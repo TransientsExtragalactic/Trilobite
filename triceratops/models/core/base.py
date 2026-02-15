@@ -236,10 +236,10 @@ class Model(ABC):
 
         Returns
         -------
-        outputs: dict of str, array-like
-            The model's outputs. Each output is provided as a key-value pair in the dictionary, where the key
-            is the output name and the value is the computed output value. Each element will either be a float
-            or an array-like object, depending on the inputs. Standard numpy broadcasting rules are applied throughout.
+        outputs : OUTPUTS
+            Instance of the model's ``OUTPUTS`` NamedTuple. Each field contains
+            the computed output value, returned as either a NumPy scalar/ndarray
+            or an :class:`~astropy.units.Quantity` depending on whether units are defined.
         """
         pass
 
@@ -283,12 +283,12 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables: dict of str, array-like or Quantity
+        variables: dict of str, array-like or ~astropy.units.Quantity
             The model's input variables. Each variable must be provided as a key-value pair in the
             dictionary, where the key is the variable name and the value is the variable's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
             broadcasting rules are applied throughout.
-        parameters: dict of str, array-like or Quantity
+        parameters: dict of str, array-like or ~astropy.units.Quantity
             The model's parameters. Each parameter must be provided as a key-value pair in the
             dictionary, where the key is the parameter name and the value is the parameter's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
@@ -297,11 +297,11 @@ class Model(ABC):
 
         Returns
         -------
-        outputs: dict of str, array-like or Quantity
-            The model's outputs. Each output is provided as a key-value pair in the dictionary, where the key
-            is the output name and the value is the computed output value. If an output has units, then it
-            will be returned as an astropy quantity, otherwise, it will be a numpy array or float. Standard numpy
-            broadcasting rules are applied throughout.
+        outputs : OUTPUTS
+            NamedTuple containing the model outputs in the canonical
+            order defined by :attr:`OUTPUTS`. Fields with defined units
+            are returned as :class:`~astropy.units.Quantity` objects; fields
+            without units are returned as floats or ``ndarray`` objects.
         """
         # --- Coerce the variables and parameters --- #
         # The first task in the forward model is to coerce the input variables and parameters
@@ -351,12 +351,12 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables: dict of str, array-like or Quantity
+        variables: dict of str, array-like or ~astropy.units.Quantity
             The model's input variables. Each variable must be provided as a key-value pair in the
             dictionary, where the key is the variable name and the value is the variable's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
             broadcasting rules are applied throughout.
-        parameters: dict of str, array-like or Quantity
+        parameters: dict of str, array-like or ~astropy.units.Quantity
             The model's parameters. Each parameter must be provided as a key-value pair in the
             dictionary, where the key is the parameter name and the value is the parameter's value. Each element
             must either be a float, an array-like object, or an :class:`astropy.units.Quantity`. Standard numpy
@@ -365,11 +365,11 @@ class Model(ABC):
 
         Returns
         -------
-        outputs: dict of str, array-like or Quantity
-            The model's outputs. Each output is provided as a key-value pair in the dictionary, where the key
-            is the output name and the value is the computed output value. If an output has units, then it
-            will be returned as an astropy quantity, otherwise, it will be a numpy array or float. Standard numpy
-            broadcasting rules are applied throughout.
+        outputs : OUTPUTS
+            NamedTuple containing the model outputs in the canonical
+            order defined by :attr:`OUTPUTS`. Fields with defined units
+            are returned as :class:`~astropy.units.Quantity` objects; fields
+            without units are returned as floats or ``ndarray`` objects.
         """
         return self.forward_model(variables, parameters)
 
@@ -386,13 +386,13 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables : dict of str -> float, numpy.ndarray, or astropy.units.Quantity
+        variables : dict of str to float, numpy.ndarray, or astropy.units.Quantity
             Dictionary mapping variable names to their values. All variables
             declared in :attr:`VARIABLES` must be present.
 
         Returns
         -------
-        dict of str -> float or numpy.ndarray
+        dict of str to float or numpy.ndarray
             Dictionary mapping variable names to raw numerical values in base units.
 
         Raises
@@ -429,13 +429,13 @@ class Model(ABC):
 
         Parameters
         ----------
-        parameters : dict of str -> float, numpy.ndarray, or astropy.units.Quantity
+        parameters : dict of str to float, numpy.ndarray, or astropy.units.Quantity
             Dictionary mapping parameter names to their values. Missing parameters
             will be filled using defaults defined in :class:`ModelParameter`.
 
         Returns
         -------
-        dict of str -> float or numpy.ndarray
+        dict of str to float or numpy.ndarray
             Dictionary mapping parameter names to raw numerical values in base units.
 
         Raises
@@ -478,7 +478,7 @@ class Model(ABC):
 
         Parameters
         ----------
-        parameters : dict of str -> float or numpy.ndarray
+        parameters : dict of str to float or numpy.ndarray
             Parameter values in base units.
 
         Raises
@@ -518,9 +518,9 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables : dict of str -> float or numpy.ndarray
+        variables : dict of str to float or numpy.ndarray
             Model variables in base units.
-        parameters : dict of str -> float or numpy.ndarray
+        parameters : dict of str to float or numpy.ndarray
             Model parameters in base units.
 
         Notes
@@ -544,7 +544,7 @@ class Model(ABC):
 
         Parameters
         ----------
-        parameters : dict of str -> float, numpy.ndarray, or Quantity
+        parameters : dict of str to float, numpy.ndarray, or ~astropy.units.Quantity
             Parameter values to validate.
 
         Raises
@@ -569,10 +569,13 @@ class Model(ABC):
 
         Parameters
         ----------
-        variables : dict of str -> float, numpy.ndarray, or Quantity
-            Model variables.
-        parameters : dict of str -> float, numpy.ndarray, or Quantity
-            Model parameters.
+        variables : dict of str to float or ~numpy.ndarray or ~astropy.units.Quantity
+            Mapping of variable names to their values. Values may be scalars,
+            NumPy arrays, or :class:`~astropy.units.Quantity` objects.
+        parameters : dict of str to float or ~numpy.ndarray or ~astropy.units.Quantity
+            Mapping of parameter names to their values. Values may be scalars,
+            NumPy arrays, or :class:`~astropy.units.Quantity` objects.
+
 
         Raises
         ------
