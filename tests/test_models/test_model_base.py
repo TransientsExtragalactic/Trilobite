@@ -161,7 +161,7 @@ class SimpleModel(Model):
     UNITS = SimpleOutputs(y=u.dimensionless_unscaled)
 
     def _forward_model(self, variables, parameters):
-        return {"y": parameters["a"] * variables["x"]}
+        return self.OUTPUTS(y=parameters["a"] * variables["x"])
 
 
 # ============================================================
@@ -185,7 +185,7 @@ def test_model_requires_variables():
             UNITS = Outputs(y=u.dimensionless_unscaled)
 
             def _forward_model(self, variables, parameters):
-                return {"y": 0.0}
+                return self.OUTPUTS(y=0.0)
 
 
 def test_outputs_units_field_mismatch():
@@ -211,7 +211,7 @@ def test_outputs_units_field_mismatch():
             UNITS = BadUnits(y=u.dimensionless_unscaled, z=u.dimensionless_unscaled)
 
             def _forward_model(self, variables, parameters):
-                return {"y": 0.0}
+                return self.OUTPUTS(y=parameters["a"] * variables["x"])
 
 
 # ============================================================
@@ -225,8 +225,8 @@ def test_forward_model_default_parameter():
     model = SimpleModel()
     result = model({"x": 2.0}, {})
 
-    assert result["y"].value == 2.0
-    assert result["y"].unit == u.dimensionless_unscaled
+    assert result.y.value == 2.0
+    assert result.y.unit == u.dimensionless_unscaled
 
 
 def test_forward_model_parameter_override():
@@ -235,7 +235,7 @@ def test_forward_model_parameter_override():
     model = SimpleModel()
     result = model({"x": 2.0}, {"a": 3.0})
 
-    assert result["y"].value == 6.0
+    assert result.y.value == 6.0
 
 
 def test_forward_model_missing_variable_raises():

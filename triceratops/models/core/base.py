@@ -271,7 +271,7 @@ class Model(ABC):
             The model's outputs as a tuple, ordered according to :attr:`OUTPUTS`.
         """
         raw_outputs = self._forward_model(variables, parameters)
-        return tuple(raw_outputs[output_name] for output_name in self.OUTPUTS._fields)
+        return tuple(getattr(raw_outputs, output_name) for output_name in self.OUTPUTS._fields)
 
     def forward_model(
         self,
