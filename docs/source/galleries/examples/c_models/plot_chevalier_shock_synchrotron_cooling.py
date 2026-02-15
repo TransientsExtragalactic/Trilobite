@@ -315,7 +315,7 @@ D_L = 35.0 * u.Mpc  # Luminosity distance to the source
 times = np.geomspace(1.0, 1.0e3, 50) * u.day
 
 # Add a smoothing parameter to control the sharpness of spectral breaks in the SED.
-smoothing = 0.001
+smoothing = 1
 
 
 # %%

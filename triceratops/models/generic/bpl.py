@@ -43,17 +43,17 @@ __all__ = [
 # ============================================================
 _BPLOutputs = namedtuple("BPLOutputs", ["y"])
 
+
 # ============================================================
 # Sharp Broken Power Law
 # ============================================================
-
-
 class BrokenPowerLaw(Model):
     r"""
     Sharp two-segment broken power-law model.
 
-    This model describes a piecewise power law with a discontinuous derivative
-    at a single break location :math:`x_b`.
+    This model describes a continuous but non-differentiable
+    two-regime power-law transition at a single break location
+    :math:`x_b`.
 
     The functional form is
 
@@ -67,32 +67,101 @@ class BrokenPowerLaw(Model):
 
     where:
 
-    - :math:`A` is the normalization defined at :math:`x = x_b`
-    - :math:`\alpha_1` is the low-:math:`x` slope
-    - :math:`\alpha_2` is the high-:math:`x` slope
+    - :math:`A` is defined at :math:`x = x_b`,
+    - :math:`\alpha_1` is the low-:math:`x` slope,
+    - :math:`\alpha_2` is the high-:math:`x` slope.
 
-    Properties
-    ----------
+    This model is purely phenomenological and does not encode
+    any physical emission mechanism.
 
-    - Continuous at :math:`x_b`
-    - First derivative is discontinuous
-    - Computationally inexpensive
+    It is commonly used for:
 
-    Asymptotic Limits
-    -----------------
+    - Synchrotron spectral segments
+    - Afterglow modeling
+    - Multi-phase scaling behavior
+    - Empirical curve fitting
 
-    For :math:`x \ll x_b`:
+    .. dropdown:: Parameters
 
-    - :math:`y \propto x^{\alpha_1}`
+        .. list-table::
+           :widths: 25 25 50
+           :header-rows: 1
 
-    For :math:`x \gg x_b`:
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``A``
+             - :math:`A`
+             - Normalization at the break location.
+           * - ``x_b``
+             - :math:`x_b`
+             - Break position.
+           * - ``alpha_1``
+             - :math:`\alpha_1`
+             - Slope for :math:`x < x_b`.
+           * - ``alpha_2``
+             - :math:`\alpha_2`
+             - Slope for :math:`x \ge x_b`.
 
-    - :math:`y \propto x^{\alpha_2}`
+    .. dropdown:: Variables
+
+        .. list-table::
+           :widths: 25 25 50
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``x``
+             - :math:`x`
+             - Independent variable.
+
+    .. dropdown:: Returns
+
+        .. list-table::
+           :widths: 25 25 50
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``y``
+             - :math:`y(x)`
+             - Model value evaluated at :math:`x`.
 
     Notes
     -----
-    - Canonical phenomenological broken power-law form
-    - Frequently used in spectral and lightcurve modeling
+    - The model is continuous at :math:`x_b`.
+    - The first derivative is discontinuous.
+    - For smooth transitions, use :class:`SmoothedBrokenPowerLaw`.
+
+    See Also
+    --------
+    :class:`SmoothedBrokenPowerLaw`: Smooth transition version.
+    :class:`TripleBrokenPowerLaw`: Three-segment extension.
+    :class:`SmoothedTripleBrokenPowerLaw`: Smooth three-segment version.
+
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.bpl import BrokenPowerLaw
+
+        model = BrokenPowerLaw()
+
+        x = np.logspace(-2, 2, 500)
+        y = model({"x": x}, {}).y
+
+        plt.loglog(x, y)
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("Broken Power Law Example")
+        plt.show()
     """
 
     VARIABLES = (
@@ -137,11 +206,9 @@ class BrokenPowerLaw(Model):
 # ============================================================
 # Smoothed Broken Power Law
 # ============================================================
-
-
 class SmoothedBrokenPowerLaw(Model):
     r"""
-    Smoothly broken two-segment power-law model.
+    Smooth two-segment broken power-law model.
 
     This model replaces the sharp transition at :math:`x_b`
     with a differentiable break controlled by a smoothing
@@ -160,35 +227,95 @@ class SmoothedBrokenPowerLaw(Model):
 
     where:
 
-    - :math:`A` sets the normalization at :math:`x = x_b`
-    - :math:`x_b` is the break location
-    - :math:`\alpha_1` and :math:`\alpha_2` are the asymptotic slopes
-    - :math:`s > 0` controls the sharpness of the transition
+    - :math:`A` is defined at :math:`x = x_b`,
+    - :math:`x_b` is the break location,
+    - :math:`\alpha_1`, :math:`\alpha_2` are asymptotic slopes,
+    - :math:`s > 0` controls transition sharpness.
 
-    Behavior of the Smoothing Parameter
-    ------------------------------------
+    This model is purely phenomenological.
 
-    - Small :math:`s` → sharper transition
-    - Large :math:`s` → broader transition
-    - As :math:`s \to 0`, the model approaches the sharp broken power law
+    It is commonly used when gradient-based inference
+    requires differentiability.
 
-    Properties
-    ----------
+    .. dropdown:: Parameters
 
-    - Continuous everywhere
-    - Differentiable everywhere
-    - Suitable for gradient-based inference
+        .. list-table::
+           :widths: 25 25 50
+           :header-rows: 1
 
-    Asymptotic Limits
-    -----------------
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``A``
+             - :math:`A`
+             - Normalization at the break.
+           * - ``x_b``
+             - :math:`x_b`
+             - Break position.
+           * - ``alpha_1``
+             - :math:`\alpha_1`
+             - Low-:math:`x` slope.
+           * - ``alpha_2``
+             - :math:`\alpha_2`
+             - High-:math:`x` slope.
+           * - ``s``
+             - :math:`s`
+             - Smoothing parameter.
 
-    For :math:`x \ll x_b`:
+    .. dropdown:: Variables
 
-    - :math:`y \propto x^{\alpha_1}`
+        .. list-table::
+           :header-rows: 1
 
-    For :math:`x \gg x_b`:
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``x``
+             - :math:`x`
+             - Independent variable.
 
-    - :math:`y \propto x^{\alpha_2}`
+    .. dropdown:: Returns
+
+        .. list-table::
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``y``
+             - :math:`y(x)`
+             - Model value.
+
+    Notes
+    -----
+    - Continuous and differentiable everywhere.
+    - As :math:`s \to 0`, approaches :class:`BrokenPowerLaw`.
+
+    See Also
+    --------
+    :class:`BrokenPowerLaw`
+    :class:`SmoothedTripleBrokenPowerLaw`
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.bpl import SmoothedBrokenPowerLaw
+
+        model = SmoothedBrokenPowerLaw()
+
+        x = np.logspace(-2, 2, 500)
+        y = model({"x": x}, {}).y
+
+        plt.loglog(x, y)
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("Smoothed Broken Power Law Example")
+        plt.show()
     """
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
@@ -223,15 +350,13 @@ class SmoothedBrokenPowerLaw(Model):
 # ============================================================
 # Triple Broken Power Law
 # ============================================================
-
-
 class TripleBrokenPowerLaw(Model):
     r"""
-    Three-segment sharp broken power-law model.
+    Sharp three-segment broken power-law model.
 
-    This model consists of three power-law regimes joined
-    continuously at two break locations :math:`x_{b,1}` and
-    :math:`x_{b,2}`.
+    This model introduces two break locations,
+    :math:`x_{b,1}` and :math:`x_{b,2}`, producing
+    three power-law regimes.
 
     The piecewise form is
 
@@ -248,26 +373,63 @@ class TripleBrokenPowerLaw(Model):
             & x \ge x_{b,2}
         \end{cases}
 
-    where:
+    This model is phenomenological and allows modeling
+    of multi-phase scaling behavior.
 
-    - :math:`A` is defined at :math:`x_{b,1}`
-    - :math:`\alpha_1`, :math:`\alpha_2`, :math:`\alpha_3`
-      are the slopes in the three regimes
+    .. dropdown:: Parameters
 
-    Properties
-    ----------
+        .. list-table::
+           :header-rows: 1
 
-    - Continuous at both breaks
-    - Derivative is discontinuous at both breaks
-    - Allows modeling of multi-phase behavior
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``A`` — :math:`A` — Normalization.
+           * - ``x_b1`` — :math:`x_{b,1}` — First break.
+           * - ``x_b2`` — :math:`x_{b,2}` — Second break.
+           * - ``alpha_1`` — :math:`\alpha_1` — First slope.
+           * - ``alpha_2`` — :math:`\alpha_2` — Second slope.
+           * - ``alpha_3`` — :math:`\alpha_3` — Third slope.
 
-    Typical Applications
-    --------------------
+    .. dropdown:: Variables
 
-    - Multi-phase GRB afterglows
-    - Broken synchrotron spectra
-    - TDE fallback phases
-    - Composite non-thermal emission processes
+        ``x`` – Independent variable.
+
+    .. dropdown:: Returns
+
+        ``y`` – Model value.
+
+    Notes
+    -----
+    - Continuous at both break locations.
+    - Derivative is discontinuous.
+    - Useful for modeling multi-regime spectra.
+
+    See Also
+    --------
+    :class:`BrokenPowerLaw`
+    :class:`SmoothedTripleBrokenPowerLaw`
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.bpl import TripleBrokenPowerLaw
+
+        model = TripleBrokenPowerLaw()
+
+        x = np.logspace(-2, 3, 500)
+        y = model({"x": x}, {}).y
+
+        plt.loglog(x, y)
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("Triple Broken Power Law Example")
+        plt.show()
     """
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
@@ -313,54 +475,67 @@ class TripleBrokenPowerLaw(Model):
 # ============================================================
 # Smoothed Triple Broken Power Law
 # ============================================================
-
-
 class SmoothedTripleBrokenPowerLaw(Model):
     r"""
     Smooth three-segment broken power-law model.
 
-    This model introduces differentiable transitions at two
-    break locations using a shared smoothing parameter :math:`s`.
+    This model introduces two smooth transitions using
+    a shared smoothing parameter :math:`s`.
 
-    The construction is equivalent to nesting two smoothed
-    broken power laws, ensuring continuity and differentiability
-    across all regimes.
+    It is equivalent to nesting two smooth broken
+    power laws, ensuring differentiability across
+    all regimes.
 
-    Parameters
-    ----------
-    - :math:`A` – overall normalization
-    - :math:`x_{b,1}`, :math:`x_{b,2}` – break locations
-    - :math:`\alpha_1`, :math:`\alpha_2`, :math:`\alpha_3` – asymptotic slopes
-    - :math:`s` – smoothing parameter controlling break sharpness
+    .. dropdown:: Parameters
 
-    Behavior of the Smoothing Parameter
-    ------------------------------------
+        - ``A`` – Normalization
+        - ``x_b1`` – First break
+        - ``x_b2`` – Second break
+        - ``alpha_1`` – First slope
+        - ``alpha_2`` – Second slope
+        - ``alpha_3`` – Third slope
+        - ``s`` – Smoothing parameter
 
-    - Small :math:`s` → sharper breaks
-    - Large :math:`s` → broader transitions
-    - As :math:`s \to 0`, the model approaches the sharp triple broken power law
+    .. dropdown:: Variables
 
-    Properties
-    ----------
+        - ``x`` – Independent variable
 
-    - Continuous everywhere
-    - Differentiable everywhere
-    - Recommended for inference workflows requiring gradients
+    .. dropdown:: Returns
 
-    Asymptotic Limits
-    -----------------
+        - ``y`` – Model value
 
-    For :math:`x \ll x_{b,1}`:
+    Notes
+    -----
+    - Continuous and differentiable everywhere.
+    - Approaches :class:`TripleBrokenPowerLaw`
+      as :math:`s \to 0`.
+    - Recommended for inference workflows.
 
-    - :math:`y \propto x^{\alpha_1}`
+    See Also
+    --------
+    :class:`TripleBrokenPowerLaw`
+    :class:`SmoothedBrokenPowerLaw`
 
-    For :math:`x_{b,1} \ll x \ll x_{b,2}`:
+    Examples
+    --------
 
-    - :math:`y \propto x^{\alpha_2}`
+    .. plot::
+        :include-source:
 
-    For :math:`x \gg x_{b,2}`:
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.bpl import SmoothedTripleBrokenPowerLaw
 
-    - :math:`y \propto x^{\alpha_3}`
+        model = SmoothedTripleBrokenPowerLaw()
+
+        x = np.logspace(-2, 3, 500)
+        y = model({"x": x}, {}).y
+
+        plt.loglog(x, y)
+        plt.xlabel("x")
+        plt.ylabel("y")
+        plt.title("Smoothed Triple Broken Power Law Example")
+        plt.show()
     """
 
     VARIABLES = (ModelVariable("x", base_units=u.dimensionless_unscaled),)
