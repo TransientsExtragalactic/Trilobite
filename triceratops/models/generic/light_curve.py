@@ -61,13 +61,15 @@ __all__ = [
     "LogisticPulse",
 ]
 
+_FredOutputs = namedtuple("FREDOutputs", ["flux"])
+
 
 class FRED(Model):
     r"""
     Fast Rise, Exponential Decay (FRED) lightcurve model.
 
     This model describes a phenomenological flare profile commonly used
-    in gamma-ray burst (GRB) pulse modeling and time-domain astrophysics.
+    in gamma-ray burst (GRB) pulse modeling and time-domain astrophysics (e.g. :footcite:t:`2009ApJ...698..417P`).
     The functional form consists of a rapid exponential rise followed
     by an exponential decay.
 
@@ -157,6 +159,45 @@ class FRED(Model):
     The peak time depends non-trivially on the ratio :math:`\tau_r/\tau_d`.
     The model reduces to a simple exponential decay when
     :math:`\tau_r \rightarrow 0`.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import FRED
+
+        rng = np.random.default_rng(42)
+
+        model = FRED()
+
+        t = np.linspace(-1, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, label="Model", lw=2)
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("FRED Model Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`GeneralizedFRED`
+    :class:`GaussianPulse`
+    :class:`NorrisPulse`
+
+    References
+    ----------
+    .. footbibliography::
     """
 
     VARIABLES = (
@@ -176,7 +217,7 @@ class FRED(Model):
         ModelParameter("C", 0.0, base_units=None, bounds=(None, None)),
     )
 
-    OUTPUTS = namedtuple("FREDOutputs", ["flux"])
+    OUTPUTS = _FredOutputs
     UNITS = OUTPUTS(flux=u.dimensionless_unscaled)
 
     DESCRIPTION = "Fast rise, exponential decay flare model with constant background."
@@ -212,7 +253,7 @@ class GeneralizedFRED(Model):
     exponential rise with a power-law rise of index :math:`n`. It provides
     additional flexibility in modeling asymmetric transient pulses commonly
     observed in gamma-ray bursts (GRBs), X-ray flares, and other time-domain
-    astrophysical phenomena.
+    astrophysical phenomena (see e.g. :footcite:t:`ryde1999shape`).
 
     The lightcurve is defined as
 
@@ -309,6 +350,45 @@ class GeneralizedFRED(Model):
     Caution should be exercised when interpreting fitted parameters
     physically, as this model does not enforce energy conservation or
     radiative transfer consistency.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import GeneralizedFRED
+
+        rng = np.random.default_rng(42)
+
+        model = GeneralizedFRED()
+
+        t = np.linspace(-1, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Generalized FRED Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`FRED`
+    :class:`NorrisPulse`
+    :class:`LogNormalPulse`
+
+    References
+    ----------
+    .. footbibliography::
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -445,6 +525,41 @@ class GaussianPulse(Model):
 
     Because this model is symmetric, it cannot capture the fast-rise,
     slow-decay morphology typical of GRB pulses or shock-powered flares.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import GaussianPulse
+
+        rng = np.random.default_rng(42)
+
+        model = GaussianPulse()
+
+        t = np.linspace(-5, 5, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Gaussian Pulse Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`FRED`
+    :class:`LogNormalPulse`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -566,6 +681,41 @@ class LogNormalPulse(Model):
 
     This model produces strong asymmetry and is widely used in GRB
     prompt emission pulse fitting.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import LogNormalPulse
+
+        rng = np.random.default_rng(42)
+
+        model = LogNormalPulse()
+
+        t = np.linspace(0.01, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Log-Normal Pulse Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`FRED`
+    :class:`NorrisPulse`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -682,6 +832,40 @@ class BrokenPowerLawTime(Model):
     -----
     The derivative is discontinuous at :math:`t_b`. This model is therefore
     not differentiable at the break.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import BrokenPowerLawTime
+
+        rng = np.random.default_rng(42)
+
+        model = BrokenPowerLawTime()
+
+        t = np.logspace(-1, 2, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.1 * flux * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.loglog(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Broken Power Law Time Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`SmoothedBrokenPowerLawTime`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -799,6 +983,40 @@ class SmoothedBrokenPowerLawTime(Model):
     -----
     This model is continuous and differentiable for all
     :math:`t > 0`.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import SmoothedBrokenPowerLawTime
+
+        rng = np.random.default_rng(42)
+
+        model = SmoothedBrokenPowerLawTime()
+
+        t = np.logspace(-1, 2, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.1 * flux * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.loglog(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Smoothed Broken Power Law Time Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -912,6 +1130,40 @@ class ExponentialRisePowerLawDecay(Model):
     -----
     For large times, the decay approaches
     :math:`F(t) \propto t^{-\alpha}`.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import ExponentialRisePowerLawDecay
+
+        rng = np.random.default_rng(42)
+
+        model = ExponentialRisePowerLawDecay()
+
+        t = np.logspace(-2, 2, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.1 * flux * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.loglog(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Exponential Rise Power-Law Decay Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`BrokenPowerLawTime`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -956,7 +1208,7 @@ class NorrisPulse(Model):
     Norris GRB pulse model.
 
     This model was introduced to describe asymmetric GRB
-    prompt emission pulses.
+    prompt emission pulses in :footcite:t:`norris1996attributes` and :footcite:t:`norris2005long`.
 
     .. math::
 
@@ -1031,6 +1283,44 @@ class NorrisPulse(Model):
     .. math::
 
         t_{\rm peak} = t_s + \sqrt{\tau_1 \tau_2}.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import NorrisPulse
+
+        rng = np.random.default_rng(42)
+
+        model = NorrisPulse()
+
+        t = np.linspace(0, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Norris Pulse Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`FRED`
+    :class:`LogNormalPulse`
+
+    References
+    ----------
+    .. footbibliography::
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -1144,6 +1434,41 @@ class WeibullPulse(Model):
     Notes
     -----
     For :math:`k = 1`, this reduces to an exponential distribution.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import WeibullPulse
+
+        rng = np.random.default_rng(42)
+
+        model = WeibullPulse()
+
+        t = np.linspace(0, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Weibull Pulse Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`NorrisPulse`
+    :class:`LogNormalPulse`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
@@ -1254,6 +1579,40 @@ class LogisticPulse(Model):
     - Gradual state changes.
 
     It is not suitable for isolated pulse modeling.
+
+    Examples
+    --------
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from triceratops.models.generic.light_curve import LogisticPulse
+
+        rng = np.random.default_rng(42)
+
+        model = LogisticPulse()
+
+        t = np.linspace(-5, 10, 400)
+        flux = model({"t": t}, {}).flux
+
+        noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+        synthetic = flux + noise
+
+        plt.plot(t, flux, lw=2, label="Model")
+        plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+        plt.xlabel("Time")
+        plt.ylabel("Flux")
+        plt.title("Logistic Transition Example")
+        plt.legend()
+        plt.show()
+
+    See Also
+    --------
+    :class:`GaussianPulse`
+
     """
 
     VARIABLES = (ModelVariable("t", base_units=None),)
