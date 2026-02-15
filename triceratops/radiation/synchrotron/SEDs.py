@@ -1898,6 +1898,8 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk=1.0,
+        redshift=0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -1939,6 +1941,12 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         alpha : float, optional
             Electron pitch angle in radians. This parameter is ignored if
             ``pitch_average=True``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region. This affects the Doppler
+            boosting of the observed frequencies and fluxes.
+        redshift: float, optional
+            Cosmological redshift of the source. This affects the observed frequencies
+            and fluxes via redshift corrections.
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
             Otherwise, a fixed pitch angle specified by ``alpha`` is used.
@@ -1971,19 +1979,34 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
         log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
 
-        # Characteristic synchrotron frequencies
-        log_nu_m = _opt_compute_log_synch_frequency(
-            log_gamma_min,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        # Compute the Doppler factors and redshift corrections for the
+        # fluxes and the frequencies.
+        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
+        delta_bulk = gamma_bulk * (1 + beta_bulk)
+        log_delta_bulk = np.log(delta_bulk)
+        log_nu_correction = log_delta_bulk - np.log1p(redshift)
+        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
+
+        # Characteristic synchrotron frequencies. These are all
+        # OBSERVER FRAME quantities.
+        log_nu_m = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_min,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
 
-        log_nu_max = _opt_compute_log_synch_frequency(
-            log_gamma_max,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_max = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_max,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
 
         # Electron distribution normalization via equipartition
@@ -2007,6 +2030,7 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             + log_V
             - 2.0 * log_D_L
             + (1.0 - p) * log_gamma_min
+            + log_flux_correction
         )
 
         return {
@@ -2026,6 +2050,8 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        bulk_gamma=1.0,
+        redshift=0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -2060,6 +2086,10 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             Fraction of post-shock internal energy stored in magnetic fields.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        bulk_gamma: float, optional
+            Bulk Lorentz factor of the emitting region, affecting Doppler boosting.
+        redshift: float, optional
+            Cosmological redshift of the source, affecting observed frequencies and fluxes.
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
             Otherwise, use a fixed pitch angle specified by ``alpha``.
@@ -2113,6 +2143,8 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             epsilon_B=epsilon_B,
             alpha=alpha,
             pitch_average=pitch_average,
+            gamma_bulk=bulk_gamma,
+            redshift=redshift,
         )
 
         # Convert back to physical units
@@ -2970,6 +3002,8 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -3032,6 +3066,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Fraction of post-shock internal energy stored in magnetic fields.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        gamma_bulk: float, optional
+            Bulk Lorentz factor of the emitting region. This can be used to compute the Doppler
+            factor for transforming frequencies and fluxes to the observer frame. Defaults to 1
+            (no relativistic beaming).
+        redshift: float, optional
+            Redshift of the source. This can be used to compute the luminosity distance and to
+            apply cosmological corrections to the frequencies and fluxes. Defaults to 0 (no redshift).
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
             Otherwise, a fixed pitch angle is assumed.
@@ -3074,27 +3115,44 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
         log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
 
+        # Compute the Doppler factors and redshift corrections for the
+        # fluxes and the frequencies.
+        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
+        delta_bulk = gamma_bulk * (1 + beta_bulk)
+        log_delta_bulk = np.log(delta_bulk)
+        log_nu_correction = log_delta_bulk - np.log1p(redshift)
+        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
+
         # --- Compute the Frequencies --- #
         # We need to use the electron Lorentz factors to compute
         # the relevant synchrotron frequencies. This should be done for
         # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = _opt_compute_log_synch_frequency(
-            log_gamma_min,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_m = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_min,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
-        log_nu_max = _opt_compute_log_synch_frequency(
-            log_gamma_max,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_max = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_max,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
-        log_nu_c = _opt_compute_log_synch_frequency(
-            log_gamma_c,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_c = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_c,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
 
         # Determine if we are fast cooling or not.
@@ -3144,6 +3202,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 + log_gamma_c
                 + log_V
                 - 2 * log_D_L
+                + log_flux_correction
             )
 
             # Compute the SSA frequencies.
@@ -3172,6 +3231,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 + (1 - p) * log_gamma_min
                 + log_V
                 - 2 * log_D_L
+                + log_flux_correction
             )
 
             regime, log_nu_a = self._compute_sed_regime(
@@ -3218,6 +3278,8 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -3258,6 +3320,14 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Fraction of post-shock internal energy in magnetic fields.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region. This can be used to compute the Doppler
+            factor for transforming frequencies and fluxes to the observer frame. Defaults to 1
+            (no relativistic beaming).
+        redshift : float, optional
+            Redshift of the source. This can be used to compute the luminosity distance and to
+            apply cosmological corrections to the frequencies and fluxes. Defaults to 0 (no red
+            shift).
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
 
@@ -3310,6 +3380,8 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
             pitch_average=pitch_average,
         )
 
@@ -3823,6 +3895,8 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -3907,27 +3981,44 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
         log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
 
+        # Compute the Doppler factors and redshift corrections for the
+        # fluxes and the frequencies.
+        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
+        delta_bulk = gamma_bulk * (1 + beta_bulk)
+        log_delta_bulk = np.log(delta_bulk)
+        log_nu_correction = log_delta_bulk - np.log1p(redshift)
+        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
+
         # --- Compute the Frequencies --- #
         # We need to use the electron Lorentz factors to compute
         # the relevant synchrotron frequencies. This should be done for
         # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = _opt_compute_log_synch_frequency(
-            log_gamma_min,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_m = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_min,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
-        log_nu_max = _opt_compute_log_synch_frequency(
-            log_gamma_max,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_max = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_max,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
-        log_nu_c = _opt_compute_log_synch_frequency(
-            log_gamma_c,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_c = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_c,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
 
         # --- Compute the correct peak flux based on the regime --- #
@@ -3954,6 +4045,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 + log_gamma_c
                 + log_V
                 - 2 * log_D_L
+                + log_flux_correction
             )
         elif log_nu_m <= log_nu_c:
             # This is slow cooling, we need to normalize at nu_m.
@@ -3974,6 +4066,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 + (1 - p) * log_gamma_min
                 + log_V
                 - 2 * log_D_L
+                + log_flux_correction
             )
         else:
             raise RuntimeError("Unrecognized regime in from_physics_to_params.")
@@ -4017,6 +4110,8 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -4061,6 +4156,12 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Default is ``0.1``.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting plasma. Currently ignored, but may
+            be used in future implementations to account for relativistic beaming effects.
+        redshift : float, optional
+            Redshift of the source. Currently ignored, but may be used in future
+            implementations to account for cosmological effects on the observed SED.
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity and
             normalization.
@@ -4115,6 +4216,8 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
             pitch_average=pitch_average,
         )
 
@@ -4803,6 +4906,8 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -4877,21 +4982,35 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
         log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
 
+        # Compute the Doppler factors and redshift corrections for the
+        # fluxes and the frequencies.
+        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
+        delta_bulk = gamma_bulk * (1 + beta_bulk)
+        log_delta_bulk = np.log(delta_bulk)
+        log_nu_correction = log_delta_bulk - np.log1p(redshift)
+        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
+
         # --- Compute the Frequencies --- #
         # We need to use the electron Lorentz factors to compute
         # the relevant synchrotron frequencies. This should be done for
         # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = _opt_compute_log_synch_frequency(
-            log_gamma_min,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_m = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_min,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
-        log_nu_max = _opt_compute_log_synch_frequency(
-            log_gamma_max,
-            log_B,
-            sin_alpha=sin_alpha,
-            pitch_average=pitch_average,
+        log_nu_max = (
+            _opt_compute_log_synch_frequency(
+                log_gamma_max,
+                log_B,
+                sin_alpha=sin_alpha,
+                pitch_average=pitch_average,
+            )
+            + log_nu_correction
         )
 
         # Compute the normalization flux at nu_m.
@@ -4912,6 +5031,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             + (1 - p) * log_gamma_min
             + log_V
             - 2 * log_D_L
+            + log_flux_correction
         )
 
         # Compute nu_ssa
@@ -4961,6 +5081,8 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
@@ -4995,6 +5117,10 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Fraction of post-shock internal energy in relativistic electrons.
         epsilon_B : float, optional
             Fraction of post-shock internal energy in magnetic fields.
+        gamma_bulk: float, optional
+            Bulk Lorentz factor of the emitting region.
+        redshift: float, optional
+            Cosmological redshift of the source.
         alpha : float, optional
             Electron pitch angle in radians.
         pitch_average : bool, optional
@@ -5045,6 +5171,8 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
             pitch_average=pitch_average,
         )
 
