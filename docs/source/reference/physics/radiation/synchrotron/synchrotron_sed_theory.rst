@@ -86,6 +86,12 @@ provides the **flux density** :math:`F_\nu` at a given frequency :math:`\nu` giv
 - The **break frequencies** are the critical frequencies which define the transitions between different
   power-law segments in the SED. These are, in general, functions of the underlying **physical parameters**
   of the system such as magnetic field strength, electron distribution properties, etc.
+
+  .. important::
+
+        Throughout this document, we refer to the observer-frame quantities without a prime and to
+        the rest-frame quantities with a prime.
+
 - The **hyper-parameters** are parameters which define the shape of the SED but are not directly
   related to the physical parameters of the system. Examples include the electron power-law index
   :math:`p` and the smoothness parameters :math:`s_{(i,j)}` which define the sharpness of transitions
@@ -139,6 +145,10 @@ In the tables below, we summarize the various types of quantities used in this d
         See :ref:`synchrotron_abs_frequency` for details.
     * - :math:`\gamma_{\min}`
       - The minimum electron Lorentz factor in the power-law distribution.
+    * - :math:`\Gamma_{\rm bulk}`
+      - The bulk Lorentz factor of the outflow.
+    * - :math:`z`
+      - The redshift of the source.
 
 .. rubric:: SED Internal Parameters
 
@@ -152,11 +162,14 @@ In the tables below, we summarize the various types of quantities used in this d
     * - :math:`\nu_a`
       - The self-absorption frequency. See :ref:`synchrotron_abs_frequency` for details.
     * - :math:`F_{\rm pk}`
-      - The peak flux density of the SED. This is determined by the normalization and the break frequencies. See :ref:`sed_normalization` for details.
+      - The peak flux density of the SED. This is determined by the normalization and the
+        break frequencies. See :ref:`sed_normalization` for details.
 
 .. _sed_surgery:
 The Shape of SEDs
 ^^^^^^^^^^^^^^^^^
+
+*Note*: Unless specifically noted, we describe quantities in the comoving frame of the emitting source.
 
 To begin, we introduce the formal notation used to describe each of the SEDs which is to be constructed in
 this document. We present (and implement in the code) two versions of any given SED:
@@ -173,7 +186,7 @@ using a **smoothly broken power-law** (SBPL) of the form:
 
 .. math::
 
-    F_{\nu}^{(1,2)} = F_{\nu,0}^{(1,2)} \left[
+    F_{\nu}^{(1,2)} = F_{\nu,0}^{(1,2)} 2^{-s_{(1,2)}} \left[
         \left(\frac{\nu}{\nu_{brk}}\right)^{\alpha_1/s_{(1,2)}} +
         \left(\frac{\nu}{\nu_{brk}}\right)^{\alpha_2/s_{(1,2)}}
     \right]^{s_{(1,2)}},
@@ -186,7 +199,7 @@ We likewise define the **scale-free** SBPL between two adjacent regions as:
 
 .. math::
 
-    \tilde{F}_{\nu}^{(1,2)} = \left[
+    \tilde{F}_{\nu}^{(1,2)} = 2^{-s_{(1,2)}}\left[
         1 +
         \left(\frac{\nu}{\nu_{brk}}\right)^{(\alpha_2-\alpha_1)/s_{(1,2)}}
     \right]^{s_{(1,2)}}.
@@ -219,7 +232,7 @@ Break Frequencies
 ^^^^^^^^^^^^^^^^^
 
 Before proceeding to discuss the construction of various SEDs, it is necessary to describe the precise methodology
-with while we compute the various break frequencies used in the SEDs. In each of the following sections, we describe
+with which we compute the various break frequencies used in the SEDs. In each of the following sections, we describe
 this methodology in detail.
 
 .. hint::
@@ -227,6 +240,10 @@ this methodology in detail.
     In :ref:`synchrotron_seds`, we describe the actual code implementation of all of the SEDs. It is worth noting that,
     in general, we provide implementations for SEDs in terms of the relevant frequencies so that, should one wish to
     do so, any prescription for computing the break frequencies may be used.
+
+.. note::
+
+    In this section, as is our convention throughout, the rest-frame quantities are labeled with a prime.
 
 .. _synchrotron_sed_injection_frequencies:
 The Injection Frequencies
@@ -241,7 +258,7 @@ in general, use whichever physical prescription is most appropriate to compute :
 
 Once these Lorentz factors are know, the **injection frequencies** are fixed up to a factor for the treatment of
 pitch angle :math:`\alpha` between the electron velocity and the magnetic field. As we have done elsewhere, we support
-both the isotropic pitch angle averaged case and the fixed pitch angle case. In each case, the injection frequencies
+both the isotropic pitch angle averaged case and the fixed pitch angle case. In each case, the (rest-frame) injection frequencies
 are as follows:
 
 .. tab-set::
@@ -254,13 +271,13 @@ are as follows:
         .. math::
             :label: injection_frequency_min_iso
 
-            \nu_m = \left<\nu_{\rm synch}(\gamma)\right>_{\sin \alpha} = \frac{3 q B}{2 \pi^2 m c}\gamma_{\min}^2,
+            \nu_m' = \left<\nu'_{\rm synch}(\gamma')\right>_{\sin \alpha} = \frac{3 q B'}{2 \pi^2 m c}\left[\gamma'_{\min}\right]^2,
 
         In the same manner, the maximum injection frequency is
 
         .. math::
 
-            \nu_{\rm max} = \left<\nu_{\rm synch}(\gamma)\right>_{\sin \alpha} = \frac{3 q B}{2 \pi^2 m c}\gamma_{\max}^2.
+            \nu_{\rm max}' = \left<\nu'_{\rm synch}(\gamma')\right>_{\sin \alpha} = \frac{3 q B'}{2 \pi^2 m c}\left[\gamma'_{\max}\right]^2.
 
     .. tab-item:: Fixed Pitch Angle
 
@@ -270,13 +287,25 @@ are as follows:
         .. math::
             :label: injection_frequency_min
 
-            \nu_m = \nu_{\rm char}(\gamma_{\min}) = \frac{3 q B \sin \alpha}{4 \pi m c}\gamma_{\min}^2,
+            \nu_m' = \nu'_{\rm char}(\gamma'_{\min}) = \frac{3 q B' \sin \alpha}{4 \pi m c}\left[\gamma'_{\min}\right]^2,
 
         and
 
         .. math::
 
-            \nu_{\rm max} = \nu_{\rm char}(\gamma_{\max}) = \frac{3 q B \sin \alpha}{4 \pi m c}\gamma_{\max}^2.
+            \nu_{\rm max}' = \nu_{\rm char}'(\gamma'_{\max}) = \frac{3 q B' \sin \alpha}{4 \pi m c}\left[\gamma'_{\max}\right]^2.
+
+To convert the rest-frame quantity to the observed quantity, one must apply the corresponding Doppler correction
+
+.. math::
+
+    \delta = \Gamma_{\rm bulk}(1+\beta_{\rm bulk}),
+
+so that the observed injection frequencies are
+
+.. math::
+
+    \nu_{m} = \frac{\delta}{1+z} \nu_m', \quad \nu_{\rm max} =  \frac{\delta}{1+z} \nu'_{\rm max}.
 
 In practice, the minimum injection frequency is typically treated as a free parameter in a model and fit for, while
 the maximum injection frequency is often neglected entirely due to its location at very high frequencies.
@@ -302,25 +331,25 @@ The Cooling Frequency
 
 **PARAMETER TYPE:** Free Parameter
 
-Consider a population of electrons subject to a cooling process with a cooling rate :math:`\Lambda(\gamma)`. Electrons
-with energy :math:`E = m_e c^2 \gamma` will then cool on a timescale
+Consider a population of electrons subject to a cooling process with a cooling rate :math:`\Lambda'(\gamma')`. Electrons
+with energy :math:`E' = m_e c^2 \gamma'` will then cool on a timescale (in the comoving frame)
 
 .. math::
 
-    t_{\rm cool}(\gamma) = \frac{E}{\Lambda(\gamma)} = \frac{m_e c^2 \gamma}{\Lambda(\gamma)}.
+    t'_{\rm cool}(\gamma) = \frac{E'}{\Lambda'(\gamma')} = \frac{m_e c^2 \gamma'}{\Lambda'(\gamma')}.
 
 If, in order to cool significantly, the dynamical time must exceed the cooling time for a particular energy, we can
-define the **cooling Lorentz factor** :math:`\gamma_c` as the Lorentz factor for which the cooling timescale
-equals the dynamical timescale :math:`t_{\rm dyn}` of the system:
+define the **cooling Lorentz factor** :math:`\gamma_c'` as the Lorentz factor for which the cooling timescale
+equals the dynamical timescale :math:`t'_{\rm dyn}` of the system:
 
 .. math::
 
     \boxed{
-    t_{\rm cool}(\gamma_c)
+    t'_{\rm cool}(\gamma_c')
     =
-    \frac{m_e c^2 \gamma_c}{\Lambda(\gamma_c)}
+    \frac{m_e c^2 \gamma_c'}{\Lambda'(\gamma_c')}
     =
-    t_{\rm dyn}.
+    t'_{\rm dyn}.
     }
 
 This then implies
@@ -329,9 +358,9 @@ This then implies
     :label: cooling_lorentz_factor
 
     \boxed{
-    \gamma_c
+    \gamma_c'
     =
-    \frac{m_e c^2}{\Lambda(\gamma_c) t_{\rm dyn}}.
+    \frac{m_e c^2}{\Lambda'(\gamma_c') t'_{\rm dyn}}.
     }
 
 The corresponding **cooling frequency** is then given by :eq:`eq_synch_frequency` from :ref:`synchrotron_theory` as
@@ -340,10 +369,33 @@ The corresponding **cooling frequency** is then given by :eq:`eq_synch_frequency
     :label: cooling_frequency
 
     \boxed{
-    \nu_c
+    \nu_c'
     =
-    \frac{3 q B \sin \alpha}{4 \pi m c} \gamma_c^2 = \frac{3q m_e c^3}{4\pi} \left(\frac{B\sin \alpha}{\Lambda(\gamma_c)^2
-    t_{\rm dyn}^2}\right).
+    \frac{3 q B' \sin \alpha}{4 \pi m c} \gamma_c'^2
+    =
+    \frac{3 q m_e c^3}{4\pi}
+    \left(
+    \frac{B' \sin \alpha}
+    {\left[\Lambda'(\gamma_c')\right]^2\, t_{\rm dyn}'^{\,2}}
+    \right).
+    }
+
+In the observer frame, one factor of :math:`\delta/(1+z)` is applied to covert the frequency into the observer frame;
+however, time dilation of the dynamical time modifies the frequency as well. Given a dynamical time in the observer
+frame, the corresponding rest-frame dynamical time is
+
+.. math::
+
+    t'_{\rm dyn} = t_{\rm dyn} \frac{\delta}{1+z},
+
+meaning that the cooling frequency is defined in the observer frame as
+
+.. math::
+    :label: cooling_frequency_observer
+
+    \boxed{
+    \nu_c = \left(\frac{1+z}{\delta}\right) \frac{3 q m_e c^3}{4 \pi}
+    \left[\frac{B'\sin\alpha}{\left[\Lambda'(\gamma_c')\right]^2 t_{\rm dyn}^2}\right]
     }
 
 The precise value of the cooling frequency should be determined from the dominant cooling process affecting the electron
@@ -358,10 +410,8 @@ frequency as
 .. math::
 
     \boxed{
-    \nu_c
-    =
-    \frac{3 q B}{2 \pi^2 m c} \gamma_c^2 = \frac{3 q m_e c^3}{2\pi^2} \left(\frac{B}{\Lambda(\gamma_c)^2
-    t_{\rm dyn}^2}\right).
+    \nu_c = \left(\frac{1+z}{\delta}\right) \frac{3 q m_e c^3}{2 \pi^2}
+    \left[\frac{B'\sin\alpha}{\left[\Lambda'(\gamma_c')\right]^2 t_{\rm dyn}^2}\right]
     }
 
 .. hint::
@@ -378,52 +428,58 @@ The Absorption Frequency
 
 The self-absorption frequency is a less trivial quantity to compute, as it depends on the radiative transfer
 properties of the source and is therefore dependent on the SED one is using. This creates a circular dependency
-which must be resolved by considering every possible SED configuration given a known :math:`\nu_m` and :math:`\nu_c`,
-computing the value of :math:`\nu_a` in each case and then checking for self-consistency with the assumed SED and
+which must be resolved by considering every possible SED configuration given a known :math:`\nu'_m` and :math:`\nu'_c`,
+computing the value of :math:`\nu'_a` in each case and then checking for self-consistency with the assumed SED and
 its assumptions.
 
-In the most rigorous sense, the absorption frequency :math:`\nu_a` is determined by the condition that the
+In the most rigorous sense, the absorption frequency :math:`\nu'_a` is determined by the condition that the
 optical depth to self-absorption equals unity:
 
 .. math::
 
-    \tau_{\nu_{a}} = \alpha_{\nu_a} L = 1,
+    \tau_{\nu'_{a}} = \alpha_{\nu'_a} L = 1,
 
 The form of :math:`\alpha_\nu` depends explicitly on the structure of the absorbing electron population (see
 :ref:`synchrotron_theory` for details). One could, in principle, perform these computations in full detail; however,
 an alternative approach has been developed in the literature :footcite:p:`duran2013radius` which allows for
-approximate expressions for :math:`\nu_a`.
+approximate expressions for :math:`\nu'_a`.
 
 We assume, as was done in the development of the normalization approach, that the absorption at a particular frequency
 is dominated by a mono-energetic population of electrons. In such a case, the optically thick emission from the source
-should be well approximated by a blackbody with effective temperature :math:`kT_{\rm eff} = \gamma_\nu m_e c^2`, where
-:math:`\gamma_\nu` is the Lorentz factor of electrons emitting at frequency :math:`\nu`. This corresponds to a source
-function :math:`S_\nu = 2\nu^2 m_e \gamma_\nu`. The corresponding flux :math:`F_\nu` should then be
+should be well approximated by a blackbody with brightness temperature :math:`kT_{b} = \gamma'_\nu m_e c^2`, where
+:math:`\gamma'_\nu` is the Lorentz factor corresponding to the dominant absorbing population of electrons:
 
 .. math::
 
-    F_\nu = 2\nu^2 m_e \gamma_\nu \frac{A}{D_A^2},
+    \gamma'_\nu = {\rm max}\left(\gamma'_a, {\rm min}\left(\gamma'_c,\gamma'_m\right)\right).
+
+This corresponds to a source function :math:`S'_\nu = 2\left[\nu_a'\right]^2 m_e \gamma'_\nu`. The corresponding flux
+:math:`F'_\nu` should then be
+
+.. math::
+
+    F'_\nu = 2\left[\nu'_a\right]^2 m_e \gamma'_\nu \frac{A}{D_A^2},
 
 where :math:`A` is the effective radiating area of the source. Equating this to the **optically thin** flux
-from the normalized SED at :math:`\nu_a` then allows one to solve for :math:`\nu_a`. In practice, we instead parameterize
+from the normalized SED at :math:`\nu'_a` then allows one to solve for :math:`\nu'_a`. In practice, we instead parameterize
 this flux density in terms of the **effective angular radiating area** :math:`\Omega = A/D_A^2` so that the distance
 does not need to be provided as a hyper-parameter.
 
 .. important::
 
-    For code users, it is important to note that while the inclusion of :math:`\nu_a` would seem to be similar
+    For code users, it is important to note that while the inclusion of :math:`\nu'_a` would seem to be similar
     in complexity to the other breaks, using an SSA enabled SED **REQUIRES** the user to provide some elements of
-    the underlying geometry of the source (i.e., the effective area and volume) in order to compute :math:`\nu_a`
+    the underlying geometry of the source (i.e., the effective area and volume) in order to compute :math:`\nu'_a`
     in each dependent scenario.
 
-    Thus, an SSA SED function :math:`F_{\rm \nu}(\nu; \nu_m,\nu_c,\nu_a,\ldots)` should be thought of more properly
+    Thus, an SSA SED function :math:`F'_{\rm \nu}(\nu'; \nu'_m,\nu'_c,\nu'_a,\ldots)` should be thought of more properly
     as
 
     .. math::
 
-        F_{\rm \nu}(\nu; \nu_m,\nu_c,A,V,\ldots),
+        F'_{\rm \nu}(\nu'; \nu'_m,\nu'_c,A,V,\ldots),
 
-    where now :math:`\nu_a = f(\nu_m,\nu_c,A,V,\ldots)` is computed internally.
+    where now :math:`\nu'_a = f(\nu'_m,\nu'_c,A,V,\ldots)` is computed internally.
 
 Computing The Self-Absorption Frequency
 #######################################
@@ -433,17 +489,17 @@ approximation described above:
 
 .. math::
 
-    F_\nu = 2\nu^2 m_e \gamma_\nu \Omega = F_{\nu, \rm thin}(\nu_a),
+    F'_\nu = 2\left[\nu'_a\right]^2 m_e \gamma'_\nu \Omega = F_{\nu', \rm thin}(\nu_a),
 
-where :math:`F_{\nu, \rm thin}(\nu_a)` is the flux density at :math:`\nu_a` computed from the optically thin SED,
-and :math:`\gamma_\nu` is the Lorentz factor of the **dominant absorbing electrons**:
+where :math:`F_{\nu', \rm thin}(\nu'_a)` is the flux density at :math:`\nu'_a` computed from the optically thin SED,
+and :math:`\gamma_{\nu'}` is the Lorentz factor of the **dominant absorbing electrons**:
 
 .. math::
 
-    \gamma_\nu = {\rm max}\left(\gamma_a, {\rm min}\left(\gamma_c,\gamma_m\right)\right).
+    \gamma'_\nu = {\rm max}\left(\gamma'_a, {\rm min}\left(\gamma'_c,\gamma'_m\right)\right).
 
-This defines an implicit equation for :math:`\nu_a` which may be solved algebraically (or numerically if necessary).
-Thus, for any set of break frequencies and hyper-parameters, one may compute :math:`\nu_a` by solving the equation
+This defines an implicit equation for :math:`\nu'_a` which may be solved algebraically (or numerically if necessary).
+Thus, for any set of break frequencies and hyper-parameters, one may compute :math:`\nu'_a` by solving the equation
 and then construct the SED using the computed frequency.
 
 ----
@@ -2271,6 +2327,12 @@ Given a selected normalizing population (:math:`F_{c,0}` at :math:`\nu_c` for fa
 one may then use equipartition to compute the relevant coefficients in the flux normalization expressions above. In the sections
 below, we'll go through each of the SED cases and describe how to connect the normalization frequency to the peak emission frequency
 and thus the full SED normalization.
+
+.. important::
+
+    In the **observer frame**, the above expressions should be modified by a factor
+    :math:`\delta^3/(1+z)`, where :math:`\delta` is the Doppler factor of the emitting material
+    and :math:`z` is the redshift of the source.
 
 The Power-Law SED Normalization
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
