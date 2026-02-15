@@ -42,7 +42,7 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from ..core import Model, ModelParameter, ModelVariable
+from triceratops.models.core import Model, ModelParameter, ModelVariable
 
 __all__ = [
     "PL_Evolving_SSA_SED_Model",

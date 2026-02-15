@@ -3608,7 +3608,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         This method assumes that all inputs are already in log-space and does
         not perform unit validation.
         """
-        if log_nu_c < log_nu_m:
+        if log_nu_c <= log_nu_m:
             regime = self.SPECTRUM_FUNCTIONS.SPECTRUM_1
         elif log_nu_m < log_nu_c < log_nu_max:
             regime = self.SPECTRUM_FUNCTIONS.SPECTRUM_2
@@ -5042,7 +5042,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             log_gamma_min,
             p,
         )
-        regime = self._compute_sed_regime(
+        regime, _ = self._compute_sed_regime(
             log_nu_m,
             log_nu_a,
         )

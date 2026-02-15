@@ -26,6 +26,7 @@ in different scenarios. These models can be used to simulate observations, fit d
     models.supernovae
     models.core
     models.generic
+    models.SEDs
 
 Data Modules
 ------------

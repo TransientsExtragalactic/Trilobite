@@ -23,20 +23,18 @@ import numpy as np
 from astropy import units as u
 from test_model_base import BaseModelTest
 
-from triceratops.models.generic.evolving_sed import PL_Evolving_SSA_SED_Model
-
-# ============================================================
-# Shared Inputs
-# ============================================================
-
-_TIME_GRID = np.linspace(0.1, 10.0, 500) * u.s
+from triceratops.models.SEDs.evolving_sed import PL_Evolving_SSA_SED_Model
+from triceratops.models.SEDs.synchrotron import (
+    Cooling_SynchrotronSEDModel,
+    SSA_Cooling_SynchrotronSEDModel,
+    SSA_SynchrotronSEDModel,
+    SynchrotronSEDModel,
+)
 
 
 # ============================================================
 # Individual Model Tests
 # ============================================================
-
-
 class TestPL_Evolving_SSA_SED_Model(BaseModelTest):
     MODEL = PL_Evolving_SSA_SED_Model
     VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
@@ -50,5 +48,37 @@ class TestPL_Evolving_SSA_SED_Model(BaseModelTest):
         "t_0": 10 * u.day,
         "s": 0.3,
     }
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestSSA_Cooling_SynchrotronSEDModel(BaseModelTest):
+    MODEL = SSA_Cooling_SynchrotronSEDModel
+    VARIABLES = {"log_nu": np.linspace(8, 11, 200)}
+    PARAMETERS = {}
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestSynchrotronSEDModel(BaseModelTest):
+    MODEL = SynchrotronSEDModel
+    VARIABLES = {"log_nu": np.linspace(8, 11, 200)}
+    PARAMETERS = {}
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestSSA_SynchrotronSEDModel(BaseModelTest):
+    MODEL = SSA_SynchrotronSEDModel
+    VARIABLES = {"log_nu": np.linspace(8, 11, 200)}
+    PARAMETERS = {}
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestCooling_SynchrotronSEDModel(BaseModelTest):
+    MODEL = Cooling_SynchrotronSEDModel
+    VARIABLES = {"log_nu": np.linspace(8, 11, 200)}
+    PARAMETERS = {}
     LOG_X = True
     LOG_Y = True
