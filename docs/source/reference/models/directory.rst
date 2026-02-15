@@ -47,20 +47,12 @@ Quick Navigation
 .. grid:: 1 2 3 3
    :gutter: 3
 
-   .. grid-item-card:: 📈 Curve-Fitting Models
-      :link: curve_fitting_models
+   .. grid-item-card:: 📈 Generic Models
+      :link: generic_models
       :link-type: ref
       :class-card: sd-shadow-sm
 
-      Generic broken power laws and mathematical scaling
-      relations for rapid exploratory modeling.
-
-   .. grid-item-card:: 🌊 Light Curve Models
-      :link: light_curve_models
-      :link-type: ref
-      :class-card: sd-shadow-sm
-
-      Phenomenological transient pulse and time-domain models.
+      Flexible, modular models for curve fitting and exploratory analysis.
 
    .. grid-item-card:: 💥 Supernova Models
       :link: supernova_models
@@ -71,10 +63,18 @@ Quick Navigation
 
 ---------------------------------------------------------------------
 
+.. _generic_models:
+Generic Models
+----------------
+
+Generic models are designed to be flexible, modular, and easily subclassed. They are ideal for rapid prototyping,
+exploratory data analysis, and building custom likelihood functions. These models are not tied
+to specific physical scenarios but provide mathematical forms that can be adapted to a wide range of applications.
+
 .. _curve_fitting_models:
 
 Curve-Fitting Models
---------------------
+^^^^^^^^^^^^^^^^^^^^
 
 These models provide flexible mathematical forms for fitting data.
 They are especially useful during exploratory analysis and for
@@ -93,12 +93,10 @@ building likelihood functions.
    SmoothedTripleBrokenPowerLaw
 
 
----------------------------------------------------------------------
-
 .. _light_curve_models:
 
 Light Curve Models
-------------------
+^^^^^^^^^^^^^^^^^^
 
 These phenomenological models are designed for time-domain transient
 analysis and pulse-shape modeling.
@@ -121,6 +119,19 @@ analysis and pulse-shape modeling.
    WeibullPulse
    LogisticPulse
 
+SED Models
+^^^^^^^^^^^^
+
+These models provide flexible spectral energy distribution (SED) forms for fitting multi-wavelength data.
+
+.. rubric:: Generic SED Models
+
+.. currentmodule:: models.generic.evolving_sed
+
+.. autosummary::
+   :nosignatures:
+
+   PL_Evolving_SSA_SED_Model
 
 ---------------------------------------------------------------------
 
