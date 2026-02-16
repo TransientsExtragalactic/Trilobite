@@ -1,6 +1,6 @@
 r"""
 Synchrotron Spectra from Single Electrons and Electron Populations
-=================================================================
+==================================================================
 
 This example demonstrates how Triceratops computes synchrotron emission
 from both individual relativistic electrons and from a population of
@@ -91,7 +91,7 @@ dt_interp = end_time - start_time
 print(f"Interpolated kernel setup time: {end_time - start_time:.4f} seconds")
 # %%
 # Single-Electron Synchrotron Spectra
-# ----------------------------------
+# -----------------------------------
 #
 # We first compute the synchrotron spectrum emitted by *individual*
 # electrons at the minimum and maximum Lorentz factors of the population.
@@ -160,7 +160,7 @@ print(f"Interpolation speedup factor: {(dt_interp * 100) / (end_time - start_tim
 
 # %%
 # Theoretical Optically-Thin Slope
-# -------------------------------
+# --------------------------------
 #
 # For a power-law electron distribution with index ``p``, the optically
 # thin synchrotron spectrum obeys

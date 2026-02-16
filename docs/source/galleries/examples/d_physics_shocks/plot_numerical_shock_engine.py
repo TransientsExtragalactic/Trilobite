@@ -1,6 +1,6 @@
 """
 Numerical Thin-Shell Shock in a Broken CSM
-=========================================
+==========================================
 
 This example demonstrates how to use the
 :class:`~dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`
@@ -16,7 +16,8 @@ In this example, we consider:
 
 - Supernova ejecta with a broken power-law density profile in velocity space
 - A circumstellar medium consisting of:
-  - a wind-like :math:`\\rho \\propto r^{-2}` profile close to the progenitor
+
+  - a wind-like :math:`\rho \propto r^{-2}` profile close to the progenitor
   - a transition to a uniform-density interstellar medium (ISM) at larger radii
 
 We then compute and visualize the evolution of the shock radius, velocity,
@@ -24,7 +25,7 @@ and swept-up mass as a function of time.
 """
 
 # %%
-# Imports
+# Setup
 # -------
 #
 # We begin by importing the relevant numerical, plotting, and Triceratops
@@ -41,8 +42,6 @@ from triceratops.dynamics.supernovae.shock_dynamics import NumericalThinShellSho
 from triceratops.utils.plot_utils import set_plot_style
 
 # %%
-# Physical Setup
-# --------------
 #
 # We now define the physical parameters of the system. These values are chosen
 # to be broadly representative of a core-collapse supernova interacting with
@@ -69,15 +68,15 @@ R_wind = v_wind * t_wind
 
 # %%
 # Circumstellar Medium Density Profile
-# -----------------------------------
+# ------------------------------------
 #
 # The numerical thin-shell engine requires the CSM density profile to be provided
 # as a **callable function** returning the density in CGS units.
 #
 # Here we construct a broken profile:
 #
-# - For :math:`r < R_{\\rm wind}`: a steady wind with :math:`\\rho \\propto r^{-2}`
-# - For :math:`r \\ge R_{\\rm wind}`: a uniform ISM
+# - For :math:`r < R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
+# - For :math:`r \ge R_{\rm wind}`: a uniform ISM
 
 rho_0_cgs = (M_dot / (4 * np.pi * R_wind**2 * v_wind)).to_value(u.g / u.cm**3)
 R_wind_cgs = R_wind.to_value(u.cm)
@@ -113,10 +112,10 @@ def rho_csm(r):
 #
 # .. math::
 #
-#     \\rho_{\\rm ej}(r, t) = t^{-3} G_{\\rm ej}(r / t)
+#     \rho_{\rm ej}(r, t) = t^{-3} G_{\rm ej}(r / t)
 #
-# Rather than specifying :math:`\\rho(r, t)` directly, the thin-shell engine
-# requires the kernel function :math:`G_{\\rm ej}(v)`.
+# Rather than specifying :math:`\rho(r, t)` directly, the thin-shell engine
+# requires the kernel function :math:`G_{\rm ej}(v)`.
 #
 # Triceratops provides helper functions for constructing commonly used ejecta
 # profiles. Here we adopt a Chevalier-style broken power-law profile.

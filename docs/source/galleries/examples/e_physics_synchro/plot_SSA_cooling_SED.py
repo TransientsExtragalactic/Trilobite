@@ -152,7 +152,7 @@ from matplotlib.cm import ScalarMappable
 # illustrate the corresponding spectra.
 #
 # I. Non-Cooling Spectra
-# ^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^^^^^^^^^^^^^^^^^
 #
 # We begin with the **non-cooling** regime, in which radiative losses are
 # negligible over the dynamical timescale of the system. In this case, the
@@ -255,7 +255,7 @@ cbar.set_label(r"$F_{\nu,\mathrm{pk}}\ \mathrm{[mJy]}$")
 plt.show()
 # %%
 # II. Fast-Cooling Spectra
-# ^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^^^^^^^^^^^^^^^^^^^
 #
 # We now consider the **fast-cooling** regime, defined by
 #
@@ -375,7 +375,7 @@ plt.show()
 
 # %%
 # III. Slow-Cooling Spectra
-# ^^^^^^^^^^^^^^^^^^^^^^^^
+# ^^^^^^^^^^^^^^^^^^^^^^^^^
 #
 # Finally, we consider the **slow-cooling** regime, defined by
 #
