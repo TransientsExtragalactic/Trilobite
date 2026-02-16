@@ -193,7 +193,7 @@ class ModelParameter:
         Given a particular ``value`` determine if the value satisfies the bounds
         defined for this parameter. If the parameter has no bounds, this will always
         return ``True``. This is a wrapper around the low-level ``_check_bounds_base``, which
-        assumes all inputs are already coerced to the base unit (:param:`ModelParameter.base_unit`).
+        assumes all inputs are already coerced to the base unit (:attr:`ModelParameter.base_unit`).
 
         Parameters
         ----------
