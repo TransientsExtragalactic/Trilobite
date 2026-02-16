@@ -1,0 +1,724 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>inference.likelihood.gaussian &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/inference/likelihood/gaussian';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">inference.likelihood.gaussian</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for inference.likelihood.gaussian</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core functions for computing Gaussian log-likelihood contributions.</span>
+
+<span class="sd">This module provides **pure, stateless numerical utilities** for evaluating</span>
+<span class="sd">Gaussian likelihood terms under a variety of observational constraints.</span>
+<span class="sd">These functions implement only the *mathematical form* of the likelihood and</span>
+<span class="sd">make **no assumptions** about:</span>
+
+<span class="sd">- The origin of the model predictions,</span>
+<span class="sd">- The structure or semantics of the data,</span>
+<span class="sd">- Units, shapes, masking, or parameter validation.</span>
+
+<span class="sd">They are therefore intended to be used as **low-level building blocks**</span>
+<span class="sd">inside higher-level likelihood classes (e.g.</span>
+<span class="sd">:class:`~inference.likelihood.base.Likelihood`), which are responsible for:</span>
+
+<span class="sd">- Model–data compatibility validation,</span>
+<span class="sd">- Unit coercion and consistency,</span>
+<span class="sd">- Censoring semantics and masking logic,</span>
+<span class="sd">- Efficient reuse of preprocessed data.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">For more details on the use of likelihood functions in Triceratops, see :ref:`likelihoods`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">norm</span>
+
+
+<div class="viewcode-block" id="censored_gaussian_loglikelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.gaussian.censored_gaussian_loglikelihood.html#inference.likelihood.gaussian.censored_gaussian_loglikelihood">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">censored_gaussian_loglikelihood</span><span class="p">(</span>
+    <span class="n">data_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">model_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">y_err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">y_upper</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_lower</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_upper_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">y_lower_mask</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the log-likelihood for Gaussian-distributed data with censoring.</span>
+
+<span class="sd">    This function evaluates the total log-likelihood assuming normally</span>
+<span class="sd">    distributed measurement errors, supporting a mixture of:</span>
+
+<span class="sd">    - Fully detected data points,</span>
+<span class="sd">    - Upper-censored observations (y &lt; y_upper),</span>
+<span class="sd">    - Lower-censored observations (y &gt; y_lower).</span>
+
+<span class="sd">    All inputs are assumed to be **numerically compatible and preprocessed**.</span>
+<span class="sd">    In particular, this function performs **no** unit handling, validation,</span>
+<span class="sd">    reshaping, broadcasting, or inference of censoring semantics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_y : np.ndarray</span>
+<span class="sd">        The observed data array. ``data_y`` should have the same shape as</span>
+<span class="sd">        ``model_y`` and ``y_err``. For censored data points, the values in</span>
+<span class="sd">        ``data_y`` are **not used** and may therefore be set to arbitrary</span>
+<span class="sd">        values (e.g. ``np.nan``) without affecting the likelihood.</span>
+<span class="sd">    model_y : np.ndarray</span>
+<span class="sd">        Model-predicted values corresponding to each data point. This array</span>
+<span class="sd">        represents the mean of the Gaussian distribution evaluated at each</span>
+<span class="sd">        location and must match the shape of ``data_y``.</span>
+<span class="sd">    y_err : np.ndarray</span>
+<span class="sd">        One-sigma measurement uncertainties associated with the dependent</span>
+<span class="sd">        variable. Uncertainties must be defined for **all** data points,</span>
+<span class="sd">        including censored observations.</span>
+<span class="sd">    y_upper : np.ndarray, optional</span>
+<span class="sd">        Upper limits for upper-censored observations. Must match the shape of</span>
+<span class="sd">        ``data_y``. Values are only accessed for indices where</span>
+<span class="sd">        ``y_upper_mask`` is ``True``; all other entries are ignored.</span>
+<span class="sd">    y_lower : np.ndarray, optional</span>
+<span class="sd">        Lower limits for lower-censored observations. Must match the shape of</span>
+<span class="sd">        ``data_y``. Values are only accessed for indices where</span>
+<span class="sd">        ``y_lower_mask`` is ``True``; all other entries are ignored.</span>
+<span class="sd">    y_upper_mask : np.ndarray of bool, optional</span>
+<span class="sd">        Boolean mask indicating which data points are upper-censored.</span>
+<span class="sd">    y_lower_mask : np.ndarray of bool, optional</span>
+<span class="sd">        Boolean mask indicating which data points are lower-censored.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Total log-likelihood value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Censoring is handled *exclusively* via the supplied boolean masks.</span>
+<span class="sd">    No assumptions are made based on the numerical values of ``data_y``,</span>
+<span class="sd">    ``y_upper``, or ``y_lower``.</span>
+
+<span class="sd">    For each data point :math:`i`, the likelihood contribution is determined</span>
+<span class="sd">    as follows:</span>
+
+<span class="sd">    - **Detection**</span>
+<span class="sd">      If ``y_upper_mask[i]`` and ``y_lower_mask[i]`` are both ``False``,</span>
+<span class="sd">      the data point is treated as a standard Gaussian detection with</span>
+<span class="sd">      likelihood</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          =</span>
+<span class="sd">          -\frac{1}{2}</span>
+<span class="sd">          \\left[</span>
+<span class="sd">              \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}</span>
+<span class="sd">              + \\ln\\!\\left(2\\pi\\sigma_i^2\right)</span>
+<span class="sd">          \right],</span>
+
+<span class="sd">      where :math:`y_i` is the observed value, :math:`\\mu_i` is the model</span>
+<span class="sd">      prediction, and :math:`\\sigma_i` is the measurement uncertainty.</span>
+
+<span class="sd">    - **Upper-censored observation**</span>
+<span class="sd">      If ``y_upper_mask[i]`` is ``True``, the data point contributes the</span>
+<span class="sd">      probability that the true value lies *below* the reported upper limit:</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          =</span>
+<span class="sd">          \\ln \\left[</span>
+<span class="sd">              \\Phi\\!\\left(</span>
+<span class="sd">                  \frac{y_i^{\rm upper} - \\mu_i}{\\sigma_i}</span>
+<span class="sd">              \right)</span>
+<span class="sd">          \right],</span>
+
+<span class="sd">      where :math:`\\Phi` is the standard normal cumulative distribution</span>
+<span class="sd">      function.</span>
+
+<span class="sd">    - **Lower-censored observation**</span>
+<span class="sd">      If ``y_lower_mask[i]`` is ``True``, the data point contributes the</span>
+<span class="sd">      probability that the true value lies *above* the reported lower limit:</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          =</span>
+<span class="sd">          \\ln \\left[</span>
+<span class="sd">              1 - \\Phi\\!\\left(</span>
+<span class="sd">                  \frac{y_i^{\rm lower} - \\mu_i}{\\sigma_i}</span>
+<span class="sd">              \right)</span>
+<span class="sd">          \right].</span>
+
+<span class="sd">    The total log-likelihood is obtained by summing over all data points:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\ln \\mathcal{L}</span>
+<span class="sd">        =</span>
+<span class="sd">        \\sum_i \\ln \\mathcal{L}_i.</span>
+
+<span class="sd">    Numerical underflow in the evaluation of tail probabilities is handled</span>
+<span class="sd">    by assigning ``-np.inf`` to non-finite contributions.</span>
+
+<span class="sd">    This function is intended to serve as a **low-level numerical backend**</span>
+<span class="sd">    for higher-level likelihood classes, which are responsible for enforcing</span>
+<span class="sd">    model–data compatibility, constructing the censoring masks, and managing</span>
+<span class="sd">    units and data containers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Set the initial likelihood value.</span>
+    <span class="n">log_likelihood</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+    <span class="c1"># Default masks</span>
+    <span class="k">if</span> <span class="n">y_upper_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y_upper_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">y_lower_mask</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">y_lower_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">data_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="n">det_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">y_upper_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">y_lower_mask</span>
+
+    <span class="c1"># Compute the likelihood for detections.</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">det_mask</span><span class="p">):</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_y</span><span class="p">[</span><span class="n">det_mask</span><span class="p">]</span> <span class="o">-</span> <span class="n">model_y</span><span class="p">[</span><span class="n">det_mask</span><span class="p">])</span> <span class="o">/</span> <span class="n">y_err</span><span class="p">[</span><span class="n">det_mask</span><span class="p">]</span>
+        <span class="n">log_likelihood</span> <span class="o">+=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">y_err</span><span class="p">[</span><span class="n">det_mask</span><span class="p">]</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)))</span>
+
+    <span class="c1"># Compute for non detections.</span>
+    <span class="k">if</span> <span class="n">y_upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">y_upper_mask</span><span class="p">):</span>
+        <span class="n">logcdf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">logcdf</span><span class="p">(</span>
+            <span class="n">y_upper</span><span class="p">[</span><span class="n">y_upper_mask</span><span class="p">],</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">model_y</span><span class="p">[</span><span class="n">y_upper_mask</span><span class="p">],</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">y_err</span><span class="p">[</span><span class="n">y_upper_mask</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">log_likelihood</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logcdf</span><span class="p">),</span> <span class="n">logcdf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">y_lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">y_lower_mask</span><span class="p">):</span>
+        <span class="n">logsf</span> <span class="o">=</span> <span class="n">norm</span><span class="o">.</span><span class="n">logsf</span><span class="p">(</span>
+            <span class="n">y_lower</span><span class="p">[</span><span class="n">y_lower_mask</span><span class="p">],</span>
+            <span class="n">loc</span><span class="o">=</span><span class="n">model_y</span><span class="p">[</span><span class="n">y_lower_mask</span><span class="p">],</span>
+            <span class="n">scale</span><span class="o">=</span><span class="n">y_err</span><span class="p">[</span><span class="n">y_lower_mask</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">log_likelihood</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logsf</span><span class="p">),</span> <span class="n">logsf</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">log_likelihood</span></div>
+
+
+
+<div class="viewcode-block" id="gaussian_loglikelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.gaussian.gaussian_loglikelihood.html#inference.likelihood.gaussian.gaussian_loglikelihood">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">gaussian_loglikelihood</span><span class="p">(</span>
+    <span class="n">data_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">model_y</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">y_err</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the log-likelihood for Gaussian-distributed, uncensored data.</span>
+
+<span class="sd">    This function evaluates the total log-likelihood under the assumption</span>
+<span class="sd">    that all observations are fully detected and have normally distributed</span>
+<span class="sd">    measurement errors.</span>
+
+<span class="sd">    All inputs are assumed to be **numerically compatible and preprocessed**.</span>
+<span class="sd">    In particular, this function performs **no** unit handling, validation,</span>
+<span class="sd">    reshaping, broadcasting, or inference of data semantics.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data_y : np.ndarray</span>
+<span class="sd">        The observed data array. Must have the same shape as ``model_y`` and</span>
+<span class="sd">        ``y_err``.</span>
+<span class="sd">    model_y : np.ndarray</span>
+<span class="sd">        Model-predicted values corresponding to each data point. This array</span>
+<span class="sd">        represents the mean of the Gaussian distribution evaluated at each</span>
+<span class="sd">        location and must match the shape of ``data_y``.</span>
+<span class="sd">    y_err : np.ndarray</span>
+<span class="sd">        One-sigma measurement uncertainties associated with the dependent</span>
+<span class="sd">        variable. Must be defined for all data points.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Total log-likelihood value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For each data point :math:`i`, the likelihood contribution is given by</span>
+<span class="sd">    the standard Gaussian log-likelihood:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\ln \\mathcal{L}_i</span>
+<span class="sd">        =</span>
+<span class="sd">        -\frac{1}{2}</span>
+<span class="sd">        \\left[</span>
+<span class="sd">            \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}</span>
+<span class="sd">            + \\ln\\!\\left(2\\pi\\sigma_i^2\right)</span>
+<span class="sd">        \right],</span>
+
+<span class="sd">    where :math:`y_i` is the observed value, :math:`\\mu_i` is the model</span>
+<span class="sd">    prediction, and :math:`\\sigma_i` is the measurement uncertainty.</span>
+
+<span class="sd">    The total log-likelihood is obtained by summing over all data points:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \\ln \\mathcal{L}</span>
+<span class="sd">        =</span>
+<span class="sd">        \\sum_i \\ln \\mathcal{L}_i.</span>
+
+<span class="sd">    This function is intended to serve as a **low-level numerical backend**</span>
+<span class="sd">    for higher-level likelihood classes that handle model–data compatibility,</span>
+<span class="sd">    unit management, and data container semantics.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">resid</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_y</span> <span class="o">-</span> <span class="n">model_y</span><span class="p">)</span> <span class="o">/</span> <span class="n">y_err</span>
+
+    <span class="n">log_likelihood</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">y_err</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+
+    <span class="k">return</span> <span class="n">log_likelihood</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

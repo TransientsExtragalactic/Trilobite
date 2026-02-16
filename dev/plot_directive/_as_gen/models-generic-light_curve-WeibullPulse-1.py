@@ -1,0 +1,22 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from triceratops.models.generic.light_curve import WeibullPulse
+
+rng = np.random.default_rng(42)
+
+model = WeibullPulse()
+
+t = np.linspace(0, 10, 400)
+flux = model({"t": t}, {}).flux
+
+noise = 0.05 * np.max(flux) * rng.normal(size=t.size)
+synthetic = flux + noise
+
+plt.plot(t, flux, lw=2, label="Model")
+plt.scatter(t, synthetic, s=8, alpha=0.5, label="Synthetic Data")
+
+plt.xlabel("Time")
+plt.ylabel("Flux")
+plt.title("Weibull Pulse Example")
+plt.legend()
+plt.show()

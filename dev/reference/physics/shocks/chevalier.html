@@ -1,0 +1,693 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>The Chevalier Self-Similar Solution &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/chevalier';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">The Chevalier Self-Similar Solution</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="the-chevalier-self-similar-solution">
+<span id="chevalier-theory"></span><h1>The Chevalier Self-Similar Solution<a class="headerlink" href="#the-chevalier-self-similar-solution" title="Link to this heading">#</a></h1>
+<p>The Chevalier self-similar solution
+(<a class="reference internal" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine" title="dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>)
+provides a physically motivated and widely adopted description of shocks
+generated by supernovae and other explosive transients interacting with a
+surrounding circumstellar medium (CSM).</p>
+<p>Originally derived by Chevalier<a class="footnote-reference brackets" href="#footcite-chevalierselfsimilarsolutionsinteraction1982" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>
+to model radio and X-ray emission from supernovae, the Chevalier solution has
+since become a foundational framework for modeling shock-powered emission
+across a broad range of astrophysical transients.</p>
+<p>This page serves as a <strong>theory reference</strong> for the Chevalier self-similar
+solution as implemented in Triceratops. All assumptions, scalings, and
+normalizations used by the corresponding shock engines are derived and
+documented explicitly below.</p>
+<section id="overview-and-assumptions">
+<h2>Overview and Assumptions<a class="headerlink" href="#overview-and-assumptions" title="Link to this heading">#</a></h2>
+<p>The Chevalier solution describes the interaction between homologously expanding
+supernova ejecta and an ambient medium under the assumption of self-similar
+evolution. Specifically, it assumes:</p>
+<ul>
+<li><p>The ejecta density follows a power-law distribution in velocity space:</p>
+<div class="math notranslate nohighlight">
+\[\rho(r, t) = A_1\, t^{-3} \left(\frac{r}{t}\right)^{-n},\]</div>
+</li>
+<li><p>The circumstellar medium (CSM) density follows a power-law distribution in
+radius:</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\rm csm}(r) = A_4\, r^{-s},\]</div>
+</li>
+<li><p>The shock dynamics are self-similar, such that the shock radius and velocity
+evolve as power laws in time.</p></li>
+<li><p>The shocks are strong and adiabatic, allowing the use of the
+Rankine–Hugoniot jump conditions to relate upstream and downstream
+thermodynamic quantities.</p></li>
+<li><p>The forward and reverse shocks are sufficiently close that the shocked region
+may be treated as a thin shell when computing radiative properties.</p>
+<p>While the original work of
+Chevalier<a class="footnote-reference brackets" href="#footcite-chevalierselfsimilarsolutionsinteraction1982" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> solved the full
+self-similar ordinary differential equation system to obtain the detailed
+internal structure of the shocked region, it has become standard practice to
+adopt the thin-shell approximation for radiative modeling, following
+Chevalier<a class="footnote-reference brackets" href="#footcite-chevalierxrayradioemission1982" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</li>
+</ul>
+</section>
+<section id="self-similar-scaling-relations">
+<h2>Self-Similar Scaling Relations<a class="headerlink" href="#self-similar-scaling-relations" title="Link to this heading">#</a></h2>
+<p>In a self-similar framework, there can be no intrinsic length or timescale.
+Consequently, ratios of physical quantities must remain constant over time.
+Requiring that the ratio of the ejecta density to the CSM density remain fixed
+at the shock radius leads to a power-law evolution for the shock radius:</p>
+<div class="math notranslate nohighlight">
+\[R_{\rm sh}(t) =
+\left[\frac{A_4}{A_1} \zeta\right]^{1/(s-n)} t^{(3-n)/(s-n)}
+\equiv A_{\rm sh}\, t^{\lambda},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\zeta\)</span> is a dimensionless constant determined by the solution of
+the self-similar ODEs, and</p>
+<div class="math notranslate nohighlight">
+\[\lambda = \frac{n-3}{n-s}.\]</div>
+<p>The corresponding shock velocity is</p>
+<div class="math notranslate nohighlight">
+\[v_{\rm sh}(t) = \frac{dR_{\rm sh}}{dt}
+= \lambda A_{\rm sh} t^{\lambda - 1}
+= \lambda \frac{R_{\rm sh}}{t}.\]</div>
+<p>The normalization constant <span class="math notranslate nohighlight">\(A_{\rm sh}\)</span> encodes the detailed structure of
+the shocked region and, in general, cannot be obtained in closed form. This
+motivates the use of the thin-shell approximation, which allows approximate
+expressions for <span class="math notranslate nohighlight">\(A_{\rm sh}\)</span> to be derived analytically.</p>
+</section>
+<section id="thin-shell-normalization">
+<h2>Thin-Shell Normalization<a class="headerlink" href="#thin-shell-normalization" title="Link to this heading">#</a></h2>
+<p>In the thin-shell approximation, the net pressure force acting on the shell
+balances the rate of change of momentum of the swept-up material:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{dt}\!\left[(M_2 + M_3)\,\dot{R}_{\rm sh}\right]
+= 4\pi R_{\rm sh}^2 (P_3 - P_2).\]</div>
+<p>The mass swept up by the forward shock is</p>
+<div class="math notranslate nohighlight">
+\[M_3(R_{\rm sh}) = \frac{4\pi A_4}{3-s} R_{\rm sh}^{3-s}.\]</div>
+<p>The mass swept up by the reverse shock corresponds to ejecta material with
+velocities exceeding</p>
+<div class="math notranslate nohighlight">
+\[\tilde{v} = \frac{R_{\rm sh}}{t},\]</div>
+<p>yielding</p>
+<div class="math notranslate nohighlight">
+\[M_2(t)
+= \int_{R_{\rm sh}}^{\infty} 4\pi \xi^2 \rho_1(\xi,t)\,d\xi
+\simeq \frac{4\pi A_1}{n-3} t^{n-3} R_{\rm sh}^{3-n},\]</div>
+<p>valid for <span class="math notranslate nohighlight">\(n &gt; 3\)</span>.</p>
+<p>The total shell mass is therefore</p>
+<div class="math notranslate nohighlight">
+\[M_{\rm sh}
+= 4\pi \left[
+    \frac{A_4}{3-s} R_{\rm sh}^{3-s}
+    + \frac{A_1}{n-3} t^{n-3} R_{\rm sh}^{3-n}
+\right].\]</div>
+<p>Substituting the self-similar ansatz yields</p>
+<div class="math notranslate nohighlight">
+\[M_{\rm sh} = K_{\rm sh} t^{\gamma},
+\qquad
+\gamma = \frac{(n-3)(3-s)}{n-s}.\]</div>
+<p>Using the strong-shock Rankine–Hugoniot relations, the post-shock pressures
+are</p>
+<div class="math notranslate nohighlight">
+\[P_2 = \frac{3}{4}\rho_1(R_{\rm sh},t)
+(\tilde{v} - \dot{R}_{\rm sh})^2,\]</div>
+<div class="math notranslate nohighlight">
+\[P_3 = \frac{3}{4}\rho_4(R_{\rm sh}) \dot{R}_{\rm sh}^2.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some references omit the factor of <span class="math notranslate nohighlight">\(3/4\)</span>, as it introduces only an
+order-unity correction. Triceratops retains the full factor for accuracy.</p>
+</div>
+<p>Collecting terms yields the dimensionless normalization constant</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\zeta =
+\frac{
+    3\lambda^2
+    + 4 \frac{(\lambda - 1)\lambda}{3-s}
+}{
+    3(1-\lambda)^2
+    - 4 \frac{(\lambda - 1)\lambda}{n-3}
+}.
+}\]</div>
+<p>For a wind-like CSM (<span class="math notranslate nohighlight">\(s = 2\)</span>), this reduces to</p>
+<div class="math notranslate nohighlight">
+\[\zeta = \frac{(n-4)(n-3)}{2},\]</div>
+<p>consistent with Chevalier<a class="footnote-reference brackets" href="#footcite-chevalierxrayradioemission1982" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>. With <span class="math notranslate nohighlight">\(\zeta\)</span> specified, the
+full shock dynamics are completely determined.</p>
+</section>
+<section id="ejecta-density-normalization">
+<h2>Ejecta Density Normalization<a class="headerlink" href="#ejecta-density-normalization" title="Link to this heading">#</a></h2>
+<p>To connect the ejecta density profile to physical parameters, it is convenient
+to express the normalization in terms of the total ejecta mass
+<span class="math notranslate nohighlight">\(M_{\rm ej}\)</span> and kinetic energy <span class="math notranslate nohighlight">\(E_{\rm ej}\)</span>.</p>
+<p>We adopt a broken power-law ejecta profile motivated by hydrodynamical
+simulations, with an inner slope <span class="math notranslate nohighlight">\(\delta\)</span> and an outer slope <span class="math notranslate nohighlight">\(n\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\rho(r,t) = K t^{-3}
+\begin{cases}
+    v^{-\delta}, &amp; v &lt; v_t, \\
+    v_t^{n-\delta} v^{-n}, &amp; v \geq v_t.
+\end{cases}\end{split}\]</div>
+<p>Mass conservation requires</p>
+<div class="math notranslate nohighlight">
+\[M_{\rm ej}
+= 4\pi K v_t^{3-\delta}
+  \frac{n-\delta}{(3-\delta)(n-3)},\]</div>
+<p>and energy conservation gives</p>
+<div class="math notranslate nohighlight">
+\[E_{\rm ej}
+= 2\pi K v_t^{5-\delta}
+  \frac{n-\delta}{(5-\delta)(n-5)}.\]</div>
+<p>Combining these expressions yields the transition velocity</p>
+<div class="math notranslate nohighlight">
+\[v_t^2 =
+\frac{2(5-\delta)(n-5)}{(3-\delta)(n-3)}
+\frac{E_{\rm ej}}{M_{\rm ej}},\]</div>
+<p>and the density normalization</p>
+<div class="math notranslate nohighlight">
+\[K =
+\frac{1}{4\pi}
+\left(\frac{(3-\delta)(n-3)}{n-\delta}\right)
+\frac{M_{\rm ej}}{v_t^{3-\delta}}.\]</div>
+</section>
+<section id="csm-density-normalization">
+<h2>CSM Density Normalization<a class="headerlink" href="#csm-density-normalization" title="Link to this heading">#</a></h2>
+<p>The CSM density normalization <span class="math notranslate nohighlight">\(A_4\)</span> is less easily connected to global physical parameters than the ejecta
+density. In the most general case, one can either choose to specify <span class="math notranslate nohighlight">\(A_4\)</span> directly relate it to some fiducial
+density such that</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\rm CSM}(r) = \rho_0 \left(\frac{r}{r_0}\right)^{-s} = A_4 r^{-s}.\]</div>
+<p>In some special cases, the normalization of the CSM is dictated by the additional features of the system.</p>
+<section id="wind-like-csm">
+<h3>Wind-Like CSM<a class="headerlink" href="#wind-like-csm" title="Link to this heading">#</a></h3>
+<p>The most common example of a physically motivated CSM normalization is that of a steady wind, for which
+<span class="math notranslate nohighlight">\(s = 2\)</span>. In this case, mass conservation requires</p>
+<div class="math notranslate nohighlight">
+\[A_4 = \frac{\dot{M}}{4\pi v_w},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}\)</span> is the mass-loss rate of the progenitor star, and <span class="math notranslate nohighlight">\(v_w\)</span> is the wind velocity.
+This normalization is widely used to model the CSM around massive stars that have undergone steady
+mass loss prior to explosion.</p>
+</section>
+</section>
+<section id="references">
+<h2>References<a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id5">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-chevalierselfsimilarsolutionsinteraction1982" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>R. A. Chevalier. Self-similar solutions for the interaction of stellar ejecta with an external medium. <em>The Astrophysical Journal</em>, 258:790–797, July 1982. ADS Bibcode: 1982ApJ…258..790C. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1982ApJ...258..790C">https://ui.adsabs.harvard.edu/abs/1982ApJ…258..790C</a> (visited on 2025-11-25), <a class="reference external" href="https://doi.org/10.1086/160126">doi:10.1086/160126</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-chevalierxrayradioemission1982" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id4">2</a>)</span>
+<p>R. A. Chevalier. The radio and X-ray emission from type II supernovae. <em>\apj </em>, 259:302–310, August 1982. <a class="reference external" href="https://doi.org/10.1086/160167">doi:10.1086/160167</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-assumptions">Overview and Assumptions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#self-similar-scaling-relations">Self-Similar Scaling Relations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thin-shell-normalization">Thin-Shell Normalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#ejecta-density-normalization">Ejecta Density Normalization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#csm-density-normalization">CSM Density Normalization</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wind-like-csm">Wind-Like CSM</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/reference/physics/shocks/chevalier.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

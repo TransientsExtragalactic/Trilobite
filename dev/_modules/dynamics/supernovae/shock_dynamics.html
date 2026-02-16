@@ -1,0 +1,1522 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dynamics.supernovae.shock_dynamics &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dynamics/supernovae/shock_dynamics';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dynamics.supernovae.shock_dynamics</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dynamics.supernovae.shock_dynamics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Ejecta property computation for supernova models.</span>
+
+<span class="sd">Function in this module compute various properties of the supernova ejecta and ambient CSM in</span>
+<span class="sd">different physical scenarios of interest. They can then be baked into the models of :mod:`models`.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.integrate</span><span class="w"> </span><span class="kn">import</span> <span class="n">solve_ivp</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..shock_engine</span><span class="w"> </span><span class="kn">import</span> <span class="n">ShockEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.profiles</span><span class="w"> </span><span class="kn">import</span> <span class="n">_normalize_inner_BPL_ejecta_cgs</span>
+
+<span class="c1"># Handle type aliases and static type checking</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_ArrayLike</span><span class="p">,</span>
+        <span class="n">_UnitBearingArrayLike</span><span class="p">,</span>
+        <span class="n">_UnitBearingScalarLike</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ====================================================== #</span>
+<span class="c1"># Shock Engine Classes                                   #</span>
+<span class="c1"># ====================================================== #</span>
+<span class="c1"># These are the core encapsulations for the various sorts of shock dynamics that</span>
+<span class="c1"># we&#39;ve implemented. They may rely on additional utility functions below.</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChevalierSelfSimilarShockEngine</span><span class="p">(</span><span class="n">ShockEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Implementation of the &quot;classical&quot; Chevalier 1982 self-similar supernova shock model.</span>
+
+<span class="sd">    This :class:`~dynamics.shock_engine.ShockEngine` subclass implements the self-similar shock solutions</span>
+<span class="sd">    described in :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982` for the interaction between</span>
+<span class="sd">    supernova ejecta and a surrounding circumstellar medium (CSM). The model assumes power-law density profiles</span>
+<span class="sd">    for both the ejecta and the CSM, leading to a self-similar evolution of the shock structure over time.</span>
+
+<span class="sd">    The engine calculates the position and velocity of the shock-interface as functions of time, based on</span>
+<span class="sd">    the ejecta and CSM density profiles. It can be used to model the dynamical evolution of supernova remnants</span>
+<span class="sd">    and their interaction with the surrounding medium.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        A derivation of this model can be found on the :ref:`supernova_shocks_theory` guide. Much of the</span>
+<span class="sd">        relevant detail omitted here can be found there.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    .. important::</span>
+
+<span class="sd">        This model is based off of the classical self-similar solutions for supernova ejecta interacting</span>
+<span class="sd">        with a circumstellar medium as described in</span>
+<span class="sd">        :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`, and a discussion of their relevance</span>
+<span class="sd">        for synchrotron emission from supernovae may be found in</span>
+<span class="sd">        :footcite:t:`ChevalierXRayRadioEmission1982`. The implementation here follows these sources quite closely</span>
+<span class="sd">        with some moderate improvements to the formalism.</span>
+
+<span class="sd">    **Model Assumptions:**</span>
+
+<span class="sd">    This model assumes the following:</span>
+
+<span class="sd">    - The supernova ejecta is expanding homologously such that :math:`r = vt`.</span>
+<span class="sd">    - As required by homologous expansion, the ejecta density profile must be a function of the velocity of the</span>
+<span class="sd">      form</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">            \rho(r,t) = t^{-3} f\left(\frac{r}{t}\right),</span>
+
+<span class="sd">      for some, generally unknown, function :math:`f(v)`.</span>
+
+<span class="sd">      In this model, the supernova ejecta density profile follows a broken power-law in velocity space such that</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">            \rho_{\rm ej}(r,t) = K_{\rm ej} t^{-3} \begin{cases}</span>
+<span class="sd">                v^{-\delta}, &amp; v &lt; v_t \\</span>
+<span class="sd">                v_t^{n-\delta} v^{-n}, &amp; v \geq v_t,</span>
+<span class="sd">            \end{cases}</span>
+
+<span class="sd">      where :math:`v_t` is the transition velocity between the inner and outer ejecta profiles, and :math:`K` is</span>
+<span class="sd">      the normalization constant.</span>
+
+<span class="sd">    - The circumstellar medium (CSM) surrounding the supernova progenitor follows a power-law density profile of the</span>
+<span class="sd">      form</span>
+
+<span class="sd">      .. math::</span>
+
+<span class="sd">            \rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s},</span>
+
+<span class="sd">      where :math:`\rho_0` is the normalization constant and :math:`s` is the CSM density power-law index.</span>
+
+<span class="sd">    - The interaction between the ejecta and the CSM produces a forward and reverse shock structure that evolves</span>
+<span class="sd">      self-similarly over time and maintains the shock within a region suitable for thin-shell approximation.</span>
+
+<span class="sd">    **Model Features**</span>
+
+<span class="sd">    Under the previously described assumptions, the position of the discontinuity surface between the forward and</span>
+<span class="sd">    reverse shocks evolves self-similarly as :math:`R(t)` such that</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R(t) = \left(\frac{\zeta K_{\rm CSM}}{K_{\rm ej}}\right)^{\frac{1}{s-n}} t^{\frac{3-n}{s-n}},</span>
+
+<span class="sd">    where :math:`A` is a dimensionless constant that depends on the ejecta and CSM density power-law indices</span>
+<span class="sd">    :math:`n` and :math:`s`, respectively. From conservation of momentum, it can be derived that</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \zeta = \frac{3\lambda^2 +4\frac{ (\lambda -1)\lambda}{3-s} }</span>
+<span class="sd">                    { 3(1-\lambda)^2-4\frac{ (\lambda  -1)\lambda}{n-3}}.</span>
+
+<span class="sd">    is a factor generally of order unity.</span>
+
+<span class="sd">    **Connection to Energetics**:</span>
+
+<span class="sd">    The ejecta normalization constant :math:`K_{\rm ej}` and transition velocity :math:`v_t` can be computed</span>
+<span class="sd">    from the total ejecta kinetic energy :math:`E_{\rm ej}` and ejecta mass :math:`M_{\rm ej}` instead of requiring</span>
+<span class="sd">    them as direct inputs.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ChevalierSelfSimilarWindShockEngine</span>
+<span class="sd">        Specialized version of :class:`ChevalierSelfSimilarShockEngine` for steady-wind CSM.</span>
+<span class="sd">    NumericalThinShellShockEngine</span>
+<span class="sd">        A numerical implementation of thin-shell shock dynamics for arbitrary ejecta and CSM profiles.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># =========================================== #</span>
+    <span class="c1"># Initialization                              #</span>
+    <span class="c1"># =========================================== #</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.__init__.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the :class:`ChevalierSelfSimilarShockEngine`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional parameters for initializing the shock engine. Currently, no additional</span>
+<span class="sd">            parameters are required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ============================================================= #</span>
+    <span class="c1"># Supplementary Numerical Methods                               #</span>
+    <span class="c1"># ============================================================= #</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine.compute_scale_parameter">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.compute_scale_parameter.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.compute_scale_parameter">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_scale_parameter</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">s</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the radius scale parameter for the Chevalier self-similar shock solution.</span>
+
+<span class="sd">        This function computes the dimensionless :math:`\zeta` parameter that appears in the</span>
+<span class="sd">        radius normalization of the Chevalier self-similar shock solution. This parameter</span>
+<span class="sd">        depends on the ejecta density power-law index :math:`n` and the CSM density power-law</span>
+<span class="sd">        index :math:`s`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n: float</span>
+<span class="sd">            The outer ejecta density profile power-law index.</span>
+<span class="sd">        s: float</span>
+<span class="sd">            The CSM density profile power-law index.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed scale parameter :math:`\zeta`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The equation for :math:`\zeta` is</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \zeta = \frac{3\lambda^2 +4\frac{ (\lambda -1)\lambda}{3-s} }</span>
+<span class="sd">                        { 3(1-\lambda)^2-4\frac{ (\lambda  -1)\lambda}{n-3}},</span>
+
+<span class="sd">        where :math:`\lambda = \frac{3-n}{s-n}`. A derivation of this parameter can be found in</span>
+<span class="sd">        :ref:`supernova_shocks_theory`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Construct lambda from n and s.</span>
+        <span class="n">_lambda</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+
+        <span class="c1"># Compute the A, B, C, and D terms</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">_lambda</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">s</span><span class="p">)</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">_lambda</span> <span class="o">*</span> <span class="p">(</span><span class="n">_lambda</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">_lambda</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="mi">3</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">_lambda</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">C</span> <span class="o">+</span> <span class="n">A</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">D</span> <span class="o">-</span> <span class="n">B</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Core Shock Engine Methods                                    #</span>
+    <span class="c1"># ============================================================ #</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine.compute_shock_properties">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.compute_shock_properties.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.compute_shock_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_shock_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+        <span class="n">K_csm</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the shock properties at a given time.</span>
+
+<span class="sd">        This method calculates the shock radius and velocity as a function of time since the</span>
+<span class="sd">        explosion. See the class documentation (:class:`ChevalierSelfSimilarShockEngine`) for details</span>
+<span class="sd">        on the relevant theory and assumptions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: ~astropy.units.Quantity or float or numpy.ndarray</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (seconds) are assumed.</span>
+<span class="sd">            If ``time`` is provided as an array of shape ``(N,)``, the results will all have</span>
+<span class="sd">            corresponding shapes ``(N,)``.</span>
+<span class="sd">        E_ej: ~astropy.units.Quantity or float</span>
+<span class="sd">            The total energy in the ejecta from the explosion. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (erg) are assumed.</span>
+<span class="sd">        M_ej: ~astropy.units.Quantity or float</span>
+<span class="sd">            The total mass in the ejecta from the explosion. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (grams) are assumed.</span>
+<span class="sd">        K_csm: ~astropy.units.Quantity or float, optional</span>
+<span class="sd">            The scaling (:math:`K_{\rm CSM}`) for the CSM density profile of the form</span>
+<span class="sd">            :math:`\rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s}`. If units are provided, they will be</span>
+<span class="sd">            taken into account. Otherwise, CGS units (``g * cm^{(s-3)}``) are assumed. If not provided,</span>
+<span class="sd">            a default scaling based on a wind-like CSM with :math:`\dot{M} \sim 10^{-5} M_{\odot}/yr`</span>
+<span class="sd">            and :math:`v_w \sim 1000 km/s` is used at a radius of :math:`r = 10^{16} cm`.</span>
+
+<span class="sd">            .. note::</span>
+
+<span class="sd">                For science scenarios, ``K_csm`` should always be provided explicitly to ensure</span>
+<span class="sd">                physical accuracy. The default is only a placeholder.</span>
+<span class="sd">        n: float, optional</span>
+<span class="sd">            The outer ejecta density profile power-law index. Default is ``10.0``. Must be steeper than</span>
+<span class="sd">            5 for convergence.</span>
+<span class="sd">        s: float, optional</span>
+<span class="sd">            The CSM density profile power-law index. Default is ``2.0``.</span>
+<span class="sd">        delta: float, optional</span>
+<span class="sd">            The inner ejecta density profile power-law index. Default is ``0.0``. Must be less than</span>
+<span class="sd">            3 for convergence. In general, it is suitable to use ``0.0``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of str, ~astropy.units.Quantity</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - ``&#39;radius&#39;``: The shock radius at the given time(s) with units of cm.</span>
+<span class="sd">            - ``&#39;velocity&#39;``: The shock velocity at the given time(s) with units of cm/s.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Validate inputs and determine a scaling for K_csm if one</span>
+        <span class="c1"># is not provided. To do this, we set a standard density based on a wind-like</span>
+        <span class="c1"># density profile. THIS IS PURELY A MEANS FOR PICKING A DEFAULT, IT SHOULD</span>
+        <span class="c1"># NOT BE USED IN SCIENCE RUNS.</span>
+        <span class="k">if</span> <span class="n">K_csm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Assume a generic wind-like CSM with M_dot ~ 1e-5 Msun/yr and v_w ~ 1000 km/s scaled</span>
+            <span class="c1"># at r = 1e16 cm.</span>
+            <span class="n">K_csm</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+
+        <span class="c1"># Scale everything down to CGS for internal computation.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">E_ej</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">E_ej</span> <span class="o">=</span> <span class="n">E_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">M_ej</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">M_ej</span> <span class="o">=</span> <span class="n">M_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">K_csm</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">K_csm</span> <span class="o">=</span> <span class="n">K_csm</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Perform checks on ``n``, ``s``, and ``delta`` to ensure convergence.</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The inner ejecta density profile index `delta` must be less than 3 for convergence.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The outer ejecta density profile index `n` must be greater than 5 for convergence.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Call the internal CGS computation method.</span>
+        <span class="n">shock_properties_cgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_shock_properties_cgs</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">E_ej</span><span class="o">=</span><span class="n">E_ej</span><span class="p">,</span> <span class="n">M_ej</span><span class="o">=</span><span class="n">M_ej</span><span class="p">,</span> <span class="n">K_csm</span><span class="o">=</span><span class="n">K_csm</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Attach units to the outputs.</span>
+        <span class="n">shock_properties</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+            <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">shock_properties</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_shock_properties_cgs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">E_ej</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e51</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e34</span><span class="p">,</span>
+        <span class="n">K_csm</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5e11</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">s</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the shock properties at a given time in CGS units.</span>
+
+<span class="sd">        This method computes the shock radius and velocity at a given time based on the</span>
+<span class="sd">        Chevalier self-similar solution for supernova ejecta interacting with a circumstellar</span>
+<span class="sd">        medium (CSM). The ejecta and CSM are assumed to follow power-law density profiles.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: array-like</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties in seconds. This can be a scalar or</span>
+<span class="sd">            an array of times. The results will match the shape of the input time array.</span>
+<span class="sd">        E_ej: float</span>
+<span class="sd">            The total kinetic energy of the ejecta in erg. Default is ``1e51``.</span>
+<span class="sd">        M_ej: float</span>
+<span class="sd">            The total mass of the ejecta in grams. Default is ``1e34``.</span>
+<span class="sd">        K_csm: float</span>
+<span class="sd">            The normalization constant of the CSM density profile in CGS units ``g * cm^{(s-3}}``.</span>
+<span class="sd">        n: float</span>
+<span class="sd">            The outer ejecta density profile power-law index. Default is ``10.0``.</span>
+<span class="sd">        s: float</span>
+<span class="sd">            The CSM density profile power-law index. Default is ``2.0``.</span>
+<span class="sd">        delta:</span>
+<span class="sd">            The inner ejecta density profile power-law index. Default is ``0.0``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of str, array-like</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - &#39;radius&#39;: The shock radius at the given time(s) in cm.</span>
+<span class="sd">            - &#39;velocity&#39;: The shock velocity at the given time(s) in cm/s.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Using the ``_compute_v_t_and_K_from_energetics_cgs`` static method to get v_t and K. We can</span>
+        <span class="c1"># discard v_t, but K is necessary.</span>
+        <span class="n">v_t</span><span class="p">,</span> <span class="n">K</span> <span class="o">=</span> <span class="n">_normalize_inner_BPL_ejecta_cgs</span><span class="p">(</span>
+            <span class="n">E_ej</span><span class="o">=</span><span class="n">E_ej</span><span class="p">,</span>
+            <span class="n">M_ej</span><span class="o">=</span><span class="n">M_ej</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Correct K since it needs to be multiplied by v_t^(n - delta) for the outer ejecta profile.</span>
+        <span class="n">K_EJ</span> <span class="o">=</span> <span class="n">K</span> <span class="o">*</span> <span class="n">v_t</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
+
+        <span class="c1"># Compute relevant factors: We of course need ``_lambda`` (the scaling in time of the radius),</span>
+        <span class="c1"># ``_gamma`` appears in the radius scale factor, as does the ``_lambda_gamma_constant``.</span>
+        <span class="n">_lambda</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">SCALE_CONSTANT</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_scale_parameter</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">R_0</span> <span class="o">=</span> <span class="p">(</span><span class="n">SCALE_CONSTANT</span> <span class="o">*</span> <span class="n">K_csm</span> <span class="o">/</span> <span class="n">K_EJ</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="n">n</span><span class="p">))</span>
+
+        <span class="c1"># Compute the shock radius and velocity at the given time(s).</span>
+        <span class="n">shock_radius</span> <span class="o">=</span> <span class="n">R_0</span> <span class="o">*</span> <span class="n">time</span><span class="o">**</span><span class="n">_lambda</span>
+        <span class="n">shock_velocity</span> <span class="o">=</span> <span class="n">_lambda</span> <span class="o">*</span> <span class="n">shock_radius</span> <span class="o">/</span> <span class="n">time</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">shock_radius</span><span class="p">,</span>
+            <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">shock_velocity</span><span class="p">,</span>
+        <span class="p">}</span>
+
+    <span class="c1"># =========================================== #</span>
+    <span class="c1"># UTILITIES                                   #</span>
+    <span class="c1"># =========================================== #</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine.normalize_csm_density">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.normalize_csm_density.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.normalize_csm_density">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_csm_density</span><span class="p">(</span>
+        <span class="n">rho_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">,</span>
+        <span class="n">r_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">,</span>
+        <span class="n">s</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the CSM density normalization constant from a reference density.</span>
+
+<span class="sd">        This function computes the normalization constant :math:`K_{\rm CSM}` for a power-law</span>
+<span class="sd">        circumstellar medium (CSM) density profile of the form</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \rho_{\rm CSM}(r) = K_{\rm CSM} r^{-s} = \rho_0 \left(\frac{r}{r_0}\right)^{-s},</span>
+
+<span class="sd">        given a reference density :math:`\rho_0` at a reference radius :math:`r_0`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho_0: astropy.units.Quantity or float</span>
+<span class="sd">            The reference density of the CSM at radius :math:`r_0`. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (``grams/cm^3``) are assumed.</span>
+<span class="sd">        r_0: astropy.units.Quantity or float</span>
+<span class="sd">            The reference radius at which the density is specified. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (``cm``) are assumed.</span>
+<span class="sd">        s: float</span>
+<span class="sd">            The CSM density profile power-law index.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        K_csm: astropy.units.Quantity</span>
+<span class="sd">            The computed normalization constant :math:`K_{\rm CSM}` with units of</span>
+<span class="sd">            ``grams * cm^(s-3)``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert inputs to CGS for internal computation.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rho_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">rho_0</span> <span class="o">=</span> <span class="n">rho_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">r_0</span> <span class="o">=</span> <span class="n">r_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Compute K_csm in CGS.</span>
+        <span class="n">K_csm_cgs</span> <span class="o">=</span> <span class="n">rho_0</span> <span class="o">*</span> <span class="n">r_0</span><span class="o">**</span><span class="n">s</span>
+
+        <span class="c1"># Attach units to K_csm.</span>
+        <span class="n">K_csm_units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="p">(</span><span class="n">s</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">K_csm</span> <span class="o">=</span> <span class="n">K_csm_cgs</span> <span class="o">*</span> <span class="n">K_csm_units</span>
+
+        <span class="k">return</span> <span class="n">K_csm</span></div>
+
+
+<div class="viewcode-block" id="ChevalierSelfSimilarShockEngine.normalize_outer_ejecta_density">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.normalize_outer_ejecta_density.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.normalize_outer_ejecta_density">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">normalize_outer_ejecta_density</span><span class="p">(</span>
+        <span class="n">rho_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">,</span>
+        <span class="n">v_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">,</span>
+        <span class="n">t_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the ejecta density normalization constant from a reference density.</span>
+
+<span class="sd">        This function computes the normalization constant :math:`K_{\rm ej}` for a power-law</span>
+<span class="sd">        outer ejecta density profile of the form</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \rho_{\rm ej}(r,t) = K_{\rm ej} t^{-3} \left(\frac{r}{t}\right)^{-n} =</span>
+<span class="sd">            \rho_0 \left(\frac{r/t}{v_0}\right)^{-n} left(\frac{t}{t_0}\right)^{-3},</span>
+
+<span class="sd">        given a reference density :math:`\rho_0` at a reference velocity :math:`v_0` and time :math:`t_0`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho_0: astropy.units.Quantity or float</span>
+<span class="sd">            The reference density of the ejecta at velocity :math:`v_0` and time :math:`t_0`. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (``grams/cm^3``) are assumed.</span>
+<span class="sd">        v_0: astropy.units.Quantity or float</span>
+<span class="sd">            The reference velocity at which the density is specified. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (``cm/s``) are assumed.</span>
+<span class="sd">        t_0: astropy.units.Quantity or float</span>
+<span class="sd">            The reference time at which the density is specified. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (``s``) are assumed.</span>
+<span class="sd">        n: float</span>
+<span class="sd">            The outer ejecta density profile power-law index.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        K_ej: astropy.units.Quantity</span>
+<span class="sd">            The computed normalization constant :math:`K_{\rm ej}` with units of</span>
+<span class="sd">            ``grams * cm^(n-3) * s^(3-n)``.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Convert inputs to CGS for internal computation.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rho_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">rho_0</span> <span class="o">=</span> <span class="n">rho_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">v_0</span> <span class="o">=</span> <span class="n">v_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">t_0</span> <span class="o">=</span> <span class="n">t_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Compute K_ej in CGS.</span>
+        <span class="n">K_ej_cgs</span> <span class="o">=</span> <span class="n">rho_0</span> <span class="o">*</span> <span class="n">v_0</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">t_0</span><span class="o">**</span><span class="mi">3</span>
+
+        <span class="c1"># Attach units to K_ej.</span>
+        <span class="n">K_ej_units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+        <span class="n">K_ej</span> <span class="o">=</span> <span class="n">K_ej_cgs</span> <span class="o">*</span> <span class="n">K_ej_units</span>
+
+        <span class="k">return</span> <span class="n">K_ej</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="ChevalierSelfSimilarWindShockEngine">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ChevalierSelfSimilarWindShockEngine</span><span class="p">(</span><span class="n">ChevalierSelfSimilarShockEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Specialized version of :class:`ChevalierSelfSimilarShockEngine` for steady-wind CSM.</span>
+
+<span class="sd">    In the case of a steady wind CSM with injection rate :math:`\dot{M}` and characteristic velocity</span>
+<span class="sd">    :math:`v_{\rm wind}`, the corresponding CSM density profile is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho_{\rm CSM}(r) = \frac{\\dot{M}}{4\pi r^2 v_{\rm wind}}.</span>
+
+<span class="sd">    This corresponds to a conventional :class:`ChevalierSelfSimilarShockEngine` with CSM density power-law index</span>
+<span class="sd">    :math:`s = 2` and normalization constant</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        K_{\rm CSM} = \frac{\dot{M}}{4\pi v_{\rm wind}}.</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        A derivation of this model can be found on the :ref:`supernova_shocks_theory` guide. Much of the</span>
+<span class="sd">        relevant detail omitted here can be found there.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># =========================================== #</span>
+    <span class="c1"># Initialization                              #</span>
+    <span class="c1"># =========================================== #</span>
+<div class="viewcode-block" id="ChevalierSelfSimilarWindShockEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.__init__.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the :class:`ChevalierSelfSimilarWindShockEngine`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional parameters for initializing the shock engine. Currently, no additional</span>
+<span class="sd">            parameters are required.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ChevalierSelfSimilarWindShockEngine.compute_shock_properties">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.compute_shock_properties.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.compute_shock_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_shock_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+        <span class="n">M_dot</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span>
+        <span class="n">v_wind</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the shock properties at a given time.</span>
+
+<span class="sd">        This method calculates the shock radius and velocity as a function of time since the</span>
+<span class="sd">        explosion. See the class documentation (:class:`ChevalierSelfSimilarShockEngine`) for details</span>
+<span class="sd">        on the relevant theory and assumptions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: ~astropy.units.Quantity or float or numpy.ndarray</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (seconds) are assumed.</span>
+<span class="sd">            If ``time`` is provided as an array of shape ``(N,)``, the results will all have</span>
+<span class="sd">            corresponding shapes ``(N,)``.</span>
+<span class="sd">        E_ej: ~astropy.units.Quantity or float</span>
+<span class="sd">            The total energy in the ejecta from the explosion. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (erg) are assumed.</span>
+<span class="sd">        M_ej: ~astropy.units.Quantity or float</span>
+<span class="sd">            The total mass in the ejecta from the explosion. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (grams) are assumed.</span>
+<span class="sd">        M_dot: ~astropy.units.Quantity or float</span>
+<span class="sd">            The mass-loss rate of the progenitor star&#39;s wind. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (grams/second) are assumed.</span>
+<span class="sd">            By default, this is set to ``1e-5 Msun/yr``.</span>
+<span class="sd">        v_wind: ~astropy.units.Quantity or float</span>
+<span class="sd">            The velocity of the progenitor star&#39;s wind. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (cm/second) are assumed. By</span>
+<span class="sd">            default, this is set to ``1000 km/s``.</span>
+<span class="sd">        n: float, optional</span>
+<span class="sd">            The outer ejecta density profile power-law index. Default is ``10.0``. Must be steeper than</span>
+<span class="sd">            5 for convergence.</span>
+<span class="sd">        delta: float, optional</span>
+<span class="sd">            The inner ejecta density profile power-law index. Default is ``0.0``. Must be less than</span>
+<span class="sd">            3 for convergence. In general, it is suitable to use ``0.0``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of str, ~astropy.units.Quantity</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - &#39;radius&#39;: The shock radius at the given time(s) with units of cm.</span>
+<span class="sd">            - &#39;velocity&#39;: The shock velocity at the given time(s) with units of cm/s.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Scale everything down to CGS for internal computation.</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">E_ej</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">E_ej</span> <span class="o">=</span> <span class="n">E_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">M_ej</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">M_ej</span> <span class="o">=</span> <span class="n">M_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">M_dot</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">M_dot</span> <span class="o">=</span> <span class="n">M_dot</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v_wind</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">v_wind</span> <span class="o">=</span> <span class="n">v_wind</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Perform checks on ``n``, ``s``, and ``delta`` to ensure convergence.</span>
+        <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The inner ejecta density profile index `delta` must be less than 3 for convergence.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The outer ejecta density profile index `n` must be greater than 5 for convergence.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Call the internal CGS computation method.</span>
+        <span class="n">shock_properties_cgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_shock_properties_cgs</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">E_ej</span><span class="o">=</span><span class="n">E_ej</span><span class="p">,</span> <span class="n">M_ej</span><span class="o">=</span><span class="n">M_ej</span><span class="p">,</span> <span class="n">M_dot</span><span class="o">=</span><span class="n">M_dot</span><span class="p">,</span> <span class="n">v_wind</span><span class="o">=</span><span class="n">v_wind</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="n">delta</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Attach units to the outputs.</span>
+        <span class="n">shock_properties</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+            <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">shock_properties</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_shock_properties_cgs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">E_ej</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e51</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e34</span><span class="p">,</span>
+        <span class="n">M_dot</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">6.3e20</span><span class="p">,</span>
+        <span class="n">v_wind</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e8</span><span class="p">,</span>
+        <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">10.0</span><span class="p">,</span>
+        <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the shock properties at a given time in CGS units.</span>
+
+<span class="sd">        This method computes the shock radius and velocity at a given time based on the</span>
+<span class="sd">        Chevalier self-similar solution for supernova ejecta interacting with a circumstellar</span>
+<span class="sd">        medium (CSM). The ejecta and CSM are assumed to follow power-law density profiles.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: array-like</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties in seconds. This can be a scalar or</span>
+<span class="sd">            an array of times. The results will match the shape of the input time array.</span>
+<span class="sd">        E_ej: float</span>
+<span class="sd">            The total kinetic energy of the ejecta in erg. Default is ``1e51``.</span>
+<span class="sd">        M_ej: float</span>
+<span class="sd">            The total mass of the ejecta in grams. Default is ``1e34``.</span>
+<span class="sd">        M_dot: float</span>
+<span class="sd">            The mass-loss rate of the progenitor star&#39;s wind in grams/second. Default is</span>
+<span class="sd">            ``1e-5 Msun/yr`` in CGS units.</span>
+<span class="sd">        v_wind: float</span>
+<span class="sd">            The velocity of the progenitor star&#39;s wind in cm/second. Default is</span>
+<span class="sd">            ``1000 km/s`` in CGS units.</span>
+<span class="sd">        n: float</span>
+<span class="sd">            The outer ejecta density profile power-law index. Default is ``10.0``.</span>
+<span class="sd">        delta:</span>
+<span class="sd">            The inner ejecta density profile power-law index. Default is ``0.0``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of str, array-like</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - &#39;radius&#39;: The shock radius at the given time(s) in cm.</span>
+<span class="sd">            - &#39;velocity&#39;: The shock velocity at the given time(s) in cm/s.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Compute the correct K_CSM for the wind-like CSM</span>
+        <span class="n">K_csm</span> <span class="o">=</span> <span class="n">M_dot</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">v_wind</span><span class="p">)</span>
+
+        <span class="c1"># Now just pass off to the super-class</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_compute_shock_properties_cgs</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+            <span class="n">E_ej</span><span class="o">=</span><span class="n">E_ej</span><span class="p">,</span>
+            <span class="n">M_ej</span><span class="o">=</span><span class="n">M_ej</span><span class="p">,</span>
+            <span class="n">K_csm</span><span class="o">=</span><span class="n">K_csm</span><span class="p">,</span>
+            <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+            <span class="n">s</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+            <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="NumericalThinShellShockEngine">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.html#dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">NumericalThinShellShockEngine</span><span class="p">(</span><span class="n">ShockEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Base class for numerically integrated thin-shell shock models with arbitrary ejecta and CSM profiles.</span>
+
+<span class="sd">    This :class:`~dynamics.shock_engine.ShockEngine` subclass implements a general thin-shell shock model</span>
+<span class="sd">    dependent on arbitrary ejecta and circumstellar medium (CSM) density profiles. The model assumes a thin-shell</span>
+<span class="sd">    shock model and utilizes conservation of momentum in the form</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{\rm sh} \frac{\partial}{\partial t}\left(v_{\rm sh}\right) = 4\pi R_{\rm sh}^2 (P_2-P_3)</span>
+
+<span class="sd">    where :math:`M_{\rm sh}(t)` is the mass of the shocked shell, :math:`v_{\rm sh}(t)` is the shock velocity,</span>
+<span class="sd">    :math:`R_{\rm sh}(t)` is the shock radius, and :math:`P_{\rm shocked,\;CSM}` and :math:`P_{\rm shocked,\;ej}`</span>
+<span class="sd">    are the pressures just behind the forward and reverse shocks, respectively.</span>
+
+<span class="sd">    .. hint::</span>
+
+<span class="sd">        For a detailed description of the theory behind this engine, see :ref:`numeric_thin_shell_shocks`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This engine is suitable for scenarios where the supernova ejecta is **expanding homologously** into a</span>
+<span class="sd">    general CSM density profile :math:`\rho_{\rm CSM}(r)`. Because the ejecta is homologously expanding, it must</span>
+<span class="sd">    have a general density profile of the form</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(r,t) = t^{-3} G\left(\frac{r}{t}\right),</span>
+
+<span class="sd">    where :math:`G(v)` is an arbitrary function of velocity. It can be shown that, under these assumptions,</span>
+<span class="sd">    conservation of momentum requires that the following set of differential equations be followed:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">        \frac{dR_{\rm sh}}{dt} &amp;= v_{\rm sh}\\</span>
+<span class="sd">        \frac{dv_{\rm sh}}{dt} &amp;= \frac{-4\pi R_{\rm sh}^2}{ M_{\rm sh}}\left(1-\frac{1}{\chi}\right)</span>
+<span class="sd">        \left(\rho_{\rm csm} v_{\rm sh}^2 - t^{-3} G[v_{\rm ej}] \Delta^2\right)\\</span>
+<span class="sd">        \frac{dM_{\rm sh}}{dt} &amp;= 4\pi R_{\rm sh}^2 \left\{\rho_{\rm csm} v_{\rm sh} + t^{-3} G[v_{\rm ej}]</span>
+<span class="sd">        \Delta\right\}</span>
+<span class="sd">        \end{aligned}</span>
+
+<span class="sd">    where :math:`\Delta = v_{\rm ej} - v_{\rm sh}` is the velocity difference between the ejecta at the shock</span>
+<span class="sd">    radius and the shock velocity, :math:`\rho_{\rm csm} = \rho_{\rm CSM}(R)` is the CSM density at the shock radius,</span>
+<span class="sd">    and :math:`M` is the mass of the shocked shell.</span>
+
+<span class="sd">    Equivalently, using :math:`\tau = \log t` and making the transformation that :math:`R_{\rm sh} = \xi t`,</span>
+<span class="sd">    :math:`\Delta = \xi - v_{\rm sh}`, the system can be rewritten as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \boxed{</span>
+<span class="sd">        \begin{aligned}</span>
+<span class="sd">            \frac{d\xi}{d\tau} &amp;= -\Delta,\\[4pt]</span>
+<span class="sd">            \frac{d\Delta}{d\tau} &amp;=</span>
+<span class="sd">            -\Delta</span>
+<span class="sd">            + \frac{4\pi \xi^2}{M_{\rm sh}} \left(1-\frac{1}{\chi}\right)</span>
+<span class="sd">            \left(t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)^2</span>
+<span class="sd">                  - G(\xi)\,\Delta^2\right),\\[6pt]</span>
+<span class="sd">            \frac{dM_{\rm sh}}{d\tau} &amp;=</span>
+<span class="sd">            4\pi \xi^2</span>
+<span class="sd">            \left[t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)</span>
+<span class="sd">                  + G(\xi)\,\Delta\right].</span>
+<span class="sd">        \end{aligned}</span>
+<span class="sd">        }</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># =========================================== #</span>
+    <span class="c1"># Initialization                              #</span>
+    <span class="c1"># =========================================== #</span>
+<div class="viewcode-block" id="NumericalThinShellShockEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.__init__.html#dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the :class:`NumericalThinShellShockEngine`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments passed to the base :class:`~dynamics.shock_engine.ShockEngine` class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ============================================================= #</span>
+    <span class="c1"># Supplementary Numerical Methods                               #</span>
+    <span class="c1"># ============================================================= #</span>
+<div class="viewcode-block" id="NumericalThinShellShockEngine.generate_evaluation_kernel">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.generate_evaluation_kernel.html#dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.generate_evaluation_kernel">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_evaluation_kernel</span><span class="p">(</span><span class="n">rho_csm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">G_ej</span><span class="p">:</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate the evaluation kernel for the ODE.</span>
+
+<span class="sd">        This method generates a ``callable`` function which acts as the RHS of the relevant set of</span>
+<span class="sd">        ODE&#39;s for the thin-shell shock model. The generated function is suitable for use with</span>
+<span class="sd">        :func:`scipy.integrate.solve_ivp`.</span>
+
+<span class="sd">        In this base class, the inputs ``rho_csm`` and ``G_ej`` are arbitrary functions which return the CSM density</span>
+<span class="sd">        and ejecta density profile function respectively in CGS units. Subclasses may provide more assistance in</span>
+<span class="sd">        generating these functions correctly.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        rho_csm: callable</span>
+<span class="sd">            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns</span>
+<span class="sd">            the corresponding CSM density in ``g/cm^3``.</span>
+<span class="sd">        G_ej: callable</span>
+<span class="sd">            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns</span>
+<span class="sd">            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \rho_{\rm ej}(r,t) = t^{-3} G\left(\frac{r}{t}\right).</span>
+<span class="sd">        gamma: float, optional</span>
+<span class="sd">            The adiabatic index of the shocked gas. Default is ``5/3``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        callable</span>
+<span class="sd">            A function which takes as input the independent variable ``tau = log(t)`` and the state vector</span>
+<span class="sd">            ``y = [xi, Delta, M]``, and returns the derivatives ``dy/dtau`` as a numpy array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Use gamma and the strong-shock RH conditions to compute chi, the compression</span>
+        <span class="c1"># factor.</span>
+        <span class="n">chi</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">chi</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">chi</span><span class="p">)))</span>
+
+        <span class="c1"># With the compression factor defined, we can now define the evaluation kernel:</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_evaluation_kernel</span><span class="p">(</span><span class="n">tau</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="c1"># Expand the y-vector into the components xi, Delta, M.</span>
+            <span class="n">xi</span><span class="p">,</span> <span class="n">delta</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>
+
+            <span class="c1"># Using the functions rho_csm and G_ej, we can compute the two necessary</span>
+            <span class="c1"># CGS density state quantities.</span>
+            <span class="n">_rho_csm</span> <span class="o">=</span> <span class="n">rho_csm</span><span class="p">(</span><span class="n">xi</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">_G_ej</span> <span class="o">=</span> <span class="n">G_ej</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>
+
+            <span class="c1"># Compute the derivatives.</span>
+            <span class="n">_dxi_dtau</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta</span>
+            <span class="n">_ddelta_dtau</span> <span class="o">=</span> <span class="o">-</span><span class="n">delta</span> <span class="o">+</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="n">chi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span>
+                <span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">_rho_csm</span> <span class="o">*</span> <span class="p">(</span><span class="n">xi</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">_G_ej</span> <span class="o">*</span> <span class="n">delta</span><span class="o">**</span><span class="mi">2</span>
+            <span class="p">)</span>
+            <span class="n">_dm_dtau</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">xi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">_rho_csm</span> <span class="o">*</span> <span class="p">(</span><span class="n">xi</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">+</span> <span class="n">_G_ej</span> <span class="o">*</span> <span class="n">delta</span><span class="p">)</span>
+
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">_dxi_dtau</span><span class="p">,</span> <span class="n">_ddelta_dtau</span><span class="p">,</span> <span class="n">_dm_dtau</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">_evaluation_kernel</span></div>
+
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Core Numerical Methods                                       #</span>
+    <span class="c1"># ============================================================ #</span>
+<div class="viewcode-block" id="NumericalThinShellShockEngine.compute_shock_properties">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.compute_shock_properties.html#dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine.compute_shock_properties">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_shock_properties</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">rho_csm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">],</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">G_ej</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">],</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">R_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e11</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+        <span class="n">v_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e7</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">M_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1e28</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">,</span>
+        <span class="n">t_0</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the properties of the shock at a given time.</span>
+
+<span class="sd">        This function computes the solution to the thin-shell shock equations at the specified time(s) using</span>
+<span class="sd">        the provided CSM density profile function and ejecta density profile function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: ~astropy.units.Quantity or float or numpy.ndarray</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (seconds) are assumed.</span>
+<span class="sd">            If ``time`` is provided as an array of shape ``(N,)``, the results will all have</span>
+<span class="sd">            corresponding shapes ``(N,)``.</span>
+<span class="sd">        rho_csm: callable</span>
+<span class="sd">            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns</span>
+<span class="sd">            the corresponding CSM density in ``g/cm^3``.</span>
+<span class="sd">        G_ej: callable</span>
+<span class="sd">            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns</span>
+<span class="sd">            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \rho_{\rm ej}(r,t) = t^{-3} G\left(\frac{r}{t}\right).</span>
+
+<span class="sd">        R_0: ~astropy.units.Quantity or float</span>
+<span class="sd">            The initial shock radius at time ``t_0``. If units are provided, they will be taken into account.</span>
+<span class="sd">            Otherwise, CGS units (cm) are assumed.</span>
+<span class="sd">        v_0: ~astropy.units.Quantity or float</span>
+<span class="sd">            The initial shock velocity at time ``t_0``. If units are provided, they will be taken into account.</span>
+<span class="sd">            Otherwise, CGS units (cm/s) are assumed.</span>
+<span class="sd">        M_0: ~astropy.units.Quantity or float</span>
+<span class="sd">            The initial shocked mass at time ``t_0``. If units are provided, they will be taken into account.</span>
+<span class="sd">            Otherwise, CGS units (g) are assumed.</span>
+<span class="sd">        t_0: ~astropy.units.Quantity or float</span>
+<span class="sd">            The initial time at which the shock properties are defined. If units are provided,</span>
+<span class="sd">            they will be taken into account. Otherwise, CGS units (seconds) are assumed.</span>
+<span class="sd">        gamma: float</span>
+<span class="sd">            The adiabatic index of the shocked gas. Default is ``5/3``.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments to pass to the ODE solver.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict of str, ~astropy.units.Quantity</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - ``&#39;radius&#39;``: The shock radius at the given time(s) with units of cm.</span>
+<span class="sd">            - ``&#39;velocity&#39;``: The shock velocity at the given time(s) with units of cm/s.</span>
+<span class="sd">            - ``&#39;mass&#39;``: The shocked mass at the given time(s) with units of g.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure that the time array has been converted to CGS units (seconds).</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">R_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">R_0</span> <span class="o">=</span> <span class="n">R_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">v_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">v_0</span> <span class="o">=</span> <span class="n">v_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">M_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">M_0</span> <span class="o">=</span> <span class="n">M_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">t_0</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">t_0</span> <span class="o">=</span> <span class="n">t_0</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="c1"># Pass off to the low-level CGS computation method.</span>
+        <span class="n">shock_properties_cgs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_shock_properties_cgs</span><span class="p">(</span>
+            <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+            <span class="n">rho_csm</span><span class="o">=</span><span class="n">rho_csm</span><span class="p">,</span>
+            <span class="n">G_ej</span><span class="o">=</span><span class="n">G_ej</span><span class="p">,</span>
+            <span class="n">R_0</span><span class="o">=</span><span class="n">R_0</span><span class="p">,</span>
+            <span class="n">v_0</span><span class="o">=</span><span class="n">v_0</span><span class="p">,</span>
+            <span class="n">M_0</span><span class="o">=</span><span class="n">M_0</span><span class="p">,</span>
+            <span class="n">t_0</span><span class="o">=</span><span class="n">t_0</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Attach units to the outputs.</span>
+        <span class="n">shock_properties</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;radius&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+            <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;velocity&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span>
+            <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="n">shock_properties_cgs</span><span class="p">[</span><span class="s2">&quot;mass&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">,</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="n">shock_properties</span></div>
+
+
+    <span class="c1"># noinspection PyUnresolvedReferences</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_shock_properties_cgs</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">rho_csm</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">],</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">G_ej</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">],</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">R_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e8</span><span class="p">,</span>
+        <span class="n">v_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e9</span><span class="p">,</span>
+        <span class="n">M_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e28</span><span class="p">,</span>
+        <span class="n">t_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the properties of the shock at a given time in CGS units.</span>
+
+<span class="sd">        This function computes the solution to the thin-shell shock equations at the specified time(s) using</span>
+<span class="sd">        the provided CSM density profile function and ejecta density profile function.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        time: array-like</span>
+<span class="sd">            The time(s) at which to evaluate the shock properties in seconds. This can be a</span>
+<span class="sd">            scalar or an array of times. The results will match the shape of the input time array.</span>
+<span class="sd">        rho_csm: callable</span>
+<span class="sd">            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns</span>
+<span class="sd">            the corresponding CSM density in ``g/cm^3``.</span>
+<span class="sd">        G_ej: callable</span>
+<span class="sd">            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.</span>
+<span class="sd">            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns</span>
+<span class="sd">            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \rho_{\rm ej}(r,t) = t^{-3} G\\left(\frac{r}{t}\right).</span>
+
+<span class="sd">        R_0: float</span>
+<span class="sd">            The initial shock radius at time ``t_0`` in cm.</span>
+<span class="sd">        v_0: float</span>
+<span class="sd">            The initial shock velocity at time ``t_0`` in cm/s.</span>
+<span class="sd">        M_0: float</span>
+<span class="sd">            The initial shocked mass at time ``t_0`` in g.</span>
+<span class="sd">        t_0:</span>
+<span class="sd">            The initial time at which the shock properties are defined in seconds.</span>
+<span class="sd">        gamma: float</span>
+<span class="sd">            The adiabatic index of the shocked gas. Default is ``5/3``.</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            Additional keyword arguments to pass to the ODE solver.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict: of str, array-like</span>
+<span class="sd">            A dictionary containing the computed shock properties:</span>
+
+<span class="sd">            - &#39;radius&#39;: The shock radius at the given time(s) in cm.</span>
+<span class="sd">            - &#39;velocity&#39;: The shock velocity at the given time(s) in cm/s.</span>
+<span class="sd">            - &#39;mass&#39;: The shocked mass at the given time(s) in g.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Quick check to ensure that the user has provided the necessary functions.</span>
+        <span class="k">if</span> <span class="n">rho_csm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;A CSM density profile function `rho_csm` must be provided.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">G_ej</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;An ejecta density profile function `G_ej` must be provided.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --- Parameter Management and Coercion --- #</span>
+        <span class="c1"># Coerce the parameters into the initial conditions for the ODE solver.</span>
+        <span class="n">xi_0</span> <span class="o">=</span> <span class="n">R_0</span> <span class="o">/</span> <span class="n">t_0</span>
+        <span class="n">delta_0</span> <span class="o">=</span> <span class="n">xi_0</span> <span class="o">-</span> <span class="n">v_0</span>
+        <span class="n">m_0</span> <span class="o">=</span> <span class="n">M_0</span>
+
+        <span class="c1"># --- Mange the Kernel and ODE Solver --- #</span>
+        <span class="c1"># Generate the evaluation kernel for the ODE solver.</span>
+        <span class="n">evaluation_kernel</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_evaluation_kernel</span><span class="p">(</span>
+            <span class="n">rho_csm</span><span class="o">=</span><span class="n">rho_csm</span><span class="p">,</span>
+            <span class="n">G_ej</span><span class="o">=</span><span class="n">G_ej</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Set up the ODE solver.</span>
+        <span class="n">t_bound</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">t_0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">amax</span><span class="p">(</span><span class="n">time</span><span class="p">)))</span>
+        <span class="n">y_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">xi_0</span><span class="p">,</span> <span class="n">delta_0</span><span class="p">,</span> <span class="n">m_0</span><span class="p">])</span>
+
+        <span class="c1"># Perform the integration using solve_ivp.</span>
+        <span class="n">sol</span> <span class="o">=</span> <span class="n">solve_ivp</span><span class="p">(</span>
+            <span class="n">fun</span><span class="o">=</span><span class="n">evaluation_kernel</span><span class="p">,</span>
+            <span class="n">t_span</span><span class="o">=</span><span class="n">t_bound</span><span class="p">,</span>
+            <span class="n">y0</span><span class="o">=</span><span class="n">y_0</span><span class="p">,</span>
+            <span class="n">t_eval</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">time</span><span class="p">),</span>
+            <span class="n">rtol</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;rtol&quot;</span><span class="p">,</span> <span class="mf">1e-10</span><span class="p">),</span>
+            <span class="n">method</span><span class="o">=</span><span class="n">kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;method&quot;</span><span class="p">,</span> <span class="s2">&quot;Radau&quot;</span><span class="p">),</span>  <span class="c1"># Implicit method for stiff problems</span>
+            <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># --- Extract Data and Check Validity --- #</span>
+        <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">status</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ODE solver failed to integrate the thin-shell shock equations.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Extract the shock radius and velocity from the solution.</span>
+        <span class="n">xi_sol</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">delta_sol</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">m_sol</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+        <span class="c1"># Convert integration space variables into physical shock properties.</span>
+        <span class="n">shock_radius</span> <span class="o">=</span> <span class="n">xi_sol</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">sol</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">shock_velocity</span> <span class="o">=</span> <span class="n">xi_sol</span> <span class="o">-</span> <span class="n">delta_sol</span>
+        <span class="n">shock_mass</span> <span class="o">=</span> <span class="n">m_sol</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;radius&quot;</span><span class="p">:</span> <span class="n">shock_radius</span><span class="p">,</span>
+            <span class="s2">&quot;velocity&quot;</span><span class="p">:</span> <span class="n">shock_velocity</span><span class="p">,</span>
+            <span class="s2">&quot;mass&quot;</span><span class="p">:</span> <span class="n">shock_mass</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

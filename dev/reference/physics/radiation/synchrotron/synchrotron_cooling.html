@@ -1,0 +1,817 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Radiative Cooling Engines &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_cooling';</script>
+    <link rel="icon" href="../../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Synchrotron Radiation Theory" href="synchrotron_theory.html" />
+    <link rel="prev" title="radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../inference/triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../inference/triceratops.inference.likelihood.base.GaussianLikelihoodXY.html">triceratops.inference.likelihood.base.GaussianLikelihoodXY</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs.log_smoothed_SFBPL.html">radiation.synchrotron.SEDs.log_smoothed_SFBPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs.log_exp_cutoff_sed.html">radiation.synchrotron.SEDs.log_exp_cutoff_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_2.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_1.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_1.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_2.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_3.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_4.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_5.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_6.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_sed_theory.html">Theory of Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Triceratops</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Radiative Cooling Engines</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="radiative-cooling-engines">
+<span id="synchrotron-cooling"></span><h1>Radiative Cooling Engines<a class="headerlink" href="#radiative-cooling-engines" title="Link to this heading">#</a></h1>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a> for a detailed discussion of radiative cooling
+processes and their role in shaping synchrotron spectra.</p>
+</div>
+<p>The <a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.cooling.html#module-radiation.synchrotron.cooling" title="radiation.synchrotron.cooling"><code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron.cooling</span></code></a> module provides the <strong>low-level and
+high-level tools required to compute radiative cooling of relativistic
+electrons</strong>. Whereas the <a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.core.html#module-radiation.synchrotron.core" title="radiation.synchrotron.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron.core</span></code></a> module focuses on
+<em>emission</em>, this module focuses on <em>energy loss</em> and the evolution of electron
+Lorentz factors.</p>
+<p>The cooling API is intentionally <strong>simple, explicit, and composable</strong>:</p>
+<ul class="simple">
+<li><p>no assumptions about electron distributions,</p></li>
+<li><p>no implicit microphysical closures,</p></li>
+<li><p>no hidden state inside cooling engines.</p></li>
+</ul>
+<p>Instead, all physical parameters (magnetic field strength, radiation field
+properties, timescales) are supplied explicitly at call time, making these tools
+well-suited for inference, parameter studies, and time-dependent modeling.</p>
+<section id="overview-of-the-api">
+<h2>Overview of the API<a class="headerlink" href="#overview-of-the-api" title="Link to this heading">#</a></h2>
+<p>Radiative cooling is exposed through <strong>cooling engines</strong>, each corresponding to
+a distinct physical process. Each engine implements a common interface defined
+by <a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronCoolingEngine</span></code></a>.</p>
+<p>Every cooling engine provides methods to compute:</p>
+<ul class="simple">
+<li><p>the <strong>cooling rate</strong> <span class="math notranslate nohighlight">\(dE/dt\)</span>,</p></li>
+<li><p>the <strong>cooling time</strong> <span class="math notranslate nohighlight">\(t_{\rm cool}\)</span>,</p></li>
+<li><p>the <strong>cooling Lorentz factor</strong> <span class="math notranslate nohighlight">\(\gamma_c\)</span>,</p></li>
+<li><p>a <strong>characteristic synchrotron frequency</strong> associated with cooled electrons.</p></li>
+</ul>
+<p>Two concrete engines are currently implemented:</p>
+<ul class="simple">
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InverseComptonCoolingEngine</span></code></p></li>
+</ul>
+<p>Both engines expose <strong>unit-aware public APIs</strong> and <strong>optimized CGS low-level
+implementations</strong>.</p>
+</section>
+<section id="cooling-times-and-cooling-lorentz-factors">
+<h2>Cooling Times and Cooling Lorentz Factors<a class="headerlink" href="#cooling-times-and-cooling-lorentz-factors" title="Link to this heading">#</a></h2>
+<p>For any radiative process, the cooling time is defined as</p>
+<div class="math notranslate nohighlight">
+\[t_{\rm cool}(\gamma)
+=
+\frac{\gamma m_e c^2}{|dE/dt|}.\]</div>
+<p>Given a characteristic timescale <span class="math notranslate nohighlight">\(t\)</span> (e.g. source age or dynamical time),
+the <strong>cooling Lorentz factor</strong> <span class="math notranslate nohighlight">\(\gamma_c\)</span> is defined implicitly by</p>
+<div class="math notranslate nohighlight">
+\[t_{\rm cool}(\gamma_c) = t.\]</div>
+<p>Electrons with <span class="math notranslate nohighlight">\(\gamma &gt; \gamma_c\)</span> cool efficiently over time <span class="math notranslate nohighlight">\(t\)</span>,
+while those with <span class="math notranslate nohighlight">\(\gamma &lt; \gamma_c\)</span> do not. Cooling Lorentz factors play a
+central role in determining spectral breaks in synchrotron emission.</p>
+</section>
+<section id="synchrotron-radiative-cooling">
+<h2>Synchrotron Radiative Cooling<a class="headerlink" href="#synchrotron-radiative-cooling" title="Link to this heading">#</a></h2>
+<p>Synchrotron cooling describes energy losses due to synchrotron radiation in a
+magnetic field. In the isotropic, Thomson-regime limit, the energy loss rate is</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{dE}{dt}\right)_{\rm syn}
+=
+\frac{4}{3}\,\sigma_T c\,\gamma^2\,u_B,
+\qquad
+u_B = \frac{B^2}{8\pi}.\]</div>
+<p>This process is implemented by
+<a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+High-Level API</label><div class="sd-tab-content docutils">
+<p>The high-level API performs unit validation and returns
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> objects.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">SynchrotronRadiativeCoolingEngine</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">SynchrotronRadiativeCoolingEngine</span><span class="p">()</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1e4</span>
+<span class="n">t_dyn</span> <span class="o">=</span> <span class="mf">1e6</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+
+<span class="c1"># Cooling rate</span>
+<span class="n">dEdt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_rate</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dEdt</span><span class="p">)</span>
+
+<span class="c1"># Cooling time at gamma</span>
+<span class="n">t_cool</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_time</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t_cool</span><span class="p">)</span>
+
+<span class="c1"># Cooling Lorentz factor</span>
+<span class="n">gamma_c</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_gamma</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t_dyn</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
+
+<span class="c1"># Synchrotron frequency of cooled electrons</span>
+<span class="n">nu_c</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_characteristic_frequency</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nu_c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Low-Level API</label><div class="sd-tab-content docutils">
+<p>The low-level API operates purely in CGS units and performs no unit
+checking. It is intended for internal use and performance-critical
+workflows.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_opt_compute_synchrotron_cooling_rate</span><span class="p">,</span>
+    <span class="n">_opt_compute_synchrotron_cooling_time</span><span class="p">,</span>
+    <span class="n">_opt_compute_synchrotron_cooling_gamma</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">B_cgs</span> <span class="o">=</span> <span class="mf">1.0</span>        <span class="c1"># Gauss</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1e4</span>
+<span class="n">t_dyn</span> <span class="o">=</span> <span class="mf">1e6</span>       <span class="c1"># seconds</span>
+
+<span class="n">dEdt</span> <span class="o">=</span> <span class="n">_opt_compute_synchrotron_cooling_rate</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">t_cool</span> <span class="o">=</span> <span class="n">_opt_compute_synchrotron_cooling_time</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">gamma_c</span> <span class="o">=</span> <span class="n">_opt_compute_synchrotron_cooling_gamma</span><span class="p">(</span><span class="n">B_cgs</span><span class="p">,</span> <span class="n">t_dyn</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dEdt</span><span class="p">,</span> <span class="n">t_cool</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="inverse-compton-cooling">
+<h2>Inverse Compton Cooling<a class="headerlink" href="#inverse-compton-cooling" title="Link to this heading">#</a></h2>
+<p>Inverse Compton (IC) cooling describes energy losses due to scattering of ambient
+photons by relativistic electrons. In the isotropic, Thomson-regime limit, the
+energy loss rate is</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{dE}{dt}\right)_{\rm IC}
+=
+\frac{4}{3}\,\sigma_T c\,\gamma^2\,u_{\rm rad},\]</div>
+<p>with radiation energy density</p>
+<div class="math notranslate nohighlight">
+\[u_{\rm rad}
+=
+\frac{L_{\rm bol}}{4\pi R^2 c}.\]</div>
+<p>This process is implemented by
+<a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine" title="radiation.synchrotron.cooling.InverseComptonCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">InverseComptonCoolingEngine</span></code></a>.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+High-Level API</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InverseComptonCoolingEngine</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">InverseComptonCoolingEngine</span><span class="p">()</span>
+
+<span class="n">L_bol</span> <span class="o">=</span> <span class="mf">1e42</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1e4</span>
+<span class="n">t_dyn</span> <span class="o">=</span> <span class="mf">1e6</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+
+<span class="n">dEdt</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_rate</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+    <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">dEdt</span><span class="p">)</span>
+
+<span class="n">t_cool</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_time</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+    <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">t_cool</span><span class="p">)</span>
+
+<span class="n">gamma_c</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_cooling_gamma</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+    <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+    <span class="n">t</span><span class="o">=</span><span class="n">t_dyn</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">)</span>
+
+<span class="c1"># Synchrotron frequency corresponding to gamma_c</span>
+<span class="n">nu_c</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_characteristic_frequency</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+    <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_c</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">nu_c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Low-Level API</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">_opt_compute_IC_cooling_rate</span><span class="p">,</span>
+    <span class="n">_opt_compute_IC_cooling_time</span><span class="p">,</span>
+    <span class="n">_opt_compute_IC_cooling_gamma</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">L_bol</span> <span class="o">=</span> <span class="mf">1e42</span>   <span class="c1"># erg/s</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">1e16</span>       <span class="c1"># cm</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="mf">1e4</span>
+<span class="n">t_dyn</span> <span class="o">=</span> <span class="mf">1e6</span>   <span class="c1"># s</span>
+
+<span class="n">dEdt</span> <span class="o">=</span> <span class="n">_opt_compute_IC_cooling_rate</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">t_cool</span> <span class="o">=</span> <span class="n">_opt_compute_IC_cooling_time</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">gamma_c</span> <span class="o">=</span> <span class="n">_opt_compute_IC_cooling_gamma</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t_dyn</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">dEdt</span><span class="p">,</span> <span class="n">t_cool</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+</section>
+<section id="combining-cooling-channels">
+<h2>Combining Cooling Channels<a class="headerlink" href="#combining-cooling-channels" title="Link to this heading">#</a></h2>
+<p>Triceratops does <strong>not</strong> implicitly combine cooling processes. When multiple
+cooling channels are relevant, users are expected to explicitly sum cooling
+rates:</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{dE}{dt}\right)_{\rm total}
+=
+\left(\frac{dE}{dt}\right)_{\rm syn}
++
+\left(\frac{dE}{dt}\right)_{\rm IC}.\]</div>
+<p>This explicit design avoids ambiguity and provides full control in inference
+and modeling pipelines.</p>
+<p>Higher-level modeling layers may build composite cooling models on top of these
+engines, but the primitives provided here form the <strong>canonical foundation for
+radiative cooling calculations in Triceratops</strong>.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="synchrotron_theory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Synchrotron Radiation Theory</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-of-the-api">Overview of the API</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cooling-times-and-cooling-lorentz-factors">Cooling Times and Cooling Lorentz Factors</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-radiative-cooling">Synchrotron Radiative Cooling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inverse-compton-cooling">Inverse Compton Cooling</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-cooling-channels">Combining Cooling Channels</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_cooling.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

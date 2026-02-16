@@ -1,0 +1,1240 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radiation.free_free &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/radiation/free_free';</script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">radiation.free_free</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for radiation.free_free</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Physics utilities for computing free-free absorption of synchrotron radiation from shock interfaces.</span>
+
+<span class="sd">This module&#39;s core objective is to allow the calculation of the free-free attenuation of synchrotron radiation</span>
+<span class="sd">as it passes through the ionized medium surrounding the transient shocks studied in the Triceratops framework.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="c1"># noinspection PyUnresolvedReferences</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">m_p</span>
+
+
+<span class="c1"># ================================================ #</span>
+<span class="c1"># Free-Free Ratiative Transfer Parameters          #</span>
+<span class="c1"># ================================================ #</span>
+<span class="c1"># This section contains functions to compute the free-free absorption coefficient and other</span>
+<span class="c1"># relevant radiative transfer properties in different scenarios. For the most part, these</span>
+<span class="c1"># are focused on scenarios relevant for radio transients, meaning that the RJ tail is assumed.</span>
+<div class="viewcode-block" id="compute_RJ_FF_absorption_coefficient">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_absorption_coefficient.html#radiation.free_free.compute_RJ_FF_absorption_coefficient">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_absorption_coefficient</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the free–free absorption coefficient in the Rayleigh–Jeans limit.</span>
+
+<span class="sd">    This function evaluates the classical thermal bremsstrahlung (free–free)</span>
+<span class="sd">    absorption coefficient assuming the Rayleigh–Jeans approximation</span>
+<span class="sd">    :math:`h\nu \ll k_B T`, appropriate for radio frequencies.</span>
+
+<span class="sd">    The absorption coefficient is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu^{\rm ff}</span>
+<span class="sd">        =</span>
+<span class="sd">        0.018\;</span>
+<span class="sd">        T^{-3/2}</span>
+<span class="sd">        Z^2</span>
+<span class="sd">        n_e n_i</span>
+<span class="sd">        \nu^{-2}</span>
+<span class="sd">        g_{\rm ff},</span>
+
+<span class="sd">    where all quantities are expressed in CGS units.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        Observing frequency. If a Quantity is provided, it must be convertible to ``Hz``. If `frequency` is provided</span>
+<span class="sd">        as an array of shape ``(N,...)``, the calculation will be performed for all frequencies simultaneously.</span>
+<span class="sd">    temperature : float, or astropy.units.Quantity</span>
+<span class="sd">        Electron temperature. If a Quantity is provided, it must be convertible to ``Kelvin``.</span>
+<span class="sd">    n_e : float, or astropy.units.Quantity</span>
+<span class="sd">        Electron number density. If a Quantity is provided, it must be convertible to ``cm^-3``.</span>
+<span class="sd">    n_i : float,  or astropy.units.Quantity</span>
+<span class="sd">        Ion number density. If a Quantity is provided, it must be convertible to ``cm^-3``.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    astropy.units.Quantity</span>
+<span class="sd">        Free–free absorption coefficient with units of ``cm^-1``. If `frequency` and other parameters are arrays,</span>
+<span class="sd">        the returned array will have shape broadcasted to match the input arrays.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The free-free absorption coefficient in the Rayleigh–Jeans limit is given by (See equation 5.19b in</span>
+<span class="sd">    :footcite:p:`RybickiLightman`):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu = 0.018 \, T^{-3/2} \, \nu^{-2} \, n_e \, n_i \, Z^2 \, g_{ff},</span>
+
+<span class="sd">    where :math:`T` is the electron temperature in Kelvin, :math:`\nu` is the frequency in Hz,</span>
+<span class="sd">    :math:`n_e` and :math:`n_i` are the electron and ion number densities in :math:`{\rm cm^{-3}}`,</span>
+<span class="sd">    :math:`Z` is the ionic charge, and :math:`g_{ff}` is the velocity-averaged Gaunt factor.</span>
+
+<span class="sd">    For this expression to be valid, the following conditions must be met:</span>
+
+<span class="sd">    - This function assumes a fully thermal, non-relativistic plasma.</span>
+<span class="sd">    - The Rayleigh–Jeans approximation is extremely well satisfied for</span>
+<span class="sd">      radio supernovae and CSM environments.</span>
+<span class="sd">    - If relativistic temperatures or infrared/optical frequencies are</span>
+<span class="sd">      required, this expression is no longer valid.</span>
+
+<span class="sd">    **Broadcasting**: This function fully supports NumPy broadcasting. In particular:</span>
+
+<span class="sd">    - ``frequency`` may be an array of shape ``(M, 1)``</span>
+<span class="sd">    - ``n_e`` and ``n_i`` may be arrays of shape ``(1, N)``</span>
+<span class="sd">    - scalar parameters (``temperature``, ``Z``, ``g_ff``) broadcast over all axes</span>
+
+<span class="sd">    In this case, the returned absorption coefficient will have shape ``(M, N)``.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Unit coercion</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">n_e</span> <span class="o">=</span> <span class="n">n_e</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">n_i</span> <span class="o">=</span> <span class="n">n_i</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">alpha_cgs</span> <span class="o">=</span> <span class="n">compute_RJ_FF_absorption_coefficient_CGS</span><span class="p">(</span>
+        <span class="n">frequency</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="p">,</span>
+        <span class="n">n_e</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span>
+        <span class="n">n_i</span><span class="o">=</span><span class="n">n_i</span><span class="p">,</span>
+        <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+        <span class="n">g_ff</span><span class="o">=</span><span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">alpha_cgs</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">1</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_absorption_coefficient_CGS">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS.html#radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_absorption_coefficient_CGS</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the thermal free–free absorption coefficient in the Rayleigh–Jeans limit (CGS).</span>
+
+<span class="sd">    See :func:`compute_RJ_FF_absorption_coefficient` for details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : float or array-like</span>
+<span class="sd">        Frequency in ``Hz``.</span>
+<span class="sd">    temperature : float or array-like</span>
+<span class="sd">        Electron temperature in ``Kelvin``.</span>
+<span class="sd">    n_e : float or array-like</span>
+<span class="sd">        Electron number density in ``cm^-3``.</span>
+<span class="sd">    n_i : float or array-like</span>
+<span class="sd">        Ion number density in ``cm^-3``.</span>
+<span class="sd">    Z : float or array-like, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float or array-like, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The free-free absorption coefficient :math:`\alpha_\nu` in :math:`{\rm cm^{-1}}`.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">0.018</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">n_e</span> <span class="o">*</span> <span class="n">n_i</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">g_ff</span></div>
+
+
+
+<span class="c1"># ================================================ #</span>
+<span class="c1"># Optical Depth Calculators                        #</span>
+<span class="c1"># ================================================ #</span>
+<span class="c1"># Various different physical scenarios require different optical depth calculations. This section</span>
+<span class="c1"># contains functions to compute the optical depth due to free-free absorption in a variety</span>
+<span class="c1"># of different scenarios relevant to radio transients. These can be used as components in models</span>
+<span class="c1"># to achieve the desired optical depth calculation.</span>
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_wind_CGS">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_wind_CGS</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">mdot</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">wind_velocity</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the free–free optical depth through a steady wind (Rayleigh–Jeans, CGS).</span>
+
+<span class="sd">    This function assumes a stellar wind with **constant velocity** and **mass-loss rate**. All quantities</span>
+<span class="sd">    must be provided in CGS units. For a more detailed description of the parameters and usage, see</span>
+<span class="sd">    :func:`compute_RJ_FF_optical_depth_wind`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : float or numpy.ndarray</span>
+<span class="sd">        Observing frequency in Hz. This is the only parameter allowed to be array-like.</span>
+<span class="sd">        Output shape matches ``frequency``.</span>
+<span class="sd">    r : float</span>
+<span class="sd">        Inner radius in cm (lower integration bound).</span>
+<span class="sd">    mdot : float</span>
+<span class="sd">        Mass-loss rate in g/s.</span>
+<span class="sd">    wind_velocity : float</span>
+<span class="sd">        Wind velocity in cm/s.</span>
+<span class="sd">    r_max : float, optional</span>
+<span class="sd">        Outer radius in cm. Default is ``np.inf`` (analytic infinite-wind limit).</span>
+<span class="sd">    temperature : float, optional</span>
+<span class="sd">        Electron temperature in K. Default is ``1e4``.</span>
+<span class="sd">    mu_e : float, optional</span>
+<span class="sd">        Mean molecular weight per free electron. Default is 1.2.</span>
+<span class="sd">    mu_i : float, optional</span>
+<span class="sd">        Mean molecular weight per ion. Default is 1.3.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Free–free optical depth (dimensionless), with the same shape as ``frequency``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    **Vectorization rule:** only ``frequency`` may be array-like; all other inputs must be scalar-like.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Proton mass in CGS</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">m_p</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Handle the radial integral term</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">r_max</span><span class="p">):</span>
+        <span class="n">integral</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">integral</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">r</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="mf">3.0</span> <span class="o">*</span> <span class="n">r_max</span><span class="o">**</span><span class="mi">3</span><span class="p">))</span>
+
+    <span class="c1"># Assemble optical depth</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mf">0.018</span>
+        <span class="o">*</span> <span class="n">temperature</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">frequency</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span>
+        <span class="o">*</span> <span class="n">g_ff</span>
+        <span class="o">*</span> <span class="n">mdot</span><span class="o">**</span><span class="mi">2</span>
+        <span class="o">/</span> <span class="p">(</span><span class="mf">16.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">wind_velocity</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mp</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mu_e</span> <span class="o">*</span> <span class="n">mu_i</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">integral</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tau</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_wind">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_wind.html#radiation.free_free.compute_RJ_FF_optical_depth_wind">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_wind</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">r</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">mdot</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">wind_velocity</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the free–free optical depth through a stellar wind in the Rayleigh–Jeans limit (CGS).</span>
+
+<span class="sd">    This function computes the optical depth due to free–free absorption (:math:`\tau_{\rm ff}`) due</span>
+<span class="sd">    to a stellar wind with **constant velocity** and **mass-loss rate**. The density profile of the wind</span>
+<span class="sd">    is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(r,t) = \frac{\\dot{M}}{4 \\pi r^2 v_w},</span>
+
+<span class="sd">    where :math:`\\dot{M}` is the mass-loss rate and :math:`v_w` is the wind velocity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency: float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        The observing frequency. If a Quantity is provided, it must be convertible to ``Hz``. `frequency` may be</span>
+<span class="sd">        provided as an array with shape ``(N,...)`` to compute the optical depth at multiple frequencies simultaneously.</span>
+<span class="sd">        In this case, all other array inputs must be broadcastable to the shape ``(N,...)``.</span>
+<span class="sd">    r: float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        The current radius from the progenitor center. If a Quantity is provided, it must be convertible to ``cm``. This</span>
+<span class="sd">        sets the inner boundary of the optical depth integral. Must be broadcastable to the shape of `frequency` if that</span>
+<span class="sd">        is provided as an array.</span>
+<span class="sd">    mdot: float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        The mass-loss rate of the wind. If a Quantity is provided, it must be convertible to ``g/s``. Must be</span>
+<span class="sd">        broadcastable to the shape of `frequency` if that is provided as an array.</span>
+<span class="sd">    wind_velocity: float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        The velocity of the wind. If a Quantity is provided, it must be convertible to ``cm/s``. Must be broadcastable</span>
+<span class="sd">        to the shape of `frequency` if that is provided as an array.</span>
+<span class="sd">    r_max: float, or astropy.units.Quantity</span>
+<span class="sd">        The outer radius of the wind region. If a Quantity is provided, it must be convertible to ``cm``. This</span>
+<span class="sd">        sets the outer boundary of the optical depth integral. By default, this in set to infinity and the integration</span>
+<span class="sd">        is performed analytically.</span>
+<span class="sd">    temperature: float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        The electron temperature of the wind material. If a Quantity is provided, it must be convertible to ``Kelvin``.</span>
+<span class="sd">        If provided as an array, the shape must match that of `r`. By default, this is set to :math:`10^4 {\rm K}`.</span>
+<span class="sd">    mu_e: float, array-like</span>
+<span class="sd">        The mean molecular weight per free electron. Default is 1.2, appropriate for fully ionized solar composition</span>
+<span class="sd">        material. If provided as an array, the shape must match that of `r`.</span>
+<span class="sd">    mu_i: float, array-like</span>
+<span class="sd">        The mean molecular weight per ion. Default is 1.3, appropriate for fully ionized solar composition</span>
+<span class="sd">        material. If provided as an array, the shape must match that of `r`.</span>
+<span class="sd">    Z: float, array-like</span>
+<span class="sd">        The ionic charge. Default is 1. If provided as an array, the shape must match that of `r`.</span>
+<span class="sd">    g_ff: float, array-like</span>
+<span class="sd">        The velocity-averaged Gaunt factor. Default is 5. If provided as an array, the shape must match that of `r`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Free–free optical depth :math:`\tau_{\rm ff}` with the same shape as ``frequency``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The free–free optical depth through a stellar wind with constant velocity and mass-loss rate is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \tau_{\rm ff}</span>
+<span class="sd">        =</span>
+<span class="sd">        \\int_{r}^{r_{\rm max}}</span>
+<span class="sd">        \alpha_\nu^{\rm ff}(r&#39;)</span>
+<span class="sd">        \\, dr&#39;,</span>
+
+<span class="sd">    where :math:`\alpha_\nu^{\rm ff}(r&#39;)` is the free–free absorption coefficient at radius :math:`r&#39;`. Upon</span>
+<span class="sd">    substituting the density profile of the wind and evaluating the integral, we find</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \tau_{\rm ff}(\nu) = 0.018 \frac{\\dot{M}^2 r_0^{-3}}{48 \\pi^2 v^2 m_p^2 \\mu_e \\mu_i} T^{-3/2} \nu^{-2} Z^2</span>
+<span class="sd">        g_{\rm ff}</span>
+<span class="sd">        \\left(1- \\left(\frac{r_0}{r_{\rm max}}\right)^3\right),</span>
+
+<span class="sd">    where :math:`m_p` is the proton mass, :math:`\\mu_e` is the mean molecular weight per free electron, and</span>
+<span class="sd">    :math:`\\mu_i` is the mean molecular weight per ion. This is the formulation used in this function.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Unit management: coerce everything to CGS floats.</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">mdot</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">mdot</span> <span class="o">=</span> <span class="n">mdot</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">wind_velocity</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">wind_velocity</span> <span class="o">=</span> <span class="n">wind_velocity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r_max</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">r_max</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="c1"># Call the CGS implementation</span>
+    <span class="n">tau_cgs</span> <span class="o">=</span> <span class="n">compute_RJ_FF_optical_depth_wind_CGS</span><span class="p">(</span>
+        <span class="n">frequency</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">,</span>
+        <span class="n">mdot</span><span class="p">,</span>
+        <span class="n">wind_velocity</span><span class="p">,</span>
+        <span class="n">r_max</span><span class="o">=</span><span class="n">r_max</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+        <span class="n">mu_e</span><span class="o">=</span><span class="n">mu_e</span><span class="p">,</span>
+        <span class="n">mu_i</span><span class="o">=</span><span class="n">mu_i</span><span class="p">,</span>
+        <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+        <span class="n">g_ff</span><span class="o">=</span><span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">tau_cgs</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_shell_CGS">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_shell_CGS</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">rho</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">thickness</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Low-level CGS version of :func:`compute_RJ_FF_optical_depth_shell`.&quot;&quot;&quot;</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">m_p</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="mf">0.018</span> <span class="o">*</span> <span class="n">temperature</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span> <span class="o">*</span> <span class="n">frequency</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">g_ff</span> <span class="o">*</span> <span class="n">rho</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu_e</span> <span class="o">*</span> <span class="n">mu_i</span> <span class="o">*</span> <span class="n">mp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">thickness</span>
+
+    <span class="k">return</span> <span class="n">tau</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_shell">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_shell.html#radiation.free_free.compute_RJ_FF_optical_depth_shell">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_shell</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">rho</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">thickness</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the free–free optical depth through a uniform-density shell.</span>
+
+<span class="sd">    This function computes the free–free optical depth :math:`\tau_{\rm ff}` through</span>
+<span class="sd">    a shell of ionized material with **constant density** and finite radial thickness.</span>
+<span class="sd">    The shell is assumed to be homogeneous and is characterized by a mass density</span>
+<span class="sd">    :math:`\rho` and thickness :math:`\Delta r`.</span>
+
+<span class="sd">    Under the Rayleigh–Jeans approximation, the optical depth reduces to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \tau_{\rm ff}(\nu)</span>
+<span class="sd">        =</span>
+<span class="sd">        \alpha_\nu^{\rm ff} \, \Delta r,</span>
+
+<span class="sd">    where :math:`\alpha_\nu^{\rm ff}` is the thermal free–free absorption coefficient</span>
+<span class="sd">    evaluated at the shell density.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        Observing frequency. Must be convertible to ``Hz``.</span>
+<span class="sd">        This is the only parameter that may be array-like.</span>
+<span class="sd">    rho : float or astropy.units.Quantity</span>
+<span class="sd">        Mass density of the shell. Must be convertible to ``g cm^-3``.</span>
+<span class="sd">    thickness : float or astropy.units.Quantity</span>
+<span class="sd">        Radial thickness of the shell. Must be convertible to ``cm``.</span>
+<span class="sd">    temperature : float or astropy.units.Quantity, optional</span>
+<span class="sd">        Electron temperature of the shell. Must be convertible to ``K``.</span>
+<span class="sd">        Default is ``1e4``.</span>
+<span class="sd">    mu_e : float, optional</span>
+<span class="sd">        Mean molecular weight per free electron. Default is 1.2.</span>
+<span class="sd">    mu_i : float, optional</span>
+<span class="sd">        Mean molecular weight per ion. Default is 1.3.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Free–free optical depth :math:`\tau_{\rm ff}` with the same shape as ``frequency``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This model is appropriate for shocked shells, dense CSM walls, or swept-up</span>
+<span class="sd">      material with approximately uniform density.</span>
+<span class="sd">    - Geometric effects such as curvature or obliquity are ignored.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">thickness</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">thickness</span> <span class="o">=</span> <span class="n">thickness</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">compute_RJ_FF_optical_depth_shell_CGS</span><span class="p">(</span>
+        <span class="n">frequency</span><span class="p">,</span>
+        <span class="n">rho</span><span class="p">,</span>
+        <span class="n">thickness</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+        <span class="n">mu_e</span><span class="o">=</span><span class="n">mu_e</span><span class="p">,</span>
+        <span class="n">mu_i</span><span class="o">=</span><span class="n">mu_i</span><span class="p">,</span>
+        <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+        <span class="n">g_ff</span><span class="o">=</span><span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_powerlaw_CGS">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_powerlaw_CGS</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">r</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">rho0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">r0</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Low-level CGS version of :func:`compute_RJ_FF_optical_depth_powerlaw`.&quot;&quot;&quot;</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">m_p</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;=</span> <span class="mf">0.5</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">r_max</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Power-law does not converge for k &lt;= 1/2 with r_max = inf.&quot;</span><span class="p">)</span>
+
+    <span class="n">prefactor</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mf">0.018</span>
+        <span class="o">*</span> <span class="n">temperature</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">frequency</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span>
+        <span class="o">*</span> <span class="n">g_ff</span>
+        <span class="o">*</span> <span class="n">rho0</span><span class="o">**</span><span class="mi">2</span>
+        <span class="o">/</span> <span class="p">(</span><span class="n">mu_e</span> <span class="o">*</span> <span class="n">mu_i</span> <span class="o">*</span> <span class="n">mp</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">r0</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">r_max</span><span class="p">):</span>
+        <span class="n">integral</span> <span class="o">=</span> <span class="n">r</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">integral</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">)</span> <span class="o">-</span> <span class="n">r_max</span> <span class="o">**</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">k</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">k</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">prefactor</span> <span class="o">*</span> <span class="n">integral</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_powerlaw">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_powerlaw.html#radiation.free_free.compute_RJ_FF_optical_depth_powerlaw">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_powerlaw</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">r</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">rho0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">r0</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">k</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0e4</span><span class="p">,</span>
+    <span class="n">mu_e</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">mu_i</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the free–free optical depth for a power-law density profile.</span>
+
+<span class="sd">    This function computes the free–free optical depth :math:`\tau_{\rm ff}` for</span>
+<span class="sd">    radiation propagating through a medium with a spherically symmetric power-law</span>
+<span class="sd">    density profile</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(r) = \rho_0 \left(\frac{r}{r_0}\right)^{-k},</span>
+
+<span class="sd">    where :math:`\rho_0` is the density at reference radius :math:`r_0` and</span>
+<span class="sd">    :math:`k` is the power-law index.</span>
+
+<span class="sd">    The optical depth is obtained by integrating the free–free absorption coefficient</span>
+<span class="sd">    from radius :math:`r` to :math:`r_{\max}`. In the Rayleigh–Jeans limit, this integral</span>
+<span class="sd">    can be evaluated analytically, yielding</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \tau_{\rm ff}(\nu)</span>
+<span class="sd">        \propto</span>
+<span class="sd">        \int_r^{r_{\max}} r&#39;^{-2k} \, dr&#39;.</span>
+
+<span class="sd">    For :math:`k &gt; 1/2`, the integral converges in the limit</span>
+<span class="sd">    :math:`r_{\max} \rightarrow \infty`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">        Observing frequency. Must be convertible to ``Hz``.</span>
+<span class="sd">        This is the only parameter that may be array-like.</span>
+<span class="sd">    r : float or astropy.units.Quantity</span>
+<span class="sd">        Inner radius of the absorbing region. Must be convertible to ``cm``.</span>
+<span class="sd">    rho0 : float or astropy.units.Quantity</span>
+<span class="sd">        Density normalization at radius ``r0``. Must be convertible to ``g cm^-3``.</span>
+<span class="sd">    r0 : float or astropy.units.Quantity</span>
+<span class="sd">        Reference radius for the density normalization. Must be convertible to ``cm``.</span>
+<span class="sd">    k : float</span>
+<span class="sd">        Power-law index of the density profile.</span>
+<span class="sd">    r_max : float or astropy.units.Quantity, optional</span>
+<span class="sd">        Outer radius of the absorbing region. Default is infinity.</span>
+<span class="sd">    temperature : float or astropy.units.Quantity, optional</span>
+<span class="sd">        Electron temperature. Must be convertible to ``K``. Default is ``1e4``.</span>
+<span class="sd">    mu_e : float, optional</span>
+<span class="sd">        Mean molecular weight per free electron. Default is 1.2.</span>
+<span class="sd">    mu_i : float, optional</span>
+<span class="sd">        Mean molecular weight per ion. Default is 1.3.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or numpy.ndarray</span>
+<span class="sd">        Free–free optical depth :math:`\tau_{\rm ff}`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - For ``k &lt;= 1/2``, the optical depth diverges when ``r_max`` is infinite.</span>
+<span class="sd">    - This model is suitable for generalized CSM profiles beyond steady winds,</span>
+<span class="sd">      including stratified or relic mass-loss environments.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">rho0</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">rho0</span> <span class="o">=</span> <span class="n">rho0</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r0</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">r0</span> <span class="o">=</span> <span class="n">r0</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">r_max</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">r_max</span> <span class="o">=</span> <span class="n">r_max</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">compute_RJ_FF_optical_depth_powerlaw_CGS</span><span class="p">(</span>
+        <span class="n">frequency</span><span class="p">,</span>
+        <span class="n">r</span><span class="p">,</span>
+        <span class="n">rho0</span><span class="p">,</span>
+        <span class="n">r0</span><span class="p">,</span>
+        <span class="n">k</span><span class="p">,</span>
+        <span class="n">r_max</span><span class="o">=</span><span class="n">r_max</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+        <span class="n">mu_e</span><span class="o">=</span><span class="n">mu_e</span><span class="p">,</span>
+        <span class="n">mu_i</span><span class="o">=</span><span class="n">mu_i</span><span class="p">,</span>
+        <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+        <span class="n">g_ff</span><span class="o">=</span><span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_arrays">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_arrays.html#radiation.free_free.compute_RJ_FF_optical_depth_arrays">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_arrays</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute free–free optical depth from tabulated radial profiles.</span>
+
+<span class="sd">    This function computes the frequency-dependent free–free optical depth</span>
+<span class="sd">    by numerically integrating the Rayleigh–Jeans absorption coefficient</span>
+<span class="sd">    over a supplied radial grid.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : array-like or astropy.units.Quantity</span>
+<span class="sd">        Observing frequencies. Must be convertible to ``Hz``.</span>
+<span class="sd">    radius : array-like or astropy.units.Quantity</span>
+<span class="sd">        Radial coordinates. Must be convertible to ``cm``.</span>
+<span class="sd">    n_e : array-like or astropy.units.Quantity</span>
+<span class="sd">        Electron number density. Must be convertible to ``cm^-3``.</span>
+<span class="sd">    n_i : array-like or astropy.units.Quantity</span>
+<span class="sd">        Ion number density. Must be convertible to ``cm^-3``.</span>
+<span class="sd">    temperature : array-like or astropy.units.Quantity</span>
+<span class="sd">        Electron temperature. Must be convertible to ``K``.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    astropy.units.Quantity</span>
+<span class="sd">        Free–free optical depth (dimensionless), with shape ``(N_freq,)``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This function is fully numerical and makes **no assumptions**</span>
+<span class="sd">      about the density profile.</span>
+<span class="sd">    - The radial grid must be monotonic.</span>
+<span class="sd">    - This is the most general optical depth calculator in the module</span>
+<span class="sd">      and should be preferred when analytic assumptions are invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Unit coercion</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">frequency</span> <span class="o">=</span> <span class="n">frequency</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">radius</span> <span class="o">=</span> <span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">n_e</span> <span class="o">=</span> <span class="n">n_e</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">n_i</span> <span class="o">=</span> <span class="n">n_i</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">temperature</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">):</span>
+        <span class="n">temperature</span> <span class="o">=</span> <span class="n">temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">compute_RJ_FF_optical_depth_arrays_CGS</span><span class="p">(</span>
+        <span class="n">frequency</span><span class="o">=</span><span class="n">frequency</span><span class="p">,</span>
+        <span class="n">radius</span><span class="o">=</span><span class="n">radius</span><span class="p">,</span>
+        <span class="n">n_e</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span>
+        <span class="n">n_i</span><span class="o">=</span><span class="n">n_i</span><span class="p">,</span>
+        <span class="n">temperature</span><span class="o">=</span><span class="n">temperature</span><span class="p">,</span>
+        <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span>
+        <span class="n">g_ff</span><span class="o">=</span><span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span></div>
+
+
+
+<div class="viewcode-block" id="compute_RJ_FF_optical_depth_arrays_CGS">
+<a class="viewcode-back" href="../../_as_gen/radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_RJ_FF_optical_depth_arrays_CGS</span><span class="p">(</span>
+    <span class="n">frequency</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">radius</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="n">temperature</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="n">axis</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute free–free optical depth from tabulated radial profiles (CGS).</span>
+
+<span class="sd">    This function numerically integrates the Rayleigh–Jeans free–free absorption</span>
+<span class="sd">    coefficient over a supplied radial grid. All inputs must be provided as</span>
+<span class="sd">    CGS floats.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    frequency : numpy.ndarray</span>
+<span class="sd">        Frequencies in Hz. Shape ``(N_freq,)``.</span>
+<span class="sd">    radius : numpy.ndarray</span>
+<span class="sd">        Radial coordinates in cm. Must be monotonic. Shape ``(N_r,)``.</span>
+<span class="sd">    n_e : numpy.ndarray</span>
+<span class="sd">        Electron number density in ``cm^-3``. Shape ``(N_r,)``.</span>
+<span class="sd">    n_i : numpy.ndarray</span>
+<span class="sd">        Ion number density in ``cm^-3``. Shape ``(N_r,)``.</span>
+<span class="sd">    temperature : numpy.ndarray</span>
+<span class="sd">        Electron temperature in K. Shape ``(N_r,)``.</span>
+<span class="sd">    Z : float, optional</span>
+<span class="sd">        Ionic charge. Default is 1.</span>
+<span class="sd">    g_ff : float, optional</span>
+<span class="sd">        Velocity-averaged Gaunt factor. Default is 5.</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        Axis along which the radial integration is performed. Default is ``-1``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        Optical depth array with shape ``(N_freq,)``.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This function performs **no unit validation**.</span>
+<span class="sd">    - The Rayleigh–Jeans approximation is assumed.</span>
+<span class="sd">    - This function is intended for arbitrary, tabulated density profiles.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure arrays</span>
+    <span class="n">frequency</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">frequency</span><span class="p">)</span>
+    <span class="n">radius</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_e</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">n_i</span><span class="p">)</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">temperature</span><span class="p">)</span>
+
+    <span class="c1"># Build alpha_nu grid: shape (N_freq, N_r)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="mf">0.018</span>
+        <span class="o">*</span> <span class="n">temperature</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.5</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">frequency</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.0</span><span class="p">)</span>
+        <span class="o">*</span> <span class="n">n_e</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="o">*</span> <span class="n">n_i</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="o">*</span> <span class="n">Z</span><span class="o">**</span><span class="mi">2</span>
+        <span class="o">*</span> <span class="n">g_ff</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Integrate over radius</span>
+    <span class="n">tau</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">trapezoid</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">radius</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">tau</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

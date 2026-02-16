@@ -1,0 +1,1881 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>inference.problem &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/inference/problem';</script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">inference.problem</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for inference.problem</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Abstract base class for inference problem definitions.</span>
+
+<span class="sd">This module defines the :class:`InferenceProblem` abstract base class, which serves as a</span>
+<span class="sd">template for defining specific inference problems in the Triceratops library. It takes, as input, a</span>
+<span class="sd">:class:`~inference.likelihood.base.Likelihood` instance and allows the user to handling things like fixed and</span>
+<span class="sd">free parameters, priors, and other problem-specific settings.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.prior</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">HalfNormalPrior</span><span class="p">,</span>
+    <span class="n">LogNormalPrior</span><span class="p">,</span>
+    <span class="n">LogUniformPrior</span><span class="p">,</span>
+    <span class="n">NormalPrior</span><span class="p">,</span>
+    <span class="n">UniformPrior</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Handle type checking and special aliases.</span>
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_UnitBearingScalarLike</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Likelihood</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ModelParametersInput</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundType</span><span class="p">,</span> <span class="n">ModelParameter</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">Prior</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;InferenceProblem&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;InferenceParameter&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<span class="c1"># ------------------------------------------------- #</span>
+<span class="c1"># INFERENCE PARAMETER CLASS                         #</span>
+<span class="c1"># ------------------------------------------------- #</span>
+<span class="c1"># A simple dataclass to hold information about each parameter.</span>
+<div class="viewcode-block" id="InferenceParameter">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.html#inference.problem.InferenceParameter">[docs]</a>
+<span class="nd">@dataclass</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">InferenceParameter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dataclass to hold information about an inference parameter.</span>
+
+<span class="sd">    When an :class:`InferenceProblem` is initialized, it creates an :class:`InferenceParameter`</span>
+<span class="sd">    object for each of the parameters defined in the corresponding :class:`~models.core.base.Model` provided</span>
+<span class="sd">    as part of the input :class:`~inference.likelihood.base.Likelihood` object.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model_parameter: `~models.core.parameters.ModelParameter`</span>
+<span class="sd">        The model parameter associated with this inference parameter. This is where we</span>
+<span class="sd">        get the name, default value, bounds, and other metadata about the parameter. This should be</span>
+<span class="sd">        selected from the model&#39;s :attr:`~models.core.base.Model.PARAMETERS` list. Because :class:`InferenceParameter`</span>
+<span class="sd">        instances are generated automatically during :class:`InferenceProblem` initialization, users typically</span>
+<span class="sd">        do not need to create them manually.</span>
+<span class="sd">    freeze: bool, optional</span>
+<span class="sd">        Whether to freeze this parameter during inference. If `True`, the parameter</span>
+<span class="sd">        will not be varied. Default is `False`.</span>
+<span class="sd">    prior: Callable, optional</span>
+<span class="sd">        A callable representing the prior distribution for this parameter. If not provided,</span>
+<span class="sd">        a default prior based on the parameter&#39;s bounds will be used. If a prior is provided, it</span>
+<span class="sd">        should be a callable which takes a single float argument (the parameter value) and returns</span>
+<span class="sd">        the log-prior probability (a float).</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            def prior(x: float) -&gt; float:</span>
+
+<span class="sd">    transform: Callable, optional</span>
+<span class="sd">        A callable to transform the parameter value (e.g., log-transform). If not provided,</span>
+<span class="sd">        no transformation will be applied. If a transform is provided, an `inverse_transform` should</span>
+<span class="sd">        also be provided.</span>
+<span class="sd">    inverse_transform: Callable, optional</span>
+<span class="sd">        A callable to inverse-transform the parameter value back to its original scale. If not provided,</span>
+<span class="sd">        no inverse transformation will be applied. If `inverse_transform` is provided, a `transform` should</span>
+<span class="sd">        also be provided.</span>
+<span class="sd">    transform_jacobian: Callable, optional</span>
+<span class="sd">        A callable to compute the Jacobian of the transform, if needed. This is useful for</span>
+<span class="sd">        certain sampling algorithms that require knowledge of the transformation&#39;s Jacobian. If a transform</span>
+<span class="sd">        is provided, this should also be provided. Likewise, if no transform is provided, this should be `None`.</span>
+
+<span class="sd">        The transform jacobian should be provided as a callable which takes a single float argument (the parameter</span>
+<span class="sd">        value) and returns the log-Jacobian (a float).</span>
+<span class="sd">    initial_value: float, optional</span>
+<span class="sd">        An initial value for the parameter to start inference from. If not provided, the model&#39;s default</span>
+<span class="sd">        value will be used. When performing MCMC, chains will be distributed around this initial value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">model_parameter</span><span class="p">:</span> <span class="s2">&quot;ModelParameter&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;`~models.core.parameters.ModelParameter`: The model parameter associated with this inference parameter.</span>
+
+<span class="sd">    This is where we get the name, default value, bounds, and other metadata about the parameter.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">freeze</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;bool: Whether to freeze this parameter during inference.&quot;&quot;&quot;</span>
+    <span class="n">prior</span><span class="p">:</span> <span class="s2">&quot;Prior&quot;</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;~inference.prior.Prior: A callable representing the prior distribution for this parameter.&quot;&quot;&quot;</span>
+    <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable: A callable to transform the parameter value (e.g., log-transform).&quot;&quot;&quot;</span>
+    <span class="n">inverse_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable: A callable to inverse-transform the parameter value back to its original scale.&quot;&quot;&quot;</span>
+    <span class="n">transform_jacobian</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callable: A callable to compute the Jacobian of the transform, if needed.&quot;&quot;&quot;</span>
+
+    <span class="c1"># --- Private Attributes --- #</span>
+    <span class="n">_initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;float: An initial value for the parameter to start inference from.&quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Initialization and Post-Initialization            #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+<div class="viewcode-block" id="InferenceParameter.__init__">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.__init__.html#inference.problem.InferenceParameter.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model_parameter</span><span class="p">:</span> <span class="s2">&quot;ModelParameter&quot;</span><span class="p">,</span>
+        <span class="n">freeze</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="n">prior</span><span class="p">:</span> <span class="s2">&quot;Prior&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">inverse_transform</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">transform_jacobian</span><span class="p">:</span> <span class="n">Callable</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">initial_value</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">):</span>
+        <span class="c1"># Set all of the attributes.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter</span> <span class="o">=</span> <span class="n">model_parameter</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="n">freeze</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inverse_transform</span> <span class="o">=</span> <span class="n">inverse_transform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform_jacobian</span> <span class="o">=</span> <span class="n">transform_jacobian</span>
+
+        <span class="c1"># Handle the initial value so that it (a) defaults</span>
+        <span class="c1"># to the model parameter&#39;s default and (b) performs</span>
+        <span class="c1"># unit coercion to the model&#39;s base unit.</span>
+        <span class="k">if</span> <span class="n">initial_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span> <span class="o">=</span> <span class="n">model_parameter</span><span class="o">.</span><span class="n">default</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">initial_value</span><span class="p">,</span> <span class="n">model_parameter</span><span class="o">.</span><span class="n">base_units</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Initial value for parameter &#39;</span><span class="si">{</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; could not be &quot;</span>
+                    <span class="sa">f</span><span class="s2">&quot;coerced to required units &#39;</span><span class="si">{</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">base_units</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span>
+
+        <span class="c1"># Now handle the post-initialization checks for</span>
+        <span class="c1"># the transforms.</span>
+        <span class="c1"># Ensure that the transform and inverse_transform are both provided or both None.</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse_transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Both &#39;transform&#39; and &#39;inverse_transform&#39; must be provided together.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The name of the parameter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">name</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">bounds</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;BoundType&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple or callable: The bounds of the parameter.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">bounds</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_default</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The default value of the parameter from the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">default</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_base_unit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;`astropy.units.Unit`: The base unit of the parameter from the model.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_parameter</span><span class="o">.</span><span class="n">base_units</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: The initial value for the parameter to start inference from.</span>
+
+<span class="sd">        This is in the model&#39;s base units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span>
+
+    <span class="nd">@initial_value</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set the initial value of this parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        value: float or `astropy.units.Quantity` or array-like</span>
+<span class="sd">            The new initial value for the parameter. This will be coerced to the model&#39;s base</span>
+<span class="sd">            units.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_initial_value</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_base_unit</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Initial value for parameter &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; could not be &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;coerced to required units &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model_base_unit</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">exp</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_quantity</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;`astropy.units.Quantity`: The initial value as an Astropy Quantity.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_base_unit</span>
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Serialization Methods                             #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_callable_repr</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a safe, non-reconstructive representation of a callable.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">func</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="nb">repr</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InferenceParameter.to_metadata">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.to_metadata.html#inference.problem.InferenceParameter.to_metadata">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_metadata</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize recoverable metadata for this inference parameter.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Metadata dictionary suitable for storage in HDF5 / JSON.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This does NOT allow full reconstruction. The owning</span>
+<span class="sd">        ``InferenceProblem`` must supply the ``ModelParameter``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+            <span class="s2">&quot;freeze&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">freeze</span><span class="p">,</span>
+            <span class="s2">&quot;initial_value&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span>
+            <span class="s2">&quot;prior&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;transform&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callable_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">),</span>
+            <span class="s2">&quot;inverse_transform&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callable_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">),</span>
+            <span class="s2">&quot;transform_jacobian&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_callable_repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transform_jacobian</span><span class="p">),</span>
+        <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="InferenceParameter.from_metadata">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.from_metadata.html#inference.problem.InferenceParameter.from_metadata">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_metadata</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a format compliant metadata dictionary from serialized metadata.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        metadata : dict</span>
+<span class="sd">            Metadata dictionary produced by ``to_metadata``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Parsed metadata suitable for reconstruction by InferenceProblem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">metadata</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;prior&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">Prior</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">])</span>
+
+        <span class="c1"># NOTE:</span>
+        <span class="c1"># Transforms are NOT reconstructed — metadata only.</span>
+        <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="InferenceParameter.to_metadata_string">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.to_metadata_string.html#inference.problem.InferenceParameter.to_metadata_string">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_metadata_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize metadata to a JSON string.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="InferenceParameter.from_metadata_string">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceParameter.from_metadata_string.html#inference.problem.InferenceParameter.from_metadata_string">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_metadata_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">metadata_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deserialize metadata from a JSON string.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_metadata</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">metadata_string</span><span class="p">))</span></div>
+</div>
+
+
+
+<span class="c1"># ------------------------------------------------- #</span>
+<span class="c1"># INFERENCE PROBLEM BASE CLASS                      #</span>
+<span class="c1"># ------------------------------------------------- #</span>
+<div class="viewcode-block" id="InferenceProblem">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.html#inference.problem.InferenceProblem">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InferenceProblem</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class representing a statistical inference problem.</span>
+
+<span class="sd">    An :class:`InferenceProblem` defines the **glue layer** between a physical</span>
+<span class="sd">    :class:`~models.core.base.Model`, observational data, and a statistical</span>
+<span class="sd">    inference engine. It combines a likelihood function with a structured</span>
+<span class="sd">    parameter management system, enabling consistent evaluation of priors,</span>
+<span class="sd">    likelihoods, and posteriors across a wide range of inference scenarios.</span>
+
+<span class="sd">    This class is intentionally **model-agnostic** and **sampler-agnostic**.</span>
+<span class="sd">    It does not implement any specific inference algorithm (e.g., MCMC, nested</span>
+<span class="sd">    sampling), but instead provides a standardized interface and bookkeeping</span>
+<span class="sd">    layer that samplers can rely on.</span>
+
+<span class="sd">    Core responsibilities</span>
+<span class="sd">    ---------------------</span>
+<span class="sd">    - **Parameter management**</span>
+<span class="sd">        Each model parameter is wrapped in an :class:`InferenceParameter`,</span>
+<span class="sd">        which tracks whether the parameter is free or fixed, its prior,</span>
+<span class="sd">        optional transformations, and initial value. Parameters retain a</span>
+<span class="sd">        deterministic ordering inherited from the underlying model to ensure</span>
+<span class="sd">        unambiguous vector representations.</span>
+
+<span class="sd">    - **Prior handling**</span>
+<span class="sd">        The inference problem evaluates log-priors for free parameters,</span>
+<span class="sd">        including optional transformations and Jacobian corrections. Convenience</span>
+<span class="sd">        helpers are provided to attach common parametric priors in a unit-aware</span>
+<span class="sd">        manner.</span>
+
+<span class="sd">    - **Likelihood evaluation**</span>
+<span class="sd">        The inference problem delegates likelihood computation to the associated</span>
+<span class="sd">        :class:`~inference.likelihood.base.Likelihood` object, which encapsulates</span>
+<span class="sd">        the model–data comparison logic.</span>
+
+<span class="sd">    - **Posterior evaluation**</span>
+<span class="sd">        The log-posterior is computed as the sum of the log-prior and</span>
+<span class="sd">        log-likelihood, with appropriate short-circuiting for invalid parameter</span>
+<span class="sd">        regions.</span>
+
+<span class="sd">    - **Packing and unpacking**</span>
+<span class="sd">        Utilities are provided to pack parameter dictionaries into NumPy arrays</span>
+<span class="sd">        (and vice versa), both for full parameter sets and for free parameters</span>
+<span class="sd">        only. This enables seamless integration with numerical optimizers and</span>
+<span class="sd">        samplers.</span>
+
+<span class="sd">    - **Validation**</span>
+<span class="sd">        A comprehensive validation routine ensures that the inference problem</span>
+<span class="sd">        is internally consistent and ready for execution before sampling begins.</span>
+
+<span class="sd">    Design philosophy</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    The :class:`InferenceProblem` enforces a clear separation of concerns:</span>
+
+<span class="sd">    - **Models** define physical parameters and predictions.</span>
+<span class="sd">    - **Likelihoods** define how predictions are compared to data.</span>
+<span class="sd">    - **Inference problems** define *which parameters are varied*, *how they are</span>
+<span class="sd">      constrained*, and *how probabilities are computed*.</span>
+<span class="sd">    - **Samplers** explore the resulting posterior distribution.</span>
+
+<span class="sd">    By isolating parameter bookkeeping and probability evaluation in this class,</span>
+<span class="sd">    Triceratops ensures that inference logic remains transparent, reproducible,</span>
+<span class="sd">    and extensible.</span>
+
+<span class="sd">    Intended usage</span>
+<span class="sd">    --------------</span>
+<span class="sd">    Users typically do not instantiate :class:`InferenceProblem` directly.</span>
+<span class="sd">    Instead, concrete subclasses may:</span>
+
+<span class="sd">    - Customize parameter freezing or transformations</span>
+<span class="sd">    - Define problem-specific validation logic</span>
+<span class="sd">    - Expose convenience constructors for common inference setups</span>
+
+<span class="sd">    Samplers and optimizers interact with instances of this class by calling</span>
+<span class="sd">    them as functions (to evaluate the log-posterior) or by using the provided</span>
+<span class="sd">    ``log_prior``, ``log_likelihood``, and ``log_posterior`` interfaces.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - All probability-returning methods return **log-probabilities**.</span>
+<span class="sd">    - Parameter transformations are assumed to operate in unconstrained</span>
+<span class="sd">      sampling space; inverse transforms are applied before evaluating priors.</span>
+<span class="sd">    - This class does not store sampling results; results are handled by</span>
+<span class="sd">      classes in :mod:`inference.sampling`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    inference.likelihood.base.Likelihood</span>
+<span class="sd">        Defines the model–data comparison used by the inference problem.</span>
+<span class="sd">    inference.prior</span>
+<span class="sd">        Collection of prior distributions usable with inference parameters.</span>
+<span class="sd">    inference.sampling</span>
+<span class="sd">        Samplers that operate on :class:`InferenceProblem` instances.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Initialization                                    #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Initialize the InferenceProblem with a Likelihood object.</span>
+<div class="viewcode-block" id="InferenceProblem.__init__">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.__init__.html#inference.problem.InferenceProblem.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">likelihood</span><span class="p">:</span> <span class="s2">&quot;Likelihood&quot;</span><span class="p">,</span> <span class="o">*</span><span class="n">_</span><span class="p">,</span> <span class="o">**</span><span class="n">__</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the :class:`InferenceProblem` object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        likelihood: `~inference.likelihood.base.Likelihood`</span>
+<span class="sd">            The likelihood object that defines the model and data for this inference problem.</span>
+<span class="sd">        args:</span>
+<span class="sd">            Additional positional arguments. (Not used in this base class.)</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments. (Not used in this base class.)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This constructor sets up the inference problem by storing the likelihood,</span>
+<span class="sd">        generating the parameter dictionary, and initializing the lock state. Further</span>
+<span class="sd">        initialization can be performed in subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Assign the likelihood to ``self.__likelihood__`` so that we can access the</span>
+        <span class="c1"># model and data from it. Properties are provided to give easy access to</span>
+        <span class="c1"># all 3.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span> <span class="o">=</span> <span class="n">likelihood</span>
+
+        <span class="c1"># Specify an explicit ordering for the parameters based on their order in</span>
+        <span class="c1"># the underlying model. This ensures that there is no ambiguity about parameter</span>
+        <span class="c1"># ordering when packing/unpacking parameter vectors.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">([</span><span class="n">p</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span><span class="p">])</span>
+
+        <span class="c1"># Generate the parameter dictionary with InferenceParameter objects so that</span>
+        <span class="c1"># we can manage them easily. These are basically empty shells of parameters</span>
+        <span class="c1"># that we can later fill in with priors, transforms, etc.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="n">model_parameter</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">InferenceParameter</span><span class="p">(</span>
+                <span class="n">model_parameter</span><span class="o">=</span><span class="n">model_parameter</span><span class="p">,</span>
+                <span class="n">freeze</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">inverse_transform</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">initial_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="k">for</span> <span class="n">model_parameter</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">PARAMETERS</span>
+        <span class="p">}</span></div>
+
+
+        <span class="c1"># Further initialization can be performed in subclasses.</span>
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Dunder Methods                                    #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the log-posterior at the given parameter vector.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta: np.ndarray</span>
+<span class="sd">            Array of free parameters in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-posterior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return the number of free parameters in the inference problem.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The number of free parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;model=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;n_free=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="si">}</span><span class="s2">, &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;n_fixed=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fixed_parameters</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Check if a parameter with the given name exists in the inference problem.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        item: str</span>
+<span class="sd">            The name of the parameter to check.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            `True` if the parameter exists, `False` otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceParameter&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">item</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">item</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&#39; not found in InferenceProblem.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Iterate over parameter names.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_repr_html_</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Rich HTML representation for Jupyter notebooks.&quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">row</span><span class="p">(</span><span class="n">cols</span><span class="p">):</span>
+            <span class="k">return</span> <span class="s2">&quot;&lt;tr&gt;&quot;</span> <span class="o">+</span> <span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;&lt;td&gt;</span><span class="si">{</span><span class="n">c</span><span class="si">}</span><span class="s2">&lt;/td&gt;&quot;</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cols</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;&lt;/tr&gt;&quot;</span>
+
+        <span class="n">rows</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">status</span> <span class="o">=</span> <span class="s2">&quot;Free&quot;</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span> <span class="k">else</span> <span class="s2">&quot;Fixed&quot;</span>
+            <span class="n">prior</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="k">else</span> <span class="s2">&quot;—&quot;</span>
+            <span class="n">rows</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="n">row</span><span class="p">(</span>
+                    <span class="p">[</span>
+                        <span class="n">name</span><span class="p">,</span>
+                        <span class="n">status</span><span class="p">,</span>
+                        <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="p">,</span>
+                        <span class="n">prior</span><span class="p">,</span>
+                    <span class="p">]</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="n">html</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;div style=&quot;font-family: monospace&quot;&gt;</span>
+<span class="s2">          &lt;h3&gt;InferenceProblem&lt;/h3&gt;</span>
+<span class="s2">          &lt;b&gt;Model:&lt;/b&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">          &lt;b&gt;Likelihood:&lt;/b&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">          &lt;b&gt;Data points:&lt;/b&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_data_points</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">          &lt;b&gt;Free parameters:&lt;/b&gt; </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">          &lt;br&gt;</span>
+<span class="s2">          &lt;table style=&quot;border-collapse: collapse;&quot;&gt;</span>
+<span class="s2">            &lt;thead&gt;</span>
+<span class="s2">              &lt;tr&gt;</span>
+<span class="s2">                &lt;th style=&quot;border-bottom: 1px solid black;&quot;&gt;Parameter&lt;/th&gt;</span>
+<span class="s2">                &lt;th style=&quot;border-bottom: 1px solid black;&quot;&gt;Status&lt;/th&gt;</span>
+<span class="s2">                &lt;th style=&quot;border-bottom: 1px solid black;&quot;&gt;Initial Value&lt;/th&gt;</span>
+<span class="s2">                &lt;th style=&quot;border-bottom: 1px solid black;&quot;&gt;Prior&lt;/th&gt;</span>
+<span class="s2">              &lt;/tr&gt;</span>
+<span class="s2">            &lt;/thead&gt;</span>
+<span class="s2">            &lt;tbody&gt;</span>
+<span class="s2">              </span><span class="si">{</span><span class="s2">&quot;&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">rows</span><span class="p">)</span><span class="si">}</span>
+<span class="s2">            &lt;/tbody&gt;</span>
+<span class="s2">          &lt;/table&gt;</span>
+<span class="s2">        &lt;/div&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">html</span>
+
+<div class="viewcode-block" id="InferenceProblem.summary">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.summary.html#inference.problem.InferenceProblem.summary">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a formatted summary of the inference problem.&quot;&quot;&quot;</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="s2">&quot;InferenceProblem&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Model: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Likelihood: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Number of data points: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">num_data_points</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="sa">f</span><span class="s2">&quot;Free parameters (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">,</span>
+        <span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">prior</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="k">else</span> <span class="s2">&quot;None&quot;</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: init=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">, prior=</span><span class="si">{</span><span class="n">prior</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_parameters</span><span class="p">:</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Fixed parameters (</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_fixed_parameters</span><span class="si">}</span><span class="s2">):&quot;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">fixed_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  - </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">: value=</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Basic Access Utilities                            #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+<div class="viewcode-block" id="InferenceProblem.keys">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.keys.html#inference.problem.InferenceProblem.keys">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of parameter names in the inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.values">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.values.html#inference.problem.InferenceProblem.values">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">values</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;InferenceParameter&quot;</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of inference parameters in the inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">values</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.items">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.items.html#inference.problem.InferenceProblem.items">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">items</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;InferenceParameter&quot;</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a list of (name, inference parameter) tuples in the inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">())</span></div>
+
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Likelihood / Inference Methods                    #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># These methods provide the final log-likelihood, log-prior, and log-posterior calculations</span>
+    <span class="c1"># by combining the model, data, and parameter information.</span>
+
+    <span class="c1"># Packing and unpacking of parameters.</span>
+<div class="viewcode-block" id="InferenceProblem.pack_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.pack_parameters.html#inference.problem.InferenceProblem.pack_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pack a dictionary of parameter values into a NumPy array in the model-defined parameter order.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping parameter names to values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            One-dimensional array of parameter values ordered according</span>
+<span class="sd">            to the model definition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Generate the packed parameter array.</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># Cycle through the parameters and assign them.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing value for parameter &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; when packing parameters.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">theta</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.unpack_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.unpack_parameters.html#inference.problem.InferenceProblem.unpack_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unpack_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unpack a NumPy array of parameter values into a dictionary keyed by parameter name.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta : np.ndarray</span>
+<span class="sd">            One-dimensional array of parameter values ordered according</span>
+<span class="sd">            to the model definition.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary mapping parameter names to values.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">)}</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.pack_free_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.pack_free_parameters.html#inference.problem.InferenceProblem.pack_free_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">pack_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Pack only the free parameters into a NumPy array in the model-defined parameter order.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping parameter names to values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray</span>
+<span class="sd">            One-dimensional array of free parameter values ordered according</span>
+<span class="sd">            to the model definition.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Generate the packed parameter array for free parameters only.</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># Cycle through the parameters and assign them if they are free.</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">:</span>
+                <span class="n">theta</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="n">j</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">theta</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.unpack_free_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.unpack_free_parameters.html#inference.problem.InferenceProblem.unpack_free_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unpack_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Expand a free-parameter vector into a full parameter dictionary, inserting frozen values where appropriate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta_free : np.ndarray</span>
+<span class="sd">            One-dimensional array of free parameter values ordered according</span>
+<span class="sd">            to the model definition.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary mapping parameter names to values, including frozen parameters.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">theta_free</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta_free</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">:</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">theta_free</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">theta_free</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mismatch between free parameters and theta_free length.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span></div>
+
+
+    <span class="c1"># Prior callables.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-prior for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta : np.ndarray</span>
+<span class="sd">            Array of parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-prior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Declare the log-prior variable.</span>
+        <span class="n">logp</span> <span class="o">=</span> <span class="mf">0.0</span>
+
+        <span class="c1"># Cycle through each of the parameters and compute the log-prior, adding</span>
+        <span class="c1"># it to the total.</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">):</span>
+            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+            <span class="c1"># if the parameter is frozen, skip it. If the prior is None, then we can</span>
+            <span class="c1"># also skip, although this should be caught when preparing for inference since</span>
+            <span class="c1"># there should be a prior defined for each free parameter.</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span> <span class="ow">or</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Get the parameter value, applying the inverse transform if necessary.</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="c1"># Compute the log-prior for this parameter.</span>
+            <span class="n">lp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+            <span class="c1"># Check if the log-prior is finite; if not, return -inf immediately.</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lp</span><span class="p">):</span>
+                <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+            <span class="n">logp</span> <span class="o">+=</span> <span class="n">lp</span>
+
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta : np.ndarray</span>
+<span class="sd">            Array of parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Unpack the parameters into a dictionary.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="c1"># Compute the log-likelihood using the likelihood object.</span>
+        <span class="n">logl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">logl</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-posterior for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta : np.ndarray</span>
+<span class="sd">            Array of parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-posterior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logp</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="n">logl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logl</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">return</span> <span class="n">logp</span> <span class="o">+</span> <span class="n">logl</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-prior for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta_free : np.ndarray</span>
+<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-prior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Expand the free parameters into a full parameter vector.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta_free : np.ndarray</span>
+<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Expand the free parameters into a full parameter vector.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-posterior for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta_free : np.ndarray</span>
+<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-posterior value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Expand the free parameters into a full parameter vector.</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+<div class="viewcode-block" id="InferenceProblem.log_prior">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_prior.html#inference.problem.InferenceProblem.log_prior">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-prior for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-prior value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_prior` method which</span>
+<span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.log_likelihood">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_likelihood.html#inference.problem.InferenceProblem.log_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-likelihood value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_likelihood` method which</span>
+<span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.log_posterior">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_posterior.html#inference.problem.InferenceProblem.log_posterior">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-posterior for a given set of parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-posterior value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_posterior` method which</span>
+<span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.log_free_prior">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_free_prior.html#inference.problem.InferenceProblem.log_free_prior">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_free_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-prior for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of free parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-prior value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_free_prior` method which</span>
+<span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_prior</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.log_free_likelihood">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_free_likelihood.html#inference.problem.InferenceProblem.log_free_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_free_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of free parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-likelihood value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_free_likelihood` method which</span>
+<span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_likelihood</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.log_free_posterior">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.log_free_posterior.html#inference.problem.InferenceProblem.log_free_posterior">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">:</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-posterior for a given set of free parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : dict</span>
+<span class="sd">            Dictionary of free parameter names and their corresponding values.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The computed log-posterior value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is a public wrapper around the internal :meth:`_log_free_posterior` method which</span>
+<span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Validation Methods                                #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+<div class="viewcode-block" id="InferenceProblem.validate_for_inference">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.validate_for_inference.html#inference.problem.InferenceProblem.validate_for_inference">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_for_inference</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate that the inference problem is fully and consistently specified and ready for execution by a sampler.</span>
+
+<span class="sd">        This method performs a final, comprehensive validation pass before inference.</span>
+<span class="sd">        It should be called explicitly by the user or implicitly by sampler interfaces.</span>
+
+<span class="sd">        Validation checks include:</span>
+
+<span class="sd">        - Every parameter has a unique name</span>
+<span class="sd">        - Every *free* parameter has a prior defined</span>
+<span class="sd">        - Parameter transforms and inverse transforms are consistent</span>
+<span class="sd">        - Initial values are finite and compatible with priors</span>
+<span class="sd">        - Packed parameter dimensionality is consistent</span>
+<span class="sd">        - The likelihood can be evaluated at the initial parameter point</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If any validation check fails.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Parameter bookkeeping                             #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Ensure that we have parameters defined, that they are unique etc.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;InferenceProblem has no parameters defined.&quot;</span><span class="p">)</span>
+
+        <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">names</span><span class="p">))</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Duplicate parameter names detected in inference problem.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate free / frozen parameters                 #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="n">free_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">free_params</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;All parameters are frozen. Inference requires at least one free parameter.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate priors                                   #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">free_params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No prior specified for free parameter &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># Test prior at initial value</span>
+            <span class="n">x0</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">x0</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inverse transform failed for parameter &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">lp</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">prior</span><span class="p">(</span><span class="n">x0</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prior evaluation failed for parameter &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">lp</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prior for parameter &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; evaluates to non-finite value at initial point.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate transforms                               #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">free_params</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">y</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">initial_value</span><span class="p">)</span>
+                    <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">inverse_transform</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Transform/inverse_transform failed for parameter &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Inverse transform produced non-finite value for &#39;</span><span class="si">{</span><span class="n">p</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate parameter packing                        #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">theta0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Failed to pack initial parameters: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">theta0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Packed parameters must be returned as a NumPy array.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">theta0</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Packed parameter vector must be one-dimensional.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate likelihood evaluation                    #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logl</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Likelihood evaluation failed at initial point: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logl</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Log-likelihood evaluates to non-finite value at initial parameters.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="c1"># Validate posterior evaluation                     #</span>
+        <span class="c1"># ------------------------------------------------- #</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta0</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Posterior evaluation failed at initial point: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logp</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;Log-posterior evaluates to non-finite value at initial parameters.&quot;</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Properties                                        #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Properties to access the likelihood, model, data, and parameters.</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Likelihood&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;`~inference.likelihood.base.Likelihood`: The likelihood associated with this inference problem.</span>
+
+<span class="sd">        The :class:`~inference.likelihood.base.Likelihood` object defines the model and data for the problem and,</span>
+<span class="sd">        most importantly, determines how the model predictions are compared to the data via the likelihood function.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;`~models.core.base.Model`: The model associated with this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;The data associated with this inference problem.</span>
+
+<span class="sd">        This data container is that data which is being fit by the problem. It is provided to the likelihood object</span>
+<span class="sd">        when it is initialized and is used during likelihood evaluations. This may be any number of data container types</span>
+<span class="sd">        defined in the :mod:`data` module.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_data</span>
+
+    <span class="c1"># --- Various Parameter focused properties --- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_order</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of str: The ordered names of the parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InferenceParameter</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: Dictionary of inference parameters keyed by parameter name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InferenceParameter</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: Dictionary of free (unfrozen) inference parameters keyed by parameter name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fixed_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">InferenceParameter</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: Dictionary of fixed (frozen) inference parameters keyed by parameter name.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">free_parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of str: The names of the free (unfrozen) parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fixed_parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of str: The names of the fixed (frozen) parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fixed_parameters</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: The total number of parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_free_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: The number of free (unfrozen) parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_fixed_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: The number of fixed (frozen) parameters in this inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">([</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">values</span><span class="p">()</span> <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">freeze</span><span class="p">])</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_dim</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Alias for :attr:`n_free_parameters`.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">num_data_points</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: The number of data points in the likelihood&#39;s data.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+
+    <span class="c1"># --- Sampling Utility Properties --- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;np.ndarray: The initial parameter vector of free parameters.</span>
+
+<span class="sd">        This is the packed array of initial values for all free parameters in the inference problem. It</span>
+<span class="sd">        is generally the starting point for samplers and optimizers. Note that this will only include free parameters;</span>
+<span class="sd">        fixed parameters are not included in this vector.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_full_theta</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;np.ndarray: The initial full parameter vector including fixed parameters.</span>
+
+<span class="sd">        This is the packed array of initial values for all parameters in the inference problem, including both</span>
+<span class="sd">        free and fixed parameters. It can be useful for evaluating the likelihood or posterior at the initial point.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">({</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">()})</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: The initial parameter dictionary of all parameters.</span>
+
+<span class="sd">        This is a dictionary mapping free parameter names to their initial values for all parameters</span>
+<span class="sd">        in the inference problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">free_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_full_params</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: The initial full parameter dictionary including fixed parameters.</span>
+
+<span class="sd">        This is a dictionary mapping all parameter names (free and fixed) to their initial values</span>
+<span class="sd">        in the inference problem.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">initial_value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">items</span><span class="p">()}</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">initial_log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: The log-posterior evaluated at the initial free parameter values.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_theta</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Prior Setting Helpers                             #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># These methods allow us to set up some basic priors quickly without</span>
+    <span class="c1"># requiring the user to manually define prior callables. We can also do</span>
+    <span class="c1"># some unit-handled priors this way, which is a nice feature.</span>
+    <span class="n">_PRIOR_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;uniform&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">UniformPrior</span><span class="p">,</span>
+            <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;loguniform&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">LogUniformPrior</span><span class="p">,</span>
+            <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;normal&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">NormalPrior</span><span class="p">,</span>
+            <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;lognormal&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">LogNormalPrior</span><span class="p">,</span>
+            <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">),</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;halfnormal&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">HalfNormalPrior</span><span class="p">,</span>
+            <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,),</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_coerce_to_base_units</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+        <span class="n">values</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_UnitBearingScalarLike&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Coerce unit-bearing values into the model parameter&#39;s base units.&quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">&#39; not found in inference problem.&quot;</span><span class="p">)</span>
+
+        <span class="n">base_unit</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">model_base_unit</span>
+
+        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">unit</span><span class="o">=</span><span class="n">base_unit</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">base_unit</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">out</span>
+
+<div class="viewcode-block" id="InferenceProblem.set_prior">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.set_prior.html#inference.problem.InferenceProblem.set_prior">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameter</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prior_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Set a prior distribution on a parameter.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameter : str</span>
+<span class="sd">            Name of the model parameter.</span>
+<span class="sd">        prior_type : str</span>
+<span class="sd">            Type of prior (&#39;uniform&#39;, &#39;loguniform&#39;, &#39;normal&#39;, etc.).</span>
+<span class="sd">        parameters</span>
+<span class="sd">            Parameters defining the prior.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">prior_type</span> <span class="o">=</span> <span class="n">prior_type</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">prior_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_PRIOR_REGISTRY</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Unknown prior type &#39;</span><span class="si">{</span><span class="n">prior_type</span><span class="si">}</span><span class="s2">&#39;. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available priors: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_PRIOR_REGISTRY</span><span class="p">)</span><span class="si">}</span><span class="s2">.</span><span class="se">\n</span><span class="s2"> &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Additional priors can be found in the `inference.prior` module.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">entry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">_PRIOR_REGISTRY</span><span class="p">[</span><span class="n">prior_type</span><span class="p">]</span>
+        <span class="n">prior_cls</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;class&quot;</span><span class="p">]</span>
+        <span class="n">unit_params</span> <span class="o">=</span> <span class="n">entry</span><span class="p">[</span><span class="s2">&quot;unit_params&quot;</span><span class="p">]</span>
+
+        <span class="c1"># Split parameters into unit-bearing and unitless</span>
+        <span class="n">unit_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">parameters</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">unit_params</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">}</span>
+
+        <span class="c1"># Coerce unit-bearing parameters</span>
+        <span class="n">coerced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coerce_to_base_units</span><span class="p">(</span><span class="n">parameter</span><span class="p">,</span> <span class="n">unit_values</span><span class="p">)</span>
+
+        <span class="c1"># Merge back</span>
+        <span class="n">final_params</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="n">final_params</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">coerced</span><span class="p">)</span>
+
+        <span class="c1"># Assign prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">prior</span> <span class="o">=</span> <span class="n">prior_cls</span><span class="p">(</span><span class="o">**</span><span class="n">final_params</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------- #</span>
+    <span class="c1"># Freezing and Unfreezing Parameters                #</span>
+    <span class="c1"># ------------------------------------------------- #</span>
+<div class="viewcode-block" id="InferenceProblem.freeze_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.freeze_parameters.html#inference.problem.InferenceProblem.freeze_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">freeze_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Freeze (fix) specified parameters in the inference problem.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : list or str</span>
+<span class="sd">            Parameter name or list of parameter names to freeze.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in inference problem.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+
+<div class="viewcode-block" id="InferenceProblem.unfreeze_parameters">
+<a class="viewcode-back" href="../../_as_gen/inference.problem.InferenceProblem.unfreeze_parameters.html#inference.problem.InferenceProblem.unfreeze_parameters">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">unfreeze_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Unfreeze (free) specified parameters in the inference problem.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : list or str</span>
+<span class="sd">            Parameter name or list of parameter names to unfreeze.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">parameters</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="n">parameters</span> <span class="o">=</span> <span class="p">[</span><span class="n">parameters</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Parameter &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found in inference problem.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="kc">False</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1471 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radiation.synchrotron.cooling &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/radiation/synchrotron/cooling';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">radiation.synchrotron.cooling</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for radiation.synchrotron.cooling</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Cooling module for synchrotron radiation processes in triceratops.</span>
+
+<span class="sd">This module provides functions to calculate the cooling rates of electrons</span>
+<span class="sd">due to synchrotron radiation in magnetic fields. It includes functions to</span>
+<span class="sd">compute the synchrotron cooling time and the energy loss rate for electrons</span>
+<span class="sd">in a given magnetic field strength.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">electron_rest_mass_cgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">_opt_compute_synch_frequency</span>
+
+<span class="c1"># ========================================================= #</span>
+<span class="c1"># CGS Constants and Coefficients                            #</span>
+<span class="c1"># ========================================================= #</span>
+<span class="n">_cooling_frequency_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="mi">18</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">sigma_T</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+<span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="n">_synchrotron_cooling_rate_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">sigma_T</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="n">_synchrotron_cooling_time_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">sigma_T</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+<span class="n">_IC_cooling_rate_coefficient_cgs</span> <span class="o">=</span> <span class="n">constants</span><span class="o">.</span><span class="n">sigma_T</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">_IC_cooling_time_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="mi">3</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span><span class="o">**</span><span class="mi">3</span>
+<span class="p">)</span> <span class="o">/</span> <span class="n">constants</span><span class="o">.</span><span class="n">sigma_T</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># ========================================================= #</span>
+<span class="c1"># Optimized Low-Level Callables                             #</span>
+<span class="c1"># ========================================================= #</span>
+
+
+<span class="c1"># --- Generic Functions --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_cooling_time</span><span class="p">(</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">cooling_rate</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the radiative cooling time from an energy loss rate.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    gamma : float or array-like</span>
+<span class="sd">        Electron Lorentz factor.</span>
+
+<span class="sd">    cooling_rate : float or array-like</span>
+<span class="sd">        Energy loss rate dE/dt in erg/s (CGS).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t_cool : float or array-like</span>
+<span class="sd">        Cooling time in seconds (CGS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">electron_rest_mass_cgs</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">/</span> <span class="n">cooling_rate</span>
+
+
+<span class="c1"># --- Synchrotron Cooling --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_synchrotron_cooling_rate</span><span class="p">(</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the synchrotron energy loss rate dE/dt (CGS, optimized).</span>
+
+<span class="sd">    Assumes an isotropic pitch-angle distribution and the Thomson regime.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    B : float or array-like</span>
+<span class="sd">        Magnetic field strength in Gauss.</span>
+
+<span class="sd">    gamma : float or array-like</span>
+<span class="sd">        Electron Lorentz factor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dEdt : float or array-like</span>
+<span class="sd">        Synchrotron cooling rate in erg/s (CGS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_synchrotron_cooling_rate_coefficient_cgs</span> <span class="o">*</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span><span class="o">**</span><span class="mi">2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_synchrotron_cooling_time</span><span class="p">(</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the synchrotron cooling time t_cool (CGS, optimized).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    B : float or array-like</span>
+<span class="sd">        Magnetic field strength in Gauss.</span>
+
+<span class="sd">    gamma : float or array-like</span>
+<span class="sd">        Electron Lorentz factor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t_cool : float or array-like</span>
+<span class="sd">        Synchrotron cooling time in seconds (CGS).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This expression follows directly from the synchrotron cooling rate:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        t_{cool} = \frac{6\pi m_e c}{\sigma_T B^2 \gamma}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_synchrotron_cooling_time_coefficient_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_synchrotron_cooling_gamma</span><span class="p">(</span>
+    <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the synchrotron cooling Lorentz factor gamma_c (CGS, optimized).</span>
+
+<span class="sd">    The cooling Lorentz factor is defined by the condition</span>
+<span class="sd">    t_cool(gamma_c) = t.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    B : float or array-like</span>
+<span class="sd">        Magnetic field strength in Gauss.</span>
+
+<span class="sd">    t : float or array-like</span>
+<span class="sd">        Dynamical time in seconds.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gamma_c : float or array-like</span>
+<span class="sd">        Synchrotron cooling Lorentz factor.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The analytic expression is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \gamma_c = \frac{6\pi m_e c}{\sigma_T B^2 t}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_synchrotron_cooling_time_coefficient_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+
+
+<span class="c1"># --- IC Cooling --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_IC_cooling_rate</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the inverse Compton energy loss rate dE/dt (CGS, optimized).</span>
+
+<span class="sd">    Assumes an isotropic radiation field and the Thomson regime.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L_bol : float or array-like</span>
+<span class="sd">        Bolometric luminosity of the radiation field in erg/s.</span>
+
+<span class="sd">    R : float or array-like</span>
+<span class="sd">        Distance from the radiation source in cm.</span>
+
+<span class="sd">    gamma : float or array-like</span>
+<span class="sd">        Electron Lorentz factor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dEdt : float or array-like</span>
+<span class="sd">        Inverse Compton cooling rate in erg/s (CGS).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_IC_cooling_rate_coefficient_cgs</span> <span class="o">*</span> <span class="p">(</span><span class="n">L_bol</span> <span class="o">/</span> <span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="o">**</span><span class="mi">2</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_IC_cooling_time</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the inverse Compton cooling time t_cool (CGS, optimized).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L_bol : float or array-like</span>
+<span class="sd">        Bolometric luminosity of the radiation field in erg/s.</span>
+
+<span class="sd">    R : float or array-like</span>
+<span class="sd">        Distance from the radiation source in cm.</span>
+
+<span class="sd">    gamma : float or array-like</span>
+<span class="sd">        Electron Lorentz factor.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    t_cool : float or array-like</span>
+<span class="sd">        Inverse Compton cooling time in seconds (CGS).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This expression follows directly from the IC cooling rate:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        t_{cool}</span>
+<span class="sd">        = \frac{3 m_e c^3 R^2}{\sigma_T L_{bol} \gamma}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_IC_cooling_time_coefficient_cgs</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">L_bol</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_opt_compute_IC_cooling_gamma</span><span class="p">(</span>
+    <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the inverse Compton cooling Lorentz factor gamma_IC (CGS, optimized).</span>
+
+<span class="sd">    The cooling Lorentz factor is defined by the condition</span>
+<span class="sd">    t_cool(gamma_IC) = t.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L_bol : float or array-like</span>
+<span class="sd">        Bolometric luminosity of the radiation field in erg/s.</span>
+
+<span class="sd">    R : float or array-like</span>
+<span class="sd">        Distance from the radiation source in cm.</span>
+
+<span class="sd">    t : float or array-like</span>
+<span class="sd">        Dynamical time in seconds.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    gamma_IC : float or array-like</span>
+<span class="sd">        Inverse Compton cooling Lorentz factor.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The analytic expression is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \gamma_{IC}</span>
+<span class="sd">        = \frac{3 m_e c^3 R^2}{\sigma_T L_{bol} t}</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_IC_cooling_time_coefficient_cgs</span> <span class="o">*</span> <span class="p">(</span><span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">L_bol</span><span class="p">)</span> <span class="o">/</span> <span class="n">t</span>
+
+
+<span class="c1"># ======================================================== #</span>
+<span class="c1"># Cooling Engines                                          #</span>
+<span class="c1"># ======================================================== #</span>
+<div class="viewcode-block" id="SynchrotronCoolingEngine">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynchrotronCoolingEngine</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for radiative electron cooling engines.</span>
+
+<span class="sd">    A cooling engine encapsulates a specific radiative cooling channel</span>
+<span class="sd">    (e.g. synchrotron, inverse Compton) and provides methods to compute:</span>
+
+<span class="sd">    - the radiative energy loss rate,</span>
+<span class="sd">    - the corresponding cooling time,</span>
+<span class="sd">    - the cooling Lorentz factor,</span>
+<span class="sd">    - and a *characteristic synchrotron frequency* associated with that</span>
+<span class="sd">      Lorentz factor when applicable.</span>
+
+<span class="sd">    Cooling engines are **stateless with respect to physical parameters**.</span>
+<span class="sd">    All quantities (magnetic fields, radiation fields, timescales, etc.)</span>
+<span class="sd">    must be supplied explicitly at call time. This design is intentional</span>
+<span class="sd">    and supports efficient inference workflows.</span>
+
+<span class="sd">    Subclasses must implement the private ``_compute_*`` methods in CGS</span>
+<span class="sd">    units. Public ``compute_*`` methods may perform unit coercion or</span>
+<span class="sd">    validation before dispatching to these implementations.</span>
+
+<span class="sd">    See :ref:`synchrotron_theory` for the physical context in which these</span>
+<span class="sd">    engines are used.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SynchrotronCoolingEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.__init__.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the cooling engine.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Cooling engines should not store physical parameters internally.</span>
+<span class="sd">        They serve as structured, documented dispatch layers over</span>
+<span class="sd">        optimized low-level kernels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span></div>
+
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Core Computation Interface (CGS, no units)                #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the radiative energy loss rate.</span>
+
+<span class="sd">        Returns the instantaneous energy loss rate</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left(\frac{dE}{dt}\right)</span>
+
+<span class="sd">        in CGS units (erg/s).</span>
+
+<span class="sd">        Subclasses must document the physical assumptions and required</span>
+<span class="sd">        parameters (e.g. magnetic field strength, radiation field</span>
+<span class="sd">        properties, Lorentz factor).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the radiative cooling time.</span>
+
+<span class="sd">        Returns the characteristic cooling time</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            t_{\rm cool}(\gamma)</span>
+<span class="sd">            = \frac{E}{|dE/dt|}</span>
+
+<span class="sd">        in CGS units (seconds).</span>
+
+<span class="sd">        Subclasses must specify the regime and assumptions under which</span>
+<span class="sd">        the expression is valid.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the cooling Lorentz factor.</span>
+
+<span class="sd">        The cooling Lorentz factor :math:`\gamma_c` is defined implicitly by</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            t_{\rm cool}(\gamma_c) = t,</span>
+
+<span class="sd">        where :math:`t` is a supplied dynamical or observational timescale.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gamma_c : float or array-like</span>
+<span class="sd">            Cooling Lorentz factor (dimensionless).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_characteristic_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute a characteristic synchrotron frequency.</span>
+
+<span class="sd">        This method returns the **synchrotron characteristic frequency**</span>
+<span class="sd">        associated with a physically meaningful Lorentz factor</span>
+<span class="sd">        (e.g. :math:`\gamma_c`, :math:`\gamma_m`, or :math:`\gamma_{\rm IC}`).</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - Not all cooling channels define an intrinsic emission frequency.</span>
+<span class="sd">        - For channels such as inverse Compton cooling, this method should</span>
+<span class="sd">          return the synchrotron frequency corresponding to the cooled</span>
+<span class="sd">          electrons, or explicitly raise ``NotImplementedError`` if such</span>
+<span class="sd">          a mapping is undefined.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Public Interface Methods                                  #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+<div class="viewcode-block" id="SynchrotronCoolingEngine.compute_cooling_rate">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_rate.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_rate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Public wrapper for computing the radiative cooling rate.</span>
+
+<span class="sd">        Subclasses may override this method to perform unit coercion</span>
+<span class="sd">        or validation before dispatching to the core implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_rate</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronCoolingEngine.compute_cooling_time">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_time.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Public wrapper for computing the radiative cooling time.</span>
+
+<span class="sd">        Subclasses may override this method to perform unit coercion</span>
+<span class="sd">        or validation before dispatching to the core implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_time</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronCoolingEngine.compute_cooling_gamma">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_gamma.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_cooling_gamma">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_gamma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Public wrapper for computing the cooling Lorentz factor.</span>
+
+<span class="sd">        Subclasses may override this method to perform unit coercion</span>
+<span class="sd">        or validation before dispatching to the core implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_gamma</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronCoolingEngine.compute_characteristic_frequency">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_characteristic_frequency.html#radiation.synchrotron.cooling.SynchrotronCoolingEngine.compute_characteristic_frequency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_characteristic_frequency</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Public wrapper for computing a characteristic synchrotron frequency.</span>
+
+<span class="sd">        Subclasses may override this method to perform unit coercion,</span>
+<span class="sd">        validation, or composition with other physical processes.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_characteristic_frequency</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SynchrotronRadiativeCoolingEngine</span><span class="p">(</span><span class="n">SynchrotronCoolingEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Synchrotron radiative cooling engine.</span>
+
+<span class="sd">    This engine provides synchrotron cooling rates, cooling times,</span>
+<span class="sd">    cooling Lorentz factors, and the associated characteristic</span>
+<span class="sd">    synchrotron frequency for relativistic electrons in a magnetic field.</span>
+
+<span class="sd">    Cooling rates and cooling times are always **ensemble-averaged**</span>
+<span class="sd">    (isotropic pitch-angle distribution, Thomson regime).</span>
+
+<span class="sd">    The pitch-angle treatment only affects the mapping from Lorentz</span>
+<span class="sd">    factor :math:`\gamma` to the characteristic synchrotron frequency</span>
+<span class="sd">    :math:`\nu`.</span>
+
+<span class="sd">    See :ref:`synchrotron_theory` for the full physical derivation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Initialization                                           #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.__init__.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch_averaged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the synchrotron cooling engine.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pitch_averaged : bool, optional</span>
+<span class="sd">            Whether to use the pitch-angle–averaged synchrotron</span>
+<span class="sd">            characteristic frequency.</span>
+
+<span class="sd">            If True (default), the mapping uses</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \langle \sin\alpha \rangle = \frac{2}{\pi}</span>
+
+<span class="sd">            If False, a specific pitch angle must be supplied via</span>
+<span class="sd">            ``sin_alpha`` when computing the characteristic frequency.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This flag **does not** affect cooling rates or cooling times,</span>
+<span class="sd">        which are always ensemble-averaged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_average</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Core Computation Methods (CGS, no units)                  #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">_opt_compute_synchrotron_cooling_rate</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">_opt_compute_synchrotron_cooling_time</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_gamma</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">_opt_compute_synchrotron_cooling_gamma</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_characteristic_frequency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">_opt_compute_synch_frequency</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+            <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+            <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
+            <span class="n">pitch_average</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch_average</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Public Interface Methods                                  #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine.compute_cooling_rate">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_rate.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the synchrotron energy loss rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength. Default units are Gauss.</span>
+
+<span class="sd">        gamma : float or array-like</span>
+<span class="sd">            Electron Lorentz factor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dEdt : astropy.units.Quantity</span>
+<span class="sd">            Synchrotron cooling rate in erg/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_rate</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine.compute_cooling_time">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the synchrotron cooling time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength. Default units are Gauss.</span>
+
+<span class="sd">        gamma : float or array-like</span>
+<span class="sd">            Electron Lorentz factor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t_cool : astropy.units.Quantity</span>
+<span class="sd">            Synchrotron cooling time in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">t_cool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_time</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t_cool</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine.compute_cooling_gamma">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_gamma.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_gamma">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_gamma</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the synchrotron cooling Lorentz factor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength. Default units are Gauss.</span>
+
+<span class="sd">        t : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Dynamical time. Default units are seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gamma_c : float or array-like</span>
+<span class="sd">            Synchrotron cooling Lorentz factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_gamma</span><span class="p">(</span><span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_characteristic_frequency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the synchrotron characteristic frequency.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength. Default units are Gauss.</span>
+
+<span class="sd">        gamma : float or array-like</span>
+<span class="sd">            Electron Lorentz factor.</span>
+
+<span class="sd">        sin_alpha : float or array-like, optional</span>
+<span class="sd">            Sine of the pitch angle. Only used if ``pitch_averaged=False``.</span>
+<span class="sd">            Default corresponds to :math:`\alpha = \pi/2`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nu : astropy.units.Quantity</span>
+<span class="sd">            Synchrotron characteristic frequency in Hz.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_characteristic_frequency</span><span class="p">(</span>
+            <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+            <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="InverseComptonCoolingEngine">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">InverseComptonCoolingEngine</span><span class="p">(</span><span class="n">SynchrotronCoolingEngine</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverse Compton radiative cooling engine.</span>
+
+<span class="sd">    This engine provides inverse Compton (IC) cooling rates, cooling times,</span>
+<span class="sd">    and cooling Lorentz factors for relativistic electrons interacting with</span>
+<span class="sd">    an ambient radiation field.</span>
+
+<span class="sd">    The implementation assumes:</span>
+
+<span class="sd">    - an isotropic radiation field,</span>
+<span class="sd">    - the Thomson scattering regime,</span>
+<span class="sd">    - no Klein–Nishina corrections.</span>
+
+<span class="sd">    Unlike synchrotron cooling, inverse Compton cooling does **not**</span>
+<span class="sd">    define a unique characteristic synchrotron frequency. Instead, IC</span>
+<span class="sd">    cooling modifies the electron energy distribution, which subsequently</span>
+<span class="sd">    affects the emitted radiation through other channels.</span>
+
+<span class="sd">    See :ref:`synchrotron_theory` for discussion of radiative cooling</span>
+<span class="sd">    processes and their role in shaping non-thermal electron populations.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Initialization                                           #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+<div class="viewcode-block" id="InverseComptonCoolingEngine.__init__">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.__init__.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pitch_averaged</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the inverse Compton cooling engine.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        pitch_averaged : bool, optional</span>
+<span class="sd">            Whether to use the pitch-angle–averaged synchrotron</span>
+<span class="sd">            characteristic frequency.</span>
+
+<span class="sd">            If True (default), the mapping uses</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \langle \sin\alpha \rangle = \frac{2}{\pi}</span>
+
+<span class="sd">            If False, a specific pitch angle must be supplied via</span>
+<span class="sd">            ``sin_alpha`` when computing the characteristic frequency.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This flag **does not** affect cooling rates or cooling times,</span>
+<span class="sd">        which are always ensemble-averaged.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_average</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Core Computation Methods (CGS, no units)                  #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inverse Compton energy loss rate.</span>
+
+<span class="sd">        Implements</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \left(\frac{dE}{dt}\right)_{\rm IC}</span>
+<span class="sd">            = \frac{4}{3}\,\sigma_T c\,\gamma^2\,u_{\rm rad}</span>
+
+<span class="sd">        with the radiation energy density</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            u_{\rm rad} = \frac{L_{\rm bol}}{4\pi R^2 c}</span>
+
+<span class="sd">        See :ref:`synchrotron_theory`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_opt_compute_IC_cooling_rate</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inverse Compton cooling time.</span>
+
+<span class="sd">        Implements</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            t_{\rm cool}(\gamma)</span>
+<span class="sd">            = \frac{3 m_e c^3 R^2}{\sigma_T L_{\rm bol}\,\gamma}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_opt_compute_IC_cooling_time</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_cooling_gamma</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Inverse Compton cooling Lorentz factor.</span>
+
+<span class="sd">        Defined implicitly by</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            t_{\rm cool}(\gamma_{\rm IC}) = t</span>
+
+<span class="sd">        giving</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \gamma_{\rm IC}</span>
+<span class="sd">            = \frac{3 m_e c^3 R^2}{\sigma_T L_{\rm bol} t}</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">_opt_compute_IC_cooling_gamma</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_characteristic_frequency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+        <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Synchrotron characteristic frequency of inverse-Compton–cooled electrons.</span>
+
+<span class="sd">        This computes the synchrotron frequency associated with electrons</span>
+<span class="sd">        at the inverse Compton cooling Lorentz factor :math:`\gamma_{\rm IC}`.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is **not** an inverse Compton emission frequency. It is the</span>
+<span class="sd">        synchrotron frequency corresponding to IC-cooled electrons:</span>
+
+<span class="sd">        .. math::</span>
+
+<span class="sd">            \gamma_{\rm IC}</span>
+<span class="sd">            = \frac{3 m_e c^3 R^2}{\sigma_T L_{\rm bol} t}</span>
+
+<span class="sd">            \nu_{\rm syn, IC}</span>
+<span class="sd">            = \nu_{\rm syn}(\gamma_{\rm IC}, B)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">gamma_IC</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_gamma</span><span class="p">(</span>
+            <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_opt_compute_synch_frequency</span><span class="p">(</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_IC</span><span class="p">,</span>
+            <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+            <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
+            <span class="n">pitch_average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># --------------------------------------------------------- #</span>
+    <span class="c1"># Public Interface Methods                                  #</span>
+    <span class="c1"># --------------------------------------------------------- #</span>
+<div class="viewcode-block" id="InverseComptonCoolingEngine.compute_cooling_rate">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_rate.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_rate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_rate</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the inverse Compton energy loss rate.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        L_bol : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Bolometric luminosity of the radiation field.</span>
+<span class="sd">            Default units are erg/s.</span>
+
+<span class="sd">        R : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Distance from the radiation source.</span>
+<span class="sd">            Default units are cm.</span>
+
+<span class="sd">        gamma : float or array-like</span>
+<span class="sd">            Electron Lorentz factor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dEdt : astropy.units.Quantity</span>
+<span class="sd">            Inverse Compton cooling rate in erg/s.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">L_bol</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+
+        <span class="n">rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_rate</span><span class="p">(</span>
+            <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">rate</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InverseComptonCoolingEngine.compute_cooling_time">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_time.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_time">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_time</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the inverse Compton cooling time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        L_bol : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Bolometric luminosity of the radiation field.</span>
+<span class="sd">            Default units are erg/s.</span>
+
+<span class="sd">        R : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Distance from the radiation source.</span>
+<span class="sd">            Default units are cm.</span>
+
+<span class="sd">        gamma : float or array-like</span>
+<span class="sd">            Electron Lorentz factor.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        t_cool : astropy.units.Quantity</span>
+<span class="sd">            Inverse Compton cooling time in seconds.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">L_bol</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+
+        <span class="n">t_cool</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_time</span><span class="p">(</span>
+            <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">gamma</span><span class="o">=</span><span class="n">gamma</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">t_cool</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span></div>
+
+
+<div class="viewcode-block" id="InverseComptonCoolingEngine.compute_cooling_gamma">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_cooling_gamma</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the inverse Compton cooling Lorentz factor.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        L_bol : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Bolometric luminosity of the radiation field.</span>
+<span class="sd">            Default units are erg/s.</span>
+
+<span class="sd">        R : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Distance from the radiation source.</span>
+<span class="sd">            Default units are cm.</span>
+
+<span class="sd">        t : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Dynamical time.</span>
+<span class="sd">            Default units are seconds.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gamma_IC : float or array-like</span>
+<span class="sd">            Inverse Compton cooling Lorentz factor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">L_bol</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_cooling_gamma</span><span class="p">(</span>
+            <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="InverseComptonCoolingEngine.compute_characteristic_frequency">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_characteristic_frequency.html#radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_characteristic_frequency">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_characteristic_frequency</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">L_bol</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">R</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">t</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">sin_alpha</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the synchrotron characteristic frequency corresponding to inverse-Compton–cooled electrons.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        B : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Magnetic field strength. Default units are Gauss.</span>
+
+<span class="sd">        L_bol : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Bolometric luminosity of the radiation field.</span>
+<span class="sd">            Default units are erg/s.</span>
+
+<span class="sd">        R : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Distance from the radiation source.</span>
+<span class="sd">            Default units are cm.</span>
+
+<span class="sd">        t : float, array-like, or astropy.units.Quantity</span>
+<span class="sd">            Dynamical time. Default units are seconds.</span>
+
+<span class="sd">        sin_alpha : float or array-like, optional</span>
+<span class="sd">            Sine of the pitch angle. Only relevant if pitch-angle</span>
+<span class="sd">            averaging is disabled elsewhere.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        nu : astropy.units.Quantity</span>
+<span class="sd">            Synchrotron characteristic frequency of IC-cooled electrons.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+        <span class="n">L_bol</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L_bol</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+
+        <span class="n">nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_characteristic_frequency</span><span class="p">(</span>
+            <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+            <span class="n">L_bol</span><span class="o">=</span><span class="n">L_bol</span><span class="p">,</span>
+            <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+            <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span>
+            <span class="n">sin_alpha</span><span class="o">=</span><span class="n">sin_alpha</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">nu</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

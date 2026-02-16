@@ -1,0 +1,740 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>radiation.synchrotron.utils &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/radiation/synchrotron/utils';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">radiation.synchrotron.utils</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for radiation.synchrotron.utils</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">General utilities for synchrotron radiation calculations.</span>
+
+<span class="sd">This module contains some catch-all utility functions for synchrotron radiation</span>
+<span class="sd">calculations, including functions to compute the :math:`c_5(p)` and :math:`c_6(p)` coefficients</span>
+<span class="sd">for synchrotron emissivity and absorption from a power-law population of electrons.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">gamma</span> <span class="k">as</span> <span class="n">gamma_func</span>
+
+<span class="c1"># =========================================== #</span>
+<span class="c1"># CGS CONSTANTS FOR SYNCHROTRON CALCULATIONS  #</span>
+<span class="c1"># =========================================== #</span>
+<span class="n">_c5_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">16</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="n">_c6_coefficient_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">72</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">constants</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">m_e</span><span class="o">**</span><span class="mi">5</span> <span class="o">*</span> <span class="n">constants</span><span class="o">.</span><span class="n">c</span><span class="o">**</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+
+<span class="n">c_1</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span> <span class="o">/</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">m_e</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">**</span><span class="mi">5</span><span class="p">))</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity: Synchrotron radiation constant :math:`c_1`.</span>
+
+<span class="sd">The :math:`c_1` constant is the coefficient appearing in the synchrotron frequency :footcite:p:`1970ranp.book.....P`</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    \nu_c = \frac{3e}{4\pi m_e c} B\sin \alpha \Gamma^2 = c_1 B \sin \alpha E^2.</span>
+
+<span class="sd">Thus,</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    c_1 = \frac{3}{4\pi} \frac{e}{m_e^3 c^5}.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. footbibliography::</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">c_1_cgs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">c_1</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="sd">&quot;&quot;&quot;float: Synchrotron radiation constant :math:`c_1` in CGS units.&quot;&quot;&quot;</span>
+
+<span class="c1"># ------------------------------------------------------------------</span>
+<span class="c1"># Synchrotron normalization constants (chi)</span>
+<span class="c1"># ------------------------------------------------------------------</span>
+
+<span class="n">chi_cgs</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">_c5_coefficient_cgs</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">float</span>
+<span class="sd">    Numerical synchrotron normalization coefficient</span>
+<span class="sd">    :math:`\chi \equiv 4 c_5`.</span>
+
+<span class="sd">    This constant represents **only the coefficient prefactor** extracted from</span>
+<span class="sd">    the standard synchrotron emissivity constant :math:`c_5` (in CGS units).</span>
+<span class="sd">    It is used as a bookkeeping convenience in SED normalization expressions</span>
+<span class="sd">    and does **not** by itself represent a physical power, emissivity, or flux.</span>
+
+<span class="sd">    In particular, :math:`\chi` does *not* include:</span>
+
+<span class="sd">    - electron distribution normalization,</span>
+<span class="sd">    - magnetic-field or frequency dependence,</span>
+<span class="sd">    - pitch-angle averaging,</span>
+<span class="sd">    - geometric or distance factors.</span>
+
+<span class="sd">    These contributions are applied explicitly elsewhere in the SED</span>
+<span class="sd">    construction.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">_log_chi_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">chi_cgs</span><span class="p">)</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">float</span>
+<span class="sd">    Natural logarithm of the synchrotron normalization coefficient</span>
+<span class="sd">    :math:`\chi = 4 c_5`.</span>
+
+<span class="sd">    Stored separately to support numerically stable, log-space SED</span>
+<span class="sd">    normalization and inference workflows.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">chi_cgs_iso</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span> <span class="n">chi_cgs</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">float</span>
+<span class="sd">    Synchrotron normalization coefficient for an **isotropic pitch-angle</span>
+<span class="sd">    distribution**.</span>
+
+<span class="sd">    This quantity applies the standard isotropic pitch-angle averaging factor</span>
+<span class="sd">    :math:`2 / \pi` to the coefficient-only normalization constant</span>
+<span class="sd">    :math:`\chi = 4 c_5`.</span>
+
+<span class="sd">    As with ``chi_cgs``, this constant represents only the numerical prefactor</span>
+<span class="sd">    and must be combined with additional physical factors to construct a full</span>
+<span class="sd">    synchrotron emissivity or SED normalization.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">_log_chi_cgs_iso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">chi_cgs_iso</span><span class="p">)</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">float</span>
+<span class="sd">    Natural logarithm of the isotropic-pitch-angle synchrotron normalization</span>
+<span class="sd">    coefficient.</span>
+
+<span class="sd">    Used internally for log-space normalization and inference when</span>
+<span class="sd">    pitch-angle-averaged synchrotron emissivities are assumed.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="c1"># =========================================== #</span>
+<span class="c1"># C5 AND C6 PARAMETERS                        #</span>
+<span class="c1"># =========================================== #</span>
+<span class="c1"># These are the c5 and c6 coefficients as defined in Pacholczyk (1970) and used in</span>
+<span class="c1"># deMarchi+22 which are common in radio supernova modeling.</span>
+<div class="viewcode-block" id="compute_c5_parameter">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.utils.compute_c5_parameter.html#radiation.synchrotron.utils.compute_c5_parameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_c5_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the :math:`c_5(p)` coefficient for synchrotron assuming a power-law electron population.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float or array-like, optional</span>
+<span class="sd">        Power-law index of the electron Lorentz factor (or energy) distribution,</span>
+<span class="sd">        :math:`N(\Gamma) \propto \Gamma^{-p}`. Default is ``3.0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The synchrotron emissivity coefficient :math:`c_5(p)` in CGS units.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The radiative power emitted per unit frequency by a single relativistic</span>
+<span class="sd">    electron with Lorentz factor :math:`\Gamma` spiraling in a magnetic field</span>
+<span class="sd">    :math:`B` is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        P(\nu, \Gamma)</span>
+<span class="sd">        =</span>
+<span class="sd">        \frac{\sqrt{3}\, e^3 B}{m_e c^2}</span>
+<span class="sd">        \sin\alpha\,</span>
+<span class="sd">        F\!\left(\frac{\nu}{\nu_c}\right),</span>
+
+<span class="sd">    where :math:`\alpha` is the pitch angle, :math:`F(x)` is the</span>
+<span class="sd">    **synchrotron kernel**</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F(x) = x \int_x^\infty K_{5/3}(z)\, dz,</span>
+
+<span class="sd">    and the critical frequency is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \nu_c</span>
+<span class="sd">        =</span>
+<span class="sd">        \frac{3 e B \sin\alpha}{4\pi m_e c}\, \Gamma^2.</span>
+
+<span class="sd">    For an isotropic distribution of pitch angles and a power-law distribution</span>
+<span class="sd">    of electron Lorentz factors,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        N(\Gamma)\, d\Gamma</span>
+<span class="sd">        =</span>
+<span class="sd">        N_0\, \Gamma^{-p}\, d\Gamma,</span>
+
+<span class="sd">    where :math:`N_0` is the normalization of the electron number density</span>
+<span class="sd">    (units of :math:`\mathrm{cm^{-3}}`), the synchrotron emissivity</span>
+<span class="sd">    :math:`j_\nu` (power per unit volume per unit frequency per unit solid angle)</span>
+<span class="sd">    is obtained by integrating the single-electron power over the distribution:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu</span>
+<span class="sd">        =</span>
+<span class="sd">        \int P(\nu, \Gamma)\, N(\Gamma)\, d\Gamma.</span>
+
+<span class="sd">    Carrying out this integration analytically yields</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu</span>
+<span class="sd">        =</span>
+<span class="sd">        c_5(p)\,N_0\,(m_e c^2)^{p-1}</span>
+<span class="sd">        \left(B\sin\alpha\right)^{(p+1)/2}</span>
+<span class="sd">        \left(\frac{\nu}{2c_1}\right)^{-(p-1)/2}.</span>
+
+<span class="sd">    where the coefficient :math:`c_5(p)` encapsulates the full integration</span>
+<span class="sd">    of the synchrotron kernel over the power-law electron distribution and</span>
+<span class="sd">    depends only on the spectral index :math:`p`.</span>
+
+<span class="sd">    The resulting emissivity has CGS units of</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        [j_\nu] = \mathrm{erg\ s^{-1}\ cm^{-3}\ Hz^{-1}\ sr^{-1}}.</span>
+
+<span class="sd">    The value of :math:`c_5(p)` is given by (see :footcite:p:`1970ranp.book.....P` and</span>
+<span class="sd">    :footcite:p:`RybickiLightman`)</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        c_5(p) = \frac{\sqrt{3}}{16\pi} \left(\frac{e^3}{m_e c^2}\right) \frac{p + 7/3}{p + 1}</span>
+<span class="sd">         \Gamma\left(\frac{3p - 1}{12}\right) \Gamma\left(\frac{3p + 7}{12}\right).</span>
+
+<span class="sd">    .. rubric:: References</span>
+
+<span class="sd">    .. footbibliography::</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dimless_part</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma_func</span><span class="p">((</span><span class="mi">3</span> <span class="o">*</span> <span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma_func</span><span class="p">((</span><span class="mi">3</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">7</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+
+    <span class="c1"># Multiply the p-dependent term by the globally defined _c5_coefficient_cgs coefficient.</span>
+    <span class="k">return</span> <span class="n">_c5_coefficient_cgs</span> <span class="o">*</span> <span class="n">dimless_part</span></div>
+
+
+
+<div class="viewcode-block" id="compute_c6_parameter">
+<a class="viewcode-back" href="../../../_as_gen/radiation.synchrotron.utils.compute_c6_parameter.html#radiation.synchrotron.utils.compute_c6_parameter">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_c6_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the :math:`c_6(p)` coefficient for synchrotron self-absorption from a power-law population of electrons.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    p : float or array-like, optional</span>
+<span class="sd">        Power-law index of the electron Lorentz factor distribution,</span>
+<span class="sd">        :math:`N(\Gamma) \propto \Gamma^{-p}`. Default is 3.0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        The synchrotron self-absorption coefficient :math:`c_6(p)` in CGS units.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    For an isotropic distribution of pitch angles and a power-law electron</span>
+<span class="sd">    population,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        N(\Gamma)\, d\Gamma = K_e\, \Gamma^{-p}\, d\Gamma,</span>
+
+<span class="sd">    the synchrotron self-absorption coefficient :math:`\alpha_\nu`</span>
+<span class="sd">    (with units of :math:`\mathrm{cm^{-1}}`) can be written as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu</span>
+<span class="sd">        =</span>
+<span class="sd">        c_6(p)\,N_0\,(m_e c^2)^{p-1}</span>
+<span class="sd">        (B\sin\alpha)^{(p+2)/2}</span>
+<span class="sd">        \left(\frac{\nu}{2 c_1}\right)^{-(p+4)/2},</span>
+
+
+<span class="sd">    The coefficient :math:`c_6(p)` encapsulates the full analytic integration</span>
+<span class="sd">    of the synchrotron absorption kernel over the power-law electron</span>
+<span class="sd">    distribution and depends only on the spectral index :math:`p`.</span>
+
+<span class="sd">    In the :footcite:p:`1970ranp.book.....P` and :footcite:p:`RybickiLightman` convention appropriate</span>
+<span class="sd">    for radio supernova synchrotron self-absorption modeling,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        c_6(p)</span>
+<span class="sd">        =</span>
+<span class="sd">        \frac{\sqrt{3}\, e^3}{16\pi m_e}</span>
+<span class="sd">        \left(\frac{3e}{2\pi m_e^3 c^5}\right)^{p/2}</span>
+<span class="sd">        (p + 2)\,</span>
+<span class="sd">        \Gamma\!\left(\frac{3p + 2}{12}\right)</span>
+<span class="sd">        \Gamma\!\left(\frac{3p + 10}{12}\right).</span>
+
+<span class="sd">    This implementation uses an algebraically equivalent form in which all</span>
+<span class="sd">    dimensional constants are grouped into a single prefactor and the</span>
+<span class="sd">    remaining dependence on :math:`p` is purely dimensionless. This form</span>
+<span class="sd">    is numerically stable and commonly used in radio supernova modeling codes.</span>
+
+<span class="sd">    .. rubric:: References</span>
+
+<span class="sd">    .. footbibliography::</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Purely dimensionless p-dependent part</span>
+    <span class="n">dimensionless_part</span> <span class="o">=</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">10</span> <span class="o">/</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma_func</span><span class="p">((</span><span class="mi">3</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma_func</span><span class="p">((</span><span class="mi">3</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mi">10</span><span class="p">)</span> <span class="o">/</span> <span class="mi">12</span><span class="p">)</span>
+
+    <span class="c1"># Scale by the standard coefficient and return.</span>
+    <span class="k">return</span> <span class="n">_c6_coefficient_cgs</span> <span class="o">*</span> <span class="n">dimensionless_part</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

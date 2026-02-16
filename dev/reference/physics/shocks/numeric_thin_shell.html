@@ -1,0 +1,694 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Numeric Thin-Shell Shock Models &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/numeric_thin_shell';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Numeric Thin-Shell Shock Models</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="numeric-thin-shell-shock-models">
+<span id="numeric-thin-shell-shocks"></span><h1>Numeric Thin-Shell Shock Models<a class="headerlink" href="#numeric-thin-shell-shock-models" title="Link to this heading">#</a></h1>
+<p>One downside of the self-similar approach is that it relies on a number of assumptions about the ejecta and CSM density
+profiles, which may <strong>not always be valid</strong>. To address this, we implement a purely numerical thin-shell model which
+permits much more general density profiles for both the ejecta and CSM.</p>
+<p>In this approach, we imagine the shock as a <strong>thin shell</strong> with an equation of motion dictated by the conservation of
+momentum. The <strong>thin shell</strong> is the region between the forward and reverse shocks (regions 2 and 3 in our standard
+notation). We denote the mass in this shell as <span class="math notranslate nohighlight">\(M_{\rm sh} = M_2 + M_3\)</span>, where <span class="math notranslate nohighlight">\(M_2\)</span> is the
+mass swept up from the ejecta and <span class="math notranslate nohighlight">\(M_3\)</span> is the mass swept up from the CSM. The velocity of the shell is
+the shock velocity, <span class="math notranslate nohighlight">\(v_{\rm sh} = \dot{R}_{\rm sh}\)</span>, where <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span> is the shock radius.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>In these models, we assume that the forward and reverse shocks are very close together such that
+<span class="math notranslate nohighlight">\(R_{\rm sh} \approx R_{\rm fs} \approx R_{\rm rs}\)</span>.</p>
+</div>
+<section id="the-equations-of-motion">
+<h2>The Equations of Motion<a class="headerlink" href="#the-equations-of-motion" title="Link to this heading">#</a></h2>
+<p>The core of the thin-shell model is the equation for the conservation of momentum in the shell. To avoid internal
+inconsistencies, we define the “shell” in this scenario to be the region between the forward and reverse shocks which
+has fully thermalized (i.e., shocked). We assume that, one thermalized behind the forward / reverse shock, the material
+all moves together at the shock velocity, <span class="math notranslate nohighlight">\(v_{\rm sh}\)</span>. Treating the shell as a contact discontinuity, there
+is no mass transfer across the shell. Therefore, the only way for momentum to change in the shell is via pressure
+forces from the shocked ejecta and CSM.</p>
+<p>In this formalism, the Cauchy-Euler equations reduce to a single equation for the conservation of momentum:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial {\bf p}}{\partial t} + \nabla \cdot ({\bf p} \otimes {\bf u}) + \nabla \cdot \boldsymbol{\sigma} = 0,\]</div>
+<p>where <span class="math notranslate nohighlight">\({\bf p} = \rho {\bf u}\)</span> is the momentum density and <span class="math notranslate nohighlight">\(\boldsymbol{\sigma}\)</span> is the stress tensor.
+Again, we treat the shell as pressure supported with no momentum transport across the shell, so the stress tensor
+reduces to the pressure term, <span class="math notranslate nohighlight">\(\boldsymbol{\sigma} = P {\bf I}\)</span>, and the ram pressure term
+becomes 0. This ensures that we do not double-count contributions to the momentum from mass fluxes across the shell.</p>
+<p>Integrating over the volume of the thin shell, we have</p>
+<div class="math notranslate nohighlight">
+\[M_{\rm sh} \frac{\partial}{\partial t}\left(v_{\rm sh}\right) = 4\pi R_{\rm sh}^2 (P_2-P_3)\]</div>
+<section id="shell-pressure">
+<h3>Shell Pressure<a class="headerlink" href="#shell-pressure" title="Link to this heading">#</a></h3>
+<p>In order to leverage the above equation of motion, we need expressions for the pressures behind
+the forward and reverse shocks, for which we can use the Rankine-Hugoniot jump conditions. Momentum conservation across
+the shock requires that</p>
+<div class="math notranslate nohighlight">
+\[P_1 + \rho_1 v_1^2 = P_2 + \rho_2 v_2^2,\]</div>
+<p>where <span class="math notranslate nohighlight">\(P\)</span>, <span class="math notranslate nohighlight">\(\rho\)</span>, and <span class="math notranslate nohighlight">\(v\)</span> are the pressure, density, and velocity in the shock frame, respectively.</p>
+<p>For the forward shock, we assume a cold CSM relative to the post-shock material, allowing us to set <span class="math notranslate nohighlight">\(P_1=0\)</span>.
+In the shock frame, the upstream velocity is <span class="math notranslate nohighlight">\(v_1 = v_{\rm sh}\)</span> and the downstream velocity is,
+using the strong shock condition,</p>
+<div class="math notranslate nohighlight">
+\[v_2 = \frac{1}{\chi}(v_{\rm sh}),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi = (\gamma +1)/(\gamma -1)\)</span> is the compression ratio. Thus, the pressure behind the forward shock is</p>
+<div class="math notranslate nohighlight">
+\[P_2 = \rho_{\rm CSM} v_{\rm sh}^2 \left(1 - \frac{1}{\chi}\right).\]</div>
+<p>For the reverse shock, we again assume a cold upstream medium, allowing us to set <span class="math notranslate nohighlight">\(P_1=0\)</span>. In the shock frame,
+the upstream velocity is <span class="math notranslate nohighlight">\(v_1 = v_{\rm ej} - v_{\rm sh}\)</span>, <span class="math notranslate nohighlight">\(v_{\rm ej}\)</span> being the ejecta
+velocity at the shock radius. The resulting pressure behind the reverse shock is then</p>
+<div class="math notranslate nohighlight">
+\[P_3 = \rho_{\rm ej} (v_{\rm ej} - v_{\rm sh})^2 \left(1 - \frac{1}{\chi}\right).\]</div>
+<p>The pressure term in the equation of motion is therefore</p>
+<div class="math notranslate nohighlight">
+\[4\pi R_{\rm sh}^2 (P_2-P_3) = 4\pi R_{\rm sh}^2 \left(1 - \frac{1}{\chi}\right)\left(\rho_{\rm csm} v_{\rm sh}^2 - \rho_{\rm ej}
+(v_{\rm ej} - v_{\rm sh})^2\right).\]</div>
+<p>We refer to the velocity difference between the ejecta and shock as <span class="math notranslate nohighlight">\(\Delta = v_{\rm ej} - v_{\rm sh}\)</span> going
+forward.</p>
+</section>
+<section id="shell-mass-evolution">
+<h3>Shell Mass Evolution<a class="headerlink" href="#shell-mass-evolution" title="Link to this heading">#</a></h3>
+<p>It is easy to show that the masses can be obtained in quadrature by integrating the density profiles; however,
+this leads to a numerical scheme that requires time-step integration to obtain the mass evolution. Instead, we
+can derive differential equations for the mass evolution that can be solved simultaneously with the equation of motion.</p>
+<p>A more mathematically rich approach relies again on the <strong>homologous expansion</strong> in the early phase of the supernova
+expansion. Because this is true regardless of the ejecta profile, it remains the case that if the ejecta have some
+distribution of velocities such that</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_{\rm ej}}{dv} = f(v),\]</div>
+<p>then the density must be of the form</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\rm ej}(r,t) = t^{-3} G(v = r/t),\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[G(v) = \frac{f(v)}{4\pi v^2}.\]</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>In the self-similar model, we allow only scenarios where <span class="math notranslate nohighlight">\(f(v) \propto v^{-n}\)</span>; however, here we can
+consider arbitrary distributions.</p>
+</div>
+<p>Now, at a given time <span class="math notranslate nohighlight">\(t\)</span>, the mass swept up in region 2 (<strong>post-shock ejecta</strong>) is the same as all of
+the mass with</p>
+<div class="math notranslate nohighlight">
+\[r&gt;R_{\rm sh} \iff v&gt; R_{\rm sh}/t = v_{\rm ej},\]</div>
+<p>Thus,</p>
+<div class="math notranslate nohighlight">
+\[M_2(t) = \int_{v_{\rm ej}}^{\infty} f(v) dv,\]</div>
+<p>which means that (using Leibniz rule), noting that</p>
+<div class="math notranslate nohighlight">
+\[\frac{dv_{\rm ej}}{dt} = \frac{d}{dt}\left(\frac{R_{\rm sh}}{t}\right)
+ = \frac{\dot{R}_{\rm sh}}{t} - \frac{R_{\rm sh}}{t^2},\]</div>
+<p>the rate of change of <span class="math notranslate nohighlight">\(M_2\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_2}{dt} = \frac{dM_2}{dv_{\rm ej}} \frac{dv_{\rm ej}}{dt} = + 4\pi \frac{R_{\rm sh}^2}{t^3}
+G\left[v_{\rm ej}\right] \Delta.\]</div>
+<p>We can, of course, find the rate of change of <span class="math notranslate nohighlight">\(M_3\)</span> by considering the mass swept up from the CSM: a much
+simpler undertaking than the ejecta case. We have</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_3}{dt} = 4\pi \rho_{\rm csm}[R_{\rm sh}] R_{\rm sh}^2 v_{\rm sh},\]</div>
+<p>We do have to keep track of the shock mass as it evolves, which is given by the equations derived above
+for the post-shock ejecta and CSM mass evolution. The combined set of ODEs is therefore</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\frac{dR_{\rm sh}}{dt} &amp;= v_{\rm sh}\\
+\frac{dv_{\rm sh}}{dt} &amp;= \frac{-4\pi R_{\rm sh}^2}{ M_{\rm sh}}\left(1-\frac{1}{\chi}\right)
+\left(\rho_{\rm csm} v_{\rm sh}^2 - t^{-3} G[v_{\rm ej}] \Delta^2\right)\\
+\frac{dM_{\rm sh}}{dt} &amp;= 4\pi R_{\rm sh}^2 \left\{\rho_{\rm csm} v_{\rm sh} + t^{-3} G[v_{\rm ej}] \Delta\right\}
+\end{aligned}\end{split}\]</div>
+</section>
+</section>
+<section id="numerical-stability-and-implementation">
+<h2>Numerical Stability and Implementation<a class="headerlink" href="#numerical-stability-and-implementation" title="Link to this heading">#</a></h2>
+<p>The equations above can be solved numerically using standard ODE solvers. Care must be taken to ensure numerical
+stability, particularly in regimes where the shock velocity approaches the ejecta velocity (i.e., <span class="math notranslate nohighlight">\(\Delta \to 0\)</span>).
+In these cases, small numerical errors can lead to unphysical results, such as negative shock velocities or masses.
+Likewise, the scheme is somewhat stiff and therefore requires an appropriate solver (e.g., implicit methods or adaptive
+step-size control).</p>
+<p>To mitigate these issues, we introduce dimensionless variables that remove the
+dominant explicit time dependence associated with homologous expansion. Define</p>
+<div class="math notranslate nohighlight">
+\[\xi \equiv \frac{R_{\rm sh}}{t}, \qquad
+\tau \equiv \ln t, \qquad
+\Delta \equiv \xi - v_{\rm sh}.\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\xi\)</span> is the homologous ejecta velocity coordinate at the shock
+radius (<span class="math notranslate nohighlight">\(v_{\rm ej} = R_{\rm sh}/t\)</span>), and <span class="math notranslate nohighlight">\(\Delta\)</span> is the relative
+velocity between the upstream ejecta and the shell.</p>
+<p>Since <span class="math notranslate nohighlight">\(R_{\rm sh} = t\,\xi\)</span>, we have</p>
+<div class="math notranslate nohighlight">
+\[\frac{dR_{\rm sh}}{dt} = \xi + t\frac{d\xi}{dt}.\]</div>
+<p>But <span class="math notranslate nohighlight">\(dR_{\rm sh}/dt = v_{\rm sh}\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[v_{\rm sh} = \xi + t\frac{d\xi}{dt}
+\quad\Rightarrow\quad
+t\frac{d\xi}{dt} = v_{\rm sh} - \xi = -\Delta.\]</div>
+<p>Using <span class="math notranslate nohighlight">\(d\tau = dt/t\)</span>, this becomes</p>
+<div class="math notranslate nohighlight">
+\[\boxed{\frac{d\xi}{d\tau} = -\Delta.}\]</div>
+<p>Next, since <span class="math notranslate nohighlight">\(\Delta = \xi - v_{\rm sh}\)</span>, differentiation yields</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\Delta}{d\tau}
+= \frac{d\xi}{d\tau} - \frac{dv_{\rm sh}}{d\tau}
+= -\Delta - \frac{dv_{\rm sh}}{d\tau}.\]</div>
+<p>From the thin-shell equation of motion derived above,</p>
+<div class="math notranslate nohighlight">
+\[\frac{dv_{\rm sh}}{dt}
+=
+-\frac{4\pi R_{\rm sh}^2}{ M_{\rm sh}}\left(1-\frac{1}{\chi}\right)
+\left(\rho_{\rm csm}(R_{\rm sh})\, v_{\rm sh}^2
+      - t^{-3}G(\xi)\,\Delta^2\right).\]</div>
+<p>Multiplying by <span class="math notranslate nohighlight">\(t\)</span> and using <span class="math notranslate nohighlight">\(R_{\rm sh} = \xi t\)</span> and
+<span class="math notranslate nohighlight">\(v_{\rm sh} = \xi - \Delta\)</span>, we obtain</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{dv_{\rm sh}}{d\tau}
+=
+-\frac{4\pi \xi^2}{M_{\rm sh}}\left(1-\frac{1}{\chi}\right)
+\left(t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)^2
+      - G(\xi)\,\Delta^2\right).
+}\]</div>
+<p>Substituting into <span class="math notranslate nohighlight">\(d\Delta/d\tau = -\Delta - dv_{\rm sh}/d\tau\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{d\Delta}{d\tau}
+=
+-\Delta
++ \frac{4\pi \xi^2}{M_{\rm sh}} \left(1-\frac{1}{\chi}\right)
+\left(t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)^2
+      - G(\xi)\,\Delta^2\right).
+}\]</div>
+<p>Finally, the shell-mass evolution equation</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_{\rm sh}}{dt}
+=
+4\pi R_{\rm sh}^2\left[
+    \rho_{\rm csm}(R_{\rm sh})\,v_{\rm sh}
+    + t^{-3}G(\xi)\,\Delta
+\right]\]</div>
+<p>becomes, after multiplying by <span class="math notranslate nohighlight">\(t\)</span> and substituting <span class="math notranslate nohighlight">\(R_{\rm sh}=\xi t\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{dM_{\rm sh}}{d\tau}
+=
+4\pi \xi^2
+\left[
+    t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)
+    + G(\xi)\,\Delta
+\right].
+}\]</div>
+<p>The numerically stable ODE system in <span class="math notranslate nohighlight">\((\xi,\Delta,M_{\rm sh})\)</span> is therefore</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{d\xi}{d\tau} &amp;= -\Delta,\\[4pt]
+    \frac{d\Delta}{d\tau} &amp;=
+    -\Delta
+    + \frac{4\pi \xi^2}{M_{\rm sh}} \left(1-\frac{1}{\chi}\right)
+    \left(t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)^2
+          - G(\xi)\,\Delta^2\right),\\[6pt]
+    \frac{dM_{\rm sh}}{d\tau} &amp;=
+    4\pi \xi^2
+    \left[t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)
+          + G(\xi)\,\Delta\right].
+\end{aligned}
+}\end{split}\]</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-equations-of-motion">The Equations of Motion</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shell-pressure">Shell Pressure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shell-mass-evolution">Shell Mass Evolution</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-stability-and-implementation">Numerical Stability and Implementation</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/reference/physics/shocks/numeric_thin_shell.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

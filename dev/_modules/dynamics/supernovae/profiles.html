@@ -1,0 +1,943 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>dynamics.supernovae.profiles &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/dynamics/supernovae/profiles';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">dynamics.supernovae.profiles</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for dynamics.supernovae.profiles</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Helper module containing various routines for CSM / ejecta profile calculations relevant to supernovae.</span>
+
+<span class="sd">In the :mod:`dynamics.supernovae.shock_dynamics` module, various shock engines require knowledge of the</span>
+<span class="sd">ejecta and circumstellar medium (CSM) density profiles to compute shock dynamics. This module provides</span>
+<span class="sd">routines to compute these profiles based on standard models in the literature.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
+
+
+<span class="c1"># ============================================ #</span>
+<span class="c1"># Ejecta Profiles and Routines                 #</span>
+<span class="c1"># ============================================ #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_normalize_inner_BPL_ejecta_cgs</span><span class="p">(</span>
+    <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">delta</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimized computation of a BPL normalization parameters in CGS for performance.</span>
+
+<span class="sd">    See the public-facing function :func:`normalize_inner_BPL_ejecta` for details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E_ej: float or array-like</span>
+<span class="sd">        The total kinetic energy of the ejecta in CGS units (erg).</span>
+<span class="sd">    M_ej: float or array-like</span>
+<span class="sd">        The total mass of the ejecta in CGS units (g).</span>
+<span class="sd">    n: float or array-like</span>
+<span class="sd">        The outer ejecta density profile power-law index. By default, this is set to ``10``.</span>
+<span class="sd">    delta: float or array-like, optional</span>
+<span class="sd">        The inner ejecta density profile power-law index. By default, this is set to ``0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    v_t : float or array-like</span>
+<span class="sd">        The transition velocity between the inner and outer ejecta profiles in CGS units (cm/s).</span>
+<span class="sd">    K: float or array-like</span>
+<span class="sd">        The normalization constant of the ejecta density profile in CGS units. The units are</span>
+<span class="sd">        ``g * cm^(2*delta-3) * s^(3-delta)``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the energy per unit mass for derivation of v_t.</span>
+    <span class="n">E_per_M</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">E_ej</span> <span class="o">/</span> <span class="n">M_ej</span>  <span class="c1"># factor of 2 for v^2</span>
+
+    <span class="c1"># Compute transition velocity v_t</span>
+    <span class="n">v_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">E_per_M</span> <span class="o">*</span> <span class="p">((</span><span class="mi">5</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">5</span><span class="p">))</span> <span class="o">/</span> <span class="p">((</span><span class="mi">3</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)))</span>
+
+    <span class="c1"># Compute normalization constant K</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">M_ej</span> <span class="o">*</span> <span class="n">v_t</span> <span class="o">**</span> <span class="p">(</span><span class="n">delta</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">((</span><span class="mi">3</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">v_t</span><span class="p">,</span> <span class="n">K</span>
+
+
+<div class="viewcode-block" id="normalize_inner_BPL_ejecta">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.profiles.normalize_inner_BPL_ejecta.html#dynamics.supernovae.profiles.normalize_inner_BPL_ejecta">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_inner_BPL_ejecta</span><span class="p">(</span>
+    <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the transition velocity and normalization constant for a Chevalier-style ejecta profile.</span>
+
+<span class="sd">    This function computes the transition velocity :math:`v_t` and normalization constant :math:`K` of a</span>
+<span class="sd">    broken power-law ejecta density profile as described in</span>
+<span class="sd">    :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`.</span>
+<span class="sd">    See the notes for a detailed description of the theory.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E_ej: astropy.units.Quantity or array-like</span>
+<span class="sd">        The total kinetic energy of the ejecta. If units are specified, then they will be taken into</span>
+<span class="sd">        account. Otherwise, CGS units are assumed.</span>
+<span class="sd">    M_ej: astropy.units.Quantity or array-like</span>
+<span class="sd">        The total mass of the ejecta. If units are specified, then they will be taken into</span>
+<span class="sd">        account. Otherwise, CGS units are assumed.</span>
+<span class="sd">    n: float</span>
+<span class="sd">        The outer ejecta density profile power-law index. By default, this is set to ``10``.</span>
+<span class="sd">    delta: float, optional</span>
+<span class="sd">        The inner ejecta density profile power-law index. By default, this is set to ``0``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    v_t : astropy.units.Quantity</span>
+<span class="sd">        The transition velocity between the inner and outer ejecta profiles.</span>
+<span class="sd">    K: astropy.units.Quantity</span>
+<span class="sd">        The normalization constant of the ejecta density profile.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    As described in :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`, the ejecta velocity profile</span>
+<span class="sd">    is well described by a broken power-law. During homologous expansion, :math:`r = vt` implies that the density</span>
+<span class="sd">    of the ejecta is likewise a broken power-law in velocity space:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(r,t) = Kt^{-3} \begin{cases}</span>
+<span class="sd">            v^{-\delta}, &amp; v &lt; v_t \\</span>
+<span class="sd">            v_t^{n-\delta} v^{-n}, &amp; v \geq v_t,</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where :math:`v_t` is the transition velocity between the inner and outer ejecta profiles. The total mass of</span>
+<span class="sd">    the ejecta is given by :math:`M_{\rm ej}` and must be conserved:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        M_{\rm ej} = \int_0^{\infty} 4\pi r^2 \rho(r,t) dr = 4\pi K v_t^{3-\delta} \frac{n-\delta}{(3-\delta)(n-3)}.</span>
+
+<span class="sd">    Similarly, the total kinetic energy of the ejecta is given by :math:`E_{\rm ej}` and must also be conserved:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        E_{\rm ej} = \int_0^{\infty} \frac{1}{2} 4\pi r^2 \rho(r,t) v^2 dr =</span>
+<span class="sd">        2\pi K v_t^{5-\delta} \frac{n-\delta}{(5-\delta)(n-5)}.</span>
+
+<span class="sd">    In terms of the energy per unit mass, :math:`E_{\rm ej}/M_{\rm ej}`, these two equations can be combined to</span>
+<span class="sd">    solve for the transition velocity:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        v_t^2 = \frac{2(5-\delta)(n-5)}{(3-\delta)(n-3)} \frac{E_{\rm ej}}{M_{\rm ej}}.</span>
+
+<span class="sd">    Finally, substituting this back into the mass equation allows us to solve for the normalization constant</span>
+<span class="sd">    :math:`K`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        K = \frac{1}{4\pi} \left(\frac{(3-\delta)(n-3)}{(n-\delta)}\right) \frac{M_{\rm ej}}{v_t^{3-\delta}}.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Ensure that ``n`` and ``delta`` are valid values for convergence. This requires that delta &lt; 3 and n &gt; 5.</span>
+    <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The inner ejecta density profile index `delta` must be less than 3 for convergence.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;The outer ejecta density profile index `n` must be greater than 5 for convergence.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Convert any unit-bearing inputs to CGS for internal calculations</span>
+    <span class="n">E_ej_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">E_ej</span><span class="p">,</span> <span class="s2">&quot;erg&quot;</span><span class="p">)</span>
+    <span class="n">M_ej_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">M_ej</span><span class="p">,</span> <span class="s2">&quot;g&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Call the optimized internal function for computation</span>
+    <span class="n">v_t_cgs</span><span class="p">,</span> <span class="n">K_cgs</span> <span class="o">=</span> <span class="n">_normalize_inner_BPL_ejecta_cgs</span><span class="p">(</span>
+        <span class="n">E_ej</span><span class="o">=</span><span class="n">E_ej_cgs</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="o">=</span><span class="n">M_ej_cgs</span><span class="p">,</span>
+        <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Attach units to the outputs. For v_t, CGS velocity is cm/s. For K, the units are g * cm^(2*delta-3)</span>
+    <span class="c1"># * s^(3-delta).</span>
+    <span class="n">v_t</span> <span class="o">=</span> <span class="n">v_t_cgs</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">K_units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">delta</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">K_cgs</span> <span class="o">*</span> <span class="n">K_units</span>
+
+    <span class="k">return</span> <span class="n">v_t</span><span class="p">,</span> <span class="n">K</span></div>
+
+
+
+<div class="viewcode-block" id="compute_BKC_ejecta_parameters">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.profiles.compute_BKC_ejecta_parameters.html#dynamics.supernovae.profiles.compute_BKC_ejecta_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_BKC_ejecta_parameters</span><span class="p">(</span>
+    <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute empirical outer ejecta normalization parameters following Berger–Kulkarni–Chevalier (BKC) scalings.</span>
+
+<span class="sd">    This model provides an empirical calibration of the *outer* ejecta</span>
+<span class="sd">    density profile based on numerical supernova explosion models and</span>
+<span class="sd">    radio supernova observations :footcite:p:`2002ApJ...577L...5B,1999ApJ...510..379M`.</span>
+
+<span class="sd">    The ejecta density is assumed to take the Chevalier self-similar form</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho(r,t) = K\,t^{-3}\left(\frac{r}{t}\right)^{-n}</span>
+
+<span class="sd">    with a fixed outer power-law index</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        n = 10.18.</span>
+
+<span class="sd">    The normalization :math:`K` is calibrated as a power-law function of</span>
+<span class="sd">    ejecta kinetic energy and ejecta mass:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        K = 3 \times 10^{96}</span>
+<span class="sd">        \left(\frac{E_{\rm ej}}{10^{51}\,\mathrm{erg}}\right)^{3.59}</span>
+<span class="sd">        \left(\frac{M_{\rm ej}}{10\,M_\odot}\right)^{-2.59}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E_ej : astropy.units.Quantity</span>
+<span class="sd">        Total kinetic energy of the supernova ejecta.</span>
+<span class="sd">    M_ej : astropy.units.Quantity</span>
+<span class="sd">        Total mass of the supernova ejecta.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    K : astropy.units.Quantity</span>
+<span class="sd">        Ejecta density normalization with units</span>
+<span class="sd">        ``g * cm^(n-3) * s^(3-n)``.</span>
+<span class="sd">    n : float</span>
+<span class="sd">        Outer ejecta density power-law index.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This prescription is **empirical**, not derived from exact mass/energy</span>
+<span class="sd">    conservation. It is calibrated for:</span>
+
+<span class="sd">    - Red supergiant progenitors</span>
+<span class="sd">    - Wind-like circumstellar media</span>
+<span class="sd">    - Early-time radio supernova evolution</span>
+
+<span class="sd">    For applications requiring strict mass/energy conservation or</span>
+<span class="sd">    arbitrary ejecta profiles, use</span>
+<span class="sd">    :func:`compute_chevalier_ejecta_parameters` instead.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Chevalier, R. A. (1982), ApJ, 258, 790</span>
+<span class="sd">    Matzner &amp; McKee (1999), ApJ, 510, 379</span>
+<span class="sd">    Berger et al. (2002), ApJ, 572, 503</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert inputs to CGS</span>
+    <span class="n">E_cgs</span> <span class="o">=</span> <span class="n">E_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">M_cgs</span> <span class="o">=</span> <span class="n">M_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="n">K_cgs</span><span class="p">,</span> <span class="n">n</span> <span class="o">=</span> <span class="n">_optimized_compute_BKC_ejecta_parameters</span><span class="p">(</span><span class="n">E_cgs</span><span class="p">,</span> <span class="n">M_cgs</span><span class="p">)</span>
+
+    <span class="c1"># Attach physical units</span>
+    <span class="n">K_units</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">**</span> <span class="p">(</span><span class="mi">3</span> <span class="o">-</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">K_cgs</span> <span class="o">*</span> <span class="n">K_units</span>
+
+    <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">n</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_optimized_compute_BKC_ejecta_parameters</span><span class="p">(</span>
+    <span class="n">E_ej</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimized CGS backend for Berger–Kulkarni–Chevalier ejecta scalings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E_ej : float or array-like</span>
+<span class="sd">        Ejecta kinetic energy in erg.</span>
+<span class="sd">    M_ej : float or array-like</span>
+<span class="sd">        Ejecta mass in g.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    K : float or array-like</span>
+<span class="sd">        Ejecta density normalization in CGS units.</span>
+<span class="sd">    n : float</span>
+<span class="sd">        Outer ejecta density power-law index.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">10.18</span>
+
+    <span class="n">K</span> <span class="o">=</span> <span class="mf">3.0e96</span> <span class="o">*</span> <span class="p">(</span><span class="n">E_ej</span> <span class="o">/</span> <span class="mf">1.0e51</span><span class="p">)</span> <span class="o">**</span> <span class="mf">3.59</span> <span class="o">*</span> <span class="p">(</span><span class="n">M_ej</span> <span class="o">/</span> <span class="p">(</span><span class="mf">10.0</span> <span class="o">*</span> <span class="mf">1.989e33</span><span class="p">))</span> <span class="o">**</span> <span class="o">-</span><span class="mf">2.59</span>
+
+    <span class="k">return</span> <span class="n">K</span><span class="p">,</span> <span class="n">n</span>
+
+
+<span class="c1"># --- Ejecta Profile Functions for Numerics --- #</span>
+<div class="viewcode-block" id="get_broken_power_law_ejecta_kernel_func">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.profiles.get_broken_power_law_ejecta_kernel_func.html#dynamics.supernovae.profiles.get_broken_power_law_ejecta_kernel_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_broken_power_law_ejecta_kernel_func</span><span class="p">(</span>
+    <span class="n">E_ej</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span>
+    <span class="n">n</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">10</span><span class="p">,</span>
+    <span class="n">delta</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a callable broken power-law ejecta kernel function ``G(v)`` in CGS units.</span>
+
+<span class="sd">    The returned function satisfies</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho_{\rm ej}(r,t) = t^{-3} G\!\left(\frac{r}{t}\right),</span>
+
+<span class="sd">    with</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        G(v) =</span>
+<span class="sd">        \begin{cases}</span>
+<span class="sd">            K\, v^{-\delta}, &amp; v &lt; v_t \\</span>
+<span class="sd">            K\, v_t^{n-\delta} v^{-n}, &amp; v \ge v_t</span>
+<span class="sd">        \end{cases}</span>
+
+<span class="sd">    where ``v_t`` and ``K`` are fixed by total ejecta mass and energy.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    E_ej : astropy.units.Quantity</span>
+<span class="sd">        Total kinetic energy of the ejecta.</span>
+<span class="sd">    M_ej : astropy.units.Quantity</span>
+<span class="sd">        Total mass of the ejecta.</span>
+<span class="sd">    n : float, optional</span>
+<span class="sd">        Outer ejecta density power-law index (must be &gt; 5).</span>
+<span class="sd">    delta : float, optional</span>
+<span class="sd">        Inner ejecta density power-law index (must be &lt; 3).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    G_ej : callable</span>
+<span class="sd">        Function ``G(v)`` returning the ejecta kernel in CGS units</span>
+<span class="sd">        ``g * s^3 / cm^3`` for velocity ``v`` in ``cm/s``.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># --- validation ---</span>
+    <span class="k">if</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Inner ejecta index delta must be &lt; 3.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="mi">5</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Outer ejecta index n must be &gt; 5.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;=</span> <span class="n">delta</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Outer index n must exceed inner index delta.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># --- convert to CGS ---</span>
+    <span class="n">E_cgs</span> <span class="o">=</span> <span class="n">E_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">M_cgs</span> <span class="o">=</span> <span class="n">M_ej</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># --- compute normalization ---</span>
+    <span class="n">v_t</span><span class="p">,</span> <span class="n">K_inner</span> <span class="o">=</span> <span class="n">_normalize_inner_BPL_ejecta_cgs</span><span class="p">(</span>
+        <span class="n">E_ej</span><span class="o">=</span><span class="n">E_cgs</span><span class="p">,</span>
+        <span class="n">M_ej</span><span class="o">=</span><span class="n">M_cgs</span><span class="p">,</span>
+        <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">,</span>
+        <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Precompute outer normalization factor</span>
+    <span class="n">K_outer</span> <span class="o">=</span> <span class="n">K_inner</span> <span class="o">*</span> <span class="n">v_t</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">delta</span><span class="p">)</span>
+
+    <span class="c1"># --- construct kernel ---</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_G_ej</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="n">G</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty_like</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="n">inner</span> <span class="o">=</span> <span class="n">v</span> <span class="o">&lt;</span> <span class="n">v_t</span>
+        <span class="n">outer</span> <span class="o">=</span> <span class="o">~</span><span class="n">inner</span>
+
+        <span class="n">G</span><span class="p">[</span><span class="n">inner</span><span class="p">]</span> <span class="o">=</span> <span class="n">K_inner</span> <span class="o">*</span> <span class="n">v</span><span class="p">[</span><span class="n">inner</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">G</span><span class="p">[</span><span class="n">outer</span><span class="p">]</span> <span class="o">=</span> <span class="n">K_outer</span> <span class="o">*</span> <span class="n">v</span><span class="p">[</span><span class="n">outer</span><span class="p">]</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">G</span>
+
+    <span class="k">return</span> <span class="n">_G_ej</span></div>
+
+
+
+<div class="viewcode-block" id="get_wind_csm_density_func">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.profiles.get_wind_csm_density_func.html#dynamics.supernovae.profiles.get_wind_csm_density_func">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_wind_csm_density_func</span><span class="p">(</span>
+    <span class="n">mass_loss_rate</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span>
+    <span class="n">wind_velocity</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a callable function for the wind-like CSM density profile in CGS units.</span>
+
+<span class="sd">    This function returns a callable that computes the density of a wind-like circumstellar medium (CSM)</span>
+<span class="sd">    at a given radius based on the mass-loss rate and wind velocity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass_loss_rate: astropy.units.Quantity</span>
+<span class="sd">        The mass-loss rate of the progenitor star.</span>
+<span class="sd">    wind_velocity: astropy.units.Quantity</span>
+<span class="sd">        The velocity of the stellar wind.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    csm_density_func: callable</span>
+<span class="sd">        A function that takes a radius (with units) as input and returns the CSM density at that radius.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the normalization constant rho_0 using the provided parameters</span>
+    <span class="n">rho_0</span> <span class="o">=</span> <span class="n">compute_wind_csm_parameters</span><span class="p">(</span>
+        <span class="n">mass_loss_rate</span><span class="o">=</span><span class="n">mass_loss_rate</span><span class="p">,</span>
+        <span class="n">wind_velocity</span><span class="o">=</span><span class="n">wind_velocity</span><span class="p">,</span>
+    <span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="s2">&quot;g/cm**3&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">csm_density_func</span><span class="p">(</span><span class="n">radius</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the CSM density at a given radius.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        radius: astropy.units.Quantity</span>
+<span class="sd">            The radius at which to evaluate the CSM density.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rho_csm: astropy.units.Quantity</span>
+<span class="sd">            The CSM density at the specified radius.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">rho_0</span> <span class="o">*</span> <span class="n">radius</span><span class="o">**-</span><span class="mi">2</span>
+
+    <span class="k">return</span> <span class="n">csm_density_func</span></div>
+
+
+
+<span class="c1"># ================================================== #</span>
+<span class="c1"># CSM Profiles and Routines                          #</span>
+<span class="c1"># ================================================== #</span>
+<div class="viewcode-block" id="compute_wind_csm_parameters">
+<a class="viewcode-back" href="../../../_as_gen/dynamics.supernovae.profiles.compute_wind_csm_parameters.html#dynamics.supernovae.profiles.compute_wind_csm_parameters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_wind_csm_parameters</span><span class="p">(</span>
+    <span class="n">mass_loss_rate</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">wind_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the normalization constant for a wind-like circumstellar medium (CSM) density profile.</span>
+
+<span class="sd">    For a steady wind :math:`\dot{M}` with velocity :math:`v_w`, the density profile of the CSM is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \rho_{\rm CSM}(r) = \frac{\dot{M}}{4\pi r^2 v_w} = \rho_0 r^{-2}.</span>
+
+<span class="sd">    This function computes the normalization constant :math:`\rho_0` given the mass-loss rate and wind velocity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass_loss_rate: astropy.units.Quantity or array-like</span>
+<span class="sd">        The mass-loss rate of the progenitor star. If units are specified, they will be taken into account.</span>
+<span class="sd">        Otherwise, CGS units are assumed (g/s).</span>
+<span class="sd">    wind_velocity: astropy.units.Quantity or array-like</span>
+<span class="sd">        The velocity of the stellar wind. If units are specified, they will be taken into account.</span>
+<span class="sd">        Otherwise, CGS units are assumed (cm/s).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rho_0: astropy.units.Quantity</span>
+<span class="sd">        The normalization constant of the wind-like CSM density profile.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert inputs to CGS units for internal calculations</span>
+    <span class="n">mdot_cgs</span> <span class="o">=</span> <span class="n">mass_loss_rate</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+    <span class="n">v_w_cgs</span> <span class="o">=</span> <span class="n">wind_velocity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+    <span class="c1"># Compute the normalization constant rho_0</span>
+    <span class="c1"># NOTE: we skip the call to the optimized function here since this is a simple one-liner.</span>
+    <span class="n">rho_0_cgs</span> <span class="o">=</span> <span class="n">mdot_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">v_w_cgs</span><span class="p">)</span>
+
+    <span class="c1"># Attach units to the output. The units are g/cm.</span>
+    <span class="n">rho_0</span> <span class="o">=</span> <span class="n">rho_0_cgs</span> <span class="o">*</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rho_0</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_optimized_compute_wind_csm_parameters</span><span class="p">(</span>
+    <span class="n">mass_loss_rate</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">wind_velocity</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Optimized computation of wind CSM normalization constant in CGS for performance.</span>
+
+<span class="sd">    See the public-facing function :func:`compute_wind_csm_parameters` for details.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mass_loss_rate: float or array-like</span>
+<span class="sd">        The mass-loss rate of the progenitor star in CGS units (g/s).</span>
+<span class="sd">    wind_velocity: float or array-like</span>
+<span class="sd">        The velocity of the stellar wind in CGS units (cm/s).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rho_0: float or array-like</span>
+<span class="sd">        The normalization constant of the wind-like CSM density profile in CGS units (g/cm).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Compute the normalization constant rho_0</span>
+    <span class="n">rho_0</span> <span class="o">=</span> <span class="n">mass_loss_rate</span> <span class="o">/</span> <span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">wind_velocity</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">rho_0</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

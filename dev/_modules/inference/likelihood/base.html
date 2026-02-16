@@ -1,0 +1,1203 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>inference.likelihood.base &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/inference/likelihood/base';</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">inference.likelihood.base</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for inference.likelihood.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Abstract base class for likelihood models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">triceratops_logger</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gaussian</span><span class="w"> </span><span class="kn">import</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">,</span> <span class="n">gaussian_loglikelihood</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_ModelParametersInput</span><span class="p">,</span>
+        <span class="n">_ModelParametersInputRaw</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="c1"># Defining the __all__ variable.</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">,</span> <span class="s2">&quot;GaussianCensoredLikelihoodStencil&quot;</span><span class="p">,</span> <span class="s2">&quot;GaussianLikelihoodXY&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># ============================================================ #</span>
+<span class="c1"># Likelihood Base Class                                        #</span>
+<span class="c1"># ============================================================ #</span>
+<div class="viewcode-block" id="Likelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Likelihood</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for likelihood functions.</span>
+
+<span class="sd">    The :class:`Likelihood` class defines the interface and core semantics for</span>
+<span class="sd">    evaluating the probability of observational data given a physical model.</span>
+<span class="sd">    It provides a structured separation between:</span>
+
+<span class="sd">    - **Model physics**, implemented in subclasses of :class:`~models.core.base.Model`</span>
+<span class="sd">    - **Observational data**, encapsulated in container classes</span>
+<span class="sd">    - **Statistical assumptions**, encoded in concrete likelihood subclasses</span>
+
+<span class="sd">    A likelihood object binds together a *specific model* and a *specific data</span>
+<span class="sd">    container*, validates their compatibility, and performs any required</span>
+<span class="sd">    preprocessing of the data into a numerical form suitable for efficient</span>
+<span class="sd">    likelihood evaluation.</span>
+
+<span class="sd">    Design Philosophy</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    This class is intentionally **not** a fully generic &quot;black box&quot; likelihood.</span>
+<span class="sd">    Instead, it enforces explicit compatibility between models and data</span>
+<span class="sd">    containers via class-level declarations. This prevents subtle misuse while</span>
+<span class="sd">    still allowing a high degree of extensibility.</span>
+
+<span class="sd">    The likelihood workflow is divided into three conceptual stages:</span>
+
+<span class="sd">    1. **Compatibility validation**</span>
+<span class="sd">       Ensures that the supplied model and data container are appropriate for</span>
+<span class="sd">       the likelihood implementation.</span>
+
+<span class="sd">    2. **Data reduction and coercion**</span>
+<span class="sd">       The input data container is processed exactly once during initialization</span>
+<span class="sd">       via :meth:`_process_input_data`. This step extracts relevant quantities,</span>
+<span class="sd">       converts them to consistent base units, and stores them in a</span>
+<span class="sd">       :class:`types.SimpleNamespace` for fast reuse.</span>
+
+<span class="sd">    3. **Likelihood evaluation**</span>
+<span class="sd">       The core statistical computation is implemented in :meth:`_log_likelihood`,</span>
+<span class="sd">       which assumes that model parameters are already in their raw, unit-consistent</span>
+<span class="sd">       format.</span>
+
+<span class="sd">    Public vs. Internal API</span>
+<span class="sd">    -----------------------</span>
+<span class="sd">    The public method :meth:`log_likelihood` is intended for user-facing calls</span>
+<span class="sd">    and accepts parameters in any format supported by the model. These parameters</span>
+<span class="sd">    are coerced into the model&#39;s raw format before being passed to</span>
+<span class="sd">    :meth:`_log_likelihood`.</span>
+
+<span class="sd">    For inference backends (e.g., MCMC, nested sampling), the private</span>
+<span class="sd">    :meth:`_log_likelihood` method should be used directly, as it avoids repeated</span>
+<span class="sd">    parameter coercion and assumes a consistent internal representation.</span>
+
+<span class="sd">    Extensibility</span>
+<span class="sd">    -------------</span>
+<span class="sd">    Concrete likelihood implementations should subclass :class:`Likelihood` and:</span>
+
+<span class="sd">    - Declare compatible models via :attr:`COMPATIBLE_MODELS`</span>
+<span class="sd">    - Declare compatible data containers via :attr:`COMPATIBLE_DATA_CONTAINERS`</span>
+<span class="sd">    - Implement :meth:`_process_input_data`</span>
+<span class="sd">    - Implement :meth:`_log_likelihood`</span>
+
+<span class="sd">    This structure allows for clean extension to multiple likelihood forms</span>
+<span class="sd">    (e.g., Gaussian errors, censored data, hierarchical likelihoods) while</span>
+<span class="sd">    maintaining a uniform interface for inference engines.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This class makes no assumptions about priors, posteriors, or sampling</span>
+<span class="sd">    strategies. Those concerns are handled at the inference layer, which</span>
+<span class="sd">    composes likelihoods with priors and samplers.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Class Semantics                                              #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Here we establish the permissible models and data structures which</span>
+    <span class="c1"># can be initialized in this likelihood model. This permits some degree</span>
+    <span class="c1"># of reduced boilerplate when constructing specific likelihood implementations,</span>
+    <span class="c1"># but still ensures we cannot cross inconsistent models and data.</span>
+    <span class="c1">#</span>
+    <span class="c1"># When writing custom likelihoods, it is often acceptable to have MANY</span>
+    <span class="c1"># compatible models but only ONE compatible data container (e.g. a</span>
+    <span class="c1"># photometry likelihood that works with any SED model, but only</span>
+    <span class="c1"># photometry data). In other cases, one may have a SINGLE compatible</span>
+    <span class="c1"># model that works with multiple data containers.</span>
+    <span class="c1">#</span>
+    <span class="c1"># For this reason, both compatibility declarations are tuples.</span>
+    <span class="n">COMPATIBLE_MODELS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;tuple of :class:`~triceratops.models.core.base.Model`</span>
+
+<span class="sd">    Model classes compatible with this likelihood. The provided model instance</span>
+<span class="sd">    must be an instance of one of these classes.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;tuple of types</span>
+
+<span class="sd">    Data container classes compatible with this likelihood. The provided data</span>
+<span class="sd">    object must be an instance of one of these types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Initialization                                               #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate likelihood subclass definitions at class creation time.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">COMPATIBLE_MODELS</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must define COMPATIBLE_MODELS as a tuple.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must define COMPATIBLE_DATA_CONTAINERS as a tuple.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">COMPATIBLE_MODELS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must declare at least one compatible model.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must declare at least one compatible data container.&quot;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">model_cls</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">COMPATIBLE_MODELS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">model_cls</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">model_cls</span><span class="si">}</span><span class="s2"> listed in COMPATIBLE_MODELS is not a Model subclass.&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Likelihood.__init__">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.Likelihood.__init__.html#inference.likelihood.base.Likelihood.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">DataContainer</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the likelihood object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model: ~models.core.base.Model</span>
+<span class="sd">            The astrophysical model to be evaluated. This must be a subclass of :class:`~models.core.base.Model` and</span>
+<span class="sd">            be compatible with the likelihood class (see :attr:`COMPATIBLE_MODELS`). This defines the forward model</span>
+<span class="sd">            used in the likelihood evaluation.</span>
+<span class="sd">        data: ~data.core.DataContainer</span>
+<span class="sd">            The data container object holding the observational data. This must be of a type compatible</span>
+<span class="sd">            with the likelihood class (see :attr:`COMPATIBLE_DATA_CONTAINERS`). This defines the observations being</span>
+<span class="sd">            compared against.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments that may be used during configuration. These are passed</span>
+<span class="sd">            directly to the :meth:`_configure` method immediately after assigning the model and data attributes.</span>
+<span class="sd">            These can therefore be used to customize likelihood behavior during initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Declare the model and the data.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The &#39;model&#39; argument must be an instance of Model.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">DataContainer</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The &#39;data&#39; argument must be an instance of DataContainer.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="p">:</span> <span class="n">DataContainer</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># Configure the likelihood by passing off to the ``_configure`` method. This</span>
+        <span class="c1"># allows for custom namespace configuration before we perform any validation</span>
+        <span class="c1"># or other steps.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># With the model and data assigned and the namespace configured, we now</span>
+        <span class="c1"># perform the model and data validation step.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
+
+        <span class="c1"># Finalize the initialization step by generating the data.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_process_input_data</span><span class="p">()</span></div>
+
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configure the likelihood namespace.</span>
+
+<span class="sd">        This method is called immediately after the model and data attributes</span>
+<span class="sd">        have been assigned. It can be used to set up any additional attributes</span>
+<span class="sd">        or perform any configuration steps needed before validation and data</span>
+<span class="sd">        processing.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments passed during initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate model–data compatibility.</span>
+
+<span class="sd">        This method is called after the namespace has been configured.</span>
+<span class="sd">        It should raise an error if the model and data are not compatible</span>
+<span class="sd">        with this likelihood implementation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">,</span> <span class="n">m</span><span class="p">)</span> <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COMPATIBLE_MODELS</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Model of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not compatible with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Compatible models: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COMPATIBLE_MODELS</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span> <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Data of type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="p">)</span><span class="si">}</span><span class="s2"> is not compatible with &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">. Compatible data containers: &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Data Processing                                              #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimpleNamespace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the input data container into a numerical representation suitable for likelihood evaluation.</span>
+
+<span class="sd">        This method is called exactly once during initialization and should:</span>
+
+<span class="sd">        - Extract relevant quantities from the data container</span>
+<span class="sd">        - Convert all values into consistent base units</span>
+<span class="sd">        - Store the results in a :class:`types.SimpleNamespace`</span>
+
+<span class="sd">        The returned namespace is cached as ``self._data`` and should be treated</span>
+<span class="sd">        as immutable.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        types.SimpleNamespace</span>
+<span class="sd">            Namespace containing all numerical arrays required for computing</span>
+<span class="sd">            the likelihood.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Likelihood Evaluation                                        #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInputRaw&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for the given model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping model parameter names to values in base units,</span>
+<span class="sd">            as defined by the model. These parameters should be in the **raw format**</span>
+<span class="sd">            accepted by the model: array-like objects in the correct base units.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="Likelihood.log_likelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.Likelihood.log_likelihood.html#inference.likelihood.base.Likelihood.log_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for the given model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters: dict</span>
+<span class="sd">            Dictionary mapping model parameter names to values. These parameters</span>
+<span class="sd">            may be in any acceptable format for the model; they will be coerced</span>
+<span class="sd">            into the raw format by this method.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        For inference, the private method :meth:`_log_likelihood` should be used,</span>
+<span class="sd">        as it assumes that the parameters are already in the correct raw format. This is a user-facing</span>
+<span class="sd">        wrapper that performs the necessary coercion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GaussianCensoredLikelihoodStencil">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.GaussianCensoredLikelihoodStencil.html#inference.likelihood.base.GaussianCensoredLikelihoodStencil">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianCensoredLikelihoodStencil</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stencil for Gaussian likelihoods with censored observations.</span>
+
+<span class="sd">    This class defines the *linkage layer* between three components:</span>
+
+<span class="sd">    1. A forward model, which maps independent variables and model parameters</span>
+<span class="sd">       to predicted dependent-variable values.</span>
+<span class="sd">    2. A preprocessed observational dataset stored in ``self._data``, produced</span>
+<span class="sd">       exactly once during initialization by :meth:`_process_input_data`.</span>
+<span class="sd">    3. A low-level, stateless numerical backend,</span>
+<span class="sd">       :func:`censored_gaussian_loglikelihood`, which evaluates the Gaussian</span>
+<span class="sd">       log-likelihood given raw NumPy arrays.</span>
+
+<span class="sd">    This stencil intentionally implements **no statistical logic** itself.</span>
+<span class="sd">    Instead, it exists to:</span>
+
+<span class="sd">    - Declare model–data compatibility,</span>
+<span class="sd">    - Specify the required numerical data contract,</span>
+<span class="sd">    - Perform the forward-model evaluation,</span>
+<span class="sd">    - Delegate likelihood evaluation to the numerical backend.</span>
+
+<span class="sd">    Subclasses should focus *exclusively* on translating a concrete data</span>
+<span class="sd">    container into the required numerical representation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Compatibility declarations</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">COMPATIBLE_MODELS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Model classes compatible with this likelihood stencil.&quot;&quot;&quot;</span>
+
+    <span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">DataContainer</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data container classes compatible with this likelihood stencil.&quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Required data contract</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimpleNamespace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the input data container into the numerical form required by the log likelihood function.</span>
+
+<span class="sd">        This method is called **exactly once** during initialization. The</span>
+<span class="sd">        returned namespace is cached as ``self._data`` and treated as immutable</span>
+<span class="sd">        thereafter.</span>
+
+<span class="sd">        The returned :class:`types.SimpleNamespace` **must** define the</span>
+<span class="sd">        following fields:</span>
+
+<span class="sd">        - ``x`` : dict[str, np.ndarray]</span>
+<span class="sd">            Independent variable arrays keyed by the corresponding model</span>
+<span class="sd">            variable names. This dictionary is passed directly to the model’s</span>
+<span class="sd">            forward evaluation method.</span>
+<span class="sd">        - ``y`` : np.ndarray</span>
+<span class="sd">            Observed dependent-variable values. Entries corresponding to</span>
+<span class="sd">            censored observations are ignored by the likelihood backend.</span>
+<span class="sd">        - ``y_err`` : np.ndarray</span>
+<span class="sd">            One-sigma uncertainties associated with each data point. These must</span>
+<span class="sd">            be defined for *all* points, including censored observations.</span>
+<span class="sd">        - ``y_upper`` : np.ndarray</span>
+<span class="sd">            Upper limits for upper-censored observations. Values are only</span>
+<span class="sd">            accessed where ``y_upper_mask`` is ``True``.</span>
+<span class="sd">        - ``y_lower`` : np.ndarray</span>
+<span class="sd">            Lower limits for lower-censored observations. Values are only</span>
+<span class="sd">            accessed where ``y_lower_mask`` is ``True``.</span>
+<span class="sd">        - ``y_upper_mask`` : np.ndarray of bool</span>
+<span class="sd">            Boolean mask indicating upper-censored observations.</span>
+<span class="sd">        - ``y_lower_mask`` : np.ndarray of bool</span>
+<span class="sd">            Boolean mask indicating lower-censored observations.</span>
+
+<span class="sd">        Subclasses are responsible for unit coercion, shape validation, and</span>
+<span class="sd">        mask construction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Likelihood evaluation</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInputRaw&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the Gaussian log-likelihood for the given model parameters.</span>
+
+<span class="sd">        This method:</span>
+<span class="sd">        1. Evaluates the forward model at the supplied parameter values,</span>
+<span class="sd">        2. Extracts the predicted dependent-variable values,</span>
+<span class="sd">        3. Delegates the statistical computation to</span>
+<span class="sd">           :func:`censored_gaussian_loglikelihood`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping model parameter names to values in the model’s</span>
+<span class="sd">            raw (unit-consistent) format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Evaluate the forward model. By convention, the first element of the</span>
+        <span class="c1"># returned tuple corresponds to the dependent variable.</span>
+        <span class="n">model_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="c1"># Delegate all statistical computation to the numerical backend.</span>
+        <span class="k">return</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_err</span><span class="p">,</span>
+            <span class="n">y_upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_upper</span><span class="p">,</span>
+            <span class="n">y_lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_lower</span><span class="p">,</span>
+            <span class="n">y_upper_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_upper_mask</span><span class="p">,</span>
+            <span class="n">y_lower_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_lower_mask</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="GaussianCensoredLikelihoodStencil.log_likelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.GaussianCensoredLikelihoodStencil.log_likelihood.html#inference.likelihood.base.GaussianCensoredLikelihoodStencil.log_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the log-likelihood for the given model parameters.</span>
+
+<span class="sd">        This is the **public entry point** for likelihood evaluation. It accepts</span>
+<span class="sd">        model parameters in any format supported by the model (e.g. quantities</span>
+<span class="sd">        with units, scalars, or array-like objects), coerces them into the model’s</span>
+<span class="sd">        internal raw representation, and then evaluates the likelihood.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping model parameter names to values in any format</span>
+<span class="sd">            accepted by the model. These values are converted internally to the</span>
+<span class="sd">            model’s raw, unit-consistent representation before likelihood</span>
+<span class="sd">            evaluation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value for the supplied parameters.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method is intended for **interactive use and high-level workflows**.</span>
+
+<span class="sd">        For performance-critical applications such as inference backends</span>
+<span class="sd">        (e.g. MCMC or nested sampling), prefer calling :meth:`_log_likelihood`</span>
+<span class="sd">        directly with parameters already in the model’s raw format, as this</span>
+<span class="sd">        avoids repeated parameter coercion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GaussianLikelihoodStencil">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.GaussianLikelihoodStencil.html#inference.likelihood.base.GaussianLikelihoodStencil">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihoodStencil</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Stencil for standard (uncensored) Gaussian likelihoods.</span>
+
+<span class="sd">    This class provides the same linkage pattern as</span>
+<span class="sd">    :class:`GaussianCensoredLikelihoodStencil`, but assumes that **all data</span>
+<span class="sd">    points are detections** and that no censoring is present.</span>
+
+<span class="sd">    It delegates statistical evaluation to the low-level numerical function</span>
+<span class="sd">    :func:`~inference.likelihood.gaussian.gaussian_loglikelihood`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Compatibility declarations</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="n">COMPATIBLE_MODELS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">[</span><span class="n">Model</span><span class="p">],</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Model classes compatible with this likelihood stencil.&quot;&quot;&quot;</span>
+
+    <span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">DataContainer</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Data container classes compatible with this likelihood stencil.&quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Required data contract</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimpleNamespace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the input data container into the numerical form required by :func:`gaussian_loglikelihood`.</span>
+
+<span class="sd">        The returned namespace **must** define:</span>
+
+<span class="sd">        - ``x`` : dict[str, np.ndarray]</span>
+<span class="sd">            Independent variable arrays keyed by model variable name.</span>
+<span class="sd">        - ``y`` : np.ndarray</span>
+<span class="sd">            Observed dependent-variable values.</span>
+<span class="sd">        - ``y_err`` : np.ndarray</span>
+<span class="sd">            One-sigma uncertainties associated with each data point.</span>
+
+<span class="sd">        Subclasses are responsible for unit coercion and validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Likelihood evaluation</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInputRaw&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Evaluate the Gaussian log-likelihood for the given model parameters.&quot;&quot;&quot;</span>
+        <span class="n">model_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_err</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="GaussianLikelihoodStencil.log_likelihood">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.GaussianLikelihoodStencil.log_likelihood.html#inference.likelihood.base.GaussianLikelihoodStencil.log_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the log-likelihood for the given model parameters.</span>
+
+<span class="sd">        This is the **public entry point** for likelihood evaluation. It accepts</span>
+<span class="sd">        model parameters in any format supported by the model (e.g. quantities</span>
+<span class="sd">        with units, scalars, or array-like objects), coerces them into the model’s</span>
+<span class="sd">        internal raw representation, and then evaluates the likelihood.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Dictionary mapping model parameter names to values in any format</span>
+<span class="sd">            accepted by the model. These values are converted internally to the</span>
+<span class="sd">            model’s raw, unit-consistent representation before likelihood</span>
+<span class="sd">            evaluation.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value for the supplied parameters.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method is intended for **interactive use and high-level workflows**.</span>
+
+<span class="sd">        For performance-critical applications such as inference backends</span>
+<span class="sd">        (e.g. MCMC or nested sampling), prefer calling :meth:`_log_likelihood`</span>
+<span class="sd">        directly with parameters already in the model’s raw format, as this</span>
+<span class="sd">        avoids repeated parameter coercion.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">))</span></div>
+</div>
+
+
+
+<span class="c1"># ============================================================ #</span>
+<span class="c1"># Generic Likelihood Classes                                   #</span>
+<span class="c1"># ============================================================ #</span>
+<span class="c1"># Here we define a few drop-in likelihood classes that can be used to</span>
+<span class="c1"># generate other likelihoods via multiple inheritance. These classes</span>
+<span class="c1"># implement common likelihood functions (e.g., Gaussian errors) but do</span>
+<span class="c1"># not define any specific model or data container compatibility.</span>
+<span class="c1"># Specific likelihood implementations can then combine these generic</span>
+<span class="c1"># likelihoods with specific model/data compatibility via multiple inheritance.</span>
+<div class="viewcode-block" id="GaussianLikelihoodXY">
+<a class="viewcode-back" href="../../../_as_gen/inference.likelihood.base.GaussianLikelihoodXY.html#inference.likelihood.base.GaussianLikelihoodXY">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihoodXY</span><span class="p">(</span>
+    <span class="n">GaussianCensoredLikelihoodStencil</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gaussian likelihood for XY data.</span>
+
+<span class="sd">    This class provides a concrete Gaussian likelihood implementation for</span>
+<span class="sd">    datasets stored in :class:`~triceratops.data.core.XYDataContainer`. It serves</span>
+<span class="sd">    as a **convenience adapter**, handling the extraction, validation, and unit</span>
+<span class="sd">    coercion of one-dimensional ``(x, y)`` data with associated uncertainties,</span>
+<span class="sd">    and wiring the result into the Gaussian likelihood machinery.</span>
+
+<span class="sd">    Key features</span>
+<span class="sd">    ------------</span>
+<span class="sd">    - Supports models with a **single independent variable**,</span>
+<span class="sd">    - Requires Gaussian uncertainties on the dependent variable,</span>
+<span class="sd">    - Optionally supports **censored observations** (upper and/or lower limits)</span>
+<span class="sd">      on the dependent variable,</span>
+<span class="sd">    - Ignores uncertainties on the independent variable (with a warning).</span>
+
+<span class="sd">    This class does **not** implement any statistical logic itself. Instead, it:</span>
+
+<span class="sd">    1. Validates compatibility between the model and the data container,</span>
+<span class="sd">    2. Converts the data into the numerical format required by the Gaussian</span>
+<span class="sd">       likelihood stencil,</span>
+<span class="sd">    3. Delegates likelihood evaluation to the underlying low-level Gaussian</span>
+<span class="sd">       backend.</span>
+
+<span class="sd">    As a result, this class eliminates boilerplate for the common case of fitting</span>
+<span class="sd">    one-dimensional ``(x, y)`` data with Gaussian errors, while remaining fully</span>
+<span class="sd">    compatible with Triceratops’ inference framework.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">COMPATIBLE_DATA_CONTAINERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">type</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">DataContainer</span><span class="p">,)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;tuple of types</span>
+
+<span class="sd">    Data container classes compatible with this likelihood. For the standard</span>
+<span class="sd">    Gaussian likelihood, we require :class:`~triceratops.data.core.XYDataContainer`,</span>
+<span class="sd">    so that we have both x and y data with associated uncertainties.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Initialization                                               #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate model–data compatibility.</span>
+
+<span class="sd">        In addition to the base class validation, which will ensure we have</span>
+<span class="sd">        an XY data container, we also need to ensure that we do not have</span>
+<span class="sd">        any errors on the independent variable, as the Gaussian likelihood</span>
+<span class="sd">        does not support that. We raise a warning in this scenario because it</span>
+<span class="sd">        might be an intended use-case, but its worth flagging.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
+
+        <span class="c1"># Check for independent variable errors.</span>
+        <span class="k">if</span> <span class="nb">any</span><span class="p">(</span>
+            <span class="n">_col</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">_col</span> <span class="ow">in</span> <span class="p">[</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">X_ERROR_COLUMN</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span><span class="p">,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span><span class="p">,</span>
+            <span class="p">]</span>
+        <span class="p">):</span>
+            <span class="n">triceratops_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                <span class="s2">&quot;Likelihood class `GaussianLikelihoodXY` doesn&#39;t support errors on the&quot;</span>
+                <span class="s2">&quot; independent variable(s)</span><span class="se">\n</span><span class="s2">They will be ignored if they are present.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Ensure that we DO have an X, a Y, and a Y error column.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">Y_ERROR_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Likelihood class `GaussianLikelihoodXY` requires a Y error column in the data container.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">Y_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Likelihood class `GaussianLikelihoodXY` requires a Y column in the data container.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">X_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Likelihood class `GaussianLikelihoodXY` requires an X column in the data container.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Check that the model does not have more than 1 independent variable.</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span>
+                <span class="s2">&quot;Likelihood class `GaussianLikelihoodXY` only supports models with a single independent variable.&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Data Processing                                              #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SimpleNamespace</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Process the input data.</span>
+
+<span class="sd">        For the gaussian likelihood, we require the following in the namespace:</span>
+
+<span class="sd">        - ``x``: array-like dict of str, array (shapes (N, ), ...)</span>
+<span class="sd">            Independent variable data points. These should be in base units.</span>
+<span class="sd">        - ``y``: array-like (N,)</span>
+<span class="sd">            Dependent variable data points. These should be in base units.</span>
+<span class="sd">        - ``y_err``: array-like (N,)</span>
+<span class="sd">            Uncertainties on the dependent variable data points. These should be in base units. These</span>
+<span class="sd">            must be complete. We do not accept censored data without uncertainties attached.</span>
+<span class="sd">        - ``y_upper``: array-like (N,)</span>
+<span class="sd">            Upper limits on the dependent variable data points. These should be in base units.</span>
+<span class="sd">            Entries without upper limits should be set to ``np.nan``.</span>
+<span class="sd">        - ``y_lower``: array-like (N,)</span>
+<span class="sd">            Lower limits on the dependent variable data points. These should be in base units.</span>
+<span class="sd">            Entries without lower limits should be set to ``np.nan``.</span>
+<span class="sd">        - ``y_lower_mask``: array-like (N,)</span>
+<span class="sd">            Boolean mask indicating which entries in ``y_lower`` are valid lower limits.</span>
+<span class="sd">        - ``y_upper_mask``: array-like (N,)</span>
+<span class="sd">            Boolean mask indicating which entries in ``y_upper`` are valid upper limits.</span>
+
+<span class="sd">        With these quantities defined, the Gaussian likelihood can be computed</span>
+<span class="sd">        in the :meth:`_log_likelihood` method. As such, new subclasses of this likelihood</span>
+<span class="sd">        need only ensure that they correctly implement this and the machinery will be complete.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Extract the model units for x and y so that we can ensure</span>
+        <span class="c1"># unit coercion is done correctly.</span>
+        <span class="n">model_x_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">base_units</span>
+        <span class="n">model_y_unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">UNITS</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">x_units</span> <span class="o">=</span> <span class="n">model_x_unit</span> <span class="k">if</span> <span class="n">model_x_unit</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">unit</span>
+        <span class="n">y_units</span> <span class="o">=</span> <span class="n">model_y_unit</span> <span class="k">if</span> <span class="n">model_y_unit</span> <span class="o">!=</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">unit</span>
+
+        <span class="c1"># Pull X and Y from the data container. We ensure that they get</span>
+        <span class="c1"># converted into the correct base units.</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">x_units</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">y_units</span><span class="p">)</span>
+        <span class="n">y_err</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y_error</span><span class="p">,</span> <span class="n">y_units</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y_upper</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y_upper_limit</span><span class="p">,</span>
+                <span class="n">y_units</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">y_upper_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y_upper_lim_mask</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">y_upper_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">y_lower</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y_lower_limit</span><span class="p">,</span>
+                <span class="n">y_units</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">y_lower_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">y_lower_lim_mask</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="n">y_lower_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="c1"># Now combine the processed data into a namespace and return it.</span>
+        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
+            <span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">VARIABLES</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="n">x</span><span class="p">},</span>
+            <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="n">y_err</span><span class="p">,</span>
+            <span class="n">y_upper</span><span class="o">=</span><span class="n">y_upper</span><span class="p">,</span>
+            <span class="n">y_lower</span><span class="o">=</span><span class="n">y_lower</span><span class="p">,</span>
+            <span class="n">y_upper_mask</span><span class="o">=</span><span class="n">y_upper_mask</span><span class="p">,</span>
+            <span class="n">y_lower_mask</span><span class="o">=</span><span class="n">y_lower_mask</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

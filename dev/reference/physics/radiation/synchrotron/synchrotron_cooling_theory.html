@@ -1,0 +1,1132 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Theory of Synchrotron Electron Populations &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_cooling_theory';</script>
+    <link rel="icon" href="../../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Triceratops Example Gallery" href="../../../../auto_examples/index.html" />
+    <link rel="prev" title="Theory of Synchrotron SEDs" href="synchrotron_sed_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../inference/triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../inference/triceratops.inference.likelihood.base.GaussianLikelihoodXY.html">triceratops.inference.likelihood.base.GaussianLikelihoodXY</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs.log_smoothed_SFBPL.html">radiation.synchrotron.SEDs.log_smoothed_SFBPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs.log_exp_cutoff_sed.html">radiation.synchrotron.SEDs.log_exp_cutoff_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_2.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_1.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_cool_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_1.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_2.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_3.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_4.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_5.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_6.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7.html">radiation.synchrotron.SEDs._log_powerlaw_sbpl_sed_ssa_cool_7</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_sed_theory.html">Theory of Synchrotron SEDs</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Theory of Synchrotron Electron Populations</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Triceratops</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory of Synchrotron Electron Populations</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="theory-of-synchrotron-electron-populations">
+<span id="synchrotron-cooling-theory"></span><h1>Theory of Synchrotron Electron Populations<a class="headerlink" href="#theory-of-synchrotron-electron-populations" title="Link to this heading">#</a></h1>
+<p>Synchrotron emission from astrophysical sources is determined not only by the
+radiative properties of individual electrons, but also by the <strong>energy
+distribution of the electron population as a whole</strong>. In realistic environments,
+this distribution evolves over time due to injection, radiative losses, and other
+processes.</p>
+<p>In this section, we develop the general theory governing the evolution of
+relativistic electron populations and derive the steady-state distributions most
+commonly used in synchrotron modeling.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id1">Overview</a></p></li>
+<li><p><a class="reference internal" href="#formalism-of-electron-population-evolution" id="id2">Formalism of Electron Population Evolution</a></p></li>
+<li><p><a class="reference internal" href="#solutions-to-the-continuity-equation" id="id3">Solutions to the Continuity Equation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#steady-state-solutions" id="id4">Steady State Solutions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#cooling-mechanisms" id="id5">Cooling Mechanisms</a></p>
+<ul>
+<li><p><a class="reference internal" href="#synchrotron-cooling" id="id6">Synchrotron Cooling</a></p></li>
+<li><p><a class="reference internal" href="#inverse-compton-cooling" id="id7">Inverse Compton Cooling</a></p></li>
+<li><p><a class="reference internal" href="#adiabatic-cooling" id="id8">Adiabatic Cooling</a></p></li>
+<li><p><a class="reference internal" href="#summary-of-cooling-mechanisms" id="id9">Summary of Cooling Mechanisms</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#equipartition-for-cooled-electron-populations" id="id10">Equipartition for Cooled Electron Populations</a></p></li>
+<li><p><a class="reference internal" href="#computational-implementation" id="id11">Computational Implementation</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id12">References</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>Synchrotron emission observed from astrophysical sources almost always arises
+from <strong>ensembles of relativistic electrons</strong>, rather than from isolated
+particles. The collective radiative output therefore depends not only on the
+microphysics of synchrotron emission, but also on the <strong>statistical properties
+and evolution of the electron population</strong>.</p>
+<p>In realistic environments, electron populations are <strong>dynamical</strong>. Electrons
+are continuously injected by physical processes such as diffusive shock
+acceleration, magnetic reconnection, or turbulent heating. Once injected, they
+lose energy through radiative processes—most notably synchrotron and inverse
+Compton cooling—as well as through adiabatic expansion or escape from the
+emitting region. These competing processes reshape the electron distribution
+over time, imprinting characteristic breaks and slopes that directly determine
+the observed synchrotron spectrum.</p>
+<p>A self-consistent description of synchrotron emission therefore requires
+tracking the <strong>time evolution of the electron energy distribution</strong>, accounting
+for injection, cooling, and transport in energy space. In many astrophysical
+situations, this evolution leads to a steady-state distribution whose form is
+largely independent of initial conditions and depends primarily on the balance
+between injection and energy losses.</p>
+<p>In this section, we develop the general framework used to describe evolving
+electron populations and derive the steady-state distributions most commonly
+assumed in synchrotron modeling. These results provide the foundation for
+understanding the spectral regimes, break frequencies, and absorption features
+discussed in subsequent sections.</p>
+</section>
+<section id="formalism-of-electron-population-evolution">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Formalism of Electron Population Evolution</a><a class="headerlink" href="#formalism-of-electron-population-evolution" title="Link to this heading">#</a></h2>
+<p>Before deriving any specific results, we first establish the fundamental
+quantities and assumptions that govern the evolution of relativistic electron
+populations.</p>
+<p>The central object of interest is the <strong>electron distribution function</strong>
+<span class="math notranslate nohighlight">\(N(E,t)\)</span>, defined such that <span class="math notranslate nohighlight">\(N(E,t)\,dE\)</span> is the number (or number
+density) of electrons with energies in the interval <span class="math notranslate nohighlight">\((E, E+dE)\)</span> at time
+<span class="math notranslate nohighlight">\(t\)</span>. Given knowledge of this distribution at all times, the synchrotron
+emission from the population may be computed by integrating the single-electron
+emissivity over energy:</p>
+<div class="math notranslate nohighlight">
+\[P(\nu,t)
+=
+\int N(E,t)\,P_\nu(E)\,dE,\]</div>
+<p>where <span class="math notranslate nohighlight">\(P_\nu(E)\)</span> is the synchrotron power per unit frequency emitted by a
+single electron of energy <span class="math notranslate nohighlight">\(E\)</span>. A detailed discussion of the
+single-electron emissivity is provided in <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In many astrophysical applications, it is more convenient to work in terms of
+the electron Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span> rather than the energy <span class="math notranslate nohighlight">\(E\)</span>.
+The two are related by <span class="math notranslate nohighlight">\(E = \gamma m_e c^2\)</span>, where <span class="math notranslate nohighlight">\(m_e\)</span> is the
+electron mass and <span class="math notranslate nohighlight">\(c\)</span> is the speed of light. All results presented here
+can be straightforwardly translated to <span class="math notranslate nohighlight">\(\gamma\)</span>-space, and we will do so. In
+general, Triceratops defaults to the use of the <span class="math notranslate nohighlight">\(\gamma\)</span>-space distribution; however,
+for this discussion of theory, we prefer to work in terms of energy for clarity.</p>
+</div>
+<p>In realistic astrophysical environments, the electron distribution evolves
+continuously due to a variety of physical processes. These include the injection
+of new relativistic electrons, radiative energy losses (e.g. synchrotron and
+inverse Compton cooling), adiabatic expansion of the emitting plasma, and escape
+from the emission region. To describe this evolution in a unified manner, we
+employ a <strong>continuity equation in energy space</strong>.</p>
+<p>To construct this equation, consider an infinitesimal interval
+<span class="math notranslate nohighlight">\((E, E+dE)\)</span> in energy space. At time <span class="math notranslate nohighlight">\(t\)</span>, the number of electrons
+contained in this interval is <span class="math notranslate nohighlight">\(N(E,t)\,dE\)</span>. The number of electrons within
+this domain may change in two distinct ways:</p>
+<ol class="arabic simple">
+<li><p><strong>Direct addition or removal of particles</strong>, through physical injection or
+loss processes; and</p></li>
+<li><p><strong>Transport through energy space</strong>, as electrons gain or lose energy and
+flow across the boundaries of the interval.</p></li>
+</ol>
+<p>The first effect is described by an <strong>injection term</strong>
+<span class="math notranslate nohighlight">\(Q(E,t)\)</span>, defined such that <span class="math notranslate nohighlight">\(Q(E,t)\,dE\,dt\)</span> is the net number of
+electrons injected into (or removed from) the energy interval
+<span class="math notranslate nohighlight">\((E,E+dE)\)</span> during the time interval <span class="math notranslate nohighlight">\((t,t+dt)\)</span>. Injection may arise
+from processes such as diffusive shock acceleration, magnetic reconnection, or
+pair creation, while negative values of <span class="math notranslate nohighlight">\(Q\)</span> may represent escape or
+catastrophic losses.</p>
+<p>The second effect is described by the <strong>energy loss rate</strong>
+<span class="math notranslate nohighlight">\(\dot{E}(E) \equiv dE/dt\)</span>, which specifies how individual electrons move
+through energy space. For cooling processes, <span class="math notranslate nohighlight">\(\dot{E}(E) &lt; 0\)</span>, so electrons
+systematically drift toward lower energies, generating a flux of particles
+across energy boundaries.</p>
+<p>Combining these effects, conservation of particle number in energy space leads
+to the continuity equation</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial N(E,t)}{\partial t}
++
+\frac{\partial}{\partial E}
+\left[\dot{E}(E)\,N(E,t)\right]
+=
+Q(E,t).\]</div>
+<p>This equation provides the fundamental framework for modeling the evolution of
+relativistic electron populations. In the sections that follow, we will explore
+its solutions under various assumptions regarding injection, cooling, and
+dynamical timescales, and connect these solutions directly to the resulting
+synchrotron spectral energy distributions.</p>
+</section>
+<section id="solutions-to-the-continuity-equation">
+<h2><a class="toc-backref" href="#id3" role="doc-backlink">Solutions to the Continuity Equation</a><a class="headerlink" href="#solutions-to-the-continuity-equation" title="Link to this heading">#</a></h2>
+<p>The continuity equation governing the evolution of the electron distribution is
+a <strong>one-dimensional advection equation in energy space</strong>, with a source term
+representing particle injection. In full generality, it may be solved using the
+<a class="reference external" href="https://en.wikipedia.org/wiki/Method_of_characteristics">method of characteristics</a>.</p>
+<p>Expanding the energy derivative, the continuity equation may be written as</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial N(E,t)}{\partial t}
++
+\dot{E}(E)\,
+\frac{\partial N(E,t)}{\partial E}
++
+N(E,t)\,
+\frac{d\dot{E}}{dE}
+=
+Q(E,t).\]</div>
+<p>To eliminate the partial derivatives, we introduce <strong>characteristic curves</strong>
+<span class="math notranslate nohighlight">\(E(\tau)\)</span> in energy–time space, defined such that</p>
+<div class="math notranslate nohighlight">
+\[\frac{dE}{d\tau} = \dot{E}(E),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau\)</span> is a parameter labeling position along the characteristic.
+Physically, these curves correspond to the energy trajectories followed by
+individual electrons as they cool or gain energy.</p>
+<p>Along a characteristic, the total derivative of the distribution function is</p>
+<div class="math notranslate nohighlight">
+\[\frac{dN}{d\tau}
+=
+\frac{\partial N}{\partial t}
++
+\dot{E}(E)\,
+\frac{\partial N}{\partial E}.\]</div>
+<p>Substituting this into the expanded continuity equation yields an ordinary
+differential equation along each characteristic:</p>
+<div class="math notranslate nohighlight">
+\[\frac{dN}{d\tau}
++
+N(E,\tau)\,
+\frac{d\dot{E}}{dE}
+=
+Q(E,\tau).\]</div>
+<p>This is a first-order linear ODE and may be solved using an integrating factor.
+The resulting <strong>general solution</strong> for the electron distribution is</p>
+<div class="math notranslate nohighlight">
+\[N(E,t)
+=
+\frac{\dot E(E_0)}{\dot E(E)}\,N_0(E_0)
++
+\frac{1}{\dot E(E)}
+\int_{0}^{t}
+\dot E\!\big(E(t')\big)\,
+Q\!\big(E(t'),t'\big)\,dt',\]</div>
+<p>or, equivalently,</p>
+<div class="math notranslate nohighlight">
+\[N(E,t)
+=
+\frac{\dot E(E_0)}{\dot E(E)}\,N_0(E_0)
++
+\frac{1}{\dot E(E)}
+\int_{E}^{E_0}
+Q(E',t')\,dE',\]</div>
+<p>where <span class="math notranslate nohighlight">\(t'\)</span> is the time at which an electron that has energy <span class="math notranslate nohighlight">\(E\)</span> at time
+<span class="math notranslate nohighlight">\(t\)</span> possessed energy <span class="math notranslate nohighlight">\(E'\)</span>, as determined by the characteristic
+equation <span class="math notranslate nohighlight">\(dE/dt = \dot{E}(E)\)</span>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>While the general solution is formally exact, it is impractical for most
+applications because it requires knowledge of the full time-dependent injection
+function <span class="math notranslate nohighlight">\(Q(E,t)\)</span> and the initial distribution <span class="math notranslate nohighlight">\(N_0\)</span>. One then also needs
+to integrate <span class="math notranslate nohighlight">\(\dot{E}(E)\)</span> to obtain the characteristics <span class="math notranslate nohighlight">\(E(t)\)</span>.</p>
+</div>
+<section id="steady-state-solutions">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Steady State Solutions</a><a class="headerlink" href="#steady-state-solutions" title="Link to this heading">#</a></h3>
+<p>In many cases, we are most interested in the <strong>steady-state solutions</strong> of the cooling equation described above. In
+this limit, we have <span class="math notranslate nohighlight">\(E_0(E,t) \rightarrow \infty\)</span> as <span class="math notranslate nohighlight">\(t \rightarrow \infty\)</span>, and the general solution’s
+memory of the initial conditions is lost. The steady-state solutions depend only on the injection function
+<span class="math notranslate nohighlight">\(Q(E)\)</span> and the cooling function <span class="math notranslate nohighlight">\(\dot{E}(E)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[N_{\rm SS}(E) = \frac{1}{\dot{E}} \int_0^t \dot{E}(E',t') Q(E',t') dt',\]</div>
+<p>or, in terms of energy,</p>
+<div class="math notranslate nohighlight">
+\[N_{\rm SS}(E) = \frac{1}{\dot{E}} \int_E^{\infty} Q(E') dE'.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>It is worth recognizing that, when <span class="math notranslate nohighlight">\(\dot{E} = 0\)</span>, there is no steady-state
+solution. In this case, electrons simply accumulate at each energy, and the distribution
+grows linearly with time.</p>
+</div>
+<section id="steady-state-below-the-injection-minimum">
+<h4>Steady-State Below the Injection Minimum<a class="headerlink" href="#steady-state-below-the-injection-minimum" title="Link to this heading">#</a></h4>
+<p>One particularly important regime arises when electron are injected only above energy
+<span class="math notranslate nohighlight">\(E_{\min}\)</span>, so that <span class="math notranslate nohighlight">\(Q(E) = 0\)</span> for <span class="math notranslate nohighlight">\(E &lt; E_{\min}\)</span>. In this case, we have</p>
+<div class="math notranslate nohighlight">
+\[N_{\rm SS}(E) = \frac{1}{\dot{E}(E)} \int_{E_{\min}}^{\infty} Q(E') dE' \propto \frac{1}{|\dot{E}(E)|}.\]</div>
+<p>As such, the steady-state distribution below the injection minimum is determined solely by the cooling function. This
+is a universal result that holds regardless of the specific form of the injection spectrum.</p>
+</section>
+<section id="power-law-steady-states">
+<h4>Power-Law Steady States<a class="headerlink" href="#power-law-steady-states" title="Link to this heading">#</a></h4>
+<p>A common-place scenario is that of an injection function that is a power law in energy:</p>
+<div class="math notranslate nohighlight">
+\[Q(E) = Q_0 E^{-p}, \quad E \geq E_{\min}.\]</div>
+<p>Likewise, it is often the case that the cooling function is also a power law:</p>
+<div class="math notranslate nohighlight">
+\[\dot{E}(E) = -A E^{q}.\]</div>
+<p>The resulting steady-state distribution is then</p>
+<div class="math notranslate nohighlight">
+\[N_{\rm SS}(E)
+=
+\frac{Q_0}{A (p - q - 1)}\,E^{-(p + 1 - q)},
+\quad
+E \geq E_{\min}.\]</div>
+<p>This shows that power-law injection and cooling functions lead to power-law steady-state distributions, with the
+slope determined by both the injection index <span class="math notranslate nohighlight">\(p\)</span> and the cooling index <span class="math notranslate nohighlight">\(q\)</span>. As discussed in depth below,
+the typical case of synchrotron cooling corresponds to <span class="math notranslate nohighlight">\(q = 2\)</span>, leading to the well-known result that
+the steady-state distribution steepens by one power of energy compared to the injection spectrum.</p>
+<div class="math notranslate nohighlight">
+\[N_{\rm SS}(E)
+=
+\frac{Q_0}{A (p - 3)}\,E^{-(p - 1)},
+\quad
+E \geq E_{\min}.\]</div>
+</section>
+</section>
+</section>
+<section id="cooling-mechanisms">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Cooling Mechanisms</a><a class="headerlink" href="#cooling-mechanisms" title="Link to this heading">#</a></h2>
+<p>The evolution of relativistic electron populations is governed not only by
+injection processes, but also by the mechanisms through which electrons lose
+energy. These <strong>cooling processes</strong> determine both the shape of the electron
+distribution and the locations of spectral breaks in the resulting synchrotron
+emission.</p>
+<p>In most astrophysical environments relevant to synchrotron radiation, electron
+cooling is dominated by <strong>radiative losses</strong>, particularly synchrotron emission
+and inverse Compton scattering. In expanding systems, <strong>adiabatic cooling</strong> may
+also play an important role. Each of these processes may be described by an
+energy loss rate <span class="math notranslate nohighlight">\(\dot{E}(E)\)</span>, which enters directly into the continuity
+equation governing electron population evolution.</p>
+<p>Below, we summarize the most important cooling mechanisms and their consequences
+for synchrotron-emitting electron populations.</p>
+<section id="synchrotron-cooling">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Synchrotron Cooling</a><a class="headerlink" href="#synchrotron-cooling" title="Link to this heading">#</a></h3>
+<p>The most ubiquitous radiative loss mechanism for relativistic electrons in
+magnetized plasmas is <strong>synchrotron cooling</strong>. As electrons spiral in magnetic
+fields, they continuously radiate energy, causing their Lorentz factors to
+decrease over time.</p>
+<p>The total synchrotron power radiated by a single electron is</p>
+<div class="math notranslate nohighlight">
+\[P_{\rm synch}
+=
+\frac{4}{3}\,\sigma_T c\,\gamma^2 \beta^2 U_B,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\sigma_T\)</span> is the Thomson cross section,
+<span class="math notranslate nohighlight">\(\gamma\)</span> is the electron Lorentz factor,
+<span class="math notranslate nohighlight">\(\beta = v/c\)</span>, and
+<span class="math notranslate nohighlight">\(U_B = B^2/(8\pi)\)</span> is the magnetic energy density.
+In the ultra-relativistic limit (<span class="math notranslate nohighlight">\(\beta \simeq 1\)</span>), this reduces to</p>
+<div class="math notranslate nohighlight">
+\[P_{\rm synch}
+\approx
+\frac{4}{3}\,\sigma_T c\,\gamma^2 U_B.\]</div>
+<p>Because the emitted power scales as <span class="math notranslate nohighlight">\(\gamma^2\)</span>, higher-energy electrons
+cool more rapidly than lower-energy ones. This energy dependence is responsible
+for the appearance of <strong>cooling breaks</strong> in both the electron distribution and
+the synchrotron spectrum.</p>
+<p>The corresponding synchrotron cooling timescale is</p>
+<div class="math notranslate nohighlight">
+\[\tau_{\rm synch}
+=
+\frac{\gamma m_e c^2}{P_{\rm synch}}
+=
+\frac{3 m_e c}{4 \sigma_T U_B \gamma}.\]</div>
+<p>Equating this timescale with a characteristic dynamical time
+<span class="math notranslate nohighlight">\(t_{\rm dyn}\)</span> defines the <strong>synchrotron cooling Lorentz factor</strong></p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\gamma_c
+=
+\frac{3 m_e c}{4 \sigma_T U_B t_{\rm dyn}}
+=
+\frac{6\pi m_e c}{\sigma_T B^2 t_{\rm dyn}}.
+}\]</div>
+<p>Electrons with <span class="math notranslate nohighlight">\(\gamma &gt; \gamma_c\)</span> cool efficiently within a dynamical
+time, while those with <span class="math notranslate nohighlight">\(\gamma &lt; \gamma_c\)</span> remain effectively uncooled.
+This distinction naturally leads to broken power-law electron distributions.</p>
+<p>The synchrotron frequency associated with electrons at the cooling Lorentz
+factor is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\nu_c
+=
+\frac{3 e B}{4\pi m_e c}\,\gamma_c^2.
+}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>These quantities are implemented in
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron.frequencies</span></code>.</p>
+</div>
+</section>
+<section id="inverse-compton-cooling">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Inverse Compton Cooling</a><a class="headerlink" href="#inverse-compton-cooling" title="Link to this heading">#</a></h3>
+<p>Relativistic electrons may also cool via <strong>inverse Compton (IC) scattering</strong> off
+ambient photon fields. This process is particularly important in environments
+with intense radiation backgrounds, such as star-forming regions, AGN
+environments, or compact transients.</p>
+<p>In the <strong>Thomson regime</strong>, where the photon energy in the electron rest frame
+satisfies <span class="math notranslate nohighlight">\(\gamma h\nu \ll m_e c^2\)</span>, the inverse Compton power radiated by a
+single electron is</p>
+<div class="math notranslate nohighlight">
+\[P_{\rm IC}
+=
+\frac{4}{3}\,\sigma_T c\,\gamma^2 U_{\rm rad},\]</div>
+<p>where <span class="math notranslate nohighlight">\(U_{\rm rad}\)</span> is the energy density of the target photon field.
+This expression is formally identical to the synchrotron power, with the magnetic
+energy density <span class="math notranslate nohighlight">\(U_B\)</span> replaced by <span class="math notranslate nohighlight">\(U_{\rm rad}\)</span>.</p>
+<p>The corresponding inverse Compton cooling timescale is</p>
+<div class="math notranslate nohighlight">
+\[\tau_{\rm IC}
+=
+\frac{3 m_e c}{4 \sigma_T U_{\rm rad}\,\gamma}.\]</div>
+<p>When both synchrotron and inverse Compton losses are present, the total radiative
+cooling rate is additive:</p>
+<div class="math notranslate nohighlight">
+\[P_{\rm tot}
+=
+\frac{4}{3}\,\sigma_T c\,\gamma^2
+\left(U_B + U_{\rm rad}\right).\]</div>
+<p>It is common to define the <strong>Compton (Y)-parameter</strong></p>
+<div class="math notranslate nohighlight">
+\[Y \equiv \frac{U_{\rm rad}}{U_B},\]</div>
+<p>which measures the relative importance of inverse Compton cooling compared to
+synchrotron cooling.</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>At sufficiently high electron energies, inverse Compton scattering enters
+the <strong>Klein–Nishina regime</strong>, where the scattering cross section is reduced
+and the <span class="math notranslate nohighlight">\(\gamma^2\)</span> scaling of the cooling rate breaks down.
+Triceratops currently assumes Thomson-regime IC cooling.</p>
+</div>
+</section>
+<section id="adiabatic-cooling">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Adiabatic Cooling</a><a class="headerlink" href="#adiabatic-cooling" title="Link to this heading">#</a></h3>
+<p>In expanding systems—such as supernova remnants, blast waves, or relativistic
+outflows—electrons may also lose energy through <strong>adiabatic expansion</strong> of the
+emitting plasma. Unlike radiative losses, adiabatic cooling does not produce
+radiation; instead, electron energies decrease because the plasma performs
+macroscopic work as it expands.</p>
+<p>In a fully ionized plasma, electrons are <strong>not free-streaming</strong> on macroscopic
+scales. Charge neutrality and electromagnetic forces couple electrons to the
+bulk flow (typically dominated dynamically by the ions and fields), so that the
+electron population is advected with an expanding fluid element. Adiabatic
+cooling of the electrons is therefore a kinematic consequence of expansion: as
+the comoving volume grows, the electron momenta decrease, and hence so do their
+energies.</p>
+<p>For an isotropic ultra-relativistic particle distribution, the
+pressure is related to the internal energy density <span class="math notranslate nohighlight">\(u\)</span> by</p>
+<div class="math notranslate nohighlight">
+\[P = \frac{1}{3}\,u,\]</div>
+<p>so that the adiabatic index is <span class="math notranslate nohighlight">\(\gamma_{\rm ad}=4/3\)</span>. For an adiabatic
+process, the first law gives</p>
+<div class="math notranslate nohighlight">
+\[dU = -P\,dV,\]</div>
+<p>with <span class="math notranslate nohighlight">\(U=uV\)</span>. Differentiating,</p>
+<div class="math notranslate nohighlight">
+\[d(uV) = -\frac{1}{3}u\,dV
+\quad\Rightarrow\quad
+V\,du = -\frac{4}{3}u\,dV,\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[\frac{du}{u} = -\frac{4}{3}\frac{dV}{V}
+\quad\Rightarrow\quad
+u \propto V^{-4/3}.\]</div>
+<p>For a fixed number of particles <span class="math notranslate nohighlight">\(N\)</span> in the comoving element, the mean
+particle energy scales as</p>
+<div class="math notranslate nohighlight">
+\[\langle E\rangle \sim \frac{uV}{N} \propto V^{-1/3},\]</div>
+<p>which implies</p>
+<div class="math notranslate nohighlight">
+\[\dot E_{\rm ad} = -\frac{1}{3}\frac{\dot V}{V}\,E.\]</div>
+<p>This contribution can be added to the total energy loss rate in the continuity
+equation.</p>
+<div class="math notranslate nohighlight">
+\[\dot E_{\rm ad}(t) = -\frac{1}{3}\frac{\dot V}{V}\,E
+\;=\;
+-\frac{1}{3}(\nabla\cdot \mathbf{u})\,E.\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Because <span class="math notranslate nohighlight">\(\dot E_{\rm ad}\propto -E\)</span>, adiabatic cooling preserves the slope
+of power-law electron distributions, in contrast to radiative losses such as
+synchrotron and inverse Compton cooling for which <span class="math notranslate nohighlight">\(\dot E\propto -E^2\)</span>.</p>
+</div>
+<p>In systems where both effects are important, a commonly used effective loss law
+is</p>
+<div class="math notranslate nohighlight">
+\[\dot E(E,t) = -A(t)\,E^2 - \frac{1}{3}\,(\nabla\cdot \mathbf{u})\,E,\]</div>
+<p>which captures radiative steepening at high energies and adiabatic evolution of
+the overall normalization.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Although the bulk expansion is typically driven dynamically by the ions and
+magnetic fields, adiabatic cooling applies to the relativistic electrons
+because they are advected with the expanding flow and their momenta redshift
+accordingly. The electron population need not dominate the pressure for
+adiabatic losses to operate.</p>
+</div>
+</section>
+<section id="summary-of-cooling-mechanisms">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Summary of Cooling Mechanisms</a><a class="headerlink" href="#summary-of-cooling-mechanisms" title="Link to this heading">#</a></h3>
+<p>The dominant cooling mechanisms encountered in synchrotron-emitting systems are:</p>
+<ul class="simple">
+<li><p><strong>Synchrotron cooling</strong>: <span class="math notranslate nohighlight">\(\dot{E} \propto -E^2\)</span>, steepens electron
+distributions above the cooling break.</p></li>
+<li><p><strong>Inverse Compton cooling</strong>: also <span class="math notranslate nohighlight">\(\dot{E} \propto -E^2\)</span> in the Thomson
+regime, enhancing radiative losses by a factor <span class="math notranslate nohighlight">\(1+Y\)</span>.</p></li>
+<li><p><strong>Adiabatic cooling</strong>: <span class="math notranslate nohighlight">\(\dot{E} \propto -E\)</span>, reduces electron energies
+without altering spectral slopes.</p></li>
+</ul>
+<p>The competition between these processes determines the structure of the electron
+population and, ultimately, the observed synchrotron spectral energy
+distribution.</p>
+</section>
+</section>
+<section id="equipartition-for-cooled-electron-populations">
+<span id="equipart-cooling-theory"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Equipartition for Cooled Electron Populations</a><a class="headerlink" href="#equipartition-for-cooled-electron-populations" title="Link to this heading">#</a></h2>
+<p>As described in <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>, it is generally not possible to get a direct constraint on
+the structure of the electron population from synchrotron observations alone. Instead, one typically
+relies on <strong>equipartition assumptions</strong> to relate the energy density in relativistic electrons to
+that in the magnetic field. This approach is also used when modeling the synchrotron emission from cooled
+electron populations.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For background on the equipartition formalism, see the relevant section in <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>.</p>
+</div>
+<p>The equipartition analysis of cooled electron populations roughly follows that of the uncooled
+case, with some important modifications to account for the altered electron distribution.</p>
+<p>We begin by considering a <strong>fast-cooling</strong> electron population, where the cooling Lorentz factor
+<span class="math notranslate nohighlight">\(\gamma_c\)</span> lies below the injection minimum <span class="math notranslate nohighlight">\(\gamma_m\)</span>. In this regime, all injected electrons cool
+efficiently. For notational convenience, we define the <strong>normalization parameter</strong> <span class="math notranslate nohighlight">\(K_{\rm 0}\)</span> such that</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}N(\gamma)
+=
+K_{\rm 0}
+\begin{cases}
+\left(\frac{\gamma}{\gamma_m}\right)^{-2}, &amp; \gamma_c \leq \gamma &lt; \gamma_m, \\
+\left(\frac{\gamma}{\gamma_m}\right)^{-(p+1)}, &amp; \gamma_m \leq \gamma &lt; \gamma_{\max},\\
+0 &amp; \text{elsewhere}.
+\end{cases}\end{split}\]</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Note that this convention <strong>differs</strong> from that used for the uncooled electron distribution in which we used
+<span class="math notranslate nohighlight">\(N = N_0 \gamma^{-p}\)</span> above <span class="math notranslate nohighlight">\(\gamma_m\)</span>. Here, to allow for easier manipulation of the broken-power-law,
+we normalize to <span class="math notranslate nohighlight">\(\gamma_m\)</span> and include the appropriate scaling in each segment.</p>
+</div>
+<p>As in the case of uncooled electrons, we can also write this distribution in terms of the <strong>energy</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}N(E)
+=
+K_{\rm E,0}
+\begin{cases}
+\left(\frac{E}{E_m}\right)^{-2}, &amp; E_c \leq E &lt; E_m, \\
+\left(\frac{E}{E_m}\right)^{-(p+1)}, &amp; E_m \leq E &lt; E_{\max},\\
+0 &amp; \text{elsewhere}.
+\end{cases}\end{split}\]</div>
+<p>For a <strong>slow-cooling</strong> population, where <span class="math notranslate nohighlight">\(\gamma_m &lt; \gamma_c\)</span>, only the highest-energy electrons cool
+efficiently. The distribution is then</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}N(\gamma)
+=
+H_{\rm 0}
+\begin{cases}
+\left(\frac{\gamma}{\gamma_c}\right)^{-p}, &amp; \gamma_m \leq \gamma &lt; \gamma_c, \\
+\left(\frac{\gamma}{\gamma_c}\right)^{-(p+1)}, &amp; \gamma_c \leq \gamma &lt; \gamma_{\max},\\
+0 &amp; \text{elsewhere}.
+\end{cases}\end{split}\]</div>
+<p>or, in terms of energy,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}N(E)
+=
+H_{\rm E,0}
+\begin{cases}
+\left(\frac{E}{E_c}\right)^{-p}, &amp; E_m \leq E &lt; E_c, \\
+\left(\frac{E}{E_c}\right)^{-(p+1)}, &amp; E_c \leq E &lt; E_{\max},\\
+0 &amp; \text{elsewhere}.
+\end{cases}\end{split}\]</div>
+<p>Following our approach in <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>, we can compute moments of the distribution as</p>
+<div class="math notranslate nohighlight">
+\[M_\gamma^{(k)} = K_{\rm 0} \int_{\gamma_c}^{\gamma_{\max}} \gamma^k N(\gamma) d\gamma,\]</div>
+<p>or, in terms of energy,</p>
+<div class="math notranslate nohighlight">
+\[M_E^{(k)} = K_{\rm E,0} \int_{E_c}^{E_{\max}} E^k N(E) dE.\]</div>
+<p>The equipartition analysis then proceeds in exactly the same manner as described in <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>, with
+the modified electron distribution used to compute the the relevant moments and corresponding energy densities.</p>
+</section>
+<section id="computational-implementation">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Computational Implementation</a><a class="headerlink" href="#computational-implementation" title="Link to this heading">#</a></h2>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Not Yet Implemented.</p>
+</div>
+</section>
+<section id="references">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="synchrotron_sed_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Theory of Synchrotron SEDs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../../../auto_examples/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Triceratops Example Gallery</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalism-of-electron-population-evolution">Formalism of Electron Population Evolution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solutions-to-the-continuity-equation">Solutions to the Continuity Equation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#steady-state-solutions">Steady State Solutions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#steady-state-below-the-injection-minimum">Steady-State Below the Injection Minimum</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#power-law-steady-states">Power-Law Steady States</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#cooling-mechanisms">Cooling Mechanisms</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-cooling">Synchrotron Cooling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#inverse-compton-cooling">Inverse Compton Cooling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adiabatic-cooling">Adiabatic Cooling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-cooling-mechanisms">Summary of Cooling Mechanisms</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipartition-for-cooled-electron-populations">Equipartition for Cooled Electron Populations</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computational-implementation">Computational Implementation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_cooling_theory.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

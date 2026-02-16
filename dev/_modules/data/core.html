@@ -1,0 +1,1322 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>data.core &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/data/core';</script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">data.core</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for data.core</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Generic / core data container structures for Triceratops.</span>
+
+<span class="sd">These containers form the backbone of data handling in Triceratops, providing</span>
+<span class="sd">a structured, validated interface to observational and synthetic datasets.</span>
+<span class="sd">They enforce schema compliance, unit consistency, and immutability, ensuring</span>
+<span class="sd">robustness and reproducibility throughout the modeling and inference pipeline.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">triceratops_logger</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">DataContainer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for validated, immutable data containers in Triceratops.</span>
+
+<span class="sd">    A :class:`DataContainer` provides a **structured, unit-aware, read-only interface**</span>
+<span class="sd">    to observational or synthetic datasets used throughout the Triceratops modeling</span>
+<span class="sd">    and inference pipeline. It acts as a *boundary object* between raw input data</span>
+<span class="sd">    (typically stored as :class:`astropy.table.Table` instances) and downstream</span>
+<span class="sd">    numerical, statistical, and physical modeling components.</span>
+
+<span class="sd">    The core responsibilities of a DataContainer are to:</span>
+
+<span class="sd">    - enforce a **well-defined schema** via the class-level :attr:`COLUMNS` specification,</span>
+<span class="sd">    - validate column presence, dtypes, and physical units,</span>
+<span class="sd">    - provide safe, immutable access to the underlying data,</span>
+<span class="sd">    - and support conversion to NumPy arrays for performance-critical backends</span>
+<span class="sd">      such as likelihood evaluation and samplers.</span>
+
+<span class="sd">    Unlike raw Astropy tables, DataContainer instances are **immutable by design**: all</span>
+<span class="sd">    accessors return copies of the underlying data to prevent accidental modification</span>
+<span class="sd">    during analysis or inference. This design choice ensures reproducibility and avoids</span>
+<span class="sd">    subtle bugs in long-running sampling workflows.</span>
+
+<span class="sd">    Subclasses must define a concrete schema by overriding the :attr:`COLUMNS` class</span>
+<span class="sd">    attribute and implement the :meth:`from_table` constructor to handle any</span>
+<span class="sd">    domain-specific preprocessing (e.g., detection logic, epoch grouping, masking,</span>
+<span class="sd">    or derived quantities).</span>
+
+<span class="sd">    Design principles</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    - **Schema-driven**:</span>
+<span class="sd">      Each subclass declares a formal column schema describing required and optional</span>
+<span class="sd">      columns, expected dtypes, and physical units. Validation occurs eagerly at</span>
+<span class="sd">      construction time.</span>
+
+<span class="sd">    - **Unit-aware**:</span>
+<span class="sd">      Physical quantities are validated and exposed using Astropy units. Missing but</span>
+<span class="sd">      expected units are assigned with a warning; incompatible units raise errors.</span>
+
+<span class="sd">    - **Immutable**:</span>
+<span class="sd">      The underlying table cannot be modified in place. All slicing and accessors</span>
+<span class="sd">      return copies.</span>
+
+<span class="sd">    - **Inference-friendly**:</span>
+<span class="sd">      Containers support NumPy coercion (``np.asarray(container)``) and explicit CGS</span>
+<span class="sd">      conversion via :meth:`to_cgs_array` for efficient numerical evaluation.</span>
+
+<span class="sd">    Role in the Triceratops pipeline</span>
+<span class="sd">    --------------------------------</span>
+<span class="sd">    DataContainer objects are typically consumed by likelihood classes, which</span>
+<span class="sd">    define how model predictions are statistically compared to data. Models and</span>
+<span class="sd">    samplers **never interact with raw tables directly**—all data access flows</span>
+<span class="sd">    through a validated container.</span>
+
+<span class="sd">    This abstraction allows Triceratops to support a wide range of data modalities</span>
+<span class="sd">    (e.g., photometry, spectra, time series, generic ``(x, y)`` datasets) while</span>
+<span class="sd">    maintaining a consistent and robust inference API.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This class is abstract and cannot be instantiated directly.</span>
+<span class="sd">    - Subclasses should call ``super().__init__`` to ensure schema validation.</span>
+<span class="sd">    - Equality comparisons compare the underlying tables.</span>
+<span class="sd">    - This class deliberately does **not** subclass :class:`astropy.table.Table`</span>
+<span class="sd">      in order to strictly control mutability and invariants.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    triceratops.inference.likelihood.base.Likelihood</span>
+<span class="sd">        Likelihood classes that consume DataContainer instances.</span>
+<span class="sd">    astropy.table.Table</span>
+<span class="sd">        Underlying data structure used for storage.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
+    <span class="c1"># This ``COLUMNS`` dictionary contains the core schema requirements for the input</span>
+    <span class="c1"># table in order to ensure that the radio photometry input is valid. This is then</span>
+    <span class="c1"># enforced in ``_validate_table``.</span>
+    <span class="c1">#</span>
+    <span class="c1"># DEVELOPERS: YOU NEED TO OVERWRITE THIS!</span>
+    <span class="n">COLUMNS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;COLUMN_NAME&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of the column.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="c1"># ========================= SPECIAL COLUMNS =========================== #</span>
+    <span class="c1"># In subclasses in this module, it is common to see this section filled by</span>
+    <span class="c1"># declarations about certain special columns (i.e. X_COL = ..., Y_COL = ...).</span>
+    <span class="c1"># This is to facilitate easy access to these columns in downstream code.</span>
+    <span class="c1">#</span>
+    <span class="c1"># In this base class, we do not define any special columns.</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Initialization and validation methods</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the data container.</span>
+
+<span class="sd">        This method should be overridden in subclasses to ensure proper behavior</span>
+<span class="sd">        downstream. The core responsibilities of this class are to</span>
+
+<span class="sd">        1. Assign the ``self.__table__`` attribute to a :class:`~astropy.table.Table` instance.</span>
+<span class="sd">        2. Validate that the table is consistent with the schema.</span>
+<span class="sd">        3. Any additional configuration / setup required by the subclass.</span>
+
+<span class="sd">        In the default implementation, we assign the table and offload to the</span>
+<span class="sd">        ``self._validate_table`` method for validation. New implementations should</span>
+<span class="sd">        call ``super().__init__()`` to ensure these responsibilities are fulfilled and</span>
+<span class="sd">        then add any additional setup required.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: ~astropy.table.Table</span>
+<span class="sd">            The data table to be contained. This must conform to the schema defined in the</span>
+<span class="sd">            :attr:`COLUMNS`` class attribute.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Assign the table to the data class.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;The &#39;table&#39; parameter must be an instance of astropy.table.Table.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Hand off to the validation method. DEVELOPERS: you should modify validation by</span>
+        <span class="c1"># intercepting in your subclass&#39;s ``_validate_table`` method.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">:</span> <span class="n">Table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_validate_table</span><span class="p">(</span><span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="c1"># Proceed with any additional management.</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_table</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate that the provided table conforms to the schema defined in the :attr:`COLUMNS` class attribute.</span>
+
+<span class="sd">        This method should be overridden in subclasses to implement specific validation</span>
+<span class="sd">        logic. The default implementation checks for the presence of required columns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: ~astropy.table.Table</span>
+<span class="sd">            The data table to validate.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~astropy.table.Table</span>
+<span class="sd">            The validated data table.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the table does not conform to the schema.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">for</span> <span class="n">column</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">:</span>
+            <span class="c1"># Extract necessary fields.</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">column</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">required</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+
+            <span class="c1"># Check for required columns.</span>
+            <span class="k">if</span> <span class="n">required</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing required column &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; in input table.&quot;</span><span class="p">)</span>
+
+            <span class="c1"># If this column just isn&#39;t in the table, we can break</span>
+            <span class="c1"># out now. This can happen for non-required columns.</span>
+            <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="c1"># Now ensure that we can coerce to the correct dtype</span>
+            <span class="c1"># before we proceed</span>
+            <span class="n">expected_dtype</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dtype&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">expected_dtype</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">expected_dtype</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; cannot be coerced to expected dtype &#39;</span><span class="si">{</span><span class="n">expected_dtype</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+            <span class="c1"># Now handle the units. For units, a &quot;&quot; is a specifically dimensionless unit,</span>
+            <span class="c1"># while &quot;None&quot; means we just don&#39;t care what unit is on the data.</span>
+            <span class="n">expected_unit</span> <span class="o">=</span> <span class="n">column</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">expected_unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># We have an expected unit that we&#39;re now going to check</span>
+                <span class="c1"># for compatibility with the underlying data.</span>
+                <span class="n">expected_unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">)</span>
+
+                <span class="n">col</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+                <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">triceratops_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; has no unit. Assigning expected unit &#39;</span><span class="si">{</span><span class="n">expected_unit</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+                    <span class="n">col</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">expected_unit</span>
+                <span class="k">elif</span> <span class="ow">not</span> <span class="n">col</span><span class="o">.</span><span class="n">unit</span><span class="o">.</span><span class="n">is_equivalent</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="n">u</span><span class="o">.</span><span class="n">UnitsError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; has unit &#39;</span><span class="si">{</span><span class="n">col</span><span class="o">.</span><span class="n">unit</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
+                        <span class="sa">f</span><span class="s2">&quot;which is not compatible with expected unit &#39;</span><span class="si">{</span><span class="n">expected_unit</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+                    <span class="p">)</span>
+
+                <span class="c1"># We have no reason to believe the conversion will fail. Attempt</span>
+                <span class="c1"># to execute the conversion.</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Column &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; cannot be assigned expected unit &#39;</span><span class="si">{</span><span class="n">expected_unit</span><span class="si">}</span><span class="s2">&#39;: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="k">return</span> <span class="n">table</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Dunder Methods / Specialty Methods</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># The scheme for dunder implementation in this class is as follows:</span>
+    <span class="c1">#</span>
+    <span class="c1"># - Effectively, we delegate everything to the underlying Astropy Table, this</span>
+    <span class="c1">#   ensures users are not caught off-guard by missing functionality.</span>
+    <span class="c1"># - However, we need to set a high __array_priority__ to ensure that</span>
+    <span class="c1">#   operations involving both RadioPhotometryContainer and numpy arrays</span>
+    <span class="c1">#   defer to the container&#39;s methods.</span>
+    <span class="c1"># - We also implement __eq__ to allow for equality comparisons between</span>
+    <span class="c1">#   two RadioPhotometryContainer instances.</span>
+    <span class="c1"># - Finally, we are now an immutable container, so we do not implement</span>
+    <span class="c1">#   any methods that would allow mutation of the underlying table.</span>
+    <span class="n">__array_priority__</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__len__</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__getitem__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">Table</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">iter</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;&lt;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> n_obs=</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="si">}</span><span class="s2">&gt;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__contains__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">item</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="fm">__contains__</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__bool__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__eq__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">NotImplemented</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span> <span class="o">==</span> <span class="n">other</span><span class="o">.</span><span class="n">__table__</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__array__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the container to a NumPy structured array.</span>
+
+<span class="sd">        This method is invoked by NumPy when coercing the container via</span>
+<span class="sd">        ``np.asarray(container)``. Only columns marked as ``required=True`` in the</span>
+<span class="sd">        schema and having numerical dtypes are included. Values are returned in the</span>
+<span class="sd">        units specified by the schema (i.e. *not* automatically converted to CGS).</span>
+
+<span class="sd">        The returned array is a copy and does not share writable memory with the</span>
+<span class="sd">        internal table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Structured NumPy array containing required numerical columns in schema</span>
+<span class="sd">            units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Allocate a list to store each of the subarrays as we process them.</span>
+        <span class="n">_array_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># For each column in the dataset, we&#39;re going to go and</span>
+        <span class="c1"># process it to a numerical array if it&#39;s required.</span>
+        <span class="k">for</span> <span class="n">colspec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">colspec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">colspec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">colspec</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Skip non-numerical required columns (e.g. strings, identifiers)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="n">_array_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">values</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">_array_items</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Properties</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Table</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return a copy of the underlying Astropy table.</span>
+
+<span class="sd">        This prevents mutation of the internal container state.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: The number of observations in the container.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Utility Methods</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a copy of this container.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_cgs_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert the container to a NumPy array, converted to CGS base units.</span>
+
+<span class="sd">        This method mirrors ``__array__`` but explicitly converts all unit-bearing</span>
+<span class="sd">        columns to their CGS equivalents. The output is intended for numerical backends such as</span>
+<span class="sd">        likelihood evaluation and samplers.</span>
+
+<span class="sd">        The returned array is a copy and does not share writable memory with the</span>
+<span class="sd">        internal table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Dense NumPy array of shape (n_obs, n_required_numeric_columns) with all</span>
+<span class="sd">            values expressed in CGS base units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">_array_items</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">colspec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">COLUMNS</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">colspec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;required&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">colspec</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+            <span class="n">dtype</span> <span class="o">=</span> <span class="n">colspec</span><span class="p">[</span><span class="s2">&quot;dtype&quot;</span><span class="p">]</span>
+
+            <span class="c1"># Skip non-numerical required columns</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="n">dtype</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+                <span class="k">continue</span>
+
+            <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+
+            <span class="k">if</span> <span class="n">col</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="c1"># Convert to CGS base units</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">col</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">col</span><span class="p">)</span>
+
+            <span class="n">_array_items</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">values</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">_array_items</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a DataContainer from an Astropy Table.</span>
+
+<span class="sd">        This is an abstract method that must be implemented by subclasses.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table : ~astropy.table.Table</span>
+<span class="sd">            The input table containing the data.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataContainer</span>
+<span class="sd">            An instance of the subclass containing the data from the table.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">pass</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">read_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Create a DataContainer from a FITS file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">            The file path to the FITS file containing the data.</span>
+<span class="sd">        read_kws : dict</span>
+<span class="sd">            Additional keyword arguments to pass to :meth:`astropy.table.Table.read`.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments to pass to :meth:`from_table`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        DataContainer</span>
+<span class="sd">            An instance of the subclass containing the data from the FITS file.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Coerce the read kwargs.</span>
+        <span class="k">if</span> <span class="n">read_kws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">read_kws</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Read the table from the file.</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">read_kws</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">write_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Write the RadioPhotometryContainer&#39;s table to a file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or pathlib.Path</span>
+<span class="sd">            The file path where the FITS file will be saved.</span>
+<span class="sd">        write_kws : dict</span>
+<span class="sd">            Additional keyword arguments to pass to :meth:`astropy.table.Table.write`.</span>
+<span class="sd">        **kwargs:</span>
+<span class="sd">            Additional keyword arguments to be used in subclasses.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">write_kws</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">write_kws</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">write_kws</span><span class="p">)</span>
+
+
+<span class="c1"># ====================================================================== #</span>
+<span class="c1"># Generic Containers for (x, y) Data</span>
+<span class="c1"># ====================================================================== #</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">XYDataContainer</span><span class="p">(</span><span class="n">DataContainer</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for two-dimensional ``(x, y)`` datasets with optional uncertainties and censoring.</span>
+
+<span class="sd">    An :class:`XYDataContainer` represents observational or synthetic data that</span>
+<span class="sd">    can be expressed as pairs of an independent variable ``x`` and a dependent</span>
+<span class="sd">    variable ``y``. This abstraction is intended to support a wide range of</span>
+<span class="sd">    inference problems, including curve fitting, spectral modeling, and</span>
+<span class="sd">    phenomenological regression, while remaining agnostic about the specific</span>
+<span class="sd">    physical meaning of the axes.</span>
+
+<span class="sd">    In addition to core ``(x, y)`` values, this container supports optional:</span>
+
+<span class="sd">    - uncertainties on ``x`` and/or ``y``,</span>
+<span class="sd">    - upper and lower limits (censoring) on either axis,</span>
+<span class="sd">    - detection and non-detection masking derived from limit columns.</span>
+
+<span class="sd">    All axis semantics are defined *declaratively* via class-level column</span>
+<span class="sd">    attributes (e.g., :attr:`X_COLUMN`, :attr:`Y_ERROR_COLUMN`), allowing</span>
+<span class="sd">    subclasses to specialize behavior without modifying downstream likelihood</span>
+<span class="sd">    logic.</span>
+
+<span class="sd">    This class does **not** define how uncertainties or limits are treated</span>
+<span class="sd">    statistically; it only exposes them in a standardized, unit-aware form.</span>
+<span class="sd">    Interpretation of errors and censoring is entirely delegated to likelihood</span>
+<span class="sd">    implementations.</span>
+
+<span class="sd">    Key features</span>
+<span class="sd">    ------------</span>
+<span class="sd">    - **Axis abstraction**:</span>
+<span class="sd">    Independent and dependent variables are identified via class attributes</span>
+<span class="sd">    rather than hard-coded column names.</span>
+
+<span class="sd">    - **Optional uncertainties**:</span>
+<span class="sd">    Support for symmetric uncertainties on ``x`` and/or ``y`` without</span>
+<span class="sd">    imposing a statistical model.</span>
+
+<span class="sd">    - **Censoring-aware**:</span>
+<span class="sd">    Upper and lower limits on either axis are detected automatically and</span>
+<span class="sd">    exposed through boolean masks.</span>
+
+<span class="sd">    - **Unit-safe**:</span>
+<span class="sd">    All values are validated and returned as Astropy quantities.</span>
+
+<span class="sd">    - **Immutable**:</span>
+<span class="sd">    Like all :class:`DataContainer` subclasses, this container is read-only.</span>
+
+<span class="sd">    Detection and censoring model</span>
+<span class="sd">    -----------------------------</span>
+<span class="sd">    Censoring is inferred purely from the presence of *finite values* in</span>
+<span class="sd">    declared limit columns:</span>
+
+<span class="sd">    - Upper limits correspond to finite values in ``*_UPPER_LIMIT_COLUMN``.</span>
+<span class="sd">    - Lower limits correspond to finite values in ``*_LOWER_LIMIT_COLUMN``.</span>
+
+<span class="sd">    The container constructs independent boolean masks for:</span>
+
+<span class="sd">    - x-axis upper limits,</span>
+<span class="sd">    - x-axis lower limits,</span>
+<span class="sd">    - y-axis upper limits,</span>
+<span class="sd">    - y-axis lower limits,</span>
+
+<span class="sd">    as well as composite masks indicating whether any limit applies to a given</span>
+<span class="sd">    observation.</span>
+
+<span class="sd">    No assumptions are made about how these limits should enter a likelihood</span>
+<span class="sd">    (e.g., one-sided Gaussian, survival analysis, hard truncation).</span>
+
+<span class="sd">    Intended use</span>
+<span class="sd">    ------------</span>
+<span class="sd">    :class:`XYDataContainer` is intended to serve as a *common interface* between</span>
+<span class="sd">    diverse data products and inference machinery, including:</span>
+
+<span class="sd">    - spectral energy distributions,</span>
+<span class="sd">    - light curve slices at fixed frequency,</span>
+<span class="sd">    - generic ``(x, y)`` curve-fitting problems,</span>
+<span class="sd">    - censored regression with upper or lower limits.</span>
+
+<span class="sd">    Subclasses should specialize this container by:</span>
+
+<span class="sd">    - defining a concrete :attr:`COLUMNS` schema,</span>
+<span class="sd">    - setting axis column attributes (``X_COLUMN``, ``Y_COLUMN``, etc.),</span>
+<span class="sd">    - adding domain-specific convenience properties if needed.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This class is abstract and cannot be instantiated directly.</span>
+<span class="sd">    - Axis uncertainties are assumed to be symmetric unless otherwise</span>
+<span class="sd">    interpreted by the likelihood.</span>
+<span class="sd">    - If both upper and lower limits are present for the same axis and</span>
+<span class="sd">    observation, the data point is considered interval-censored.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    DataContainer</span>
+<span class="sd">     Base class providing schema validation and immutability.</span>
+<span class="sd">    triceratops.inference.likelihood.base.Likelihood</span>
+<span class="sd">     Likelihood classes that interpret uncertainties and censoring.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ========================= SCHEMA DEFINITION ========================= #</span>
+    <span class="c1"># This ``COLUMNS`` dictionary contains the core schema requirements for the input</span>
+    <span class="c1"># table in order to ensure that the radio photometry input is valid. This is then</span>
+    <span class="c1"># enforced in ``_validate_table``.</span>
+    <span class="c1">#</span>
+    <span class="c1"># DEVELOPERS: YOU NEED TO OVERWRITE THIS!</span>
+    <span class="n">COLUMNS</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;COLUMN_NAME&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Description of the column.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+
+    <span class="c1"># ========================= SPECIAL COLUMNS =========================== #</span>
+    <span class="c1"># In subclasses in this module, it is common to see this section filled by</span>
+    <span class="c1"># declarations about certain special columns (i.e. X_COL = ..., Y_COL = ...).</span>
+    <span class="c1"># This is to facilitate easy access to these columns in downstream code.</span>
+    <span class="c1">#</span>
+    <span class="c1"># In this base class, we do not define any special columns.</span>
+    <span class="n">X_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the x-axis column.</span>
+
+<span class="sd">    For :class:`XYDataContainer` subclasses, this should be overridden to specify</span>
+<span class="sd">    the name of the column representing the x-axis data. In upstream processing,</span>
+<span class="sd">    this is how the independent variable is identified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Y_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the y-axis column.</span>
+
+<span class="sd">    For :class:`XYDataContainer` subclasses, this should be overridden to specify</span>
+<span class="sd">    the name of the column representing the y-axis data. In upstream processing,</span>
+<span class="sd">    this is how the dependent variable is identified.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Y_ERROR_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the y-axis error column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the y-axis error data. This is generally the 1-sigma error, but that is</span>
+<span class="sd">    left for the Likelihood function. If ``None``, then it is assumed that</span>
+<span class="sd">    no y-axis errors are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X_ERROR_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the x-axis error column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the x-axis error data. This is generally the 1-sigma error, but that is</span>
+<span class="sd">    left for the Likelihood function. If ``None``, then it is assumed that</span>
+<span class="sd">    no y-axis errors are provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the y-axis upper limit column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the y-axis upper limit data. This is generally used to indicate non-detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the y-axis lower limit column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the y-axis lower limit data. This is generally used to indicate non-detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the x-axis upper limit column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the x-axis upper limit data. This is generally used to indicate non-detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X_LOWER_LIMIT_COLUMN</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the x-axis lower limit column.</span>
+
+<span class="sd">    This should be overridden to specify the name of the column representing</span>
+<span class="sd">    the x-axis lower limit data. This is generally used to indicate non-detections.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Initialization and validation methods</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Instantiate the data container.</span>
+
+<span class="sd">        This method should be overridden in subclasses to ensure proper behavior</span>
+<span class="sd">        downstream. The core responsibilities of this class are to</span>
+
+<span class="sd">        1. Assign the ``self.__table__`` attribute to a :class:`~astropy.table.Table` instance.</span>
+<span class="sd">        2. Validate that the table is consistent with the schema.</span>
+<span class="sd">        3. Generate limit masks.</span>
+<span class="sd">        4. Any additional configuration / setup required by the subclass.</span>
+
+<span class="sd">        In the default implementation, we assign the table and offload to the</span>
+<span class="sd">        ``self._validate_table`` method for validation. New implementations should</span>
+<span class="sd">        call ``super().__init__()`` to ensure these responsibilities are fulfilled and</span>
+<span class="sd">        then add any additional setup required.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table: ~astropy.table.Table</span>
+<span class="sd">            The data table to be contained. This must conform to the schema defined in the</span>
+<span class="sd">            :attr:`COLUMNS`` class attribute.</span>
+<span class="sd">        kwargs:</span>
+<span class="sd">            Additional keyword arguments for subclass-specific configuration.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Pass off to the super class to instantiate the</span>
+        <span class="c1"># core data container functionality.</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Now address the potential detection / non-detection logic.</span>
+        <span class="c1"># This is done by checking for upper limit columns.</span>
+        <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__x_ul_mask__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__x_ll_mask__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__y_ul_mask__</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__y_ll_mask__</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_detection_mask</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_construct_detection_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct the detection mask based on upper limit columns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Boolean array where True indicates a detection and False indicates</span>
+<span class="sd">            a non-detection.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        For each of X and Y, we first (a) check if we even have a column for the upper</span>
+<span class="sd">        limit defined. If we do, we (b) check if that column is in the table. If it is, we (c)</span>
+<span class="sd">        check if the value is finite. If it is finite, that indicates a non-detection</span>
+<span class="sd">        in that axis. We combine the non-detection masks for both axes to get the final</span>
+<span class="sd">        detection mask.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">n_obs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="n">_xumask</span><span class="p">,</span> <span class="n">_xlmask</span><span class="p">,</span> <span class="n">_yumask</span><span class="p">,</span> <span class="n">_ylmask</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_obs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># For each of the potential upper limit columns, we need to</span>
+        <span class="c1"># check if they are defined and present in the table.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">x_ul_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span><span class="p">]</span>
+                <span class="n">_xumask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x_ul_col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">x_ll_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span><span class="p">]</span>
+                <span class="n">_xlmask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">x_ll_col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">y_ul_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span><span class="p">]</span>
+                <span class="n">_yumask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_ul_col</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+                <span class="n">y_ll_col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span><span class="p">]</span>
+                <span class="n">_ylmask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">y_ll_col</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_xumask</span><span class="p">,</span> <span class="n">_xlmask</span><span class="p">,</span> <span class="n">_yumask</span><span class="p">,</span> <span class="n">_ylmask</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Properties</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity: The x-axis data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;X_COLUMN is not defined in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity: The y-axis data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Y_COLUMN is not defined in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The y-axis error data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_ERROR_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_ERROR_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The y-axis upper limit data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_lower_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The y-axis lower limit data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_error</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The x-axis error data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_ERROR_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_ERROR_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_upper_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The x-axis upper limit data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_lower_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The x-axis lower limit data, if provided.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">col</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">X_LOWER_LIMIT_COLUMN</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_upper_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating x-axis upper limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_lower_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating x-axis lower limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">x_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating x-axis limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_upper_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating y-axis upper limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_lower_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating y-axis lower limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">y_lim_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating y-axis limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span> <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">limit_mask</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Boolean mask indicating any limits.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">__x_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__x_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ul_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="o">|</span> <span class="bp">self</span><span class="o">.</span><span class="n">__y_ll_mask__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="p">)</span>
+
+    <span class="c1"># ====================================================================== #</span>
+    <span class="c1"># Utility Functions</span>
+    <span class="c1"># ====================================================================== #</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis error column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_ERROR_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis upper limit column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">Y_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis error column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_ERROR_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis upper limit column.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">X_UPPER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

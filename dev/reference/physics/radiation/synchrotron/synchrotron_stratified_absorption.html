@@ -1,0 +1,873 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Theory Note: Stratified Synchrotron Absorption &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_stratified_absorption';</script>
+    <link rel="icon" href="../../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory Note: Stratified Synchrotron Absorption</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="theory-note-stratified-synchrotron-absorption">
+<span id="stratified-absorption"></span><h1><a class="toc-backref" href="#id4" role="doc-backlink">Theory Note: Stratified Synchrotron Absorption</a><a class="headerlink" href="#theory-note-stratified-synchrotron-absorption" title="Link to this heading">#</a></h1>
+<p>In certain scenarios, extreme cooling of the post-shock material results in a modification to the
+canonical synchrotron self-absorption (SSA) spectrum. This note outlines the theoretical basis for
+this effect, referred to as <strong>stratified synchrotron self-absorption</strong>, and derives the modified spectral
+scaling that arises in this regime. The classical paper on this effect is Granot <em>et al.</em><a class="footnote-reference brackets" href="#footcite-2000apj-534l-163g" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, which
+first introduced the concept in the context of gamma-ray burst afterglows. This effect is, generally, only relevant
+in relativistic shocks where post-shock fluid velocity allows for large spatial stratification of electron energies.</p>
+<nav class="contents" id="contents">
+<p class="topic-title">Contents</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="#theory-note-stratified-synchrotron-absorption" id="id4">Theory Note: Stratified Synchrotron Absorption</a></p>
+<ul>
+<li><p><a class="reference internal" href="#standard-synchrotron-self-absorption" id="id5">Standard Synchrotron Self-Absorption</a></p></li>
+<li><p><a class="reference internal" href="#stratified-ssa" id="id6">Stratified SSA</a></p>
+<ul>
+<li><p><a class="reference internal" href="#post-shock-stratification" id="id7">Post-Shock Stratification</a></p></li>
+<li><p><a class="reference internal" href="#radiative-transfer-through-a-stratified-slab" id="id8">Radiative Transfer Through a Stratified Slab</a></p>
+<ul>
+<li><p><a class="reference internal" href="#frequency-dependent-absorption" id="id9">Frequency-Dependent Absorption</a></p></li>
+<li><p><a class="reference internal" href="#absorption-coefficient-in-the-cooled-slab" id="id10">Absorption Coefficient in the Cooled Slab</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#source-functions-in-the-stratified-medium" id="id11">Source Functions in the Stratified Medium</a></p>
+<ul>
+<li><p><a class="reference internal" href="#uncooled-slab" id="id12">(1) Uncooled Slab</a></p></li>
+<li><p><a class="reference internal" href="#cooled-slab" id="id13">(2) Cooled Slab</a></p></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#spectral-breaks-and-spectral-implications" id="id14">Spectral Breaks and Spectral Implications</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="standard-synchrotron-self-absorption">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Standard Synchrotron Self-Absorption</a><a class="headerlink" href="#standard-synchrotron-self-absorption" title="Link to this heading">#</a></h2>
+<p>To introduce the notion of <strong>stratified synchrotron self-absorption (SSA)</strong>, it is useful to first
+recount the standard argument for SSA in a <em>homogeneous</em> synchrotron-emitting plasma and to make
+explicit the assumptions underlying the familiar low-frequency behavior of the spectrum.</p>
+<p>For an <strong>isotropic distribution</strong> of relativistic electrons with differential number density
+<span class="math notranslate nohighlight">\(N(\gamma) \equiv d N / d\gamma\)</span>, the synchrotron self-absorption coefficient may be written
+(see, e.g., Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>) as</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu
+\propto
+\frac{1}{\nu^2}
+\int d\gamma\;
+P(\nu,\gamma)\,
+\gamma^2
+\frac{d}{d\gamma}
+\!\left[
+    \frac{N(\gamma)}{\gamma^2}
+\right],\]</div>
+<p>where <span class="math notranslate nohighlight">\(P(\nu,\gamma)\)</span> is the synchrotron power per unit frequency emitted by a single electron
+of Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span>.</p>
+<p>At a <strong>fixed observing frequency</strong> <span class="math notranslate nohighlight">\(\nu\)</span>, the structure of the synchrotron kernel implies that
+electrons with characteristic synchrotron frequency
+<span class="math notranslate nohighlight">\(\nu_{\rm synch}(\gamma) \ll \nu\)</span> lie on the exponentially suppressed high-frequency tail of
+<span class="math notranslate nohighlight">\(P(\nu,\gamma)\)</span> and therefore <strong>contribute negligibly to the absorption coefficient</strong>. As a result,
+the effective support of the integral is restricted to Lorentz factors</p>
+<div class="math notranslate nohighlight">
+\[\gamma \gtrsim \gamma_{\rm synch}(\nu),
+\qquad
+\nu_{\rm synch}\!\left(\gamma_{\rm synch}(\nu)\right) \sim \nu,\]</div>
+<p>and the absorption coefficient may be written schematically as</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu
+\propto
+\frac{1}{\nu^2}
+\int_{\gamma_{\rm synch}(\nu)}^{\infty}
+d\gamma\;
+P(\nu,\gamma)\,
+\gamma^2
+\frac{d}{d\gamma}
+\!\left[
+    \frac{N(\gamma)}{\gamma^2}
+\right].\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The big idea here being that <em>at each observing frequency</em>, only electrons above a certain
+Lorentz factor contribute to absorption, because lower-energy electrons simply cannot absorb photons
+at that frequency (the synchrotron kernel is exponentially suppressed there). Likewise, it is the lowest-energy
+electrons above the cutoff that dominate absorption at low frequencies.</p>
+</div>
+<p>Now consider the regime in which the characteristic Lorentz factor <span class="math notranslate nohighlight">\(\gamma_{\rm synch}(\nu)\)</span> lies <strong>below the low-energy cutoff</strong>
+<span class="math notranslate nohighlight">\(\gamma_m\)</span> of the electron distribution, i.e.</p>
+<div class="math notranslate nohighlight">
+\[\nu \ll \nu_m \equiv \nu_{\rm synch}(\gamma_m).\]</div>
+<p>In this case, the <strong>only contribution</strong> comes from the low-energy tail of the synchrotron kernel, for which</p>
+<div class="math notranslate nohighlight">
+\[P(\nu,\gamma) \propto \left(\frac{\nu}{\nu_{\rm synch}(\gamma)}\right)^{1/3}
+\propto \nu^{1/3}\,\gamma^{-2/3}.\]</div>
+<p>Substituting this expression into the absorption coefficient yields the scaling</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu
+\propto
+\nu^{-5/3}\]</div>
+<p>where the remaining integral is independent of <span class="math notranslate nohighlight">\(\nu\)</span>. Thus, in a homogeneous source at
+frequencies well below <span class="math notranslate nohighlight">\(\nu_m\)</span>, the absorption coefficient scales as
+<span class="math notranslate nohighlight">\(\alpha_\nu \propto \nu^{-5/3}\)</span>.</p>
+<p>In the same frequency regime, the synchrotron emissivity scales as
+<span class="math notranslate nohighlight">\(j_\nu \propto \nu^{1/3}\)</span>, since both emission and absorption are controlled by electrons at
+the fixed Lorentz factor <span class="math notranslate nohighlight">\(\gamma \simeq \gamma_m\)</span>. The resulting SSA source function,</p>
+<div class="math notranslate nohighlight">
+\[S_\nu \equiv \frac{j_\nu}{\alpha_\nu},\]</div>
+<p>therefore scales as</p>
+<div class="math notranslate nohighlight">
+\[S_\nu \propto \nu^{2}.\]</div>
+<p>In the optically thick limit (<span class="math notranslate nohighlight">\(\alpha_\nu L \gg 1\)</span>, where <span class="math notranslate nohighlight">\(L\)</span> is the characteristic size
+of the emitting region), radiative transfer implies that the <strong>emergent specific intensity approaches
+the source function</strong>. For a source of fixed angular size, this yields the familiar low-frequency
+synchrotron self-absorbed spectrum,</p>
+<div class="math notranslate nohighlight">
+\[F_\nu \propto \nu^{2},
+\qquad
+\nu \ll \nu_m.\]</div>
+<p>This conclusion relies critically on the assumption that the identity of the electrons controlling
+both emission and absorption is <em>independent of frequency</em> at sufficiently low <span class="math notranslate nohighlight">\(\nu\)</span>.</p>
+<p>In realistic astrophysical shocks, however—particularly in the <strong>fast-cooling regime</strong>—the
+post-shock plasma is not homogeneous. Electrons are continuously accelerated at the shock front and
+cool as they are advected downstream, producing a strong spatial stratification in the characteristic
+electron energy. As a result, the lowest-energy electrons capable of absorbing a given frequency
+depend on position within the flow. This stratification qualitatively modifies the optically thick
+synchrotron spectrum and leads to deviations from the standard <span class="math notranslate nohighlight">\(F_\nu \propto \nu^2\)</span> scaling,
+as discussed below.</p>
+<figure class="align-center" id="id3">
+<a class="reference internal image-reference" href="../../../../_images/stratified_ssa.png"><img alt="Schematic illustration of stratified synchrotron self-absorption." src="../../../../_images/stratified_ssa.png" style="width: 100%;" />
+</a>
+<figcaption>
+<p><span class="caption-text"><strong>Schematic illustration of stratified synchrotron self-absorption in a fast-cooling shock.</strong>
+Electrons are injected at the shock front (bottom) with minimum Lorentz factor
+<span class="math notranslate nohighlight">\(\gamma_m\)</span> and subsequently cool as they advect downstream, producing a thin
+<strong>uncooled layer</strong> (<span class="math notranslate nohighlight">\(\gamma \simeq \gamma_m\)</span>) followed by a much thicker <strong>cooled layer</strong>,
+in which the characteristic electron Lorentz factor decreases with distance behind the shock,
+<span class="math notranslate nohighlight">\(\gamma_c(x) \propto x^{-1}\)</span>. For a given observing frequency <span class="math notranslate nohighlight">\(\nu\)</span>, synchrotron
+self-absorption becomes effective only once the radiation reaches layers where
+<span class="math notranslate nohighlight">\(\nu \lesssim \nu_{\rm sync}(\gamma_c(x))\)</span>; deeper layers then dominate the optical-depth
+accumulation. The shaded regions indicate the locations of the frequency-dependent SSA
+photospheres (<span class="math notranslate nohighlight">\(\tau_\nu \simeq 1\)</span>) for two representative frequencies. At low frequencies
+(<span class="math notranslate nohighlight">\(\nu &lt; \nu_{\rm ac}\)</span>), the photosphere lies within the uncooled layer, yielding the standard
+optically thick scaling <span class="math notranslate nohighlight">\(S_\nu \propto \nu^2\)</span>. At higher frequencies
+(<span class="math notranslate nohighlight">\(\nu_{\rm ac} &lt; \nu &lt; \nu_a\)</span>), the photosphere recedes into the cooled layer, where the
+decrease of the effective electron temperature with depth modifies the emergent spectrum,
+producing the stratified self-absorption slope <span class="math notranslate nohighlight">\(S_\nu \propto \nu^{11/8}\)</span>. The transition
+frequency <span class="math notranslate nohighlight">\(\nu_{\rm ac}\)</span> marks the frequency at which the SSA photosphere coincides with
+the boundary between the uncooled and cooled layers.</span><a class="headerlink" href="#id3" title="Link to this image">#</a></p>
+</figcaption>
+</figure>
+</section>
+<section id="stratified-ssa">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Stratified SSA</a><a class="headerlink" href="#stratified-ssa" title="Link to this heading">#</a></h2>
+<p>The primary difference between standard SSA and stratified SSA lies in the spatial variation of
+the electron energy distribution behind the shock front. In the stratified case, the electrons
+responsible for absorption at a given frequency vary with depth into the post-shock region,
+leading to a frequency-dependent SSA photosphere and a modified emergent spectrum. In this section, we’ll
+derive the relevant results and implications for the spectrum.</p>
+<section id="post-shock-stratification">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Post-Shock Stratification</a><a class="headerlink" href="#post-shock-stratification" title="Link to this heading">#</a></h3>
+<p>We begin by recognizing that, if cooling is sufficiently fast, then a significant degree of stratification
+develops immediately behind the shock front due to radiative losses. In each subsequent layer downstream,
+the characteristic electron energy decreases as electrons cool. This stratification affects both the emissivity
+and absorption coefficient as a function of depth behind the shock and significantly complicates the resulting emission.</p>
+<p>Given a cooling process (e.g., synchrotron and/or inverse Compton) with rate function <span class="math notranslate nohighlight">\(\Lambda\)</span>, the
+cooling timescale for an electron of Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[t_{\rm cool}(\gamma) = \frac{\gamma m_e c^2}{\Lambda(\gamma)}.\]</div>
+<p>For electrons injected at the shock with a minimum Lorentz factor <span class="math notranslate nohighlight">\(\gamma_m\)</span>, the cooling timescale
+<span class="math notranslate nohighlight">\(t_{\rm cool}(\gamma_m)\)</span> sets the thickness of the uncooled layer behind the shock:</p>
+<div class="math notranslate nohighlight">
+\[\ell_{\rm uncooled} \sim v_{\rm ps}\,t_{\rm cool}(\gamma_m).\]</div>
+<p>Likewise, for a given dynamical timescale <span class="math notranslate nohighlight">\(t_{\rm dyn}\)</span>, one may define a cooling Lorentz factor</p>
+<div class="math notranslate nohighlight">
+\[\gamma_c : t_{\rm cool}(\gamma_c) = t_{\rm dyn}.\]</div>
+<p>and a corresponding cooling layer thickness</p>
+<div class="math notranslate nohighlight">
+\[\ell_{\rm cool} \sim v_{\rm ps}\,t_{\rm dyn}.\]</div>
+<p>The relative scales of these two lengths determine the degree of stratification in the post-shock region:</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{\ell_{\rm uncooled}}{\ell_{\rm cool}} = \frac{t_{\rm cool}(\gamma_m)}{t_{\rm dyn}} = \frac{\gamma_c}{\gamma_m}.
+}\]</div>
+<p>In the <strong>fast-cooling regime</strong> (<span class="math notranslate nohighlight">\(\gamma_c \ll \gamma_m\)</span>), the uncooled layer is very thin
+(<span class="math notranslate nohighlight">\(\ell_{\rm uncooled} \ll \ell_{\rm cool}\)</span>), and most of the post-shock region is occupied by cooled electrons
+whose characteristic energy decreases with distance behind the shock. This leads to our big idea:</p>
+<div class="admonition-big-idea admonition">
+<p class="admonition-title">Big Idea</p>
+<p>In the fast-cooling regime, the coldest electrons are located farthest from the shock front, meaning
+that the surface from which SSA emission escapes <strong>depends on frequency</strong>. For extremely <strong>low</strong> frequencies,
+even the uncooled layer is optically thick, leading to typical behavior, but at higher frequencies, the
+SSA photosphere recedes into progressively colder layers, modifying the emergent spectrum.</p>
+</div>
+</section>
+<section id="radiative-transfer-through-a-stratified-slab">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Radiative Transfer Through a Stratified Slab</a><a class="headerlink" href="#radiative-transfer-through-a-stratified-slab" title="Link to this heading">#</a></h3>
+<p>We now consider synchrotron radiation of a fixed observing frequency <span class="math notranslate nohighlight">\(\nu\)</span> emitted at some
+depth behind the shock and propagating outward toward the observer. Because electrons are injected
+<em>only at the shock front</em> and subsequently cool as they advect downstream, the post-shock region
+may be regarded as a stack of layers with monotonically increasing characteristic electron energy
+toward the shock.</p>
+<p>It is therefore useful to describe the post-shock region in terms of two distinct slabs:</p>
+<ol class="arabic simple">
+<li><p>an <strong>uncooled slab</strong>, extending from the shock front to depth
+<span class="math notranslate nohighlight">\(\ell_{\rm uncooled} \sim v_{\rm ps} t_{\rm cool}(\gamma_m)\)</span>, in which electrons retain
+their injection energy <span class="math notranslate nohighlight">\(\gamma \simeq \gamma_m\)</span>, and</p></li>
+<li><p>a <strong>cooled slab</strong>, extending from <span class="math notranslate nohighlight">\(\ell_{\rm uncooled}\)</span> to
+<span class="math notranslate nohighlight">\(\ell_{\rm cool} \sim v_{\rm ps} t_{\rm dyn}\)</span>, in which the characteristic electron
+Lorentz factor decreases with depth due to radiative losses.</p></li>
+</ol>
+<p>We adopt a coordinate <span class="math notranslate nohighlight">\(x\)</span> measured <em>from the shock front downstream</em>, such that
+<span class="math notranslate nohighlight">\(x = 0\)</span> corresponds to freshly shocked material.</p>
+<section id="frequency-dependent-absorption">
+<h4><a class="toc-backref" href="#id9" role="doc-backlink">Frequency-Dependent Absorption</a><a class="headerlink" href="#frequency-dependent-absorption" title="Link to this heading">#</a></h4>
+<p>Consider radiation of frequency <span class="math notranslate nohighlight">\(\nu\)</span> propagating outward through successive layers at
+increasingly smaller <span class="math notranslate nohighlight">\(x\)</span>. In a given layer at depth <span class="math notranslate nohighlight">\(x\)</span>, the maximum electron Lorentz
+factor is set by cooling, <span class="math notranslate nohighlight">\(\gamma_{\rm cool}(x)\)</span>, with an associated synchrotron frequency</p>
+<div class="math notranslate nohighlight">
+\[\nu_{\rm cool}(x) \equiv \nu_{\rm synch}(\gamma_{\rm cool}(x)).\]</div>
+<p>If <span class="math notranslate nohighlight">\(\nu &gt; \nu_{\rm cool}(x)\)</span>, then <em>all</em> electrons in that layer lie on the exponentially
+suppressed high-frequency tail of the synchrotron kernel. In this case, the local absorption
+coefficient is negligible:</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu(x) \simeq 0.\]</div>
+<p>Such layers are effectively transparent at frequency <span class="math notranslate nohighlight">\(\nu\)</span>.</p>
+<p>Conversely, once the radiation reaches a layer for which</p>
+<div class="math notranslate nohighlight">
+\[\nu \lesssim \nu_{\rm cool}(x),\]</div>
+<p>electrons are present that can absorb efficiently at frequency <span class="math notranslate nohighlight">\(\nu\)</span>. From this point
+toward the shock, the SSA optical depth begins to accumulate. We define <span class="math notranslate nohighlight">\(x_k(\nu)\)</span> as the
+<em>first</em> layer encountered (moving outward) for which this condition is satisfied.</p>
+<p>The SSA photosphere at frequency <span class="math notranslate nohighlight">\(\nu\)</span> is then defined implicitly by</p>
+<div class="math notranslate nohighlight">
+\[\tau_\nu(x_{\rm LS,\nu})
+=
+\int_{x_k(\nu)}^{x_{\rm LS,\nu}} \alpha_\nu(x')\,dx'
+\simeq 1,\]</div>
+<p>where <span class="math notranslate nohighlight">\(x_{\rm LS,\nu}\)</span> denotes the last-scattering surface for photons of frequency
+<span class="math notranslate nohighlight">\(\nu\)</span>.</p>
+</section>
+<section id="absorption-coefficient-in-the-cooled-slab">
+<h4><a class="toc-backref" href="#id10" role="doc-backlink">Absorption Coefficient in the Cooled Slab</a><a class="headerlink" href="#absorption-coefficient-in-the-cooled-slab" title="Link to this heading">#</a></h4>
+<p>In the cooled slab, electrons have cooled down to the local Lorentz factor
+<span class="math notranslate nohighlight">\(\gamma_{\rm cool}(x)\)</span>, and no electrons with <span class="math notranslate nohighlight">\(\gamma &gt; \gamma_{\rm cool}(x)\)</span> are
+present. Absorption is therefore dominated by electrons near this cutoff.</p>
+<p>Because absorption occurs only for electrons satisfying
+<span class="math notranslate nohighlight">\(\nu \ll \nu_{\rm synch}(\gamma)\)</span>, the relevant part of the synchrotron kernel is its
+low-frequency asymptotic form,</p>
+<div class="math notranslate nohighlight">
+\[P(\nu,\gamma) \propto \nu^{1/3}\,\gamma^{-2/3}.\]</div>
+<p>Substituting this into the SSA coefficient yields the local scaling</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu(x)
+\propto
+\nu^{-5/3}\,\gamma_{\rm cool}(x)^{-5/3}.\]</div>
+<p>In the fast-cooling regime, radiative losses imply</p>
+<div class="math notranslate nohighlight">
+\[\gamma_{\rm cool}(x) \propto x^{-1},\]</div>
+<p>so that</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu(x) \propto \nu^{-5/3}\,x^{5/3}.\]</div>
+</section>
+</section>
+<section id="source-functions-in-the-stratified-medium">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Source Functions in the Stratified Medium</a><a class="headerlink" href="#source-functions-in-the-stratified-medium" title="Link to this heading">#</a></h3>
+<p>A key simplification of the stratified SSA problem is that <em>any layer which defines the SSA
+photosphere must lie on the Rayleigh–Jeans tail of the local synchrotron spectrum</em>. Otherwise,
+the absorption coefficient would be exponentially suppressed and optical depth could not reach
+unity.</p>
+<p>As a result, the local SSA source function always takes the Rayleigh–Jeans form,</p>
+<div class="math notranslate nohighlight">
+\[S_\nu(x) = \frac{j_\nu(x)}{\alpha_\nu(x)} \propto \nu^2\,\gamma(x).\]</div>
+<p>The distinction between the two slabs enters only through the depth-dependence of
+<span class="math notranslate nohighlight">\(\gamma(x)\)</span>.</p>
+<section id="uncooled-slab">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">(1) Uncooled Slab</a><a class="headerlink" href="#uncooled-slab" title="Link to this heading">#</a></h4>
+<p>In the uncooled slab (<span class="math notranslate nohighlight">\(x \lesssim \ell_{\rm uncooled}\)</span>), electrons retain their injection
+energy,</p>
+<div class="math notranslate nohighlight">
+\[\gamma(x) \simeq \gamma_m = \text{constant}.\]</div>
+<p>The local source function is therefore independent of depth:</p>
+<div class="math notranslate nohighlight">
+\[S_\nu^{\rm (uncooled)} \propto \nu^2\,\gamma_m.\]</div>
+<p>If the SSA photosphere lies within this slab, the emergent spectrum recovers the standard
+optically thick synchrotron scaling,</p>
+<div class="math notranslate nohighlight">
+\[F_\nu \propto \nu^2.\]</div>
+</section>
+<section id="cooled-slab">
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">(2) Cooled Slab</a><a class="headerlink" href="#cooled-slab" title="Link to this heading">#</a></h4>
+<p>In the cooled slab (<span class="math notranslate nohighlight">\(x \gtrsim \ell_{\rm uncooled}\)</span>), the characteristic electron energy
+decreases with depth,</p>
+<div class="math notranslate nohighlight">
+\[\gamma(x) \propto x^{-1}.\]</div>
+<p>As a result, the local SSA source function varies with depth as</p>
+<div class="math notranslate nohighlight">
+\[S_\nu^{\rm (cooled)}(x) \propto \nu^2\,\gamma(x) \propto \nu^2\,x^{-1}.\]</div>
+<p>To determine the emergent spectrum, we must therefore establish how the depth of the SSA
+photosphere depends on observing frequency.</p>
+<p>As shown above, absorption at frequency <span class="math notranslate nohighlight">\(\nu\)</span> becomes effective only once the radiation
+reaches layers for which <span class="math notranslate nohighlight">\(\nu \lesssim \nu_{\rm cool}(x)\)</span>. From that point inward toward the
+shock, the SSA optical depth accumulates according to</p>
+<div class="math notranslate nohighlight">
+\[\tau_\nu(x)
+=
+\int_{x_k(\nu)}^{x} \alpha_\nu(x')\,dx',\]</div>
+<p>where <span class="math notranslate nohighlight">\(x_k(\nu)\)</span> is the first layer capable of absorbing at frequency <span class="math notranslate nohighlight">\(\nu\)</span>.</p>
+<p>In the cooled slab, the local absorption coefficient scales as</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu(x)
+\propto
+\nu^{-5/3}\,\gamma_{\rm cool}(x)^{-5/3}
+\propto
+\nu^{-5/3}\,x^{5/3}.\]</div>
+<p>Integrating this expression yields</p>
+<div class="math notranslate nohighlight">
+\[\tau_\nu(x)
+\propto
+\nu^{-5/3}
+\int x'^{5/3}\,dx'
+\propto
+\nu^{-5/3}\,x^{8/3}.\]</div>
+<p>The SSA photosphere <span class="math notranslate nohighlight">\(x_{\rm LS,\nu}\)</span> is defined by the condition
+<span class="math notranslate nohighlight">\(\tau_\nu(x_{\rm LS,\nu}) \simeq 1\)</span>, implying</p>
+<div class="math notranslate nohighlight">
+\[x_{\rm LS,\nu} \propto \nu^{-5/8}.\]</div>
+<p>The observed intensity at frequency <span class="math notranslate nohighlight">\(\nu\)</span> is determined by the local source function
+evaluated at the SSA photosphere,</p>
+<div class="math notranslate nohighlight">
+\[I_\nu \simeq S_\nu^{\rm (cooled)}\!\left(x_{\rm LS,\nu}\right).\]</div>
+<p>Substituting the scalings derived above, we find</p>
+<div class="math notranslate nohighlight">
+\[I_\nu
+\propto
+\nu^2\,x_{\rm LS,\nu}^{-1}
+\propto
+\nu^2\,\nu^{5/8}
+=
+\nu^{11/8}.\]</div>
+<p>For a source of fixed angular size, the flux density therefore scales as</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+F_\nu \propto \nu^{11/8},
+\qquad
+\nu_{\rm ac} &lt; \nu &lt; \nu_a.
+}\]</div>
+<p>This modified optically thick slope arises <em>entirely</em> from the frequency dependence of the SSA
+photosphere depth in the cooling-stratified post-shock region. The local synchrotron source
+function remains Rayleigh–Jeans at all relevant depths; the deviation from the standard
+<span class="math notranslate nohighlight">\(F_\nu \propto \nu^2\)</span> behavior is a geometric consequence of stratification rather than a
+change in microphysics.</p>
+</section>
+</section>
+</section>
+<section id="spectral-breaks-and-spectral-implications">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Spectral Breaks and Spectral Implications</a><a class="headerlink" href="#spectral-breaks-and-spectral-implications" title="Link to this heading">#</a></h2>
+<p>As we have shown previously, there are <strong>two distinct spectral regimes</strong> for stratified SSA determined by
+the location of the SSA photosphere relative to the uncooled and cooled slabs:</p>
+<ul>
+<li><p>If the SSA photosphere lies within the <strong>uncooled slab</strong> (<span class="math notranslate nohighlight">\(\nu &lt; \nu_{\rm ac}\)</span>), the emergent spectrum
+recovers the standard optically thick synchrotron scaling,</p>
+<div class="math notranslate nohighlight">
+\[F_\nu \propto \nu^{2}.\]</div>
+</li>
+<li><p>If the SSA photosphere lies within the <strong>cooled slab</strong> (<span class="math notranslate nohighlight">\(\nu_{\rm ac} &lt; \nu &lt; \nu_a\)</span>), the emergent spectrum
+exhibits the modified scaling derived above,</p>
+<div class="math notranslate nohighlight">
+\[F_\nu \propto \nu^{11/8}.\]</div>
+</li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>TODO: Complete the discussion of spectral breaks, including expressions for <span class="math notranslate nohighlight">\(\nu_{\rm ac}\)</span> and <span class="math notranslate nohighlight">\(\nu_a\)</span>,
+and implications for astrophysical sources.</p>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-synchrotron-self-absorption">Standard Synchrotron Self-Absorption</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#stratified-ssa">Stratified SSA</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#post-shock-stratification">Post-Shock Stratification</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radiative-transfer-through-a-stratified-slab">Radiative Transfer Through a Stratified Slab</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#frequency-dependent-absorption">Frequency-Dependent Absorption</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-coefficient-in-the-cooled-slab">Absorption Coefficient in the Cooled Slab</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#source-functions-in-the-stratified-medium">Source Functions in the Stratified Medium</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#uncooled-slab">(1) Uncooled Slab</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#cooled-slab">(2) Cooled Slab</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectral-breaks-and-spectral-implications">Spectral Breaks and Spectral Implications</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_stratified_absorption.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

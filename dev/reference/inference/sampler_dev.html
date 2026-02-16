@@ -1,0 +1,715 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Sampler Development Guide &#8212; Triceratops  documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/inference/sampler_dev';</script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Sampler Development Guide</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="sampler-development-guide">
+<span id="samplers-dev"></span><h1>Sampler Development Guide<a class="headerlink" href="#sampler-development-guide" title="Link to this heading">#</a></h1>
+<p>This document describes how sampling algorithms are integrated into the
+Triceratops inference framework and how to implement new samplers
+in a way that is consistent, robust, and fully compatible with the
+existing infrastructure.</p>
+<p>The core sampler interface is defined in
+<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/base.py</span></code>
+An example concrete implementation using <code class="docutils literal notranslate"><span class="pre">emcee</span></code> can be found in
+<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/mcmc.py</span></code>
+Sampling outputs are handled by classes in
+<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/result.py</span></code>
+Supporting statistical utilities live in
+<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/utils.py</span></code></p>
+<section id="overview-and-design-philosophy">
+<h2>Overview and Design Philosophy<a class="headerlink" href="#overview-and-design-philosophy" title="Link to this heading">#</a></h2>
+<p>In Triceratops, a sampler is responsible for <em>exploring</em> the posterior
+distribution defined by an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code>. It does not define
+the posterior, it does not manage priors, and it does not interact directly
+with the physical model or dataset. All of that logic is encapsulated inside
+the inference problem layer.</p>
+<p>A sampler therefore has a very narrow and well-defined responsibility:</p>
+<ol class="arabic simple">
+<li><p>Repeatedly evaluate the posterior through the inference problem.</p></li>
+<li><p>Manage algorithm-specific state (walkers, chains, live points, etc.).</p></li>
+<li><p>Return results in a standardized <code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code> object.</p></li>
+</ol>
+<p>This separation ensures that new sampling strategies can be added without
+modifying any model or likelihood code.</p>
+</section>
+<section id="the-sampler-base-class">
+<h2>The Sampler Base Class<a class="headerlink" href="#the-sampler-base-class" title="Link to this heading">#</a></h2>
+<p>All samplers must inherit from
+<code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></p>
+<p>The base class defines a minimal interface:</p>
+<ul class="simple">
+<li><p>It stores a reference to an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code>.</p></li>
+<li><p>It exposes a public <code class="xref py py-meth docutils literal notranslate"><span class="pre">run()</span></code> method (abstract).</p></li>
+<li><p>It provides a hook for validating compatibility.</p></li>
+</ul>
+<p>A minimal skeleton looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.result</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplingResult</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MySampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_inference_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Perform compatibility checks here</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">validate_for_inference</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">SamplingResult</span><span class="p">:</span>
+        <span class="c1"># Implement sampling logic</span>
+        <span class="o">...</span>
+        <span class="k">return</span> <span class="n">SamplingResult</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The constructor receives an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> instance and
+stores it internally. This problem object is the only interface
+a sampler needs in order to evaluate the posterior.</p>
+</section>
+<section id="interacting-with-the-inferenceproblem">
+<h2>Interacting with the InferenceProblem<a class="headerlink" href="#interacting-with-the-inferenceproblem" title="Link to this heading">#</a></h2>
+<p>Samplers must use the <strong>vectorized API</strong> of the inference problem.
+Specifically, they should evaluate:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>or, equivalently:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The vector <code class="docutils literal notranslate"><span class="pre">theta</span></code> must represent only the free parameters, ordered
+according to the model definition. The inference problem handles:</p>
+<ul class="simple">
+<li><p>reinserting frozen parameters,</p></li>
+<li><p>evaluating priors,</p></li>
+<li><p>delegating likelihood evaluation,</p></li>
+<li><p>short-circuiting invalid regions.</p></li>
+</ul>
+<p>Samplers must never manipulate priors or likelihoods directly.</p>
+</section>
+<section id="validation">
+<h2>Validation<a class="headerlink" href="#validation" title="Link to this heading">#</a></h2>
+<p>Before sampling begins, the sampler should ensure that the inference
+problem is fully specified and valid. The standard approach is:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">validate_for_inference</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The base class provides a hook method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_validate_inference_problem()</span></code> for algorithm-specific constraints.</p>
+<p>For example, the <code class="docutils literal notranslate"><span class="pre">EmceeSampler</span></code> verifies that:</p>
+<ul class="simple">
+<li><p>the problem has at least one free parameter,</p></li>
+<li><p>the inference problem passes validation,</p></li>
+<li><p>the number of walkers is sufficient.</p></li>
+</ul>
+<p>See the implementation in
+<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/mcmc.py</span></code></p>
+</section>
+<section id="implementing-a-new-sampler">
+<h2>Implementing a New Sampler<a class="headerlink" href="#implementing-a-new-sampler" title="Link to this heading">#</a></h2>
+<p>When implementing a new sampler, follow these principles:</p>
+<ol class="arabic simple">
+<li><p>Accept an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> in the constructor.</p></li>
+<li><p>Perform inference validation during initialization.</p></li>
+<li><p>Use only the vectorized posterior API.</p></li>
+<li><p>Keep algorithm-specific state isolated.</p></li>
+<li><p>Return a properly constructed <code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code>.</p></li>
+</ol>
+<p>A minimal example might look like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">RandomWalkSampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_inference_problem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">validate_for_inference</span><span class="p">()</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">1000</span><span class="p">):</span>
+
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_theta</span>
+        <span class="n">samples</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_steps</span><span class="p">):</span>
+            <span class="n">proposal</span> <span class="o">=</span> <span class="n">theta</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+            <span class="n">logp_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">(</span><span class="n">proposal</span><span class="p">)</span>
+            <span class="n">logp_old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">())</span> <span class="o">&lt;</span> <span class="n">logp_new</span> <span class="o">-</span> <span class="n">logp_old</span><span class="p">:</span>
+                <span class="n">theta</span> <span class="o">=</span> <span class="n">proposal</span>
+
+            <span class="n">samples</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+
+        <span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">SamplingResult</span><span class="p">(</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="n">parameter_metadata</span><span class="o">=</span><span class="p">[</span>
+                <span class="n">p</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">()</span>
+                <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+            <span class="p">],</span>
+            <span class="n">sampler_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">likelihood_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">model_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">data_container_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="n">inference_problem_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>While simplistic, this illustrates the core contract.</p>
+</section>
+<section id="samplingresult-objects">
+<h2>SamplingResult Objects<a class="headerlink" href="#samplingresult-objects" title="Link to this heading">#</a></h2>
+<p>All samplers must return a subclass of
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code></p>
+<p>This object stores:</p>
+<ul class="simple">
+<li><p>posterior samples,</p></li>
+<li><p>optional log-prior / log-likelihood / log-posterior arrays,</p></li>
+<li><p>parameter metadata,</p></li>
+<li><p>sampler and model identifiers.</p></li>
+</ul>
+<p>For MCMC-based samplers, the
+<code class="xref py py-class docutils literal notranslate"><span class="pre">MCMCSamplingResult</span></code> subclass should be used. It expects
+samples to be shaped as:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>(n_steps, n_walkers, n_dim)
+</pre></div>
+</div>
+<p>This class provides:</p>
+<ul class="simple">
+<li><p>flattening utilities,</p></li>
+<li><p>autocorrelation time estimation,</p></li>
+<li><p>effective sample size computation,</p></li>
+<li><p>Vehtari-style split R-hat,</p></li>
+<li><p>trace plots,</p></li>
+<li><p>corner plots.</p></li>
+</ul>
+<p>If you are implementing a nested sampler or variational method,
+you may instead return a plain <code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code>.</p>
+</section>
+<section id="convergence-diagnostics-and-utilities">
+<h2>Convergence Diagnostics and Utilities<a class="headerlink" href="#convergence-diagnostics-and-utilities" title="Link to this heading">#</a></h2>
+<p>Common diagnostics are implemented in
+<code class="docutils literal notranslate"><span class="pre">sampling/utils.py</span></code></p>
+<p>For example, the Gelman–Rubin statistic:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_gelman_rubin_rhat</span>
+</pre></div>
+</div>
+<p>These utilities are intentionally separated from sampler implementations
+so that they can be reused across algorithms.</p>
+</section>
+<section id="metadata-and-reproducibility">
+<h2>Metadata and Reproducibility<a class="headerlink" href="#metadata-and-reproducibility" title="Link to this heading">#</a></h2>
+<p>Each sampling result stores:</p>
+<ul class="simple">
+<li><p>sampler class name,</p></li>
+<li><p>likelihood class name,</p></li>
+<li><p>model class name,</p></li>
+<li><p>data container class name,</p></li>
+<li><p>inference problem class name.</p></li>
+</ul>
+<p>This allows partial reproducibility and introspection even without
+reconstructing the full inference stack.</p>
+<p>Results can be serialized to HDF5 via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">result</span><span class="o">.</span><span class="n">to_hdf5</span><span class="p">(</span><span class="s2">&quot;chains.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>and reconstructed using:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">SamplingResult</span><span class="o">.</span><span class="n">from_hdf5</span><span class="p">(</span><span class="s2">&quot;chains.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="guidelines-and-best-practices">
+<h2>Guidelines and Best Practices<a class="headerlink" href="#guidelines-and-best-practices" title="Link to this heading">#</a></h2>
+<p>When developing new samplers, keep the following principles in mind:</p>
+<ul class="simple">
+<li><p>Never bypass the inference problem.</p></li>
+<li><p>Never manipulate priors or likelihoods directly.</p></li>
+<li><p>Never assume parameter ordering beyond what the inference problem defines.</p></li>
+<li><p>Always validate before sampling.</p></li>
+<li><p>Keep the sampler stateless beyond algorithm state.</p></li>
+<li><p>Ensure returned samples have consistent dimensionality.</p></li>
+</ul>
+<p>The sampler layer must remain numerically focused and free of
+model-specific assumptions.</p>
+<p>If these invariants are respected, new sampling strategies can be
+added safely and will integrate cleanly with the broader
+Triceratops inference ecosystem.</p>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview-and-design-philosophy">Overview and Design Philosophy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-sampler-base-class">The Sampler Base Class</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#interacting-with-the-inferenceproblem">Interacting with the InferenceProblem</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#validation">Validation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementing-a-new-sampler">Implementing a New Sampler</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#samplingresult-objects">SamplingResult Objects</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#convergence-diagnostics-and-utilities">Convergence Diagnostics and Utilities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#metadata-and-reproducibility">Metadata and Reproducibility</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#guidelines-and-best-practices">Guidelines and Best Practices</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/reference/inference/sampler_dev.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
