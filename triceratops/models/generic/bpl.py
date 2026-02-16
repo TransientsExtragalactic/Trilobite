@@ -325,7 +325,7 @@ class SmoothedBrokenPowerLaw(Model):
         ModelParameter("x_b", 1.0, base_units=u.dimensionless_unscaled, bounds=(1e-12, None)),
         ModelParameter("alpha_1", -1.0, base_units=u.dimensionless_unscaled, bounds=(-20, 20)),
         ModelParameter("alpha_2", -2.0, base_units=u.dimensionless_unscaled, bounds=(-20, 20)),
-        ModelParameter("s", 0.1, base_units=u.dimensionless_unscaled, bounds=(1e-6, None)),
+        ModelParameter("s", 0.1, base_units=u.dimensionless_unscaled, bounds=(None, None)),
     )
 
     OUTPUTS = _BPLOutputs
@@ -572,7 +572,7 @@ class SmoothedTripleBrokenPowerLaw(Model):
         ModelParameter("alpha_1", -0.5, base_units=u.dimensionless_unscaled, bounds=(-20, 20)),
         ModelParameter("alpha_2", -1.5, base_units=u.dimensionless_unscaled, bounds=(-20, 20)),
         ModelParameter("alpha_3", -2.5, base_units=u.dimensionless_unscaled, bounds=(-20, 20)),
-        ModelParameter("s", 0.1, base_units=u.dimensionless_unscaled, bounds=(1e-6, None)),
+        ModelParameter("s", 0.1, base_units=u.dimensionless_unscaled, bounds=(None, None)),
     )
 
     OUTPUTS = _BPLOutputs

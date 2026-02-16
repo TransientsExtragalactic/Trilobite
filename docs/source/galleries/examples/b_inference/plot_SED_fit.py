@@ -19,10 +19,10 @@ from astropy import units as u
 # Setup
 # -----
 # First, we need to import the necessary libraries
-from triceratops.models.emission.synchrotron import Synchrotron_SSA_SBPL_SED
+from triceratops.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
 
 # %%
-# Now, the :class:`~models.emission.synchrotron.Synchrotron_SSA_SBPL_SED` model produces a synchrotron SED
+# Now, the :class:`~models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model` model produces a synchrotron SED
 # with the form:
 #
 # .. math::
@@ -52,7 +52,7 @@ from triceratops.models.emission.synchrotron import Synchrotron_SSA_SBPL_SED
 # SED with a Gaussian noise with a standard deviation proportional to the flux density.
 
 # Generate the forward model object.
-sed_model = Synchrotron_SSA_SBPL_SED()
+sed_model = Synchrotron_SSA_SBPL_Model()
 
 # Create a parameter dictionary with our preferred true values.
 true_params = {"norm": 5.0 * u.mJy, "nu_break": 4.0 * u.GHz, "p": 3.0, "s": -1.0}
@@ -64,7 +64,7 @@ noise_fraction = 0.1  # 5% noise
 frequencies = u.Quantity([0.1, 0.5, 1.0, 3.0, 5.0, 7.0, 10.0, 15.0, 20.0, 30.0], u.GHz)
 
 # Generate the synthetic flux densities with noise.
-synthetic_flux = sed_model.forward_model({"frequency": frequencies}, true_params)["flux_density"]
+synthetic_flux = sed_model.forward_model({"frequency": frequencies}, true_params).flux_density
 synthetic_flux += (
     np.random.normal(size=synthetic_flux.shape, scale=noise_fraction * synthetic_flux.to_value("mJy")) * u.mJy
 )
@@ -78,7 +78,7 @@ fig, ax = plt.subplots(figsize=(10, 6))
 
 # Plot the true model.
 freqs_plot = np.logspace(8, 11, 100) * u.Hz
-true_flux_plot = sed_model.forward_model({"frequency": freqs_plot}, true_params)["flux_density"]
+true_flux_plot = sed_model.forward_model({"frequency": freqs_plot}, true_params).flux_density
 ax.plot(freqs_plot.to_value(u.GHz), true_flux_plot.to_value(u.mJy), label="True Model", color="black")
 
 # Add our synthetic data points.
@@ -191,12 +191,12 @@ idx = np.random.choice(samples.shape[0], n_draw, replace=False)
 for i in idx:
     theta_free = samples[i]
     params = problem.unpack_free_parameters(theta_free)
-    flux = sed_model.forward_model({"frequency": freqs_plot}, params)["flux_density"]
+    flux = sed_model.forward_model({"frequency": freqs_plot}, params).flux_density
 
     ax.plot(freqs_plot.to_value(u.GHz), flux.to_value(u.mJy), color="C0", alpha=0.05)
 
 # Plot true model
-true_flux_plot = sed_model.forward_model({"frequency": freqs_plot}, true_params)["flux_density"]
+true_flux_plot = sed_model.forward_model({"frequency": freqs_plot}, true_params).flux_density
 
 ax.plot(freqs_plot.to_value(u.GHz), true_flux_plot.to_value(u.mJy), color="black", lw=2, label="True Model")
 
