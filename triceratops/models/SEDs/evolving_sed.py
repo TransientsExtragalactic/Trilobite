@@ -191,8 +191,7 @@ class PL_Evolving_SSA_SED_Model(Model):
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.models.generic.evolving_sed import PL_Evolving_SSA_SED_Model
-
+        from triceratops.models.SEDs.evolving_sed import PL_Evolving_SSA_SED_Model
 
         # --------------------------------------------------
         # Reproducibility
@@ -220,10 +219,10 @@ class PL_Evolving_SSA_SED_Model(Model):
         # --------------------------------------------------
 
         parameters = {
-            "alpha_1": 5 / 2,               # self-absorbed slope
-            "alpha_2": -1.0,                # optically thin slope
-            "beta": 1.0,                    # nu_brk evolution
-            "gamma": 0.0,                   # F_brk evolution
+            "alpha_1": 5 / 2,  # self-absorbed slope
+            "alpha_2": -1.0,  # optically thin slope
+            "beta": 1.0,  # nu_brk evolution
+            "gamma": 0.0,  # F_brk evolution
             "nu_brk_0": 1e10 * u.Hz,
             "F_brk_0": 1.0 * u.Jy,
             "t_0": 10 * u.day,
@@ -237,7 +236,6 @@ class PL_Evolving_SSA_SED_Model(Model):
         plt.figure(figsize=(8, 6))
 
         for t in times:
-
             flux = model(
                 {"frequency": nu, "time": t},
                 parameters
