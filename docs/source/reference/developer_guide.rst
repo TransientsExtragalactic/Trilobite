@@ -28,7 +28,7 @@ of branches to be familiar with in the repository:
 In the case of a hotfix to a release, branches should be made from the stable version tag and named ``hotfix_...``.
 
 Version Tagging Workflow
-````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. New development should occur on a branch / fork of the bleeding edge development branch. There
    is only one active development branch at a time, which is ``dev_vX.Y.Z``. This is the next version
@@ -175,7 +175,7 @@ Github Actions will be used to automatically run tests and check your PR formatt
 you will need to address the issues before your PR can be merged.
 
 Triceratops Standards, Conventions, and Structures
-----------------------------------------------
+---------------------------------------------------
 
 Triceratops is developed with the explicit intention of allowing easy extensibility and maintainability. A big part of this
 is the modular style of various parts of the codebase with the use of well-defined interfaces and abstract base classes.

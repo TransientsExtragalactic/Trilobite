@@ -59,7 +59,7 @@ in frequency.
 For purely phenomenological evolving SEDs without
 microphysical closure, see:
 
-:mod:`triceratops.models.generic.evolving_sed`
+:mod:`~models.generic.SEDs.evolving_sed.PL_Evolving_SSA_SED_Model`
 
 For theoretical background and implementation details, see:
 

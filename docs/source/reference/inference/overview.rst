@@ -348,7 +348,7 @@ A minimal example looks like:
 .. code-block:: python
 
     from triceratops.inference.problem import InferenceProblem
-    from triceratops.inference.likelihood import GaussianPhotometryLikelihood
+    from triceratops.inference.likelihood import GaussianLikelihoodXY
     from triceratops.models import MyModel
     from triceratops.data import RadioLightCurveContainer
 
@@ -360,7 +360,7 @@ A minimal example looks like:
     )
 
     # Build likelihood
-    likelihood = GaussianPhotometryLikelihood(
+    likelihood = GaussianLikelihoodXY(
         model=model,
         data=data,
     )
@@ -531,7 +531,7 @@ To freeze a parameter, set its :attr:`~inference.problem.InferenceParameter.free
 Alternatively, you can use the :meth:`~inference.problem.InferenceProblem.freeze_parameters`.
 
 Computing the Prior and Posterior
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Once an inference problem has been fully specified (i.e., all free parameters
 have priors and initial values), it provides a consistent interface for
