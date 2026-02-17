@@ -206,6 +206,26 @@
   <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
 </button></div>
       
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
         <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
         <li class="nav-item">
@@ -312,6 +332,26 @@
   <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
   <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
 </button></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
         
           <div class="navbar-item"><ul class="navbar-icon-links"
     aria-label="Icon Links">
@@ -520,11 +560,11 @@ improve performance with negligible loss of accuracy.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 14% |█▍        | 🦖 143/1000 [00:00&lt;00:00, 1425.77it/s]
- 32% |███▏      | 🦖 323/1000 [00:00&lt;00:00, 1644.74it/s]
- 63% |██████▎   | 🦖 629/1000 [00:00&lt;00:00, 2289.39it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 2968.91it/s]
-Interpolated kernel setup time: 0.3376 seconds
+ 16% |█▌        | 🦖 156/1000 [00:00&lt;00:00, 1558.29it/s]
+ 36% |███▌      | 🦖 359/1000 [00:00&lt;00:00, 1833.46it/s]
+ 79% |███████▉  | 🦖 792/1000 [00:00&lt;00:00, 2971.10it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3203.78it/s]
+Interpolated kernel setup time: 0.3129 seconds
 </pre></div>
 </div>
 </section>
@@ -589,9 +629,9 @@ unit volume.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Interpolation speedup factor: </span><span class="si">{</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_interp</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">end_time</span></a><span class="w"> </span><span class="o">-</span><span class="w"> </span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">start_time</span></a><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 8.9246 seconds
-Predicted naive computation time without interpolation on (100,) gamma resolution: 33.7627 seconds.
-Interpolation speedup factor: 3.8x
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 7.1408 seconds
+Predicted naive computation time without interpolation on (100,) gamma resolution: 31.2904 seconds.
+Interpolation speedup factor: 4.4x
 </pre></div>
 </div>
 </section>
@@ -718,7 +758,7 @@ self-absorption, and time-dependent spectra—can be found in:</p>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a></p></li>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.496 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.731 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-pl-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/88720a1edd7e08eca5b35a49569eae25/plot_PL_sed.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_PL_sed.ipynb</span></code></a></p>
