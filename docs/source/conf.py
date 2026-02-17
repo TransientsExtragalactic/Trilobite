@@ -15,6 +15,11 @@ import sys
 
 import matplotlib  # noqa: F401
 
+import triceratops
+
+release = triceratops.__version__
+version = release
+
 sys.path.insert(0, os.path.abspath("../../triceratops"))
 sys.path.insert(0, os.path.abspath("../../triceratops"))
 # -- Project information -----------------------------------------------------
@@ -55,10 +60,18 @@ bibtex_bibfiles = ["docs_bib.bib"]
 exclude_patterns = []
 
 # -- Options for HTML output -------------------------------------------------
-
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
+
+# Get the current git tag or branch name from the environment variable set by GitHub Actions.
+ref = os.environ.get("GITHUB_REF_NAME", "")
+
+if ref.startswith("v"):
+    version = release = ref
+else:
+    version = release = "dev"
+
+# Set the HTML theme to "pydata_sphinx_theme" and configure theme options for the project.
 html_theme = "pydata_sphinx_theme"
 
 html_theme_options = {
@@ -80,6 +93,10 @@ html_theme_options = {
             "type": "fontawesome",
         }
     ],
+    "switcher": {
+        "json_url": "https://eliza-diggins.github.io/Triceratops/versions.json",
+        "version_match": version,
+    },
 }
 
 html_favicon = "images/logo.png"

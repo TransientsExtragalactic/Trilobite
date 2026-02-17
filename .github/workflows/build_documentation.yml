@@ -25,6 +25,9 @@ on:
       - "v*"               # Match version tags like v1.2.0
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 # Perform the workflow.
 jobs:
   docs:
@@ -69,20 +72,98 @@ jobs:
           mkdir -p docs/_build/html
           sphinx-build -b html -j auto docs/source docs/_build/html
 
-      # Deploy redirect index.html to root (only on main or stable tag)
-      - name: Deploy redirect index.html to root
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: docs/redirect
-          destination_dir: .
-
-      # Deploy the built HTML to /stable or /dev
+      # ---------------------------------------------------------
+      # 1️⃣ Deploy versioned docs (vX.Y.Z or dev)
+      # ---------------------------------------------------------
       - name: Deploy versioned documentation
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_branch: gh-pages
           publish_dir: docs/_build/html
-          destination_dir: ${{ startsWith(github.ref, 'refs/tags/v') && 'stable' || 'dev' }}
+          destination_dir: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'dev' }}
+
+      # ---------------------------------------------------------
+      # 2️⃣ Update versions.json + root redirect
+      # ---------------------------------------------------------
+      - name: Update versions.json and root redirect
+        run: |
+          set -e
+
+          BASE_URL="https://eliza-diggins.github.io/Triceratops"
+
+          echo "Cloning gh-pages branch..."
+          git clone --depth 1 --branch gh-pages https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }} gh-pages
+          cd gh-pages
+          git pull origin gh-pages
+
+          echo "Generating versions.json..."
+
+          python - << PY
+          import json
+          import re
+          from pathlib import Path
+
+          BASE_URL = "${BASE_URL}"
+          root = Path(".")
+
+          versions = []
+
+          # Include dev if exists
+          if (root / "dev").is_dir():
+              versions.append({
+                  "name": "dev",
+                  "version": "dev",
+                  "url": f"{BASE_URL}/dev/"
+              })
+
+          tag_dirs = []
+          for p in root.iterdir():
+              if p.is_dir() and re.match(r"^v\d+\.\d+\.\d+$", p.name):
+                  tag_dirs.append(p.name)
+
+          tag_dirs.sort(reverse=True)
+
+          for tag in tag_dirs:
+              versions.append({
+                  "name": tag,
+                  "version": tag,
+                  "url": f"{BASE_URL}/{tag}/"
+              })
+
+          (root / "versions.json").write_text(json.dumps(versions, indent=2) + "\n")
+          print("Updated versions.json")
+          PY
+
+          # Root redirect (only on main or tag)
+          if [[ "${GITHUB_REF}" == "refs/heads/main" || "${GITHUB_REF}" == refs/tags/* ]]; then
+
+            LATEST=$(ls -d v* 2>/dev/null | sort -Vr | head -n 1)
+
+            if [ -n "$LATEST" ]; then
+              TARGET="$BASE_URL/$LATEST/"
+            else
+              TARGET="$BASE_URL/dev/"
+            fi
+
+            echo "Creating root redirect to $TARGET"
+
+            cat > index.html <<EOF
+          <!DOCTYPE html>
+          <html>
+            <head>
+              <meta http-equiv="refresh" content="0; url=$TARGET" />
+            </head>
+            <body>
+              Redirecting to <a href="$TARGET">$TARGET</a>
+            </body>
+          </html>
+          EOF
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git add versions.json index.html || true
+          git diff --quiet && echo "No changes" || git commit -m "Update versions.json and redirect"
+          git push
