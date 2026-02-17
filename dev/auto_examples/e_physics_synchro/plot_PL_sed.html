@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Synchrotron Spectra from Single Electrons and Electron Populations &#8212; Triceratops  documentation</title>
+    <title>Synchrotron Spectra from Single Electrons and Electron Populations &#8212; Triceratops dev documentation</title>
   
   
   
@@ -46,7 +46,7 @@
   <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
 <link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
 
-    <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+    <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
@@ -54,6 +54,13 @@
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/e_physics_synchro/plot_PL_sed';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
     <link rel="icon" href="../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
@@ -61,7 +68,7 @@
     <link rel="prev" title="Physics Backend Examples - Synchrotron" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
-  <meta name="docsearch:version" content="" />
+  <meta name="docsearch:version" content="dev" />
   </head>
   
   
@@ -513,11 +520,11 @@ improve performance with negligible loss of accuracy.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 14% |█▍        | 🦖 145/1000 [00:00&lt;00:00, 1446.93it/s]
- 33% |███▎      | 🦖 331/1000 [00:00&lt;00:00, 1687.30it/s]
- 67% |██████▋   | 🦖 669/1000 [00:00&lt;00:00, 2458.14it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3027.33it/s]
-Interpolated kernel setup time: 0.3310 seconds
+ 14% |█▍        | 🦖 143/1000 [00:00&lt;00:00, 1425.77it/s]
+ 32% |███▏      | 🦖 323/1000 [00:00&lt;00:00, 1644.74it/s]
+ 63% |██████▎   | 🦖 629/1000 [00:00&lt;00:00, 2289.39it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 2968.91it/s]
+Interpolated kernel setup time: 0.3376 seconds
 </pre></div>
 </div>
 </section>
@@ -582,9 +589,9 @@ unit volume.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Interpolation speedup factor: </span><span class="si">{</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_interp</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">end_time</span></a><span class="w"> </span><span class="o">-</span><span class="w"> </span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">start_time</span></a><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 8.9250 seconds
-Predicted naive computation time without interpolation on (100,) gamma resolution: 33.0978 seconds.
-Interpolation speedup factor: 3.7x
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 8.9246 seconds
+Predicted naive computation time without interpolation on (100,) gamma resolution: 33.7627 seconds.
+Interpolation speedup factor: 3.8x
 </pre></div>
 </div>
 </section>
@@ -711,7 +718,7 @@ self-absorption, and time-dependent spectra—can be found in:</p>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a></p></li>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.480 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 9.496 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-pl-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/88720a1edd7e08eca5b35a49569eae25/plot_PL_sed.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_PL_sed.ipynb</span></code></a></p>
