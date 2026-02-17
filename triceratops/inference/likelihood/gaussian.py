@@ -24,6 +24,8 @@ Notes
 For more details on the use of likelihood functions in Triceratops, see :ref:`likelihoods`.
 """
 
+from typing import Optional
+
 import numpy as np
 from scipy.stats import norm
 
@@ -33,10 +35,10 @@ def censored_gaussian_loglikelihood(
     model_y: np.ndarray,
     y_err: np.ndarray,
     *,
-    y_upper: np.ndarray | None = None,
-    y_lower: np.ndarray | None = None,
-    y_upper_mask: np.ndarray | None = None,
-    y_lower_mask: np.ndarray | None = None,
+    y_upper: Optional[np.ndarray] = None,
+    y_lower: Optional[np.ndarray] = None,
+    y_upper_mask: Optional[np.ndarray] = None,
+    y_lower_mask: Optional[np.ndarray] = None,
 ) -> float:
     r"""
     Compute the log-likelihood for Gaussian-distributed data with censoring.
