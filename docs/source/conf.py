@@ -88,6 +88,7 @@ html_theme_options = {
             "type": "fontawesome",
         }
     ],
+    "navbar_end": ["theme-switcher", "version-switcher", "navbar-icon-links"],
     "switcher": {
         "json_url": "https://eliza-diggins.github.io/Triceratops/versions.json",
         "version_match": version,
