@@ -7,8 +7,10 @@ robustness and reproducibility throughout the modeling and inference pipeline.
 """
 
 from abc import ABC, abstractmethod
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Union
+from types import MappingProxyType
+from typing import Optional, Union
 
 import numpy as np
 from astropy import units as u
@@ -17,6 +19,9 @@ from astropy.table import Table
 from triceratops.utils.log import triceratops_logger
 
 
+# ====================================================================== #
+# Base Data Container
+# ====================================================================== #
 class DataContainer(ABC):
     """
     Abstract base class for validated, immutable data containers in Triceratops.
@@ -449,6 +454,762 @@ class DataContainer(ABC):
         if write_kws is None:
             write_kws = {}
         self.__table__.write(path, **write_kws)
+
+
+# ====================================================================== #
+# Inference Data Structures
+# ====================================================================== #
+@dataclass(frozen=True)
+class Observable:
+    """
+    Immutable numerical representation of a single dependent variable used in statistical inference.
+
+    An :class:`Observable` encapsulates a measured quantity (e.g. flux,
+    magnitude, polarization) along with optional uncertainty and
+    censoring information. This object is tied into a single
+    :class:`InferenceData` instance, which may contain multiple named observables
+    (e.g., flux and polarization) that are jointly modeled.
+
+    This object is *purely numerical* and contains no units or
+    domain-specific semantics. All unit conversion and validation
+    should be performed upstream in reference to the generating
+    model or data container. This allows likelihood implementations to
+    interpret the data according to the needs of the problem at hand while
+    being agnostic about the physical meaning of the observable.
+
+    Parameters
+    ----------
+    value : np.ndarray
+        Measured values of the observable. This should be provided
+        as a ``(n,)`` array where ``n`` is the number of observations.
+    error : np.ndarray, optional
+        Symmetric 1-sigma uncertainties. Must be finite. Should be
+        the same shape as ``value``. Use ``None`` if not provided.
+    upper : np.ndarray, optional
+        Upper limit values. Use NaN where not applicable.
+    lower : np.ndarray, optional
+        Lower limit values. Use NaN where not applicable.
+
+    Notes
+    -----
+    - To indicate non-detections, provide finite values in the ``upper`` column
+      and NaN in the ``value`` column. The likelihood can then interpret
+      these as upper limits. Likewise, detections should be represented as
+      finite values in the ``value`` column and NaN in the ``upper`` column.
+    """
+
+    value: np.ndarray
+    error: Optional[np.ndarray] = None
+    upper: Optional[np.ndarray] = None
+    lower: Optional[np.ndarray] = None
+
+    # ------------------------------------------------------------------
+    # Initialization / Validation
+    # ------------------------------------------------------------------
+    # At this stage, we simply need to ensure that the
+    # resulting object is correctly generated and does not
+    # have any foundational issues.
+    def __post_init__(self):
+        # Coerce the input object to an array so that we
+        # are guaranteed to have a consistent interface for the rest of the code.
+        value = np.asarray(self.value)
+        object.__setattr__(self, "value", value)
+
+        # Compute the shape of ``value`` and use it to coerce
+        # the shapes of the other arrays. This ensures that we have a consistent shape across all
+        # arrays and that we can easily check for consistency.
+        shape = value.shape
+
+        if self.error is not None:
+            err = np.asarray(self.error)
+            if err.shape != shape:
+                raise ValueError(f"error must have shape {shape}, got {err.shape}")
+            if not np.all(np.isfinite(err)):
+                raise ValueError(
+                    "Error must contain only finite values. For non-detections, use the upper limit column."
+                )
+            object.__setattr__(self, "error", err)
+
+        if self.upper is not None:
+            upper = np.asarray(self.upper)
+            if upper.shape != shape:
+                raise ValueError(f"upper must have shape {shape}, got {upper.shape}")
+            object.__setattr__(self, "upper", upper)
+
+        if self.lower is not None:
+            lower = np.asarray(self.lower)
+            if lower.shape != shape:
+                raise ValueError(f"lower must have shape {shape}, got {lower.shape}")
+            object.__setattr__(self, "lower", lower)
+
+        # Ensure that logical consistency is maintained throughout the
+        # dataset. This includes checking for detection / non-detection overlap
+        # and ensuring that upper limits do not exceed lower limits.
+
+        # Check for upper limit and lower limit overlap
+        if self.upper is not None:
+            if np.any(~np.isnan(self.upper) & ~np.isnan(self.value)):
+                raise ValueError(
+                    "Upper limits cannot be finite where values are finite. Use NaN in the upper column for detections."
+                )
+        elif self.lower is not None:
+            if np.any(~np.isnan(self.lower) & ~np.isnan(self.value)):
+                raise ValueError(
+                    "Lower limits cannot be finite where values are finite. Use NaN in the lower column for detections."
+                )
+
+        # Check that the upper and lower limits do not exceed one
+        # another.
+        if self.upper is not None and self.lower is not None:
+            both = np.isfinite(self.upper) & np.isfinite(self.lower)
+            if np.any(both & (self.lower > self.upper)):
+                raise ValueError("Lower limit cannot exceed upper limit.")
+
+    # ------------------------------------------------------------------
+    # Dunder Methods
+    # ------------------------------------------------------------------
+    __array_priority__ = 1000  # ensure numpy defers properly
+
+    def __repr__(self) -> str:
+        return f"<Observable shape={self.shape} error={self.has_error} censoring={self.has_censoring}>"
+
+    def __str__(self) -> str:
+        return (
+            f"Observable(n={self.size}, "
+            f"error={self.has_error}, "
+            f"upper_limits={self.has_upper_limits}, "
+            f"lower_limits={self.has_lower_limits})"
+        )
+
+    def __len__(self) -> int:
+        return self.size
+
+    def __bool__(self) -> bool:
+        """Truthiness defined as non-empty."""
+        return self.size > 0
+
+    def __array__(self, dtype=None) -> np.ndarray:
+        """
+        NumPy coercion returns the observable values.
+
+        This allows:
+            np.asarray(observable)
+        """
+        if dtype is not None:
+            return np.asarray(self.value, dtype=dtype)
+        return np.asarray(self.value)
+
+    def __iter__(self):
+        """Iterate over values."""
+        return iter(self.value)
+
+    def __getitem__(self, item):
+        """
+        Return a sliced Observable.
+
+        This preserves error and censoring information.
+        """
+        return Observable(
+            value=self.value[item],
+            error=None if self.error is None else self.error[item],
+            upper=None if self.upper is None else self.upper[item],
+            lower=None if self.lower is None else self.lower[item],
+        )
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Observable):
+            return NotImplemented
+
+        def arr_equal(a, b):
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            return np.array_equal(a, b, equal_nan=True)
+
+        return (
+            arr_equal(self.value, other.value)
+            and arr_equal(self.error, other.error)
+            and arr_equal(self.upper, other.upper)
+            and arr_equal(self.lower, other.lower)
+        )
+
+    # ------------------------------------------------------------------
+    # Derived Masks
+    # ------------------------------------------------------------------
+    @property
+    def upper_mask(self) -> Optional[np.ndarray]:
+        """Boolean mask of upper-censored points."""
+        if self.upper is None:
+            return None
+        return np.isfinite(self.upper)
+
+    @property
+    def lower_mask(self) -> Optional[np.ndarray]:
+        """Boolean mask of lower-censored points."""
+        if self.lower is None:
+            return None
+        return np.isfinite(self.lower)
+
+    # ------------------------------------------------------------------
+    # Convenience Properties
+    # ------------------------------------------------------------------
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """Shape of the observable."""
+        return self.value.shape
+
+    @property
+    def size(self) -> int:
+        """Number of observations."""
+        return self.value.size
+
+    @property
+    def has_error(self) -> bool:
+        """True if uncertainties are provided."""
+        return self.error is not None
+
+    @property
+    def has_upper_limits(self) -> bool:
+        """True if any upper-censored points exist."""
+        return self.upper is not None and np.any(self.upper_mask)
+
+    @property
+    def has_lower_limits(self) -> bool:
+        """True if any lower-censored points exist."""
+        return self.lower is not None and np.any(self.lower_mask)
+
+    @property
+    def has_censoring(self) -> bool:
+        """True if any censoring exists."""
+        return self.has_upper_limits or self.has_lower_limits
+
+
+@dataclass(frozen=True)
+class InferenceData:
+    """
+    An immutable, validated representation of data for use in the inference pipeline.
+
+    Given any inference workflow with a model (:mod:`models`), and a data container
+    from :mod:`data`, the :class:`InferenceData` class serves as the standardized interface
+    which combines the two into an object universally understood by the inference
+    pipeline.
+
+    The :class:`InferenceData` object contains a set of
+    dependent variables (Observables) and independent variables (x) that are used in the inference process.
+
+    Parameters
+    ----------
+    x : dict[str, np.ndarray]
+        Mapping from model variable names to arrays.
+        All arrays must share the same shape.
+
+    observables : dict[str, Observable]
+        Mapping from observable names to :class:`Observable` objects.
+        Each observable must match the shape of `x`.
+
+    x_error : dict[str, np.ndarray], optional
+        Uncertainties on independent variables.
+        Must match shape of corresponding x arrays.
+
+    x_upper : dict[str, np.ndarray], optional
+        Upper limits on independent variables.
+
+    x_lower : dict[str, np.ndarray], optional
+        Lower limits on independent variables.
+
+    Notes
+    -----
+    Not all likelihoods are compatible with all specifications for the :class:`InferenceData`
+    class. It is worthwhile to check your likelihood's documentation to ensure that your data
+    is complete before attempting to run inference. For example, some likelihoods may not be able to handle
+    independent variable uncertainties or censoring, while others may require them for proper operation.
+    """
+
+    # ----------------------------------------------------------------
+    # Parameters
+    # ----------------------------------------------------------------
+    x: dict[str, np.ndarray]
+    observables: dict[str, Observable]
+    x_error: Optional[dict[str, np.ndarray]] = None
+    x_upper: Optional[dict[str, np.ndarray]] = None
+    x_lower: Optional[dict[str, np.ndarray]] = None
+
+    # ------------------------------------------------------------------
+    # Initialization / Validation
+    # ------------------------------------------------------------------
+    def __post_init__(self):
+        # Validate the independent variable exists and is in the
+        # correct format before doing anything else.
+        if not isinstance(self.observables, dict):
+            raise TypeError(f"Parameter `x` of InferenceData must be a dictionary, not type {type(self.x)}.")
+        elif len(self.observables) < 1:
+            raise ValueError("InferenceData must contain at least one independent variable in the `x` parameter.")
+
+        # Coerce all of the x-arrays so that they are guaranteed to be numpy arrays and have a consistent shape.
+        # This also allows us to easily check for consistency across the different x-arrays and ensure that they all
+        # have the same shape, which is a requirement for the inference process to work properly.
+        x_clean = {}
+        shapes = []
+
+        for name, arr in self.x.items():
+            arr = np.asarray(arr)
+            x_clean[name] = arr
+            shapes.append(arr.shape)
+
+        # Check that everything is the same shape.
+        if len(set(shapes)) > 1:
+            raise ValueError(f"All independent variable arrays in `x` must have the same shape. Found shapes: {shapes}")
+        base_shape = shapes[0]
+
+        # We now validate that the x_err, x_lower, and x_upper are properly managed
+        # and are all the same shape.
+        # Validate optional x_error
+        x_error_clean = None
+        if self.x_error is not None:
+            x_error_clean = {}
+            for name, arr in self.x_error.items():
+                arr = np.asarray(arr)
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_error for '{name}' must have shape {base_shape}.")
+                x_error_clean[name] = arr
+        else:
+            x_error_clean = np.full(base_shape, np.nan)
+
+        # Validate optional x_upper
+        x_upper_clean = None
+        if self.x_upper is not None:
+            x_upper_clean = {}
+            for name, arr in self.x_upper.items():
+                arr = np.asarray(arr)
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_upper for '{name}' must have shape {base_shape}.")
+                x_upper_clean[name] = arr
+        else:
+            x_upper_clean = np.full(base_shape, np.nan)
+
+        # Validate optional x_lower
+        x_lower_clean = None
+        if self.x_lower is not None:
+            x_lower_clean = {}
+            for name, arr in self.x_lower.items():
+                arr = np.asarray(arr)
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_lower for '{name}' must have shape {base_shape}.")
+                x_lower_clean[name] = arr
+        else:
+            x_lower_clean = np.full(base_shape, np.nan)
+
+        # Set all the attributes
+        object.__setattr__(self, "x", MappingProxyType(x_clean))
+        object.__setattr__(self, "x_error", MappingProxyType(x_error_clean))
+        object.__setattr__(self, "x_upper", MappingProxyType(x_upper_clean))
+        object.__setattr__(self, "x_lower", MappingProxyType(x_lower_clean))
+
+        # Ensure that the observables are all in the correct format. These must all be Observable
+        # objects and we require that their shape matches that of the base shape.
+        if not self.observables:
+            raise ValueError("InferenceData must contain at least one observable.")
+
+        obs_clean = {}
+
+        for name, obs in self.observables.items():
+            if not isinstance(obs, Observable):
+                raise TypeError(f"Observable '{name}' must be an Observable instance.")
+
+            if obs.shape != base_shape:
+                raise ValueError(
+                    f"Observable '{name}' shape {obs.shape} does not match independent variable shape {base_shape}."
+                )
+
+            obs_clean[name] = obs
+
+        # Replace internal state with read-only versions
+        object.__setattr__(self, "observables", MappingProxyType(obs_clean))
+
+    # ------------------------------------------------------------------
+    # Dunder Methods
+    # ------------------------------------------------------------------
+
+    def __repr__(self) -> str:
+        return f"<InferenceData shape={self.shape} n_observables={self.n_observables}>"
+
+    def __str__(self) -> str:
+        return (
+            f"InferenceData(n={self.size}, "
+            f"variables={list(self.x.keys())}, "
+            f"observables={list(self.observables.keys())})"
+        )
+
+    def __len__(self) -> int:
+        return self.size
+
+    def __eq__(self, other):
+        if not isinstance(other, InferenceData):
+            return NotImplemented
+        return self.x == other.x and self.observables == other.observables
+
+    # ------------------------------------------------------------------
+    # Convenience Properties
+    # ------------------------------------------------------------------
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """Shape of the dataset."""
+        return next(iter(self.x.values())).shape
+
+    @property
+    def size(self) -> int:
+        """Total number of data points."""
+        return int(np.prod(self.shape))
+
+    @property
+    def variable_names(self) -> list[str]:
+        """List of independent variable names."""
+        return list(self.x.keys())
+
+    @property
+    def observable_names(self) -> list[str]:
+        """List of observable names."""
+        return list(self.observables.keys())
+
+    @property
+    def n_observables(self) -> int:
+        """Number of dependent variables."""
+        return len(self.observables)
+
+    # ------------------------------------------------------------------
+    # Helper Methods
+    # ------------------------------------------------------------------
+    def get_observable(self, name: str) -> Observable:
+        """Return a specific observable by name."""
+        try:
+            return self.observables[name]
+        except KeyError as exp:
+            raise KeyError(f"Observable '{name}' not found.") from exp
+
+    def has_x_uncertainty(self) -> bool:
+        """
+        Determine if independent variable uncertainties are provided.
+
+        Returns
+        -------
+        bool
+            True if independent variable uncertainties are provided, False otherwise.
+        """
+        return self.x_error is not None
+
+    def get_x_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return independent variables stacked into a single numerical array.
+
+        This method aggregates all independent variable arrays stored in
+        :attr:`x` into a single stacked array suitable for vectorized
+        model evaluation or likelihood computation.
+
+        The stacking order follows the insertion order of
+        :attr:`variable_names`. This ordering is deterministic and
+        consistent across calls.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
+            If True, the returned array is reshaped to:``(n_points, n_variables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray
+            Stacked independent variable array.
+
+        Notes
+        -----
+        - No copying beyond stacking is performed.
+        - The returned array does not modify internal state.
+        - This method does not apply unit conversions.
+        - The variable ordering must match the model's expected input order.
+        """
+        arrays = [self.x[name] for name in self.variable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return observable values stacked into a single numerical array.
+
+        This method aggregates all observable ``value`` arrays stored in
+        :attr:`observables` into a single stacked array suitable for
+        vectorized likelihood evaluation or residual computation.
+
+        The stacking order follows the insertion order of
+        :attr:`observable_names`. This ordering is deterministic and
+        consistent across calls.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
+            If True, the returned array is reshaped to:``(n_points, n_observables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray
+            Stacked observable value array.
+
+        Notes
+        -----
+        - No copying beyond stacking is performed.
+        - The returned array does not modify internal state.
+        - NaN values are preserved.
+        - The observable ordering must match the model's output ordering.
+        """
+        arrays = [self.observables[name].value for name in self.observable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_error_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return observable uncertainties stacked into a single numerical array.
+
+        This method aggregates all observable ``error`` arrays stored in
+        :attr:`observables` into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`observable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
+            If True, the returned array is reshaped to:``(n_points, n_observables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked observable uncertainty array. Returns ``None`` if any
+            observable does not define uncertainties.
+
+        Notes
+        -----
+        - This method assumes symmetric uncertainties.
+        - No statistical interpretation is applied.
+        - If uncertainties are missing for any observable, ``None`` is returned.
+        """
+        arrays = [self.observables[name].error for name in self.observable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_lower_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return observable lower limits stacked into a single numerical array.
+
+        This method aggregates all observable ``lower`` arrays stored in
+        :attr:`observables` into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`observable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
+            If True, the returned array is reshaped to:``(n_points, n_observables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked observable lower-limit array. Returns ``None`` if lower
+            limits are not defined.
+
+        Notes
+        -----
+        - NaN values indicate non-censored observations.
+        - No masking or filtering is applied.
+        - Intended for interval or one-sided likelihood implementations.
+        """
+        arrays = [self.observables[name].lower for name in self.observable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_upper_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return independent-variable uncertainties stacked into a single numerical array.
+
+        This method aggregates all independent-variable ``x_error`` arrays
+        into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`variable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
+            If True, the returned array is reshaped to:``(n_points, n_variables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked independent-variable uncertainty array.
+            Returns ``None`` if ``x_error`` is not defined.
+
+        Notes
+        -----
+        - Most standard likelihoods ignore independent-variable uncertainty.
+        - No statistical interpretation is applied.
+        """
+        arrays = [self.observables[name].upper for name in self.observable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_error_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return independent-variable uncertainties stacked into a single numerical array.
+
+        This method aggregates all independent-variable ``x_error`` arrays
+        into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`variable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
+            If True, the returned array is reshaped to:``(n_points, n_variables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked independent-variable uncertainty array.
+            Returns ``None`` if ``x_error`` is not defined.
+
+        Notes
+        -----
+        - Most standard likelihoods ignore independent-variable uncertainty.
+        - No statistical interpretation is applied.
+        """
+        if self.x_error is None:
+            return None
+
+        arrays = [self.x_error[name] for name in self.variable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_upper_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return independent-variable upper limits stacked into a single numerical array.
+
+        This method aggregates all independent-variable ``x_upper`` arrays
+        into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`variable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
+            If True, the returned array is reshaped to:``(n_points, n_variables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked independent-variable upper-limit array.
+            Returns ``None`` if ``x_upper`` is not defined.
+
+        Notes
+        -----
+        - NaN values indicate non-censored values.
+        - Rarely used in standard regression problems.
+        """
+        if self.x_upper is None:
+            return None
+
+        arrays = [self.x_upper[name] for name in self.variable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_lower_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+        """
+        Return independent-variable lower limits stacked into a single numerical array.
+
+        This method aggregates all independent-variable ``x_lower`` arrays
+        into a single stacked array.
+
+        The stacking order follows the insertion order of
+        :attr:`variable_names`.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
+            If True, the returned array is reshaped to:``(n_points, n_variables)``,
+            where ``n_points = prod(base_shape)``.
+
+        Returns
+        -------
+        numpy.ndarray or None
+            Stacked independent-variable lower-limit array.
+            Returns ``None`` if ``x_lower`` is not defined.
+
+        Notes
+        -----
+        - NaN values indicate non-censored values.
+        - Rarely used in standard regression problems.
+        """
+        if self.x_lower is None:
+            return None
+
+        arrays = [self.x_lower[name] for name in self.variable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
 
 
 # ====================================================================== #

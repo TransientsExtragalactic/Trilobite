@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.985** total execution time for 9 files **from all galleries**:
+**00:31.012** total execution time for 9 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,20 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
-     - 00:00.985
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_censored_SED_fit.py` (``galleries/examples/b_inference/plot_censored_SED_fit.py``)
+     - 00:15.836
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_SED_fit.py` (``galleries/examples/b_inference/plot_SED_fit.py``)
+     - 00:10.576
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py` (``galleries/examples/e_physics_synchro/plot_PL_sed.py``)
+     - 00:03.812
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
+     - 00:00.407
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_SSA_cooling_SED.py` (``galleries/examples/e_physics_synchro/plot_SSA_cooling_SED.py``)
+     - 00:00.380
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000
@@ -44,18 +56,6 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_a_data_plot_specific_epochs.py` (``galleries/examples/a_data/plot_specific_epochs.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_b_inference_plot_SED_fit.py` (``galleries/examples/b_inference/plot_SED_fit.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_b_inference_plot_censored_SED_fit.py` (``galleries/examples/b_inference/plot_censored_SED_fit.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py` (``galleries/examples/e_physics_synchro/plot_PL_sed.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_SSA_cooling_SED.py` (``galleries/examples/e_physics_synchro/plot_SSA_cooling_SED.py``)
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
      - 00:00.000
      - 0.0
