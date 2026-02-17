@@ -82,7 +82,7 @@ jobs:
           publish_branch: gh-pages
           publish_dir: docs/_build/html
           destination_dir: ${{ startsWith(github.ref, 'refs/tags/') && github.ref_name || 'dev' }}
-
+          keep_files: true
       # ---------------------------------------------------------
       # 2️⃣ Update versions.json + root redirect
       # ---------------------------------------------------------

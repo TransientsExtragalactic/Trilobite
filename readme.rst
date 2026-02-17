@@ -37,7 +37,7 @@ To install the package using ``pip`` (not yet available on PyPI):
 
 .. code-block:: bash
 
-    pip install triceratops  # NOT YET IMPLEMENTED
+    pip install triceratops
 
 Alternatively, you can install directly from the GitHub repository:
 
