@@ -15,11 +15,6 @@ import sys
 
 import matplotlib  # noqa: F401
 
-import triceratops
-
-release = triceratops.__version__
-version = release
-
 sys.path.insert(0, os.path.abspath("../../triceratops"))
 sys.path.insert(0, os.path.abspath("../../triceratops"))
 # -- Project information -----------------------------------------------------
