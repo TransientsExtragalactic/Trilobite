@@ -468,299 +468,87 @@ class DataContainer(ABC):
         observables: Optional[dict[str, tuple[str, ...]]] = None,
     ) -> "InferenceData":
         """
-        Construct an :class:`InferenceData` object for a given model.
+        Convert this :class:`DataContainer` into an :class:`InferenceData` instance.
 
-        This method converts the :class:`DataContainer` object into the
-        strictly structured data format required for inference against the
-        provided ``model`` object. The conversion process is guided by the model's
-        declared variable and observable names, as well as their associated units.
+        This method provides a high-level interface for preparing data for use
+        in the inference pipeline. Internally, it delegates all validation,
+        column resolution, and unit coercion to
+        :meth:`InferenceData.from_table`.
 
-        The behavior is intentionally minimal and deterministic:
+        The conversion process is guided entirely by the provided ``model``:
 
-        1. **Name matching**:
+        - Model-declared variable names determine required independent variables.
+        - Model-declared output names determine required observables.
+        - Model-declared units are used for automatic unit coercion.
+        - Column names are matched by default using exact name equality.
 
-           - By default, model variable and observable names must match
-             table column names exactly.
-           - Optional manual overrides may be provided via ``variables``
-             and ``observables``.
-
-        2. **Unit coercion**:
-
-           - All resolved columns are converted to the units declared
-             by the model.
-           - Unit incompatibilities raise immediately.
-
-        3. **InferenceData construction**:
-
-           - The resolved arrays are inserted into a new
-             :class:`InferenceData` instance.
-           - No transformations, scaling, or statistical assumptions
-             are applied.
+        Optional overrides may be supplied to manually map model variables
+        or observables to specific table columns.
 
         Parameters
         ----------
         model : ~models.core.base.Model
-            The model object against which inference will be performed.
-            This is used to resolve variable and observable names and units.
+            The model against which inference will be performed.
+            This determines:
 
-        variables : dict[str, tuple or str], optional
-            Manual overrides for independent variables.
-            Keys are model variable names.
-            Values may be:
+            - Required independent variable names
+            - Required observable names
+            - Expected units for each quantity
+
+        variables : dict[str, tuple[str, ...]] or str, optional
+            Manual overrides for independent variable column resolution.
+
+            Keys must match model variable names.
+
+            Each value may be specified as:
 
             - ``"column_name"``
             - ``("column", "error")``
             - ``("column", "error", "upper", "lower")``
 
-        observables : dict[str, tuple or str], optional
-            Manual overrides for dependent variables.
+            If not provided, default column names are assumed to match
+            the model variable names directly.
+
+        observables : dict[str, tuple[str, ...]] or str, optional
+            Manual overrides for observable column resolution.
+
+            Keys must match model observable names.
+
             Same tuple formats as ``variables``.
 
         Returns
         -------
         InferenceData
-            Fully validated, unit-coerced inference dataset.
+            A fully validated, immutable, inference-ready dataset.
 
         Raises
         ------
         ValueError
-            If required columns are missing or incompatible.
+            If required columns are missing or shapes are inconsistent.
+
         UnitsError
-            If column units are incompatible with model declarations.
+            If table column units cannot be coerced to model-declared units.
 
+        Notes
+        -----
+        - No transformations (e.g., log-scaling) are applied.
+        - No statistical assumptions are imposed.
+        - All validation logic is centralized in :class:`InferenceData`.
+        - This method is intentionally thin and deterministic.
+
+        See Also
+        --------
+        InferenceData.from_table :
+            Lower-level table ingestion logic.
+        InferenceData.from_arrays :
+            Direct array-based ingestion.
         """
-        # --- Coerce Inputs --- #
-        # The first task is to coerce the inputs into a consistent format for processing.
-        # We allow for some flexibility in how users specify the variables and observables,
-        # but we need to convert them into a standard format for the rest of the code to work with.
-        variables = variables or {}
-        observables = observables or {}
-
-        # Convert all variable and observable inputs to 4-tuples
-        # for easier processing.
-        def _coerce_params(params):
-            coerced = {}
-            for _key, _value in params.items():
-                if isinstance(_value, str):
-                    coerced[_key] = (_value, None, None, None)
-                elif isinstance(_value, tuple):
-                    if len(_value) == 2:
-                        coerced[_key] = (_value[0], _value[1], None, None)
-                    elif len(_value) == 4:
-                        coerced[_key] = _value
-                    else:
-                        raise ValueError(
-                            f"Invalid specification for '{_key}': {_value}. Expected str, 2-tuple, or 4-tuple."
-                        )
-                else:
-                    raise ValueError(
-                        f"Invalid type for specification of '{_key}': {type(_value)}."
-                        f" Expected str, 2-tuple, or 4-tuple."
-                    )
-            return coerced
-
-        variables = _coerce_params(variables)
-        observables = _coerce_params(observables)
-
-        # --- Handle Variables --- #
-        # In order to coerce the variables, we take each variable from the model and
-        # assign an expected variable column name for the value, the error, the lower,
-        # and the upper.
-        #
-        # We then ensure that, at a minimum, the value column is present in the table
-        # and then coerce it to the correct data. Otherwise, we raise an error.
-        # If the error, upper, or lower, columns are not present, we simply ignore them: they will
-        # become None in the resulting InferenceData object.
-        _model_variables = model.VARIABLES
-
-        # construct the X dictionary.
-        X_DATA, X_ERR, X_UPPER, X_LOWER = {}, {}, {}, {}
-
-        for _model_variable in _model_variables:
-            # Extract basic info.
-            _model_var_name = _model_variable.name
-            _model_var_unit = _model_variable.base_units
-
-            # Resolve the column specifications for this variable.
-            # Resolve the column specification for this observable.
-            _col_name, _err_col_name, _upper_col_name, _lower_col_name = variables.get(
-                _model_var_name,
-                (_model_var_name, _model_var_name + "_err", _model_var_name + "_upper", _model_var_name + "_lower"),
-            )
-
-            # Ensure that, at minimum, the value column is present in the table.
-            if _col_name not in self.table.colnames:
-                raise ValueError(
-                    f"Column '{_col_name}' not found for model variable '{_model_var_name}'\n."
-                    f"You can manually specify the column name using the 'variables' argument to 'to_inference_data'."
-                )
-
-            # Extract the column data
-            try:
-                _col_data = self.table[_col_name].quantity.to_value(_model_var_unit)
-            except Exception as e:
-                raise ValueError(
-                    f"Column '{_col_name}' cannot be converted to model unit '{_model_var_unit}'"
-                    f" for variable '{_model_var_name}'."
-                ) from e
-
-            # Store the value in the X_DATA dictionary.
-            X_DATA[_model_var_name] = _col_data
-
-            # Handle the extraction and manipulation of the
-            # upper, lower, and error columns now.
-            if _err_col_name in self.table.colnames:
-                try:
-                    _err_data = self.table[_err_col_name].quantity.to_value(_model_var_unit)
-                    X_ERR[_model_var_name] = _err_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_err_col_name}' cannot be converted to"
-                        f" model unit '{_model_var_unit}' for variable '{_model_var_name}'."
-                    ) from e
-
-            if _upper_col_name in self.table.colnames:
-                try:
-                    _upper_data = self.table[_upper_col_name].quantity.to_value(_model_var_unit)
-                    X_UPPER[_model_var_name] = _upper_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_upper_col_name}' cannot be converted to"
-                        f" model unit '{_model_var_unit}' for variable '{_model_var_name}'."
-                    ) from e
-
-            if _lower_col_name in self.table.colnames:
-                try:
-                    _lower_data = self.table[_lower_col_name].quantity.to_value(_model_var_unit)
-                    X_LOWER[_model_var_name] = _lower_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_lower_col_name}' cannot be converted to"
-                        f" model unit '{_model_var_unit}' for variable '{_model_var_name}'."
-                    ) from e
-
-            # Write a debugging message.
-            triceratops_logger.debug(
-                f"Processed variable '{_model_var_name}' from {self.__class__.__name__} object:\n"
-                f"  Value column: '{_col_name}' -> {X_DATA[_model_var_name]}\n"
-                f"  Error column: '{_err_col_name}' -> {X_ERR.get(_model_var_name, None)}\n"
-                f"  Upper column: '{_upper_col_name}' -> {X_UPPER.get(_model_var_name, None)}\n"
-                f"  Lower column: '{_lower_col_name}' -> {X_LOWER.get(_model_var_name, None)}\n"
-                f"  Unit: '{_model_var_unit}'"
-            )
-
-        # Correct X_err, X_lower, and X_upper so that, if we have empty dicts, we set to None, and
-        # if we have full dicts, we insert zeros / nans for any missing
-        if len(X_ERR) == 0:
-            X_ERR = None
-
-        if len(X_UPPER) == 0:
-            X_UPPER = None
-
-        if len(X_LOWER) == 0:
-            X_LOWER = None
-
-        # --- Handle Observables --- #
-        # We now mirror the above process with the observables. This time, the main difference is
-        # the interaction with the model, which has less structure in the observables than in the variables.
-        # We still need to ensure that the columns are present and can be coerced to the correct units,
-        # but we have more flexibility in how we handle the error, upper, and lower columns since
-        # they will be stored in the Observable object.
-        _model_observables = model.OUTPUTS._fields
-        _model_units = {name: getattr(model.UNITS, name) for name in _model_observables}
-
-        # construct the X dictionary.
-        Y_DATA, Y_ERR, Y_UPPER, Y_LOWER = {}, {}, {}, {}
-
-        for _model_obs in _model_observables:
-            _model_unit = _model_units[_model_obs]
-            # Resolve the column specification for this observable.
-            _col_name, _err_col_name, _upper_col_name, _lower_col_name = observables.get(
-                _model_obs, (_model_obs, _model_obs + "_err", _model_obs + "_upper", _model_obs + "_lower")
-            )
-
-            # Ensure that, at minimum, the value column is present in the table.
-            if _col_name not in self.table.colnames:
-                raise ValueError(
-                    f"Column '{_col_name}' not found for model observable '{_model_obs}'\n."
-                    f"You can manually specify the column name using the 'observables' argument to 'to_inference_data'."
-                )
-
-            # Extract the column data
-            try:
-                _col_data = self.table[_col_name].quantity.to_value(_model_unit)
-            except Exception as e:
-                raise ValueError(
-                    f"Column '{_col_name}' cannot be converted to model unit '{_model_unit}'\n"
-                    f" for observable '{_model_obs}'."
-                ) from e
-
-            # Store the value in the X_DATA dictionary.
-            Y_DATA[_model_obs] = _col_data
-
-            # Handle the extraction and manipulation of the
-            # upper, lower, and error columns now.
-            if _err_col_name in self.table.colnames:
-                try:
-                    _err_data = self.table[_err_col_name].quantity.to_value(_model_unit)
-                    Y_ERR[_model_obs] = _err_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_err_col_name}' cannot be converted to"
-                        f" model unit '{_model_unit}' for variable '{_model_obs}'."
-                    ) from e
-
-            if _upper_col_name in self.table.colnames:
-                try:
-                    _upper_data = self.table[_upper_col_name].quantity.to_value(_model_unit)
-                    Y_UPPER[_model_obs] = _upper_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_upper_col_name}' cannot be converted to"
-                        f" model unit '{_model_unit}' for variable '{_model_obs}'."
-                    ) from e
-
-            if _lower_col_name in self.table.colnames:
-                try:
-                    _lower_data = self.table[_lower_col_name].quantity.to_value(_model_unit)
-                    Y_LOWER[_model_obs] = _lower_data
-                except Exception as e:
-                    raise ValueError(
-                        f"Column '{_lower_col_name}' cannot be converted to"
-                        f" model unit '{_model_unit}' for variable '{_model_obs}'."
-                    ) from e
-
-            # Write a debugging message.
-            triceratops_logger.debug(
-                f"Processed observable '{_model_obs}' from {self.__class__.__name__} object:\n"
-                f"  Value column: '{_col_name}' -> {X_DATA[_model_obs]}\n"
-                f"  Error column: '{_err_col_name}' -> {X_ERR.get(_model_obs, None)}\n"
-                f"  Upper column: '{_upper_col_name}' -> {X_UPPER.get(_model_obs, None)}\n"
-                f"  Lower column: '{_lower_col_name}' -> {X_LOWER.get(_model_obs, None)}\n"
-                f"  Unit: '{_model_unit}'"
-            )
-
-        # --- Generate the Observables --- #
-        _data_observables = {
-            obs: Observable(
-                value=Y_DATA[obs],
-                error=Y_ERR.get(obs, None),
-                upper=Y_UPPER.get(obs, None),
-                lower=Y_LOWER.get(obs, None),
-            )
-            for obs in Y_DATA.keys()
-        }
-
-        # --- Construct the InferenceData --- #
-        inference_data = InferenceData(
-            x=X_DATA,
-            observables=_data_observables,
-            x_error=X_ERR,
-            x_upper=X_UPPER,
-            x_lower=X_LOWER,
+        return InferenceData.from_table(
+            model=model,
+            table=self.table,
+            variables=variables,
+            observables=observables,
         )
-
-        return inference_data
 
 
 # ====================================================================== #
@@ -1149,7 +937,6 @@ class InferenceData:
     # ------------------------------------------------------------------
     # Dunder Methods
     # ------------------------------------------------------------------
-
     def __repr__(self) -> str:
         return f"<InferenceData shape={self.shape} n_observables={self.n_observables}>"
 
@@ -1529,6 +1316,437 @@ class InferenceData:
             stacked = stacked.reshape(-1, stacked.shape[-1])
 
         return stacked
+
+    # ------------------------------------------------------------------
+    # Initialization
+    # ------------------------------------------------------------------
+    @classmethod
+    def from_arrays(
+        cls,
+        model: "Model",
+        x: dict[str, Union[np.ndarray, u.Quantity]],
+        y: dict[str, Union[np.ndarray, u.Quantity]],
+        y_err: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        y_upper: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        y_lower: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_err: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_upper: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_lower: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+    ):
+        """
+        Construct an :class:`InferenceData` instance directly from raw array inputs.
+
+        This is a convenience constructor for workflows where data are already
+        available as numerical arrays (or `astropy.units.Quantity` objects)
+        and are intended to be used directly for inference against a given model.
+
+        The method performs:
+
+        1. **Name validation**
+           - All model-declared variables and observables must be present.
+           - Extra keys are ignored.
+           - Missing required entries raise immediately.
+
+        2. **Unit coercion**
+           - If a value is provided as a `Quantity`, it is converted to the
+             units declared by the model.
+           - If a value is a plain NumPy array, it is assumed to already be in
+             model-expected units.
+           - Unit incompatibilities raise a `ValueError`.
+
+        3. **Shape validation**
+           - All independent variables must share identical shape.
+           - All observables must match the independent-variable shape.
+           - Optional uncertainty/limit arrays must match the same shape.
+
+        4. **Construction**
+           - Observable objects are created internally.
+           - The resulting :class:`InferenceData` instance is fully validated
+             and immutable.
+
+        Parameters
+        ----------
+        model : Model
+            The model defining:
+
+            - Required independent variable names
+            - Required observable names
+            - Expected base units for each variable and observable
+
+        x : dict[str, np.ndarray or Quantity]
+            Mapping from model variable names to arrays.
+            All arrays must share the same shape.
+
+        y : dict[str, np.ndarray or Quantity]
+            Mapping from model observable names to arrays.
+            All arrays must match the shape of `x`.
+
+        y_err : dict[str, np.ndarray or Quantity], optional
+            Symmetric uncertainties for observables.
+            Must match observable shape.
+
+        y_upper : dict[str, np.ndarray or Quantity], optional
+            Upper limits for observables.
+            Must match observable shape.
+
+        y_lower : dict[str, np.ndarray or Quantity], optional
+            Lower limits for observables.
+            Must match observable shape.
+
+        x_err : dict[str, np.ndarray or Quantity], optional
+            Symmetric uncertainties for independent variables.
+            Must match independent-variable shape.
+
+        x_upper : dict[str, np.ndarray or Quantity], optional
+            Upper limits for independent variables.
+
+        x_lower : dict[str, np.ndarray or Quantity], optional
+            Lower limits for independent variables.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable inference-ready dataset.
+
+        Raises
+        ------
+        ValueError
+            If:
+            - Required variables or observables are missing
+            - Shapes are inconsistent
+            - Units cannot be coerced to model-declared units
+
+        Notes
+        -----
+        - No statistical interpretation is applied.
+        - No transformations (e.g., log-space conversions) are performed.
+        - All arrays must already represent physical values in model units.
+        - This method is intended for low-level or programmatic data ingestion.
+        - For table-based workflows with automatic unit coercion and column
+          resolution, use :meth:`DataContainer.to_inference_data` instead.
+
+        Examples
+        --------
+
+        .. code-block:: python
+
+            >>> x = {"time": np.linspace(0, 10, 100)}
+            >>> y = {"flux": np.random.normal(0, 1, 100)}
+            >>> data = InferenceData.from_arrays(model, x=x, y=y)
+
+        Using quantities:
+
+        .. code-block:: python
+
+            >>> x = {"time": np.linspace(0, 10, 100) * u.day}
+            >>> y = {"flux": np.random.normal(0, 1, 100) * u.mJy}
+            >>> data = InferenceData.from_arrays(model, x=x, y=y)
+        """
+        variable_names = model.variable_names
+        observable_names = list(model.OUTPUTS._fields)
+
+        variable_units = {v.name: v.base_units for v in model.VARIABLES}
+        observable_units = {o: getattr(model.UNITS, o) for o in observable_names}
+
+        # -------------------------------------------------
+        # Helper: validate dictionary of arrays
+        # -------------------------------------------------
+        def _validate_group(
+            data_dict,
+            expected_names,
+            unit_map,
+            group_name,
+            required=True,
+            expected_shape=None,
+        ):
+            # Check if the data object is required.
+            if data_dict is None:
+                if required:
+                    raise ValueError(f"{group_name} must be provided.")
+                return None
+
+            # Begin the validation loop.
+            validated = {}
+            shapes = []
+
+            for name in expected_names:
+                if name not in data_dict:
+                    raise ValueError(f"{group_name} missing required entry '{name}'.")
+
+                unit = unit_map[name]
+
+                try:
+                    value = data_dict[name]
+                    if isinstance(value, u.Quantity):
+                        arr = np.asarray(value.to_value(unit))
+                    else:
+                        arr = np.asarray(value)
+                except Exception as exc:
+                    raise ValueError(f"Error converting '{name}' in {group_name} to expected unit '{unit}'.") from exc
+
+                validated[name] = arr
+                shapes.append(arr.shape)
+
+            # All shapes must match
+            if len(set(shapes)) > 1:
+                raise ValueError(f"All arrays in {group_name} must share shape. Found shapes: {shapes}")
+
+            base_shape = shapes[0]
+
+            if expected_shape is not None and base_shape != expected_shape:
+                raise ValueError(f"{group_name} must have shape {expected_shape}, got {base_shape}")
+
+            return validated
+
+        # -------------------------------------------------
+        # Validate required groups
+        # -------------------------------------------------
+        validated_x = _validate_group(
+            x,
+            variable_names,
+            variable_units,
+            "x",
+            required=True,
+        )
+
+        base_shape = next(iter(validated_x.values())).shape
+
+        validated_y = _validate_group(
+            y,
+            observable_names,
+            observable_units,
+            "y",
+            required=True,
+            expected_shape=base_shape,
+        )
+
+        # -------------------------------------------------
+        # Validate optional groups
+        # -------------------------------------------------
+        validated_x_err = _validate_group(
+            x_err,
+            variable_names,
+            variable_units,
+            "x_err",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_x_upper = _validate_group(
+            x_upper,
+            variable_names,
+            variable_units,
+            "x_upper",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_x_lower = _validate_group(
+            x_lower,
+            variable_names,
+            variable_units,
+            "x_lower",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_err = _validate_group(
+            y_err,
+            observable_names,
+            observable_units,
+            "y_err",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_upper = _validate_group(
+            y_upper,
+            observable_names,
+            observable_units,
+            "y_upper",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_lower = _validate_group(
+            y_lower,
+            observable_names,
+            observable_units,
+            "y_lower",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        # -------------------------------------------------
+        # Build Observable objects
+        # -------------------------------------------------
+        observables = {
+            name: Observable(
+                value=validated_y[name],
+                error=None if validated_y_err is None else validated_y_err[name],
+                upper=None if validated_y_upper is None else validated_y_upper[name],
+                lower=None if validated_y_lower is None else validated_y_lower[name],
+            )
+            for name in observable_names
+        }
+
+        # -------------------------------------------------
+        # Construct InferenceData
+        # -------------------------------------------------
+        return cls(
+            x=validated_x,
+            observables=observables,
+            x_error=validated_x_err,
+            x_upper=validated_x_upper,
+            x_lower=validated_x_lower,
+        )
+
+    @classmethod
+    def from_table(
+        cls,
+        model: "Model",
+        table,
+        variables: Optional[dict[str, tuple[str, ...]]] = None,
+        observables: Optional[dict[str, tuple[str, ...]]] = None,
+    ):
+        """
+        Construct an :class:`InferenceData` object from an Astropy Table.
+
+        This method extracts columns from a table, performs name resolution
+        and unit coercion, and delegates validation to
+        :meth:`InferenceData.from_arrays`.
+
+        Parameters
+        ----------
+        model : Model
+            Model defining required variable and observable names and units.
+
+        table : astropy.table.Table
+            Input data table.
+
+        variables : dict[str, tuple or str], optional
+            Manual column specifications for independent variables.
+
+            Each key is a model variable name.
+
+            Values may be:
+            - "column_name"
+            - ("column", "error")
+            - ("column", "error", "upper", "lower")
+
+        observables : dict[str, tuple or str], optional
+            Manual column specifications for observables.
+            Same format as `variables`.
+
+        Returns
+        -------
+        InferenceData
+
+        Raises
+        ------
+        ValueError
+            If required columns are missing or incompatible.
+
+        Notes
+        -----
+        - Column names default to model names if not overridden.
+        - Columns must contain Quantity data or unit-compatible values.
+        - All unit conversion and shape validation is handled by
+          :meth:`from_arrays`.
+        """
+        variables = variables or {}
+        observables = observables or {}
+
+        variable_names = model.variable_names
+        observable_names = list(model.OUTPUTS._fields)
+
+        # ---------------------------------------------
+        # Helper: normalize column specification
+        # ---------------------------------------------
+        def _coerce_spec(spec):
+            if isinstance(spec, str):
+                return spec, None, None, None
+            elif isinstance(spec, tuple):
+                if len(spec) == 2:
+                    return spec[0], spec[1], None, None
+                elif len(spec) == 4:
+                    return spec
+            raise ValueError(f"Invalid column specification: {spec}. Expected str, 2-tuple, or 4-tuple.")
+
+        # ---------------------------------------------
+        # Extract X columns
+        # ---------------------------------------------
+        x = {}
+        x_err = {}
+        x_upper = {}
+        x_lower = {}
+
+        for name in variable_names:
+            col, err, upper, lower = _coerce_spec(
+                variables.get(
+                    name,
+                    (name, f"{name}_err", f"{name}_upper", f"{name}_lower"),
+                )
+            )
+
+            if col not in table.colnames:
+                raise ValueError(f"Column '{col}' not found for variable '{name}'.")
+
+            x[name] = table[col].quantity if hasattr(table[col], "quantity") else table[col]
+
+            if err and err in table.colnames:
+                x_err[name] = table[err].quantity if hasattr(table[err], "quantity") else table[err]
+
+            if upper and upper in table.colnames:
+                x_upper[name] = table[upper].quantity if hasattr(table[upper], "quantity") else table[upper]
+
+            if lower and lower in table.colnames:
+                x_lower[name] = table[lower].quantity if hasattr(table[lower], "quantity") else table[lower]
+
+        # ---------------------------------------------
+        # Extract Y columns
+        # ---------------------------------------------
+        y = {}
+        y_err = {}
+        y_upper = {}
+        y_lower = {}
+
+        for name in observable_names:
+            col, err, upper, lower = _coerce_spec(
+                observables.get(
+                    name,
+                    (name, f"{name}_err", f"{name}_upper", f"{name}_lower"),
+                )
+            )
+
+            if col not in table.colnames:
+                raise ValueError(f"Column '{col}' not found for observable '{name}'.")
+
+            y[name] = table[col].quantity if hasattr(table[col], "quantity") else table[col]
+
+            if err and err in table.colnames:
+                y_err[name] = table[err].quantity if hasattr(table[err], "quantity") else table[err]
+
+            if upper and upper in table.colnames:
+                y_upper[name] = table[upper].quantity if hasattr(table[upper], "quantity") else table[upper]
+
+            if lower and lower in table.colnames:
+                y_lower[name] = table[lower].quantity if hasattr(table[lower], "quantity") else table[lower]
+
+        # ---------------------------------------------
+        # Delegate to canonical constructor
+        # ---------------------------------------------
+        return cls.from_arrays(
+            model=model,
+            x=x,
+            y=y,
+            x_err=x_err or None,
+            x_upper=x_upper or None,
+            x_lower=x_lower or None,
+            y_err=y_err or None,
+            y_upper=y_upper or None,
+            y_lower=y_lower or None,
+        )
 
 
 # ====================================================================== #
