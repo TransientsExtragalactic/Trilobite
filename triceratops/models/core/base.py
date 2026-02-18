@@ -631,3 +631,8 @@ class Model(ABC):
     def output_names(self) -> tuple[str, ...]:
         """str: The names of the model's outputs."""
         return self.OUTPUTS._fields
+
+    @property
+    def output_units(self) -> tuple[Optional[u.Unit], ...]:
+        """astropy.units.Unit or None: The units of the model's outputs."""
+        return tuple(getattr(self.UNITS, name) for name in self.OUTPUTS._fields)

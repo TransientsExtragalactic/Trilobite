@@ -468,6 +468,7 @@ class DataContainer(ABC):
         model: "Model",
         variables: Optional[dict[str, tuple[str, ...]]] = None,
         observables: Optional[dict[str, tuple[str, ...]]] = None,
+        **_,
     ) -> "InferenceData":
         """
         Convert this :class:`DataContainer` into an :class:`InferenceData` instance.
@@ -785,42 +786,147 @@ class Observable:
 @dataclass(frozen=True)
 class InferenceData:
     """
-    An immutable, validated representation of data for use in the inference pipeline.
+    Immutable, validated numerical dataset for use in the inference pipeline.
 
-    Given any inference workflow with a model (:mod:`models`), and a data container
-    from :mod:`data`, the :class:`InferenceData` class serves as the standardized interface
-    which combines the two into an object universally understood by the inference
-    pipeline.
+    The :class:`InferenceData` class is the **canonical numerical representation**
+    consumed by likelihood objects in Triceratops. It defines the contract between
+    the :mod:`data` layer (which performs column resolution and unit coercion)
+    and the :mod:`inference` layer (which performs statistical evaluation).
 
-    The :class:`InferenceData` object contains a set of
-    dependent variables (Observables) and independent variables (x) that are used in the inference process.
+    In a typical workflow:
+
+    1. Observational data are loaded into a data container.
+    2. The container resolves column names, performs unit coercion,
+       and validates structural consistency.
+    3. An :class:`InferenceData` object is created.
+    4. Likelihood objects operate exclusively on this standardized
+       numerical representation.
+
+    Once constructed, an :class:`InferenceData` instance is **immutable**.
+    It contains only NumPy arrays and lightweight metadata required for
+    statistical evaluation. No unit handling, column interpretation, or
+    structural reshaping occurs at likelihood evaluation time.
+
+    .. rubric:: Structure
+
+    An :class:`InferenceData` object contains:
+
+    - Independent variables stored in :attr:`x`
+    - Dependent variables stored in :attr:`observables`
+    - Optional uncertainties and censoring information
+
+    All arrays share a common *base shape*. This base shape defines the
+    dimensional structure of the dataset (for example ``(N,)`` for a
+    one-dimensional dataset or ``(N, M)`` for a grid). Likelihoods may
+    derive stacked views from this base shape but do not modify it.
 
     Parameters
     ----------
-    x : dict[str, np.ndarray]
+    x : dict of str to numpy.ndarray
         Mapping from model variable names to arrays.
-        All arrays must share the same shape.
 
-    observables : dict[str, Observable]
+        - Keys must match the model's declared variable names.
+        - All arrays must share identical shape.
+        - Arrays must already be expressed in the model’s base units.
+        - No unit coercion is performed during initialization.
+
+    observables : dict of str to Observable
         Mapping from observable names to :class:`Observable` objects.
-        Each observable must match the shape of `x`.
 
-    x_error : dict[str, np.ndarray], optional
-        Uncertainties on independent variables.
-        Must match shape of corresponding x arrays.
+        Each :class:`Observable` contains:
 
-    x_upper : dict[str, np.ndarray], optional
+        - ``value`` : :class:`numpy.ndarray`
+            Observed dependent-variable values.
+        - ``error`` : :class:`numpy.ndarray` or ``None``
+            Symmetric 1-sigma uncertainties.
+        - ``upper`` : :class:`numpy.ndarray` or ``None``
+            Upper limits (NaN where not applicable).
+        - ``lower`` : :class:`numpy.ndarray` or ``None``
+            Lower limits (NaN where not applicable).
+
+        All observable arrays must match the shape of the independent variables.
+
+    x_error : dict of str to numpy.ndarray, optional
+        Symmetric uncertainties on independent variables.
+
+        - Must contain entries for *all* independent variables if provided.
+        - Arrays must match the base shape of ``x``.
+
+    x_upper : dict of str to numpy.ndarray, optional
         Upper limits on independent variables.
+        Missing entries are interpreted as no censoring.
 
-    x_lower : dict[str, np.ndarray], optional
+    x_lower : dict of str to numpy.ndarray, optional
         Lower limits on independent variables.
+        Missing entries are interpreted as no censoring.
 
     Notes
     -----
-    Not all likelihoods are compatible with all specifications for the :class:`InferenceData`
-    class. It is worthwhile to check your likelihood's documentation to ensure that your data
-    is complete before attempting to run inference. For example, some likelihoods may not be able to handle
-    independent variable uncertainties or censoring, while others may require them for proper operation.
+    - This class performs **no statistical interpretation**.
+    - All arrays must already be expressed in consistent base units.
+    - Shape validation is strict and enforced at construction time.
+    - The object is immutable once created to guarantee inference reproducibility.
+    - Not all likelihoods support all optional features (e.g., independent-variable
+      uncertainties or censoring).
+
+    Examples
+    --------
+    Constructing directly from arrays:
+
+    .. code-block:: python
+
+        import numpy as np
+        from triceratops.data.core import (
+            InferenceData,
+            Observable,
+        )
+
+        x = {"time": np.linspace(0.0, 10.0, 100)}
+
+        flux = np.random.normal(0.0, 1.0, 100)
+
+        observables = {
+            "flux_density": Observable(
+                value=flux,
+                error=np.full_like(flux, 0.1),
+                upper=None,
+                lower=None,
+            )
+        }
+
+        data = InferenceData(
+            x=x,
+            observables=observables,
+        )
+
+    Constructing from an Astropy table:
+
+    .. code-block:: python
+
+        data = InferenceData.from_table(
+            model=model,
+            table=photometry_table,
+            variables={"time": "time"},
+            observables={
+                "flux_density": (
+                    "flux_density",
+                    "flux_density_error",
+                    "flux_upper_limit",
+                    None,
+                )
+            },
+        )
+
+    See Also
+    --------
+    :class:`data.core.DataContainer`
+        High-level data ingestion and column resolution.
+
+    :class:`inference.likelihood.base.Likelihood`
+        Statistical layer that consumes :class:`InferenceData`.
+
+    :class:`Observable`
+        Lightweight container representing a single dependent variable.
     """
 
     # ----------------------------------------------------------------

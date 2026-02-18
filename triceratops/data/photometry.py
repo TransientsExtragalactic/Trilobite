@@ -8,7 +8,7 @@ and provides unit-aware accessors for time-, frequency-, and flux-related quanti
 """
 
 from pathlib import Path
-from typing import Optional, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from astropy import units as u
@@ -16,7 +16,11 @@ from astropy.table import Table
 
 from triceratops.utils.log import triceratops_logger
 
-from .core import DataContainer, XYDataContainer
+from .core import DataContainer, InferenceData, XYDataContainer
+
+if TYPE_CHECKING:
+    from triceratops.models.core.base import Model
+
 
 __all__ = [
     "RadioPhotometryContainer",
@@ -483,6 +487,152 @@ class RadioPhotometryContainer(DataContainer):
             raise ValueError("Some observations fall outside bin range")
 
         self.__epoch_ids__ = epoch_ids
+
+    # ========================= Inference Data Conversion ========================= #
+    def to_inference_data(
+        self,
+        model: "Model",
+        variables: Optional[dict[str, tuple[str, ...]]] = None,
+        observables: Optional[dict[str, tuple[str, ...]]] = None,
+    ) -> "InferenceData":
+        """
+        Convert this :class:`RadioPhotometryContainer` into an :class:`~triceratops.data.core.InferenceData` object.
+
+        This method provides a convenient bridge between validated radio
+        photometry data and the inference pipeline. It maps table columns
+        onto the independent variables and observables expected by the
+        supplied model and constructs a fully validated
+        :class:`InferenceData` instance.
+
+        Default behavior
+        ----------------
+        If ``variables`` and/or ``observables`` are not provided, sensible
+        defaults are inferred from the model's declared interface:
+
+        - Independent variables are inferred from
+          :attr:`model.variable_names`.
+
+          - ``"time"`` → maps to the ``"time"`` column.
+          - ``"freq"`` or ``"frequency"`` → maps to the ``"freq"`` column.
+
+          If the model declares any variable name that cannot be
+          automatically mapped, a :class:`ValueError` is raised and the user
+          must provide an explicit mapping.
+
+        - Observables are inferred only if the model declares exactly one
+          observable in :attr:`model.observable_names`.
+
+          In this case, that observable is mapped to the full radio
+          photometry tuple:
+
+          ``("flux_density", "flux_density_error", "flux_upper_limit", None)``
+
+          This ensures compatibility with both standard Gaussian and
+          censored likelihoods.
+
+        If the model declares multiple observables, the mapping must be
+        provided explicitly via the ``observables`` argument.
+
+        Parameters
+        ----------
+        model : Model
+            The model instance for which inference will be performed.
+            Its declared ``variable_names`` and ``observable_names`` are
+            used to determine default mappings.
+
+        variables : dict of str to tuple of str, optional
+            Mapping from model variable names to table column names.
+
+            Each key must correspond to a name in
+            ``model.variable_names``. Each value is a tuple of column names
+            in this photometry table used to construct that variable.
+
+            If not provided, defaults are inferred as described above.
+
+        observables : dict of str to tuple of str, optional
+            Mapping from model observable names to photometry table columns.
+
+            Each tuple should follow the convention expected by
+            :meth:`InferenceData.from_table`, typically:
+
+            ``(value_column, error_column, upper_column, lower_column)``
+
+            If not provided and the model declares exactly one observable,
+            a default mapping to the flux density columns is inferred.
+
+        Returns
+        -------
+        InferenceData
+            A validated, immutable inference data object ready to be
+            consumed by a likelihood.
+
+        Raises
+        ------
+        ValueError
+            If automatic mapping fails because the model declares unknown
+            variables or multiple observables without explicit mapping.
+
+        Notes
+        -----
+        This method does not perform any statistical validation. It
+        strictly handles structural mapping between this container and the
+        inference interface.
+
+        Advanced workflows may bypass this method and construct
+        :class:`InferenceData` objects manually via
+        :meth:`InferenceData.from_table` for full control.
+
+        See Also
+        --------
+        InferenceData.from_table
+            Lower-level constructor used internally.
+        triceratops.inference.likelihood
+            Likelihood classes that consume :class:`InferenceData`.
+        """
+        # ------------------------------------------------------------
+        # Default variable mapping
+        # ------------------------------------------------------------
+        if variables is None:
+            variables = {}
+
+            for var_name in model.variable_names:
+                if var_name == "time":
+                    variables[var_name] = ("time",)
+                elif var_name in {"freq", "frequency"}:
+                    variables[var_name] = ("freq",)
+                else:
+                    raise ValueError(
+                        f"Cannot infer mapping for model variable '{var_name}'. Please specify `variables=` explicitly."
+                    )
+
+        # ------------------------------------------------------------
+        # Default observable mapping
+        # ------------------------------------------------------------
+        if observables is None:
+            if len(model.output_names) != 1:
+                raise ValueError(
+                    "RadioPhotometryContainer can only infer defaults for "
+                    "single-observable models. Please specify `observables=`."
+                )
+
+            observables = {
+                model.output_names[0]: (
+                    "flux_density",
+                    "flux_density_error",
+                    "flux_upper_limit",
+                    None,
+                )
+            }
+
+        # ------------------------------------------------------------
+        # Construct inference data
+        # ------------------------------------------------------------
+        return InferenceData.from_table(
+            model=model,
+            table=self.table,
+            variables=variables,
+            observables=observables,
+        )
 
     # ========================= IO Methods ========================= #
     @classmethod
