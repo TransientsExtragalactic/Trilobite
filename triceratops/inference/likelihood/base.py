@@ -341,11 +341,23 @@ class GaussianLikelihood(Likelihood):
         - Uncertainties are present
         - Shapes are consistent
         """
-        if self._y_err is None:
-            raise ValueError("GaussianLikelihood requires observable uncertainties.")
+        # Ensure that shapes are consistent.
+        shape = self._data_y.shape
 
-        if self._data_y.shape != self._y_err.shape:
-            raise ValueError("Observed values and uncertainties must have identical shape.")
+        if self._y_err.shape != shape:
+            raise ValueError(
+                "Provided data container must have equal shapes for observed values and"
+                f" uncertainties. Found shapes: y: {shape}, y_err: {self._y_err.shape}"
+            )
+
+        # Ensure that we have EITHER a detection, an upper limit, or a lower limit
+        # for EVERY entry.
+        if np.any(np.isnan(self._data_y)):
+            raise ValueError("GaussianCensoredLikelihood requires that every entry has a detection.")
+
+        # Ensure that an error is provided for EVERY entry.
+        if np.any(np.isnan(self._y_err)):
+            raise ValueError("GaussianCensoredLikelihood requires defined uncertainties for all entries.")
 
     # ============================================================
     # Likelihood evaluation
@@ -512,17 +524,36 @@ class GaussianCensoredLikelihood(Likelihood):
     # ============================================================
     def _validate_model_and_data(self):
         """Validate structural compatibility and required fields."""
-        if self._y_err is None:
-            raise ValueError("GaussianCensoredLikelihood requires observable uncertainties.")
+        # Ensure that shapes are consistent.
+        shape = self._data_y.shape
 
-        if self._data_y.shape != self._y_err.shape:
-            raise ValueError("Observed values and uncertainties must have identical shape.")
+        if self._y_err.shape != shape:
+            raise ValueError(
+                "Provided data container must have equal shapes for observed values and"
+                f" uncertainties. Found shapes: y: {shape}, y_err: {self._y_err.shape}"
+            )
+        if self._y_upper.shape != shape:
+            raise ValueError(
+                "Provided data container must have equal shapes for observed values and"
+                f" upper limits. Found shapes: y: {shape}, y_upper: {self._y_upper.shape}"
+            )
+        if self._y_lower.shape != shape:
+            raise ValueError(
+                "Provided data container must have equal shapes for observed values and"
+                f" lower limits. Found shapes: y: {shape}, y_lower: {self._y_lower.shape}"
+            )
 
-        if self._y_upper.shape != self._data_y.shape:
-            raise ValueError("Upper limit array must match observed data shape.")
+        # Ensure that we have EITHER a detection, an upper limit, or a lower limit
+        # for EVERY entry.
+        if np.any(np.isnan(self._y_upper) & np.isnan(self._y_lower) & np.isnan(self._data_y)):
+            raise ValueError(
+                "GaussianCensoredLikelihood requires that every entry has either a detection"
+                ", an upper limit, or a lower limit."
+            )
 
-        if self._y_lower.shape != self._data_y.shape:
-            raise ValueError("Lower limit array must match observed data shape.")
+        # Ensure that an error is provided for EVERY entry.
+        if np.any(np.isnan(self._y_err)):
+            raise ValueError("GaussianCensoredLikelihood requires defined uncertainties for all entries.")
 
     # ============================================================
     # Likelihood evaluation
@@ -550,7 +581,6 @@ class GaussianCensoredLikelihood(Likelihood):
         )
 
         model_y = np.stack(model_tuple, axis=-1)
-
         # --------------------------------------------------------
         # Delegate to numerical backend
         # --------------------------------------------------------
