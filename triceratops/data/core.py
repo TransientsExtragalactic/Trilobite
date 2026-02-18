@@ -1430,17 +1430,17 @@ class InferenceData:
 
         .. code-block:: python
 
-            >>> x = {"time": np.linspace(0, 10, 100)}
-            >>> y = {"flux": np.random.normal(0, 1, 100)}
-            >>> data = InferenceData.from_arrays(model, x=x, y=y)
+            x = {"time": np.linspace(0, 10, 100)}
+            y = {"flux": np.random.normal(0, 1, 100)}
+            data = InferenceData.from_arrays(model, x=x, y=y)
 
         Using quantities:
 
         .. code-block:: python
 
-            >>> x = {"time": np.linspace(0, 10, 100) * u.day}
-            >>> y = {"flux": np.random.normal(0, 1, 100) * u.mJy}
-            >>> data = InferenceData.from_arrays(model, x=x, y=y)
+            x = {"time": np.linspace(0, 10, 100) * u.day}
+            y = {"flux": np.random.normal(0, 1, 100) * u.mJy}
+            data = InferenceData.from_arrays(model, x=x, y=y)
         """
         variable_names = model.variable_names
         observable_names = list(model.OUTPUTS._fields)
@@ -1491,10 +1491,10 @@ class InferenceData:
             if len(set(shapes)) > 1:
                 raise ValueError(f"All arrays in {group_name} must share shape. Found shapes: {shapes}")
 
-            base_shape = shapes[0]
+            _base_shape = shapes[0]
 
-            if expected_shape is not None and base_shape != expected_shape:
-                raise ValueError(f"{group_name} must have shape {expected_shape}, got {base_shape}")
+            if expected_shape is not None and _base_shape != expected_shape:
+                raise ValueError(f"{group_name} must have shape {expected_shape}, got {_base_shape}")
 
             return validated
 
