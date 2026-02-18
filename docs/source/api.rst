@@ -38,6 +38,7 @@ and visualizing data sets.
     :recursive:
     :template: module.rst
 
+    data.core
     data.light_curve
     data.spectra
     data.photometry
