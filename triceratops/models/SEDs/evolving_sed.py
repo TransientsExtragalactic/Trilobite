@@ -51,7 +51,7 @@ __all__ = [
 # ============================================================
 # Output Definition
 # ============================================================
-_PLEvolvingOutputs = namedtuple("PLEvolvingSSAOutputs", ["flux"])
+_PLEvolvingOutputs = namedtuple("PLEvolvingSSAOutputs", ["flux_density"])
 
 
 # ============================================================
@@ -169,7 +169,7 @@ class PL_Evolving_SSA_SED_Model(Model):
            * - **Name**
              - **Symbol**
              - **Description**
-           * - ``flux``
+           * - ``flux_density``
              - :math:`F_\nu(\nu,t)`
              - Flux density at frequency :math:`\nu` and time :math:`t`.
 
@@ -239,7 +239,7 @@ class PL_Evolving_SSA_SED_Model(Model):
             flux = model(
                 {"frequency": nu, "time": t},
                 parameters
-            ).flux
+            ).flux_density
 
             # Add 10% Gaussian noise
             noise = 0.1 * flux * rng.normal(size=flux.size)
@@ -277,7 +277,7 @@ class PL_Evolving_SSA_SED_Model(Model):
     )
 
     OUTPUTS = _PLEvolvingOutputs
-    UNITS = OUTPUTS(flux=u.Jy)
+    UNITS = OUTPUTS(flux_density=u.Jy)
 
     DESCRIPTION = "Time-evolving smoothed broken power-law SSA SED."
     REFERENCE = "Generic self-similar synchrotron evolution model."
@@ -313,4 +313,4 @@ class PL_Evolving_SSA_SED_Model(Model):
 
         log_F = log_F_brk - s * np.logaddexp((-a1 / s) * log_xi, (-a2 / s) * log_xi)
 
-        return self.OUTPUTS(flux=np.exp(log_F))
+        return self.OUTPUTS(flux_density=np.exp(log_F))
