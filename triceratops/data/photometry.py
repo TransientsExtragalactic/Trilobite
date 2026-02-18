@@ -18,6 +18,11 @@ from triceratops.utils.log import triceratops_logger
 
 from .core import DataContainer, XYDataContainer
 
+__all__ = [
+    "RadioPhotometryContainer",
+    "RadioPhotometryEpochContainer",
+]
+
 
 class RadioPhotometryContainer(DataContainer):
     """

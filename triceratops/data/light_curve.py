@@ -9,6 +9,10 @@ from astropy.table import Table
 
 from .core import XYDataContainer
 
+__all__ = [
+    "RadioLightCurveContainer",
+]
+
 
 class RadioLightCurveContainer(XYDataContainer):
     """

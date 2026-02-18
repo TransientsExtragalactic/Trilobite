@@ -21,6 +21,8 @@ from triceratops.utils.log import triceratops_logger
 if TYPE_CHECKING:
     from triceratops.models.core.base import Model  # noqa: F401
 
+__all__ = ["InferenceData"]
+
 
 # ====================================================================== #
 # Base Data Container
@@ -909,9 +911,9 @@ class InferenceData:
 
         # Set all the attributes
         object.__setattr__(self, "x", MappingProxyType(x_clean))
-        object.__setattr__(self, "x_error", MappingProxyType(x_error_clean))
-        object.__setattr__(self, "x_upper", MappingProxyType(x_upper_clean))
-        object.__setattr__(self, "x_lower", MappingProxyType(x_lower_clean))
+        object.__setattr__(self, "x_error", None if x_error_clean is None else MappingProxyType(x_error_clean))
+        object.__setattr__(self, "x_upper", None if x_upper_clean is None else MappingProxyType(x_upper_clean))
+        object.__setattr__(self, "x_lower", None if x_lower_clean is None else MappingProxyType(x_lower_clean))
 
         # Ensure that the observables are all in the correct format. These must all be Observable
         # objects and we require that their shape matches that of the base shape.
@@ -1006,37 +1008,36 @@ class InferenceData:
 
     def get_x_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return independent variables stacked into a single numerical array.
+        Return stacked independent-variable values.
 
-        This method aggregates all independent variable arrays stored in
-        :attr:`x` into a single stacked array suitable for vectorized
-        model evaluation or likelihood computation.
+        This method stacks all independent-variable arrays stored in
+        :attr:`x` into a single NumPy array.
 
-        The stacking order follows the insertion order of
-        :attr:`variable_names`. This ordering is deterministic and
-        consistent across calls.
+        The stacking order follows :attr:`variable_names`, which must
+        match the model's expected input ordering.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
-            If True, the returned array is reshaped to:``(n_points, n_variables)``,
-            where ``n_points = prod(base_shape)``.
+            If False (default), returns array with shape:
+                (*base_shape, n_variables)
+
+            If True, reshapes to:
+                (n_points, n_variables),
+            where n_points = product(base_shape).
 
         Returns
         -------
-        numpy.ndarray
-            Stacked independent variable array.
+        np.ndarray
+            Stacked independent-variable array.
 
         Notes
         -----
-        - No copying beyond stacking is performed.
-        - The returned array does not modify internal state.
-        - This method does not apply unit conversions.
-        - The variable ordering must match the model's expected input order.
+        - Always returns a numeric array.
+        - Raises if any required variable is missing.
+        - No unit conversion is performed.
         """
         arrays = [self.x[name] for name in self.variable_names]
-
         stacked = np.stack(arrays, axis=-1)
 
         if flatten:
@@ -1046,34 +1047,28 @@ class InferenceData:
 
     def get_y_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return observable values stacked into a single numerical array.
+        Return stacked observable values.
 
-        This method aggregates all observable ``value`` arrays stored in
-        :attr:`observables` into a single stacked array suitable for
-        vectorized likelihood evaluation or residual computation.
-
-        The stacking order follows the insertion order of
-        :attr:`observable_names`. This ordering is deterministic and
-        consistent across calls.
+        All observable values are required and must be numeric.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
-            If True, the returned array is reshaped to:``(n_points, n_observables)``,
-            where ``n_points = prod(base_shape)``.
+            If False (default), returns:
+                (*base_shape, n_observables)
+
+            If True, reshapes to:
+                (n_points, n_observables)
 
         Returns
         -------
-        numpy.ndarray
-            Stacked observable value array.
+        np.ndarray
+            Stacked observable array.
 
         Notes
         -----
-        - No copying beyond stacking is performed.
-        - The returned array does not modify internal state.
         - NaN values are preserved.
-        - The observable ordering must match the model's output ordering.
+        - Observable order matches :attr:`observable_names`.
         """
         arrays = [self.observables[name].value for name in self.observable_names]
 
@@ -1084,36 +1079,35 @@ class InferenceData:
 
         return stacked
 
-    def get_y_error_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+    def get_y_error_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return observable uncertainties stacked into a single numerical array.
+        Return stacked observable uncertainties.
 
-        This method aggregates all observable ``error`` arrays stored in
-        :attr:`observables` into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`observable_names`.
+        All observables must define symmetric uncertainties.
+        Raises if any observable lacks uncertainty information.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
-            If True, the returned array is reshaped to:``(n_points, n_observables)``,
-            where ``n_points = prod(base_shape)``.
+            Same reshaping semantics as :meth:`get_y_array`.
 
         Returns
         -------
-        numpy.ndarray or None
-            Stacked observable uncertainty array. Returns ``None`` if any
-            observable does not define uncertainties.
+        np.ndarray
+            Stacked uncertainty array.
 
-        Notes
-        -----
-        - This method assumes symmetric uncertainties.
-        - No statistical interpretation is applied.
-        - If uncertainties are missing for any observable, ``None`` is returned.
+        Raises
+        ------
+        ValueError
+            If any observable lacks uncertainties.
         """
-        arrays = [self.observables[name].error for name in self.observable_names]
+        arrays = []
+
+        for name in self.observable_names:
+            err = self.observables[name].error
+            if err is None:
+                raise ValueError(f"Observable '{name}' lacks uncertainty.")
+            arrays.append(err)
 
         stacked = np.stack(arrays, axis=-1)
 
@@ -1122,36 +1116,32 @@ class InferenceData:
 
         return stacked
 
-    def get_y_lower_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+    def get_y_lower_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return observable lower limits stacked into a single numerical array.
+        Return stacked observable lower limits.
 
-        This method aggregates all observable ``lower`` arrays stored in
-        :attr:`observables` into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`observable_names`.
+        Missing lower limits are represented as np.nan.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_observables)``.
-            If True, the returned array is reshaped to:``(n_points, n_observables)``,
-            where ``n_points = prod(base_shape)``.
+            Same reshaping semantics as :meth:`get_y_array`.
 
         Returns
         -------
-        numpy.ndarray or None
-            Stacked observable lower-limit array. Returns ``None`` if lower
-            limits are not defined.
-
-        Notes
-        -----
-        - NaN values indicate non-censored observations.
-        - No masking or filtering is applied.
-        - Intended for interval or one-sided likelihood implementations.
+        np.ndarray
+            Lower-limit array.
         """
-        arrays = [self.observables[name].lower for name in self.observable_names]
+        base_shape = self.get_y_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.observable_names:
+            lower = self.observables[name].lower
+            if lower is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(lower)
 
         stacked = np.stack(arrays, axis=-1)
 
@@ -1160,35 +1150,32 @@ class InferenceData:
 
         return stacked
 
-    def get_y_upper_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+    def get_y_upper_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return independent-variable uncertainties stacked into a single numerical array.
+        Return stacked observable upper limits.
 
-        This method aggregates all independent-variable ``x_error`` arrays
-        into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`variable_names`.
+        Missing upper limits are represented as np.nan.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
-            If True, the returned array is reshaped to:``(n_points, n_variables)``,
-            where ``n_points = prod(base_shape)``.
+            Same reshaping semantics as :meth:`get_y_array`.
 
         Returns
         -------
-        numpy.ndarray or None
-            Stacked independent-variable uncertainty array.
-            Returns ``None`` if ``x_error`` is not defined.
-
-        Notes
-        -----
-        - Most standard likelihoods ignore independent-variable uncertainty.
-        - No statistical interpretation is applied.
+        np.ndarray
+            Upper-limit array.
         """
-        arrays = [self.observables[name].upper for name in self.observable_names]
+        base_shape = self.get_y_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.observable_names:
+            upper = self.observables[name].upper
+            if upper is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(upper)
 
         stacked = np.stack(arrays, axis=-1)
 
@@ -1197,78 +1184,41 @@ class InferenceData:
 
         return stacked
 
-    def get_x_error_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+    def get_x_error_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return independent-variable uncertainties stacked into a single numerical array.
+        Return stacked independent-variable uncertainties.
 
-        This method aggregates all independent-variable ``x_error`` arrays
-        into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`variable_names`.
+        All independent variables must define symmetric uncertainties.
+        If any variable lacks uncertainty information, a ValueError is raised.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
-            If True, the returned array is reshaped to:``(n_points, n_variables)``,
-            where ``n_points = prod(base_shape)``.
+            If False (default), returns shape:
+                (*base_shape, n_variables)
+
+            If True, reshapes to:
+                (n_points, n_variables)
 
         Returns
         -------
-        numpy.ndarray or None
-            Stacked independent-variable uncertainty array.
-            Returns ``None`` if ``x_error`` is not defined.
+        np.ndarray
+            Stacked uncertainty array.
 
-        Notes
-        -----
-        - Most standard likelihoods ignore independent-variable uncertainty.
-        - No statistical interpretation is applied.
+        Raises
+        ------
+        ValueError
+            If uncertainties are not defined for all variables.
         """
         if self.x_error is None:
-            return None
+            raise ValueError("Independent-variable uncertainties are not defined.")
 
-        arrays = [self.x_error[name] for name in self.variable_names]
+        arrays = []
 
-        stacked = np.stack(arrays, axis=-1)
-
-        if flatten:
-            stacked = stacked.reshape(-1, stacked.shape[-1])
-
-        return stacked
-
-    def get_x_upper_array(self, flatten: bool = False) -> Optional[np.ndarray]:
-        """
-        Return independent-variable upper limits stacked into a single numerical array.
-
-        This method aggregates all independent-variable ``x_upper`` arrays
-        into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`variable_names`.
-
-        Parameters
-        ----------
-        flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
-            If True, the returned array is reshaped to:``(n_points, n_variables)``,
-            where ``n_points = prod(base_shape)``.
-
-        Returns
-        -------
-        numpy.ndarray or None
-            Stacked independent-variable upper-limit array.
-            Returns ``None`` if ``x_upper`` is not defined.
-
-        Notes
-        -----
-        - NaN values indicate non-censored values.
-        - Rarely used in standard regression problems.
-        """
-        if self.x_upper is None:
-            return None
-
-        arrays = [self.x_upper[name] for name in self.variable_names]
+        for name in self.variable_names:
+            if name not in self.x_error or self.x_error[name] is None:
+                raise ValueError(f"Independent-variable '{name}' lacks uncertainty.")
+            arrays.append(self.x_error[name])
 
         stacked = np.stack(arrays, axis=-1)
 
@@ -1277,38 +1227,65 @@ class InferenceData:
 
         return stacked
 
-    def get_x_lower_array(self, flatten: bool = False) -> Optional[np.ndarray]:
+    def get_x_upper_array(self, flatten: bool = False) -> np.ndarray:
         """
-        Return independent-variable lower limits stacked into a single numerical array.
+        Return stacked independent-variable upper limits.
 
-        This method aggregates all independent-variable ``x_lower`` arrays
-        into a single stacked array.
-
-        The stacking order follows the insertion order of
-        :attr:`variable_names`.
+        Missing upper limits are represented as np.nan.
 
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), the returned array has shape:``(*base_shape, n_variables)``.
-            If True, the returned array is reshaped to:``(n_points, n_variables)``,
-            where ``n_points = prod(base_shape)``.
+            Same reshaping semantics as :meth:`get_x_array`.
 
         Returns
         -------
-        numpy.ndarray or None
-            Stacked independent-variable lower-limit array.
-            Returns ``None`` if ``x_lower`` is not defined.
-
-        Notes
-        -----
-        - NaN values indicate non-censored values.
-        - Rarely used in standard regression problems.
+        np.ndarray
+            Upper-limit array with shape:
+                (*base_shape, n_variables)
         """
-        if self.x_lower is None:
-            return None
+        base_shape = self.get_x_array(flatten=False).shape[:-1]
 
-        arrays = [self.x_lower[name] for name in self.variable_names]
+        arrays = []
+
+        for name in self.variable_names:
+            if self.x_upper is None or name not in self.x_upper or self.x_upper[name] is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(self.x_upper[name])
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_lower_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked independent-variable lower limits.
+
+        Missing lower limits are represented as np.nan.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_x_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Lower-limit array.
+        """
+        base_shape = self.get_x_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.variable_names:
+            if self.x_lower is None or name not in self.x_lower or self.x_lower[name] is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(self.x_lower[name])
 
         stacked = np.stack(arrays, axis=-1)
 

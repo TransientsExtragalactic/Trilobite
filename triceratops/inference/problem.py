@@ -1126,7 +1126,7 @@ class InferenceProblem:
         when it is initialized and is used during likelihood evaluations. This may be any number of data container types
         defined in the :mod:`data` module.
         """
-        return self.__likelihood__._data
+        return self.__likelihood__._data_container
 
     # --- Various Parameter focused properties --- #
     @property

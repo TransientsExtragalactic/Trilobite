@@ -122,17 +122,29 @@ data_table["flux_upper_limit"] = np.full((frequencies.size,), np.nan) * u.mJy  #
 # Create the RadioPhotometryContainer from the table.
 photometry_data = RadioPhotometryEpochContainer(data_table)
 
+from triceratops.data import InferenceData
+
 # %%
 # Now that we have the data container, we can set up the likelihood function. We'll use the
-# :class:`inference.likelihood.base.GaussianLikelihoodXY` for this purpose.
+# :class:`~inference.likelihood.base.GaussianCensoredLikelihood` for this purpose.
 #
 # This likelihood works with single-epoch photometry data and assumes Gaussian errors on the flux densities.
-from triceratops.inference.likelihood.base import GaussianLikelihoodXY
+from triceratops.inference.likelihood.base import GaussianCensoredLikelihood
+
+# Create the inference data object.
+inference_data = InferenceData.from_table(
+    sed_model,
+    photometry_data.table,
+    variables={"frequency": "freq"},
+    observables={
+        "flux_density": ("flux_density", "flux_density_error", "flux_upper_limit", None),
+    },
+)
 
 # Create the likelihood object.
-likelihood = GaussianLikelihoodXY(
+likelihood = GaussianCensoredLikelihood(
     model=sed_model,
-    data=photometry_data,
+    data=inference_data,
 )
 
 # Print the current log likelihood value for the true parameters.
