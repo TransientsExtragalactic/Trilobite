@@ -21,8 +21,12 @@ __all__ = [
     "Likelihood",
     "GaussianLikelihood",
     "GaussianCensoredLikelihood",
+    "problem",
+    "sampling",
+    "likelihood",
+    "prior",
 ]
-
+from . import likelihood, prior, problem, sampling
 from .likelihood import GaussianCensoredLikelihood, GaussianLikelihood, Likelihood
 from .prior import (
     BetaPrior,

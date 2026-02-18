@@ -21,7 +21,7 @@ from triceratops.utils.log import triceratops_logger
 if TYPE_CHECKING:
     from triceratops.models.core.base import Model  # noqa: F401
 
-__all__ = ["InferenceData"]
+__all__ = ["InferenceData", "DataContainer", "Observable", "XYDataContainer"]
 
 
 # ====================================================================== #

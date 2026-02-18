@@ -16,7 +16,7 @@ import sys
 import matplotlib  # noqa: F401
 
 sys.path.insert(0, os.path.abspath("../../triceratops"))
-sys.path.insert(0, os.path.abspath("../../triceratops"))
+sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 
 project = "Triceratops"
