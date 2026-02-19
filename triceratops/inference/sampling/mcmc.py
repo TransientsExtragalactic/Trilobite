@@ -188,20 +188,11 @@ class EmceeSampler(Sampler):
         chain = sampler.get_chain()  # (steps, walkers, dim)
         logp = sampler.get_log_prob()  # (steps, walkers)
 
-        # Handle metadata we need in order to generate the outputs.
-        parameter_metadata = [p.to_metadata() for p in self.problem.parameters.values()]
-
         # --------------------------------------------------
         # Build result
         # --------------------------------------------------
         return MCMCSamplingResult(
             samples=chain,
-            parameter_metadata=parameter_metadata,
+            problem=self.problem,
             log_posterior=logp,
-            sampler_class_name=self.__class__.__name__,
-            likelihood_class_name=self.problem.likelihood.__class__.__name__,
-            model_class_name=self.problem.model.__class__.__name__,
-            data_container_class_name=self.problem.data.__class__.__name__,
-            inference_problem_class_name=self.problem.__class__.__name__,
-            acceptance_fraction=sampler.acceptance_fraction,
         )

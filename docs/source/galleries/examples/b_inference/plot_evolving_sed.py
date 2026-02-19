@@ -244,7 +244,7 @@ for epoch_id in np.unique(photometry_data.epoch_ids):
 
 ax.set_xscale("log")
 ax.set_yscale("log")
-ax.set_xlabel("Frequency [GHz]")
+ax.set_xlabel("Frequency [Hz]")
 ax.set_ylabel("Flux Density [mJy]")
 ax.legend(title="Posterior Median + 68% CI", ncol=2)
 

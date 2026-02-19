@@ -20,7 +20,11 @@ import numpy as np
 from .utils import compute_gelman_rubin_rhat
 
 if TYPE_CHECKING:
-    pass
+    from triceratops.data.core import InferenceData
+    from triceratops.models.core.base import Model
+
+    from ..likelihood.base import Likelihood
+    from ..problem import InferenceProblem
 
 
 # ------------------------------------------------ #
@@ -28,12 +32,31 @@ if TYPE_CHECKING:
 # ------------------------------------------------ #
 @dataclass
 class SamplingResult(ABC):
-    """
-    Abstract base class for sampling results.
+    r"""
+    Abstract base class representing the result of a sampling procedure.
 
-    This class stores sampled parameter values along with sufficient metadata
-    to allow post-processing, visualization, and partial reproducibility
-    without requiring the original inference objects.
+    A :class:`SamplingResult` stores posterior samples along with the
+    associated :class:`~triceratops.inference.InferenceProblem` required
+    to fully reconstruct the inference configuration.
+
+    The result is designed to be:
+
+    - Fully serializable
+    - Self-consistent
+    - Reproducible without requiring the original sampler instance
+    - Lightweight with respect to inference infrastructure
+
+    Numerical arrays (samples and optional log-probabilities) are written
+    to an HDF5 file, while structural metadata (the inference problem and
+    sampler metadata) are written to a companion JSON file.
+
+    Notes
+    -----
+    - The final axis of ``samples`` must correspond to parameter space
+      dimensionality.
+    - Subclasses may impose additional structure (e.g. MCMC chain layouts).
+    - The associated :class:`InferenceProblem` contains the model, priors,
+      transforms, and data required for posterior evaluation.
     """
 
     # ------------------------------------------------ #
@@ -51,14 +74,8 @@ class SamplingResult(ABC):
     The final dimension must correspond to parameter space dimensionality.
     Subclasses may use higher-dimensional layouts (e.g., chains × steps × dim).
     """
-
-    parameter_metadata: list[dict]
-    """list of dict
-    Serialized metadata for each inferred parameter.
-
-    Each entry should correspond to a serialized
-    :class:`InferenceParameter.to_metadata()` dictionary.
-    """
+    problem: "InferenceProblem"
+    """InferenceProblem: The inference problem associated with this sampling result."""
 
     # --- Log-probability values --- #
     log_likelihood: Optional[np.ndarray] = None
@@ -73,21 +90,19 @@ class SamplingResult(ABC):
     """numpy.ndarray: The log-posterior values corresponding to each sample.
     This may or may not be present depending on the sampling algorithm used.
     """
+    sampler_metadata: Optional[dict] = None
+    """dict: Metadata about the sampling procedure.
 
-    # --- Metadata about the sampling process --- #
-    # This information is helpful for tracking what was used to generate the samples,
-    # without requiring the full sampler / model / likelihood objects to be present.
-    sampler_class_name: str = ""
-    """str: The class name of the sampler used to generate the samples."""
-    likelihood_class_name: str = ""
-    """str: The class name of the likelihood used in the inference problem."""
-    model_class_name: str = ""
-    """str: The class name of the model used in the inference problem."""
-    data_container_class_name: str = ""
-    """str: The class name of the data container used in the inference problem."""
-    inference_problem_class_name: str = ""
-    """str: The class name of the inference problem used to generate the samples."""
+    This may be quite generic, but could include information such as:
 
+    - Sampler type (e.g., "MCMC", "Nested Sampling")
+    - Sampler configuration (e.g., number of walkers, step size)
+    - Inference problem metadata (e.g., parameter names, prior types)
+    """
+
+    # ------------------------------------------------ #
+    # Initialization                                   #
+    # ------------------------------------------------ #
     def __post_init__(self):
         self.samples = np.asarray(self.samples)
 
@@ -96,7 +111,13 @@ class SamplingResult(ABC):
     # ------------------------------------------------ #
     @property
     def n_samples(self) -> int:
-        """int: Number of samples."""
+        """
+        int: Total number of samples.
+
+        For multi-dimensional layouts (e.g., MCMC chains),
+        this may correspond only to the leading axis. Subclasses
+        may override this behavior.
+        """
         return self.samples.shape[0]
 
     @property
@@ -105,50 +126,76 @@ class SamplingResult(ABC):
         return self.samples.shape[-1]
 
     @property
-    def n_parameters(self) -> int:
-        """int: Number of inferred parameters."""
-        return len(self.parameter_metadata)
+    def likelihood(self) -> "Likelihood":
+        """Likelihood: The likelihood object associated with the underlying :class:`InferenceProblem`."""
 
     @property
-    def parameter_names(self) -> tuple[str, ...]:
-        """Tuple of str: Names of inferred parameters."""
-        return tuple(p["name"] for p in self.parameter_metadata)
+    def model(self) -> "Model":
+        """Model: The model associated with this sampling result."""
+        return self.problem.likelihood._model
 
     @property
-    def priors(self) -> tuple[dict, ...]:
-        """Tuple of dict: Serialized prior metadata."""
-        return tuple(p["prior"] for p in self.parameter_metadata)
+    def data(self) -> "InferenceData":
+        """Data: The data associated with this sampling result."""
+        return self.problem.likelihood._data
 
-    # ------------------------------- #
-    # Serialization API               #
-    # ------------------------------- #
+    @property
+    def parameters(self):
+        """dict: The parameters of the inference problem."""
+        return self.problem.parameters
+
+    # ------------------------------------------------ #
+    # IO                                               #
+    # ------------------------------------------------ #
     def to_hdf5(
         self,
         path: Union[str, Path],
         overwrite: bool = False,
     ) -> None:
         """
-        Serialize the sampling result to an HDF5 file.
+        Serialize the sampling result to disk.
+
+        This method writes two files:
+
+        1. ``<path>`` — HDF5 file containing numeric arrays:
+           - ``samples``
+           - ``log_likelihood`` (if present)
+           - ``log_prior`` (if present)
+           - ``log_posterior`` (if present)
+
+        2. ``<path>.meta`` — JSON file containing:
+           - Serialized :class:`InferenceProblem`
+           - Sampler metadata
+           - Result class information
 
         Parameters
         ----------
         path : str or Path
-            Output file path.
-        overwrite : bool
-            Whether to overwrite an existing file.
+            Output path for the HDF5 file.
+        overwrite : bool, optional
+            If ``True``, overwrite an existing file. Default is ``False``.
+
+        Raises
+        ------
+        FileExistsError
+            If ``path`` already exists and ``overwrite`` is ``False``.
+
+        Notes
+        -----
+        The JSON metadata file is required to reconstruct the full inference
+        problem and must remain alongside the HDF5 file.
         """
-        # Clarify the path and manage the overwrite
-        # if necessary.
         path = Path(path)
 
         if path.exists() and not overwrite:
             raise FileExistsError(f"{path} already exists.")
 
-        # Create the file and start writing the data.
+        meta_path = Path(str(path) + ".meta")
+
+        # ----------------------------
+        # Write numeric arrays
+        # ----------------------------
         with h5py.File(path, "w") as f:
-            # We start by writing the datasets to disk. These are just
-            # dumped in as the relevant datasets and the base directory
-            # of the file.
             f.create_dataset("samples", data=self.samples)
 
             if self.log_likelihood is not None:
@@ -160,22 +207,18 @@ class SamplingResult(ABC):
             if self.log_posterior is not None:
                 f.create_dataset("log_posterior", data=self.log_posterior)
 
-            # Now manage the parameters. For this one, we have a
-            # dedicated group where we store the metadata. Each parameter
-            # is numbered by its index, and each metadata key is stored
-            # as an attribute with the key formatted as "{index}.{key}".
-            pgroup = f.create_group("parameters")
-            for i, meta in enumerate(self.parameter_metadata):
-                for k, v in meta.items():
-                    pgroup.attrs[f"{i}.{k}"] = json.dumps(v)
+        # ----------------------------
+        # Write metadata JSON
+        # ----------------------------
+        metadata = {
+            "format": "SamplingResult",
+            "class": self.__class__.__name__,
+            "problem": self.problem.to_dict(),
+            "sampler_metadata": self.sampler_metadata or {},
+        }
 
-            # Set the various metadata attributes about the sampling
-            # process itself.
-            f.attrs["sampler_class_name"] = self.sampler_class_name
-            f.attrs["likelihood_class_name"] = self.likelihood_class_name
-            f.attrs["model_class_name"] = self.model_class_name
-            f.attrs["data_container_class_name"] = self.data_container_class_name
-            f.attrs["inference_problem_class_name"] = self.inference_problem_class_name
+        with open(meta_path, "w") as f:
+            json.dump(metadata, f, indent=2)
 
     @classmethod
     def from_hdf5(
@@ -183,72 +226,104 @@ class SamplingResult(ABC):
         path: Union[str, Path],
     ) -> "SamplingResult":
         """
-        Load a sampling result from an HDF5 file.
+        Reconstruct a :class:`SamplingResult` from disk.
+
+        This method expects:
+
+        - ``<path>`` — HDF5 file containing numeric arrays.
+        - ``<path>.meta`` — JSON file containing serialized metadata.
+
+        The inference problem is reconstructed using
+        :meth:`InferenceProblem.from_dict`.
 
         Parameters
         ----------
         path : str or Path
-            Path to HDF5 file.
+            Path to the HDF5 file containing numeric sampling results.
 
         Returns
         -------
         SamplingResult
-            Reconstructed sampling result.
-        """
-        # Clarify the path
-        path = Path(path)
+            Reconstructed sampling result instance. If the metadata
+            specifies a subclass of :class:`SamplingResult`, that subclass
+            will be instantiated.
 
-        # Open the file and start reading the data.
+        Raises
+        ------
+        FileNotFoundError
+            If either the HDF5 file or its metadata file is missing.
+        ValueError
+            If the metadata format is invalid or incomplete.
+
+        Notes
+        -----
+        The metadata JSON file must be present and valid in order to
+        reconstruct the associated :class:`InferenceProblem`.
+        """
+        path = Path(path)
+        meta_path = Path(str(path) + ".meta")
+
+        if not path.exists():
+            raise FileNotFoundError(f"{path} does not exist.")
+
+        if not meta_path.exists():
+            raise FileNotFoundError(f"Missing metadata file: {meta_path}")
+
+        # --------------------------------------------------
+        # Load numeric arrays
+        # --------------------------------------------------
         with h5py.File(path, "r") as f:
-            # Load the datasets. Because they may not all exist,
-            # we have to check for their presence.
             samples = f["samples"][...]
 
-            log_likelihood = f.get("log_likelihood", None)
-            log_prior = f.get("log_prior", None)
-            log_posterior = f.get("log_posterior", None)
+            log_likelihood = f["log_likelihood"][...] if "log_likelihood" in f else None
+            log_prior = f["log_prior"][...] if "log_prior" in f else None
+            log_posterior = f["log_posterior"][...] if "log_posterior" in f else None
 
-            # reconstruct parameter metadata. This is the most complicated
-            # part of the process, since we have to parse the attributes
-            # of the "parameters" group. Recall that each parameter is
-            # written as attributes with keys formatted as "{index}.{key}".
-            param_attrs = dict(f["parameters"].attrs)
-            n_params = samples.shape[-1]
+        # --------------------------------------------------
+        # Load metadata JSON
+        # --------------------------------------------------
+        with open(meta_path) as f:
+            metadata = json.load(f)
 
-            parameter_metadata = []
-            for i in range(n_params):
-                meta = {}
-                for k in param_attrs:
-                    index_str, key = k.split(".", 1)
-                    if int(index_str) == i:
-                        v = param_attrs[k]
-                        meta[key] = json.loads(v)
+        if metadata.get("format") != "SamplingResult":
+            raise ValueError("Invalid SamplingResult metadata file.")
 
-                parameter_metadata.append(meta)
+        result_class_name = metadata.get("class")
+        sampler_metadata = metadata.get("sampler_metadata", {})
+        problem_dict = metadata.get("problem")
 
-            # Now generate the class instance.
-            return cls(
-                samples=samples,
-                parameter_metadata=parameter_metadata,
-                log_likelihood=None if log_likelihood is None else log_likelihood[...],
-                log_prior=None if log_prior is None else log_prior[...],
-                log_posterior=None if log_posterior is None else log_posterior[...],
-                sampler_class_name=f.attrs.get("sampler_class_name", ""),
-                likelihood_class_name=f.attrs.get("likelihood_class_name", ""),
-                model_class_name=f.attrs.get("model_class_name", ""),
-                data_container_class_name=f.attrs.get("data_container_class_name", ""),
-                inference_problem_class_name=f.attrs.get("inference_problem_class_name", ""),
-            )
+        if problem_dict is None:
+            raise ValueError("Metadata file missing 'problem' field.")
 
-    # ------------------------------------------------ #
-    # Representation                                   #
-    # ------------------------------------------------ #
-    def __repr__(self) -> str:
-        return (
-            f"{self.__class__.__name__}("
-            f"n_samples={self.n_samples}, "
-            f"n_dim={self.n_dim}, "
-            f"sampler={self.sampler_class_name})"
+        # --------------------------------------------------
+        # Reconstruct InferenceProblem
+        # --------------------------------------------------
+        from triceratops.inference import InferenceProblem
+
+        problem = InferenceProblem.from_dict(problem_dict)
+
+        # --------------------------------------------------
+        # Determine correct result class
+        # --------------------------------------------------
+        result_cls = cls
+
+        if result_class_name is not None and result_class_name != cls.__name__:
+            # Attempt dynamic subclass resolution
+            subclass = globals().get(result_class_name)
+            if subclass is None:
+                raise ValueError(f"Unknown SamplingResult subclass '{result_class_name}'.")
+            result_cls = subclass
+
+        # --------------------------------------------------
+        # Construct result
+        # --------------------------------------------------
+        return result_cls(
+            samples=samples,
+            problem=problem,
+            log_likelihood=log_likelihood,
+            log_prior=log_prior,
+            log_posterior=log_posterior,
+            sampler_metadata=sampler_metadata,
         )
 
 
@@ -259,113 +334,94 @@ class SamplingResult(ABC):
 # only core difference is that we respect the chain structure of MCMC samples.
 @dataclass
 class MCMCSamplingResult(SamplingResult):
-    """
+    r"""
     Sampling result for MCMC samplers.
 
-    This class extends :class:`SamplingResult` to specifically handle the
-    chain structure of MCMC samples. The samples are expected to be organized
-    as (n_walkers, n_steps, n_dim).
+    This subclass of :class:`SamplingResult` stores samples with explicit
+    chain structure. Samples must be provided in the form:
+
+        (n_steps, n_walkers, n_dim)
+
+    or
+
+        (n_samples, n_dim)
+
+    In the latter case, the samples are interpreted as a single-chain
+    result and reshaped internally to:
+
+        (n_samples, 1, n_dim)
     """
 
-    samples: np.ndarray
-    """numpy.ndarray
-    Sampled parameter values.
-
-    The shape must be ``(n_walkers, n_steps, n_dim)`` to respect the MCMC chain structure. If
-    a different shape is provided, it will be converted to this format in :meth:`__post_init__`.
-    """
     acceptance_fraction: Optional[np.ndarray] = None
     """numpy.ndarray: Acceptance fraction for each walker, if available."""
 
+    # ------------------------------------------------ #
+    # Initialization                                   #
+    # ------------------------------------------------ #
     def __post_init__(self):
-        # Pass through the parent initialization
         super().__post_init__()
 
-        # Ensure that we have to correct structure (n_steps, n_walkers, n_dim). If
-        # we have (n_samples, n_dim), we convert to ( n_samples, 1, n_dim). If we
-        # have some other structure, we raise an error.
         if self.samples.ndim == 2:
             n_samples, n_dim = self.samples.shape
             self.samples = self.samples.reshape((n_samples, 1, n_dim))
+
         elif self.samples.ndim != 3:
             raise ValueError(
                 "MCMCSamplingResult samples must have shape (n_steps, n_walkers, n_dim) or (n_samples, n_dim)."
             )
 
-        # Create the auto-correlation time cache and ESS cache
-        # so that we don't have to recompute them multiple times.
         self._autocorr_time_cache: Optional[np.ndarray] = None
 
     # ------------------------------------------------ #
-    # Properties                                       #
+    # Core Properties                                  #
     # ------------------------------------------------ #
-    @property
-    def n_walkers(self) -> int:
-        """int: Number of MCMC walkers."""
-        return self.samples.shape[1]
-
     @property
     def n_steps(self) -> int:
         """int: Number of MCMC steps."""
         return self.samples.shape[0]
 
     @property
+    def n_walkers(self) -> int:
+        """int: Number of MCMC walkers."""
+        return self.samples.shape[1]
+
+    @property
     def n_samples(self) -> int:
-        """int: Total number of MCMC samples (n_steps * n_walkers)."""
+        """int: Total number of MCMC samples (n_steps × n_walkers)."""
         return self.n_steps * self.n_walkers
 
     @property
-    def autocorr_time(self) -> np.ndarray:
-        """numpy.ndarray: The integrated autocorrelation time for each parameter.
-
-        If this has not been computed yet, it will be calculated and cached for repeated
-        reference. It may also be computed with the :meth:`compute_autocorr_time` method with
-        additional arguments.
-        """
-        if self._autocorr_time_cache is None:
-            self._autocorr_time_cache = self.compute_autocorr_time()
-        return self._autocorr_time_cache
-
-    @property
-    def min_ESS(self) -> float:
-        """float: Minimum effective sample size (ESS) across all parameters."""
-        return np.min(self.compute_effective_sample_size(use_cache=True))
-
-    @property
-    def mean_acceptance_fraction(self) -> float:
-        """float: Mean acceptance fraction across all walkers."""
-        if self.acceptance_fraction is None:
-            raise ValueError("Acceptance fraction is not available.")
-        return np.mean(self.acceptance_fraction)
+    def parameter_names(self) -> tuple[str, ...]:
+        """Tuple[str]: Names of inferred parameters."""
+        return tuple(self.problem.free_parameter_names)
 
     # ------------------------------------------------ #
-    # Data Access and Manipulation                     #
+    # Flattening                                       #
     # ------------------------------------------------ #
-    def get_flat_samples(self, burn: int = 0, thin: int = 1) -> np.ndarray:
+    def get_flat_samples(
+        self,
+        burn: int = 0,
+        thin: int = 1,
+    ) -> np.ndarray:
         """
-        Get flattened MCMC samples with optional burn-in and thinning.
+        Return flattened MCMC samples with optional burn-in and thinning.
 
         Parameters
         ----------
-        burn : int
-            Number of initial steps to discard as burn-in.
-        thin : int
-            Thinning factor to apply to the samples.
+        burn : int, optional
+            Number of initial steps to discard.
+        thin : int, optional
+            Thinning factor.
 
         Returns
         -------
         numpy.ndarray
-            Flattened array of shape (n_effective_samples, n_dim) containing the
-            MCMC samples after applying burn-in and thinning.
+            Array of shape (n_effective_samples, n_dim).
         """
-        # Apply burn-in and thinning
         samples = self.samples[burn::thin, :, :]
-
-        # Flatten the samples to (n_effective_samples, n_dim)
         n_steps, n_walkers, n_dim = samples.shape
-        flat_samples = samples.reshape((n_walkers * n_steps, n_dim))
 
-        return flat_samples
+        return samples.reshape((n_steps * n_walkers, n_dim))
 
     # ------------------------------------------------ #
     # Goodness of Fit Statistics                       #
