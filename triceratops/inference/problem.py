@@ -9,7 +9,6 @@ free parameters, priors, and other problem-specific settings.
 
 import warnings
 from dataclasses import dataclass
-from datetime import UTC
 from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING
 
@@ -1748,7 +1747,6 @@ class InferenceProblem:
         - A version tag is embedded to allow compatibility checks during loading.
         """
         import json
-        from datetime import datetime
 
         from .likelihood.utils import get_likelihood_target
 
@@ -1801,7 +1799,6 @@ class InferenceProblem:
         # Construct metadata (JSON-safe only)
         # ---------------------------------------------------------
         metadata_block = {
-            "created_at": datetime.now(UTC).isoformat(),
             "num_parameters": self.n_parameters,
             "num_free_parameters": self.n_free_parameters,
             "num_fixed_parameters": self.n_fixed_parameters,
