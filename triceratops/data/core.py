@@ -8,8 +8,9 @@ robustness and reproducibility throughout the modeling and inference pipeline.
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
+from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Any, Optional, Union
 
 import numpy as np
 from astropy import units as u
@@ -17,8 +18,17 @@ from astropy.table import Table
 
 from triceratops.utils.log import triceratops_logger
 
+# ============================================================= #
+# Package versioning and Type checking
+# ============================================================= #=
+try:
+    __pkg_version__ = version("triceratops")
+except PackageNotFoundError:
+    __pkg_version__ = "unknown"
+
 if TYPE_CHECKING:
     from triceratops.models.core.base import Model  # noqa: F401
+
 
 __all__ = ["InferenceData", "DataContainer", "Observable", "XYDataContainer"]
 
@@ -1057,7 +1067,48 @@ class InferenceData:
     def __eq__(self, other):
         if not isinstance(other, InferenceData):
             return NotImplemented
-        return self.x == other.x and self.observables == other.observables
+
+        # -------------------------------------------------
+        # Helper: compare dict[str, ndarray] or None
+        # -------------------------------------------------
+        def _dict_array_equal(d1, d2):
+            if d1 is None and d2 is None:
+                return True
+            if d1 is None or d2 is None:
+                return False
+            if set(d1.keys()) != set(d2.keys()):
+                return False
+            for k in d1:
+                if not np.array_equal(d1[k], d2[k], equal_nan=True):
+                    return False
+            return True
+
+        # -------------------------------------------------
+        # Independent variables
+        # -------------------------------------------------
+        if not _dict_array_equal(self.x, other.x):
+            return False
+
+        if not _dict_array_equal(self.x_error, other.x_error):
+            return False
+
+        if not _dict_array_equal(self.x_upper, other.x_upper):
+            return False
+
+        if not _dict_array_equal(self.x_lower, other.x_lower):
+            return False
+
+        # -------------------------------------------------
+        # Observables
+        # -------------------------------------------------
+        if set(self.observables.keys()) != set(other.observables.keys()):
+            return False
+
+        for name in self.observables:
+            if self.observables[name] != other.observables[name]:
+                return False
+
+        return True
 
     # ------------------------------------------------------------------
     # Convenience Properties
@@ -1826,6 +1877,605 @@ class InferenceData:
             y_upper=y_upper or None,
             y_lower=y_lower or None,
         )
+
+    # ====================================================================== #
+    # External IO / Serialization                                            #
+    # ====================================================================== #
+    # Because these objects will end up crossing process boundaries, they need
+    # to be handled with care in regard to IO processes. We want to ensure that
+    # the object can read / write to HDF5 as a standard format and that we can
+    # serialize to something like JSON.
+    def to_dict(self, **metadata) -> dict:
+        """
+        Convert this instance to a JSON-serializable dictionary.
+
+        This method converts the :class:`InferenceData` object into a fully
+        JSON-safe representation composed only of native Python types
+        (``dict``, ``list``, ``str``, ``float``, ``int``, ``None``). NumPy
+        arrays are converted to nested lists via ``.tolist()``.
+
+        The resulting dictionary is suitable for:
+
+        - JSON serialization (``json.dumps``),
+        - writing to disk,
+        - transmission across process boundaries (e.g. MPI),
+        - caching or checkpointing inference state.
+
+        Additional keyword arguments are inserted into the ``attrs`` block
+        and may be used to store provenance or contextual metadata
+        (e.g. run identifiers, dataset names, timestamps).
+
+        Parameters
+        ----------
+        **metadata :
+            Additional metadata to include under the ``attrs`` key.
+
+        Returns
+        -------
+        dict
+            JSON-safe dictionary representation of this
+            :class:`InferenceData` instance.
+
+        Notes
+        -----
+        The dictionary structure has the following canonical form:
+
+        .. code-block:: json
+
+            {
+              "attrs": {
+                "format": "InferenceData",
+                "version": "x.y.z",
+                "...": "additional metadata"
+              },
+
+              "x": {
+                "time": [ ... ],
+                "frequency": [ ... ]
+              },
+
+              "x_error": {                 // Optional
+                "time": [ ... ]
+              },
+
+              "x_upper": { ... },          // Optional
+              "x_lower": { ... },          // Optional
+
+              "observables": {
+                "flux": {
+                  "value": [ ... ],
+                  "error": [ ... ],        // Optional
+                  "upper": [ ... ],        // Optional
+                  "lower": [ ... ]         // Optional
+                }
+              }
+            }
+
+        - All arrays are converted to Python lists.
+        - Optional groups (``x_error``, ``x_upper``, ``x_lower``) are only
+          included if present.
+        - Optional observable fields (``error``, ``upper``, ``lower``)
+          are only included when defined.
+
+        See Also
+        --------
+        from_dict :
+            Reconstruct an :class:`InferenceData` instance from a dictionary.
+        json.dumps :
+            Serialize dictionary to JSON.
+        """
+        # Construct the scaffold dictionary for the eventual serialized array.
+        out: dict[str, Any] = {
+            "attrs": {
+                "format": "InferenceData",
+                "version": __pkg_version__,
+                **metadata,
+            },
+            "x": {},
+            "observables": {},
+        }
+
+        # Dump the independent variable arrays.
+        for name, arr in self.x.items():
+            out["x"][name] = np.asarray(arr).tolist()
+        if self.x_error is not None:
+            out["x_error"] = {name: np.asarray(arr).tolist() for name, arr in self.x_error.items()}
+        if self.x_upper is not None:
+            out["x_upper"] = {name: np.asarray(arr).tolist() for name, arr in self.x_upper.items()}
+        if self.x_lower is not None:
+            out["x_lower"] = {name: np.asarray(arr).tolist() for name, arr in self.x_lower.items()}
+
+        # Dump the dependent variable arrays and their associated metadata.
+        for name, obs in self.observables.items():
+            obs_dict: dict[str, Any] = {"value": np.asarray(obs.value).tolist()}
+            if obs.error is not None:
+                obs_dict["error"] = np.asarray(obs.error).tolist()
+            if obs.upper is not None:
+                obs_dict["upper"] = np.asarray(obs.upper).tolist()
+            if obs.lower is not None:
+                obs_dict["lower"] = np.asarray(obs.lower).tolist()
+            out["observables"][name] = obs_dict
+
+        return out
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "InferenceData":
+        """
+        Reconstruct an :class:`InferenceData` instance from a dictionary.
+
+        This method is the inverse of :meth:`to_dict`. It restores NumPy
+        arrays and :class:`Observable` objects from a JSON-deserialized
+        dictionary representation.
+
+        Parameters
+        ----------
+        data : dict
+            Dictionary representation produced by :meth:`to_dict`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable :class:`InferenceData` instance.
+
+        Raises
+        ------
+        ValueError
+            If the dictionary does not represent a valid
+            :class:`InferenceData` structure.
+        """
+        # -------------------------------------------------
+        # Basic structure validation
+        # -------------------------------------------------
+        if not isinstance(data, dict):
+            raise TypeError("Input must be a dictionary.")
+
+        attrs = data.get("attrs", {})
+        if attrs.get("format") != "InferenceData":
+            raise ValueError("Dictionary does not represent InferenceData.")
+
+        # -------------------------------------------------
+        # Independent variables
+        # -------------------------------------------------
+        if "x" not in data:
+            raise ValueError("Missing 'x' block in InferenceData dictionary.")
+
+        x = {name: np.asarray(arr) for name, arr in data["x"].items()}
+
+        # Optional groups
+        x_error = None
+        if "x_error" in data:
+            x_error = {name: np.asarray(arr) for name, arr in data["x_error"].items()}
+
+        x_upper = None
+        if "x_upper" in data:
+            x_upper = {name: np.asarray(arr) for name, arr in data["x_upper"].items()}
+
+        x_lower = None
+        if "x_lower" in data:
+            x_lower = {name: np.asarray(arr) for name, arr in data["x_lower"].items()}
+
+        # -------------------------------------------------
+        # Observables
+        # -------------------------------------------------
+        if "observables" not in data:
+            raise ValueError("Missing 'observables' block in InferenceData dictionary.")
+
+        observables = {}
+
+        for name, obs_dict in data["observables"].items():
+            if "value" not in obs_dict:
+                raise ValueError(f"Observable '{name}' missing required 'value' field.")
+
+            observables[name] = Observable(
+                value=np.asarray(obs_dict["value"]),
+                error=None if "error" not in obs_dict else np.asarray(obs_dict["error"]),
+                upper=None if "upper" not in obs_dict else np.asarray(obs_dict["upper"]),
+                lower=None if "lower" not in obs_dict else np.asarray(obs_dict["lower"]),
+            )
+
+        # -------------------------------------------------
+        # Construct validated instance
+        # -------------------------------------------------
+        return cls(
+            x=x,
+            observables=observables,
+            x_error=x_error,
+            x_upper=x_upper,
+            x_lower=x_lower,
+        )
+
+    def to_json(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to a JSON file.
+
+        The object is first converted to its canonical dictionary
+        representation via :meth:`to_dict`, then written to disk using
+        ``json.dump`` with pretty formatting (``indent=2``).
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination JSON file path.
+        overwrite : bool, optional
+            If ``False`` (default) and the file already exists,
+            a :class:`FileExistsError` is raised.
+        **metadata :
+            Additional metadata forwarded to :meth:`to_dict` and
+            stored in the ``attrs`` block of the serialized file.
+
+        Raises
+        ------
+        FileExistsError
+            If the file exists and ``overwrite=False``.
+
+        Notes
+        -----
+        - Output is fully JSON-safe (pure Python types only).
+        - NumPy arrays are stored as nested lists.
+        - NaN values are preserved according to Python's JSON encoding rules.
+        - The resulting file is human-readable.
+        - This method does not modify the object state.
+
+        See Also
+        --------
+        from_json :
+            Inverse operation.
+        to_dict :
+            Canonical serialization backend.
+        """
+        import json
+
+        path = Path(filename)
+
+        if path.exists() and not overwrite:
+            raise FileExistsError(f"File '{path}' already exists.")
+
+        data = self.to_dict(**metadata)
+
+        with open(path, "w") as f:
+            json.dump(data, f, indent=2)
+
+    @classmethod
+    def from_json(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Deserialize an :class:`InferenceData` instance from a JSON file.
+
+        This method reads the JSON file, reconstructs the canonical
+        dictionary representation, and delegates object construction
+        to :meth:`from_dict`.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to a JSON file produced by :meth:`to_json`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        ValueError
+            If the file contents are not a valid InferenceData structure.
+
+        Notes
+        -----
+        - All arrays are restored as NumPy arrays.
+        - Shape and structural validation occur during object construction.
+        - Metadata stored in the ``attrs`` block is not automatically
+          attached to the returned object but remains available in the file.
+
+        See Also
+        --------
+        to_json :
+            JSON serialization method.
+        from_dict :
+            Canonical reconstruction backend.
+        """
+        import json
+
+        path = Path(filename)
+
+        if not path.exists():
+            raise FileNotFoundError(f"File '{path}' not found.")
+
+        with open(path) as f:
+            data = json.load(f)
+
+        return cls.from_dict(data)
+
+    def to_hdf5(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to an HDF5 file.
+
+        The HDF5 layout mirrors the canonical dictionary structure,
+        with independent variables and observables stored in hierarchical
+        groups.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination HDF5 file path.
+        overwrite : bool, optional
+            If ``False`` (default) and the file already exists,
+            a :class:`FileExistsError` is raised.
+        **metadata :
+            Additional metadata stored as root-level HDF5 attributes.
+
+        Raises
+        ------
+        FileExistsError
+            If the file exists and ``overwrite=False``.
+
+        Notes
+        -----
+        - Independent variables are stored under ``/x``.
+        - Optional groups (``x_error``, ``x_upper``, ``x_lower``)
+          are created only if present.
+        - Observables are stored under ``/observables/<name>/``.
+        - Root attributes include ``format`` and ``version``.
+        - Arrays are written in native NumPy format (no conversion to lists).
+        - This method is suitable for large datasets and high-performance workflows.
+
+        See Also
+        --------
+        from_hdf5 :
+            Inverse operation.
+        to_dict :
+            JSON serialization backend.
+        """
+        import h5py
+
+        path = Path(filename)
+
+        if path.exists() and not overwrite:
+            raise FileExistsError(f"File '{path}' already exists.")
+
+        mode = "w" if overwrite else "x"
+
+        with h5py.File(path, mode) as f:
+            # Root attributes
+            f.attrs["format"] = "InferenceData"
+            f.attrs["version"] = __pkg_version__
+
+            for key, value in metadata.items():
+                f.attrs[key] = value
+
+            # -------------------------
+            # Independent variables
+            # -------------------------
+            grp_x = f.create_group("x")
+            for name, arr in self.x.items():
+                grp_x.create_dataset(name, data=arr)
+
+            def _write_optional_group(group_name, data_dict):
+                if data_dict is None:
+                    return
+                grp = f.create_group(group_name)
+                for _name, _arr in data_dict.items():
+                    grp.create_dataset(_name, data=_arr)
+
+            _write_optional_group("x_error", self.x_error)
+            _write_optional_group("x_upper", self.x_upper)
+            _write_optional_group("x_lower", self.x_lower)
+
+            # -------------------------
+            # Observables
+            # -------------------------
+            grp_obs = f.create_group("observables")
+
+            for name, obs in self.observables.items():
+                subgrp = grp_obs.create_group(name)
+                subgrp.create_dataset("value", data=obs.value)
+
+                if obs.error is not None:
+                    subgrp.create_dataset("error", data=obs.error)
+
+                if obs.upper is not None:
+                    subgrp.create_dataset("upper", data=obs.upper)
+
+                if obs.lower is not None:
+                    subgrp.create_dataset("lower", data=obs.lower)
+
+    @classmethod
+    def from_hdf5(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Deserialize an :class:`InferenceData` instance from an HDF5 file.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to an HDF5 file produced by :meth:`to_hdf5`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        ValueError
+            If the file does not conform to the expected format.
+
+        Notes
+        -----
+        - The file must contain a root attribute ``format="InferenceData"``.
+        - Arrays are loaded directly as NumPy arrays.
+        - Structural validation occurs during object construction.
+        - Metadata stored in HDF5 attributes is not automatically
+          attached to the returned object.
+
+        See Also
+        --------
+        to_hdf5 :
+            HDF5 serialization method.
+        """
+        import h5py
+
+        path = Path(filename)
+
+        if not path.exists():
+            raise FileNotFoundError(f"File '{path}' not found.")
+
+        with h5py.File(path, "r") as f:
+            if f.attrs.get("format") != "InferenceData":
+                raise ValueError("Invalid HDF5 file for InferenceData.")
+
+            # -------------------------
+            # Independent variables
+            # -------------------------
+            x = {name: f["x"][name][...] for name in f["x"].keys()}
+
+            def _read_optional_group(group_name):
+                if group_name not in f:
+                    return None
+                return {name: f[group_name][name][...] for name in f[group_name].keys()}
+
+            x_error = _read_optional_group("x_error")
+            x_upper = _read_optional_group("x_upper")
+            x_lower = _read_optional_group("x_lower")
+
+            # -------------------------
+            # Observables
+            # -------------------------
+            observables = {}
+
+            for name in f["observables"].keys():
+                grp = f["observables"][name]
+
+                observables[name] = Observable(
+                    value=grp["value"][...],
+                    error=grp["error"][...] if "error" in grp else None,
+                    upper=grp["upper"][...] if "upper" in grp else None,
+                    lower=grp["lower"][...] if "lower" in grp else None,
+                )
+
+        return cls(
+            x=x,
+            observables=observables,
+            x_error=x_error,
+            x_upper=x_upper,
+            x_lower=x_lower,
+        )
+
+    def to_file(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to disk.
+
+        The output format is determined automatically from the file
+        extension.
+
+        .. rubric:: Supported Formats
+
+        - ``.json``
+        - ``.h5``
+        - ``.hdf5``
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination file path.
+        overwrite : bool, optional
+            If ``False`` and the file exists, raise :class:`FileExistsError`.
+        **metadata :
+            Additional metadata passed to the underlying serializer.
+
+        Raises
+        ------
+        ValueError
+            If the file extension is unsupported.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`to_json`
+        and :meth:`to_hdf5`.
+
+        See Also
+        --------
+        from_file :
+            Inverse operation.
+        """
+        path = Path(filename)
+        suffix = path.suffix.lower()
+
+        if suffix == ".json":
+            self.to_json(path, overwrite=overwrite, **metadata)
+
+        elif suffix in {".h5", ".hdf5"}:
+            self.to_hdf5(path, overwrite=overwrite, **metadata)
+
+        else:
+            raise ValueError(f"Unsupported file extension '{suffix}'.")
+
+    @classmethod
+    def from_file(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Load an :class:`InferenceData` instance from disk.
+
+        The input format is inferred from the file extension.
+
+        .. rubric:: Supported Formats
+
+        - ``.json``
+        - ``.h5``
+        - ``.hdf5``
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to serialized file.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        ValueError
+            If the file extension is unsupported.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`from_json`
+        and :meth:`from_hdf5`.
+
+        See Also
+        --------
+        to_file :
+            Generic serialization method.
+        """
+        path = Path(filename)
+        suffix = path.suffix.lower()
+
+        if suffix == ".json":
+            return cls.from_json(path)
+
+        elif suffix in {".h5", ".hdf5"}:
+            return cls.from_hdf5(path)
+
+        else:
+            raise ValueError(f"Unsupported file extension '{suffix}'.")
 
 
 # ====================================================================== #
