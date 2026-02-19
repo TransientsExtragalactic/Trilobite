@@ -49,10 +49,20 @@ and explicitly by the user.
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable
+from importlib.metadata import PackageNotFoundError, version
 from typing import Optional
 
 import numpy as np
 from scipy.special import erf, gamma
+
+# ============================================================= #
+# Package versioning and Type checking
+# ============================================================= #=
+try:
+    __pkg_version__ = version("triceratops")
+except PackageNotFoundError:
+    __pkg_version__ = "unknown"
+
 
 __all__ = [
     "Prior",
@@ -236,75 +246,136 @@ class Prior(ABC):
     # ------------------------------------------------------------ #
     # Serialization support                                        #
     # ------------------------------------------------------------ #
-    @staticmethod
-    def _all_subclasses():
-        """Recursively yield all subclasses of Prior."""
-        work = list(Prior.__subclasses__())
-        seen = set(work)
-
-        while work:
-            cls = work.pop()
-            yield cls
-            for sub in cls.__subclasses__():
-                if sub not in seen:
-                    seen.add(sub)
-                    work.append(sub)
-
     def to_dict(self) -> dict:
         """
-        Serialize the prior to a dictionary.
+        Serialize the prior to a JSON-safe dictionary.
 
-        Returns
-        -------
-        dict
-            A JSON-serializable representation of the prior.
+        .. important::
+
+            This method requires that the prior class be importable via
+            a fully-qualified module path of the form:
+
+            .. code-block:: text
+
+                module.submodule:ClassName
+
+            If it is not, an error is raised. Additionally, all constructor parameters must be JSON-serializable.
+
+        Raises
+        ------
+        TypeError
+            If the prior class is not importable.
+        TypeError
+            If constructor parameters are not JSON-serializable.
         """
+        import importlib
+        import json
+
+        module_name = self.__class__.__module__
+        class_name = self.__class__.__name__
+
+        # Verify importability of the class. This ensures that the prior can be
+        # reconstructed from its serialized form.
+        if module_name == "__main__":
+            raise TypeError(
+                f"Prior '{class_name}' is defined in __main__ and "
+                "cannot be serialized. Define it in an importable module."
+            )
+
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError as exc:
+            raise TypeError(f"Module '{module_name}' for prior '{class_name}' is not importable.") from exc
+
+        if not hasattr(module, class_name):
+            raise TypeError(f"Prior class '{class_name}' not found in module '{module_name}'.")
+
+        # Ensure that we can actually perform the json dump.
+        try:
+            json.dumps(self._parameters)
+        except TypeError as exc:
+            raise TypeError(
+                f"Prior '{class_name}' contains non-serializable parameters. "
+                "Ensure constructor arguments are JSON-safe."
+            ) from exc
+
+        # Construct the dump dictionary.
         return {
-            "prior_class": self.__class__.__name__,
+            "format": "Prior",
+            "version": __pkg_version__,
+            "target": f"{module_name}:{class_name}",
             "parameters": self._parameters,
-            "reconstructible": True,
         }
 
     @classmethod
     def from_dict(cls, prior_dict: dict) -> "Prior":
         """
-        Load a prior from a serialized dictionary.
+        Reconstruct a Prior from a serialized dictionary.
 
         Parameters
         ----------
         prior_dict : dict
-            A dictionary representation of the prior, as produced by
-            :meth:`to_dict`.
+            Dictionary produced by :meth:`to_dict`.
+
+        Returns
+        -------
+        Prior
+            Reconstructed prior instance.
+
+        Raises
+        ------
+        TypeError
+            If input is not a dictionary.
+        ValueError
+            If dictionary format is invalid.
+        ImportError
+            If module or class cannot be imported.
+        TypeError
+            If imported object is not a Prior subclass.
         """
+        import importlib
+
+        # Ensure the basic properties of the dictionary are
+        # self consistent. We need a dictionary, we need to
+        # correct format, and we need a target to exist.
+        if not isinstance(prior_dict, dict):
+            raise TypeError("prior_dict must be a dictionary.")
+
+        if prior_dict.get("format") != "Prior":
+            raise ValueError("Dictionary does not represent a Prior.")
+
         try:
-            class_name = prior_dict["prior_class"]
-            parameters = prior_dict.get("parameters", {})
+            target = prior_dict["target"]
         except KeyError as exc:
-            raise ValueError("Invalid prior serialization dictionary.") from exc
+            raise ValueError("Serialized Prior missing required 'target' field.") from exc
 
-        if not prior_dict.get("reconstructible", True):
-            raise ValueError(f"Prior '{class_name}' is not reconstructible and must be recreated manually.")
+        parameters = prior_dict.get("parameters", {})
 
-        # Find subclass recursively
-        for subclass in cls._all_subclasses():
-            if subclass.__name__ == class_name:
-                return subclass(**parameters)
+        # Check the target structure and then attempt to import
+        # the class to make sure everything works.
+        if ":" not in target:
+            raise ValueError(f"Invalid target '{target}'. Must be 'module.submodule:ClassName'.")
 
-        raise ValueError(f"Unknown prior class '{class_name}'.")
+        module_name, class_name = target.split(":", 1)
 
-    def to_string(self) -> str:
-        """Serialize the prior to a JSON string."""
-        import json
+        try:
+            module = importlib.import_module(module_name)
+        except ImportError as exc:
+            raise ImportError(
+                f"Could not import module '{module_name}' while reconstructing Prior '{class_name}'."
+            ) from exc
 
-        return json.dumps(self.to_dict())
+        # Retrieve the class and ensure it exists. This also serves as a check that the class is importable.
+        try:
+            prior_cls = getattr(module, class_name)
+        except AttributeError as exc:
+            raise ImportError(f"Class '{class_name}' not found in module '{module_name}'.") from exc
 
-    @classmethod
-    def from_string(cls, prior_string: str) -> "Prior":
-        """Deserialize a prior from a JSON string."""
-        import json
+        # Check the type.
+        if not issubclass(prior_cls, Prior):
+            raise TypeError(f"Imported class '{class_name}' is not a subclass of Prior.")
 
-        prior_dict = json.loads(prior_string)
-        return cls.from_dict(prior_dict)
+        return prior_cls(**parameters)
 
 
 class CallablePrior(Prior):
@@ -327,35 +398,6 @@ class CallablePrior(Prior):
     def _generate_log_prior(self, **parameters) -> Callable[[float], float]:
         # Return the user-supplied callable directly.
         return self._user_log_prior
-
-    # ------------------------------------------------------------ #
-    # Serialization support                                        #
-    # ------------------------------------------------------------ #
-    def to_dict(self) -> dict:
-        """
-        Serialize the callable prior to a dictionary.
-
-        Note: The actual callable cannot be serialized. This method
-        only captures metadata.
-
-        Returns
-        -------
-        dict
-            A JSON-serializable representation of the prior.
-        """
-        return {
-            "prior_class": "CallablePrior",
-            "parameters": self._parameters,
-            "reconstructible": False,
-            "note": "This prior wraps a user-supplied callable and cannot be fully reconstructed.",
-        }
-
-    @classmethod
-    def from_dict(cls, prior_dict):
-        raise NotImplementedError("CallablePrior cannot be reconstructed from serialized form.")
-
-    def __repr__(self):
-        return f"CallablePrior(parameters={self._parameters}, reconstructible=False)"
 
 
 # ============================================================ #
