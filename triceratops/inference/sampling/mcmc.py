@@ -11,6 +11,8 @@ from typing import TYPE_CHECKING, Optional
 
 import numpy as np
 
+from triceratops.utils.config import triceratops_config
+
 from .base import Sampler
 from .result import MCMCSamplingResult
 
@@ -177,7 +179,15 @@ class EmceeSampler(Sampler):
             pool=pool,
             **self.ensemble_kwargs,
         )
-        sampler.run_mcmc(initial_state, n_steps, progress=progress)
+        sampler.run_mcmc(
+            initial_state,
+            n_steps,
+            progress=progress,
+            progress_kwargs={
+                "bar_format": triceratops_config["system.appearance.progress_bar_format"],
+                "desc": "Sampling Posterior Distribution",
+            },
+        )
 
         # --- Post Processing ------------------------------------- #
         # We now need to extract the results and build the SamplingResult
