@@ -434,7 +434,6 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">UTC</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackageNotFoundError</span><span class="p">,</span> <span class="n">version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
 
@@ -2258,7 +2257,6 @@
 <span class="sd">        - A version tag is embedded to allow compatibility checks during loading.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">.likelihood.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_likelihood_target</span>
 
@@ -2311,7 +2309,6 @@
         <span class="c1"># Construct metadata (JSON-safe only)</span>
         <span class="c1"># ---------------------------------------------------------</span>
         <span class="n">metadata_block</span> <span class="o">=</span> <span class="p">{</span>
-            <span class="s2">&quot;created_at&quot;</span><span class="p">:</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">(</span><span class="n">UTC</span><span class="p">)</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(),</span>
             <span class="s2">&quot;num_parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_parameters</span><span class="p">,</span>
             <span class="s2">&quot;num_free_parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_free_parameters</span><span class="p">,</span>
             <span class="s2">&quot;num_fixed_parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_fixed_parameters</span><span class="p">,</span>
