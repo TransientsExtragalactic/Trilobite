@@ -7,9 +7,8 @@ template for defining specific inference problems in the Triceratops library. It
 free parameters, priors, and other problem-specific settings.
 """
 
-from collections.abc import Callable
 from dataclasses import dataclass
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import numpy as np
 from astropy import units as u
@@ -33,6 +32,7 @@ if TYPE_CHECKING:
     from triceratops.models.core.parameters import BoundType, ModelParameter
 
     from .prior import Prior
+    from .transform import ParameterTransform
 
 
 __all__ = [
@@ -79,17 +79,6 @@ class InferenceParameter:
         A callable to transform the parameter value (e.g., log-transform). If not provided,
         no transformation will be applied. If a transform is provided, an `inverse_transform` should
         also be provided.
-    inverse_transform: Callable, optional
-        A callable to inverse-transform the parameter value back to its original scale. If not provided,
-        no inverse transformation will be applied. If `inverse_transform` is provided, a `transform` should
-        also be provided.
-    transform_jacobian: Callable, optional
-        A callable to compute the Jacobian of the transform, if needed. This is useful for
-        certain sampling algorithms that require knowledge of the transformation's Jacobian. If a transform
-        is provided, this should also be provided. Likewise, if no transform is provided, this should be `None`.
-
-        The transform jacobian should be provided as a callable which takes a single float argument (the parameter
-        value) and returns the log-Jacobian (a float).
     initial_value: float, optional
         An initial value for the parameter to start inference from. If not provided, the model's default
         value will be used. When performing MCMC, chains will be distributed around this initial value.
@@ -103,13 +92,84 @@ class InferenceParameter:
     freeze: bool = False
     """bool: Whether to freeze this parameter during inference."""
     prior: "Prior" = None
-    """~inference.prior.Prior: A callable representing the prior distribution for this parameter."""
-    transform: Callable = None
-    """Callable: A callable to transform the parameter value (e.g., log-transform)."""
-    inverse_transform: Callable = None
-    """Callable: A callable to inverse-transform the parameter value back to its original scale."""
-    transform_jacobian: Callable = None
-    """Callable: A callable to compute the Jacobian of the transform, if needed."""
+    r"""~inference.prior.Prior: Prior distribution for this parameter.
+
+    The prior defines the log-probability density
+    :math:`\log p(\theta)` in **physical parameter space**.
+
+    During inference, the posterior is computed as:
+
+    .. math::
+
+        \log p(\theta \mid \mathcal{D})
+        =
+        \log \mathcal{L}(\theta)
+        +
+        \log p(\theta)
+
+    If a :class:`~triceratops.inference.prior.Prior` instance is provided,
+    its :meth:`~triceratops.inference.prior.Prior.logp` method is used to
+    evaluate the prior contribution.
+
+    If ``None`` (default), a prior will be automatically constructed based
+    on the parameter's bounds:
+
+    - If finite bounds are defined, a uniform prior over the bounds is used.
+    - If no bounds are defined, the prior defaults to a constant (improper)
+      prior unless explicitly overridden.
+
+    Notes
+    -----
+    - The prior is always evaluated in physical parameter space,
+      even if a transformation is applied for sampling.
+    - If a transform is present, the log-Jacobian correction is
+      applied separately and is **not** part of the prior.
+    - Custom priors must be importable and JSON-serializable
+      in order for :class:`InferenceProblem` serialization
+      to remain fully reconstructible.
+    """
+    transform: ParameterTransform = None
+    r"""~inference.transform.ParameterTransform: Optional transformation applied
+    to this parameter during sampling.
+
+    If provided, the sampler operates in a transformed space
+    :math:`z = f(\theta)` rather than directly in the physical parameter
+    space :math:`\theta`.
+
+    The transformation must be a smooth, bijective mapping with a well-defined
+    Jacobian determinant. The inference workflow proceeds as:
+
+    1. The sampler proposes a value in sampling space :math:`z`.
+    2. The inverse transform is applied:
+
+       .. math::
+
+           \theta = f^{-1}(z)
+
+    3. The likelihood and prior are evaluated in physical parameter space.
+    4. The log-Jacobian correction
+
+       .. math::
+
+           \log \left| \frac{d\theta}{dz} \right|
+
+       is added to ensure proper change-of-variables accounting.
+
+    If ``None`` (default), the identity transformation is assumed and the
+    parameter is sampled directly in physical space.
+
+    Common use cases include:
+
+    - Enforcing positivity via a log transform
+    - Mapping bounded intervals to :math:`\mathbb{R}` via logistic transforms
+    - Improving sampling geometry for highly skewed posteriors
+
+    Notes
+    -----
+    - The prior is always defined in physical parameter space.
+    - The transform must be fully importable and JSON-serializable.
+    - The transform must be deterministic and reconstructible.
+    """
 
     # --- Private Attributes --- #
     _initial_value: float = None
@@ -123,9 +183,7 @@ class InferenceParameter:
         model_parameter: "ModelParameter",
         freeze: bool = False,
         prior: "Prior" = None,
-        transform: Callable = None,
-        inverse_transform: Callable = None,
-        transform_jacobian: Callable = None,
+        transform: ParameterTransform = None,
         initial_value: float = None,
     ):
         # Set all of the attributes.
@@ -133,8 +191,6 @@ class InferenceParameter:
         self.freeze = freeze
         self.prior = prior
         self.transform = transform
-        self.inverse_transform = inverse_transform
-        self.transform_jacobian = transform_jacobian
 
         # Handle the initial value so that it (a) defaults
         # to the model parameter's default and (b) performs
@@ -149,12 +205,6 @@ class InferenceParameter:
                     f"Initial value for parameter '{model_parameter.name}' could not be "
                     f"coerced to required units '{model_parameter.base_units}': {exp}"
                 ) from exp
-
-        # Now handle the post-initialization checks for
-        # the transforms.
-        # Ensure that the transform and inverse_transform are both provided or both None.
-        if (self.transform is None) != (self.inverse_transform is None):
-            raise ValueError("Both 'transform' and 'inverse_transform' must be provided together.")
 
     @property
     def name(self) -> str:
@@ -213,75 +263,171 @@ class InferenceParameter:
         return self.initial_value * self.model_base_unit
 
     # ------------------------------------------------- #
-    # Serialization Methods                             #
+    # Serialization
     # ------------------------------------------------- #
-    @staticmethod
-    def _callable_repr(func: Optional[Callable]) -> Optional[str]:
-        """Return a safe, non-reconstructive representation of a callable."""
-        if func is None:
-            return None
-        return repr(func)
-
-    def to_metadata(self) -> dict:
+    def to_dict(self) -> dict:
         """
-        Serialize recoverable metadata for this inference parameter.
+        Serialize the :class:`InferenceParameter` to a JSON-safe dictionary.
+
+        This method can be used to transfer an inference parameter either to
+        disk or, in multiprocessing scenarios, between processes. The
+        resulting dictionary is JSON-serializable, meaning it can be safely passed through
+        multiprocessing queues or saved to disk in JSON format.
+
+        .. important::
+
+            If either the prior or transform for a particular parameter are not
+            self-consistently serializable (i.e. they are not importable), then
+            this method will raise a `TypeError`. This is because the serialization of
+            the inference parameter relies on the ability to serialize both the prior and
+            transform (if they are present) in a self-consistent way. If either of these
+            components cannot be serialized, then the entire inference parameter cannot be
+            serialized, and a `TypeError` is raised to indicate this issue.
 
         Returns
         -------
         dict
-            Metadata dictionary suitable for storage in HDF5 / JSON.
+            JSON-serializable representation.
 
-        Notes
-        -----
-        This does NOT allow full reconstruction. The owning
-        ``InferenceProblem`` must supply the ``ModelParameter``.
+        Raises
+        ------
+        TypeError
+            If prior or transform are not serializable.
         """
-        return {
+        import json
+
+        # Serialize prior
+        prior_dict = None
+        if self.prior is not None:
+            try:
+                prior_dict = self.prior.to_dict()
+            except Exception as exp:
+                raise TypeError(
+                    f"Failed to serialize prior for parameter '{self.name}'!\n"
+                    f"This may indicate that the prior object is not self-consistently serializable...\n"
+                    f"Original error: {exp}"
+                ) from exp
+
+        # Serialize transform
+        transform_dict = None
+        if self.transform is not None:
+            try:
+                transform_dict = self.transform.to_dict()
+            except Exception as exp:
+                raise TypeError(
+                    f"Failed to serialize transform for parameter '{self.name}'!\n"
+                    f"This may indicate that the transform object is not self-consistently serializable...\n"
+                    f"Original error: {exp}"
+                ) from exp
+
+        data = {
+            "format": "InferenceParameter",
             "name": self.name,
             "freeze": self.freeze,
-            "initial_value": self.initial_value,
-            "prior": self.prior.to_dict() if self.prior else None,
-            "transform": self._callable_repr(self.transform),
-            "inverse_transform": self._callable_repr(self.inverse_transform),
-            "transform_jacobian": self._callable_repr(self.transform_jacobian),
+            "initial_value": float(self.initial_value),
+            "prior": prior_dict,
+            "transform": transform_dict,
         }
 
+        # Ensure JSON-safe
+        try:
+            json.dumps(data)
+        except TypeError as exc:
+            raise TypeError(f"InferenceParameter '{self.name}' is not JSON-serializable.") from exc
+
+        return data
+
     @classmethod
-    def from_metadata(cls, metadata: dict) -> dict:
+    def from_dict(
+        cls,
+        dict_rep: dict,
+        model: "Model",
+    ) -> "InferenceParameter":
         """
-        Construct a format compliant metadata dictionary from serialized metadata.
+        Reconstruct an :class:`InferenceParameter` from a serialized dictionary.
 
         Parameters
         ----------
-        metadata : dict
-            Metadata dictionary produced by ``to_metadata``.
+        dict_rep : dict
+            Dictionary produced by :meth:`to_dict`.
+
+        model : Model
+            The model instance that owns the corresponding
+            :class:`~models.core.parameters.ModelParameter`. This is required in order
+            to resolve the parameter definition (name, bounds,
+            units, default value, etc.).
 
         Returns
         -------
-        dict
-            Parsed metadata suitable for reconstruction by InferenceProblem.
+        InferenceParameter
+            Reconstructed inference parameter.
+
+        Raises
+        ------
+        TypeError
+            If inputs are invalid.
+        ValueError
+            If dictionary structure is malformed.
+        KeyError
+            If the referenced parameter does not exist on the model.
         """
-        data = dict(metadata)
+        from triceratops.inference.prior import Prior
+        from triceratops.inference.transform import ParameterTransform
 
-        if data.get("prior") is not None:
-            data["prior"] = Prior.from_dict(data["prior"])
+        if not isinstance(dict_rep, dict):
+            raise TypeError("dict_rep must be a dictionary.")
 
-        # NOTE:
-        # Transforms are NOT reconstructed — metadata only.
-        return data
+        if dict_rep.get("format") != "InferenceParameter":
+            raise ValueError("Dictionary does not represent an InferenceParameter.")
 
-    def to_metadata_string(self) -> str:
-        """Serialize metadata to a JSON string."""
-        import json
+        if model is None:
+            raise TypeError("A valid Model instance must be provided.")
 
-        return json.dumps(self.to_metadata())
+        try:
+            name = dict_rep["name"]
+        except KeyError as exc:
+            raise ValueError("Serialized InferenceParameter missing 'name'.") from exc
 
-    @classmethod
-    def from_metadata_string(cls, metadata_string: str) -> dict:
-        """Deserialize metadata from a JSON string."""
-        import json
+        # ------------------------------------------------------------------
+        # Resolve ModelParameter from model
+        # ------------------------------------------------------------------
+        try:
+            model_parameter = next(p for p in model.PARAMETERS if p.name == name)
+        except StopIteration as exc:
+            raise KeyError(f"Model does not define a parameter named '{name}'.") from exc
 
-        return cls.from_metadata(json.loads(metadata_string))
+        freeze = bool(dict_rep.get("freeze", False))
+        initial_value = dict_rep.get("initial_value", None)
+
+        # ------------------------------------------------------------------
+        # Reconstruct prior
+        # ------------------------------------------------------------------
+        prior_dict = dict_rep.get("prior")
+        prior = None
+        if prior_dict is not None:
+            try:
+                prior = Prior.from_dict(prior_dict)
+            except Exception as exp:
+                raise TypeError(f"Failed to reconstruct prior for parameter '{name}'.") from exp
+
+        # ------------------------------------------------------------------
+        # Reconstruct transform
+        # ------------------------------------------------------------------
+        transform_dict = dict_rep.get("transform")
+        transform = None
+        if transform_dict is not None:
+            try:
+                transform = ParameterTransform.from_dict(transform_dict)
+            except Exception as exp:
+                raise TypeError(f"Failed to reconstruct transform for parameter '{name}'.") from exp
+
+        return cls(
+            model_parameter=model_parameter,
+            freeze=freeze,
+            prior=prior,
+            transform=transform,
+            initial_value=initial_value,
+        )
 
 
 # ------------------------------------------------- #
