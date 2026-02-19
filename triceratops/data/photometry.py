@@ -253,7 +253,7 @@ class RadioPhotometryContainer(DataContainer):
                         f"which is not compatible with expected unit '{expected_unit}'."
                     )
                 else:
-                    col = col.to(expected_unit)
+                    table[col] = col.to(expected_unit)
 
         return table
 
@@ -1151,7 +1151,6 @@ class RadioPhotometryContainer(DataContainer):
             Matplotlib style kwargs for upper limits.
         """
         import matplotlib.pyplot as plt
-        import numpy as np
 
         from triceratops.utils.plot_utils import resolve_fig_axes, set_plot_style
 
