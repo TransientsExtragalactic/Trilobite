@@ -10,7 +10,7 @@ free parameters, priors, and other problem-specific settings.
 import warnings
 from dataclasses import dataclass
 from importlib.metadata import PackageNotFoundError, version
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from astropy import units as u
@@ -1940,7 +1940,7 @@ class InferenceProblem:
 
         return problem
 
-    def to_json(self, path: str | None = None, **extra_metadata) -> str:
+    def to_json(self, path: Optional[str] = None, **extra_metadata) -> str:
         """
         Serialize the :class:`InferenceProblem` to a JSON string or file.
 
@@ -1979,7 +1979,7 @@ class InferenceProblem:
         return json_str
 
     @classmethod
-    def from_json(cls, source: str | bytes) -> "InferenceProblem":
+    def from_json(cls, source: Union[str, bytes]) -> "InferenceProblem":
         """
         Reconstruct an :class:`InferenceProblem` from a JSON string or file.
 
@@ -2017,7 +2017,7 @@ class InferenceProblem:
 
         return cls.from_dict(spec)
 
-    def to_yaml(self, path: str | None = None, **extra_metadata) -> str:
+    def to_yaml(self, path: Optional[str] = None, **extra_metadata) -> str:
         """
         Serialize the :class:`InferenceProblem` to a YAML string or file.
 
@@ -2060,7 +2060,7 @@ class InferenceProblem:
         return yaml_str
 
     @classmethod
-    def from_yaml(cls, source: str | bytes) -> "InferenceProblem":
+    def from_yaml(cls, source: Union[str, bytes]) -> "InferenceProblem":
         """
         Reconstruct an :class:`InferenceProblem` from a YAML string or file.
 
