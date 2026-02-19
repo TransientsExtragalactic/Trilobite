@@ -50,7 +50,7 @@ for t in times:
     flux = model(
         {"frequency": nu, "time": t},
         parameters
-    ).flux
+    ).flux_density
 
     # Add 10% Gaussian noise
     noise = 0.1 * flux * rng.normal(size=flux.size)

@@ -379,7 +379,15 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../data/overview.html">Data Loading, Handling, and Visualization</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Triceratops Models</a></li>
@@ -388,7 +396,8 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Parameter Inference and Model Comparison</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihoodXY.html">triceratops.inference.likelihood.base.GaussianLikelihoodXY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</a></li>
 </ul>
 </details></li>
 </ul>
@@ -686,21 +695,20 @@ to each sampler used.</p></li>
 </ol>
 <p>This is the standard workflow for performing inference in Triceratops. The following sections will provide more details
 on each of these components, along with examples of how to use them in practice.</p>
-<hr class="docutils" />
 </section>
 <section id="likelihoods">
-<span id="id1"></span><h2>Likelihoods<a class="headerlink" href="#likelihoods" title="Link to this heading">#</a></h2>
+<h2>Likelihoods<a class="headerlink" href="#likelihoods" title="Link to this heading">#</a></h2>
 <p><em>Module:</em> <a class="reference internal" href="../../_as_gen/inference.likelihood.html#module-inference.likelihood" title="inference.likelihood"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference.likelihood</span></code></a></p>
 <p>The likelihood is where the statistical assumptions of the inference problem are encoded. It defines how well
 the model predictions match the observed data for a given set of parameters. In Triceratops,
 likelihoods are implemented as structured objects that bind together a model,
-a dataset, and a noise/statistical assumption.</p>
+a validated numerical dataset, and a noise/statistical assumption.</p>
 <section id="the-likelihood-class">
 <h3>The Likelihood Class<a class="headerlink" href="#the-likelihood-class" title="Link to this heading">#</a></h3>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>For more information about likelihood development, implementation details,
-and advanced features, see <a class="reference internal" href="likelihood_dev.html#likelihood-dev"><span class="std std-ref">Likelihood Development Guide</span></a>.</p>
+and architectural principles, see <a class="reference internal" href="likelihood_dev.html#likelihood-dev"><span class="std std-ref">Likelihood Development Guide</span></a>.</p>
 </div>
 <p>In Triceratops, <strong>likelihood functions</strong> quantify how well a physical model reproduces a
 dataset under a particular statistical noise model. Conceptually, a likelihood defines</p>
@@ -712,103 +720,132 @@ dataset under a particular statistical noise model. Conceptually, a likelihood d
 <strong>structured objects</strong> that explicitly bind together:</p>
 <ul class="simple">
 <li><p>a <strong>model</strong> (from <code class="xref py py-mod docutils literal notranslate"><span class="pre">models</span></code>),</p></li>
-<li><p>a <strong>data container</strong> (from <code class="xref py py-mod docutils literal notranslate"><span class="pre">data</span></code>),</p></li>
+<li><p>an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object (from <code class="xref py py-mod docutils literal notranslate"><span class="pre">data</span></code>),</p></li>
 <li><p>and a <strong>noise/statistical assumption</strong> (implemented by the likelihood subclass).</p></li>
 </ul>
 <p>All likelihoods inherit from <a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>.</p>
 <section id="creating-a-likelihood-object">
 <h4>Creating a Likelihood Object<a class="headerlink" href="#creating-a-likelihood-object" title="Link to this heading">#</a></h4>
-<p>A likelihood object is constructed by combining a model instance with a data container.
-In most workflows, you will do this once, and then reuse the likelihood many times during
-sampling.</p>
+<p>A likelihood object is constructed by combining a model instance with an
+<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object. In most workflows, you will construct the likelihood once
+and reuse it repeatedly during sampling.</p>
 <p>A typical initialization pattern looks like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioLightCurveContainer</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihood</span>
 
 <span class="n">model</span> <span class="o">=</span> <span class="n">MyModel</span><span class="p">(</span><span class="o">...</span><span class="p">)</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">RadioLightCurveContainer</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span>
-    <span class="s2">&quot;my_lightcurve.ecsv&quot;</span><span class="p">,</span>
-    <span class="n">frequency</span><span class="o">=</span><span class="mf">6.0</span><span class="p">,</span>   <span class="c1"># GHz if unitless</span>
-    <span class="n">band</span><span class="o">=</span><span class="s2">&quot;VLA C-band&quot;</span>
+
+<span class="n">inference_data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">variables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">},</span>
+    <span class="n">observables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;flux&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_err&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">)},</span>
 <span class="p">)</span>
 
-<span class="n">like</span> <span class="o">=</span> <span class="n">MyLikelihood</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+<span class="n">like</span> <span class="o">=</span> <span class="n">GaussianLikelihood</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">inference_data</span><span class="p">)</span>
 </pre></div>
 </div>
-<p>During initialization, likelihoods typically do three things:</p>
-<ol class="arabic simple">
-<li><p><strong>Compatibility validation</strong>
-Likelihoods enforce that the provided model/data pairing is meaningful (e.g., a time-domain
-likelihood should not accept a heterogeneous-frequency dataset). This failure mode is
-intentionally <em>eager</em>: it is better to raise during construction than after thousands of
-sampler calls.</p></li>
-<li><p><strong>Dataset retention (for provenance)</strong>
-The original <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> and/or container object is retained internally so
-that the likelihood can be inspected, serialized, or re-plotted later.</p></li>
-<li><p><strong>Preprocessing for performance</strong>
-Repeated operations like unit conversion, sorting, masking detections vs. upper limits, and
-building dense numerical arrays are performed once via <code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood._process_input_data()</span></code>.
-This prepares cached arrays that the optimized backend can consume with minimal overhead.</p></li>
+<p>During initialization, likelihoods perform three core operations:</p>
+<ol class="arabic">
+<li><p><strong>Compatibility validation</strong></p>
+<p>The likelihood verifies that the model and dataset are structurally compatible.
+For example, a Gaussian likelihood requires uncertainties to be present.
+Validation failures are intentionally eager — it is better to fail at construction
+time than after thousands of sampler calls.</p>
+</li>
+<li><p><strong>Numerical array extraction</strong></p>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object already stores validated, stacked numerical arrays.
+The likelihood extracts and caches those arrays once during
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood._configure()</span></code>.</p>
+</li>
+<li><p><strong>Preparation for fast evaluation</strong></p>
+<p>Any masks (e.g., for censored data), stacked observable arrays, or frequently
+accessed structures are prepared once during initialization.
+The goal is that likelihood evaluation inside a sampling loop performs no
+structural work beyond model evaluation and lightweight stacking.</p>
+</li>
 </ol>
 </section>
 <section id="the-likelihood-function">
 <h4>The Likelihood Function<a class="headerlink" href="#the-likelihood-function" title="Link to this heading">#</a></h4>
-<p>Likelihood evaluation is split into two layers: a public wrapper and an optimized backend.</p>
+<p>Likelihood evaluation is split into two layers: a public wrapper and a
+performance-oriented backend.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
 High-Level API</label><div class="sd-tab-content docutils">
 <p>The high-level interface is <a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.log_likelihood.html#inference.likelihood.base.Likelihood.log_likelihood" title="inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood.log_likelihood()</span></code></a>. This method is designed
-to be called by user code. It accepts model parameters as kwargs, performs coercion of unit-bearing
-quantities, and validates that inputs are well-formed.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Example parameterization (exact signature depends on your model / likelihood)</span>
-<span class="n">lnL</span> <span class="o">=</span> <span class="n">like</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span>
-    <span class="n">theta_E</span><span class="o">=</span><span class="mf">0.12</span><span class="p">,</span>
-    <span class="n">epsilon_B</span><span class="o">=</span><span class="mf">1e-2</span><span class="p">,</span>
-    <span class="n">n0</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+to be called by user code. It accepts model parameters in any format supported by the model,
+performs coercion into the model’s internal representation, and then evaluates the likelihood.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">lnL</span> <span class="o">=</span> <span class="n">like</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;theta_E&quot;</span><span class="p">:</span> <span class="mf">0.12</span><span class="p">,</span>
+        <span class="s2">&quot;epsilon_B&quot;</span><span class="p">:</span> <span class="mf">1e-2</span><span class="p">,</span>
+        <span class="s2">&quot;n0&quot;</span><span class="p">:</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="p">}</span>
 <span class="p">)</span>
 </pre></div>
 </div>
-<p>This is generally the nice way to call the likelihood if you don’t need to do so many many times. If
-you are making a call to the likelihood inside of a tight loop (e.g., inside a sampler), you may want to
-consider using the low-level API instead.</p>
+<p>This is the recommended interface for interactive use or exploratory work.
+If you are evaluating the likelihood inside a tight sampling loop,
+you may prefer the low-level API to avoid repeated parameter coercion.</p>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-1">
 Low-Level API</label><div class="sd-tab-content docutils">
-<p>The low-level backend is <code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood._log_likelihood()</span></code>. This method should be written
-for performance: it assumes all inputs are already validated and coerced into the expected
-internal representation (e.g., floats/NumPy arrays in a consistent unit system).</p>
-<p>This method is where you should implement the actual statistical model (Gaussian errors,
-censored likelihood for upper limits, correlated noise, etc.).</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Inside a Likelihood subclass:</span>
-<span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">pars</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-    <span class="c1"># assumes pars already validated and in internal form</span>
-    <span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_prediction</span><span class="p">(</span><span class="o">**</span><span class="n">pars</span><span class="p">)</span>
-    <span class="n">resid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y</span> <span class="o">-</span> <span class="n">mu</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
-    <span class="k">return</span> <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">resid</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+<p>The low-level backend is <code class="xref py py-meth docutils literal notranslate"><span class="pre">Likelihood._log_likelihood()</span></code>. This method is written
+for performance. It assumes that:</p>
+<ul class="simple">
+<li><p>parameters are already coerced into the model’s raw internal format,</p></li>
+<li><p>data arrays have already been extracted and cached during initialization.</p></li>
+</ul>
+<p>A typical implementation looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+
+    <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+        <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+        <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+        <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+    <span class="p">)</span>
 </pre></div>
 </div>
+<p>The pattern is always the same:</p>
+<ol class="arabic simple">
+<li><p>Evaluate the forward model.</p></li>
+<li><p>Stack outputs to match the observable array shape.</p></li>
+<li><p>Delegate to a numerical backend.</p></li>
+<li><p>Return a scalar log-likelihood.</p></li>
+</ol>
+<p>No unit conversion, table parsing, or structural validation occurs here.</p>
 </div>
 </div>
 <p>While it is not common to need to implement a custom likelihood, we recognize that some users
-may wish / need to do so. For that purpose, see the separate documentation on building likelihood
-functions: <span class="xref std std-ref">likelihood_development</span>.</p>
+may wish to do so. For that purpose, see the developer guide:
+<a class="reference internal" href="likelihood_dev.html#likelihood-dev"><span class="std std-ref">Likelihood Development Guide</span></a>.</p>
 </section>
 </section>
 <section id="existing-likelihoods">
 <h3>Existing Likelihoods<a class="headerlink" href="#existing-likelihoods" title="Link to this heading">#</a></h3>
-<p>In most cases, a likelihood function has already been implemented for your use case / data type. Below are
-the various likelihoods that are currently available in Triceratops. For more details on each likelihood,
-see the corresponding documentation pages.</p>
+<p>In most cases, a likelihood function has already been implemented for your use case.
+Below are the likelihood classes currently available in Triceratops.</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.Likelihood</span></code></a>(model, data, **kwargs)</p></td>
-<td><p>Abstract base class for likelihood functions.</p></td>
+<td><p>Abstract base class for statistical likelihood functions.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihoodXY.html#triceratops.inference.likelihood.base.GaussianLikelihoodXY" title="triceratops.inference.likelihood.base.GaussianLikelihoodXY"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.GaussianLikelihoodXY</span></code></a>(model, data, **kwargs)</p></td>
-<td><p>Gaussian likelihood for XY data.</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihood.html#triceratops.inference.likelihood.base.GaussianLikelihood" title="triceratops.inference.likelihood.base.GaussianLikelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.GaussianLikelihood</span></code></a>(model, data, **kwargs)</p></td>
+<td><p>Multivariate Gaussian log-likelihood for uncensored observations.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood" title="triceratops.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.GaussianCensoredLikelihood</span></code></a>(model, data, ...)</p></td>
+<td><p>Multivariate Gaussian log-likelihood with support for censored data.</p></td>
 </tr>
 </tbody>
 </table>
@@ -909,7 +946,7 @@ assumptions</strong>, the inference problem can infer everything it needs from t
 single object.</p>
 <p>A minimal example looks like:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihoodXY</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihood</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyModel</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioLightCurveContainer</span>
 
@@ -921,7 +958,7 @@ single object.</p>
 <span class="p">)</span>
 
 <span class="c1"># Build likelihood</span>
-<span class="n">likelihood</span> <span class="o">=</span> <span class="n">GaussianLikelihoodXY</span><span class="p">(</span>
+<span class="n">likelihood</span> <span class="o">=</span> <span class="n">GaussianLikelihood</span><span class="p">(</span>
     <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
     <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span>
 <span class="p">)</span>

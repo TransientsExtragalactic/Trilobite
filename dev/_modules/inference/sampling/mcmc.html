@@ -623,22 +623,13 @@
         <span class="n">chain</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_chain</span><span class="p">()</span>  <span class="c1"># (steps, walkers, dim)</span>
         <span class="n">logp</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">get_log_prob</span><span class="p">()</span>  <span class="c1"># (steps, walkers)</span>
 
-        <span class="c1"># Handle metadata we need in order to generate the outputs.</span>
-        <span class="n">parameter_metadata</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span><span class="o">.</span><span class="n">to_metadata</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="o">.</span><span class="n">values</span><span class="p">()]</span>
-
         <span class="c1"># --------------------------------------------------</span>
         <span class="c1"># Build result</span>
         <span class="c1"># --------------------------------------------------</span>
         <span class="k">return</span> <span class="n">MCMCSamplingResult</span><span class="p">(</span>
             <span class="n">samples</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
-            <span class="n">parameter_metadata</span><span class="o">=</span><span class="n">parameter_metadata</span><span class="p">,</span>
+            <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span>
             <span class="n">log_posterior</span><span class="o">=</span><span class="n">logp</span><span class="p">,</span>
-            <span class="n">sampler_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">likelihood_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">model_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">data_container_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">inference_problem_class_name</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
-            <span class="n">acceptance_fraction</span><span class="o">=</span><span class="n">sampler</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">,</span>
         <span class="p">)</span></div>
 </div>
 

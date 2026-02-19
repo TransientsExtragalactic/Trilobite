@@ -530,16 +530,16 @@
 
 <span class="sd">      .. math::</span>
 
-<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          \ln \mathcal{L}_i</span>
 <span class="sd">          =</span>
 <span class="sd">          -\frac{1}{2}</span>
-<span class="sd">          \\left[</span>
-<span class="sd">              \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}</span>
-<span class="sd">              + \\ln\\!\\left(2\\pi\\sigma_i^2\right)</span>
+<span class="sd">          \left[</span>
+<span class="sd">              \frac{(y_i - \mu_i)^2}{\sigma_i^2}</span>
+<span class="sd">              + \ln\!\left(2\pi\sigma_i^2\right)</span>
 <span class="sd">          \right],</span>
 
-<span class="sd">      where :math:`y_i` is the observed value, :math:`\\mu_i` is the model</span>
-<span class="sd">      prediction, and :math:`\\sigma_i` is the measurement uncertainty.</span>
+<span class="sd">      where :math:`y_i` is the observed value, :math:`\mu_i` is the model</span>
+<span class="sd">      prediction, and :math:`\sigma_i` is the measurement uncertainty.</span>
 
 <span class="sd">    - **Upper-censored observation**</span>
 <span class="sd">      If ``y_upper_mask[i]`` is ``True``, the data point contributes the</span>
@@ -547,15 +547,15 @@
 
 <span class="sd">      .. math::</span>
 
-<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          \ln \mathcal{L}_i</span>
 <span class="sd">          =</span>
-<span class="sd">          \\ln \\left[</span>
-<span class="sd">              \\Phi\\!\\left(</span>
-<span class="sd">                  \frac{y_i^{\rm upper} - \\mu_i}{\\sigma_i}</span>
+<span class="sd">          \ln \left[</span>
+<span class="sd">              \Phi\!\left(</span>
+<span class="sd">                  \frac{y_i^{\rm upper} - \mu_i}{\sigma_i}</span>
 <span class="sd">              \right)</span>
 <span class="sd">          \right],</span>
 
-<span class="sd">      where :math:`\\Phi` is the standard normal cumulative distribution</span>
+<span class="sd">      where :math:`\Phi` is the standard normal cumulative distribution</span>
 <span class="sd">      function.</span>
 
 <span class="sd">    - **Lower-censored observation**</span>
@@ -564,11 +564,11 @@
 
 <span class="sd">      .. math::</span>
 
-<span class="sd">          \\ln \\mathcal{L}_i</span>
+<span class="sd">          \ln \mathcal{L}_i</span>
 <span class="sd">          =</span>
-<span class="sd">          \\ln \\left[</span>
-<span class="sd">              1 - \\Phi\\!\\left(</span>
-<span class="sd">                  \frac{y_i^{\rm lower} - \\mu_i}{\\sigma_i}</span>
+<span class="sd">          \ln \left[</span>
+<span class="sd">              1 - \Phi\!\left(</span>
+<span class="sd">                  \frac{y_i^{\rm lower} - \mu_i}{\sigma_i}</span>
 <span class="sd">              \right)</span>
 <span class="sd">          \right].</span>
 
@@ -576,9 +576,9 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\ln \\mathcal{L}</span>
+<span class="sd">        \ln \mathcal{L}</span>
 <span class="sd">        =</span>
-<span class="sd">        \\sum_i \\ln \\mathcal{L}_i.</span>
+<span class="sd">        \sum_i \ln \mathcal{L}_i.</span>
 
 <span class="sd">    Numerical underflow in the evaluation of tail probabilities is handled</span>
 <span class="sd">    by assigning ``-np.inf`` to non-finite contributions.</span>
@@ -668,24 +668,24 @@
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\ln \\mathcal{L}_i</span>
+<span class="sd">        \ln \mathcal{L}_i</span>
 <span class="sd">        =</span>
 <span class="sd">        -\frac{1}{2}</span>
-<span class="sd">        \\left[</span>
-<span class="sd">            \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}</span>
-<span class="sd">            + \\ln\\!\\left(2\\pi\\sigma_i^2\right)</span>
+<span class="sd">        \left[</span>
+<span class="sd">            \frac{(y_i - \mu_i)^2}{\sigma_i^2}</span>
+<span class="sd">            + \ln\!\left(2\pi\sigma_i^2\right)</span>
 <span class="sd">        \right],</span>
 
-<span class="sd">    where :math:`y_i` is the observed value, :math:`\\mu_i` is the model</span>
-<span class="sd">    prediction, and :math:`\\sigma_i` is the measurement uncertainty.</span>
+<span class="sd">    where :math:`y_i` is the observed value, :math:`\mu_i` is the model</span>
+<span class="sd">    prediction, and :math:`\sigma_i` is the measurement uncertainty.</span>
 
 <span class="sd">    The total log-likelihood is obtained by summing over all data points:</span>
 
 <span class="sd">    .. math::</span>
 
-<span class="sd">        \\ln \\mathcal{L}</span>
+<span class="sd">        \ln \mathcal{L}</span>
 <span class="sd">        =</span>
-<span class="sd">        \\sum_i \\ln \\mathcal{L}_i.</span>
+<span class="sd">        \sum_i \ln \mathcal{L}_i.</span>
 
 <span class="sd">    This function is intended to serve as a **low-level numerical backend**</span>
 <span class="sd">    for higher-level likelihood classes that handle model–data compatibility,</span>

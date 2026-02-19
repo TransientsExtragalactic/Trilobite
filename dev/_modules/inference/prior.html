@@ -474,10 +474,20 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackageNotFoundError</span><span class="p">,</span> <span class="n">version</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">gamma</span>
+
+<span class="c1"># ============================================================= #</span>
+<span class="c1"># Package versioning and Type checking</span>
+<span class="c1"># ============================================================= #=</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="n">__pkg_version__</span> <span class="o">=</span> <span class="n">version</span><span class="p">(</span><span class="s2">&quot;triceratops&quot;</span><span class="p">)</span>
+<span class="k">except</span> <span class="n">PackageNotFoundError</span><span class="p">:</span>
+    <span class="n">__pkg_version__</span> <span class="o">=</span> <span class="s2">&quot;unknown&quot;</span>
+
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;Prior&quot;</span><span class="p">,</span>
@@ -489,6 +499,8 @@
     <span class="s2">&quot;LogNormalPrior&quot;</span><span class="p">,</span>
     <span class="s2">&quot;GammaPrior&quot;</span><span class="p">,</span>
     <span class="s2">&quot;BetaPrior&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;CallablePrior&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;PRIOR_REGISTRY&quot;</span><span class="p">,</span>
 <span class="p">]</span>
 
 
@@ -675,35 +687,67 @@
     <span class="c1"># ------------------------------------------------------------ #</span>
     <span class="c1"># Serialization support                                        #</span>
     <span class="c1"># ------------------------------------------------------------ #</span>
-    <span class="nd">@staticmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_all_subclasses</span><span class="p">():</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Recursively yield all subclasses of Prior.&quot;&quot;&quot;</span>
-        <span class="n">work</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">Prior</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">())</span>
-        <span class="n">seen</span> <span class="o">=</span> <span class="nb">set</span><span class="p">(</span><span class="n">work</span><span class="p">)</span>
-
-        <span class="k">while</span> <span class="n">work</span><span class="p">:</span>
-            <span class="bp">cls</span> <span class="o">=</span> <span class="n">work</span><span class="o">.</span><span class="n">pop</span><span class="p">()</span>
-            <span class="k">yield</span> <span class="bp">cls</span>
-            <span class="k">for</span> <span class="n">sub</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__subclasses__</span><span class="p">():</span>
-                <span class="k">if</span> <span class="n">sub</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">seen</span><span class="p">:</span>
-                    <span class="n">seen</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
-                    <span class="n">work</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">sub</span><span class="p">)</span>
-
 <div class="viewcode-block" id="Prior.to_dict">
 <a class="viewcode-back" href="../../_as_gen/inference.prior.Prior.to_dict.html#inference.prior.Prior.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize the prior to a dictionary.</span>
+<span class="sd">        Serialize the prior to a JSON-safe dictionary.</span>
 
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A JSON-serializable representation of the prior.</span>
+<span class="sd">        .. important::</span>
+
+<span class="sd">            This method requires that the prior class be importable via</span>
+<span class="sd">            a fully-qualified module path of the form:</span>
+
+<span class="sd">            .. code-block:: text</span>
+
+<span class="sd">                module.submodule:ClassName</span>
+
+<span class="sd">            If it is not, an error is raised. Additionally, all constructor parameters must be JSON-serializable.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If the prior class is not importable.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If constructor parameters are not JSON-serializable.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="c1"># Verify importability of the class. This ensures that the prior can be</span>
+        <span class="c1"># reconstructed from its serialized form.</span>
+        <span class="k">if</span> <span class="n">module_name</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Prior &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; is defined in __main__ and &quot;</span>
+                <span class="s2">&quot;cannot be serialized. Define it in an importable module.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39; for prior &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; is not importable.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prior class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; not found in module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Ensure that we can actually perform the json dump.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Prior &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; contains non-serializable parameters. &quot;</span>
+                <span class="s2">&quot;Ensure constructor arguments are JSON-safe.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="c1"># Construct the dump dictionary.</span>
         <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;prior_class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;Prior&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;version&quot;</span><span class="p">:</span> <span class="n">__pkg_version__</span><span class="p">,</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span>
-            <span class="s2">&quot;reconstructible&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">}</span></div>
 
 
@@ -712,49 +756,72 @@
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prior_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Prior&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load a prior from a serialized dictionary.</span>
+<span class="sd">        Reconstruct a Prior from a serialized dictionary.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        prior_dict : dict</span>
-<span class="sd">            A dictionary representation of the prior, as produced by</span>
-<span class="sd">            :meth:`to_dict`.</span>
+<span class="sd">            Dictionary produced by :meth:`to_dict`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Prior</span>
+<span class="sd">            Reconstructed prior instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If input is not a dictionary.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If dictionary format is invalid.</span>
+<span class="sd">        ImportError</span>
+<span class="sd">            If module or class cannot be imported.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If imported object is not a Prior subclass.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+
+        <span class="c1"># Ensure the basic properties of the dictionary are</span>
+        <span class="c1"># self consistent. We need a dictionary, we need to</span>
+        <span class="c1"># correct format, and we need a target to exist.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">prior_dict</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;prior_dict must be a dictionary.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">prior_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;Prior&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Dictionary does not represent a Prior.&quot;</span><span class="p">)</span>
+
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">class_name</span> <span class="o">=</span> <span class="n">prior_dict</span><span class="p">[</span><span class="s2">&quot;prior_class&quot;</span><span class="p">]</span>
-            <span class="n">parameters</span> <span class="o">=</span> <span class="n">prior_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">target</span> <span class="o">=</span> <span class="n">prior_dict</span><span class="p">[</span><span class="s2">&quot;target&quot;</span><span class="p">]</span>
         <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid prior serialization dictionary.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Serialized Prior missing required &#39;target&#39; field.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="n">prior_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reconstructible&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">):</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Prior &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; is not reconstructible and must be recreated manually.&quot;</span><span class="p">)</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">prior_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">,</span> <span class="p">{})</span>
 
-        <span class="c1"># Find subclass recursively</span>
-        <span class="k">for</span> <span class="n">subclass</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_all_subclasses</span><span class="p">():</span>
-            <span class="k">if</span> <span class="n">subclass</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">==</span> <span class="n">class_name</span><span class="p">:</span>
-                <span class="k">return</span> <span class="n">subclass</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="c1"># Check the target structure and then attempt to import</span>
+        <span class="c1"># the class to make sure everything works.</span>
+        <span class="k">if</span> <span class="s2">&quot;:&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">target</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid target &#39;</span><span class="si">{</span><span class="n">target</span><span class="si">}</span><span class="s2">&#39;. Must be &#39;module.submodule:ClassName&#39;.&quot;</span><span class="p">)</span>
 
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown prior class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span></div>
+        <span class="n">module_name</span><span class="p">,</span> <span class="n">class_name</span> <span class="o">=</span> <span class="n">target</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
 
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Could not import module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39; while reconstructing Prior &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-<div class="viewcode-block" id="Prior.to_string">
-<a class="viewcode-back" href="../../_as_gen/inference.prior.Prior.to_string.html#inference.prior.Prior.to_string">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_string</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Serialize the prior to a JSON string.&quot;&quot;&quot;</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+        <span class="c1"># Retrieve the class and ensure it exists. This also serves as a check that the class is importable.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">prior_cls</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; not found in module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-        <span class="k">return</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">to_dict</span><span class="p">())</span></div>
+        <span class="c1"># Check the type.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">prior_cls</span><span class="p">,</span> <span class="n">Prior</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Imported class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; is not a subclass of Prior.&quot;</span><span class="p">)</span>
 
-
-<div class="viewcode-block" id="Prior.from_string">
-<a class="viewcode-back" href="../../_as_gen/inference.prior.Prior.from_string.html#inference.prior.Prior.from_string">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_string</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prior_string</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Prior&quot;</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Deserialize a prior from a JSON string.&quot;&quot;&quot;</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
-
-        <span class="n">prior_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">prior_string</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">prior_dict</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="n">prior_cls</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span></div>
 </div>
 
 
@@ -783,42 +850,7 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_generate_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="nb">float</span><span class="p">]:</span>
         <span class="c1"># Return the user-supplied callable directly.</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_log_prior</span>
-
-    <span class="c1"># ------------------------------------------------------------ #</span>
-    <span class="c1"># Serialization support                                        #</span>
-    <span class="c1"># ------------------------------------------------------------ #</span>
-<div class="viewcode-block" id="CallablePrior.to_dict">
-<a class="viewcode-back" href="../../_as_gen/inference.prior.CallablePrior.to_dict.html#inference.prior.CallablePrior.to_dict">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize the callable prior to a dictionary.</span>
-
-<span class="sd">        Note: The actual callable cannot be serialized. This method</span>
-<span class="sd">        only captures metadata.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        dict</span>
-<span class="sd">            A JSON-serializable representation of the prior.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="p">{</span>
-            <span class="s2">&quot;prior_class&quot;</span><span class="p">:</span> <span class="s2">&quot;CallablePrior&quot;</span><span class="p">,</span>
-            <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="p">,</span>
-            <span class="s2">&quot;reconstructible&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
-            <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="s2">&quot;This prior wraps a user-supplied callable and cannot be fully reconstructed.&quot;</span><span class="p">,</span>
-        <span class="p">}</span></div>
-
-
-<div class="viewcode-block" id="CallablePrior.from_dict">
-<a class="viewcode-back" href="../../_as_gen/inference.prior.CallablePrior.from_dict.html#inference.prior.CallablePrior.from_dict">[docs]</a>
-    <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">prior_dict</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s2">&quot;CallablePrior cannot be reconstructed from serialized form.&quot;</span><span class="p">)</span></div>
-
-
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;CallablePrior(parameters=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_parameters</span><span class="si">}</span><span class="s2">, reconstructible=False)&quot;</span></div>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_user_log_prior</span></div>
 
 
 
@@ -1340,6 +1372,48 @@
 
         <span class="k">return</span> <span class="n">logp</span></div>
 
+
+
+<span class="c1"># ==================================================== #</span>
+<span class="c1"># Registry</span>
+<span class="c1"># ==================================================== #</span>
+<span class="c1"># We keep a registry of these objects so that we can easily perform</span>
+<span class="c1"># unit parsing and other checks. This also allows us to easily test that all</span>
+<span class="c1"># concrete subclasses of Prior are included in the registry.</span>
+<span class="n">PRIOR_REGISTRY</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;uniform&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">UniformPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;loguniform&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">LogUniformPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;normal&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">NormalPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;lognormal&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">LogNormalPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;halfnormal&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">HalfNormalPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;sigma&quot;</span><span class="p">,),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;gamma&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">GammaPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;beta&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">BetaPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;scale&quot;</span><span class="p">,),</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;truncatednormal&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="n">TruncatedNormalPrior</span><span class="p">,</span>
+        <span class="s2">&quot;unit_params&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="s2">&quot;sigma&quot;</span><span class="p">,</span> <span class="s2">&quot;lower&quot;</span><span class="p">,</span> <span class="s2">&quot;upper&quot;</span><span class="p">),</span>
+    <span class="p">},</span>
+<span class="p">}</span>
 </pre></div>
 
                 </article>

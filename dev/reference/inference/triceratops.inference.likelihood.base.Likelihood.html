@@ -63,7 +63,7 @@
     <link rel="icon" href="../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="triceratops.inference.likelihood.base.GaussianLikelihoodXY" href="triceratops.inference.likelihood.base.GaussianLikelihoodXY.html" />
+    <link rel="next" title="triceratops.inference.likelihood.base.GaussianLikelihood" href="triceratops.inference.likelihood.base.GaussianLikelihood.html" />
     <link rel="prev" title="Parameter Inference and Model Comparison" href="overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -378,7 +378,15 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../data/overview.html">Data Loading, Handling, and Visualization</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Triceratops Models</a></li>
@@ -387,7 +395,8 @@
 <ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Parameter Inference and Model Comparison</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">triceratops.inference.likelihood.base.Likelihood</a></li>
-<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihoodXY.html">triceratops.inference.likelihood.base.GaussianLikelihoodXY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianLikelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</a></li>
 </ul>
 </details></li>
 </ul>
@@ -509,84 +518,87 @@
 <h1>triceratops.inference.likelihood.base.Likelihood<a class="headerlink" href="#triceratops-inference-likelihood-base-likelihood" title="Link to this heading">#</a></h1>
 <dl class="py class">
 <dt class="sig sig-object py" id="triceratops.inference.likelihood.base.Likelihood">
-<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triceratops.inference.likelihood.base.</span></span><span class="sig-name descname"><span class="pre">Likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataContainer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/inference/likelihood/base.html#Likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#triceratops.inference.likelihood.base.Likelihood" title="Link to this definition">#</a></dt>
-<dd><p>Abstract base class for likelihood functions.</p>
-<p>The <a class="reference internal" href="#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> class defines the interface and core semantics for
-evaluating the probability of observational data given a physical model.
-It provides a structured separation between:</p>
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triceratops.inference.likelihood.base.</span></span><span class="sig-name descname"><span class="pre">Likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InferenceData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/inference/likelihood/base.html#Likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#triceratops.inference.likelihood.base.Likelihood" title="Link to this definition">#</a></dt>
+<dd><p>Abstract base class for statistical likelihood functions.</p>
+<p>The <a class="reference internal" href="#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> class defines the interface and execution
+semantics for evaluating the probability of observational data
+given a physical model.</p>
+<p>This class operates strictly on:</p>
 <ul class="simple">
-<li><p><strong>Model physics</strong>, implemented in subclasses of <a class="reference internal" href="../../_as_gen/models.core.base.Model.html#models.core.base.Model" title="models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a></p></li>
-<li><p><strong>Observational data</strong>, encapsulated in container classes</p></li>
-<li><p><strong>Statistical assumptions</strong>, encoded in concrete likelihood subclasses</p></li>
+<li><p>A validated <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object</p></li>
+<li><p>A concrete subclass of <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p></li>
 </ul>
-<p>A likelihood object binds together a <em>specific model</em> and a <em>specific data
-container</em>, validates their compatibility, and performs any required
-preprocessing of the data into a numerical form suitable for efficient
-likelihood evaluation.</p>
-<section id="design-philosophy">
-<h2>Design Philosophy<a class="headerlink" href="#design-philosophy" title="Link to this heading">#</a></h2>
-<p>This class is intentionally <strong>not</strong> a fully generic “black box” likelihood.
-Instead, it enforces explicit compatibility between models and data
-containers via class-level declarations. This prevents subtle misuse while
-still allowing a high degree of extensibility.</p>
-<p>The likelihood workflow is divided into three conceptual stages:</p>
+<p>It performs <strong>no unit coercion, column resolution, or table parsing</strong>.
+Those responsibilities belong to the data ingestion layer
+(e.g. <code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code> → <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>).</p>
+<section id="architectural-role">
+<h2>Architectural Role<a class="headerlink" href="#architectural-role" title="Link to this heading">#</a></h2>
+<p>The inference stack is intentionally layered:</p>
 <ol class="arabic simple">
-<li><p><strong>Compatibility validation</strong>
-Ensures that the supplied model and data container are appropriate for
-the likelihood implementation.</p></li>
-<li><p><strong>Data reduction and coercion</strong>
-The input data container is processed exactly once during initialization
-via <code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code>. This step extracts relevant quantities,
-converts them to consistent base units, and stores them in a
-<a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></a> for fast reuse.</p></li>
-<li><p><strong>Likelihood evaluation</strong>
-The core statistical computation is implemented in <code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code>,
-which assumes that model parameters are already in their raw, unit-consistent
-format.</p></li>
+<li><p><strong>DataContainer</strong>
+Handles column resolution and unit coercion.</p></li>
+<li><p><strong>InferenceData</strong>
+Stores validated, immutable NumPy arrays.</p></li>
+<li><p><strong>Likelihood</strong>
+Implements statistical assumptions and evaluates
+log-likelihood values using numerical arrays.</p></li>
+<li><p><strong>Model</strong>
+Encodes forward physics.</p></li>
 </ol>
+<p>The <a class="reference internal" href="#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> layer is therefore a <strong>pure statistical engine</strong>
+operating on already-validated numerical data.</p>
 </section>
-<section id="public-vs-internal-api">
-<h2>Public vs. Internal API<a class="headerlink" href="#public-vs-internal-api" title="Link to this heading">#</a></h2>
-<p>The public method <code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code> is intended for user-facing calls
-and accepts parameters in any format supported by the model. These parameters
-are coerced into the model’s raw format before being passed to
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code>.</p>
-<p>For inference backends (e.g., MCMC, nested sampling), the private
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code> method should be used directly, as it avoids repeated
-parameter coercion and assumes a consistent internal representation.</p>
-</section>
-<section id="extensibility">
-<h2>Extensibility<a class="headerlink" href="#extensibility" title="Link to this heading">#</a></h2>
-<p>Concrete likelihood implementations should subclass <a class="reference internal" href="#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> and:</p>
+<section id="design-principles">
+<h2>Design Principles<a class="headerlink" href="#design-principles" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p>Declare compatible models via <code class="xref py py-attr docutils literal notranslate"><span class="pre">COMPATIBLE_MODELS</span></code></p></li>
-<li><p>Declare compatible data containers via <code class="xref py py-attr docutils literal notranslate"><span class="pre">COMPATIBLE_DATA_CONTAINERS</span></code></p></li>
-<li><p>Implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code></p></li>
-<li><p>Implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code></p></li>
+<li><p>The likelihood should contain <em>only statistical logic</em>.</p></li>
+<li><p>All unit validation and shape checking must already be complete.</p></li>
+<li><p>Model–data compatibility must be explicitly validated.</p></li>
+<li><p>The likelihood evaluation itself must be stateless with respect
+to model parameters.</p></li>
 </ul>
-<p>This structure allows for clean extension to multiple likelihood forms
-(e.g., Gaussian errors, censored data, hierarchical likelihoods) while
-maintaining a uniform interface for inference engines.</p>
+</section>
+<section id="extending-likelihood">
+<h2>Extending Likelihood<a class="headerlink" href="#extending-likelihood" title="Link to this heading">#</a></h2>
+<p>Concrete likelihood implementations must implement:</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code></p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_validate_model_and_data()</span></code></p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code></p></li>
+</ul>
+<p>Subclasses are responsible for:</p>
+<ul class="simple">
+<li><p>Enforcing model–data compatibility</p></li>
+<li><p>Extracting required arrays from <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></p></li>
+<li><p>Calling the appropriate numerical backend</p></li>
+<li><p>Implementing the statistical form of the likelihood</p></li>
+</ul>
 <p class="rubric">Notes</p>
-<p>This class makes no assumptions about priors, posteriors, or sampling
-strategies. Those concerns are handled at the inference layer, which
-composes likelihoods with priors and samplers.</p>
+<ul class="simple">
+<li><p>This class makes no assumptions about priors or sampling strategies.</p></li>
+<li><p>Parameter coercion is delegated to the model.</p></li>
+<li><p>Data validation is delegated to <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>.</p></li>
+</ul>
 <dl class="py method">
 <dt class="sig sig-object py" id="triceratops.inference.likelihood.base.Likelihood.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataContainer</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/inference/likelihood/base.html#Likelihood.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#triceratops.inference.likelihood.base.Likelihood.__init__" title="Link to this definition">#</a></dt>
-<dd><p>Instantiate the likelihood object.</p>
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">InferenceData</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/inference/likelihood/base.html#Likelihood.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#triceratops.inference.likelihood.base.Likelihood.__init__" title="Link to this definition">#</a></dt>
+<dd><p>Initialize the likelihood object.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
-<li><p><strong>model</strong> (<a class="reference internal" href="../../_as_gen/models.core.base.Model.html#models.core.base.Model" title="models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – The astrophysical model to be evaluated. This must be a subclass of <a class="reference internal" href="../../_as_gen/models.core.base.Model.html#models.core.base.Model" title="models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> and
-be compatible with the likelihood class (see <code class="xref py py-attr docutils literal notranslate"><span class="pre">COMPATIBLE_MODELS</span></code>). This defines the forward model
-used in the likelihood evaluation.</p></li>
-<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code>) – The data container object holding the observational data. This must be of a type compatible
-with the likelihood class (see <code class="xref py py-attr docutils literal notranslate"><span class="pre">COMPATIBLE_DATA_CONTAINERS</span></code>). This defines the observations being
-compared against.</p></li>
-<li><p><strong>kwargs</strong> – Additional keyword arguments that may be used during configuration. These are passed
-directly to the <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code> method immediately after assigning the model and data attributes.
-These can therefore be used to customize likelihood behavior during initialization.</p></li>
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – The forward model used to generate predicted observables.
+Must be an instance of <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>.</p></li>
+<li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>) – Fully validated, immutable dataset containing
+numerical arrays required for likelihood evaluation.
+All unit coercion and shape validation must already
+have been performed.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments forwarded to <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If <cite>model</cite> is not a <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> instance.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><strong>TypeError</strong></a> – If <cite>data</cite> is not an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> instance.</p></li>
 </ul>
 </dd>
 </dl>
@@ -596,22 +608,10 @@ These can therefore be used to customize likelihood behavior during initializati
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="#triceratops.inference.likelihood.base.Likelihood.__init__" title="triceratops.inference.likelihood.base.Likelihood.__init__"><code class="xref py py-obj docutils literal notranslate"><span class="pre">__init__</span></code></a>(model, data, **kwargs)</p></td>
-<td><p>Instantiate the likelihood object.</p></td>
+<td><p>Initialize the likelihood object.</p></td>
 </tr>
 <tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">log_likelihood</span></code>(parameters)</p></td>
-<td><p>Compute the log-likelihood for the given model parameters.</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<p class="rubric">Attributes</p>
-<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
-<tbody>
-<tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">COMPATIBLE_DATA_CONTAINERS</span></code></p></td>
-<td><p>tuple of types</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">COMPATIBLE_MODELS</span></code></p></td>
-<td><p>tuple of <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></p></td>
+<td><p>Evaluate the log-likelihood for model parameters.</p></td>
 </tr>
 </tbody>
 </table>
@@ -641,11 +641,11 @@ These can therefore be used to customize likelihood behavior during initializati
       </div>
     </a>
     <a class="right-next"
-       href="triceratops.inference.likelihood.base.GaussianLikelihoodXY.html"
+       href="triceratops.inference.likelihood.base.GaussianLikelihood.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">triceratops.inference.likelihood.base.GaussianLikelihoodXY</p>
+        <p class="prev-next-title">triceratops.inference.likelihood.base.GaussianLikelihood</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

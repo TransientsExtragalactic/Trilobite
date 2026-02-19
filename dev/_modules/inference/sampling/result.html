@@ -445,7 +445,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_gelman_rubin_rhat</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
-    <span class="k">pass</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..likelihood.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Likelihood</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">..problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
 
 
 <span class="c1"># ------------------------------------------------ #</span>
@@ -455,12 +459,31 @@
 <a class="viewcode-back" href="../../../_as_gen/inference.sampling.result.SamplingResult.html#inference.sampling.result.SamplingResult">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">SamplingResult</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Abstract base class for sampling results.</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class representing the result of a sampling procedure.</span>
 
-<span class="sd">    This class stores sampled parameter values along with sufficient metadata</span>
-<span class="sd">    to allow post-processing, visualization, and partial reproducibility</span>
-<span class="sd">    without requiring the original inference objects.</span>
+<span class="sd">    A :class:`SamplingResult` stores posterior samples along with the</span>
+<span class="sd">    associated :class:`~triceratops.inference.InferenceProblem` required</span>
+<span class="sd">    to fully reconstruct the inference configuration.</span>
+
+<span class="sd">    The result is designed to be:</span>
+
+<span class="sd">    - Fully serializable</span>
+<span class="sd">    - Self-consistent</span>
+<span class="sd">    - Reproducible without requiring the original sampler instance</span>
+<span class="sd">    - Lightweight with respect to inference infrastructure</span>
+
+<span class="sd">    Numerical arrays (samples and optional log-probabilities) are written</span>
+<span class="sd">    to an HDF5 file, while structural metadata (the inference problem and</span>
+<span class="sd">    sampler metadata) are written to a companion JSON file.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - The final axis of ``samples`` must correspond to parameter space</span>
+<span class="sd">      dimensionality.</span>
+<span class="sd">    - Subclasses may impose additional structure (e.g. MCMC chain layouts).</span>
+<span class="sd">    - The associated :class:`InferenceProblem` contains the model, priors,</span>
+<span class="sd">      transforms, and data required for posterior evaluation.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># ------------------------------------------------ #</span>
@@ -478,14 +501,8 @@
 <span class="sd">    The final dimension must correspond to parameter space dimensionality.</span>
 <span class="sd">    Subclasses may use higher-dimensional layouts (e.g., chains × steps × dim).</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-
-    <span class="n">parameter_metadata</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;list of dict</span>
-<span class="sd">    Serialized metadata for each inferred parameter.</span>
-
-<span class="sd">    Each entry should correspond to a serialized</span>
-<span class="sd">    :class:`InferenceParameter.to_metadata()` dictionary.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">problem</span><span class="p">:</span> <span class="s2">&quot;InferenceProblem&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;InferenceProblem: The inference problem associated with this sampling result.&quot;&quot;&quot;</span>
 
     <span class="c1"># --- Log-probability values --- #</span>
     <span class="n">log_likelihood</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
@@ -500,21 +517,19 @@
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: The log-posterior values corresponding to each sample.</span>
 <span class="sd">    This may or may not be present depending on the sampling algorithm used.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">sampler_metadata</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;dict: Metadata about the sampling procedure.</span>
 
-    <span class="c1"># --- Metadata about the sampling process --- #</span>
-    <span class="c1"># This information is helpful for tracking what was used to generate the samples,</span>
-    <span class="c1"># without requiring the full sampler / model / likelihood objects to be present.</span>
-    <span class="n">sampler_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The class name of the sampler used to generate the samples.&quot;&quot;&quot;</span>
-    <span class="n">likelihood_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The class name of the likelihood used in the inference problem.&quot;&quot;&quot;</span>
-    <span class="n">model_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The class name of the model used in the inference problem.&quot;&quot;&quot;</span>
-    <span class="n">data_container_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The class name of the data container used in the inference problem.&quot;&quot;&quot;</span>
-    <span class="n">inference_problem_class_name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: The class name of the inference problem used to generate the samples.&quot;&quot;&quot;</span>
+<span class="sd">    This may be quite generic, but could include information such as:</span>
 
+<span class="sd">    - Sampler type (e.g., &quot;MCMC&quot;, &quot;Nested Sampling&quot;)</span>
+<span class="sd">    - Sampler configuration (e.g., number of walkers, step size)</span>
+<span class="sd">    - Inference problem metadata (e.g., parameter names, prior types)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------ #</span>
+    <span class="c1"># Initialization                                   #</span>
+    <span class="c1"># ------------------------------------------------ #</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
 
@@ -523,7 +538,13 @@
     <span class="c1"># ------------------------------------------------ #</span>
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Number of samples.&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        int: Total number of samples.</span>
+
+<span class="sd">        For multi-dimensional layouts (e.g., MCMC chains),</span>
+<span class="sd">        this may correspond only to the leading axis. Subclasses</span>
+<span class="sd">        may override this behavior.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
@@ -532,23 +553,27 @@
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">n_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Number of inferred parameters.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_metadata</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Likelihood&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Likelihood: The likelihood object associated with the underlying :class:`InferenceProblem`.&quot;&quot;&quot;</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of str: Names of inferred parameters.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_metadata</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">model</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Model&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Model: The model associated with this sampling result.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">_model</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">priors</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">dict</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple of dict: Serialized prior metadata.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;prior&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_metadata</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">data</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Data: The data associated with this sampling result.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">likelihood</span><span class="o">.</span><span class="n">_data</span>
 
-    <span class="c1"># ------------------------------- #</span>
-    <span class="c1"># Serialization API               #</span>
-    <span class="c1"># ------------------------------- #</span>
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;dict: The parameters of the inference problem.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span>
+
+    <span class="c1"># ------------------------------------------------ #</span>
+    <span class="c1"># IO                                               #</span>
+    <span class="c1"># ------------------------------------------------ #</span>
 <div class="viewcode-block" id="SamplingResult.to_hdf5">
 <a class="viewcode-back" href="../../../_as_gen/inference.sampling.result.SamplingResult.to_hdf5.html#inference.sampling.result.SamplingResult.to_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_hdf5</span><span class="p">(</span>
@@ -557,27 +582,49 @@
         <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Serialize the sampling result to an HDF5 file.</span>
+<span class="sd">        Serialize the sampling result to disk.</span>
+
+<span class="sd">        This method writes two files:</span>
+
+<span class="sd">        1. ``&lt;path&gt;`` — HDF5 file containing numeric arrays:</span>
+<span class="sd">           - ``samples``</span>
+<span class="sd">           - ``log_likelihood`` (if present)</span>
+<span class="sd">           - ``log_prior`` (if present)</span>
+<span class="sd">           - ``log_posterior`` (if present)</span>
+
+<span class="sd">        2. ``&lt;path&gt;.meta`` — JSON file containing:</span>
+<span class="sd">           - Serialized :class:`InferenceProblem`</span>
+<span class="sd">           - Sampler metadata</span>
+<span class="sd">           - Result class information</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        path : str or Path</span>
-<span class="sd">            Output file path.</span>
-<span class="sd">        overwrite : bool</span>
-<span class="sd">            Whether to overwrite an existing file.</span>
+<span class="sd">            Output path for the HDF5 file.</span>
+<span class="sd">        overwrite : bool, optional</span>
+<span class="sd">            If ``True``, overwrite an existing file. Default is ``False``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        FileExistsError</span>
+<span class="sd">            If ``path`` already exists and ``overwrite`` is ``False``.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The JSON metadata file is required to reconstruct the full inference</span>
+<span class="sd">        problem and must remain alongside the HDF5 file.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Clarify the path and manage the overwrite</span>
-        <span class="c1"># if necessary.</span>
         <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
 
         <span class="k">if</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">FileExistsError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> already exists.&quot;</span><span class="p">)</span>
 
-        <span class="c1"># Create the file and start writing the data.</span>
+        <span class="n">meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.meta&quot;</span><span class="p">)</span>
+
+        <span class="c1"># ----------------------------</span>
+        <span class="c1"># Write numeric arrays</span>
+        <span class="c1"># ----------------------------</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># We start by writing the datasets to disk. These are just</span>
-            <span class="c1"># dumped in as the relevant datasets and the base directory</span>
-            <span class="c1"># of the file.</span>
             <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;samples&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
 
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_likelihood</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
@@ -589,22 +636,18 @@
             <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_posterior</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
                 <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;log_posterior&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">)</span>
 
-            <span class="c1"># Now manage the parameters. For this one, we have a</span>
-            <span class="c1"># dedicated group where we store the metadata. Each parameter</span>
-            <span class="c1"># is numbered by its index, and each metadata key is stored</span>
-            <span class="c1"># as an attribute with the key formatted as &quot;{index}.{key}&quot;.</span>
-            <span class="n">pgroup</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">)</span>
-            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">meta</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_metadata</span><span class="p">):</span>
-                <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">meta</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
-                    <span class="n">pgroup</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="c1"># ----------------------------</span>
+        <span class="c1"># Write metadata JSON</span>
+        <span class="c1"># ----------------------------</span>
+        <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;format&quot;</span><span class="p">:</span> <span class="s2">&quot;SamplingResult&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;class&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">,</span>
+            <span class="s2">&quot;problem&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span>
+            <span class="s2">&quot;sampler_metadata&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_metadata</span> <span class="ow">or</span> <span class="p">{},</span>
+        <span class="p">}</span>
 
-            <span class="c1"># Set the various metadata attributes about the sampling</span>
-            <span class="c1"># process itself.</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;sampler_class_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sampler_class_name</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;likelihood_class_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">likelihood_class_name</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;model_class_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model_class_name</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;data_container_class_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data_container_class_name</span>
-            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;inference_problem_class_name&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inference_problem_class_name</span></div>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">metadata</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="SamplingResult.from_hdf5">
@@ -615,74 +658,106 @@
         <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SamplingResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Load a sampling result from an HDF5 file.</span>
+<span class="sd">        Reconstruct a :class:`SamplingResult` from disk.</span>
+
+<span class="sd">        This method expects:</span>
+
+<span class="sd">        - ``&lt;path&gt;`` — HDF5 file containing numeric arrays.</span>
+<span class="sd">        - ``&lt;path&gt;.meta`` — JSON file containing serialized metadata.</span>
+
+<span class="sd">        The inference problem is reconstructed using</span>
+<span class="sd">        :meth:`InferenceProblem.from_dict`.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        path : str or Path</span>
-<span class="sd">            Path to HDF5 file.</span>
+<span class="sd">            Path to the HDF5 file containing numeric sampling results.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        SamplingResult</span>
-<span class="sd">            Reconstructed sampling result.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Clarify the path</span>
-        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+<span class="sd">            Reconstructed sampling result instance. If the metadata</span>
+<span class="sd">            specifies a subclass of :class:`SamplingResult`, that subclass</span>
+<span class="sd">            will be instantiated.</span>
 
-        <span class="c1"># Open the file and start reading the data.</span>
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        FileNotFoundError</span>
+<span class="sd">            If either the HDF5 file or its metadata file is missing.</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the metadata format is invalid or incomplete.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The metadata JSON file must be present and valid in order to</span>
+<span class="sd">        reconstruct the associated :class:`InferenceProblem`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="n">meta_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">path</span><span class="p">)</span> <span class="o">+</span> <span class="s2">&quot;.meta&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2"> does not exist.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">meta_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Missing metadata file: </span><span class="si">{</span><span class="n">meta_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Load numeric arrays</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
-            <span class="c1"># Load the datasets. Because they may not all exist,</span>
-            <span class="c1"># we have to check for their presence.</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;samples&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span>
 
-            <span class="n">log_likelihood</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_likelihood&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">log_prior</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_prior&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
-            <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;log_posterior&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">log_likelihood</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;log_likelihood&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;log_likelihood&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">log_prior</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;log_prior&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;log_prior&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span>
+            <span class="n">log_posterior</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="s2">&quot;log_posterior&quot;</span><span class="p">][</span><span class="o">...</span><span class="p">]</span> <span class="k">if</span> <span class="s2">&quot;log_posterior&quot;</span> <span class="ow">in</span> <span class="n">f</span> <span class="k">else</span> <span class="kc">None</span>
 
-            <span class="c1"># reconstruct parameter metadata. This is the most complicated</span>
-            <span class="c1"># part of the process, since we have to parse the attributes</span>
-            <span class="c1"># of the &quot;parameters&quot; group. Recall that each parameter is</span>
-            <span class="c1"># written as attributes with keys formatted as &quot;{index}.{key}&quot;.</span>
-            <span class="n">param_attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">attrs</span><span class="p">)</span>
-            <span class="n">n_params</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Load metadata JSON</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">meta_path</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">metadata</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
 
-            <span class="n">parameter_metadata</span> <span class="o">=</span> <span class="p">[]</span>
-            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_params</span><span class="p">):</span>
-                <span class="n">meta</span> <span class="o">=</span> <span class="p">{}</span>
-                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">param_attrs</span><span class="p">:</span>
-                    <span class="n">index_str</span><span class="p">,</span> <span class="n">key</span> <span class="o">=</span> <span class="n">k</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;.&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
-                    <span class="k">if</span> <span class="nb">int</span><span class="p">(</span><span class="n">index_str</span><span class="p">)</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
-                        <span class="n">v</span> <span class="o">=</span> <span class="n">param_attrs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
-                        <span class="n">meta</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;format&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;SamplingResult&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Invalid SamplingResult metadata file.&quot;</span><span class="p">)</span>
 
-                <span class="n">parameter_metadata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">meta</span><span class="p">)</span>
+        <span class="n">result_class_name</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;class&quot;</span><span class="p">)</span>
+        <span class="n">sampler_metadata</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler_metadata&quot;</span><span class="p">,</span> <span class="p">{})</span>
+        <span class="n">problem_dict</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;problem&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Now generate the class instance.</span>
-            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span>
-                <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
-                <span class="n">parameter_metadata</span><span class="o">=</span><span class="n">parameter_metadata</span><span class="p">,</span>
-                <span class="n">log_likelihood</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">log_likelihood</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">log_likelihood</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
-                <span class="n">log_prior</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">log_prior</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">log_prior</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
-                <span class="n">log_posterior</span><span class="o">=</span><span class="kc">None</span> <span class="k">if</span> <span class="n">log_posterior</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">log_posterior</span><span class="p">[</span><span class="o">...</span><span class="p">],</span>
-                <span class="n">sampler_class_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampler_class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-                <span class="n">likelihood_class_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;likelihood_class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-                <span class="n">model_class_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;model_class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-                <span class="n">data_container_class_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;data_container_class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-                <span class="n">inference_problem_class_name</span><span class="o">=</span><span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;inference_problem_class_name&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
-            <span class="p">)</span></div>
+        <span class="k">if</span> <span class="n">problem_dict</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Metadata file missing &#39;problem&#39; field.&quot;</span><span class="p">)</span>
 
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Reconstruct InferenceProblem</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
 
-    <span class="c1"># ------------------------------------------------ #</span>
-    <span class="c1"># Representation                                   #</span>
-    <span class="c1"># ------------------------------------------------ #</span>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-        <span class="k">return</span> <span class="p">(</span>
-            <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">(&quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;n_samples=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_samples</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;n_dim=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="si">}</span><span class="s2">, &quot;</span>
-            <span class="sa">f</span><span class="s2">&quot;sampler=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">sampler_class_name</span><span class="si">}</span><span class="s2">)&quot;</span>
+        <span class="n">problem</span> <span class="o">=</span> <span class="n">InferenceProblem</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">problem_dict</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Determine correct result class</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">result_cls</span> <span class="o">=</span> <span class="bp">cls</span>
+
+        <span class="k">if</span> <span class="n">result_class_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">result_class_name</span> <span class="o">!=</span> <span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="p">:</span>
+            <span class="c1"># Attempt dynamic subclass resolution</span>
+            <span class="n">subclass</span> <span class="o">=</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">result_class_name</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">subclass</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown SamplingResult subclass &#39;</span><span class="si">{</span><span class="n">result_class_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span>
+            <span class="n">result_cls</span> <span class="o">=</span> <span class="n">subclass</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Construct result</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">return</span> <span class="n">result_cls</span><span class="p">(</span>
+            <span class="n">samples</span><span class="o">=</span><span class="n">samples</span><span class="p">,</span>
+            <span class="n">problem</span><span class="o">=</span><span class="n">problem</span><span class="p">,</span>
+            <span class="n">log_likelihood</span><span class="o">=</span><span class="n">log_likelihood</span><span class="p">,</span>
+            <span class="n">log_prior</span><span class="o">=</span><span class="n">log_prior</span><span class="p">,</span>
+            <span class="n">log_posterior</span><span class="o">=</span><span class="n">log_posterior</span><span class="p">,</span>
+            <span class="n">sampler_metadata</span><span class="o">=</span><span class="n">sampler_metadata</span><span class="p">,</span>
         <span class="p">)</span></div>
+</div>
 
 
 
@@ -695,115 +770,96 @@
 <a class="viewcode-back" href="../../../_as_gen/inference.sampling.result.MCMCSamplingResult.html#inference.sampling.result.MCMCSamplingResult">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">MCMCSamplingResult</span><span class="p">(</span><span class="n">SamplingResult</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Sampling result for MCMC samplers.</span>
 
-<span class="sd">    This class extends :class:`SamplingResult` to specifically handle the</span>
-<span class="sd">    chain structure of MCMC samples. The samples are expected to be organized</span>
-<span class="sd">    as (n_walkers, n_steps, n_dim).</span>
+<span class="sd">    This subclass of :class:`SamplingResult` stores samples with explicit</span>
+<span class="sd">    chain structure. Samples must be provided in the form:</span>
+
+<span class="sd">        (n_steps, n_walkers, n_dim)</span>
+
+<span class="sd">    or</span>
+
+<span class="sd">        (n_samples, n_dim)</span>
+
+<span class="sd">    In the latter case, the samples are interpreted as a single-chain</span>
+<span class="sd">    result and reshaped internally to:</span>
+
+<span class="sd">        (n_samples, 1, n_dim)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">samples</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;numpy.ndarray</span>
-<span class="sd">    Sampled parameter values.</span>
-
-<span class="sd">    The shape must be ``(n_walkers, n_steps, n_dim)`` to respect the MCMC chain structure. If</span>
-<span class="sd">    a different shape is provided, it will be converted to this format in :meth:`__post_init__`.</span>
-<span class="sd">    &quot;&quot;&quot;</span>
     <span class="n">acceptance_fraction</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: Acceptance fraction for each walker, if available.&quot;&quot;&quot;</span>
 
+    <span class="c1"># ------------------------------------------------ #</span>
+    <span class="c1"># Initialization                                   #</span>
+    <span class="c1"># ------------------------------------------------ #</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">__post_init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="c1"># Pass through the parent initialization</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__post_init__</span><span class="p">()</span>
 
-        <span class="c1"># Ensure that we have to correct structure (n_steps, n_walkers, n_dim). If</span>
-        <span class="c1"># we have (n_samples, n_dim), we convert to ( n_samples, 1, n_dim). If we</span>
-        <span class="c1"># have some other structure, we raise an error.</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
             <span class="n">n_samples</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_samples</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span>
+
         <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">3</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
                 <span class="s2">&quot;MCMCSamplingResult samples must have shape (n_steps, n_walkers, n_dim) or (n_samples, n_dim).&quot;</span>
             <span class="p">)</span>
 
-        <span class="c1"># Create the auto-correlation time cache and ESS cache</span>
-        <span class="c1"># so that we don&#39;t have to recompute them multiple times.</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_autocorr_time_cache</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
 
     <span class="c1"># ------------------------------------------------ #</span>
-    <span class="c1"># Properties                                       #</span>
+    <span class="c1"># Core Properties                                  #</span>
     <span class="c1"># ------------------------------------------------ #</span>
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">n_walkers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Number of MCMC walkers.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
-
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_steps</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Number of MCMC steps.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
 
     <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">n_walkers</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Number of MCMC walkers.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">n_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Total number of MCMC samples (n_steps * n_walkers).&quot;&quot;&quot;</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;int: Total number of MCMC samples (n_steps × n_walkers).&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span>
 
     <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">autocorr_time</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;numpy.ndarray: The integrated autocorrelation time for each parameter.</span>
-
-<span class="sd">        If this has not been computed yet, it will be calculated and cached for repeated</span>
-<span class="sd">        reference. It may also be computed with the :meth:`compute_autocorr_time` method with</span>
-<span class="sd">        additional arguments.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autocorr_time_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_autocorr_time_cache</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">compute_autocorr_time</span><span class="p">()</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_autocorr_time_cache</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">min_ESS</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: Minimum effective sample size (ESS) across all parameters.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">compute_effective_sample_size</span><span class="p">(</span><span class="n">use_cache</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
-
-    <span class="nd">@property</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">mean_acceptance_fraction</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;float: Mean acceptance fraction across all walkers.&quot;&quot;&quot;</span>
-        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">acceptance_fraction</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Acceptance fraction is not available.&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">acceptance_fraction</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">parameter_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Tuple[str]: Names of inferred parameters.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">free_parameter_names</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------ #</span>
-    <span class="c1"># Data Access and Manipulation                     #</span>
+    <span class="c1"># Flattening                                       #</span>
     <span class="c1"># ------------------------------------------------ #</span>
 <div class="viewcode-block" id="MCMCSamplingResult.get_flat_samples">
 <a class="viewcode-back" href="../../../_as_gen/inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#inference.sampling.result.MCMCSamplingResult.get_flat_samples">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="nf">get_flat_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="n">thin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_flat_samples</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="n">thin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Get flattened MCMC samples with optional burn-in and thinning.</span>
+<span class="sd">        Return flattened MCMC samples with optional burn-in and thinning.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        burn : int</span>
-<span class="sd">            Number of initial steps to discard as burn-in.</span>
-<span class="sd">        thin : int</span>
-<span class="sd">            Thinning factor to apply to the samples.</span>
+<span class="sd">        burn : int, optional</span>
+<span class="sd">            Number of initial steps to discard.</span>
+<span class="sd">        thin : int, optional</span>
+<span class="sd">            Thinning factor.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        numpy.ndarray</span>
-<span class="sd">            Flattened array of shape (n_effective_samples, n_dim) containing the</span>
-<span class="sd">            MCMC samples after applying burn-in and thinning.</span>
+<span class="sd">            Array of shape (n_effective_samples, n_dim).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="c1"># Apply burn-in and thinning</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">burn</span><span class="p">::</span><span class="n">thin</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
-
-        <span class="c1"># Flatten the samples to (n_effective_samples, n_dim)</span>
         <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
-        <span class="n">flat_samples</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_walkers</span> <span class="o">*</span> <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">flat_samples</span></div>
+        <span class="k">return</span> <span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_steps</span> <span class="o">*</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span></div>
 
 
     <span class="c1"># ------------------------------------------------ #</span>

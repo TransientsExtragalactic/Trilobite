@@ -895,7 +895,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span> <span class="o">=</span> <span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">pitch_averaged</span><span class="o">=</span><span class="n">pitch_averaged</span><span class="p">)</span></div>
 
 
     <span class="c1"># -------------------------------------------------- #</span>
@@ -1267,7 +1269,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span> <span class="o">=</span> <span class="n">PowerLaw_SSA_SynchrotronSED</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">pitch_averaged</span><span class="o">=</span><span class="n">pitch_averaged</span><span class="p">)</span></div>
 
 
     <span class="c1"># -------------------------------------------------- #</span>
@@ -1622,7 +1626,9 @@
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
 
         <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span> <span class="o">=</span> <span class="n">PowerLaw_Cooling_SynchrotronSED</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">pitch_averaged</span><span class="o">=</span><span class="n">pitch_averaged</span><span class="p">)</span></div>
 
 
     <span class="c1"># -------------------------------------------------- #</span>
@@ -1967,10 +1973,10 @@
 
 <span class="sd">        :class:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
-
         <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span> <span class="o">=</span> <span class="n">PowerLaw_SynchrotronSED</span><span class="p">()</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span></div>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span> <span class="o">=</span> <span class="n">pitch_averaged</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">(</span><span class="n">pitch_averaged</span><span class="o">=</span><span class="n">pitch_averaged</span><span class="p">)</span></div>
 
 
     <span class="c1"># -------------------------------------------------- #</span>
@@ -2126,9 +2132,9 @@
     <span class="c1"># ============================================== #</span>
 <div class="viewcode-block" id="Synchrotron_SSA_SBPL_Model.__init__">
 <a class="viewcode-back" href="../../../_as_gen/models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.__init__.html#models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.__init__">[docs]</a>
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the :class:`Synchrotron_SSA_SBPL_SED` model.&quot;&quot;&quot;</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the model with given parameters and variables.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
 
 
     <span class="c1"># =============================================== #</span>

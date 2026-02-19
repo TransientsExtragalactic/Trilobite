@@ -428,8 +428,8 @@
   <section id="likelihood-development-guide">
 <span id="likelihood-dev"></span><h1>Likelihood Development Guide<a class="headerlink" href="#likelihood-development-guide" title="Link to this heading">#</a></h1>
 <p>Likelihoods are the bridge between physics and inference in Triceratops.
-They bind a concrete <a class="reference internal" href="../../_as_gen/models.core.base.Model.html#models.core.base.Model" title="models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> to a
-<code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code> under a specific statistical
+They bind a concrete <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code> to a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object under a specific statistical
 assumption and produce a scalar log-likelihood suitable for samplers,
 optimizers, or evidence estimators.</p>
 <p>This guide is written for developers. It does not assume that you merely want
@@ -448,53 +448,46 @@ extending the framework safely.</p>
 <li><p><a class="reference internal" href="#model-and-data-binding" id="id5">Model and Data Binding</a></p></li>
 <li><p><a class="reference internal" href="#configuration-hook-configure" id="id6">Configuration Hook: <code class="docutils literal notranslate"><span class="pre">_configure</span></code></a></p></li>
 <li><p><a class="reference internal" href="#compatibility-validation-validate-model-and-data" id="id7">Compatibility Validation: <code class="docutils literal notranslate"><span class="pre">_validate_model_and_data</span></code></a></p></li>
-<li><p><a class="reference internal" href="#one-time-data-preprocessing-process-input-data" id="id8">One-Time Data Preprocessing: <code class="docutils literal notranslate"><span class="pre">_process_input_data</span></code></a></p></li>
-<li><p><a class="reference internal" href="#likelihood-evaluation" id="id9">Likelihood Evaluation</a></p></li>
+<li><p><a class="reference internal" href="#likelihood-evaluation" id="id8">Likelihood Evaluation</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#likelihood-stencils" id="id10">Likelihood Stencils</a></p>
-<ul>
-<li><p><a class="reference internal" href="#what-a-stencil-does" id="id11">What a Stencil Does</a></p></li>
-<li><p><a class="reference internal" href="#stencils-as-reusable-structure" id="id12">Stencils as Reusable Structure</a></p></li>
-</ul>
-</li>
-<li><p><a class="reference internal" href="#concrete-likelihood-classes" id="id13">Concrete Likelihood Classes</a></p></li>
+<li><p><a class="reference internal" href="#concrete-likelihood-classes" id="id9">Concrete Likelihood Classes</a></p></li>
+<li><p><a class="reference internal" href="#summary" id="id10">Summary</a></p></li>
 </ul>
 </nav>
 <hr class="docutils" />
 <section id="a-conceptual-overview">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">A Conceptual Overview</a><a class="headerlink" href="#a-conceptual-overview" title="Link to this heading">#</a></h2>
-<p>A Triceratops likelihood is not a monolithic object. It is composed of three
+<p>A Triceratops likelihood is not a monolithic object. It consists of two
 conceptual layers:</p>
 <ol class="arabic simple">
 <li><p>A <strong>numerical backend</strong> that encodes pure statistics.</p></li>
-<li><p>A <strong>likelihood stencil</strong> that links a forward model to that backend.</p></li>
-<li><p>A <strong>concrete likelihood class</strong> that adapts a specific data container.</p></li>
+<li><p>A <strong>likelihood class</strong> that binds a forward model to validated numerical data.</p></li>
 </ol>
 <p>The separation between these layers is enforced by
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That base class defines the
-initialization workflow, compatibility contract, and evaluation interface.</p>
+<a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That base class
+defines the initialization workflow, compatibility contract, and evaluation
+interface.</p>
 <p>Before diving into extension patterns, we examine each layer in turn.</p>
 </section>
 <section id="low-level-numerical-likelihoods">
 <h2><a class="toc-backref" href="#id2" role="doc-backlink">Low-Level Numerical Likelihoods</a><a class="headerlink" href="#low-level-numerical-likelihoods" title="Link to this heading">#</a></h2>
 <p>At the foundation of the Triceratops likelihood system lie the <strong>pure
 numerical backends</strong>. These are ordinary Python functions — typically located
-in submodules of <a class="reference internal" href="../../_as_gen/inference.likelihood.html#module-inference.likelihood" title="inference.likelihood"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference.likelihood</span></code></a> such as
-<a class="reference internal" href="../../_as_gen/inference.likelihood.gaussian.html#module-inference.likelihood.gaussian" title="inference.likelihood.gaussian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference.likelihood.gaussian</span></code></a> — whose sole responsibility is to evaluate
-a statistical expression in array space.</p>
+in submodules of <code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.inference.likelihood</span></code> such as
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.inference.likelihood.gaussian</span></code> — whose sole responsibility
+is to evaluate a statistical expression in array space.</p>
 <p>These functions operate directly on NumPy arrays and return a scalar
 log-likelihood value. They are deliberately unaware of:</p>
 <ul class="simple">
 <li><p>physical models,</p></li>
 <li><p>data container abstractions,</p></li>
 <li><p>unit systems,</p></li>
-<li><p>masking semantics beyond what is passed explicitly,</p></li>
 <li><p>inference engines.</p></li>
 </ul>
 <p>Their role is purely mathematical.</p>
 <p>For example,
-<a class="reference internal" href="../../_as_gen/inference.likelihood.gaussian.gaussian_loglikelihood.html#inference.likelihood.gaussian.gaussian_loglikelihood" title="inference.likelihood.gaussian.gaussian_loglikelihood"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_loglikelihood()</span></code></a>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_loglikelihood()</span></code>
 computes the standard Gaussian log-likelihood from arrays of observed values,
 model predictions, and uncertainties. It assumes that the arrays are already
 compatible, correctly shaped, and expressed in consistent units. It does not
@@ -520,101 +513,27 @@ formulas from model and data semantics, the numerical layer becomes:</p>
 <li><p>Return a scalar log-likelihood value,</p></li>
 <li><p>Perform no unit coercion,</p></li>
 <li><p>Perform no model evaluation,</p></li>
-<li><p>Inspect no data container objects,</p></li>
-<li><p>Avoid implicit reshaping or structural validation beyond what NumPy enforces.</p></li>
+<li><p>Inspect no container objects,</p></li>
+<li><p>Avoid implicit reshaping beyond what NumPy enforces.</p></li>
 </ul>
 <p>If a function violates these constraints, it does not belong in the
 numerical backend layer.</p>
 </div>
-<p class="rubric">Examples</p>
-<p>The Gaussian case is familiar, but the pattern generalizes immediately to
-other statistical models.</p>
-<p><strong>Poisson Likelihood</strong></p>
-<p>Suppose observations consist of integer event counts <span class="math notranslate nohighlight">\(k_i\)</span>, and the
-model predicts expected rates <span class="math notranslate nohighlight">\(\lambda_i\)</span>. The Poisson log-likelihood is</p>
-<div class="math notranslate nohighlight">
-\[\ln \mathcal{L}
-=
-\sum_i
-\left[
-    k_i \ln \lambda_i
-    - \lambda_i
-    - \ln(k_i!)
-\right].\]</div>
-<p>A suitable numerical backend would look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">gammaln</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">poisson_loglikelihood</span><span class="p">(</span><span class="n">data_k</span><span class="p">,</span> <span class="n">model_rate</span><span class="p">):</span>
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">data_k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">model_rate</span><span class="p">)</span>
-        <span class="o">-</span> <span class="n">model_rate</span>
-        <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">data_k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>This function:</p>
-<ul class="simple">
-<li><p>assumes <code class="docutils literal notranslate"><span class="pre">data_k</span></code> and <code class="docutils literal notranslate"><span class="pre">model_rate</span></code> are already compatible arrays,</p></li>
-<li><p>does not verify non-negativity,</p></li>
-<li><p>does not inspect the model,</p></li>
-<li><p>does not perform unit handling.</p></li>
-</ul>
-<p>All semantic validation belongs elsewhere.</p>
-<p><strong>Binomial Likelihood</strong></p>
-<p>Now suppose each observation consists of a number of trials <span class="math notranslate nohighlight">\(n_i\)</span>
-and observed successes <span class="math notranslate nohighlight">\(k_i\)</span>, while the model predicts success
-probabilities <span class="math notranslate nohighlight">\(p_i\)</span>. The Binomial log-likelihood is</p>
-<div class="math notranslate nohighlight">
-\[\ln \mathcal{L}
-=
-\sum_i
-\left[
-    \ln \binom{n_i}{k_i}
-    + k_i \ln p_i
-    + (n_i - k_i)\ln(1 - p_i)
-\right].\]</div>
-<p>A corresponding numerical backend might be written as:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">gammaln</span>
-
-<span class="k">def</span><span class="w"> </span><span class="nf">binomial_loglikelihood</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
-    <span class="n">log_binom_coeff</span> <span class="o">=</span> <span class="p">(</span>
-        <span class="n">gammaln</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-        <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
-        <span class="n">log_binom_coeff</span>
-        <span class="o">+</span> <span class="n">k</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
-        <span class="o">+</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>Again, this function:</p>
-<ul class="simple">
-<li><p>assumes valid inputs,</p></li>
-<li><p>performs no structural checks,</p></li>
-<li><p>does not enforce bounds on <code class="docutils literal notranslate"><span class="pre">p</span></code>,</p></li>
-<li><p>does not validate integer constraints.</p></li>
-</ul>
-<p>Those responsibilities lie in higher layers of the likelihood stack.</p>
 </section>
 <hr class="docutils" />
 <section id="the-likelihood-base-class">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">The Likelihood Base Class</a><a class="headerlink" href="#the-likelihood-base-class" title="Link to this heading">#</a></h2>
 <p>The structural core of the likelihood system is
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>.</p>
+<a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>.</p>
 <p>This abstract base class does not implement a specific statistical model.
 Instead, it defines the lifecycle and contract that all concrete likelihoods
 must obey. Its purpose is architectural: it ensures that model binding,
-compatibility validation, preprocessing, and evaluation occur in a consistent
-and disciplined manner.</p>
+compatibility validation, and evaluation occur in a consistent and
+disciplined manner.</p>
 <p>A likelihood instance represents the binding of:</p>
 <ul class="simple">
 <li><p>one <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>,</p></li>
-<li><p>one <code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code>,</p></li>
+<li><p>one <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>,</p></li>
 <li><p>one statistical assumption.</p></li>
 </ul>
 <p>Once constructed, it becomes a callable object capable of evaluating
@@ -622,124 +541,105 @@ log-likelihoods efficiently and safely.</p>
 <section id="initialization-lifecycle">
 <h3><a class="toc-backref" href="#id4" role="doc-backlink">Initialization Lifecycle</a><a class="headerlink" href="#initialization-lifecycle" title="Link to this heading">#</a></h3>
 <p>All likelihood subclasses inherit the constructor defined in
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That constructor enforces
-a strict sequence of steps:</p>
+<a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That constructor
+enforces a strict sequence of steps:</p>
 <ol class="arabic simple">
-<li><p>Bind the model and data container.</p></li>
+<li><p>Bind the model and inference data.</p></li>
 <li><p>Invoke <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p></li>
 <li><p>Validate compatibility via <code class="xref py py-meth docutils literal notranslate"><span class="pre">_validate_model_and_data()</span></code>.</p></li>
-<li><p>Preprocess input data via <code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code>.</p></li>
 </ol>
-<p>Each step has a narrowly defined responsibility. Understanding those
-responsibilities is essential when implementing a new likelihood.</p>
+<p>Unlike earlier versions of the framework, there is no separate data
+preprocessing stage. Any one-time array extraction or transformation must
+occur inside <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p>
+<p>Each step has a narrowly defined responsibility.</p>
 </section>
 <section id="model-and-data-binding">
 <h3><a class="toc-backref" href="#id5" role="doc-backlink">Model and Data Binding</a><a class="headerlink" href="#model-and-data-binding" title="Link to this heading">#</a></h3>
-<p>The constructor requires a model instance and a data container instance.
-Basic interface checks ensure that the objects conform to the expected
+<p>The constructor requires:</p>
+<ul class="simple">
+<li><p>a <code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>,</p></li>
+<li><p>an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>.</p></li>
+</ul>
+<p>Basic interface checks ensure that the objects conform to the expected
 abstract base classes before proceeding.</p>
 <p>At this stage, no structural validation is performed. The objects are
-simply stored internally as <code class="docutils literal notranslate"><span class="pre">self._model</span></code> and <code class="docutils literal notranslate"><span class="pre">self._data_container</span></code>.</p>
-<p>The purpose of this early binding is to guarantee that all subsequent
-validation and preprocessing logic has access to both components.</p>
+stored internally as <code class="docutils literal notranslate"><span class="pre">self._model</span></code> and <code class="docutils literal notranslate"><span class="pre">self._data_container</span></code>.</p>
 </section>
 <section id="configuration-hook-configure">
 <h3><a class="toc-backref" href="#id6" role="doc-backlink">Configuration Hook: <code class="docutils literal notranslate"><span class="pre">_configure</span></code></a><a class="headerlink" href="#configuration-hook-configure" title="Link to this heading">#</a></h3>
-<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code> method provides an optional configuration hook that
-runs before validation and preprocessing.</p>
-<p>This method is typically used to parse keyword arguments or toggle internal
-options that influence how the likelihood behaves. Many likelihoods require
-no configuration and may simply implement:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="k">pass</span>
-</pre></div>
-</div>
-<p>However, a likelihood supporting, for example, optional robust weighting
-might implement:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">robust</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-    <span class="bp">self</span><span class="o">.</span><span class="n">_robust</span> <span class="o">=</span> <span class="n">robust</span>
-</pre></div>
-</div>
-<p>Configuration logic should remain lightweight. It should not:</p>
+<p>The <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code> method runs once during initialization.</p>
+<p>This method is responsible for:</p>
 <ul class="simple">
-<li><p>Access or reshape data arrays,</p></li>
-<li><p>Perform unit coercion,</p></li>
-<li><p>Evaluate the forward model.</p></li>
+<li><p>Extracting stacked NumPy arrays from <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>,</p></li>
+<li><p>Caching independent variables,</p></li>
+<li><p>Constructing masks (for censoring or selection),</p></li>
+<li><p>Precomputing anything that would otherwise occur inside the hot loop.</p></li>
 </ul>
-<p>Those steps belong later in the lifecycle.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_error_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Configuration should not:</p>
+<ul class="simple">
+<li><p>Evaluate the forward model,</p></li>
+<li><p>Perform statistical calculations,</p></li>
+<li><p>Modify the inference data object.</p></li>
+</ul>
+<p>Its sole purpose is one-time numerical preparation.</p>
 </section>
 <section id="compatibility-validation-validate-model-and-data">
 <h3><a class="toc-backref" href="#id7" role="doc-backlink">Compatibility Validation: <code class="docutils literal notranslate"><span class="pre">_validate_model_and_data</span></code></a><a class="headerlink" href="#compatibility-validation-validate-model-and-data" title="Link to this heading">#</a></h3>
-<p>Every likelihood class declares compatibility at the class level via
-<code class="docutils literal notranslate"><span class="pre">COMPATIBLE_MODELS</span></code> and <code class="docutils literal notranslate"><span class="pre">COMPATIBLE_DATA_CONTAINERS</span></code>. The base class
-verifies these declarations when the subclass is defined and checks them
-again during initialization.</p>
-<p>The default implementation ensures that:</p>
+<p>After configuration, subclasses validate structural assumptions.</p>
+<p>Typical checks include:</p>
 <ul class="simple">
-<li><p>The model instance is of an allowed type.</p></li>
-<li><p>The data container instance is of an allowed type.</p></li>
+<li><p>Required uncertainty arrays exist,</p></li>
+<li><p>Model dimensionality matches observable dimensionality,</p></li>
+<li><p>Censoring arrays are structurally consistent,</p></li>
+<li><p>No unsupported data features are present.</p></li>
 </ul>
-<p>Concrete subclasses may extend <code class="xref py py-meth docutils literal notranslate"><span class="pre">_validate_model_and_data()</span></code>
-to enforce additional structural requirements.</p>
-<p>For example, a Gaussian likelihood for XY data might require:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
-
-    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">has_column</span><span class="p">(</span><span class="s2">&quot;y_err&quot;</span><span class="p">):</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;GaussianLikelihoodXY requires a &#39;y_err&#39; column.&quot;</span>
-        <span class="p">)</span>
-
-    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">n_independent_variables</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-            <span class="s2">&quot;GaussianLikelihoodXY requires a single independent variable.&quot;</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-<p>Validation should check structure and semantic assumptions,
-but it should not transform data.</p>
-<div class="admonition-separation-of-concerns admonition">
-<p class="admonition-title">Separation of Concerns</p>
-<p>Validation verifies that assumptions are satisfied.
-It does not perform unit coercion, reshaping, or array extraction.
-Those operations belong in <code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code>.</p>
-</div>
+<p>Validation verifies assumptions.
+It does not transform arrays.</p>
 </section>
-<section id="one-time-data-preprocessing-process-input-data">
-<h3><a class="toc-backref" href="#id8" role="doc-backlink">One-Time Data Preprocessing: <code class="docutils literal notranslate"><span class="pre">_process_input_data</span></code></a><a class="headerlink" href="#one-time-data-preprocessing-process-input-data" title="Link to this heading">#</a></h3>
-<p>After compatibility is confirmed, the constructor calls
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code>.</p>
-<p>This method performs all transformations required to convert a data container
-into the numerical form expected by the likelihood backend.</p>
-<p>It must return a <a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></a> containing only NumPy arrays
-and any masks required for evaluation.</p>
-<p>A minimal Gaussian example might look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+<section id="likelihood-evaluation">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Likelihood Evaluation</a><a class="headerlink" href="#likelihood-evaluation" title="Link to this heading">#</a></h3>
+<p>Evaluation is intentionally split into two methods.</p>
+<p>The public method
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code>
+accepts parameters in any format supported by the model and coerces them
+into the model’s internal representation.</p>
+<p>It then delegates to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code>,
+which assumes parameters are already in raw format.</p>
+<p>A typical implementation looks like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
 
-<span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-    <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">x_unit</span>
+    <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">,</span>
     <span class="p">)</span>
 
-    <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">y_unit</span>
-    <span class="p">)</span>
+    <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-    <span class="n">y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;y_err&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">y_unit</span>
-    <span class="p">)</span>
-
-    <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
-        <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-        <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-        <span class="n">y_err</span><span class="o">=</span><span class="n">y_err</span><span class="p">,</span>
+    <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+        <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+        <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+        <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
     <span class="p">)</span>
 </pre></div>
 </div>
-<p>This method is called exactly once during initialization. Its output is stored
-internally as <code class="docutils literal notranslate"><span class="pre">self._data</span></code>.</p>
-<p>After this point, likelihood evaluation should never access
-<code class="docutils literal notranslate"><span class="pre">self._data_container</span></code> again.</p>
+<p>At evaluation time, the likelihood reduces to:</p>
+<ol class="arabic simple">
+<li><p>Forward model evaluation,</p></li>
+<li><p>Lightweight array stacking,</p></li>
+<li><p>Delegation to the numerical backend,</p></li>
+<li><p>Scalar return.</p></li>
+</ol>
+<p>Nothing else.</p>
 <div class="admonition-performance-principle admonition">
 <p class="admonition-title">Performance Principle</p>
 <p>Any operation that can be performed once during initialization must not
@@ -747,186 +647,74 @@ be repeated inside <code class="xref py py-meth docutils literal notranslate"><s
 method millions of times.</p>
 </div>
 </section>
-<section id="likelihood-evaluation">
-<h3><a class="toc-backref" href="#id9" role="doc-backlink">Likelihood Evaluation</a><a class="headerlink" href="#likelihood-evaluation" title="Link to this heading">#</a></h3>
-<p>Evaluation is intentionally split into two methods.</p>
-<p>The public method
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.log_likelihood.html#inference.likelihood.base.Likelihood.log_likelihood" title="inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code></a>
-accepts parameters in any format supported by the model and coerces them
-into the model’s internal representation.</p>
-<p>It then delegates to
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code>,
-which assumes parameters are already in raw format.</p>
-<p>A typical implementation of <code class="docutils literal notranslate"><span class="pre">_log_likelihood</span></code> might look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-    <span class="n">model_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-        <span class="n">parameters</span><span class="p">,</span>
-    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-    <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
-        <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-        <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
-        <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_err</span><span class="p">,</span>
-    <span class="p">)</span>
-</pre></div>
-</div>
-<p>Notice the absence of:</p>
-<ul class="simple">
-<li><p>Unit conversion,</p></li>
-<li><p>Mask construction,</p></li>
-<li><p>Structural checks.</p></li>
-</ul>
-<p>At evaluation time, the likelihood should reduce to:
-1. Evaluate the forward model.
-2. Pass arrays to the numerical backend.
-3. Return a scalar.</p>
-<p>Inference engines should call <code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_likelihood()</span></code> directly when operating
-in tight loops to avoid repeated parameter coercion overhead.</p>
-</section>
-</section>
-<section id="likelihood-stencils">
-<h2><a class="toc-backref" href="#id10" role="doc-backlink">Likelihood Stencils</a><a class="headerlink" href="#likelihood-stencils" title="Link to this heading">#</a></h2>
-<p>A likelihood stencil is an abstract subclass of
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a> that defines the <em>structural</em>
-relationship between model predictions and a numerical backend.</p>
-<p>Where the low-level functions encode mathematics, and concrete classes handle
-data semantics, a stencil encodes the <em>wiring</em> between them.</p>
-<p>More precisely, a stencil answers the question:</p>
-<blockquote>
-<div><p>Given preprocessed NumPy arrays and a forward model,
-how is this likelihood evaluated?</p>
-</div></blockquote>
-<p>A stencil therefore defines the shape of <code class="docutils literal notranslate"><span class="pre">_log_likelihood</span></code>. It assumes that
-<code class="xref py py-meth docutils literal notranslate"><span class="pre">_process_input_data()</span></code> has already produced a
-<a class="reference external" href="https://docs.python.org/3/library/types.html#types.SimpleNamespace" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">types.SimpleNamespace</span></code></a> containing the necessary arrays, and it
-assumes that a numerical backend exists to compute the log-likelihood from
-those arrays.</p>
-<section id="what-a-stencil-does">
-<h3><a class="toc-backref" href="#id11" role="doc-backlink">What a Stencil Does</a><a class="headerlink" href="#what-a-stencil-does" title="Link to this heading">#</a></h3>
-<p>A stencil typically performs exactly two operations:</p>
-<ol class="arabic simple">
-<li><p>Evaluate the forward model using the independent variables stored in
-<code class="docutils literal notranslate"><span class="pre">self._data</span></code>.</p></li>
-<li><p>Delegate to a low-level numerical likelihood function.</p></li>
-</ol>
-<p>For example,
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.GaussianLikelihoodStencil.html#inference.likelihood.base.GaussianLikelihoodStencil" title="inference.likelihood.base.GaussianLikelihoodStencil"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianLikelihoodStencil</span></code></a>
-computes model predictions and passes them to
-<a class="reference internal" href="../../_as_gen/inference.likelihood.gaussian.gaussian_loglikelihood.html#inference.likelihood.gaussian.gaussian_loglikelihood" title="inference.likelihood.gaussian.gaussian_loglikelihood"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_loglikelihood()</span></code></a>.</p>
-<p>A minimal stencil might look like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihoodStencil</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
-
-    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
-        <span class="n">model_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">x</span><span class="p">,</span>
-            <span class="n">parameters</span><span class="p">,</span>
-        <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
-
-        <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
-            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y</span><span class="p">,</span>
-            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
-            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data</span><span class="o">.</span><span class="n">y_err</span><span class="p">,</span>
-        <span class="p">)</span>
-</pre></div>
-</div>
-<p>Notice what is absent:</p>
-<ul class="simple">
-<li><p>No statistical expressions.</p></li>
-<li><p>No container access.</p></li>
-<li><p>No unit conversion.</p></li>
-<li><p>No mask construction.</p></li>
-</ul>
-<p>All of those responsibilities belong to other layers.</p>
-<div class="admonition-responsibility-boundary admonition">
-<p class="admonition-title">Responsibility Boundary</p>
-<p>If you find yourself re-deriving Gaussian formulas inside a stencil,
-that logic belongs in <a class="reference internal" href="../../_as_gen/inference.likelihood.gaussian.html#module-inference.likelihood.gaussian" title="inference.likelihood.gaussian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">inference.likelihood.gaussian</span></code></a>.</p>
-<p>If you find yourself extracting columns from a data container,
-that logic belongs in a concrete likelihood class.</p>
-</div>
-</section>
-<section id="stencils-as-reusable-structure">
-<h3><a class="toc-backref" href="#id12" role="doc-backlink">Stencils as Reusable Structure</a><a class="headerlink" href="#stencils-as-reusable-structure" title="Link to this heading">#</a></h3>
-<p>Stencils are especially valuable when multiple concrete likelihood classes
-share the same statistical structure but differ in their data sources.</p>
-<p>For example, a Gaussian stencil could support:</p>
-<ul class="simple">
-<li><p>XY data containers,</p></li>
-<li><p>Spectral data containers,</p></li>
-<li><p>Time-series containers,</p></li>
-</ul>
-<p>as long as each concrete class produces the same numerical namespace
-(<code class="docutils literal notranslate"><span class="pre">x</span></code>, <code class="docutils literal notranslate"><span class="pre">y</span></code>, <code class="docutils literal notranslate"><span class="pre">y_err</span></code>, etc.).</p>
-<p>The stencil isolates the statistical structure from the data representation.
-It is the middle layer of the architecture: neither purely mathematical nor
-purely semantic.</p>
-</section>
 </section>
 <section id="concrete-likelihood-classes">
-<h2><a class="toc-backref" href="#id13" role="doc-backlink">Concrete Likelihood Classes</a><a class="headerlink" href="#concrete-likelihood-classes" title="Link to this heading">#</a></h2>
-<p>Concrete likelihood classes complete the stack. They adapt a specific
-<code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code> to the numerical contract
-expected by a stencil.</p>
-<p>This is the layer where data semantics live.</p>
-<p>While a stencil assumes arrays already exist, a concrete class is responsible
-for producing those arrays correctly and consistently.</p>
-<p>In practice, this means:</p>
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Concrete Likelihood Classes</a><a class="headerlink" href="#concrete-likelihood-classes" title="Link to this heading">#</a></h2>
+<p>Concrete likelihood classes implement a specific statistical assumption
+for a given <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object.</p>
+<p>Because <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> already guarantees:</p>
 <ul class="simple">
-<li><p>Interpreting container columns,</p></li>
-<li><p>Enforcing structural requirements,</p></li>
-<li><p>Coercing units into the model’s base units,</p></li>
-<li><p>Constructing masks or censoring arrays,</p></li>
-<li><p>Returning a clean numerical namespace.</p></li>
+<li><p>validated shapes,</p></li>
+<li><p>consistent stacking,</p></li>
+<li><p>resolved variable and observable names,</p></li>
 </ul>
-<p>A typical implementation combines compatibility validation and preprocessing.</p>
-<p>For example,
-<a class="reference internal" href="../../_as_gen/inference.likelihood.base.GaussianLikelihoodXY.html#inference.likelihood.base.GaussianLikelihoodXY" title="inference.likelihood.base.GaussianLikelihoodXY"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianLikelihoodXY</span></code></a>
-may implement:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihoodXY</span><span class="p">(</span><span class="n">GaussianLikelihoodStencil</span><span class="p">):</span>
+<p>the likelihood layer does not interpret tables, units, or schema.</p>
+<p>Instead, it operates purely on stacked arrays.</p>
+<p>A complete Gaussian likelihood under the current architecture may look like:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihood</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">):</span>
 
-    <span class="n">COMPATIBLE_MODELS</span> <span class="o">=</span> <span class="p">(</span><span class="n">Model</span><span class="p">,)</span>
-    <span class="n">COMPATIBLE_DATA_CONTAINERS</span> <span class="o">=</span> <span class="p">(</span><span class="n">XYDataContainer</span><span class="p">,)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span>
 
-        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">has_column</span><span class="p">(</span><span class="s2">&quot;y_err&quot;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_error_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
-                <span class="s2">&quot;GaussianLikelihoodXY requires a &#39;y_err&#39; column.&quot;</span>
+                <span class="s2">&quot;GaussianLikelihood requires observable uncertainties.&quot;</span>
             <span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_process_input_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
 
-        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">x_unit</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+
+        <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
         <span class="p">)</span>
 
-        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">y_unit</span>
-        <span class="p">)</span>
+        <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
 
-        <span class="n">y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_column</span><span class="p">(</span><span class="s2">&quot;y_err&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">y_unit</span>
-        <span class="p">)</span>
-
-        <span class="k">return</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
-            <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
-            <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">,</span>
-            <span class="n">y_err</span><span class="o">=</span><span class="n">y_err</span><span class="p">,</span>
+        <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
         <span class="p">)</span>
 </pre></div>
 </div>
-<p>After this preprocessing step, the original data container is no longer
-accessed during likelihood evaluation. The stencil operates purely on
-<code class="docutils literal notranslate"><span class="pre">self._data</span></code>.</p>
-<div class="admonition-semantic-isolation admonition">
-<p class="admonition-title">Semantic Isolation</p>
-<p>The numerical backend must remain completely ignorant of how the data were
-stored. The stencil must remain ignorant of how the data were extracted.
-Only the concrete class may interpret container semantics.</p>
-</div>
+<p>The censored case follows the same pattern, with additional arrays and
+masks cached in <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p>
+</section>
+<hr class="docutils" />
+<section id="summary">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Summary</a><a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>Under the current architecture:</p>
+<ul class="simple">
+<li><p>Numerical backends implement pure statistics.</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> defines the numerical contract.</p></li>
+<li><p>Likelihood classes bind models to numerical arrays.</p></li>
+<li><p>All preprocessing occurs once in <code class="xref py py-meth docutils literal notranslate"><span class="pre">_configure()</span></code>.</p></li>
+<li><p>The hot loop performs only forward evaluation and backend delegation.</p></li>
+</ul>
+<p>This separation ensures that:</p>
+<ul class="simple">
+<li><p>Statistical mathematics remains testable,</p></li>
+<li><p>Data semantics remain isolated,</p></li>
+<li><p>Inference backends remain fast,</p></li>
+<li><p>The system remains extensible without architectural drift.</p></li>
+</ul>
 </section>
 </section>
 
@@ -966,16 +754,11 @@ Only the concrete class may interpret container semantics.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-and-data-binding">Model and Data Binding</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#configuration-hook-configure">Configuration Hook: <code class="docutils literal notranslate"><span class="pre">_configure</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#compatibility-validation-validate-model-and-data">Compatibility Validation: <code class="docutils literal notranslate"><span class="pre">_validate_model_and_data</span></code></a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-time-data-preprocessing-process-input-data">One-Time Data Preprocessing: <code class="docutils literal notranslate"><span class="pre">_process_input_data</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood-evaluation">Likelihood Evaluation</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#likelihood-stencils">Likelihood Stencils</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-a-stencil-does">What a Stencil Does</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stencils-as-reusable-structure">Stencils as Reusable Structure</a></li>
-</ul>
-</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#concrete-likelihood-classes">Concrete Likelihood Classes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 </ul>
   </nav></div>
 

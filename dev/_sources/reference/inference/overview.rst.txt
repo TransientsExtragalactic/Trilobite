@@ -87,17 +87,17 @@ This is the standard workflow for performing inference in Triceratops. The follo
 on each of these components, along with examples of how to use them in practice.
 
 ----
-
 .. _likelihoods:
+
 Likelihoods
-------------
+-----------
 
 *Module:* :mod:`inference.likelihood`
 
 The likelihood is where the statistical assumptions of the inference problem are encoded. It defines how well
 the model predictions match the observed data for a given set of parameters. In Triceratops,
 likelihoods are implemented as structured objects that bind together a model,
-a dataset, and a noise/statistical assumption.
+a validated numerical dataset, and a noise/statistical assumption.
 
 The Likelihood Class
 ^^^^^^^^^^^^^^^^^^^^
@@ -105,8 +105,7 @@ The Likelihood Class
 .. hint::
 
         For more information about likelihood development, implementation details,
-        and advanced features, see :ref:`likelihood_dev`.
-
+        and architectural principles, see :ref:`likelihood_dev`.
 
 In Triceratops, **likelihood functions** quantify how well a physical model reproduces a
 dataset under a particular statistical noise model. Conceptually, a likelihood defines
@@ -122,7 +121,7 @@ Rather than treating likelihoods as opaque black boxes, Triceratops implements t
 **structured objects** that explicitly bind together:
 
 - a **model** (from :mod:`models`),
-- a **data container** (from :mod:`data`),
+- an :class:`~triceratops.data.core.InferenceData` object (from :mod:`data`),
 - and a **noise/statistical assumption** (implemented by the likelihood subclass).
 
 All likelihoods inherit from :class:`~inference.likelihood.base.Likelihood`.
@@ -132,98 +131,124 @@ All likelihoods inherit from :class:`~inference.likelihood.base.Likelihood`.
 Creating a Likelihood Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-A likelihood object is constructed by combining a model instance with a data container.
-In most workflows, you will do this once, and then reuse the likelihood many times during
-sampling.
+A likelihood object is constructed by combining a model instance with an
+:class:`InferenceData` object. In most workflows, you will construct the likelihood once
+and reuse it repeatedly during sampling.
 
 A typical initialization pattern looks like:
 
 .. code-block:: python
 
     from triceratops.models import MyModel
-    from triceratops.data import RadioLightCurveContainer
-    from triceratops.inference.likelihood import MyLikelihood
+    from triceratops.data import InferenceData
+    from triceratops.inference.likelihood import GaussianLikelihood
 
     model = MyModel(...)
-    data = RadioLightCurveContainer.from_file(
-        "my_lightcurve.ecsv",
-        frequency=6.0,   # GHz if unitless
-        band="VLA C-band"
+
+    inference_data = InferenceData.from_table(
+        model,
+        table,
+        variables={"time": "time"},
+        observables={"flux": ("flux", "flux_err", None, None)},
     )
 
-    like = MyLikelihood(model=model, data=data)
+    like = GaussianLikelihood(model=model, data=inference_data)
 
-During initialization, likelihoods typically do three things:
+During initialization, likelihoods perform three core operations:
 
 1. **Compatibility validation**
-   Likelihoods enforce that the provided model/data pairing is meaningful (e.g., a time-domain
-   likelihood should not accept a heterogeneous-frequency dataset). This failure mode is
-   intentionally *eager*: it is better to raise during construction than after thousands of
-   sampler calls.
 
-2. **Dataset retention (for provenance)**
-   The original :class:`astropy.table.Table` and/or container object is retained internally so
-   that the likelihood can be inspected, serialized, or re-plotted later.
+   The likelihood verifies that the model and dataset are structurally compatible.
+   For example, a Gaussian likelihood requires uncertainties to be present.
+   Validation failures are intentionally eager — it is better to fail at construction
+   time than after thousands of sampler calls.
 
-3. **Preprocessing for performance**
-   Repeated operations like unit conversion, sorting, masking detections vs. upper limits, and
-   building dense numerical arrays are performed once via :meth:`Likelihood._process_input_data`.
-   This prepares cached arrays that the optimized backend can consume with minimal overhead.
+2. **Numerical array extraction**
+
+   The :class:`InferenceData` object already stores validated, stacked numerical arrays.
+   The likelihood extracts and caches those arrays once during
+   :meth:`Likelihood._configure`.
+
+3. **Preparation for fast evaluation**
+
+   Any masks (e.g., for censored data), stacked observable arrays, or frequently
+   accessed structures are prepared once during initialization.
+   The goal is that likelihood evaluation inside a sampling loop performs no
+   structural work beyond model evaluation and lightweight stacking.
 
 The Likelihood Function
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Likelihood evaluation is split into two layers: a public wrapper and an optimized backend.
+Likelihood evaluation is split into two layers: a public wrapper and a
+performance-oriented backend.
 
 .. tab-set::
 
     .. tab-item:: High-Level API
 
         The high-level interface is :meth:`Likelihood.log_likelihood`. This method is designed
-        to be called by user code. It accepts model parameters as kwargs, performs coercion of unit-bearing
-        quantities, and validates that inputs are well-formed.
+        to be called by user code. It accepts model parameters in any format supported by the model,
+        performs coercion into the model’s internal representation, and then evaluates the likelihood.
 
         .. code-block:: python
 
-            # Example parameterization (exact signature depends on your model / likelihood)
             lnL = like.log_likelihood(
-                theta_E=0.12,
-                epsilon_B=1e-2,
-                n0=0.5,
+                {
+                    "theta_E": 0.12,
+                    "epsilon_B": 1e-2,
+                    "n0": 0.5,
+                }
             )
 
-        This is generally the nice way to call the likelihood if you don't need to do so many many times. If
-        you are making a call to the likelihood inside of a tight loop (e.g., inside a sampler), you may want to
-        consider using the low-level API instead.
+        This is the recommended interface for interactive use or exploratory work.
+        If you are evaluating the likelihood inside a tight sampling loop,
+        you may prefer the low-level API to avoid repeated parameter coercion.
 
     .. tab-item:: Low-Level API
 
-        The low-level backend is :meth:`Likelihood._log_likelihood`. This method should be written
-        for performance: it assumes all inputs are already validated and coerced into the expected
-        internal representation (e.g., floats/NumPy arrays in a consistent unit system).
+        The low-level backend is :meth:`Likelihood._log_likelihood`. This method is written
+        for performance. It assumes that:
 
-        This method is where you should implement the actual statistical model (Gaussian errors,
-        censored likelihood for upper limits, correlated noise, etc.).
+        - parameters are already coerced into the model’s raw internal format,
+        - data arrays have already been extracted and cached during initialization.
+
+        A typical implementation looks like:
 
         .. code-block:: python
 
-            # Inside a Likelihood subclass:
-            def _log_likelihood(self, **pars) -> float:
-                # assumes pars already validated and in internal form
-                mu = self._model_prediction(**pars)
-                resid = (self._y - mu) / self._sigma
-                return -0.5 * (resid**2).sum()
+            def _log_likelihood(self, parameters):
+
+                model_tuple = self._model._forward_model_tupled(
+                    self._x,
+                    parameters,
+                )
+
+                model_y = np.stack(model_tuple, axis=-1)
+
+                return gaussian_loglikelihood(
+                    data_y=self._data_y,
+                    model_y=model_y,
+                    y_err=self._y_err,
+                )
+
+        The pattern is always the same:
+
+        1. Evaluate the forward model.
+        2. Stack outputs to match the observable array shape.
+        3. Delegate to a numerical backend.
+        4. Return a scalar log-likelihood.
+
+        No unit conversion, table parsing, or structural validation occurs here.
 
 While it is not common to need to implement a custom likelihood, we recognize that some users
-may wish / need to do so. For that purpose, see the separate documentation on building likelihood
-functions: :ref:`likelihood_development`.
+may wish to do so. For that purpose, see the developer guide:
+:ref:`likelihood_dev`.
 
 Existing Likelihoods
 ^^^^^^^^^^^^^^^^^^^^
 
-In most cases, a likelihood function has already been implemented for your use case / data type. Below are
-the various likelihoods that are currently available in Triceratops. For more details on each likelihood,
-see the corresponding documentation pages.
+In most cases, a likelihood function has already been implemented for your use case.
+Below are the likelihood classes currently available in Triceratops.
 
 .. currentmodule:: triceratops.inference.likelihood
 
@@ -231,7 +256,8 @@ see the corresponding documentation pages.
     :toctree:
 
     base.Likelihood
-    base.GaussianLikelihoodXY
+    base.GaussianLikelihood
+    base.GaussianCensoredLikelihood
 
 ----
 
@@ -348,7 +374,7 @@ A minimal example looks like:
 .. code-block:: python
 
     from triceratops.inference.problem import InferenceProblem
-    from triceratops.inference.likelihood import GaussianLikelihoodXY
+    from triceratops.inference.likelihood import GaussianLikelihood
     from triceratops.models import MyModel
     from triceratops.data import RadioLightCurveContainer
 
@@ -360,7 +386,7 @@ A minimal example looks like:
     )
 
     # Build likelihood
-    likelihood = GaussianLikelihoodXY(
+    likelihood = GaussianLikelihood(
         model=model,
         data=data,
     )

@@ -432,16 +432,28 @@
 <span class="sd">and provides unit-aware accessors for time-, frequency-, and flux-related quantities.</span>
 <span class="sd">&quot;&quot;&quot;</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.time</span><span class="w"> </span><span class="kn">import</span> <span class="n">Time</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">triceratops_logger</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataContainer</span><span class="p">,</span> <span class="n">XYDataContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">DataContainer</span><span class="p">,</span> <span class="n">InferenceData</span><span class="p">,</span> <span class="n">XYDataContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">infer_err_from_non_detection</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;RadioPhotometryContainer&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;RadioPhotometryEpochContainer&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 
 <div class="viewcode-block" id="RadioPhotometryContainer">
@@ -516,6 +528,15 @@
 <span class="sd">    - This class intentionally does **not** subclass :class:`astropy.table.Table`</span>
 <span class="sd">      in order to control mutability and enforce invariants.</span>
 
+<span class="sd">    **Time Conventions**:</span>
+
+<span class="sd">    In :class:`RadioPhotometryContainer`, the ``time`` is **always** a *relative time* in days since some</span>
+<span class="sd">    specified zero point time. When reading from a table, using :meth:`from_table` or :meth:`from_file`,</span>
+<span class="sd">    the user can specify a `time_starts` parameter, which is subtracted from the input time column</span>
+<span class="sd">    to convert absolute times (e.g. JD) to relative times. This ensures that all internal handling</span>
+<span class="sd">    of time is consistent and relative, which is important for modeling and inference. If the input table</span>
+<span class="sd">    already contains relative times, the user can simply omit the `time_starts` parameter.</span>
+
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
 <span class="sd">    astropy.table.Table</span>
@@ -560,7 +581,7 @@
             <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span>
             <span class="s2">&quot;dtype&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
             <span class="s2">&quot;unit&quot;</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">,</span>
-            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The canonical time of the observation. This is what is used in analysis.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;The *relative* time of each data point.&quot;</span><span class="p">,</span>
             <span class="s2">&quot;required&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
         <span class="p">},</span>
         <span class="p">{</span>
@@ -662,7 +683,7 @@
                         <span class="sa">f</span><span class="s2">&quot;which is not compatible with expected unit &#39;</span><span class="si">{</span><span class="n">expected_unit</span><span class="si">}</span><span class="s2">&#39;.&quot;</span>
                     <span class="p">)</span>
                 <span class="k">else</span><span class="p">:</span>
-                    <span class="n">col</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">)</span>
+                    <span class="n">table</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">col</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">expected_unit</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">table</span>
 
@@ -927,65 +948,421 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span> <span class="o">=</span> <span class="n">epoch_ids</span></div>
 
 
+    <span class="c1"># ========================= Inference Data Conversion ========================= #</span>
+<div class="viewcode-block" id="RadioPhotometryContainer.to_inference_data">
+<a class="viewcode-back" href="../../_as_gen/data.photometry.RadioPhotometryContainer.to_inference_data.html#data.photometry.RadioPhotometryContainer.to_inference_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_inference_data</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">model</span><span class="p">:</span> <span class="s2">&quot;Model&quot;</span><span class="p">,</span>
+        <span class="n">variables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">observables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">infer_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+        <span class="n">detection_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Convert this :class:`RadioPhotometryContainer` into an :class:`~triceratops.data.core.InferenceData` object.</span>
+
+<span class="sd">        This method provides a convenient bridge between validated radio</span>
+<span class="sd">        photometry data and the inference pipeline. It maps table columns</span>
+<span class="sd">        onto the independent variables and observables expected by the</span>
+<span class="sd">        supplied model and constructs a fully validated</span>
+<span class="sd">        :class:`InferenceData` instance.</span>
+
+<span class="sd">        Default behavior</span>
+<span class="sd">        ----------------</span>
+<span class="sd">        If ``variables`` and/or ``observables`` are not provided, sensible</span>
+<span class="sd">        defaults are inferred from the model&#39;s declared interface:</span>
+
+<span class="sd">        - Independent variables are inferred from</span>
+<span class="sd">          :attr:`model.variable_names`.</span>
+
+<span class="sd">          - ``&quot;time&quot;`` → maps to the ``&quot;time&quot;`` column.</span>
+<span class="sd">          - ``&quot;freq&quot;`` or ``&quot;frequency&quot;`` → maps to the ``&quot;freq&quot;`` column.</span>
+
+<span class="sd">          If the model declares any variable name that cannot be</span>
+<span class="sd">          automatically mapped, a :class:`ValueError` is raised and the user</span>
+<span class="sd">          must provide an explicit mapping.</span>
+
+<span class="sd">        - Observables are inferred only if the model declares exactly one</span>
+<span class="sd">          observable in :attr:`model.observable_names`.</span>
+
+<span class="sd">          In this case, that observable is mapped to the full radio</span>
+<span class="sd">          photometry tuple:</span>
+
+<span class="sd">          ``(&quot;flux_density&quot;, &quot;flux_density_error&quot;, &quot;flux_upper_limit&quot;, None)``</span>
+
+<span class="sd">          This ensures compatibility with both standard Gaussian and</span>
+<span class="sd">          censored likelihoods.</span>
+
+<span class="sd">        If the model declares multiple observables, the mapping must be</span>
+<span class="sd">        provided explicitly via the ``observables`` argument.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model : Model</span>
+<span class="sd">            The model instance for which inference will be performed.</span>
+<span class="sd">            Its declared ``variable_names`` and ``observable_names`` are</span>
+<span class="sd">            used to determine default mappings.</span>
+
+<span class="sd">        variables : dict of str to tuple of str, optional</span>
+<span class="sd">            Mapping from model variable names to table column names.</span>
+
+<span class="sd">            Each key must correspond to a name in</span>
+<span class="sd">            ``model.variable_names``. Each value is a tuple of column names</span>
+<span class="sd">            in this photometry table used to construct that variable.</span>
+
+<span class="sd">            If not provided, defaults are inferred as described above.</span>
+
+<span class="sd">        observables : dict of str to tuple of str, optional</span>
+<span class="sd">            Mapping from model observable names to photometry table columns.</span>
+
+<span class="sd">            Each tuple should follow the convention expected by</span>
+<span class="sd">            :meth:`InferenceData.from_table`, typically:</span>
+
+<span class="sd">            ``(value_column, error_column, upper_column, lower_column)``</span>
+
+<span class="sd">            If not provided and the model declares exactly one observable,</span>
+<span class="sd">            a default mapping to the flux density columns is inferred.</span>
+<span class="sd">        infer_errors : bool, optional</span>
+<span class="sd">            If ``True``, missing uncertainties for non-detections will be inferred</span>
+<span class="sd">            from their reported upper limits under the assumption that the upper</span>
+<span class="sd">            limit corresponds to an :math:`N\sigma` detection threshold.</span>
+
+<span class="sd">            Specifically, for an upper limit :math:`F_{\rm upper}` and detection</span>
+<span class="sd">            threshold :math:`N`, the inferred uncertainty is</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \sigma = \frac{F_{\rm upper}}{N}.</span>
+
+<span class="sd">            This allows censored Gaussian likelihoods to be evaluated even when</span>
+<span class="sd">            the original dataset does not explicitly report 1σ uncertainties for</span>
+<span class="sd">            non-detections.</span>
+
+<span class="sd">            This inference is applied **only** where uncertainties are missing.</span>
+<span class="sd">            Any explicitly provided ``flux_density_error`` values are preserved</span>
+<span class="sd">            and never overwritten.</span>
+
+<span class="sd">            If ``False`` (default), the likelihood will raise an error if</span>
+<span class="sd">            non-detections lack associated uncertainties.</span>
+
+<span class="sd">        detection_threshold : float, optional</span>
+<span class="sd">            The number of standard deviations corresponding to the reported</span>
+<span class="sd">            upper limits when ``infer_errors=True``.</span>
+
+<span class="sd">            For example, if upper limits are quoted at the 3σ level, set</span>
+
+<span class="sd">            .. code-block:: python</span>
+
+<span class="sd">                detection_threshold = 3.0</span>
+
+<span class="sd">            The inferred uncertainty is then</span>
+
+<span class="sd">            .. math::</span>
+
+<span class="sd">                \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.</span>
+
+<span class="sd">            This parameter has no effect unless ``infer_errors=True``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        InferenceData</span>
+<span class="sd">            A validated, immutable inference data object ready to be</span>
+<span class="sd">            consumed by a likelihood.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If automatic mapping fails because the model declares unknown</span>
+<span class="sd">            variables or multiple observables without explicit mapping.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This method does not perform any statistical validation. It</span>
+<span class="sd">        strictly handles structural mapping between this container and the</span>
+<span class="sd">        inference interface.</span>
+
+<span class="sd">        Advanced workflows may bypass this method and construct</span>
+<span class="sd">        :class:`InferenceData` objects manually via</span>
+<span class="sd">        :meth:`InferenceData.from_table` for full control.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        InferenceData.from_table</span>
+<span class="sd">            Lower-level constructor used internally.</span>
+<span class="sd">        triceratops.inference.likelihood</span>
+<span class="sd">            Likelihood classes that consume :class:`InferenceData`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="c1"># Default variable mapping</span>
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">variables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">variables</span> <span class="o">=</span> <span class="p">{}</span>
+
+            <span class="k">for</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">variable_names</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">var_name</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+                    <span class="n">variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;time&quot;</span>
+                <span class="k">elif</span> <span class="n">var_name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">&quot;freq&quot;</span><span class="p">,</span> <span class="s2">&quot;frequency&quot;</span><span class="p">}:</span>
+                    <span class="n">variables</span><span class="p">[</span><span class="n">var_name</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;freq&quot;</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                        <span class="sa">f</span><span class="s2">&quot;Cannot infer mapping for model variable &#39;</span><span class="si">{</span><span class="n">var_name</span><span class="si">}</span><span class="s2">&#39;. Please specify `variables=` explicitly.&quot;</span>
+                    <span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="c1"># Default observable mapping</span>
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">observables</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                    <span class="s2">&quot;RadioPhotometryContainer can only infer defaults for &quot;</span>
+                    <span class="s2">&quot;single-observable models. Please specify `observables=`.&quot;</span>
+                <span class="p">)</span>
+
+            <span class="n">observables</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">output_names</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span> <span class="p">(</span>
+                    <span class="s2">&quot;flux_density&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;flux_density_error&quot;</span><span class="p">,</span>
+                    <span class="s2">&quot;flux_upper_limit&quot;</span><span class="p">,</span>
+                    <span class="kc">None</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="p">}</span>
+
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="c1"># Infer errors for non-detections if requested and if any are missing</span>
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="n">table</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">infer_errors</span><span class="p">:</span>
+            <span class="n">nan_errors_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">flux_density_error</span><span class="p">)</span>
+            <span class="n">upper_limits_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">non_detection_mask</span>
+
+            <span class="n">_mask</span> <span class="o">=</span> <span class="n">upper_limits_mask</span> <span class="o">&amp;</span> <span class="n">nan_errors_mask</span>
+
+            <span class="n">_masked_upper_limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_upper_limit</span><span class="p">[</span><span class="n">_mask</span><span class="p">]</span>
+            <span class="n">inferred_error</span> <span class="o">=</span> <span class="n">infer_err_from_non_detection</span><span class="p">(</span>
+                <span class="n">flux_limit</span><span class="o">=</span><span class="n">_masked_upper_limits</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+                <span class="n">sigma</span><span class="o">=</span><span class="n">detection_threshold</span><span class="p">,</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Update the table with the inferred errors for non-detections where errors are missing</span>
+            <span class="n">table</span><span class="p">[</span><span class="s2">&quot;flux_density_error&quot;</span><span class="p">][</span><span class="n">_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">inferred_error</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">flux_upper_limit</span><span class="o">.</span><span class="n">unit</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;flux_density_error&quot;</span><span class="p">])):</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Flux density error contains NaN values!&quot;</span>
+                <span class="s2">&quot; This will likely cause errors in likelihood evaluation.</span><span class="se">\n</span><span class="s2">&quot;</span>
+                <span class="s2">&quot; Use the `infer_errors` option to automatically infer errors&quot;</span>
+                <span class="s2">&quot; for non-detections based on their upper limits.&quot;</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="c1"># Construct inference data</span>
+        <span class="c1"># ------------------------------------------------------------</span>
+        <span class="k">return</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+            <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+            <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
+            <span class="n">variables</span><span class="o">=</span><span class="n">variables</span><span class="p">,</span>
+            <span class="n">observables</span><span class="o">=</span><span class="n">observables</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
     <span class="c1"># ========================= IO Methods ========================= #</span>
 <div class="viewcode-block" id="RadioPhotometryContainer.from_table">
 <a class="viewcode-back" href="../../_as_gen/data.photometry.RadioPhotometryContainer.from_table.html#data.photometry.RadioPhotometryContainer.from_table">[docs]</a>
     <span class="nd">@classmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">time_starts</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span>
+        <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_starts</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="n">Time</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">internal_time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;relative&quot;</span><span class="p">,</span>
+        <span class="n">internal_time_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utc&quot;</span><span class="p">,</span>
+    <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Create a :class:`RadioPhotometryContainer` from an Astropy Table.</span>
+<span class="sd">        Construct a :class:`RadioPhotometryContainer` from an Astropy table.</span>
 
-<span class="sd">        This method allows for optional column renaming via the `column_map` parameter,</span>
-<span class="sd">        enabling flexibility in input table schemas.</span>
+<span class="sd">        This constructor provides flexible handling of time columns, allowing</span>
+<span class="sd">        both relative and absolute time representations. Internally, all times</span>
+<span class="sd">        are converted to **relative days**.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        table : astropy.table.Table</span>
-<span class="sd">            The input table containing radio photometry data.</span>
+<span class="sd">            Input table containing radio photometry data. Must contain a ``time``</span>
+<span class="sd">            column after optional renaming.</span>
+
 <span class="sd">        column_map : dict, optional</span>
-<span class="sd">            A mapping from existing column names (key) to expected column names (value).</span>
-<span class="sd">            If provided, the table&#39;s columns will be renamed accordingly before validation. If</span>
-<span class="sd">            a column is not present in the mapping, it will retain its original name.</span>
-<span class="sd">        time_starts : astropy.time.Time, optional</span>
-<span class="sd">            If provided, this time will be subtracted from the &#39;time&#39; column to convert</span>
-<span class="sd">            absolute times to relative times.</span>
+<span class="sd">            Mapping from existing column names → expected column names.</span>
+<span class="sd">            Useful when loading heterogeneous datasets.</span>
+
+<span class="sd">        time_starts : float, astropy.units.Quantity, or astropy.time.Time, optional</span>
+<span class="sd">            Reference start time used to convert absolute times into relative time.</span>
+
+<span class="sd">            Interpretation depends on ``internal_time_format``:</span>
+
+<span class="sd">            - If ``internal_time_format=&quot;relative&quot;``, then ``time_starts`` must be</span>
+<span class="sd">              a float (assumed days) or Quantity.</span>
+<span class="sd">            - Otherwise, ``time_starts`` must be an ``astropy.time.Time`` object.</span>
+
+<span class="sd">        internal_time_format : str, default=&quot;relative&quot;</span>
+<span class="sd">            Format used to interpret the input time column.</span>
+
+<span class="sd">            Options:</span>
+
+<span class="sd">            - ``&quot;relative&quot;`` → time column already represents elapsed time.</span>
+<span class="sd">            - Any valid Astropy time format (e.g., ``&quot;mjd&quot;``, ``&quot;jd&quot;``,</span>
+<span class="sd">              ``&quot;iso&quot;``, ``&quot;unix&quot;``).</span>
+
+<span class="sd">        internal_time_scale : str, default=&quot;utc&quot;</span>
+<span class="sd">            Astropy time scale to use when interpreting absolute times.</span>
+<span class="sd">            Only used if ``internal_time_format != &quot;relative&quot;``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        RadioPhotometryContainer</span>
-<span class="sd">            The constructed RadioPhotometryContainer instance.</span>
+<span class="sd">            Validated container with internal times stored as relative days.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - Internally, all times are stored as relative days (``astropy.units.Quantity``).</span>
+<span class="sd">        - Absolute time formats are converted via ``astropy.time.Time``.</span>
+<span class="sd">        - If the input time column has no units, days are assumed (with a warning).</span>
+<span class="sd">        - If the time column is already an ``astropy.time.Time`` object,</span>
+<span class="sd">          its format and scale are preserved.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        Case 1 — Already relative times (days since explosion)</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            container = RadioPhotometryContainer.from_table(</span>
+<span class="sd">                table,</span>
+<span class="sd">                internal_time_format=&quot;relative&quot;,</span>
+<span class="sd">            )</span>
+
+
+<span class="sd">        Case 2 — Absolute times in MJD</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from astropy.time import Time</span>
+
+<span class="sd">            t0 = Time(58285.0, format=&quot;mjd&quot;)</span>
+
+<span class="sd">            container = RadioPhotometryContainer.from_table(</span>
+<span class="sd">                table,</span>
+<span class="sd">                internal_time_format=&quot;mjd&quot;,</span>
+<span class="sd">                time_starts=t0,</span>
+<span class="sd">            )</span>
+
+
+<span class="sd">        Case 3 — Absolute times in JD</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from astropy.time import Time</span>
+
+<span class="sd">            t0 = Time(2458285.5, format=&quot;jd&quot;)</span>
+
+<span class="sd">            container = RadioPhotometryContainer.from_table(</span>
+<span class="sd">                table,</span>
+<span class="sd">                internal_time_format=&quot;jd&quot;,</span>
+<span class="sd">                time_starts=t0,</span>
+<span class="sd">            )</span>
+
+
+<span class="sd">        Case 4 — Relative times with offset</span>
+
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from astropy import units as u</span>
+
+<span class="sd">            container = RadioPhotometryContainer.from_table(</span>
+<span class="sd">                table,</span>
+<span class="sd">                internal_time_format=&quot;relative&quot;,</span>
+<span class="sd">                time_starts=5.0 * u.day,</span>
+<span class="sd">            )</span>
 <span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Column Renaming</span>
+        <span class="c1"># --------------------------------------------------</span>
         <span class="k">if</span> <span class="n">column_map</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Rename columns according to the provided mapping</span>
             <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
             <span class="n">table</span><span class="o">.</span><span class="n">rename_columns</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">keys</span><span class="p">()),</span> <span class="nb">list</span><span class="p">(</span><span class="n">column_map</span><span class="o">.</span><span class="n">values</span><span class="p">()))</span>
 
-        <span class="c1"># Handle the provided time_starts adjustment.</span>
-        <span class="k">if</span> <span class="n">time_starts</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-            <span class="c1"># Ensure that we have a time column.</span>
-            <span class="k">if</span> <span class="s2">&quot;time&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
-                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column &#39;time&#39; not found in the table for time adjustment.&quot;</span><span class="p">)</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># Time Handling</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">time_starts</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
 
-            <span class="c1"># Ensure that the time column has a valid dtype or attempt to coerce it.</span>
-            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
-                        <span class="sa">f</span><span class="s2">&quot;Column &#39;time&#39; has dtype &#39;</span><span class="si">{</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&#39;, &quot;</span>
-                        <span class="sa">f</span><span class="s2">&quot;expected a numerical dtype. Failed to cast: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
-                    <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+        <span class="k">if</span> <span class="s2">&quot;time&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">table</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Column &#39;time&#39; not found in table.&quot;</span><span class="p">)</span>
 
-            <span class="c1"># Ensure that the time column has a unit. If it doesn&#39;t have one, we assume days.</span>
-            <span class="n">time_col</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
-            <span class="k">if</span> <span class="n">time_col</span><span class="o">.</span><span class="n">unit</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="n">triceratops_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Column &#39;time&#39; has no unit. Assuming unit of days for time adjustment.&quot;</span><span class="p">)</span>
+        <span class="c1"># Ensure that the time column has a valid dtype or attempt to coerce it.</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">number</span><span class="p">):</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                    <span class="sa">f</span><span class="s2">&quot;Column &#39;time&#39; has dtype &#39;</span><span class="si">{</span><span class="n">table</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span><span class="si">}</span><span class="s2">&#39;, expected a numerical dtype. Failed to cast: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span>
+                <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
+
+        <span class="n">time_col</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+
+        <span class="c1"># If time column is already a Time object</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+            <span class="n">t_obs</span> <span class="o">=</span> <span class="n">time_col</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Ensure unit exists</span>
+            <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">time_col</span><span class="p">,</span> <span class="s2">&quot;unit&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">triceratops_logger</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="s2">&quot;Column &#39;time&#39; has no unit. Assuming days.&quot;</span><span class="p">)</span>
                 <span class="n">time_col</span><span class="o">.</span><span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
 
-            <span class="c1"># Now proceed to make the adjustment.</span>
-            <span class="n">time_quantity</span> <span class="o">=</span> <span class="n">time_col</span><span class="o">.</span><span class="n">quantity</span>
-            <span class="n">adjusted_time</span> <span class="o">=</span> <span class="n">time_quantity</span> <span class="o">-</span> <span class="n">time_starts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">time_quantity</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span>
-            <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adjusted_time</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">time_quantity</span><span class="o">.</span><span class="n">unit</span>
+            <span class="c1"># ----------------------------------------------</span>
+            <span class="c1"># CASE 1: Relative time</span>
+            <span class="c1"># ----------------------------------------------</span>
+            <span class="k">if</span> <span class="n">internal_time_format</span> <span class="o">==</span> <span class="s2">&quot;relative&quot;</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_starts</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;time_starts must be float or Quantity when internal_time_format=&#39;relative&#39;.&quot;</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_starts</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+                    <span class="n">t0</span> <span class="o">=</span> <span class="n">time_starts</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_starts</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+                    <span class="n">t0</span> <span class="o">=</span> <span class="n">time_starts</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;time_starts must be float or Quantity when internal_time_format=&#39;relative&#39;.&quot;</span><span class="p">)</span>
+
+                <span class="n">t_days</span> <span class="o">=</span> <span class="n">time_col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+
+                <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_days</span> <span class="o">-</span> <span class="n">t0</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+                <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+
+            <span class="c1"># ----------------------------------------------</span>
+            <span class="c1"># CASE 2: Absolute time</span>
+            <span class="c1"># ----------------------------------------------</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">time_starts</span><span class="p">,</span> <span class="n">Time</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;time_starts must be astropy.time.Time when using absolute time formats.&quot;</span><span class="p">)</span>
+
+            <span class="n">time_values</span> <span class="o">=</span> <span class="n">time_col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">t_obs</span> <span class="o">=</span> <span class="n">Time</span><span class="p">(</span>
+                    <span class="n">time_values</span><span class="p">,</span>
+                    <span class="nb">format</span><span class="o">=</span><span class="n">internal_time_format</span><span class="p">,</span>
+                    <span class="n">scale</span><span class="o">=</span><span class="n">internal_time_scale</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid internal_time_format &#39;</span><span class="si">{</span><span class="n">internal_time_format</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="c1"># ----------------------------------------------</span>
+        <span class="c1"># Convert absolute → relative days</span>
+        <span class="c1"># ----------------------------------------------</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="p">(</span><span class="n">t_obs</span> <span class="o">-</span> <span class="n">time_starts</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+        <span class="n">table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">delta</span>
 
         <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">table</span><span class="p">)</span></div>
 
@@ -994,7 +1371,13 @@
 <a class="viewcode-back" href="../../_as_gen/data.photometry.RadioPhotometryContainer.from_file.html#data.photometry.RadioPhotometryContainer.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span>
-        <span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">time_starts</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
+        <span class="n">column_map</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time_starts</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">internal_time_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;relative&quot;</span><span class="p">,</span>
+        <span class="n">internal_time_scale</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;utc&quot;</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Create a :class:`RadioPhotometryContainer` from a FITS file.</span>
@@ -1014,6 +1397,18 @@
 <span class="sd">        time_starts : astropy.units.Quantity, optional</span>
 <span class="sd">            If provided, this time will be subtracted from the &#39;time&#39; column to convert</span>
 <span class="sd">            absolute times to relative times.</span>
+<span class="sd">        internal_time_format : str, default=&quot;relative&quot;</span>
+<span class="sd">            Format used to interpret the input time column.</span>
+
+<span class="sd">            Options:</span>
+
+<span class="sd">            - ``&quot;relative&quot;`` → time column already represents elapsed time.</span>
+<span class="sd">            - Any valid Astropy time format (e.g., ``&quot;mjd&quot;``, ``&quot;jd&quot;``,</span>
+<span class="sd">              ``&quot;iso&quot;``, ``&quot;unix&quot;``).</span>
+
+<span class="sd">        internal_time_scale : str, default=&quot;utc&quot;</span>
+<span class="sd">            Astropy time scale to use when interpreting absolute times.</span>
+<span class="sd">            Only used if ``internal_time_format != &quot;relative&quot;``.</span>
 <span class="sd">        **kwargs:</span>
 <span class="sd">            Additional keyword arguments to pass to `astropy.table.Table.read`.</span>
 
@@ -1221,7 +1616,6 @@
 <span class="sd">            Matplotlib style kwargs for upper limits.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
         <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">resolve_fig_axes</span><span class="p">,</span> <span class="n">set_plot_style</span>
 

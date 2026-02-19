@@ -450,6 +450,7 @@
     <span class="n">_ModelVariablesInputRaw</span><span class="p">,</span>
 <span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.serial</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelSpec</span>
 
 <span class="c1"># --- TYPE ALIASES --- #</span>
 <span class="c1"># These are type aliases to allow for cleaner type hints throughout the codebase. They are</span>
@@ -623,9 +624,18 @@
         <span class="c1"># Rebuild namedtuple with validated units</span>
         <span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">UNITS</span><span class="p">)(</span><span class="o">*</span><span class="n">unit_values</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the model with given parameters and variables.&quot;&quot;&quot;</span>
-        <span class="k">pass</span>
+
+    <span class="k">pass</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_register_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Register the kwargs for serialization.</span>
+
+<span class="sd">        This must be done in all models that have external kwargs.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model_init_kwargs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># =============================================== #</span>
     <span class="c1"># Model Evaluation                                #</span>
@@ -1040,6 +1050,110 @@
         <span class="k">yield from</span> <span class="bp">self</span><span class="o">.</span><span class="n">VARIABLES</span>
 
     <span class="c1"># =============================================== #</span>
+    <span class="c1"># Serialization and Reproducibility               #</span>
+    <span class="c1"># =============================================== #</span>
+    <span class="c1"># In order to ensure that states are reproducible, each model</span>
+    <span class="c1"># needs to provide information on how it can be serialized and</span>
+    <span class="c1"># deserialized from a specification object. In general, this is</span>
+    <span class="c1"># simple and does not need overwrite; however, if a custom object</span>
+    <span class="c1"># in taken as a parameter, then it will itself need to be serialized</span>
+    <span class="c1"># and deserialized, and the model will need to overwrite the default</span>
+    <span class="c1"># serialization and deserialization methods to handle this custom object.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_model_spec</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ModelSpec</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Serialize this model to a ModelSpec.</span>
+
+<span class="sd">        Requirements</span>
+<span class="sd">        ------------</span>
+<span class="sd">        - The model must have called `_register_init(...)` in its constructor.</span>
+<span class="sd">        - All registered kwargs must be JSON-serializable.</span>
+<span class="sd">        - The model class must be importable via module path.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If constructor arguments were not registered.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If constructor arguments are not JSON-serializable.</span>
+<span class="sd">        ImportError</span>
+<span class="sd">            If the model class is not importable.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">importlib</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># 1. Ensure constructor registration exists</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_model_init_kwargs&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> did not register constructor &quot;</span>
+                <span class="s2">&quot;arguments. Models must call `_register_init(...)` &quot;</span>
+                <span class="s2">&quot;inside __init__.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;_model_init_kwargs&quot;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">SyntaxError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> did not register constructor &quot;</span>
+                <span class="s2">&quot;arguments. Models must call `_register_init(...)` &quot;</span>
+                <span class="s2">&quot;inside __init__.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model_init_kwargs</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># 2. Ensure JSON serializable</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">TypeError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Model &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&#39; contains &quot;</span>
+                <span class="s2">&quot;non-serializable constructor arguments. &quot;</span>
+                <span class="s2">&quot;Override to_model_spec() to handle custom objects.&quot;</span>
+            <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># 3. Ensure class is importable</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">module_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span>
+        <span class="n">class_name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module</span> <span class="o">=</span> <span class="n">importlib</span><span class="o">.</span><span class="n">import_module</span><span class="p">(</span><span class="n">module_name</span><span class="p">)</span>
+            <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">class_name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Model class &#39;</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&#39; is not importable from module &#39;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">&#39;.&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="c1"># 4. Construct spec</span>
+        <span class="c1"># --------------------------------------------------</span>
+        <span class="n">target</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">module_name</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="n">class_name</span><span class="si">}</span><span class="s2">&quot;</span>
+
+        <span class="k">return</span> <span class="n">ModelSpec</span><span class="p">(</span>
+            <span class="n">target</span><span class="o">=</span><span class="n">target</span><span class="p">,</span>
+            <span class="n">kwargs</span><span class="o">=</span><span class="n">kwargs</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_model_spec</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">spec</span><span class="p">:</span> <span class="n">ModelSpec</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a model from a ModelSpec.</span>
+
+<span class="sd">        Ensures:</span>
+<span class="sd">        - Spec is valid</span>
+<span class="sd">        - Target is importable</span>
+<span class="sd">        - Returned object is instance of Model</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">ModelSpec</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Expected ModelSpec.&quot;</span><span class="p">)</span>
+
+        <span class="n">model</span> <span class="o">=</span> <span class="n">spec</span><span class="o">.</span><span class="n">build</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="bp">cls</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;Constructed object is not a Model instance.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">model</span>
+
+    <span class="c1"># =============================================== #</span>
     <span class="c1"># Help Methods                                    #</span>
     <span class="c1"># =============================================== #</span>
     <span class="nd">@property</span>
@@ -1056,6 +1170,11 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">output_names</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;str: The names of the model&#39;s outputs.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="o">.</span><span class="n">_fields</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">output_units</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Optional</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">],</span> <span class="o">...</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Unit or None: The units of the model&#39;s outputs.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">UNITS</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="o">.</span><span class="n">_fields</span><span class="p">)</span>
 </pre></div>
 
                 </article>

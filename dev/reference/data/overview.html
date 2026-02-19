@@ -52,6 +52,7 @@
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data/overview';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
@@ -63,7 +64,7 @@
     <link rel="icon" href="../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Triceratops Models" href="../models/overview.html" />
+    <link rel="next" title="Light Curves" href="light_curve.html" />
     <link rel="prev" title="Triceratops User Guide" href="../user_guide.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -378,7 +379,15 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active"><a class="current reference internal" href="#">Data Loading, Handling, and Visualization</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Data Loading, Handling, and Visualization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Triceratops Models</a></li>
@@ -387,7 +396,8 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../inference/triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../inference/triceratops.inference.likelihood.base.GaussianLikelihoodXY.html">triceratops.inference.likelihood.base.GaussianLikelihoodXY</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inference/triceratops.inference.likelihood.base.GaussianLikelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../inference/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</a></li>
 </ul>
 </details></li>
 </ul>
@@ -504,315 +514,233 @@
                   
   <section id="data-loading-handling-and-visualization">
 <span id="data-overview"></span><h1>Data Loading, Handling, and Visualization<a class="headerlink" href="#data-loading-handling-and-visualization" title="Link to this heading">#</a></h1>
-<p>The data modules in Triceratops provide tools for loading, processing, and visualizing observational data. Most
-importantly, these structures are the entry point to the library, providing a consistent interface for working
-with different types of data in our model and inference pipelines.</p>
-<p>There are <strong>three core data types</strong> that appear in Triceratops:</p>
+<p>The <code class="xref py py-mod docutils literal notranslate"><span class="pre">data</span></code> module provides the foundational
+abstractions used to represent observational data throughout
+the Triceratops library. These objects form the boundary between
+raw measurements and the modeling and inference systems.</p>
+<p>At a high level, the data layer serves three purposes:</p>
 <ol class="arabic simple">
-<li><p><strong>Light Curves</strong>: Time series data representing the brightness of an object over time at one or more frequencies.
-Light curves are typically used to study the temporal evolution of radio sources. These are implemented in the
-<a class="reference internal" href="../../_as_gen/data.light_curve.html#module-data.light_curve" title="data.light_curve"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.light_curve</span></code></a> module.</p></li>
-<li><p><strong>Spectra</strong>: Frequency-dependent data representing the flux density of an object at a specific time or over a
-range of times. Spectra are used to analyze the frequency characteristics of radio sources. These are implemented in the
-<a class="reference internal" href="../../_as_gen/data.spectra.html#module-data.spectra" title="data.spectra"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.spectra</span></code></a>.</p></li>
-<li><p><strong>Photometry Tables</strong>: Tabular data containing measurements of flux densities at various times and frequencies.
-Photometry tables provide a structured way to store and access observational data. These are implemented in the
-<a class="reference internal" href="../../_as_gen/data.photometry.html#module-data.photometry" title="data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.photometry</span></code></a> module.</p></li>
+<li><p>Provide structured, validated containers for observational data.</p></li>
+<li><p>Preserve physical units and enforce consistent schemas.</p></li>
+<li><p>Translate observational tables into the numerical format required by inference.</p></li>
 </ol>
-<p>Each of these data types comes with a set of methods for loading data from common file formats (e.g., CSV, FITS),
-processing the data (e.g., filtering, interpolation), and visualizing the results (e.g., plotting light curves and spectra).</p>
-<section id="photometric-data">
-<h2>Photometric Data<a class="headerlink" href="#photometric-data" title="Link to this heading">#</a></h2>
-<p>Photometry data in Triceratops is handled through the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a> class, which
-is effectively a wrapper around a standard <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object with an enforced schema dictating the
-required columns and their meanings. This structure allows for easy loading, manipulation, and access to photometric
-data. The photometry container includes methods for common operations such as filtering data by time or frequency,
-interpolating missing values, and exporting data to various formats. It is also immediately compatible with
-the inference pipelines in Triceratops, allowing users to seamlessly integrate their observational data into
-model fitting and analysis workflows.</p>
-<section id="the-photometry-table">
-<h3>The Photometry Table<a class="headerlink" href="#the-photometry-table" title="Link to this heading">#</a></h3>
-<p>Underlying the photometry container is an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object with a specific schema. This schema breaks
-columns into 3 categories:</p>
-<ol class="arabic simple">
-<li><p><strong>Required Columns</strong>: These columns must be present in the table for it to be considered valid photometry data.
-They include essential information such as time, frequency, flux density, and measurement uncertainties.</p></li>
-<li><p><strong>Optional Columns</strong>: These columns provide additional information that can enhance the analysis but are not strictly
-necessary. Examples include upper limits, measurement methods, and observational metadata.</p></li>
-<li><p><strong>Auxiliary Columns</strong>: These are columns that you, as the user, may wish to include for your own purposes. They are not
-interpreted by Triceratops in any way, but are preserved when saving and loading photometry data.</p></li>
-</ol>
-<p>The set of <strong>required</strong> and <strong>optional</strong> columns are as follows:</p>
-<div class="pst-scrollable-table-container"><table class="table">
-<colgroup>
-<col style="width: 20.0%" />
-<col style="width: 50.0%" />
-<col style="width: 15.0%" />
-<col style="width: 15.0%" />
-</colgroup>
-<thead>
-<tr class="row-odd"><th class="head"><p>Column Name</p></th>
-<th class="head"><p>Description</p></th>
-<th class="head"><p>CGS-Equivalent Unit</p></th>
-<th class="head"><p>Data Type</p></th>
-</tr>
-</thead>
-<tbody>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">time</span></code></p></td>
-<td><p>Canonical time of the observation used in analysis.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">s</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">freq</span></code></p></td>
-<td><p>Central observing frequency.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">Hz</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">flux_density</span></code></p></td>
-<td><p>Measured flux density for detections. Should be <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> for non-detections.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">s^-1</span> <span class="pre">cm^-2</span> <span class="pre">Hz^-1</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flux_density_error</span></code></p></td>
-<td><p>1σ uncertainty on <code class="docutils literal notranslate"><span class="pre">flux_density</span></code>.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">s^-1</span> <span class="pre">cm^-2</span> <span class="pre">Hz^-1</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code></p></td>
-<td><p>Upper limit on flux density for non-detections. Should be <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> for detections.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">s^-1</span> <span class="pre">cm^-2</span> <span class="pre">Hz^-1</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">obs_time</span></code></p></td>
-<td><p>Total integration time of the observation.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">s</span></code></p></td>
-<td><p>float</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">obs_name</span></code></p></td>
-<td><p>Observation identifier (e.g. telescope + epoch).</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>str</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">band</span></code></p></td>
-<td><p>Integer band identifier (instrument-specific).</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">epoch_id</span></code></p></td>
-<td><p>Integer epoch identifier (user-defined).</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>int</p></td>
-</tr>
-<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">comments</span></code></p></td>
-<td><p>Free-form comments or metadata.</p></td>
-<td><p><code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
-<td><p>str</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="admonition hint">
-<p class="admonition-title">Hint</p>
-<p>There are a couple of important notes regarding the photometry table schema:</p>
+<p>The design is intentionally layered. User-facing containers wrap
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> objects and provide semantic meaning
+to specific columns. These containers can then generate
+<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> objects, which are the
+sole data representation recognized by likelihood classes.</p>
+<section id="architecture-of-the-data-layer">
+<h2>Architecture of the Data Layer<a class="headerlink" href="#architecture-of-the-data-layer" title="Link to this heading">#</a></h2>
+<p>There are three principal observational container types in Triceratops:</p>
 <ul class="simple">
-<li><p><strong>Time</strong> is always a relative measurement with respect to some reference time (e.g., explosion time, trigger time).
-The actual reference time is not stored in the photometry table itself, but should be tracked separately by the user.</p></li>
-<li><p><strong>Units</strong>: Columns must be <em>compatible</em> with the specified CGS-equivalent units, but do not need to be in those exact units.
-For example, frequency can be provided in GHz as long as it can be converted to Hz.</p></li>
-<li><p><strong>Non-detections</strong>: For non-detections, the <code class="docutils literal notranslate"><span class="pre">flux_density</span></code> and <code class="docutils literal notranslate"><span class="pre">flux_density_error</span></code> columns should be set to <code class="docutils literal notranslate"><span class="pre">np.nan</span></code>,
-and the <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code> column should contain the upper limit value.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/data.light_curve.RadioLightCurveContainer.html#data.light_curve.RadioLightCurveContainer" title="data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/data.spectra.html#module-data.spectra" title="data.spectra"><code class="xref py py-class docutils literal notranslate"><span class="pre">spectra</span></code></a> (spectral containers)</p></li>
 </ul>
-</div>
-<p>Once the photometry table has been created, it is <strong>immutable</strong>; that is, you cannot add or remove rows or columns directly.
-You can, of course, modify the progenitor <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> before creating the photometry container, or create a new
-photometry container from modified data. The reason for the immutability is to ensure data integrity and consistency when using
-the photometry container in analysis and modeling.</p>
-</section>
-<section id="creating-a-photometry-container">
-<h3>Creating a Photometry Container<a class="headerlink" href="#creating-a-photometry-container" title="Link to this heading">#</a></h3>
-<p>To create a <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>, you can either load data from a file or create it
-directly from an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> object.</p>
-<section id="from-a-table">
-<h4>From a Table<a class="headerlink" href="#from-a-table" title="Link to this heading">#</a></h4>
-<p>To create a photometry container from an existing <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>, ensure that the table contains
-the required columns as per the schema described above. Then, you can instantiate the container as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryContainer</span>
-
-<span class="c1"># Create an Astropy Table with the required columns</span>
-<span class="n">data</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span>
-    <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">],</span>
-    <span class="s1">&#39;freq&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e9</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">,</span> <span class="mf">1e9</span><span class="p">],</span>
-    <span class="s1">&#39;flux_density&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-26</span><span class="p">,</span> <span class="mf">2e-26</span><span class="p">,</span> <span class="mf">1.5e-26</span><span class="p">],</span>
-    <span class="s1">&#39;flux_density_error&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e-27</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">,</span> <span class="mf">1e-27</span><span class="p">],</span>
-    <span class="s1">&#39;flux_upper_limit&#39;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
-    <span class="s1">&#39;obs_time&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">,</span> <span class="mf">100.0</span><span class="p">],</span>
-    <span class="s1">&#39;obs_name&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;obs1&#39;</span><span class="p">,</span> <span class="s1">&#39;obs2&#39;</span><span class="p">,</span> <span class="s1">&#39;obs3&#39;</span><span class="p">],</span>
-    <span class="s1">&#39;band&#39;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
-    <span class="s1">&#39;comments&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">]</span>
-<span class="p">})</span>
-
-<span class="c1"># Create the RadioPhotometryContainer</span>
-<span class="n">photometry_container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+<p>Each container enforces a schema, ensures unit compatibility,
+and provides convenience accessors tailored to the structure of
+the underlying data.</p>
+<p>These containers are <strong>not</strong> themselves used directly in inference.
+Instead, they provide a bridge to the inference system via
+the <a class="reference internal" href="../../_as_gen/data.core.InferenceData.html#data.core.InferenceData" title="data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object.</p>
+<p>The flow is therefore:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>Astropy Table
+      ↓
+DataContainer (LightCurve / Photometry / Spectra)
+      ↓
+InferenceData
+      ↓
+Likelihood
+      ↓
+Inference Problem
 </pre></div>
 </div>
-<p>Alternatively, there is the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.from_table.html#data.photometry.RadioPhotometryContainer.from_table" title="data.photometry.RadioPhotometryContainer.from_table"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_table()</span></code></a> class method:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">photometry_container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This method has 2 additional features beyond the standard constructor:</p>
-<ol class="arabic simple">
-<li><p>It can accept a parameter <code class="docutils literal notranslate"><span class="pre">column_map</span></code>, which is a dictionary mapping the required column names to
-alternative names in the provided table. This allows you to create a photometry container from a table
-that uses different column names.</p></li>
-<li><p>It can accept a <code class="docutils literal notranslate"><span class="pre">time_starts</span></code> parameter, which allows the <code class="docutils literal notranslate"><span class="pre">time</span></code> column to be specified in absolute terms
-(e.g., MJD, JD, or Unix time). If provided, the values in the <code class="docutils literal notranslate"><span class="pre">time</span></code> column will be converted to relative
-times with respect to the specified reference time.</p></li>
-</ol>
-</section>
-<section id="from-a-file">
-<h4>From a File<a class="headerlink" href="#from-a-file" title="Link to this heading">#</a></h4>
-<p>To create a photometry container from a file, you can use the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.from_file.html#data.photometry.RadioPhotometryContainer.from_file" title="data.photometry.RadioPhotometryContainer.from_file"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_file()</span></code></a>
-class method. This method supports loading data from common file formats such as CSV and FITS.
-Here is an example of how to load photometry data from a CSV file:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryContainer</span>
-
-<span class="c1"># Load photometry data from a CSV file</span>
-<span class="n">photometry_container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s1">&#39;photometry_data.csv&#39;</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>This is a thin wrapper around the <code class="xref py py-meth docutils literal notranslate"><span class="pre">astropy.table.Table.read()</span></code> method, so any file format supported by Astropy
-can be used. Similar to the <code class="docutils literal notranslate"><span class="pre">from_table</span></code> method, you can also provide a <code class="docutils literal notranslate"><span class="pre">column_map</span></code> and <code class="docutils literal notranslate"><span class="pre">time_starts</span></code> parameter
-to customize the loading process.</p>
-</section>
-</section>
-<section id="accessing-photometry-data">
-<h3>Accessing Photometry Data<a class="headerlink" href="#accessing-photometry-data" title="Link to this heading">#</a></h3>
-<p>Once the photometry container has been created, you can access the underlying data and perform various operations.
-Accessing the data behaves much like the underlying <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>, with some additional convenience
-methods provided by the photometry container.</p>
-<section id="indexing-and-slicing">
-<h4>Indexing and Slicing<a class="headerlink" href="#indexing-and-slicing" title="Link to this heading">#</a></h4>
-<p>The indexing and slicing behavior of the photometry container is identical to that of an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>.
-You can use standard indexing and slicing techniques to access rows and columns of the data. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access the first row</span>
-<span class="n">first_row</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-
-<span class="c1"># Access the &#39;flux_density&#39; column</span>
-<span class="n">flux_densities</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="p">[</span><span class="s1">&#39;flux_density&#39;</span><span class="p">]</span>
-
-<span class="c1"># Slice the first three rows</span>
-<span class="n">first_three_rows</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
-</pre></div>
-</div>
-</section>
-<section id="special-column-access">
-<h4>Special Column Access<a class="headerlink" href="#special-column-access" title="Link to this heading">#</a></h4>
-<p>In addition to the standard indexing methods, the photometry container provides convenience properties for accessing
-the required columns directly. For example:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access the time column</span>
-<span class="n">times</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">time</span>
-
-<span class="c1"># Access the frequency column</span>
-<span class="n">frequencies</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">freq</span>
-
-<span class="c1"># Access the flux density column</span>
-<span class="n">flux_densities</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">flux_density</span>
-</pre></div>
-</div>
-<p>These are returned as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> objects with the appropriate units.</p>
-</section>
-<section id="detections-and-non-detections">
-<h4>Detections and Non-Detections<a class="headerlink" href="#detections-and-non-detections" title="Link to this heading">#</a></h4>
-<p>The photometry container provides methods to easily separate detections from non-detections. A non-detection is defined
-as an observation where the <code class="docutils literal notranslate"><span class="pre">flux_density</span></code> is <code class="docutils literal notranslate"><span class="pre">np.nan</span></code> and the <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code> is a valid number. Likewise,
-a detection is an observation where the <code class="docutils literal notranslate"><span class="pre">flux_density</span></code> is a valid number. On initialization, the
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.detection_mask.html#data.photometry.RadioPhotometryContainer.detection_mask" title="data.photometry.RadioPhotometryContainer.detection_mask"><code class="xref py py-attr docutils literal notranslate"><span class="pre">detection_mask</span></code></a> and
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.non_detection_mask.html#data.photometry.RadioPhotometryContainer.non_detection_mask" title="data.photometry.RadioPhotometryContainer.non_detection_mask"><code class="xref py py-attr docutils literal notranslate"><span class="pre">non_detection_mask</span></code></a> boolean masks are created to
-to allow rapid filtering of detections and non-detections. You can use these masks to filter the data as follows:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Get all detections</span>
-<span class="n">detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="p">[</span><span class="n">photometry_container</span><span class="o">.</span><span class="n">detection_mask</span><span class="p">]</span>
-
-<span class="c1"># Get all non-detections</span>
-<span class="n">non_detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="p">[</span><span class="n">photometry_container</span><span class="o">.</span><span class="n">non_detection_mask</span><span class="p">]</span>
-</pre></div>
-</div>
-<p>Likewise, convenience properties are provided to directly access the detections and non-detections:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Access detections</span>
-<span class="n">detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">detection_table</span>
-
-<span class="c1"># Access non-detections</span>
-<span class="n">non_detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">non_detection_table</span>
-</pre></div>
-</div>
-<p>and to access the counts of each:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Count of detections</span>
-<span class="n">num_detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">n_detections</span>
-
-<span class="c1"># Count of non-detections</span>
-<span class="n">num_non_detections</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">n_non_detections</span>
-</pre></div>
-</div>
-</section>
-</section>
-<section id="epochs">
-<h3>Epochs<a class="headerlink" href="#epochs" title="Link to this heading">#</a></h3>
-<p>Another very useful feature of the photometry container is the ability to group observations into epochs.
-An epoch is defined as a set of observations that are considered to be simultaneous or nearly simultaneous.
-This is particularly useful for multi-frequency observations taken at the same time.</p>
-<p>In some situations, models may require data to contain epochs. The photometry container provides methods
-to automatically generate epochs based on time proximity, as well as to manually specify epochs.</p>
-<section id="manually-specifying-epochs">
-<h4>Manually Specifying Epochs<a class="headerlink" href="#manually-specifying-epochs" title="Link to this heading">#</a></h4>
-<p>To directly specify epochs, simply specify the <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> column in the underlying table before creating
-the photometry container. Observations with the same <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> will be grouped into the same epoch. These should
-be integers with no particular meaning beyond grouping. The mapping of each epoch to a specific time is determined
-by taking the weighted mean of the observation times within that epoch.</p>
-</section>
-<section id="generating-epochs">
-<h4>Generating Epochs<a class="headerlink" href="#generating-epochs" title="Link to this heading">#</a></h4>
-<p>If your data does not already contain an <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> column, you can use the
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_indices.html#data.photometry.RadioPhotometryContainer.set_epochs_from_indices" title="data.photometry.RadioPhotometryContainer.set_epochs_from_indices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code></a>,
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps.html#data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps" title="data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code></a>,
-or <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_bins.html#data.photometry.RadioPhotometryContainer.set_epochs_from_bins" title="data.photometry.RadioPhotometryContainer.set_epochs_from_bins"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_bins()</span></code></a> methods to automatically generate epochs.</p>
-<p>The <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_indices.html#data.photometry.RadioPhotometryContainer.set_epochs_from_indices" title="data.photometry.RadioPhotometryContainer.set_epochs_from_indices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code></a> method allows you
-to directly specify the <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> values for each observation
-by providing a list or array of integers.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set epochs using specified indices</span>
-<span class="n">photometry_container</span><span class="o">.</span><span class="n">set_epochs_from_indices</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])</span>
-</pre></div>
-</div>
-<p>The <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps.html#data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps" title="data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code></a> method generates epochs based
-on gaps in observation times. You can specify
-a time gap threshold, and observations separated by a gap larger than this threshold will be assigned to different epochs.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set epochs based on time gaps of 1 day</span>
-<span class="n">photometry_container</span><span class="o">.</span><span class="n">set_epochs_from_time_gaps</span><span class="p">(</span><span class="mi">86400</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
-</pre></div>
-</div>
-<p>The <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_bins.html#data.photometry.RadioPhotometryContainer.set_epochs_from_bins" title="data.photometry.RadioPhotometryContainer.set_epochs_from_bins"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_bins()</span></code></a> method allows you to bin observations
-into epochs based on fixed time intervals.
-You can specify the bin size, and observations falling within the same time bin will be grouped into the same epoch.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set epochs using time bins of 2 days</span>
-<span class="n">bins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arrange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
-<span class="n">photometry_container</span><span class="o">.</span><span class="n">set_epochs_from_bins</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
-</pre></div>
-</div>
-</section>
-</section>
 </section>
 <section id="light-curves">
 <h2>Light Curves<a class="headerlink" href="#light-curves" title="Link to this heading">#</a></h2>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Not yet implemented.</p>
+<p>Light curves represent single-frequency time-series data:</p>
+<div class="math notranslate nohighlight">
+\[F_\nu(t)\]</div>
+<p>They are implemented in the
+<a class="reference internal" href="../../_as_gen/data.light_curve.html#module-data.light_curve" title="data.light_curve"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.light_curve</span></code></a> module via
+<a class="reference internal" href="../../_as_gen/data.light_curve.RadioLightCurveContainer.html#data.light_curve.RadioLightCurveContainer" title="data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a>.</p>
+<p>A light curve container wraps a validated
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>, enforces required columns
+(e.g. time, flux density, uncertainty, upper limits),
+and stores the observing frequency as metadata.</p>
+<p>Light curves are ideal for modeling temporal evolution
+at a fixed observing frequency. They expose convenience
+properties such as:</p>
+<ul class="simple">
+<li><p>Detection and non-detection masks</p></li>
+<li><p>Unit-aware column access</p></li>
+<li><p>Conversion to dense CGS arrays</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For full details, see:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
+</ul>
+</div>
+</div>
+</section>
+<section id="photometry-tables">
+<h2>Photometry Tables<a class="headerlink" href="#photometry-tables" title="Link to this heading">#</a></h2>
+<p>Photometry containers generalize light curves to heterogeneous
+multi-frequency observations. They are implemented in
+<a class="reference internal" href="../../_as_gen/data.photometry.html#module-data.photometry" title="data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.photometry</span></code></a> via
+<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>.</p>
+<p>Unlike light curves, photometry tables may contain multiple
+observing frequencies and may group measurements into epochs.</p>
+<p>These containers:</p>
+<ul class="simple">
+<li><p>Enforce a strict schema for time, frequency, flux density,
+uncertainty, and upper limits.</p></li>
+<li><p>Support detection and non-detection separation.</p></li>
+<li><p>Provide utilities for grouping observations into epochs.</p></li>
+<li><p>Preserve auxiliary metadata columns without interpretation.</p></li>
+</ul>
+<p>Photometry containers are the most flexible observational format
+and are typically used when fitting broadband spectral energy
+distributions or multi-frequency datasets.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For full details, see:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="photometry.html">Photometry</a></li>
+</ul>
+</div>
 </div>
 </section>
 <section id="spectra">
 <h2>Spectra<a class="headerlink" href="#spectra" title="Link to this heading">#</a></h2>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>Not yet implemented.</p>
+<p>Spectral containers represent flux density as a function of
+frequency at a fixed time:</p>
+<div class="math notranslate nohighlight">
+\[F_\nu(\nu)\]</div>
+<p>They are implemented in <a class="reference internal" href="../../_as_gen/data.spectra.html#module-data.spectra" title="data.spectra"><code class="xref py py-mod docutils literal notranslate"><span class="pre">data.spectra</span></code></a>.</p>
+<p>While conceptually similar to photometry tables, spectral
+containers assume that all rows correspond to a single epoch.
+They are optimized for modeling instantaneous broadband spectra
+rather than time evolution.</p>
+<p>(Full documentation forthcoming.)</p>
+</section>
+<section id="inference-data">
+<h2>Inference Data<a class="headerlink" href="#inference-data" title="Link to this heading">#</a></h2>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object is the
+numerical representation of observational data used by the
+inference layer.</p>
+<p>Unlike light curve or photometry containers, <cite>InferenceData</cite>
+contains <strong>only validated NumPy arrays</strong>. It performs no unit
+conversion, no column resolution, and no schema enforcement.
+Those responsibilities belong to the observational containers.</p>
+<p><cite>InferenceData</cite> provides:</p>
+<ul class="simple">
+<li><p>Deterministic stacking of independent variables</p></li>
+<li><p>Deterministic stacking of observables</p></li>
+<li><p>Symmetric uncertainty arrays</p></li>
+<li><p>Upper and lower limit arrays (with NaN fill where appropriate)</p></li>
+</ul>
+<p>Likelihood classes operate exclusively on this structure.</p>
+<p>An <cite>InferenceData</cite> object can be generated in three ways:</p>
+<section id="from-a-data-container">
+<h3>From a Data Container<a class="headerlink" href="#from-a-data-container" title="Link to this heading">#</a></h3>
+<p>Every observational container provides a
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inference_data</span> <span class="o">=</span> <span class="n">photometry_container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
 </div>
+<p>This is the most common pathway and ensures correct
+column mapping and unit coercion.</p>
+</section>
+<section id="from-an-astropy-table">
+<h3>From an Astropy Table<a class="headerlink" href="#from-an-astropy-table" title="Link to this heading">#</a></h3>
+<p>If working directly with tables:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inference_data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">variables</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+    <span class="n">observables</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="from-raw-arrays">
+<h3>From Raw Arrays<a class="headerlink" href="#from-raw-arrays" title="Link to this heading">#</a></h3>
+<p>For programmatic workflows:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inference_data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+    <span class="n">y</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+    <span class="n">y_err</span><span class="o">=</span><span class="p">{</span><span class="o">...</span><span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>This pathway assumes that arrays are already in the model’s
+expected base units.</p>
+<p>For complete documentation, see:</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
+</ul>
+</div>
+</section>
+</section>
+<section id="design-philosophy">
+<h2>Design Philosophy<a class="headerlink" href="#design-philosophy" title="Link to this heading">#</a></h2>
+<p>The data module intentionally separates:</p>
+<ul class="simple">
+<li><p><strong>Observational semantics</strong> (handled by containers)</p></li>
+<li><p><strong>Numerical inference representation</strong> (handled by InferenceData)</p></li>
+<li><p><strong>Statistical assumptions</strong> (handled by likelihood classes)</p></li>
+</ul>
+<p>This separation provides several benefits:</p>
+<ul class="simple">
+<li><p>Clean, testable interfaces between layers</p></li>
+<li><p>Deterministic stacking and ordering</p></li>
+<li><p>Unit safety at ingestion time</p></li>
+<li><p>Minimal overhead during likelihood evaluation</p></li>
+</ul>
+<p>Once data have been converted to <cite>InferenceData</cite>,
+likelihood evaluation becomes purely numerical and free
+of schema or unit concerns.</p>
+</section>
+<section id="visualization">
+<h2>Visualization<a class="headerlink" href="#visualization" title="Link to this heading">#</a></h2>
+<p>Observational containers retain their underlying
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a> structure and can therefore
+be used directly with standard Astropy or Matplotlib tools.</p>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">errorbar</span><span class="p">(</span>
+    <span class="n">light_curve</span><span class="o">.</span><span class="n">time</span><span class="p">,</span>
+    <span class="n">light_curve</span><span class="o">.</span><span class="n">flux_density</span><span class="p">,</span>
+    <span class="n">yerr</span><span class="o">=</span><span class="n">light_curve</span><span class="o">.</span><span class="n">flux_density_error</span><span class="p">,</span>
+    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;o&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Because containers preserve units, plotting and
+unit conversions remain explicit and transparent.</p>
+</section>
+<section id="summary">
+<h2>Summary<a class="headerlink" href="#summary" title="Link to this heading">#</a></h2>
+<p>The data module provides structured, unit-aware containers
+for observational data and a clean translation layer into
+the inference system.</p>
+<p>In typical workflows:</p>
+<ol class="arabic simple">
+<li><p>Load or construct a light curve or photometry container.</p></li>
+<li><p>Convert it to <a class="reference internal" href="../../_as_gen/data.core.InferenceData.html#data.core.InferenceData" title="data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p></li>
+<li><p>Pass the inference data to a likelihood object.</p></li>
+<li><p>Evaluate models against the data.</p></li>
+</ol>
+<p>This layered design ensures clarity, reproducibility,
+and extensibility across the entire modeling pipeline.</p>
 </section>
 </section>
 
@@ -836,11 +764,11 @@ You can specify the bin size, and observations falling within the same time bin 
       </div>
     </a>
     <a class="right-next"
-       href="../models/overview.html"
+       href="light_curve.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Triceratops Models</p>
+        <p class="prev-next-title">Light Curves</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -863,28 +791,19 @@ You can specify the bin size, and observations falling within the same time bin 
   </div>
   <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photometric-data">Photometric Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-photometry-table">The Photometry Table</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#creating-a-photometry-container">Creating a Photometry Container</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-table">From a Table</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-file">From a File</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#accessing-photometry-data">Accessing Photometry Data</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#indexing-and-slicing">Indexing and Slicing</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#special-column-access">Special Column Access</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#detections-and-non-detections">Detections and Non-Detections</a></li>
-</ul>
-</li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#epochs">Epochs</a><ul class="nav section-nav flex-column">
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#manually-specifying-epochs">Manually Specifying Epochs</a></li>
-<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-epochs">Generating Epochs</a></li>
-</ul>
-</li>
-</ul>
-</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-of-the-data-layer">Architecture of the Data Layer</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#light-curves">Light Curves</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#photometry-tables">Photometry Tables</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#spectra">Spectra</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-data">Inference Data</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-data-container">From a Data Container</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-an-astropy-table">From an Astropy Table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-raw-arrays">From Raw Arrays</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-philosophy">Design Philosophy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#visualization">Visualization</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary">Summary</a></li>
 </ul>
   </nav></div>
 

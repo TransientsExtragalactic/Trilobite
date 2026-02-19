@@ -1,0 +1,947 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>models.generic.curves &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/models/generic/curves';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">models.generic.curves</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for models.generic.curves</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Elementary curve models.</span>
+
+<span class="sd">This module provides a collection of simple analytic curve models</span>
+<span class="sd">intended primarily for:</span>
+
+<span class="sd">- Testing inference infrastructure</span>
+<span class="sd">- Validating likelihood implementations</span>
+<span class="sd">- Demonstrating prior and transform behavior</span>
+<span class="sd">- Writing deterministic unit tests</span>
+<span class="sd">- Educational examples</span>
+
+<span class="sd">These models implement elementary functional forms such as:</span>
+
+<span class="sd">- Linear relations</span>
+<span class="sd">- Polynomials</span>
+<span class="sd">- Power laws</span>
+<span class="sd">- Exponentials</span>
+<span class="sd">- Constant functions</span>
+
+<span class="sd">All models follow the standard :class:`~triceratops.models.core.Model`</span>
+<span class="sd">interface and are fully compatible with:</span>
+
+<span class="sd">- :class:`~triceratops.inference.likelihood.base.Likelihood`</span>
+<span class="sd">- :class:`~triceratops.inference.problem.InferenceProblem`</span>
+<span class="sd">- Parameter priors and transforms</span>
+<span class="sd">- Serialization via model specifications</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">- All models are dimensionless by default.</span>
+<span class="sd">- Units may be extended in future versions if required.</span>
+<span class="sd">- These models are not intended to represent physical systems,</span>
+<span class="sd">  but rather serve as analytic test functions.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;LinearModel&quot;</span><span class="p">,</span> <span class="s2">&quot;QuadraticModel&quot;</span><span class="p">,</span> <span class="s2">&quot;PowerLawModel&quot;</span><span class="p">,</span> <span class="s2">&quot;ExponentialModel&quot;</span><span class="p">,</span> <span class="s2">&quot;ConstantModel&quot;</span><span class="p">]</span>
+
+<span class="n">_CurveOutputs</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span><span class="s2">&quot;CurveOutputs&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;y&quot;</span><span class="p">])</span>
+
+
+<div class="viewcode-block" id="LinearModel">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.LinearModel.html#models.generic.curves.LinearModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LinearModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Linear function model.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y(x) = m x + b</span>
+
+<span class="sd">    .. dropdown:: Parameters</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``m``</span>
+<span class="sd">             - :math:`m`</span>
+<span class="sd">             - Slope of the linear relation.</span>
+<span class="sd">           * - ``b``</span>
+<span class="sd">             - :math:`b`</span>
+<span class="sd">             - Intercept of the linear relation.</span>
+
+<span class="sd">    .. dropdown:: Variables</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``x``</span>
+<span class="sd">             - :math:`x`</span>
+<span class="sd">             - Independent variable.</span>
+
+<span class="sd">    .. dropdown:: Returns</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``y``</span>
+<span class="sd">             - :math:`y(x)`</span>
+<span class="sd">             - Evaluated model value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;m&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">OUTPUTS</span> <span class="o">=</span> <span class="n">_CurveOutputs</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Simple linear model.&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Elementary linear function.&quot;</span>
+
+<div class="viewcode-block" id="LinearModel.__init__">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.LinearModel.__init__.html#models.generic.curves.LinearModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;m&quot;</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">m</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="QuadraticModel">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.QuadraticModel.html#models.generic.curves.QuadraticModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">QuadraticModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Quadratic polynomial model.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y(x) = a x^2 + b x + c</span>
+
+<span class="sd">    .. dropdown:: Parameters</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``a``</span>
+<span class="sd">             - :math:`a`</span>
+<span class="sd">             - Quadratic coefficient.</span>
+<span class="sd">           * - ``b``</span>
+<span class="sd">             - :math:`b`</span>
+<span class="sd">             - Linear coefficient.</span>
+<span class="sd">           * - ``c``</span>
+<span class="sd">             - :math:`c`</span>
+<span class="sd">             - Constant term.</span>
+
+<span class="sd">    .. dropdown:: Variables</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``x``</span>
+<span class="sd">             - :math:`x`</span>
+<span class="sd">             - Independent variable.</span>
+
+<span class="sd">    .. dropdown:: Returns</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``y``</span>
+<span class="sd">             - :math:`y(x)`</span>
+<span class="sd">             - Evaluated model value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;b&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">OUTPUTS</span> <span class="o">=</span> <span class="n">_CurveOutputs</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Quadratic polynomial model.&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Elementary quadratic function.&quot;</span>
+
+<div class="viewcode-block" id="QuadraticModel.__init__">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.QuadraticModel.__init__.html#models.generic.curves.QuadraticModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;a&quot;</span><span class="p">]</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;b&quot;</span><span class="p">]</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;c&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">a</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">b</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">c</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="PowerLawModel">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.PowerLawModel.html#models.generic.curves.PowerLawModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">PowerLawModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Power-law model.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y(x) = A x^{\alpha}</span>
+
+<span class="sd">    .. dropdown:: Parameters</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``A``</span>
+<span class="sd">             - :math:`A`</span>
+<span class="sd">             - Amplitude normalization.</span>
+<span class="sd">           * - ``alpha``</span>
+<span class="sd">             - :math:`\alpha`</span>
+<span class="sd">             - Power-law index.</span>
+
+<span class="sd">    .. dropdown:: Variables</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``x``</span>
+<span class="sd">             - :math:`x`</span>
+<span class="sd">             - Independent variable.</span>
+
+<span class="sd">    .. dropdown:: Returns</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``y``</span>
+<span class="sd">             - :math:`y(x)`</span>
+<span class="sd">             - Evaluated model value.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The amplitude parameter is constrained to be non-negative.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;alpha&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">OUTPUTS</span> <span class="o">=</span> <span class="n">_CurveOutputs</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Simple power-law model.&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Elementary scaling relation.&quot;</span>
+
+<div class="viewcode-block" id="PowerLawModel.__init__">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.PowerLawModel.__init__.html#models.generic.curves.PowerLawModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">A</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="n">alpha</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="ExponentialModel">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.ExponentialModel.html#models.generic.curves.ExponentialModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ExponentialModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Exponential model.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y(x) = A e^{k x}</span>
+
+<span class="sd">    .. dropdown:: Parameters</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``A``</span>
+<span class="sd">             - :math:`A`</span>
+<span class="sd">             - Amplitude normalization.</span>
+<span class="sd">           * - ``k``</span>
+<span class="sd">             - :math:`k`</span>
+<span class="sd">             - Exponential rate constant.</span>
+
+<span class="sd">    .. dropdown:: Variables</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``x``</span>
+<span class="sd">             - :math:`x`</span>
+<span class="sd">             - Independent variable.</span>
+
+<span class="sd">    .. dropdown:: Returns</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``y``</span>
+<span class="sd">             - :math:`y(x)`</span>
+<span class="sd">             - Evaluated model value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="n">OUTPUTS</span> <span class="o">=</span> <span class="n">_CurveOutputs</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Simple exponential model.&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Elementary exponential function.&quot;</span>
+
+<div class="viewcode-block" id="ExponentialModel.__init__">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.ExponentialModel.__init__.html#models.generic.curves.ExponentialModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;A&quot;</span><span class="p">]</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;k&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">A</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="n">x</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="ConstantModel">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.ConstantModel.html#models.generic.curves.ConstantModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ConstantModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Constant model.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        y(x) = C</span>
+
+<span class="sd">    .. dropdown:: Parameters</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``C``</span>
+<span class="sd">             - :math:`C`</span>
+<span class="sd">             - Constant value.</span>
+
+<span class="sd">    .. dropdown:: Variables</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``x``</span>
+<span class="sd">             - :math:`x`</span>
+<span class="sd">             - Independent variable (ignored).</span>
+
+<span class="sd">    .. dropdown:: Returns</span>
+
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 25 25 50</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``y``</span>
+<span class="sd">             - :math:`C`</span>
+<span class="sd">             - Constant model value.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelVariable</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span><span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">),)</span>
+
+    <span class="n">OUTPUTS</span> <span class="o">=</span> <span class="n">_CurveOutputs</span>
+    <span class="n">UNITS</span> <span class="o">=</span> <span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;Constant function.&quot;</span>
+    <span class="n">REFERENCE</span> <span class="o">=</span> <span class="s2">&quot;Zero-order polynomial.&quot;</span>
+
+<div class="viewcode-block" id="ConstantModel.__init__">
+<a class="viewcode-back" href="../../../_as_gen/models.generic.curves.ConstantModel.__init__.html#models.generic.curves.ConstantModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_register_init</span><span class="p">()</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;x&quot;</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">C</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;C&quot;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">OUTPUTS</span><span class="p">(</span><span class="n">y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">C</span><span class="p">))</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

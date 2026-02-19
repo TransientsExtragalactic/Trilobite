@@ -37,9 +37,12 @@ point to the library, providing a consistent interface for working with differen
 inference pipelines. The following guides cover the relevant functionality:
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 1
 
    data/overview
+   data/photometry
+   data/light_curve
+   data/inference_data
 
 
 Triceratops Models
