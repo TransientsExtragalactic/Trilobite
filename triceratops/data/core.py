@@ -9,7 +9,6 @@ robustness and reproducibility throughout the modeling and inference pipeline.
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from pathlib import Path
-from types import MappingProxyType
 from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
@@ -622,10 +621,7 @@ class Observable:
             err = np.asarray(self.error)
             if err.shape != shape:
                 raise ValueError(f"error must have shape {shape}, got {err.shape}")
-            if not np.all(np.isfinite(err)):
-                raise ValueError(
-                    "Error must contain only finite values. For non-detections, use the upper limit column."
-                )
+
             object.__setattr__(self, "error", err)
 
         if self.upper is not None:
@@ -1016,10 +1012,10 @@ class InferenceData:
             x_lower_clean = None
 
         # Set all the attributes
-        object.__setattr__(self, "x", MappingProxyType(x_clean))
-        object.__setattr__(self, "x_error", None if x_error_clean is None else MappingProxyType(x_error_clean))
-        object.__setattr__(self, "x_upper", None if x_upper_clean is None else MappingProxyType(x_upper_clean))
-        object.__setattr__(self, "x_lower", None if x_lower_clean is None else MappingProxyType(x_lower_clean))
+        object.__setattr__(self, "x", x_clean)
+        object.__setattr__(self, "x_error", None if x_error_clean is None else x_error_clean)
+        object.__setattr__(self, "x_upper", None if x_upper_clean is None else x_upper_clean)
+        object.__setattr__(self, "x_lower", None if x_lower_clean is None else x_lower_clean)
 
         # Ensure that the observables are all in the correct format. These must all be Observable
         # objects and we require that their shape matches that of the base shape.
@@ -1040,7 +1036,7 @@ class InferenceData:
             obs_clean[name] = obs
 
         # Replace internal state with read-only versions
-        object.__setattr__(self, "observables", MappingProxyType(obs_clean))
+        object.__setattr__(self, "observables", obs_clean)
 
     # ------------------------------------------------------------------
     # Dunder Methods

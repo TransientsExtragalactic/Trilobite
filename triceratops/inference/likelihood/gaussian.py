@@ -103,16 +103,16 @@ def censored_gaussian_loglikelihood(
 
       .. math::
 
-          \\ln \\mathcal{L}_i
+          \ln \mathcal{L}_i
           =
           -\frac{1}{2}
-          \\left[
-              \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}
-              + \\ln\\!\\left(2\\pi\\sigma_i^2\right)
+          \left[
+              \frac{(y_i - \mu_i)^2}{\sigma_i^2}
+              + \ln\!\left(2\pi\sigma_i^2\right)
           \right],
 
-      where :math:`y_i` is the observed value, :math:`\\mu_i` is the model
-      prediction, and :math:`\\sigma_i` is the measurement uncertainty.
+      where :math:`y_i` is the observed value, :math:`\mu_i` is the model
+      prediction, and :math:`\sigma_i` is the measurement uncertainty.
 
     - **Upper-censored observation**
       If ``y_upper_mask[i]`` is ``True``, the data point contributes the
@@ -120,15 +120,15 @@ def censored_gaussian_loglikelihood(
 
       .. math::
 
-          \\ln \\mathcal{L}_i
+          \ln \mathcal{L}_i
           =
-          \\ln \\left[
-              \\Phi\\!\\left(
-                  \frac{y_i^{\rm upper} - \\mu_i}{\\sigma_i}
+          \ln \left[
+              \Phi\!\left(
+                  \frac{y_i^{\rm upper} - \mu_i}{\sigma_i}
               \right)
           \right],
 
-      where :math:`\\Phi` is the standard normal cumulative distribution
+      where :math:`\Phi` is the standard normal cumulative distribution
       function.
 
     - **Lower-censored observation**
@@ -137,11 +137,11 @@ def censored_gaussian_loglikelihood(
 
       .. math::
 
-          \\ln \\mathcal{L}_i
+          \ln \mathcal{L}_i
           =
-          \\ln \\left[
-              1 - \\Phi\\!\\left(
-                  \frac{y_i^{\rm lower} - \\mu_i}{\\sigma_i}
+          \ln \left[
+              1 - \Phi\!\left(
+                  \frac{y_i^{\rm lower} - \mu_i}{\sigma_i}
               \right)
           \right].
 
@@ -149,9 +149,9 @@ def censored_gaussian_loglikelihood(
 
     .. math::
 
-        \\ln \\mathcal{L}
+        \ln \mathcal{L}
         =
-        \\sum_i \\ln \\mathcal{L}_i.
+        \sum_i \ln \mathcal{L}_i.
 
     Numerical underflow in the evaluation of tail probabilities is handled
     by assigning ``-np.inf`` to non-finite contributions.
@@ -238,24 +238,24 @@ def gaussian_loglikelihood(
 
     .. math::
 
-        \\ln \\mathcal{L}_i
+        \ln \mathcal{L}_i
         =
         -\frac{1}{2}
-        \\left[
-            \frac{(y_i - \\mu_i)^2}{\\sigma_i^2}
-            + \\ln\\!\\left(2\\pi\\sigma_i^2\right)
+        \left[
+            \frac{(y_i - \mu_i)^2}{\sigma_i^2}
+            + \ln\!\left(2\pi\sigma_i^2\right)
         \right],
 
-    where :math:`y_i` is the observed value, :math:`\\mu_i` is the model
-    prediction, and :math:`\\sigma_i` is the measurement uncertainty.
+    where :math:`y_i` is the observed value, :math:`\mu_i` is the model
+    prediction, and :math:`\sigma_i` is the measurement uncertainty.
 
     The total log-likelihood is obtained by summing over all data points:
 
     .. math::
 
-        \\ln \\mathcal{L}
+        \ln \mathcal{L}
         =
-        \\sum_i \\ln \\mathcal{L}_i.
+        \sum_i \ln \mathcal{L}_i.
 
     This function is intended to serve as a **low-level numerical backend**
     for higher-level likelihood classes that handle model–data compatibility,

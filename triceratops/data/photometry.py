@@ -7,16 +7,19 @@ Astropy Tables. The container enforces a standardized schema, supports detection
 and provides unit-aware accessors for time-, frequency-, and flux-related quantities.
 """
 
+import warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from astropy import units as u
 from astropy.table import Table
+from astropy.time import Time
 
 from triceratops.utils.log import triceratops_logger
 
 from .core import DataContainer, InferenceData, XYDataContainer
+from .utils import infer_err_from_non_detection
 
 if TYPE_CHECKING:
     from triceratops.models.core.base import Model
@@ -98,6 +101,15 @@ class RadioPhotometryContainer(DataContainer):
     - This class intentionally does **not** subclass :class:`astropy.table.Table`
       in order to control mutability and enforce invariants.
 
+    **Time Conventions**:
+
+    In :class:`RadioPhotometryContainer`, the ``time`` is **always** a *relative time* in days since some
+    specified zero point time. When reading from a table, using :meth:`from_table` or :meth:`from_file`,
+    the user can specify a `time_starts` parameter, which is subtracted from the input time column
+    to convert absolute times (e.g. JD) to relative times. This ensures that all internal handling
+    of time is consistent and relative, which is important for modeling and inference. If the input table
+    already contains relative times, the user can simply omit the `time_starts` parameter.
+
     See Also
     --------
     astropy.table.Table
@@ -142,7 +154,7 @@ class RadioPhotometryContainer(DataContainer):
             "name": "time",
             "dtype": float,
             "unit": u.day,
-            "description": "The canonical time of the observation. This is what is used in analysis.",
+            "description": "The *relative* time of each data point.",
             "required": True,
         },
         {
@@ -494,8 +506,10 @@ class RadioPhotometryContainer(DataContainer):
         model: "Model",
         variables: Optional[dict[str, tuple[str, ...]]] = None,
         observables: Optional[dict[str, tuple[str, ...]]] = None,
+        infer_errors: bool = True,
+        detection_threshold: float = 3.0,
     ) -> "InferenceData":
-        """
+        r"""
         Convert this :class:`RadioPhotometryContainer` into an :class:`~triceratops.data.core.InferenceData` object.
 
         This method provides a convenient bridge between validated radio
@@ -559,6 +573,46 @@ class RadioPhotometryContainer(DataContainer):
 
             If not provided and the model declares exactly one observable,
             a default mapping to the flux density columns is inferred.
+        infer_errors : bool, optional
+            If ``True``, missing uncertainties for non-detections will be inferred
+            from their reported upper limits under the assumption that the upper
+            limit corresponds to an :math:`N\sigma` detection threshold.
+
+            Specifically, for an upper limit :math:`F_{\rm upper}` and detection
+            threshold :math:`N`, the inferred uncertainty is
+
+            .. math::
+
+                \sigma = \frac{F_{\rm upper}}{N}.
+
+            This allows censored Gaussian likelihoods to be evaluated even when
+            the original dataset does not explicitly report 1σ uncertainties for
+            non-detections.
+
+            This inference is applied **only** where uncertainties are missing.
+            Any explicitly provided ``flux_density_error`` values are preserved
+            and never overwritten.
+
+            If ``False`` (default), the likelihood will raise an error if
+            non-detections lack associated uncertainties.
+
+        detection_threshold : float, optional
+            The number of standard deviations corresponding to the reported
+            upper limits when ``infer_errors=True``.
+
+            For example, if upper limits are quoted at the 3σ level, set
+
+            .. code-block:: python
+
+                detection_threshold = 3.0
+
+            The inferred uncertainty is then
+
+            .. math::
+
+                \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.
+
+            This parameter has no effect unless ``infer_errors=True``.
 
         Returns
         -------
@@ -597,9 +651,9 @@ class RadioPhotometryContainer(DataContainer):
 
             for var_name in model.variable_names:
                 if var_name == "time":
-                    variables[var_name] = ("time",)
+                    variables[var_name] = "time"
                 elif var_name in {"freq", "frequency"}:
-                    variables[var_name] = ("freq",)
+                    variables[var_name] = "freq"
                 else:
                     raise ValueError(
                         f"Cannot infer mapping for model variable '{var_name}'. Please specify `variables=` explicitly."
@@ -625,78 +679,249 @@ class RadioPhotometryContainer(DataContainer):
             }
 
         # ------------------------------------------------------------
+        # Infer errors for non-detections if requested and if any are missing
+        # ------------------------------------------------------------
+        table = self.__table__.copy()
+
+        if infer_errors:
+            nan_errors_mask = np.isnan(self.flux_density_error)
+            upper_limits_mask = self.non_detection_mask
+
+            _mask = upper_limits_mask & nan_errors_mask
+
+            _masked_upper_limits = self.flux_upper_limit[_mask]
+            inferred_error = infer_err_from_non_detection(
+                flux_limit=_masked_upper_limits.value,
+                sigma=detection_threshold,
+            )
+
+            # Update the table with the inferred errors for non-detections where errors are missing
+            table["flux_density_error"][_mask] = inferred_error * self.flux_upper_limit.unit
+
+        if np.any(np.isnan(table["flux_density_error"])):
+            warnings.warn(
+                "Flux density error contains NaN values!"
+                " This will likely cause errors in likelihood evaluation.\n"
+                " Use the `infer_errors` option to automatically infer errors"
+                " for non-detections based on their upper limits.",
+                stacklevel=2,
+            )
+
+        # ------------------------------------------------------------
         # Construct inference data
         # ------------------------------------------------------------
         return InferenceData.from_table(
             model=model,
-            table=self.table,
+            table=table,
             variables=variables,
             observables=observables,
         )
 
     # ========================= IO Methods ========================= #
     @classmethod
-    def from_table(cls, table: Table, column_map: Optional[dict] = None, time_starts: u.Quantity = None):
+    def from_table(
+        cls,
+        table: Table,
+        column_map: Optional[dict] = None,
+        time_starts: Optional[Union[u.Quantity, Time, float]] = None,
+        internal_time_format: str = "relative",
+        internal_time_scale: str = "utc",
+    ):
         """
-        Create a :class:`RadioPhotometryContainer` from an Astropy Table.
+        Construct a :class:`RadioPhotometryContainer` from an Astropy table.
 
-        This method allows for optional column renaming via the `column_map` parameter,
-        enabling flexibility in input table schemas.
+        This constructor provides flexible handling of time columns, allowing
+        both relative and absolute time representations. Internally, all times
+        are converted to **relative days**.
 
         Parameters
         ----------
         table : astropy.table.Table
-            The input table containing radio photometry data.
+            Input table containing radio photometry data. Must contain a ``time``
+            column after optional renaming.
+
         column_map : dict, optional
-            A mapping from existing column names (key) to expected column names (value).
-            If provided, the table's columns will be renamed accordingly before validation. If
-            a column is not present in the mapping, it will retain its original name.
-        time_starts : astropy.time.Time, optional
-            If provided, this time will be subtracted from the 'time' column to convert
-            absolute times to relative times.
+            Mapping from existing column names → expected column names.
+            Useful when loading heterogeneous datasets.
+
+        time_starts : float, astropy.units.Quantity, or astropy.time.Time, optional
+            Reference start time used to convert absolute times into relative time.
+
+            Interpretation depends on ``internal_time_format``:
+
+            - If ``internal_time_format="relative"``, then ``time_starts`` must be
+              a float (assumed days) or Quantity.
+            - Otherwise, ``time_starts`` must be an ``astropy.time.Time`` object.
+
+        internal_time_format : str, default="relative"
+            Format used to interpret the input time column.
+
+            Options:
+
+            - ``"relative"`` → time column already represents elapsed time.
+            - Any valid Astropy time format (e.g., ``"mjd"``, ``"jd"``,
+              ``"iso"``, ``"unix"``).
+
+        internal_time_scale : str, default="utc"
+            Astropy time scale to use when interpreting absolute times.
+            Only used if ``internal_time_format != "relative"``.
 
         Returns
         -------
         RadioPhotometryContainer
-            The constructed RadioPhotometryContainer instance.
+            Validated container with internal times stored as relative days.
+
+        Notes
+        -----
+        - Internally, all times are stored as relative days (``astropy.units.Quantity``).
+        - Absolute time formats are converted via ``astropy.time.Time``.
+        - If the input time column has no units, days are assumed (with a warning).
+        - If the time column is already an ``astropy.time.Time`` object,
+          its format and scale are preserved.
+
+        Examples
+        --------
+        Case 1 — Already relative times (days since explosion)
+
+        .. code-block:: python
+
+            container = RadioPhotometryContainer.from_table(
+                table,
+                internal_time_format="relative",
+            )
+
+
+        Case 2 — Absolute times in MJD
+
+        .. code-block:: python
+
+            from astropy.time import Time
+
+            t0 = Time(58285.0, format="mjd")
+
+            container = RadioPhotometryContainer.from_table(
+                table,
+                internal_time_format="mjd",
+                time_starts=t0,
+            )
+
+
+        Case 3 — Absolute times in JD
+
+        .. code-block:: python
+
+            from astropy.time import Time
+
+            t0 = Time(2458285.5, format="jd")
+
+            container = RadioPhotometryContainer.from_table(
+                table,
+                internal_time_format="jd",
+                time_starts=t0,
+            )
+
+
+        Case 4 — Relative times with offset
+
+        .. code-block:: python
+
+            from astropy import units as u
+
+            container = RadioPhotometryContainer.from_table(
+                table,
+                internal_time_format="relative",
+                time_starts=5.0 * u.day,
+            )
         """
+        # --------------------------------------------------
+        # Column Renaming
+        # --------------------------------------------------
         if column_map is not None:
-            # Rename columns according to the provided mapping
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
 
-        # Handle the provided time_starts adjustment.
-        if time_starts is not None:
-            # Ensure that we have a time column.
-            if "time" not in table.colnames:
-                raise ValueError("Column 'time' not found in the table for time adjustment.")
+        # --------------------------------------------------
+        # Time Handling
+        # --------------------------------------------------
+        if time_starts is None:
+            return cls(table)
 
-            # Ensure that the time column has a valid dtype or attempt to coerce it.
-            if not np.issubdtype(table["time"].dtype, np.number):
-                try:
-                    table["time"] = table["time"].astype(float)
-                except Exception as e:
-                    raise TypeError(
-                        f"Column 'time' has dtype '{table['time'].dtype}', "
-                        f"expected a numerical dtype. Failed to cast: {e}"
-                    ) from e
+        if "time" not in table.colnames:
+            raise ValueError("Column 'time' not found in table.")
 
-            # Ensure that the time column has a unit. If it doesn't have one, we assume days.
-            time_col = table["time"]
-            if time_col.unit is None:
-                triceratops_logger.warning("Column 'time' has no unit. Assuming unit of days for time adjustment.")
+        # Ensure that the time column has a valid dtype or attempt to coerce it.
+        if not np.issubdtype(table["time"].dtype, np.number):
+            try:
+                table["time"] = table["time"].astype(float)
+            except Exception as e:
+                raise TypeError(
+                    f"Column 'time' has dtype '{table['time'].dtype}', expected a numerical dtype. Failed to cast: {e}"
+                ) from e
+
+        time_col = table["time"]
+
+        # If time column is already a Time object
+        if isinstance(time_col, Time):
+            t_obs = time_col
+        else:
+            # Ensure unit exists
+            if getattr(time_col, "unit", None) is None:
+                triceratops_logger.warning("Column 'time' has no unit. Assuming days.")
                 time_col.unit = u.day
 
-            # Now proceed to make the adjustment.
-            time_quantity = time_col.quantity
-            adjusted_time = time_quantity - time_starts.to(time_quantity.unit)
-            table["time"] = adjusted_time.value * time_quantity.unit
+            # ----------------------------------------------
+            # CASE 1: Relative time
+            # ----------------------------------------------
+            if internal_time_format == "relative":
+                if isinstance(time_starts, Time):
+                    raise TypeError("time_starts must be float or Quantity when internal_time_format='relative'.")
+
+                if isinstance(time_starts, u.Quantity):
+                    t0 = time_starts.to(u.day)
+                elif isinstance(time_starts, (int, float)):
+                    t0 = time_starts * u.day
+                else:
+                    raise TypeError("time_starts must be float or Quantity when internal_time_format='relative'.")
+
+                t_days = time_col.quantity.to(u.day)
+
+                table["time"] = (t_days - t0).to(u.day)
+                return cls(table)
+
+            # ----------------------------------------------
+            # CASE 2: Absolute time
+            # ----------------------------------------------
+            if not isinstance(time_starts, Time):
+                raise TypeError("time_starts must be astropy.time.Time when using absolute time formats.")
+
+            time_values = time_col.quantity.to_value(u.day)
+
+            try:
+                t_obs = Time(
+                    time_values,
+                    format=internal_time_format,
+                    scale=internal_time_scale,
+                )
+            except Exception as exc:
+                raise ValueError(f"Invalid internal_time_format '{internal_time_format}'.") from exc
+
+        # ----------------------------------------------
+        # Convert absolute → relative days
+        # ----------------------------------------------
+        delta = (t_obs - time_starts).to(u.day)
+        table["time"] = delta
 
         return cls(table)
 
     @classmethod
     def from_file(
-        cls, path: Union[str, Path], column_map: Optional[dict] = None, time_starts: u.Quantity = None, **kwargs
+        cls,
+        path: Union[str, Path],
+        column_map: Optional[dict] = None,
+        time_starts: u.Quantity = None,
+        internal_time_format: str = "relative",
+        internal_time_scale: str = "utc",
+        **kwargs,
     ):
         """
         Create a :class:`RadioPhotometryContainer` from a FITS file.
@@ -716,6 +941,18 @@ class RadioPhotometryContainer(DataContainer):
         time_starts : astropy.units.Quantity, optional
             If provided, this time will be subtracted from the 'time' column to convert
             absolute times to relative times.
+        internal_time_format : str, default="relative"
+            Format used to interpret the input time column.
+
+            Options:
+
+            - ``"relative"`` → time column already represents elapsed time.
+            - Any valid Astropy time format (e.g., ``"mjd"``, ``"jd"``,
+              ``"iso"``, ``"unix"``).
+
+        internal_time_scale : str, default="utc"
+            Astropy time scale to use when interpreting absolute times.
+            Only used if ``internal_time_format != "relative"``.
         **kwargs:
             Additional keyword arguments to pass to `astropy.table.Table.read`.
 
