@@ -74,6 +74,8 @@ __all__ = [
     "LogNormalPrior",
     "GammaPrior",
     "BetaPrior",
+    "CallablePrior",
+    "PRIOR_REGISTRY",
 ]
 
 
@@ -870,3 +872,45 @@ class BetaPrior(Prior):
             return -np.inf
 
         return logp
+
+
+# ==================================================== #
+# Registry
+# ==================================================== #
+# We keep a registry of these objects so that we can easily perform
+# unit parsing and other checks. This also allows us to easily test that all
+# concrete subclasses of Prior are included in the registry.
+PRIOR_REGISTRY = {
+    "uniform": {
+        "class": UniformPrior,
+        "unit_params": ("lower", "upper"),
+    },
+    "loguniform": {
+        "class": LogUniformPrior,
+        "unit_params": ("lower", "upper"),
+    },
+    "normal": {
+        "class": NormalPrior,
+        "unit_params": ("mean", "sigma"),
+    },
+    "lognormal": {
+        "class": LogNormalPrior,
+        "unit_params": ("mean", "sigma"),
+    },
+    "halfnormal": {
+        "class": HalfNormalPrior,
+        "unit_params": ("sigma",),
+    },
+    "gamma": {
+        "class": GammaPrior,
+        "unit_params": ("scale",),
+    },
+    "beta": {
+        "class": BetaPrior,
+        "unit_params": ("scale",),
+    },
+    "truncatednormal": {
+        "class": TruncatedNormalPrior,
+        "unit_params": ("mean", "sigma", "lower", "upper"),
+    },
+}

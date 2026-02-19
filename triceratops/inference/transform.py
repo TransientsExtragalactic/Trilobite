@@ -130,7 +130,7 @@ class ParameterTransform(ABC):
         # Generate the callables
         self._forward = self._make_forward()
         self._inverse = self._make_inverse()
-        self._jacobian = self._make_jacobian()
+        self._log_abs_det_jacobian = self._make_log_abs_det_jacobian()
 
     # ------------------------------------------------------------ #
     # Generator Methods
@@ -160,9 +160,9 @@ class ParameterTransform(ABC):
         pass
 
     @abstractmethod
-    def _make_jacobian(self):
+    def _make_log_abs_det_jacobian(self):
         r"""
-        Generate the jacobian function :math:`J_f(\theta)`.
+        Generate the log abs of the jacobian function :math:`J_f(\theta)`.
 
         Returns
         -------
@@ -204,7 +204,7 @@ class ParameterTransform(ABC):
         """
         return self._inverse(z)
 
-    def jacobian(self, theta):
+    def log_abs_det_jacobian(self, theta):
         """
         Evaluate the jacobian of the transformation at a given parameter value.
 
@@ -217,7 +217,7 @@ class ParameterTransform(ABC):
         -------
         The jacobian of the transformation at the given parameter value.
         """
-        return self._jacobian(theta)
+        return self._log_abs_det_jacobian(theta)
 
     # ------------------------------------------------------------ #
     # Dunder methods                                               #
@@ -406,8 +406,8 @@ class IdentityTransform(ParameterTransform):
     def _make_inverse(self):
         return lambda z: z
 
-    def _make_jacobian(self):
-        return lambda theta: 1.0
+    def _make_log_abs_det_jacobian(self):
+        return lambda z: 0.0
 
 
 class LogTransform(ParameterTransform):
@@ -462,8 +462,8 @@ class LogTransform(ParameterTransform):
     def _make_inverse(self):
         return lambda z: np.exp(z)
 
-    def _make_jacobian(self):
-        return lambda theta: theta
+    def _make_log_abs_det_jacobian(self):
+        return lambda z: z
 
 
 class Log10Transform(ParameterTransform):
@@ -511,8 +511,9 @@ class Log10Transform(ParameterTransform):
     def _make_inverse(self):
         return lambda z: 10.0**z
 
-    def _make_jacobian(self):
-        return lambda theta: theta * np.log(10.0)
+    def _make_log_abs_det_jacobian(self):
+        ln10 = np.log(10.0)
+        return lambda z: z * ln10 + np.log(ln10)
 
 
 class LogisticTransform(ParameterTransform):
@@ -594,17 +595,16 @@ class LogisticTransform(ParameterTransform):
 
         return inverse
 
-    def _make_jacobian(self):
+    def _make_log_abs_det_jacobian(self):
         lower = self._parameters["lower"]
         upper = self._parameters["upper"]
+        delta = upper - lower
 
-        def jac(theta):
-            # compute via inverse derivative formula
-            z = np.log((theta - lower) / (upper - theta))
+        def _log_jac(z):
             ez = np.exp(-z)
-            return (upper - lower) * ez / (1.0 + ez) ** 2
+            return np.log(delta) + np.log(ez) - 2.0 * np.log1p(ez)
 
-        return jac
+        return _log_jac
 
 
 class SoftplusTransform(ParameterTransform):
@@ -652,5 +652,5 @@ class SoftplusTransform(ParameterTransform):
     def _make_inverse(self):
         return lambda z: np.log1p(np.exp(z))
 
-    def _make_jacobian(self):
-        return lambda theta: 1.0 - np.exp(-theta)
+    def _make_log_abs_det_jacobian(self):
+        return lambda z: z - np.log1p(np.exp(z))

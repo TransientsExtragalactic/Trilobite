@@ -11,7 +11,7 @@ from triceratops.inference.prior import *
 # We create a catalog of priors in the PRIOR_REGISTRY so that we can initialize
 # all of them and perform relevant tests. We also have a test to check that the
 # prior registry is complete.
-PRIOR_REGISTRY = {
+TEST_PRIOR_REGISTRY = {
     UniformPrior: {"lower": 0.0, "upper": 10.0},
     LogUniformPrior: {"lower": 1e-3, "upper": 1e3},
     NormalPrior: {"mean": 0.0, "sigma": 1.0},
@@ -61,7 +61,19 @@ def _get_concrete_prior_subclasses():
 def test_all_priors_registered():
     subclasses = _get_concrete_prior_subclasses()
 
-    registered = set(PRIOR_REGISTRY.keys())
+    registered = set(TEST_PRIOR_REGISTRY.keys())
+
+    missing = subclasses - registered
+    extra = registered - subclasses
+
+    assert not missing, f"Missing priors in registry: {missing}"
+    assert not extra, f"Registry contains unknown priors: {extra}"
+
+
+def test_all_priors_in_public_registry():
+    subclasses = _get_concrete_prior_subclasses()
+
+    registered = set([value["class"] for value in PRIOR_REGISTRY.values()])
 
     missing = subclasses - registered
     extra = registered - subclasses
@@ -73,7 +85,7 @@ def test_all_priors_registered():
 # --- Serialization Tests -------------------------------------------------- #
 @pytest.mark.parametrize(
     "prior_cls, params",
-    PRIOR_REGISTRY.items(),
+    TEST_PRIOR_REGISTRY.items(),
 )
 def test_prior_serialization_roundtrip(prior_cls, params):
     prior = prior_cls(**params)

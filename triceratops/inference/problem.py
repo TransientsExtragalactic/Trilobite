@@ -7,7 +7,10 @@ template for defining specific inference problems in the Triceratops library. It
 free parameters, priors, and other problem-specific settings.
 """
 
+import warnings
 from dataclasses import dataclass
+from datetime import UTC
+from importlib.metadata import PackageNotFoundError, version
 from typing import TYPE_CHECKING
 
 import numpy as np
@@ -22,6 +25,15 @@ from .prior import (
     NormalPrior,
     UniformPrior,
 )
+
+# ============================================================= #
+# Package versioning and Type checking
+# ============================================================= #=
+try:
+    __pkg_version__ = version("triceratops")
+except PackageNotFoundError:
+    __pkg_version__ = "unknown"
+
 
 # Handle type checking and special aliases.
 if TYPE_CHECKING:
@@ -128,7 +140,7 @@ class InferenceParameter:
       in order for :class:`InferenceProblem` serialization
       to remain fully reconstructible.
     """
-    transform: ParameterTransform = None
+    transform: "ParameterTransform" = None
     r"""~inference.transform.ParameterTransform: Optional transformation applied
     to this parameter during sampling.
 
@@ -183,7 +195,7 @@ class InferenceParameter:
         model_parameter: "ModelParameter",
         freeze: bool = False,
         prior: "Prior" = None,
-        transform: ParameterTransform = None,
+        transform: "ParameterTransform" = None,
         initial_value: float = None,
     ):
         # Set all of the attributes.
@@ -570,7 +582,6 @@ class InferenceProblem:
                 freeze=False,
                 prior=None,
                 transform=None,
-                inverse_transform=None,
                 initial_value=None,
             )
             for model_parameter in self.__likelihood__._model.PARAMETERS
@@ -781,7 +792,23 @@ class InferenceProblem:
         """
         theta = np.asarray(theta, dtype=float)
 
-        return {name: theta[i] for i, name in enumerate(self.__parameter_order__)}
+        out = {}
+
+        for i, name in enumerate(self.__parameter_order__):
+            p = self.__parameters__[name]
+            z = theta[i]
+
+            if p.transform is not None:
+                try:
+                    x = p.transform.inverse(z)
+                except Exception:
+                    return None  # caller handles -inf
+            else:
+                x = z
+
+            out[name] = x
+
+        return out
 
     def pack_free_parameters(self, parameters: dict[str, float]) -> np.ndarray:
         """
@@ -843,44 +870,197 @@ class InferenceProblem:
 
         return out
 
-    # Prior callables.
-    def _log_prior(self, theta: np.ndarray) -> float:
+    def transform_theta_forward(
+        self,
+        theta: np.ndarray,
+    ) -> tuple[np.ndarray, float]:
         """
-        Compute the log-prior for a given set of parameters.
-
-        Parameters
-        ----------
-        theta : np.ndarray
-            Array of parameter values in the order defined by the model.
+        Transform a full physical parameter vector into sampling space.
 
         Returns
         -------
-        float
-            The computed log-prior value.
+        z : np.ndarray
+            Sampling-space parameter vector.
+        log_det : float
+            Log absolute determinant of the transformation |dz/dθ|.
         """
-        # Declare the log-prior variable.
+        theta = np.asarray(theta, dtype=float)
+
+        if theta.ndim != 1:
+            raise ValueError("Parameter vector must be one-dimensional.")
+
+        if len(theta) != self.n_parameters:
+            raise ValueError("Parameter vector length mismatch.")
+
+        z = np.empty_like(theta)
+        log_det = 0.0
+
+        for i, name in enumerate(self.__parameter_order__):
+            p = self.__parameters__[name]
+            value = theta[i]
+
+            if p.transform is not None:
+                try:
+                    z_i = p.transform.forward(value)
+
+                    # convert stored log|dθ/dz| to log|dz/dθ|
+                    log_det -= p.transform.log_abs_det_jacobian(z_i)
+
+                except Exception as exc:
+                    raise ValueError(f"Forward transform failed for parameter '{name}'.") from exc
+            else:
+                z_i = value
+
+            z[i] = z_i
+
+        return z, log_det
+
+    def transform_theta_inverse(
+        self,
+        z: np.ndarray,
+    ) -> tuple[np.ndarray, float]:
+        """
+        Convert sampling-space vector z to physical space theta and compute total log-Jacobian.
+
+        Returns
+        -------
+        theta : np.ndarray
+            Physical-space parameter vector.
+        log_det : float
+            Log absolute determinant |dθ/dz|.
+        """
+        z = np.asarray(z, dtype=float)
+
+        if z.ndim != 1:
+            raise ValueError("Parameter vector must be one-dimensional.")
+
+        if len(z) != self.n_parameters:
+            raise ValueError("Parameter vector length mismatch.")
+
+        theta = np.empty_like(z)
+        log_det = 0.0
+
+        for i, name in enumerate(self.__parameter_order__):
+            p = self.__parameters__[name]
+            zi = z[i]
+
+            if p.transform is not None:
+                try:
+                    theta_i = p.transform.inverse(zi)
+                    log_det += p.transform.log_abs_det_jacobian(zi)
+                except Exception as exc:
+                    raise ValueError(f"Inverse transform failed for parameter '{name}'.") from exc
+            else:
+                theta_i = zi
+
+            theta[i] = theta_i
+
+        return theta, log_det
+
+    def transform_free_theta_forward(
+        self,
+        theta_free: np.ndarray,
+    ) -> tuple[np.ndarray, float]:
+        """
+        Transform free physical-space parameters into sampling space.
+
+        Returns
+        -------
+        z_free : np.ndarray
+            Free parameters in sampling space.
+        log_det : float
+            Log absolute determinant of the transformation
+            |dz/dθ|.
+        """
+        theta_free = np.asarray(theta_free, dtype=float)
+
+        if len(theta_free) != self.n_free_parameters:
+            raise ValueError("Free parameter vector length mismatch.")
+
+        z_free = np.empty_like(theta_free)
+        log_det = 0.0
+
+        j = 0
+        for name in self.__parameter_order__:
+            p = self.__parameters__[name]
+
+            if not p.freeze:
+                value = theta_free[j]
+
+                if p.transform is not None:
+                    try:
+                        z_free[j] = p.transform.forward(value)
+
+                        # we store log |dθ/dz|
+                        log_det -= p.transform.log_abs_det_jacobian(z_free[j])
+
+                    except Exception as exc:
+                        raise ValueError(f"Forward transform failed for parameter '{name}'.") from exc
+                else:
+                    z_free[j] = value
+
+                j += 1
+
+        return z_free, log_det
+
+    def transform_free_theta_inverse(
+        self,
+        z_free: np.ndarray,
+    ) -> tuple[np.ndarray, float]:
+        """
+        Transform free sampling-space parameters into physical space.
+
+        Returns
+        -------
+        theta_free : np.ndarray
+            Free parameters in physical space.
+        log_det : float
+            Log absolute determinant of the transformation
+            |dθ/dz|.
+        """
+        z_free = np.asarray(z_free, dtype=float)
+
+        if len(z_free) != self.n_free_parameters:
+            raise ValueError("Free parameter vector length mismatch.")
+
+        theta_free = np.empty_like(z_free)
+        log_det = 0.0
+
+        j = 0
+        for name in self.__parameter_order__:
+            p = self.__parameters__[name]
+
+            if not p.freeze:
+                value = z_free[j]
+
+                if p.transform is not None:
+                    try:
+                        theta_free[j] = p.transform.inverse(value)
+
+                        log_det += p.transform.log_abs_det_jacobian(value)
+
+                    except Exception as exc:
+                        raise ValueError(f"Inverse transform failed for parameter '{name}'.") from exc
+                else:
+                    theta_free[j] = value
+
+                j += 1
+
+        return theta_free, log_det
+
+    # Prior callables.
+    def _log_prior(self, theta: np.ndarray) -> float:
+        """Compute the log-prior in sampling space, including Jacobian corrections for transformed parameters."""
         logp = 0.0
 
-        # Cycle through each of the parameters and compute the log-prior, adding
-        # it to the total.
         for i, name in enumerate(self.__parameter_order__):
             p = self.__parameters__[name]
 
-            # if the parameter is frozen, skip it. If the prior is None, then we can
-            # also skip, although this should be caught when preparing for inference since
-            # there should be a prior defined for each free parameter.
             if p.freeze or p.prior is None:
                 continue
 
-            # Get the parameter value, applying the inverse transform if necessary.
-            x = theta[i]
-            if p.inverse_transform:
-                x = p.inverse_transform(x)
+            lp = p.prior(theta[i])
 
-            # Compute the log-prior for this parameter.
-            lp = p.prior(x)
-
-            # Check if the log-prior is finite; if not, return -inf immediately.
             if not np.isfinite(lp):
                 return -np.inf
 
@@ -895,7 +1075,9 @@ class InferenceProblem:
         Parameters
         ----------
         theta : np.ndarray
-            Array of parameter values in the order defined by the model.
+            Array of parameter values in the order defined by the model. These
+            will be in the sampling space and therefore must be transformed back
+            to physical space before being passed to the likelihood.
 
         Returns
         -------
@@ -910,29 +1092,25 @@ class InferenceProblem:
 
         return logl
 
-    def _log_posterior(self, theta: np.ndarray) -> float:
-        """
-        Compute the log-posterior for a given set of parameters.
+    def _log_posterior(self, z: np.ndarray) -> float:
+        """Compute log-posterior in sampling space."""
+        # Convert sampling → physical once
+        try:
+            theta, log_jac = self.transform_theta_inverse(z)
+        except Exception as exp:
+            raise ValueError("Inverse transform failed.") from exp
 
-        Parameters
-        ----------
-        theta : np.ndarray
-            Array of parameter values in the order defined by the model.
-
-        Returns
-        -------
-        float
-            The computed log-posterior value.
-        """
+        # Prior in physical space
         logp = self._log_prior(theta)
         if not np.isfinite(logp):
             return -np.inf
 
+        # Likelihood in physical space
         logl = self._log_likelihood(theta)
         if not np.isfinite(logl):
             return -np.inf
 
-        return logp + logl
+        return logp + logl + log_jac
 
     def _log_free_prior(self, theta_free: np.ndarray) -> float:
         """
@@ -1182,11 +1360,6 @@ class InferenceProblem:
 
             # Test prior at initial value
             x0 = p.initial_value
-            if p.inverse_transform:
-                try:
-                    x0 = p.inverse_transform(x0)
-                except Exception as e:
-                    raise RuntimeError(f"Inverse transform failed for parameter '{p.name}': {e}") from e
 
             try:
                 lp = p.prior(x0)
@@ -1202,8 +1375,9 @@ class InferenceProblem:
         for p in free_params.values():
             if p.transform is not None:
                 try:
-                    y = p.transform(p.initial_value)
-                    x = p.inverse_transform(y)
+                    y = p.transform.forward(p.initial_value)
+                    x = p.transform.inverse(y)
+                    _ = p.transform.log_abs_det_jacobian(y)
                 except Exception as e:
                     raise RuntimeError(f"Transform/inverse_transform failed for parameter '{p.name}': {e}") from e
 
@@ -1215,6 +1389,7 @@ class InferenceProblem:
         # ------------------------------------------------- #
         try:
             theta0 = self.pack_parameters({name: p.initial_value for name, p in self.__parameters__.items()})
+            theta0_transformed, _ = self.transform_theta_forward(theta0)
         except Exception as e:
             raise RuntimeError(f"Failed to pack initial parameters: {e}") from e
 
@@ -1239,7 +1414,7 @@ class InferenceProblem:
         # Validate posterior evaluation                     #
         # ------------------------------------------------- #
         try:
-            logp = self._log_posterior(theta0)
+            logp = self._log_posterior(theta0_transformed)
         except Exception as e:
             raise RuntimeError(f"Posterior evaluation failed at initial point: {e}") from e
 
@@ -1349,6 +1524,30 @@ class InferenceProblem:
         free and fixed parameters. It can be useful for evaluating the likelihood or posterior at the initial point.
         """
         return self.pack_parameters({name: p.initial_value for name, p in self.__parameters__.items()})
+
+    @property
+    def initial_z(self) -> np.ndarray:
+        """np.ndarray: The initial parameter vector of free parameters transformed into sampling space.
+
+        This is the initial free parameter vector transformed into sampling space using the defined parameter
+        transforms.
+        It is generally the starting point for samplers and optimizers that operate in sampling space.
+        """
+        z, _ = self.transform_free_theta_forward(self.initial_theta)
+        return z
+
+    @property
+    def initial_full_z(self) -> np.ndarray:
+        """np.ndarray: The initial full parameter vector including fixed parameters, transformed into sampling space.
+
+        This is the initial full parameter vector (including both free and fixed parameters) transformed into
+        sampling space
+        using the defined parameter transforms. It can be useful for evaluating the likelihood or posterior at
+        the initial point
+        in sampling space.
+        """
+        z, _ = self.transform_theta_forward(self.initial_full_theta)
+        return z
 
     @property
     def initial_params(self) -> dict[str, float]:
@@ -1495,3 +1694,417 @@ class InferenceProblem:
             if name not in self.__parameters__:
                 raise KeyError(f"Parameter '{name}' not found in inference problem.")
             self.__parameters__[name].freeze = False
+
+    # ------------------------------------------------- #
+    # Serialization Methods                             #
+    # ------------------------------------------------- #
+    def to_dict(self, **extra_metadata) -> dict:
+        """
+        Serialize the :class:`InferenceProblem` to a fully reconstructible dictionary.
+
+        This method produces a JSON-safe representation of the complete inference
+        configuration, including:
+
+        - Model specification
+        - Likelihood target
+        - Data container
+        - All inference parameters (including priors and transforms)
+        - Metadata describing the problem state
+
+        The resulting dictionary is guaranteed to be JSON-serializable and may be:
+
+        - Saved to disk
+        - Transferred between processes (e.g., MPI workers)
+        - Logged for reproducibility
+        - Used to exactly reconstruct the inference problem via
+          :meth:`InferenceProblem.from_dict`
+
+        Parameters
+        ----------
+        **extra_metadata
+            Optional additional metadata fields to attach to the serialized
+            representation. All provided values must be JSON-serializable.
+
+        Returns
+        -------
+        dict
+            JSON-safe representation of the inference problem.
+
+        Raises
+        ------
+        TypeError
+            If any component (model, likelihood, data, priors, transforms,
+            or metadata) is not serializable.
+
+        Notes
+        -----
+        - All priors and transforms must themselves be importable and
+          serializable.
+        - The model must implement :meth:`to_model_spec`.
+        - The data container must implement :meth:`to_dict`.
+        - The likelihood must be importable via its fully-qualified module path.
+        - The returned dictionary contains a ``format`` field for validation
+          during reconstruction.
+        - A version tag is embedded to allow compatibility checks during loading.
+        """
+        import json
+        from datetime import datetime
+
+        from .likelihood.utils import get_likelihood_target
+
+        # ---------------------------------------------------------
+        # Base output template
+        # ---------------------------------------------------------
+        output = {
+            "format": "InferenceProblem",
+            "metadata": {},
+            "model": None,
+            "likelihood": None,
+            "data": None,
+            "parameters": {},
+        }
+
+        # ---------------------------------------------------------
+        # Serialize parameters
+        # ---------------------------------------------------------
+        for name, p in self.__parameters__.items():
+            try:
+                output["parameters"][name] = p.to_dict()
+            except Exception as e:
+                raise TypeError(f"Failed to serialize parameter '{name}': {e}") from e
+
+        # ---------------------------------------------------------
+        # Serialize likelihood target
+        # ---------------------------------------------------------
+        try:
+            output["likelihood"] = get_likelihood_target(self.__likelihood__)
+        except Exception as e:
+            raise TypeError(f"Failed to serialize likelihood: {e}") from e
+
+        # ---------------------------------------------------------
+        # Serialize model
+        # ---------------------------------------------------------
+        try:
+            output["model"] = self.model.to_model_spec().to_dict()
+        except Exception as e:
+            raise TypeError(f"Failed to serialize model: {e}") from e
+
+        # ---------------------------------------------------------
+        # Serialize data
+        # ---------------------------------------------------------
+        try:
+            output["data"] = self.data.to_dict()
+        except Exception as e:
+            raise TypeError(f"Failed to serialize data: {e}") from e
+
+        # ---------------------------------------------------------
+        # Construct metadata (JSON-safe only)
+        # ---------------------------------------------------------
+        metadata_block = {
+            "created_at": datetime.now(UTC).isoformat(),
+            "num_parameters": self.n_parameters,
+            "num_free_parameters": self.n_free_parameters,
+            "num_fixed_parameters": self.n_fixed_parameters,
+            "num_data_points": self.num_data_points,
+            "likelihood_target": output["likelihood"],
+            "model_target": output["model"].get("target"),
+            "triceratops_version": __pkg_version__,
+        }
+
+        # Merge user-provided metadata safely
+        if extra_metadata:
+            metadata_block.update(extra_metadata)
+
+        output["metadata"] = metadata_block
+
+        # ---------------------------------------------------------
+        # Final JSON validation
+        # ---------------------------------------------------------
+        try:
+            json.dumps(output)
+        except TypeError as exc:
+            raise TypeError("Serialized InferenceProblem contains non-JSON-serializable objects.") from exc
+
+        return output
+
+    @classmethod
+    def from_dict(cls, dict_spec: dict) -> "InferenceProblem":
+        """
+        Reconstruct an :class:`InferenceProblem` from a serialized dictionary.
+
+        This method reverses the operation performed by
+        :meth:`InferenceProblem.to_dict` and rebuilds:
+
+        - The model
+        - The data container
+        - The likelihood
+        - All inference parameters (including priors and transforms)
+
+        Reconstruction is deterministic provided that:
+
+        - All referenced classes are importable
+        - The serialized objects are compatible with the current package version
+
+        Parameters
+        ----------
+        dict_spec : dict
+            Dictionary produced by :meth:`InferenceProblem.to_dict`.
+
+        Returns
+        -------
+        InferenceProblem
+            Fully reconstructed inference problem instance.
+
+        Raises
+        ------
+        ValueError
+            If required fields are missing or malformed.
+        TypeError
+            If reconstruction of model, data, likelihood, priors,
+            or transforms fails.
+
+        Warnings
+        --------
+        A :class:`UserWarning` is issued if the serialized object was created
+        using a different version of ``triceratops`` than the currently
+        installed version.
+
+        Notes
+        -----
+        - Reconstruction assumes that the model, likelihood, data,
+          prior, and transform classes are importable via their
+          fully-qualified module paths.
+        - The parameter ordering is restored exactly as defined by
+          the underlying model.
+        - Metadata is preserved but does not affect functional behavior.
+        """
+        from triceratops.data.core import InferenceData
+        from triceratops.models.core.serial import ModelSpec
+
+        from .likelihood.utils import build_likelihood
+
+        # --- Validation ------------------------
+        # Check that all of the expected keys are present.
+        expected_keys = {"format", "metadata", "model", "likelihood", "data", "parameters"}
+        missing_keys = expected_keys - dict_spec.keys()
+        if missing_keys:
+            raise ValueError(f"Missing keys in InferenceProblem specification: {missing_keys}")
+
+        # Verify the format
+        if dict_spec["format"] != "InferenceProblem":
+            raise ValueError(f"Invalid format '{dict_spec['format']}' for InferenceProblem specification.")
+
+        # Extract the triceratops version and check it against current. If
+        # it is not the same version, we raise a warning.
+        spec_version = dict_spec["metadata"].get("triceratops_version")
+        if spec_version != __pkg_version__:
+            warnings.warn(
+                f"Version mismatch: InferenceProblem specification was created with triceratops "
+                f"version {spec_version}, "
+                f"but current version is {__pkg_version__}. Attempting to load, but be aware that there may be "
+                f"incompatibilities or missing features. Consider regenerating the specification with the current"
+                f" version.",
+                UserWarning,
+                stacklevel=2,
+            )
+        # --- Data Reconstruction ------------------------
+        try:
+            data = InferenceData.from_dict(dict_spec["data"])
+        except Exception as e:
+            raise TypeError(f"Failed to reconstruct data from specification: {e}") from e
+
+        # --- Model Reconstruction ------------------------
+        try:
+            model_spec = ModelSpec.from_dict(dict_spec["model"])
+            model = model_spec.build()
+        except Exception as e:
+            raise TypeError(f"Failed to reconstruct model from specification: {e}") from e
+
+        # --- Likelihood Reconstruction ------------------------
+        try:
+            likelihood_target = dict_spec["likelihood"]
+            likelihood = build_likelihood(likelihood_target, model=model, data=data)
+        except Exception as e:
+            raise TypeError(f"Failed to reconstruct likelihood from specification: {e}") from e
+
+        # --- Parameter Reconstruction ------------------------
+        parameters = {}
+        for name, param_spec in dict_spec["parameters"].items():
+            try:
+                parameters[name] = InferenceParameter.from_dict(param_spec, model)
+            except Exception as e:
+                raise TypeError(f"Failed to reconstruct parameter '{name}' from specification: {e}") from e
+
+        # --- Construct InferenceProblem ------------------------
+        problem = cls(likelihood=likelihood)
+
+        # --- Process each of the parameter -------------------------
+        problem.__parameters__ = parameters
+
+        return problem
+
+    def to_json(self, path: str | None = None, **extra_metadata) -> str:
+        """
+        Serialize the :class:`InferenceProblem` to a JSON string or file.
+
+        This method is a thin wrapper around :meth:`to_dict`. It converts
+        the fully reconstructible dictionary representation into a
+        JSON-formatted string.
+
+        Parameters
+        ----------
+        path : str, optional
+            If provided, the JSON representation will be written to this file.
+            If omitted, the JSON string is returned.
+        **extra_metadata
+            Optional additional metadata fields passed to :meth:`to_dict`.
+
+        Returns
+        -------
+        str
+            JSON string representation of the inference problem
+            (also written to disk if ``path`` is provided).
+
+        Raises
+        ------
+        TypeError
+            If serialization fails.
+        """
+        import json
+
+        spec = self.to_dict(**extra_metadata)
+        json_str = json.dumps(spec, indent=2)
+
+        if path is not None:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(json_str)
+
+        return json_str
+
+    @classmethod
+    def from_json(cls, source: str | bytes) -> "InferenceProblem":
+        """
+        Reconstruct an :class:`InferenceProblem` from a JSON string or file.
+
+        Parameters
+        ----------
+        source : str or bytes
+            Either:
+
+            - A JSON string representation of the problem
+            - A file path pointing to a JSON file
+
+        Returns
+        -------
+        InferenceProblem
+            Reconstructed inference problem instance.
+
+        Raises
+        ------
+        ValueError
+            If the JSON structure is invalid.
+        TypeError
+            If reconstruction fails.
+        """
+        import json
+        import os
+
+        # ---------------------------------------------------------
+        # Determine if source is a file path
+        # ---------------------------------------------------------
+        if isinstance(source, str) and os.path.exists(source):
+            with open(source, encoding="utf-8") as f:
+                spec = json.load(f)
+        else:
+            spec = json.loads(source)
+
+        return cls.from_dict(spec)
+
+    def to_yaml(self, path: str | None = None, **extra_metadata) -> str:
+        """
+        Serialize the :class:`InferenceProblem` to a YAML string or file.
+
+        This method uses :meth:`to_dict` internally and converts the
+        resulting dictionary to YAML format.
+
+        Parameters
+        ----------
+        path : str, optional
+            If provided, the YAML representation will be written to this file.
+            If omitted, the YAML string is returned.
+        **extra_metadata
+            Optional additional metadata fields passed to :meth:`to_dict`.
+
+        Returns
+        -------
+        str
+            YAML string representation of the inference problem
+            (also written to disk if ``path`` is provided).
+
+        Raises
+        ------
+        ImportError
+            If PyYAML is not installed.
+        TypeError
+            If serialization fails.
+        """
+        try:
+            import yaml
+        except ImportError as exc:
+            raise ImportError("PyYAML is required for YAML serialization. Install with `pip install pyyaml`.") from exc
+
+        spec = self.to_dict(**extra_metadata)
+        yaml_str = yaml.safe_dump(spec, sort_keys=False)
+
+        if path is not None:
+            with open(path, "w", encoding="utf-8") as f:
+                f.write(yaml_str)
+
+        return yaml_str
+
+    @classmethod
+    def from_yaml(cls, source: str | bytes) -> "InferenceProblem":
+        """
+        Reconstruct an :class:`InferenceProblem` from a YAML string or file.
+
+        Parameters
+        ----------
+        source : str or bytes
+            Either:
+
+            - A YAML string representation of the problem
+            - A file path pointing to a YAML file
+
+        Returns
+        -------
+        InferenceProblem
+            Reconstructed inference problem instance.
+
+        Raises
+        ------
+        ImportError
+            If PyYAML is not installed.
+        ValueError
+            If the YAML structure is invalid.
+        TypeError
+            If reconstruction fails.
+        """
+        try:
+            import yaml
+        except ImportError as exc:
+            raise ImportError(
+                "PyYAML is required for YAML deserialization. Install with `pip install pyyaml`."
+            ) from exc
+
+        import os
+
+        # ---------------------------------------------------------
+        # Determine if source is a file path
+        # ---------------------------------------------------------
+        if isinstance(source, str) and os.path.exists(source):
+            with open(source, encoding="utf-8") as f:
+                spec = yaml.safe_load(f)
+        else:
+            spec = yaml.safe_load(source)
+
+        return cls.from_dict(spec)

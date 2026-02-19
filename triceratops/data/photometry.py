@@ -253,7 +253,7 @@ class RadioPhotometryContainer(DataContainer):
                         f"which is not compatible with expected unit '{expected_unit}'."
                     )
                 else:
-                    table[col] = col.to(expected_unit)
+                    table[name] = col.to(expected_unit)
 
         return table
 
