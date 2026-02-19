@@ -468,6 +468,8 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         self._sed = PowerLaw_Cooling_SSA_SynchrotronSED()
         self._pitch_averaged = pitch_averaged
 
+        self._register_init(pitch_averaged=pitch_averaged)
+
     # -------------------------------------------------- #
     # Forward Model Definition                           #
     # -------------------------------------------------- #
@@ -834,6 +836,8 @@ class SSA_SynchrotronSEDModel(Model):
         self._sed = PowerLaw_SSA_SynchrotronSED()
         self._pitch_averaged = pitch_averaged
 
+        self._register_init(pitch_averaged=pitch_averaged)
+
     # -------------------------------------------------- #
     # Forward Model Definition                           #
     # -------------------------------------------------- #
@@ -1183,6 +1187,8 @@ class Cooling_SynchrotronSEDModel(Model):
         self._sed = PowerLaw_Cooling_SynchrotronSED()
         self._pitch_averaged = pitch_averaged
 
+        self._register_init(pitch_averaged=pitch_averaged)
+
     # -------------------------------------------------- #
     # Forward Model Definition                           #
     # -------------------------------------------------- #
@@ -1520,10 +1526,10 @@ class SynchrotronSEDModel(Model):
 
         :class:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`
         """
-        super().__init__()
-
         self._sed = PowerLaw_SynchrotronSED()
         self._pitch_averaged = pitch_averaged
+
+        self._register_init(pitch_averaged=pitch_averaged)
 
     # -------------------------------------------------- #
     # Forward Model Definition                           #
@@ -1673,9 +1679,9 @@ class Synchrotron_SSA_SBPL_Model(Model):
     # ============================================== #
     # Model Initialization                           #
     # ============================================== #
-    def __init__(self, *args, **kwargs):
-        """Initialize the :class:`Synchrotron_SSA_SBPL_SED` model."""
-        super().__init__(*args, **kwargs)
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
 
     # =============================================== #
     # Parameter and Variable Declarations             #

@@ -203,6 +203,8 @@ class ChevalierShockModel(Model):
         # Set up the SED engine
         self.sed = SSA_SED_PowerLaw()
 
+        self._register_init()
+
     # =============================================== #
     # Core Model Evaluation Method                    #
     # =============================================== #

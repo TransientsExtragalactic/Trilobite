@@ -282,6 +282,10 @@ class PL_Evolving_SSA_SED_Model(Model):
     DESCRIPTION = "Time-evolving smoothed broken power-law SSA SED."
     REFERENCE = "Generic self-similar synchrotron evolution model."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         nu = np.asarray(variables["frequency"], dtype=float)
         t = np.asarray(variables["time"], dtype=float)

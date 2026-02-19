@@ -25,6 +25,7 @@ from .._typing import (
     _ModelVariablesInputRaw,
 )
 from .parameters import ModelParameter, ModelVariable
+from .serial import ModelSpec
 
 # --- TYPE ALIASES --- #
 # These are type aliases to allow for cleaner type hints throughout the codebase. They are
@@ -198,9 +199,18 @@ class Model(ABC):
         # Rebuild namedtuple with validated units
         cls.UNITS = type(cls.UNITS)(*unit_values)
 
-    def __init__(self, *args, **kwargs):
+    @abstractmethod
+    def __init__(self, **kwargs):
         """Initialize the model with given parameters and variables."""
-        pass
+
+    pass
+
+    def _register_init(self, **kwargs):
+        """Register the kwargs for serialization.
+
+        This must be done in all models that have external kwargs.
+        """
+        self._model_init_kwargs = dict(kwargs)
 
     # =============================================== #
     # Model Evaluation                                #
@@ -613,6 +623,110 @@ class Model(ABC):
         """Iterate over the model's parameters and variables."""
         yield from self.PARAMETERS
         yield from self.VARIABLES
+
+    # =============================================== #
+    # Serialization and Reproducibility               #
+    # =============================================== #
+    # In order to ensure that states are reproducible, each model
+    # needs to provide information on how it can be serialized and
+    # deserialized from a specification object. In general, this is
+    # simple and does not need overwrite; however, if a custom object
+    # in taken as a parameter, then it will itself need to be serialized
+    # and deserialized, and the model will need to overwrite the default
+    # serialization and deserialization methods to handle this custom object.
+    def to_model_spec(self) -> ModelSpec:
+        """
+        Serialize this model to a ModelSpec.
+
+        Requirements
+        ------------
+        - The model must have called `_register_init(...)` in its constructor.
+        - All registered kwargs must be JSON-serializable.
+        - The model class must be importable via module path.
+
+        Raises
+        ------
+        RuntimeError
+            If constructor arguments were not registered.
+        TypeError
+            If constructor arguments are not JSON-serializable.
+        ImportError
+            If the model class is not importable.
+        """
+        import importlib
+        import json
+
+        # --------------------------------------------------
+        # 1. Ensure constructor registration exists
+        # --------------------------------------------------
+        if not hasattr(self, "_model_init_kwargs"):
+            raise RuntimeError(
+                f"{self.__class__.__name__} did not register constructor "
+                "arguments. Models must call `_register_init(...)` "
+                "inside __init__."
+            )
+
+        if not hasattr(self, "_model_init_kwargs"):
+            raise SyntaxError(
+                f"{self.__class__.__name__} did not register constructor "
+                "arguments. Models must call `_register_init(...)` "
+                "inside __init__."
+            )
+        kwargs = self._model_init_kwargs
+
+        # --------------------------------------------------
+        # 2. Ensure JSON serializable
+        # --------------------------------------------------
+        try:
+            json.dumps(kwargs)
+        except TypeError as exc:
+            raise TypeError(
+                f"Model '{self.__class__.__name__}' contains "
+                "non-serializable constructor arguments. "
+                "Override to_model_spec() to handle custom objects."
+            ) from exc
+
+        # --------------------------------------------------
+        # 3. Ensure class is importable
+        # --------------------------------------------------
+        module_name = self.__class__.__module__
+        class_name = self.__class__.__name__
+
+        try:
+            module = importlib.import_module(module_name)
+            getattr(module, class_name)
+        except Exception as exc:
+            raise ImportError(f"Model class '{class_name}' is not importable from module '{module_name}'.") from exc
+
+        # --------------------------------------------------
+        # 4. Construct spec
+        # --------------------------------------------------
+        target = f"{module_name}:{class_name}"
+
+        return ModelSpec(
+            target=target,
+            kwargs=kwargs,
+        )
+
+    @classmethod
+    def from_model_spec(cls, spec: ModelSpec):
+        """
+        Construct a model from a ModelSpec.
+
+        Ensures:
+        - Spec is valid
+        - Target is importable
+        - Returned object is instance of Model
+        """
+        if not isinstance(spec, ModelSpec):
+            raise TypeError("Expected ModelSpec.")
+
+        model = spec.build()
+
+        if not isinstance(model, cls):
+            raise TypeError("Constructed object is not a Model instance.")
+
+        return model
 
     # =============================================== #
     # Help Methods                                    #

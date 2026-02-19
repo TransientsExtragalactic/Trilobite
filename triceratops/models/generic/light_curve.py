@@ -223,6 +223,10 @@ class FRED(Model):
     DESCRIPTION = "Fast rise, exponential decay flare model with constant background."
     REFERENCE = "Common phenomenological GRB pulse model."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
 
@@ -408,6 +412,10 @@ class GeneralizedFRED(Model):
     DESCRIPTION = "Generalized FRED with power-law rise and constant background."
     REFERENCE = "Extended phenomenological GRB pulse model."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
 
@@ -577,6 +585,10 @@ class GaussianPulse(Model):
     DESCRIPTION = "Symmetric Gaussian pulse."
     REFERENCE = "Standard analytic Gaussian."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
         A, t0, sigma, C = (
@@ -734,6 +746,10 @@ class LogNormalPulse(Model):
     DESCRIPTION = "Asymmetric log-normal pulse."
     REFERENCE = "Common GRB pulse model."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
         A, t0, mu, sigma, C = (
@@ -882,6 +898,10 @@ class BrokenPowerLawTime(Model):
 
     DESCRIPTION = "Sharp broken power-law in time."
     REFERENCE = "Standard afterglow fitting form."
+
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
 
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
@@ -1036,6 +1056,10 @@ class SmoothedBrokenPowerLawTime(Model):
     DESCRIPTION = "Smooth broken power-law in time."
     REFERENCE = "Standard smooth break prescription."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
         A, tb, a1, a2, s, C = (
@@ -1181,6 +1205,10 @@ class ExponentialRisePowerLawDecay(Model):
 
     DESCRIPTION = "Exponential rise with power-law decay."
     REFERENCE = "Common transient decay model."
+
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
 
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
@@ -1339,6 +1367,10 @@ class NorrisPulse(Model):
     DESCRIPTION = "Classic Norris GRB pulse."
     REFERENCE = "Norris et al. (1996, 2005)."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
         A, ts, tau1, tau2, C = (
@@ -1487,6 +1519,10 @@ class WeibullPulse(Model):
     DESCRIPTION = "Weibull pulse profile."
     REFERENCE = "Generalized statistical pulse form."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)
         A, t0, k, lam, C = (
@@ -1629,6 +1665,10 @@ class LogisticPulse(Model):
 
     DESCRIPTION = "Logistic rise pulse."
     REFERENCE = "Sigmoid transient model."
+
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
 
     def _forward_model(self, variables, parameters):
         t = np.asarray(variables["t"], dtype=float)

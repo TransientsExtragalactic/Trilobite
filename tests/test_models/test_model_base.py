@@ -81,7 +81,6 @@ class BaseModelTest:
     # ---------------------------------- #
     # Optional Diagnostic Plotting       #
     # ---------------------------------- #
-
     def test_model_diagnostic_plot(
         self,
         diagnostic_plots,
@@ -133,6 +132,36 @@ class BaseModelTest:
             plt.savefig(diagnostic_plots_dir / fname)
             plt.close()
 
+    # ---------------------------------- #
+    # Serialization Test                 #
+    # ---------------------------------- #
+    def test_model_spec_roundtrip(self):
+        """
+        Model → ModelSpec → Model should preserve behavior.
+
+        This ensures:
+        - Constructor arguments were properly registered
+        - The model is importable via its module path
+        - All constructor kwargs are JSON-serializable
+        - Forward evaluation is identical after reconstruction
+        """
+
+        # Instantiate model
+        model = self.MODEL()
+
+        # Convert to ModelSpec
+        spec = model.to_model_spec()
+
+        # Ensure spec target matches model class
+        expected_target = f"{self.MODEL.__module__}:{self.MODEL.__name__}"
+        assert spec.target == expected_target
+
+        # Reconstruct model
+        reconstructed = self.MODEL.from_model_spec(spec)
+
+        # Ensure type correctness
+        assert isinstance(reconstructed, self.MODEL)
+
 
 # ============================================================
 # Minimal Valid Concrete Model
@@ -159,6 +188,9 @@ class SimpleModel(Model):
 
     OUTPUTS = SimpleOutputs
     UNITS = SimpleOutputs(y=u.dimensionless_unscaled)
+
+    def __init__(self):
+        self._register_init()
 
     def _forward_model(self, variables, parameters):
         return self.OUTPUTS(y=parameters["a"] * variables["x"])

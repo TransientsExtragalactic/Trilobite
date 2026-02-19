@@ -186,6 +186,10 @@ class BrokenPowerLaw(Model):
     DESCRIPTION = "Sharp two-segment broken power law."
     REFERENCE = "Standard phenomenological broken power law."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         x = np.asarray(variables["x"], dtype=float)
 
@@ -334,6 +338,10 @@ class SmoothedBrokenPowerLaw(Model):
     DESCRIPTION = "Smooth two-segment broken power law."
     REFERENCE = "Standard smooth break prescription."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         x = np.asarray(variables["x"], dtype=float)
 
@@ -474,6 +482,10 @@ class TripleBrokenPowerLaw(Model):
     DESCRIPTION = "Sharp three-segment broken power law."
     REFERENCE = "Standard multi-break phenomenological model."
 
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
+
     def _forward_model(self, variables, parameters):
         x = np.asarray(variables["x"], dtype=float)
 
@@ -580,6 +592,10 @@ class SmoothedTripleBrokenPowerLaw(Model):
 
     DESCRIPTION = "Smooth three-segment broken power law."
     REFERENCE = "Nested smooth break prescription."
+
+    def __init__(self):
+        """Initialize the model with given parameters and variables."""
+        self._register_init()
 
     def _forward_model(self, variables, parameters):
         x = np.asarray(variables["x"], dtype=float)
