@@ -1,0 +1,1007 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>multiprocessing.context &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/multiprocessing/context';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">multiprocessing.context</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for multiprocessing.context</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">threading</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">process</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">reduction</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">()</span>
+
+<span class="c1">#</span>
+<span class="c1"># Exceptions</span>
+<span class="c1">#</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">ProcessError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">BufferTooShort</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TimeoutError</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">AuthenticationError</span><span class="p">(</span><span class="n">ProcessError</span><span class="p">):</span>
+    <span class="k">pass</span>
+
+<span class="c1">#</span>
+<span class="c1"># Base type for contexts. Bound methods of an instance of this type are included in __all__ of __init__.py</span>
+<span class="c1">#</span>
+
+<div class="viewcode-block" id="BaseContext">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.html#multiprocessing.context.BaseContext">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">BaseContext</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="n">ProcessError</span> <span class="o">=</span> <span class="n">ProcessError</span>
+    <span class="n">BufferTooShort</span> <span class="o">=</span> <span class="n">BufferTooShort</span>
+    <span class="ne">TimeoutError</span> <span class="o">=</span> <span class="ne">TimeoutError</span>
+    <span class="n">AuthenticationError</span> <span class="o">=</span> <span class="n">AuthenticationError</span>
+
+    <span class="n">current_process</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">current_process</span><span class="p">)</span>
+    <span class="n">parent_process</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">parent_process</span><span class="p">)</span>
+    <span class="n">active_children</span> <span class="o">=</span> <span class="nb">staticmethod</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">active_children</span><span class="p">)</span>
+
+<div class="viewcode-block" id="BaseContext.cpu_count">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.cpu_count.html#multiprocessing.context.BaseContext.cpu_count">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cpu_count</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns the number of CPUs in the system&#39;&#39;&#39;</span>
+        <span class="n">num</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">cpu_count</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">num</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;cannot determine number of cpus&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">num</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Manager">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Manager.html#multiprocessing.context.BaseContext.Manager">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Manager</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a manager associated with a running server process</span>
+
+<span class="sd">        The managers methods such as `Lock()`, `Condition()` and `Queue()`</span>
+<span class="sd">        can be used to create shared objects.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.managers</span><span class="w"> </span><span class="kn">import</span> <span class="n">SyncManager</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">SyncManager</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">m</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Pipe">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Pipe.html#multiprocessing.context.BaseContext.Pipe">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pipe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">duplex</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns two connection object connected by a pipe&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.connection</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pipe</span>
+        <span class="k">return</span> <span class="n">Pipe</span><span class="p">(</span><span class="n">duplex</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Lock">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Lock.html#multiprocessing.context.BaseContext.Lock">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Lock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a non-recursive lock object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Lock</span>
+        <span class="k">return</span> <span class="n">Lock</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.RLock">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.RLock.html#multiprocessing.context.BaseContext.RLock">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">RLock</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a recursive lock object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">RLock</span>
+        <span class="k">return</span> <span class="n">RLock</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Condition">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Condition.html#multiprocessing.context.BaseContext.Condition">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Condition</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a condition object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Condition</span>
+        <span class="k">return</span> <span class="n">Condition</span><span class="p">(</span><span class="n">lock</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Semaphore">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Semaphore.html#multiprocessing.context.BaseContext.Semaphore">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Semaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a semaphore object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Semaphore</span>
+        <span class="k">return</span> <span class="n">Semaphore</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.BoundedSemaphore">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.BoundedSemaphore.html#multiprocessing.context.BaseContext.BoundedSemaphore">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">BoundedSemaphore</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a bounded semaphore object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">BoundedSemaphore</span>
+        <span class="k">return</span> <span class="n">BoundedSemaphore</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Event">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Event.html#multiprocessing.context.BaseContext.Event">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Event</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns an event object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Event</span>
+        <span class="k">return</span> <span class="n">Event</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Barrier">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Barrier.html#multiprocessing.context.BaseContext.Barrier">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Barrier</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a barrier object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.synchronize</span><span class="w"> </span><span class="kn">import</span> <span class="n">Barrier</span>
+        <span class="k">return</span> <span class="n">Barrier</span><span class="p">(</span><span class="n">parties</span><span class="p">,</span> <span class="n">action</span><span class="p">,</span> <span class="n">timeout</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Queue">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Queue.html#multiprocessing.context.BaseContext.Queue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Queue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.queues</span><span class="w"> </span><span class="kn">import</span> <span class="n">Queue</span>
+        <span class="k">return</span> <span class="n">Queue</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.JoinableQueue">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.JoinableQueue.html#multiprocessing.context.BaseContext.JoinableQueue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">JoinableQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxsize</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.queues</span><span class="w"> </span><span class="kn">import</span> <span class="n">JoinableQueue</span>
+        <span class="k">return</span> <span class="n">JoinableQueue</span><span class="p">(</span><span class="n">maxsize</span><span class="p">,</span> <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.SimpleQueue">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.SimpleQueue.html#multiprocessing.context.BaseContext.SimpleQueue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">SimpleQueue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a queue object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.queues</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleQueue</span>
+        <span class="k">return</span> <span class="n">SimpleQueue</span><span class="p">(</span><span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Pool">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Pool.html#multiprocessing.context.BaseContext.Pool">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Pool</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">processes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initializer</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">initargs</span><span class="o">=</span><span class="p">(),</span>
+             <span class="n">maxtasksperchild</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a process pool object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.pool</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+        <span class="k">return</span> <span class="n">Pool</span><span class="p">(</span><span class="n">processes</span><span class="p">,</span> <span class="n">initializer</span><span class="p">,</span> <span class="n">initargs</span><span class="p">,</span> <span class="n">maxtasksperchild</span><span class="p">,</span>
+                    <span class="n">context</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.RawValue">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.RawValue.html#multiprocessing.context.BaseContext.RawValue">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">RawValue</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a shared object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawValue</span>
+        <span class="k">return</span> <span class="n">RawValue</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.RawArray">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.RawArray.html#multiprocessing.context.BaseContext.RawArray">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">RawArray</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a shared array&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">RawArray</span>
+        <span class="k">return</span> <span class="n">RawArray</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Value">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Value.html#multiprocessing.context.BaseContext.Value">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Value</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a synchronized shared object&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Value</span>
+        <span class="k">return</span> <span class="n">Value</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="n">lock</span><span class="p">,</span>
+                     <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.Array">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.Array.html#multiprocessing.context.BaseContext.Array">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">Array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Returns a synchronized shared array&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.sharedctypes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Array</span>
+        <span class="k">return</span> <span class="n">Array</span><span class="p">(</span><span class="n">typecode_or_type</span><span class="p">,</span> <span class="n">size_or_initializer</span><span class="p">,</span> <span class="n">lock</span><span class="o">=</span><span class="n">lock</span><span class="p">,</span>
+                     <span class="n">ctx</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">())</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.freeze_support">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.freeze_support.html#multiprocessing.context.BaseContext.freeze_support">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">freeze_support</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Check whether this is a fake forked process in a frozen executable.</span>
+<span class="sd">        If so then run code specified by commandline and exit.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span> <span class="ow">and</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;frozen&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.spawn</span><span class="w"> </span><span class="kn">import</span> <span class="n">freeze_support</span>
+            <span class="n">freeze_support</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.get_logger">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.get_logger.html#multiprocessing.context.BaseContext.get_logger">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_logger</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Return package logger -- if it does not already exist then</span>
+<span class="sd">        it is created.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_logger</span>
+        <span class="k">return</span> <span class="n">get_logger</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.log_to_stderr">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.log_to_stderr.html#multiprocessing.context.BaseContext.log_to_stderr">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_to_stderr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Turn on logging and add a handler which prints to stderr&#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.util</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_to_stderr</span>
+        <span class="k">return</span> <span class="n">log_to_stderr</span><span class="p">(</span><span class="n">level</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.allow_connection_pickling">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.allow_connection_pickling.html#multiprocessing.context.BaseContext.allow_connection_pickling">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">allow_connection_pickling</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Install support for sending connections and sockets</span>
+<span class="sd">        between processes</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># This is undocumented.  In previous versions of multiprocessing</span>
+        <span class="c1"># its only effect was to make socket objects inheritable on Windows.</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.</span><span class="w"> </span><span class="kn">import</span> <span class="n">connection</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.set_executable">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.set_executable.html#multiprocessing.context.BaseContext.set_executable">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_executable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">executable</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Sets the path to a python.exe or pythonw.exe binary used to run</span>
+<span class="sd">        child processes instead of sys.executable when using the &#39;spawn&#39;</span>
+<span class="sd">        start method.  Useful for people embedding Python.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.spawn</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_executable</span>
+        <span class="n">set_executable</span><span class="p">(</span><span class="n">executable</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.set_forkserver_preload">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.set_forkserver_preload.html#multiprocessing.context.BaseContext.set_forkserver_preload">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_forkserver_preload</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module_names</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Set list of module names to try to load in forkserver process.</span>
+<span class="sd">        This is really just a hint.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.forkserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_forkserver_preload</span>
+        <span class="n">set_forkserver_preload</span><span class="p">(</span><span class="n">module_names</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.get_context">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.get_context.html#multiprocessing.context.BaseContext.get_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ctx</span> <span class="o">=</span> <span class="n">_concrete_contexts</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot find context for </span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">method</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span>
+        <span class="n">ctx</span><span class="o">.</span><span class="n">_check_available</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ctx</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.get_start_method">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.get_start_method.html#multiprocessing.context.BaseContext.get_start_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_name</span></div>
+
+
+<div class="viewcode-block" id="BaseContext.set_start_method">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.BaseContext.set_start_method.html#multiprocessing.context.BaseContext.set_start_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot set start method of concrete context&#39;</span><span class="p">)</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reducer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&#39;&#39;&#39;Controls how objects will be reduced to a form that can be</span>
+<span class="sd">        shared with other processes.&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="nb">globals</span><span class="p">()</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;reduction&#39;</span><span class="p">)</span>
+
+    <span class="nd">@reducer</span><span class="o">.</span><span class="n">setter</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reducer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reduction</span><span class="p">):</span>
+        <span class="nb">globals</span><span class="p">()[</span><span class="s1">&#39;reduction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduction</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_check_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+
+<span class="c1">#</span>
+<span class="c1"># Type of default context -- underlying context can be set at most once</span>
+<span class="c1">#</span>
+
+<div class="viewcode-block" id="Process">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.Process.html#multiprocessing.context.Process">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Process</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+    <span class="n">_start_method</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_default_context</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_after_fork</span><span class="p">():</span>
+        <span class="k">return</span> <span class="n">_default_context</span><span class="o">.</span><span class="n">get_context</span><span class="p">()</span><span class="o">.</span><span class="n">Process</span><span class="o">.</span><span class="n">_after_fork</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="DefaultContext">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.html#multiprocessing.context.DefaultContext">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">DefaultContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+    <span class="n">Process</span> <span class="o">=</span> <span class="n">Process</span>
+
+<div class="viewcode-block" id="DefaultContext.__init__">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.__init__.html#multiprocessing.context.DefaultContext.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span> <span class="o">=</span> <span class="n">context</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+
+<div class="viewcode-block" id="DefaultContext.get_context">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.get_context.html#multiprocessing.context.DefaultContext.get_context">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_context</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">method</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DefaultContext.set_start_method">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.set_start_method.html#multiprocessing.context.DefaultContext.set_start_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="n">force</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">force</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;context has already been set&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">force</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">return</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_context</span><span class="p">(</span><span class="n">method</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="DefaultContext.get_start_method">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.get_start_method.html#multiprocessing.context.DefaultContext.get_start_method">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_start_method</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">allow_none</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">allow_none</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">None</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_default_context</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_actual_context</span><span class="o">.</span><span class="n">_name</span></div>
+
+
+<div class="viewcode-block" id="DefaultContext.get_all_start_methods">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.DefaultContext.get_all_start_methods.html#multiprocessing.context.DefaultContext.get_all_start_methods">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_all_start_methods</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">methods</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">,</span> <span class="s1">&#39;fork&#39;</span><span class="p">]</span> <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span> <span class="k">else</span> <span class="p">[</span><span class="s1">&#39;fork&#39;</span><span class="p">,</span> <span class="s1">&#39;spawn&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">reduction</span><span class="o">.</span><span class="n">HAVE_SEND_HANDLE</span><span class="p">:</span>
+                <span class="n">methods</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;forkserver&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">methods</span></div>
+</div>
+
+
+
+<span class="c1">#</span>
+<span class="c1"># Context types for fixed start method</span>
+<span class="c1">#</span>
+
+<span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">!=</span> <span class="s1">&#39;win32&#39;</span><span class="p">:</span>
+
+<div class="viewcode-block" id="ForkProcess">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.ForkProcess.html#multiprocessing.context.ForkProcess">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ForkProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.popen_fork</span><span class="w"> </span><span class="kn">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span></div>
+
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">SpawnProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.popen_spawn_posix</span><span class="w"> </span><span class="kn">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_after_fork</span><span class="p">():</span>
+            <span class="c1"># process is spawned, nothing to do</span>
+            <span class="k">pass</span>
+
+<div class="viewcode-block" id="ForkServerProcess">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.ForkServerProcess.html#multiprocessing.context.ForkServerProcess">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ForkServerProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;forkserver&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.popen_forkserver</span><span class="w"> </span><span class="kn">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ForkContext">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.ForkContext.html#multiprocessing.context.ForkContext">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ForkContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;fork&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">ForkProcess</span></div>
+
+
+    <span class="k">class</span><span class="w"> </span><span class="nc">SpawnContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">SpawnProcess</span>
+
+<div class="viewcode-block" id="ForkServerContext">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.ForkServerContext.html#multiprocessing.context.ForkServerContext">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">ForkServerContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;forkserver&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">ForkServerProcess</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_check_available</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">reduction</span><span class="o">.</span><span class="n">HAVE_SEND_HANDLE</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;forkserver start method not available&#39;</span><span class="p">)</span></div>
+
+
+    <span class="n">_concrete_contexts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;fork&#39;</span><span class="p">:</span> <span class="n">ForkContext</span><span class="p">(),</span>
+        <span class="s1">&#39;spawn&#39;</span><span class="p">:</span> <span class="n">SpawnContext</span><span class="p">(),</span>
+        <span class="s1">&#39;forkserver&#39;</span><span class="p">:</span> <span class="n">ForkServerContext</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">sys</span><span class="o">.</span><span class="n">platform</span> <span class="o">==</span> <span class="s1">&#39;darwin&#39;</span><span class="p">:</span>
+        <span class="c1"># bpo-33725: running arbitrary code after fork() is no longer reliable</span>
+        <span class="c1"># on macOS since macOS 10.14 (Mojave). Use spawn by default instead.</span>
+        <span class="n">_default_context</span> <span class="o">=</span> <span class="n">DefaultContext</span><span class="p">(</span><span class="n">_concrete_contexts</span><span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">_default_context</span> <span class="o">=</span> <span class="n">DefaultContext</span><span class="p">(</span><span class="n">_concrete_contexts</span><span class="p">[</span><span class="s1">&#39;fork&#39;</span><span class="p">])</span>
+
+<span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="SpawnProcess">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.SpawnProcess.html#multiprocessing.context.SpawnProcess">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SpawnProcess</span><span class="p">(</span><span class="n">process</span><span class="o">.</span><span class="n">BaseProcess</span><span class="p">):</span>
+        <span class="n">_start_method</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">):</span>
+            <span class="kn">from</span><span class="w"> </span><span class="nn">.popen_spawn_win32</span><span class="w"> </span><span class="kn">import</span> <span class="n">Popen</span>
+            <span class="k">return</span> <span class="n">Popen</span><span class="p">(</span><span class="n">process_obj</span><span class="p">)</span>
+
+        <span class="nd">@staticmethod</span>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_after_fork</span><span class="p">():</span>
+            <span class="c1"># process is spawned, nothing to do</span>
+            <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="SpawnContext">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.SpawnContext.html#multiprocessing.context.SpawnContext">[docs]</a>
+    <span class="k">class</span><span class="w"> </span><span class="nc">SpawnContext</span><span class="p">(</span><span class="n">BaseContext</span><span class="p">):</span>
+        <span class="n">_name</span> <span class="o">=</span> <span class="s1">&#39;spawn&#39;</span>
+        <span class="n">Process</span> <span class="o">=</span> <span class="n">SpawnProcess</span></div>
+
+
+    <span class="n">_concrete_contexts</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;spawn&#39;</span><span class="p">:</span> <span class="n">SpawnContext</span><span class="p">(),</span>
+    <span class="p">}</span>
+    <span class="n">_default_context</span> <span class="o">=</span> <span class="n">DefaultContext</span><span class="p">(</span><span class="n">_concrete_contexts</span><span class="p">[</span><span class="s1">&#39;spawn&#39;</span><span class="p">])</span>
+
+<span class="c1">#</span>
+<span class="c1"># Force the start method</span>
+<span class="c1">#</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_force_start_method</span><span class="p">(</span><span class="n">method</span><span class="p">):</span>
+    <span class="n">_default_context</span><span class="o">.</span><span class="n">_actual_context</span> <span class="o">=</span> <span class="n">_concrete_contexts</span><span class="p">[</span><span class="n">method</span><span class="p">]</span>
+
+<span class="c1">#</span>
+<span class="c1"># Check that the current thread is spawning a child process</span>
+<span class="c1">#</span>
+
+<span class="n">_tls</span> <span class="o">=</span> <span class="n">threading</span><span class="o">.</span><span class="n">local</span><span class="p">()</span>
+
+<div class="viewcode-block" id="get_spawning_popen">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.get_spawning_popen.html#multiprocessing.context.get_spawning_popen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_spawning_popen</span><span class="p">():</span>
+    <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">_tls</span><span class="p">,</span> <span class="s1">&#39;spawning_popen&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="set_spawning_popen">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.set_spawning_popen.html#multiprocessing.context.set_spawning_popen">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">set_spawning_popen</span><span class="p">(</span><span class="n">popen</span><span class="p">):</span>
+    <span class="n">_tls</span><span class="o">.</span><span class="n">spawning_popen</span> <span class="o">=</span> <span class="n">popen</span></div>
+
+
+<div class="viewcode-block" id="assert_spawning">
+<a class="viewcode-back" href="../../_as_gen/multiprocessing.context.assert_spawning.html#multiprocessing.context.assert_spawning">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">assert_spawning</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">get_spawning_popen</span><span class="p">()</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> objects should only be shared between processes&#39;</span>
+            <span class="s1">&#39; through inheritance&#39;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span>
+            <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

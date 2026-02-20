@@ -436,6 +436,8 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">triceratops_config</span>
+
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.result</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCMCSamplingResult</span>
 
@@ -612,7 +614,15 @@
             <span class="n">pool</span><span class="o">=</span><span class="n">pool</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">ensemble_kwargs</span><span class="p">,</span>
         <span class="p">)</span>
-        <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">n_steps</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">)</span>
+        <span class="n">sampler</span><span class="o">.</span><span class="n">run_mcmc</span><span class="p">(</span>
+            <span class="n">initial_state</span><span class="p">,</span>
+            <span class="n">n_steps</span><span class="p">,</span>
+            <span class="n">progress</span><span class="o">=</span><span class="n">progress</span><span class="p">,</span>
+            <span class="n">progress_kwargs</span><span class="o">=</span><span class="p">{</span>
+                <span class="s2">&quot;bar_format&quot;</span><span class="p">:</span> <span class="n">triceratops_config</span><span class="p">[</span><span class="s2">&quot;system.appearance.progress_bar_format&quot;</span><span class="p">],</span>
+                <span class="s2">&quot;desc&quot;</span><span class="p">:</span> <span class="s2">&quot;Sampling Posterior Distribution&quot;</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">)</span>
 
         <span class="c1"># --- Post Processing ------------------------------------- #</span>
         <span class="c1"># We now need to extract the results and build the SamplingResult</span>
