@@ -1,8 +1,11 @@
+import pathlib
+
 import numpy as np
 import pytest
 
 from triceratops.data.core import InferenceData, Observable
 from triceratops.inference import GaussianLikelihood, InferenceProblem, UniformPrior
+from triceratops.inference.sampling.mcmc import EmceeSampler
 from triceratops.models.generic.curves import LinearModel
 
 np.random.seed(42)
@@ -109,3 +112,37 @@ def test_inference_problem_roundtrip(simple_problem):
     logp_json = reconstructed_json._log_free_posterior(theta_json)
 
     assert np.isclose(baseline_logp, logp_json)
+
+
+def test_mcmc_converges_near_truth(
+    simple_problem,
+    diagnostic_plots,
+    diagnostic_plots_dir,
+):
+    problem, true_params = simple_problem
+
+    sampler = EmceeSampler(problem, n_walkers=16)
+    result = sampler.run(1000, progress=True)
+
+    samples = result.get_flat_samples(burn=50, thin=2)
+    mean_estimate = samples.mean(axis=0)
+
+    # ------------------------------------------------------------------
+    # Convergence check (loose but stable)
+    # ------------------------------------------------------------------
+    for i, name in enumerate(problem.free_parameter_names):
+        assert np.isclose(mean_estimate[i], true_params[name], atol=0.2)
+
+    # ------------------------------------------------------------------
+    # Optional diagnostic plot
+    # ------------------------------------------------------------------
+    if diagnostic_plots:
+        output_path = pathlib.Path(diagnostic_plots_dir) / "mcmc_corner_plot.png"
+
+        fig = result.corner_plot(
+            burn=500,
+            thin=2,
+            truths=true_params,
+        )
+
+        fig.savefig(output_path, dpi=150)

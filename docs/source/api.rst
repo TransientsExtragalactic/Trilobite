@@ -84,6 +84,12 @@ Computation
 The computation modules provide the numerical methods and algorithms used throughout Triceratops. This includes solvers
 for differential equations, interpolation routines, and data handling utilities.
 
+.. autosummary::
+    :toctree: _as_gen
+    :recursive:
+    :template: module.rst
+
+    multiprocessing
 
 Utilities
 ---------

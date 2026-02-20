@@ -166,9 +166,7 @@ problem.parameters["gamma"].initial_value = 1
 # ------------
 #
 # We now sample the posterior using an ensemble sampler.
-
 sampler = EmceeSampler(problem, n_walkers=16)
-
 result = sampler.run(20_000, progress=True)
 
 samples = result.get_flat_samples(burn=4000, thin=10)
