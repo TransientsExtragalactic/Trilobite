@@ -89,7 +89,7 @@ for differential equations, interpolation routines, and data handling utilities.
     :recursive:
     :template: module.rst
 
-    multiprocessing
+    parallel
 
 Utilities
 ---------

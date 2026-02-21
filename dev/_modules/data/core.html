@@ -462,7 +462,7 @@
 <span class="c1"># Base Data Container</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.html#data.core.DataContainer">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.html#data.light_curve.DataContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">DataContainer</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for validated, immutable data containers in Triceratops.</span>
@@ -564,7 +564,7 @@
     <span class="c1"># Initialization and validation methods</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer.__init__">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.__init__.html#data.core.DataContainer.__init__">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.__init__.html#data.light_curve.DataContainer.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate the data container.</span>
@@ -788,14 +788,14 @@
     <span class="c1"># Utility Methods</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer.copy">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.copy.html#data.core.DataContainer.copy">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.copy.html#data.light_curve.DataContainer.copy">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">copy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Create a copy of this container.&quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__table__</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span></div>
 
 
 <div class="viewcode-block" id="DataContainer.to_cgs_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_cgs_array.html#data.core.DataContainer.to_cgs_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_cgs_array.html#data.light_curve.DataContainer.to_cgs_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_cgs_array</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert the container to a NumPy array, converted to CGS base units.</span>
@@ -840,7 +840,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.from_table">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.from_table.html#data.core.DataContainer.from_table">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.from_table.html#data.light_curve.DataContainer.from_table">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -865,7 +865,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.from_file">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.from_file.html#data.core.DataContainer.from_file">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.from_file.html#data.light_curve.DataContainer.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">read_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -895,7 +895,7 @@
 
 
 <div class="viewcode-block" id="DataContainer.to_file">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_file.html#data.core.DataContainer.to_file">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_file.html#data.light_curve.DataContainer.to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">path</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span> <span class="n">write_kws</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">_</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the RadioPhotometryContainer&#39;s table to a file.</span>
@@ -918,7 +918,7 @@
     <span class="c1"># Converter Methods</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="DataContainer.to_inference_data">
-<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_inference_data.html#data.core.DataContainer.to_inference_data">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.DataContainer.to_inference_data.html#data.light_curve.DataContainer.to_inference_data">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_inference_data</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">model</span><span class="p">:</span> <span class="s2">&quot;Model&quot;</span><span class="p">,</span>
@@ -1016,7 +1016,7 @@
 <span class="c1"># Inference Data Structures</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="Observable">
-<a class="viewcode-back" href="../../_as_gen/data.core.Observable.html#data.core.Observable">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.Observable.html#data.light_curve.Observable">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">Observable</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1242,7 +1242,7 @@
 
 
 <div class="viewcode-block" id="InferenceData">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.html#data.core.InferenceData">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.html#data.light_curve.InferenceData">[docs]</a>
 <span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">InferenceData</span><span class="p">:</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
@@ -1596,7 +1596,7 @@
     <span class="c1"># Helper Methods</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 <div class="viewcode-block" id="InferenceData.get_observable">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_observable.html#data.core.InferenceData.get_observable">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_observable.html#data.light_curve.InferenceData.get_observable">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_observable</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Observable</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a specific observable by name.&quot;&quot;&quot;</span>
         <span class="k">try</span><span class="p">:</span>
@@ -1606,7 +1606,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.has_x_uncertainty">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.has_x_uncertainty.html#data.core.InferenceData.has_x_uncertainty">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.has_x_uncertainty.html#data.light_curve.InferenceData.has_x_uncertainty">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_x_uncertainty</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Determine if independent variable uncertainties are provided.</span>
@@ -1620,7 +1620,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_array.html#data.core.InferenceData.get_x_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_array.html#data.light_curve.InferenceData.get_x_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked independent-variable values.</span>
@@ -1662,7 +1662,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_array.html#data.core.InferenceData.get_y_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_array.html#data.light_curve.InferenceData.get_y_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked observable values.</span>
@@ -1699,7 +1699,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_error_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_error_array.html#data.core.InferenceData.get_y_error_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_error_array.html#data.light_curve.InferenceData.get_y_error_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_error_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked observable uncertainties.</span>
@@ -1739,7 +1739,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_lower_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_lower_array.html#data.core.InferenceData.get_y_lower_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_lower_array.html#data.light_curve.InferenceData.get_y_lower_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_lower_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked observable lower limits.</span>
@@ -1776,7 +1776,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_y_upper_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_upper_array.html#data.core.InferenceData.get_y_upper_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_y_upper_array.html#data.light_curve.InferenceData.get_y_upper_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_y_upper_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked observable upper limits.</span>
@@ -1813,7 +1813,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_error_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_error_array.html#data.core.InferenceData.get_x_error_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_error_array.html#data.light_curve.InferenceData.get_x_error_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_error_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked independent-variable uncertainties.</span>
@@ -1859,7 +1859,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_upper_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_upper_array.html#data.core.InferenceData.get_x_upper_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_upper_array.html#data.light_curve.InferenceData.get_x_upper_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_upper_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked independent-variable upper limits.</span>
@@ -1896,7 +1896,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.get_x_lower_array">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_lower_array.html#data.core.InferenceData.get_x_lower_array">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.get_x_lower_array.html#data.light_curve.InferenceData.get_x_lower_array">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_x_lower_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">flatten</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return stacked independent-variable lower limits.</span>
@@ -1935,7 +1935,7 @@
     <span class="c1"># Initialization</span>
     <span class="c1"># ------------------------------------------------------------------</span>
 <div class="viewcode-block" id="InferenceData.from_arrays">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_arrays.html#data.core.InferenceData.from_arrays">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_arrays.html#data.light_curve.InferenceData.from_arrays">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_arrays</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -2219,7 +2219,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_table">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_table.html#data.core.InferenceData.from_table">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_table.html#data.light_curve.InferenceData.from_table">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_table</span><span class="p">(</span>
         <span class="bp">cls</span><span class="p">,</span>
@@ -2376,7 +2376,7 @@
     <span class="c1"># the object can read / write to HDF5 as a standard format and that we can</span>
     <span class="c1"># serialize to something like JSON.</span>
 <div class="viewcode-block" id="InferenceData.to_dict">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_dict.html#data.core.InferenceData.to_dict">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_dict.html#data.light_curve.InferenceData.to_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">metadata</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert this instance to a JSON-serializable dictionary.</span>
@@ -2492,7 +2492,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_dict">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_dict.html#data.core.InferenceData.from_dict">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_dict.html#data.light_curve.InferenceData.from_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2581,7 +2581,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_json">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_json.html#data.core.InferenceData.to_json">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_json.html#data.light_curve.InferenceData.to_json">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_json</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -2640,7 +2640,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_json">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_json.html#data.core.InferenceData.from_json">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_json.html#data.light_curve.InferenceData.from_json">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_json</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2695,7 +2695,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_hdf5">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_hdf5.html#data.core.InferenceData.to_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_hdf5.html#data.light_curve.InferenceData.to_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_hdf5</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -2796,7 +2796,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_hdf5">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_hdf5.html#data.core.InferenceData.from_hdf5">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_hdf5.html#data.light_curve.InferenceData.from_hdf5">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2882,7 +2882,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.to_file">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_file.html#data.core.InferenceData.to_file">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.to_file.html#data.light_curve.InferenceData.to_file">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_file</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">],</span>
@@ -2939,7 +2939,7 @@
 
 
 <div class="viewcode-block" id="InferenceData.from_file">
-<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_file.html#data.core.InferenceData.from_file">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.InferenceData.from_file.html#data.light_curve.InferenceData.from_file">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Path</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
@@ -2997,7 +2997,7 @@
 <span class="c1"># Generic Containers for (x, y) Data</span>
 <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="XYDataContainer">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.html#data.core.XYDataContainer">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.html#data.light_curve.XYDataContainer">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">XYDataContainer</span><span class="p">(</span><span class="n">DataContainer</span><span class="p">,</span> <span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for two-dimensional ``(x, y)`` datasets with optional uncertainties and censoring.</span>
@@ -3179,7 +3179,7 @@
     <span class="c1"># Initialization and validation methods</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="XYDataContainer.__init__">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.__init__.html#data.core.XYDataContainer.__init__">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.__init__.html#data.light_curve.XYDataContainer.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">table</span><span class="p">:</span> <span class="n">Table</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Instantiate the data container.</span>
@@ -3309,7 +3309,7 @@
         <span class="k">return</span> <span class="n">col</span><span class="o">.</span><span class="n">quantity</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
 
 <div class="viewcode-block" id="XYDataContainer.y_lower_limit">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.y_lower_limit.html#data.core.XYDataContainer.y_lower_limit">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.y_lower_limit.html#data.light_curve.XYDataContainer.y_lower_limit">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">y_lower_limit</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Union</span><span class="p">[</span><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">,</span> <span class="kc">None</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity or None: The y-axis lower limit data, if provided.&quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y_LOWER_LIMIT_COLUMN</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
@@ -3390,7 +3390,7 @@
     <span class="c1"># Utility Functions</span>
     <span class="c1"># ====================================================================== #</span>
 <div class="viewcode-block" id="XYDataContainer.class_has_x_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_column.html#data.core.XYDataContainer.class_has_x_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_column.html#data.light_curve.XYDataContainer.class_has_x_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis column.&quot;&quot;&quot;</span>
@@ -3398,7 +3398,7 @@
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_column.html#data.core.XYDataContainer.class_has_y_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_column.html#data.light_curve.XYDataContainer.class_has_y_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis column.&quot;&quot;&quot;</span>
@@ -3406,7 +3406,7 @@
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_error_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_error_column.html#data.core.XYDataContainer.class_has_y_error_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_error_column.html#data.light_curve.XYDataContainer.class_has_y_error_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis error column.&quot;&quot;&quot;</span>
@@ -3414,7 +3414,7 @@
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_y_upper_limit_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_upper_limit_column.html#data.core.XYDataContainer.class_has_y_upper_limit_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_y_upper_limit_column.html#data.light_curve.XYDataContainer.class_has_y_upper_limit_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_y_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines a y-axis upper limit column.&quot;&quot;&quot;</span>
@@ -3422,7 +3422,7 @@
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_x_error_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_error_column.html#data.core.XYDataContainer.class_has_x_error_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_error_column.html#data.light_curve.XYDataContainer.class_has_x_error_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_error_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis error column.&quot;&quot;&quot;</span>
@@ -3430,7 +3430,7 @@
 
 
 <div class="viewcode-block" id="XYDataContainer.class_has_x_upper_limit_column">
-<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_upper_limit_column.html#data.core.XYDataContainer.class_has_x_upper_limit_column">[docs]</a>
+<a class="viewcode-back" href="../../_as_gen/data.core.XYDataContainer.class_has_x_upper_limit_column.html#data.light_curve.XYDataContainer.class_has_x_upper_limit_column">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">class_has_x_upper_limit_column</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Check if the class defines an x-axis upper limit column.&quot;&quot;&quot;</span>
