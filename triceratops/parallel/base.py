@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sized
 from typing import Any, Generic, TypeVar
 
-from triceratops.multiprocessing.utils import _callback_wrapper, get_batch_slices
+from .utils import _callback_wrapper, get_batch_slices
 
 # Type variables for pool input and output types
 T = TypeVar("T")  # Input type for pool tasks

@@ -2,9 +2,9 @@
 
 from importlib.metadata import PackageNotFoundError, version
 
-__all__ = ["data", "inference", "models", "radiation", "utils"]
+__all__ = ["data", "inference", "models", "radiation", "utils", "parallel"]
 
-from . import data, inference, models, radiation, utils
+from . import data, inference, models, parallel, radiation, utils
 
 try:
     __version__ = version("triceratops")
