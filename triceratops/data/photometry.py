@@ -962,7 +962,13 @@ class RadioPhotometryContainer(DataContainer):
             The constructed RadioPhotometryContainer instance.
         """
         table = Table.read(path, **kwargs)
-        return cls.from_table(table, column_map=column_map, time_starts=time_starts)
+        return cls.from_table(
+            table,
+            column_map=column_map,
+            time_starts=time_starts,
+            internal_time_format=internal_time_format,
+            internal_time_scale=internal_time_scale,
+        )
 
     def to_file(self, path: Union[str, Path], **kwargs):
         """

@@ -818,6 +818,7 @@ class MCMCSamplingResult(SamplingResult):
             truth_values = [truths.get(p, None) for p in parameters]
 
         # Generate the corner plot
+
         fig = corner.corner(
             flat_samples,
             labels=parameters,
