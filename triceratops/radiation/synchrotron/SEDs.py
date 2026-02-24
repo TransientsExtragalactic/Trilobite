@@ -51,6 +51,7 @@ from triceratops.radiation.constants import (
 from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
 
+from .closure import _compute_ssa_BR_from_spectrum_dm22
 from .core import _opt_compute_log_synch_frequency
 from .microphysics import (
     _opt_normalize_BPL_from_magnetic_field,
@@ -5430,77 +5431,18 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         Effective 1/19/26: We have modified this to work exclusively in log space due to issues with floating point
         truncation errors. Catastrophic cancellation caused significant loss of accuracy.
         """
-        # Validate input parameters. We do NOT check explicitly for shape correctness of the arrays, instead opting
-        # to allow an error to rise naturally if the shapes are incompatible during computation. We do want to ensure
-        # that all of the constants are cast properly for array operations and masking.
-        p, gamma_min, gamma_max = (
-            np.asarray(p, dtype="f8"),
-            np.asarray(gamma_min, dtype="f8"),
-            np.asarray(gamma_max, dtype="f8"),
+        return _compute_ssa_BR_from_spectrum_dm22(
+            nu_brk=nu_brk,
+            F_nu_brk=F_nu_brk,
+            distance=distance,
+            p=p,
+            f=f,
+            theta=theta,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
         )
-
-        # Obtain the synchrotron coefficients relevant for this scenario. We need c_1,c_5, and c_6.
-        c_5 = compute_c5_parameter(p)  # Should match shape of p.
-        c_6 = compute_c6_parameter(p)  # Should match shape of p.
-        c_1 = c_1_cgs  # Scalar constant.
-
-        # Construct the array for delta. See the documentation notes for details on the procedure here / physical
-        # motivation. To do this efficiently, we pre-allocate the array and then fill in values based on the conditions.
-        # Because we pre-allocate with ones, we only need to fill in values where p < 2. In THIS IMPLEMENTATION, we
-        # ignore
-        # cases where p == 2 for efficiency; these should be screened for upstream if needed.
-        delta = np.ones_like(p)
-        _p_lt_2_mask = p < 2
-        delta[_p_lt_2_mask] = (gamma_max[_p_lt_2_mask] / gamma_min[_p_lt_2_mask]) ** (
-            2 - p[_p_lt_2_mask]
-        ) - 1  # Fill in values where p < 2.
-
-        # Construct the "p_norm" term used in the B and R calculations. This allows us to handle the two branches
-        # of the solution (p < 2 and p > 2) in a unified way.
-        # Note that we take the absolute value here to avoid issues with negative bases and fractional exponents.
-        # The p == 2 case is handled upstream.
-        p_norm = np.abs(p - 2.0)
-
-        # Compute the electron energy floor using the gamma_min parameter and the standard formula.
-        E_l = electron_rest_energy_cgs * gamma_min
-
-        # Normalize unit bearing values and convert them to logarithmic quantities for
-        # numerical stability.
-        _log_nu_brk = np.log(nu_brk / 5)
-        _log_F_nu_brk = np.log(F_nu_brk)
-        _log_distance = np.log(distance)
-        _log_c1 = np.log(c_1)
-        _log_E_l = np.log(E_l)
-        _log_delta = np.log(delta)
-        _log_sin_theta = np.log(np.sin(theta))
-        _log_p_norm = np.log(p_norm)
-
-        # Compute the magnetic field following equation (16) of DeMarchi+22. We break this into
-        # components for clarity. The operation should be heavily CPU bound, so this should not have any impact
-        # on optimization.
-        #
-        # Here nu_brk is in GHz, E_l is in erg, distance is in Mpc, F_nu_brk is in Jy, and B will be in Gauss.
-        _log_B_coeff = 21.6396 + _log_nu_brk - _log_c1
-        _log_B_num = (
-            -51.41402455
-            + ((4 - 2 * p) * _log_E_l)
-            + (2 * _log_delta)
-            + (2 * np.log(epsilon_B / epsilon_E))
-            + np.log(c_5)
-            + ((1 / 2) * (-5 - 2 * p) * _log_sin_theta)
-        )
-        _log_B_denom = 2 * _log_p_norm + 2 * _log_distance + (2 * (_log_F_nu_brk - np.log(0.5))) + (3 * np.log(c_6))
-        _log_B = _log_B_coeff + (2 / (13 + 2 * p)) * (_log_B_num - _log_B_denom)
-
-        # Compute the radius following equation (17) of DeMarchi+22. We break this into parts as well on the same
-        # basis as above.
-        _log_R_coeff = -21.63956 + _log_c1 + (-1 * _log_nu_brk)
-        _log_R_t1 = np.log(12 * epsilon_B) + (-6 - p) * np.log(c_5) + (5 + p) * np.log(c_6)
-        _log_R_t2 = (6 + p) * 59.818022 + 2 * _log_sin_theta + (-5 - p) * np.log(np.pi) + (12 + 2 * p) * _log_distance
-        _log_R_t3 = (2 - p) * _log_E_l + (6 + p) * _log_F_nu_brk
-        _log_R_t4 = -1 * (np.log(epsilon_E) + _log_p_norm + np.log(f / 0.5))
-        _log_R = _log_R_coeff + (1 / (13 + 2 * p)) * (_log_R_t1 + _log_R_t2 + _log_R_t3 + _log_R_t4)
-        return np.exp(_log_B), np.exp(_log_R)
 
     def from_params_to_physics(
         self,

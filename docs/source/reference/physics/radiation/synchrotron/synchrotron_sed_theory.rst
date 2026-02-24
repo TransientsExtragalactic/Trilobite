@@ -2195,11 +2195,6 @@ for each case:
 
     .. tab-item:: Fast Cooling
 
-        .. admonition:: TODO
-
-            Are there concerns here about the electron population actually cooling like this? We need to touch base
-            with Raf.
-
         In the case of a **fast-cooling** electron population, the flux of electrons below the injection
         frequency :math:`\nu_m` produces a steady-state electron distribution which, by our conventions,
         (see :ref:`synchrotron_cooling_theory`) is
@@ -2588,6 +2583,7 @@ treat each case in turn below.
         One may compute this candidate value :math:`\nu_a^{(2)}` and
         verify that :math:`\nu_m < \nu_a^{(2)} < \nu_{\rm max}` to confirm
         that this regime applies.
+
 
 Cooling Power Law SEDs
 ^^^^^^^^^^^^^^^^^^^^^^
