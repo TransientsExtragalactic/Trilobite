@@ -79,7 +79,8 @@ from typing import Union
 import numpy as np
 from astropy import units as u
 
-from ...utils.misc_utils import ensure_in_units
+from triceratops.utils.misc_utils import ensure_in_units
+
 from ..constants import electron_rest_energy_cgs
 from .utils import c_1_cgs, compute_c5_parameter, compute_c6_parameter
 

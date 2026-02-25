@@ -301,6 +301,10 @@ For the explicit spectral slopes corresponding to each cooling regime, see
 Power Law + SSA SED
 ####################
 
+.. note::
+
+    See :ref:`synchrotron_single_zone_ssa` for a more detailed discussion of the underlying theory.
+
 The **Power Law + SSA SED** includes synchrotron self-absorption but neglects
 radiative cooling. This is appropriate for compact or dense emission regions
 where the low-frequency spectrum is optically thick, but electrons do not cool
