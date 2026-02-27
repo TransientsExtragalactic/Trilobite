@@ -508,6 +508,7 @@ class RadioPhotometryContainer(DataContainer):
         observables: Optional[dict[str, tuple[str, ...]]] = None,
         infer_errors: bool = True,
         detection_threshold: float = 3.0,
+        mask: Optional[np.ndarray] = None,
     ) -> "InferenceData":
         r"""
         Convert this :class:`RadioPhotometryContainer` into an :class:`~triceratops.data.core.InferenceData` object.
@@ -613,6 +614,11 @@ class RadioPhotometryContainer(DataContainer):
                 \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.
 
             This parameter has no effect unless ``infer_errors=True``.
+        mask: np.ndarray, optional
+            Optional boolean mask to apply to the data before conversion. Only rows where
+            the mask is True will be included in the resulting InferenceData. This allows
+            users to easily subset the data (e.g. by epoch, frequency, or detection status
+            before conversion.
 
         Returns
         -------
@@ -710,6 +716,11 @@ class RadioPhotometryContainer(DataContainer):
         # ------------------------------------------------------------
         # Construct inference data
         # ------------------------------------------------------------
+        if mask is not None:
+            if mask.shape != (len(table),):
+                raise ValueError("Mask must have the same length as the number of observations.")
+            table = table[mask]
+
         return InferenceData.from_table(
             model=model,
             table=table,
