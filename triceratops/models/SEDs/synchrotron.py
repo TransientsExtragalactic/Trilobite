@@ -77,9 +77,9 @@ from triceratops.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SynchrotronSED,
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
-    smoothed_BPL,
 )
 
+from ...radiation.synchrotron._sed_functions import smoothed_BPL
 from .._typing import _ModelParametersInputRaw, _ModelVariablesInputRaw
 from ..core import Model, ModelParameter, ModelVariable
 
