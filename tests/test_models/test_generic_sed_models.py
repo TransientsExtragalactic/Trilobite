@@ -23,7 +23,7 @@ import numpy as np
 from astropy import units as u
 from test_model_base import BaseModelTest
 
-from triceratops.models.SEDs.evolving_sed import PL_Evolving_SSA_SED_Model
+from triceratops.models.SEDs.evolving_phenom import PL_Evolving_SSA_SED_Model
 from triceratops.models.SEDs.synchrotron import (
     Cooling_SynchrotronSEDModel,
     SSA_Cooling_SynchrotronSEDModel,
