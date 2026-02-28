@@ -36,11 +36,9 @@ For physically coupled shock and radiation models,
 see the shock and synchrotron modules.
 """
 
-__all__ = ["evolving_phenom", "synchrotron"]
+__all__ = ["synchrotron"]
 
-from . import evolving_phenom, synchrotron
-from .evolving_phenom import *
+from . import synchrotron
 from .synchrotron import *
 
-__all__.extend(evolving_phenom.__all__)
 __all__.extend(synchrotron.__all__)

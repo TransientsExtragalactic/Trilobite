@@ -72,16 +72,15 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
+from triceratops.models._typing import _ModelParametersInputRaw, _ModelVariablesInputRaw
+from triceratops.models.core import Model, ModelParameter, ModelVariable
+from triceratops.radiation.synchrotron._sed_functions import smoothed_BPL
 from triceratops.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SSA_SynchrotronSED,
     PowerLaw_Cooling_SynchrotronSED,
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
-
-from ...radiation.synchrotron._sed_functions import smoothed_BPL
-from .._typing import _ModelParametersInputRaw, _ModelVariablesInputRaw
-from ..core import Model, ModelParameter, ModelVariable
 
 __all__ = []
 
