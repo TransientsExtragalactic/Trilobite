@@ -1106,6 +1106,10 @@ The flux normalization at the break frequency may then be used to determine the 
 where :math:`F_0` and :math:`Q_0` are the appropriate normalization flux and constant for the cooling regime in question
 (i.e., :math:`F_{m,0}` and :math:`Q_{m,0}` for slow cooling and :math:`F_{c,0}` and :math:`Q_{c,0}` for fast cooling).
 
+A similar technique can be employed when the break appears at the cooling frequency instead of the injection
+frequency with the exception that one must replace :math:`\gamma_m` with :math:`\gamma_c` when computing the
+magnetic field.
+
 Inverting for Optically Thick Peaks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1598,7 +1602,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                 .. math::
 
                     \boxed{
-                    B = \frac{\nu_{\rm brk}}{c_{1,\rm ISO} \gamma_{\min}^2},
+                    B = \frac{\nu_{\rm brk}}{c_{1,\rm ISO} \gamma_{c}^2},
                     \qquad
                     R = \left(\frac{F_{\rm brk}}{Q_{c,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3}.
                     }
