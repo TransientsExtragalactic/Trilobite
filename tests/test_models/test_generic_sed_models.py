@@ -23,7 +23,11 @@ import numpy as np
 from astropy import units as u
 from test_model_base import BaseModelTest
 
-from triceratops.models.SEDs.evolving_phenom import PL_Evolving_SSA_SED_Model
+from triceratops.models.generic.evolving_seds import (
+    BPL_Evolving_SBPL_Model,
+    PL_Evolving_SBPL_Model,
+    TripleBPL_Evolving_SBPL_Model,
+)
 from triceratops.models.SEDs.synchrotron import (
     Cooling_SynchrotronSEDModel,
     SSA_Cooling_SynchrotronSEDModel,
@@ -36,13 +40,56 @@ from triceratops.models.SEDs.synchrotron import (
 # Individual Model Tests
 # ============================================================
 class TestPL_Evolving_SSA_SED_Model(BaseModelTest):
-    MODEL = PL_Evolving_SSA_SED_Model
+    MODEL = PL_Evolving_SBPL_Model
     VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
     PARAMETERS = {
         "alpha_1": 5 / 2,  # self-absorbed slope
         "alpha_2": -1.0,  # optically thin slope
         "beta": 1.0,  # nu_brk evolution
         "gamma": 0.0,  # F_brk evolution
+        "nu_brk_0": 1e10 * u.Hz,
+        "F_brk_0": 1.0 * u.Jy,
+        "t_0": 10 * u.day,
+        "s": 0.3,
+    }
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestBPL_Evolving_SSA_SED_Model(BaseModelTest):
+    MODEL = BPL_Evolving_SBPL_Model
+    VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
+    PARAMETERS = {
+        "alpha_11": 5 / 2,  # self-absorbed slope
+        "alpha_12": 0.0,  # intermediate slope
+        "alpha_21": 0.0,  # intermediate slope
+        "alpha_22": -1.0,  # optically thin slope
+        "beta_1": 1.0,  # nu_brk_1 evolution
+        "beta_2": 0.5,  # nu_brk_2 evolution
+        "gamma_1": 0.0,  # F_brk_1 evolution
+        "gamma_2": 0.0,  # F_brk_2 evolution
+        "nu_brk_0": 1e10 * u.Hz,
+        "F_brk_0": 1.0 * u.Jy,
+        "t_0": 10 * u.day,
+        "s": 0.3,
+    }
+    LOG_X = True
+    LOG_Y = True
+
+
+def TestTBPL_Evolving_SSA_SED_Model(BaseModelTest):
+    MODEL = TripleBPL_Evolving_SBPL_Model
+    VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
+    PARAMETERS = {
+        "alpha_11": 5 / 2,  # self-absorbed slope
+        "alpha_12": 0.0,  # intermediate slope
+        "alpha_13": -1.0,  # optically thin slope
+        "alpha_21": 0.0,  # intermediate slope
+        "alpha_22": -1.0,  # optically thin slope
+        "beta_1": 1.0,  # nu_brk_1 evolution
+        "beta_2": 0.5,  # nu_brk_2 evolution
+        "gamma_1": 0.0,  # F_brk_1 evolution
+        "gamma_2": 0.0,  # F_brk_2 evolution
         "nu_brk_0": 1e10 * u.Hz,
         "F_brk_0": 1.0 * u.Jy,
         "t_0": 10 * u.day,

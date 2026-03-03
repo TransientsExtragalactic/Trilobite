@@ -82,7 +82,12 @@ from triceratops.radiation.synchrotron.SEDs import (
     PowerLaw_SynchrotronSED,
 )
 
-__all__ = []
+__all__ = [
+    "SSA_Cooling_SynchrotronSEDModel",
+    "SSA_SynchrotronSEDModel",
+    "Cooling_SynchrotronSEDModel",
+    "SynchrotronSEDModel",
+]
 
 # ------------------------------------------------- #
 # Define the Output object                          #

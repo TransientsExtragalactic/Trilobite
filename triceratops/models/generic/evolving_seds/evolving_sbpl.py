@@ -42,13 +42,15 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from triceratops.models.core import Model, ModelParameter, ModelVariable
+from triceratops.models.core import ModelParameter, ModelVariable
+
+from .base import EvolvingSEDModel
 
 __all__ = [
-    "PL_Evolving_SSA_SED_Model",
+    "PL_Evolving_SBPL_Model",
+    "BPL_Evolving_SBPL_Model",
+    "TripleBPL_Evolving_SBPL_Model",
 ]
-
-from ..._typing import _ModelParametersInputRaw, _ModelVariablesInputRaw
 
 
 # ============================================================
@@ -124,9 +126,9 @@ def log_smooth_broken_power_law(
     """
     dx = log_x - log_xb
 
-    return -s * np.log(2.0) + s * np.logaddexp(
-        (a1 / s) * dx,
-        (a2 / s) * dx,
+    return s * np.log(2.0) - s * np.logaddexp(
+        (-a1 / s) * dx,
+        (-a2 / s) * dx,
     )
 
 
@@ -272,7 +274,7 @@ _PLEvolvingOutputs = namedtuple("PLEvolvingSSAOutputs", ["flux_density"])
 # ============================================================
 # Model Definition
 # ============================================================
-class PL_Evolving_SSA_SED_Model(Model):
+class PL_Evolving_SBPL_Model(EvolvingSEDModel):
     r"""
     A generic model of synchrotron SED evolution assuming a time-evolving smoothed broken power law.
 
@@ -288,7 +290,7 @@ class PL_Evolving_SSA_SED_Model(Model):
 
         \nu_{\rm brk}(t) =
         \nu_{\rm brk,0}
-        \left(\frac{t}{t_0}\right)^{-\beta}
+        \left(\frac{t}{t_0}\right)^{\beta}
 
     and the break flux:
 
@@ -296,7 +298,7 @@ class PL_Evolving_SSA_SED_Model(Model):
 
         F_{\rm brk}(t) =
         F_{\rm brk,0}
-        \left(\frac{t}{t_0}\right)^{-\gamma}.
+        \left(\frac{t}{t_0}\right)^{\gamma}.
 
     At each epoch, the SED is described by a smoothed broken power law:
 
@@ -500,37 +502,48 @@ class PL_Evolving_SSA_SED_Model(Model):
     def __init__(self):
         self._register_init()
 
-    def _forward_model(
-        self,
-        variables: _ModelVariablesInputRaw,
-        parameters: _ModelParametersInputRaw,
-    ) -> "OUTPUTS":
-        # Extract the nu and t variables
-        log_nu, log_t = np.log(variables["frequency"]), np.log(variables["time"])
+    # ------------------------------------------------------------
+    # Log normalization
+    # ------------------------------------------------------------
 
-        # Compute the relative time and relative frequency
-        log_nu_0, log_t_0 = np.log(parameters["nu_brk_0"]), np.log(parameters["t_0"])
-        log_F_0 = np.log(parameters["F_brk_0"])
-        log_tau = log_t - log_t_0
+    def _compute_log_norm(self, log_t, parameters):
+        log_F0 = np.log(parameters["F_brk_0"])
+        log_t0 = np.log(parameters["t_0"])
 
-        # Compute the break frequency and break flux at the given time.
-        log_nu_brk = log_nu_0 - parameters["beta"] * log_tau
-        log_F_brk = log_F_0 - parameters["gamma"] * log_tau
+        log_tau = log_t - log_t0
+        return log_F0 + parameters["gamma"] * log_tau
 
-        # Compute the SED shape.
-        log_phi = log_smooth_broken_power_law(
-            log_nu, log_nu_brk, parameters["alpha_1"], parameters["alpha_2"], parameters["s"]
+    # ------------------------------------------------------------
+    # Log breaks
+    # ------------------------------------------------------------
+
+    def _compute_log_breaks(self, log_t, parameters):
+        log_nu0 = np.log(parameters["nu_brk_0"])
+        log_t0 = np.log(parameters["t_0"])
+
+        log_tau = log_t - log_t0
+
+        log_nu_brk = log_nu0 + parameters["beta"] * log_tau
+
+        return {"nu_brk": log_nu_brk}
+
+    # ------------------------------------------------------------
+    # Log shape
+    # ------------------------------------------------------------
+
+    def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        log_nu_brk = log_breaks["nu_brk"]
+
+        return log_smooth_broken_power_law(
+            log_nu,
+            log_nu_brk,
+            parameters["alpha_1"],
+            parameters["alpha_2"],
+            parameters["s"],
         )
 
-        # Compute the flux density.
-        log_F_nu = log_F_brk + log_phi
 
-        return self.OUTPUTS(
-            flux_density=np.exp(log_F_nu),
-        )
-
-
-class BPL_Evolving_SSA_SED_Model(Model):
+class BPL_Evolving_SBPL_Model(EvolvingSEDModel):
     r"""
     A generic model of synchrotron SED evolution assuming a time-evolving broken power law in time.
 
@@ -691,19 +704,21 @@ class BPL_Evolving_SSA_SED_Model(Model):
     def __init__(self):
         self._register_init()
 
-    def _forward_model(
-        self,
-        variables: _ModelVariablesInputRaw,
-        parameters: _ModelParametersInputRaw,
-    ) -> "OUTPUTS":
-        log_nu = np.log(variables["frequency"])
-        log_t = np.log(variables["time"])
-
-        log_nu0 = np.log(parameters["nu_brk_0"])
+    def _compute_log_norm(self, log_t, parameters):
         log_F0 = np.log(parameters["F_brk_0"])
         log_t0 = np.log(parameters["t_0"])
 
-        # Time evolution
+        return log_F0 + log_broken_power_law(
+            log_t,
+            log_t0,
+            parameters["gamma1"],
+            parameters["gamma2"],
+        )
+
+    def _compute_log_breaks(self, log_t, parameters):
+        log_nu0 = np.log(parameters["nu_brk_0"])
+        log_t0 = np.log(parameters["t_0"])
+
         log_nu_brk = log_nu0 + log_broken_power_law(
             log_t,
             log_t0,
@@ -711,14 +726,12 @@ class BPL_Evolving_SSA_SED_Model(Model):
             parameters["beta2"],
         )
 
-        log_F_brk = log_F0 + log_broken_power_law(
-            log_t,
-            log_t0,
-            parameters["gamma1"],
-            parameters["gamma2"],
-        )
+        return {"nu_brk": log_nu_brk}
 
-        # Determine time regime
+    def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        log_nu_brk = log_breaks["nu_brk"]
+        log_t0 = np.log(parameters["t_0"])
+
         regime1 = log_t < log_t0
         regime2 = ~regime1
 
@@ -742,14 +755,10 @@ class BPL_Evolving_SSA_SED_Model(Model):
                 parameters["s2"],
             )
 
-        log_F_nu = log_F_brk + log_phi
-
-        return self.OUTPUTS(
-            flux_density=np.exp(log_F_nu),
-        )
+        return log_phi
 
 
-class TBPL_Evolving_SSA_SED_Model(Model):
+class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
     r"""
     A generic model of synchrotron SED evolution assuming a time-evolving triple broken power law in time.
 
@@ -914,20 +923,25 @@ class TBPL_Evolving_SSA_SED_Model(Model):
     def __init__(self):
         self._register_init()
 
-    def _forward_model(
-        self,
-        variables: _ModelVariablesInputRaw,
-        parameters: _ModelParametersInputRaw,
-    ) -> "OUTPUTS":
-        log_nu = np.log(variables["frequency"])
-        log_t = np.log(variables["time"])
-
-        log_nu0 = np.log(parameters["nu_brk_0"])
+    def _compute_log_norm(self, log_t, parameters):
         log_F0 = np.log(parameters["F_brk_0"])
         log_t0 = np.log(parameters["t_0"])
         log_t1 = np.log(parameters["t_1"])
 
-        # Temporal evolution (sharp triple power law)
+        return log_F0 + log_triple_power_law(
+            log_t,
+            log_t0,
+            log_t1,
+            parameters["gamma1"],
+            parameters["gamma2"],
+            parameters["gamma3"],
+        )
+
+    def _compute_log_breaks(self, log_t, parameters):
+        log_nu0 = np.log(parameters["nu_brk_0"])
+        log_t0 = np.log(parameters["t_0"])
+        log_t1 = np.log(parameters["t_1"])
+
         log_nu_brk = log_nu0 + log_triple_power_law(
             log_t,
             log_t0,
@@ -937,16 +951,13 @@ class TBPL_Evolving_SSA_SED_Model(Model):
             parameters["beta3"],
         )
 
-        log_F_brk = log_F0 + log_triple_power_law(
-            log_t,
-            log_t0,
-            log_t1,
-            parameters["gamma1"],
-            parameters["gamma2"],
-            parameters["gamma3"],
-        )
+        return {"nu_brk": log_nu_brk}
 
-        # Determine which temporal regime we are in
+    def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
+        log_nu_brk = log_breaks["nu_brk"]
+        log_t0 = np.log(parameters["t_0"])
+        log_t1 = np.log(parameters["t_1"])
+
         regime1 = log_t < log_t0
         regime2 = (log_t >= log_t0) & (log_t < log_t1)
         regime3 = log_t >= log_t1
@@ -980,8 +991,4 @@ class TBPL_Evolving_SSA_SED_Model(Model):
                 parameters["s3"],
             )
 
-        log_F_nu = log_F_brk + log_phi
-
-        return self.OUTPUTS(
-            flux_density=np.exp(log_F_nu),
-        )
+        return log_phi
