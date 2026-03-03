@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:25.071** total execution time for 10 files **from all galleries**:
+**00:27.563** total execution time for 10 files **from all galleries**:
 
 .. container::
 
@@ -33,7 +33,7 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_b_inference_plot_evolving_sed.py` (``galleries/examples/b_inference/plot_evolving_sed.py``)
-     - 00:25.071
+     - 00:27.563
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000

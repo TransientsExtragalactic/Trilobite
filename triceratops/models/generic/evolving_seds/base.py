@@ -58,43 +58,36 @@ class EvolvingSEDModel(Model, ABC):
     All internal calculations are performed using natural logarithms
     for numerical stability.
 
-    Log-space Convention
-    --------------------
-    Internal quantities use natural logarithms:
+    Notes
+    -----
+    Subclasses must implement three abstract methods:
 
-    - ``log_t = ln(t)``
-    - ``log_nu = ln(nu)``
-    - ``log_F = log_norm + log_shape``
+    ``_compute_log_norm(log_t, parameters)``
+        Returns ``ln(N(t))`` evaluated on the broadcasted time grid.
 
-    The returned flux density is computed as
+    ``_compute_log_breaks(log_t, parameters)``
+        Returns a dictionary mapping break names to their natural logarithms. These are then used
+        in the log shape calculation. Thus, if the SED requires a break at some ``nu_brk(t)``, this
+        method can return ``{"nu_brk": ln(nu_brk(t))}``.
 
-    .. math::
+    ``_compute_log_shape(log_nu, log_t, log_breaks, parameters)``
+        Returns ``ln(Phi(nu,t))`` evaluated on the broadcasted
+        frequency-time grid.
 
-        F_\nu = \exp(\log F_\nu).
+    These methods must:
 
-    Subclass Contract
-    -----------------
-    Subclasses must implement:
+    - Accept *already coerced*, unitless numerical inputs.
+    - Respect NumPy broadcasting rules.
+    - Return arrays compatible with the broadcasted shape of
+      ``frequency`` and ``time``.
 
-    - :meth:`_compute_log_norm`
-    - :meth:`_compute_log_breaks`
-    - :meth:`_compute_log_shape`
+    The base class handles:
 
-    These methods operate strictly on *unitless*, log-transformed arrays.
-
-    Public helper methods (:meth:`compute_sed_shape`,
-    :meth:`compute_sed_norm`, :meth:`compute_sed_breaks`) handle:
-
-    - unit coercion,
-    - parameter validation,
-    - bounds checking,
-    - unit attachment.
-
-    Broadcasting
-    ------------
-    Frequency and time inputs are broadcast using
-    :func:`numpy.broadcast_arrays`. All returned arrays follow the
-    broadcasted shape of ``frequency`` and ``time``.
+    - Unit coercion and validation
+    - Bounds checking
+    - Broadcasting of frequency and time
+    - Reconstruction of linear-space outputs
+    - Attachment of physical units
     """
 
     # ============================================================
@@ -104,14 +97,12 @@ class EvolvingSEDModel(Model, ABC):
         ModelVariable("frequency", base_units=u.Hz, description="Observing frequency."),
         ModelVariable("time", base_units=u.s, description="Time since explosion."),
     )
-
     OUTPUTS = _EvolvingSEDOutputs
     UNITS = OUTPUTS(flux_density=u.Jy)
 
     # ============================================================
     # Abstract procedural API (log-space)
     # ============================================================
-
     @abstractmethod
     def _compute_log_norm(
         self,
@@ -192,9 +183,8 @@ class EvolvingSEDModel(Model, ABC):
         raise NotImplementedError
 
     # ============================================================
-    # Core forward model (unitless)
+    # Private (low-level) interface for evaluation.
     # ============================================================
-
     def _forward_model(
         self,
         variables: "_ModelVariablesInputRaw",
@@ -208,11 +198,13 @@ class EvolvingSEDModel(Model, ABC):
         This method assumes ``variables`` and ``parameters`` have already been
         coerced to raw numerical values and validated.
         """
+        # Broadcast frequency and time to the same shape for evaluation.
         log_nu, log_t = np.broadcast_arrays(
             np.log(variables["frequency"]),
             np.log(variables["time"]),
         )
 
+        # Extract the log normalization and log breaks, then compute the log shape.
         log_norm = self._compute_log_norm(log_t, parameters)
         log_breaks = self._compute_log_breaks(log_t, parameters)
         log_shape = self._compute_log_shape(log_nu, log_t, log_breaks, parameters)
@@ -535,4 +527,4 @@ class EvolvingSEDModel(Model, ABC):
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         raw = self._forward_model_breaks(vars_, pars_)
 
-        return {k: np.exp(v) * u.Hz for k, v in raw.items()}
+        return raw

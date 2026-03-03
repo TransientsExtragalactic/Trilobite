@@ -42,8 +42,7 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from triceratops.models.core import ModelParameter, ModelVariable
-
+from ...core import ModelParameter, ModelVariable
 from .base import EvolvingSEDModel
 
 __all__ = [
@@ -950,7 +949,6 @@ class TripleBPL_Evolving_SBPL_Model(EvolvingSEDModel):
             parameters["beta2"],
             parameters["beta3"],
         )
-
         return {"nu_brk": log_nu_brk}
 
     def _compute_log_shape(self, log_nu, log_t, log_breaks, parameters):
