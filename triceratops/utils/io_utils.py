@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from astropy import units as u
+from astropy.cosmology import FLRW, FlatLambdaCDM
 from ruamel.yaml.comments import CommentedMap
 
 if TYPE_CHECKING:
@@ -109,8 +110,14 @@ class _YAMLHandler(ABC):
         """
         if cls.__tag__ is None or cls.__type__ is None:
             raise ValueError(f"{cls.__name__} must define both __tag__ and __type__.")
-        yaml.representer.add_multi_representer(cls.__type__, cls.to_yaml)
-        yaml.constructor.add_constructor(cls.__tag__, cls.from_yaml)
+
+        if isinstance(cls.__type__, (list, tuple, set)):
+            for t in cls.__type__:
+                yaml.representer.add_representer(t, cls.to_yaml)
+                yaml.constructor.add_constructor(cls.__tag__, cls.from_yaml)
+        else:
+            yaml.representer.add_representer(cls.__type__, cls.to_yaml)
+            yaml.constructor.add_constructor(cls.__tag__, cls.from_yaml)
 
 
 class AstropyQuantityHandler(_YAMLHandler):
@@ -143,6 +150,43 @@ class AstropyQuantityHandler(_YAMLHandler):
             value = np.asarray(value)
 
         return value * u.Unit(data["unit"])
+
+
+class AstropyCosmologyHandler(_YAMLHandler):
+    """
+    YAML handler for Astropy built-in cosmologies.
+
+    Stores only the cosmology name (e.g., "Planck18") and
+    reconstructs using Astropy's cosmology registry.
+    """
+
+    __tag__ = "!astropy_cosmology"
+    __type__ = [FlatLambdaCDM, FLRW]
+
+    @staticmethod
+    def to_yaml(representer, obj: FLRW):
+        # Require that cosmology has a name
+        if obj.name is None:
+            raise ValueError("Only named cosmologies can be serialized. Custom cosmologies are not supported.")
+
+        return representer.represent_mapping(
+            AstropyCosmologyHandler.__tag__,
+            {"name": obj.name},
+        )
+
+    @staticmethod
+    def from_yaml(loader, node):
+        from astropy import cosmology
+
+        data = CommentedMap()
+        loader.construct_mapping(node, maptyp=data, deep=True)
+
+        name = data["name"]
+
+        try:
+            return getattr(cosmology, name)
+        except AttributeError as exp:
+            raise ValueError(f"Unknown built-in cosmology: {name}") from exp
 
 
 class NumpyArrayHandler(_YAMLHandler):
@@ -222,6 +266,7 @@ def get_unit_compatible_yaml() -> "YAML":
     AstropyQuantityHandler.register(yaml)
     PathHandler.register(yaml)
     NumpyArrayHandler.register(yaml)
+    AstropyCosmologyHandler.register(yaml)
 
     return yaml
 
