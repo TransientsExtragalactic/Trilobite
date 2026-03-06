@@ -68,6 +68,12 @@ __all__ = [
 ]
 
 # Import the various core module items.
+from triceratops.radiation.synchrotron.SEDs import (
+    PowerLaw_Cooling_SSA_SynchrotronSED,
+    PowerLaw_Cooling_SynchrotronSED,
+    PowerLaw_SSA_SynchrotronSED,
+)
+
 from .cooling import InverseComptonCoolingEngine, SynchrotronCoolingEngine
 from .core import (
     compute_gyrofrequency,
@@ -100,10 +106,4 @@ from .microphysics import (
     compute_PL_norm_from_magnetic_field,
     compute_PL_norm_from_thermal_energy_density,
     compute_PL_total_number_density,
-)
-from .SEDs import (
-    PowerLaw_Cooling_SSA_SynchrotronSED,
-    PowerLaw_Cooling_SynchrotronSED,
-    PowerLaw_SSA_SynchrotronSED,
-    SynchrotronSED,
 )

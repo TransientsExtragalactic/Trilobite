@@ -8,9 +8,15 @@ parameters R and B subject to some assumptions about the electron distribution a
 
 import numpy as np
 
-from ..constants import electron_rest_energy_cgs, electron_rest_mass_cgs
-from .microphysics import _opt_compute_BPL_moment, _opt_compute_PL_moment
-from .utils import (
+from triceratops.radiation.constants import (
+    electron_rest_energy_cgs,
+    electron_rest_mass_cgs,
+)
+from triceratops.radiation.synchrotron.microphysics import (
+    _opt_compute_BPL_moment,
+    _opt_compute_PL_moment,
+)
+from triceratops.radiation.synchrotron.utils import (
     _log_c_1_gamma_cgs,
     _log_c_1_gamma_iso_cgs,
     _log_chi_cgs,

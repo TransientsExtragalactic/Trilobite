@@ -36,41 +36,49 @@ The module supports:
 """
 
 import logging
+import warnings
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any, Union
 
 import numpy as np
+from astropy import cosmology as cosmo
 from astropy import units as u
 
 from triceratops.radiation.constants import (
     electron_rest_energy_cgs,
     electron_rest_mass_cgs,
 )
+from triceratops.utils.cosmology import get_cosmology, resolve_cosmological_distances
 from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
+from triceratops.utils.sr_utils import compute_doppler_factor
 
-from ._sed_functions import (
-    _log_powerlaw_sbpl_sed,
-    _log_powerlaw_sbpl_sed_ssa_1,
-    _log_powerlaw_sbpl_sed_ssa_2,
-    _SynchrotronCoolingSEDFunctions,
-    _SynchrotronSSACoolingSEDFunctions,
-    _SynchrotronSSASEDFunctions,
-    smoothed_BPL,
-)
-from .closure import _compute_ssa_BR_from_spectrum_dm22
-from .core import _opt_compute_log_synch_frequency
-from .microphysics import (
+from ..closure import _compute_ssa_BR_from_spectrum_dm22
+from ..core import _opt_compute_log_synch_frequency
+from ..microphysics import (
     _opt_normalize_BPL_from_magnetic_field,
     _opt_normalize_PL_from_magnetic_field,
 )
-from .utils import (
+from ..utils import (
     _log_chi_cgs,
     _log_chi_cgs_iso,
     c_1_cgs,
     compute_c5_parameter,
     compute_c6_parameter,
+)
+from ._one_zone_closure import (
+    COOLING_INV_FUNCTION_REGISTRY,
+    SSA_COOLING_INV_FUNCTION_REGISTRY,
+    SSA_INV_FUNCTION_REGISTRY,
+    _inv_log_powerlaw_sbpl_sed,
+)
+from ._one_zone_functions import (
+    COOLING_SED_FUNCTION_REGISTRY,
+    SSA_COOLING_SED_FUNCTION_REGISTRY,
+    SSA_SED_FUNCTION_REGISTRY,
+    _log_powerlaw_sbpl_sed,
+    smoothed_BPL,
 )
 
 # Type checking imports
@@ -886,14 +894,14 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         nu : array-like or quantity
             Observing frequencies at which to evaluate the SED. If unit-bearing,
             must be convertible to Hz.
-        F_norm : scalar or quantity
+        F_norm : ~numpy.ndarray or float or ~astropy.units.Quantity
             The normalization flux density, corresponding to the
             corresponding flux density at the dominant optically thin frequency (in this case, :math:`\nu_m`).
             Because this SED is optically thin at peak, this is also the flux density at the injection break.
-        nu_m : scalar or quantity
+        nu_m : ~numpy.ndarray or float or ~astropy.units.Quantity
             Injection (peak) frequency :math:`\nu_m`. If unit-bearing, must be
             convertible to Hz.
-        nu_max : scalar or quantity, optional
+        nu_max : ~numpy.ndarray or float or ~astropy.units.Quantity, optional
             Maximum synchrotron frequency :math:`\nu_{\max}`. Frequencies above
             this value are exponentially suppressed. The default corresponds to
             no cutoff.
@@ -1141,13 +1149,13 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
 
         Parameters
         ----------
-        B : scalar or quantity
+        B : ~numpy.ndarray or float or ~astropy.units.Quantity
             Magnetic field strength in the emitting region. Must be convertible
             to Gauss.
-        V : scalar or quantity
+        V : ~numpy.ndarray or float or ~astropy.units.Quantity
             Effective emitting volume. Must be convertible to cm³.
             This is often parameterized in terms of a filling factor.
-        D_L : scalar or quantity
+        D_L : ~numpy.ndarray or float or ~astropy.units.Quantity
             Luminosity distance to the source. Must be convertible to cm.
         gamma_min : float
             Minimum electron Lorentz factor :math:`\gamma_{\min}`.
@@ -1228,6 +1236,453 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
             "F_norm": np.exp(params_log["log_F_norm"]) * u.erg / (u.cm**2 * u.s * u.Hz),
             "nu_m": np.exp(params_log["log_nu_m"]) * u.Hz,
             "nu_max": np.exp(params_log["log_nu_max"]) * u.Hz,
+        }
+
+    def _opt_from_params_to_physics(
+        self,
+        log_F_peak: "_ArrayLike",
+        log_nu_peak: "_ArrayLike",
+        log_D_L: "_ArrayLike",
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Infer physical source parameters from phenomenological SED parameters.
+
+        This method implements the **default inverse closure relation** for the
+        canonical optically thin, uncooled synchrotron SED. It maps the observed
+        spectral peak location and peak flux density onto a corresponding set of
+        source parameters under a specific set of microphysical and geometric
+        assumptions.
+
+        In this default closure, the observed synchrotron SED is interpreted as
+        arising from a **single-zone, homogeneous emitting region** containing a
+        power-law distribution of relativistic electrons, with the spectrum peaking
+        at the characteristic synchrotron frequency of the minimum-energy electrons.
+        The inversion assumes that the observed peak corresponds to the same
+        phenomenological normalization used elsewhere in this class, i.e. to the
+        dominant optically thin emitting population.
+
+        This is a low-level, log-space routine intended for internal use and for
+        inference workflows where numerical stability matters. It performs no unit
+        handling and assumes all inputs are already in logarithmic CGS-consistent
+        form.
+
+        .. important::
+
+            This method provides a **default closure**, not a unique or universally
+            correct physical interpretation of the SED. Different closure relations
+            may be equally reasonable, or more appropriate, depending on the source
+            class, observing band, and physical regime.
+
+        .. warning::
+
+            The inferred parameters are only meaningful when the assumptions of the
+            underlying SED model are approximately satisfied. In particular, this
+            inversion can be misleading if any of the following are important:
+
+            - radiative cooling,
+            - synchrotron self-absorption,
+            - multi-zone emission,
+            - strong geometric asymmetry,
+            - significant departures from a simple power-law electron population,
+            - strong relativistic beaming with angular structure or off-axis viewing,
+            - time-dependent evolution across the emitting region.
+
+            For highly relativistic transients such as GRB afterglows, this closure
+            should generally be treated as yielding at best an **order-of-magnitude
+            estimate**, not a precision physical inference.
+
+        Parameters
+        ----------
+        log_F_peak : array-like
+            Natural logarithm of the observed peak flux density in
+            ``erg cm^-2 s^-1 Hz^-1``.
+
+            In the context of this default closure, this is interpreted as the flux
+            density of the dominant optically thin emitting population. For the
+            present SED class, that corresponds to the injection break / optically
+            thin peak.
+        log_nu_peak : array-like
+            Natural logarithm of the observed peak frequency in Hz.
+
+            In this default closure, this is interpreted as the observed
+            characteristic synchrotron frequency associated with the minimum-energy
+            electrons.
+        log_D_L : array-like
+            Natural logarithm of the luminosity distance in cm.
+        gamma_min : float, optional
+            Minimum electron Lorentz factor, :math:`\gamma_{\min}`.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor, :math:`\gamma_{\max}`.
+            The default is :math:`+\infty`.
+        p : float, optional
+            Power-law index of the non-thermal electron distribution,
+            :math:`N(\gamma) \propto \gamma^{-p}`.
+        epsilon_E : float, optional
+            Fraction of internal energy carried by relativistic electrons.
+        epsilon_B : float, optional
+            Fraction of internal energy stored in magnetic fields.
+        f_V : float, optional
+            Effective volume filling factor of the emitting region.
+
+            This enters the inversion through the assumed source geometry and
+            therefore directly affects the inferred physical scale.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            A simple on-axis Doppler correction is applied before inversion. No
+            account is made of angular structure, equal-arrival-time surface
+            effects, or off-axis viewing.
+        redshift : float, optional
+            Cosmological redshift of the source. Used to transform the observed SED
+            peak into the comoving frame before inversion.
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            Required when ``pitch_average=False``. Ignored when
+            ``pitch_average=True``.
+        pitch_average : bool, optional
+            If ``True``, use pitch-angle-averaged synchrotron emissivity.
+            If ``False``, a fixed pitch angle specified by ``alpha`` is used.
+
+        Returns
+        -------
+        params : dict
+            Dictionary containing the inferred physical parameters:
+
+            - ``"R"`` : inferred source radius in cm,
+            - ``"B"`` : inferred magnetic field strength in G.
+
+            These are returned as plain dimensionless floating-point values in CGS
+            units because this is the low-level internal implementation.
+
+        Notes
+        -----
+        **Interpretation of the inversion**
+
+        This routine does not recover a unique physical truth from the data. Rather,
+        it finds the values of :math:`R` and :math:`B` that reproduce the supplied
+        peak flux and peak frequency **within the default closure assumptions**.
+
+        **What is assumed**
+
+        The inversion assumes all of the following:
+
+        - a single homogeneous emission zone,
+        - a power-law electron distribution,
+        - an optically thin spectrum near the relevant peak,
+        - no cooling break affecting the fitted peak,
+        - no synchrotron self-absorption shaping the fitted peak,
+        - the peak is associated with :math:`\gamma_{\min}`,
+        - the source can be described by the equipartition-style normalization used
+          by the forward closure,
+        - the observer is effectively on-axis relative to any bulk motion.
+
+        **What is *not* modeled**
+
+        This routine does not model:
+
+        - time evolution,
+        - multi-component spectra,
+        - off-axis relativistic geometry,
+        - radiative transfer through an absorbing synchrotron plasma,
+        - non-power-law electron populations,
+        - deviations from the assumed closure prescription.
+
+        If any of those effects are important, users should implement or choose a
+        different closure relation rather than relying on this default inversion.
+
+        See Also
+        --------
+        from_params_to_physics :
+            Public, unit-aware wrapper around this method.
+        _opt_from_physics_to_params :
+            Forward closure relation from physical parameters to SED parameters.
+        """
+        # ------------------------------------------------------------------ #
+        # Pitch-angle treatment
+        # ------------------------------------------------------------------ #
+        if pitch_average:
+            if alpha is not None:
+                warnings.warn(
+                    "Pitch averaging is enabled, so the provided `alpha` is ignored. "
+                    "(Set `alpha=None` to suppress this warning.)",
+                    stacklevel=2,
+                )
+            sin_alpha = None
+        else:
+            if alpha is None:
+                raise ValueError("Pitch averaging is disabled, so a fixed pitch angle must be provided via `alpha`.")
+            sin_alpha = np.sin(alpha)
+
+        # ------------------------------------------------------------------ #
+        # Transform observed peak quantities into the comoving frame.
+        #
+        # This applies the same minimal relativistic treatment used elsewhere
+        # in the default closure: an on-axis Doppler correction plus the usual
+        # cosmological redshift correction.
+        #
+        # IMPORTANT: this is intentionally simple and is not a substitute for a
+        # full relativistic radiative-transfer treatment.
+        # ------------------------------------------------------------------ #
+        doppler_factor = compute_doppler_factor(gamma_bulk, 0.0)
+
+        log_nu_peak_comoving = log_nu_peak - np.log(doppler_factor) + np.log1p(redshift)
+        log_F_peak_comoving = log_F_peak - 3.0 * np.log(doppler_factor) + np.log1p(redshift)
+
+        # ------------------------------------------------------------------ #
+        # Invert the default closure in the comoving frame.
+        # ------------------------------------------------------------------ #
+        log_R, log_B = _inv_log_powerlaw_sbpl_sed(
+            log_nu_peak_comoving,
+            log_F_peak_comoving,
+            log_D_L,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            p=p,
+            epsilon_e=epsilon_E,
+            epsilon_B=epsilon_B,
+            f_V=f_V,
+            sin_alpha=sin_alpha,
+        )
+
+        return {
+            "R": np.exp(log_R),
+            "B": np.exp(log_B),
+        }
+
+    def from_params_to_physics(
+        self,
+        F_peak: "_UnitBearingScalarLike",
+        nu_peak: "_UnitBearingScalarLike",
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Infer physical source parameters from observed SED peak quantities.
+
+        This is the **public, unit-aware interface** for the default inverse closure
+        relation of :class:`PowerLaw_SynchrotronSED`. It converts an observed peak
+        flux density and peak frequency into inferred physical source parameters
+        under the assumptions of the default single-zone optically thin synchrotron
+        model.
+
+        The inversion is performed using the same phenomenological interpretation
+        adopted by the forward closure: the supplied peak flux and peak frequency are
+        assumed to correspond to the dominant optically thin synchrotron-emitting
+        electron population. In the present SED family, that means the observed peak
+        is identified with the injection-scale synchrotron frequency.
+
+        .. important::
+
+            This method provides a **convenient default closure**, not a uniquely
+            privileged physical model. Users should treat it as one physically
+            motivated mapping from observables to source parameters, not as the only
+            permissible interpretation of the data.
+
+        .. warning::
+
+            The returned values can be badly misleading if the spectrum being fit is
+            not actually described by the assumptions of this SED class and its
+            closure. In particular, do **not** interpret the results literally if the
+            observed peak is shaped by synchrotron self-absorption, radiative
+            cooling, multiple emitting zones, or strong time evolution.
+
+        Parameters
+        ----------
+        F_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed peak flux density.
+
+            Must be convertible to ``erg cm^-2 s^-1 Hz^-1``. Within this default
+            closure, this is interpreted as the flux density of the dominant
+            optically thin emitting population.
+        nu_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed peak frequency.
+
+            Must be convertible to Hz. Within this default closure, this is
+            interpreted as the characteristic synchrotron frequency of the
+            minimum-energy electrons.
+        gamma_min : float, optional
+            Minimum electron Lorentz factor, :math:`\gamma_{\min}`.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor, :math:`\gamma_{\max}`.
+        p : float, optional
+            Power-law index of the electron energy distribution.
+        epsilon_E : float, optional
+            Fraction of internal energy carried by relativistic electrons.
+        epsilon_B : float, optional
+            Fraction of internal energy stored in magnetic fields.
+        f_V : float, optional
+            Effective volume filling factor of the emitting region.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the source. A simple on-axis Doppler correction is
+            applied when converting observed quantities into the comoving frame.
+        redshift : float, optional
+            Source redshift. If not given explicitly, it may be inferred indirectly
+            from the provided cosmological distance information.
+        luminosity_distance : ~numpy.ndarray or float or ~astropy.units.Quantity, optional
+            Luminosity distance to the source. Must be convertible to cm.
+        angular_diameter_distance : ~numpy.ndarray or float or ~astropy.units.Quantity, optional
+            Angular-diameter distance to the source.
+        proper_distance : ~numpy.ndarray or float or ~astropy.units.Quantity, optional
+            Proper distance to the source.
+        cosmology : `astropy.cosmology.Cosmology`, optional
+            Cosmology used to resolve missing cosmological distance information.
+            If not provided, the configured default cosmology is used.
+        alpha : float, optional
+            Electron pitch angle in radians. Required if ``pitch_average=False``.
+        pitch_average : bool, optional
+            If ``True``, use pitch-angle-averaged synchrotron emissivity.
+            If ``False``, a fixed pitch angle must be supplied via ``alpha``.
+
+        Returns
+        -------
+        params : dict
+            Dictionary containing the inferred physical parameters:
+
+            - ``"R"`` : source radius, returned in cm,
+            - ``"B"`` : magnetic field strength, returned in G.
+
+        Notes
+        -----
+        **Physical meaning**
+
+        The returned :math:`R` and :math:`B` are not direct measurements. They are
+        the values implied by the input observables **if** the source obeys the
+        default closure relation assumed by this class.
+
+        **Core assumptions**
+
+        This inversion assumes:
+
+        - a single-zone homogeneous source,
+        - optically thin synchrotron emission near the relevant peak,
+        - no cooling break affecting that peak,
+        - no self-absorption shaping that peak,
+        - a power-law electron distribution with index ``p``,
+        - a closure prescription parameterized by ``epsilon_E`` and ``epsilon_B``,
+        - a filling-factor description of the emitting volume via ``f_V``,
+        - simple on-axis bulk relativistic boosting when ``gamma_bulk > 1``.
+
+        **When not to use this method**
+
+        This method is generally *not* appropriate when:
+
+        - the observed peak is actually an SSA turnover,
+        - the source is cooling-dominated,
+        - the spectrum contains multiple components,
+        - the emitting region is strongly stratified or multi-zone,
+        - relativistic geometry and equal-arrival-time effects matter,
+        - the physical closure differs from the equipartition-style prescription
+          assumed here.
+
+        In such cases, a different SED subclass or a custom closure relation should
+        be preferred.
+
+        **Cosmological handling**
+
+        This method accepts several ways of specifying distance information. The
+        helper :func:`resolve_cosmological_distances` is used to enforce a
+        self-consistent set of cosmological quantities before the inversion is
+        performed.
+
+        See Also
+        --------
+        _opt_from_params_to_physics :
+            Low-level log-space implementation of the inverse closure.
+        from_physics_to_params :
+            Forward closure from physical source parameters to SED parameters.
+        sed :
+            Evaluate the SED for a given set of phenomenological parameters.
+
+        Examples
+        --------
+        Infer a characteristic source radius and magnetic field from a measured
+        optically thin synchrotron peak:
+
+        .. code-block:: python
+
+            results = sed.from_params_to_physics(
+                F_peak=1e-26 * u.erg / (u.cm**2 * u.s * u.Hz),
+                nu_peak=1e10 * u.Hz,
+                luminosity_distance=100 * u.Mpc,
+                p=2.5,
+                gamma_min=10.0,
+                epsilon_E=0.1,
+                epsilon_B=0.1,
+                pitch_average=True,
+            )
+
+            R = results["R"]
+            B = results["B"]
+
+        The returned values should be interpreted as those implied by the **default
+        closure assumptions** of this class, not as model-independent measurements.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement and conversion to internal log-space representation.
+        # ------------------------------------------------------------------ #
+        log_F_peak = np.log(ensure_in_units(F_peak, "erg cm^-2 s^-1 Hz^-1"))
+        log_nu_peak = np.log(ensure_in_units(nu_peak, "Hz"))
+        log_D_L = np.log(ensure_in_units(D_L, "cm"))
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level inverse closure.
+        # ------------------------------------------------------------------ #
+        results = self._opt_from_params_to_physics(
+            log_F_peak=log_F_peak,
+            log_nu_peak=log_nu_peak,
+            log_D_L=log_D_L,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            p=p,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            f_V=f_V,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            alpha=alpha,
+            pitch_average=pitch_average,
+        )
+
+        return {
+            "R": results["R"] * u.cm,
+            "B": results["B"] * u.G,
         }
 
 
@@ -1378,7 +1833,8 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     # ============================================================ #
     # These are the synchrotron SED functions with SSA and cooling. We use
     # this enum class to trace through the runtime which regime we're in.
-    SPECTRUM_FUNCTIONS = _SynchrotronSSACoolingSEDFunctions
+    SPECTRUM_FUNCTIONS = SSA_COOLING_SED_FUNCTION_REGISTRY
+    SPECTRUM_INVERSION_FUNCTIONS = SSA_COOLING_INV_FUNCTION_REGISTRY
 
     # ============================================================ #
     # Regime Management                                            #
@@ -1396,7 +1852,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_omega: float,
         log_gamma_m: float,
         p: float = 3.0,
-    ) -> tuple[dict[_SynchrotronSSACoolingSEDFunctions, float], int]:
+    ) -> tuple[dict[str, float], int]:
         r"""
         Compute candidate self-absorption frequencies using anchored spectral normalizations.
 
@@ -1478,31 +1934,27 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         if log_nu_c < log_nu_m:
             # This is fast cooling. We have access to S5, S6, and S7 only.
             return {
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_5: (6 * log_Q_c / 13) + (3 * log_nu_m / 13) - (2 * log_nu_c / 13),
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_6: (log_Q_c / 3) + (log_nu_m / 6) + (log_nu_c / 6),
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_7: (2 * log_Q / (5 + p))
-                + (log_nu_c / (5 + p))
-                + (p * log_nu_m / (5 + p)),
+                "Spectrum5": (6 * log_Q_c / 13) + (3 * log_nu_m / 13) - (2 * log_nu_c / 13),
+                "Spectrum6": (log_Q_c / 3) + (log_nu_m / 6) + (log_nu_c / 6),
+                "Spectrum7": (2 * log_Q / (5 + p)) + (log_nu_c / (5 + p)) + (p * log_nu_m / (5 + p)),
             }, 0
         elif (log_nu_m < log_nu_c) and (log_nu_c < log_nu_max):
             # This is slow cooling with nu_c < nu_max. We have access to S3 and S4 and S7 only.
             return {
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_3: (3 * log_Q / 5) - (log_nu_m / 5),
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_4: (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_7: (2 * log_Q / (5 + p))
-                + (log_nu_c / (5 + p))
-                + (p * log_nu_m / (5 + p)),
+                "Spectrum3": (3 * log_Q / 5) - (log_nu_m / 5),
+                "Spectrum4": (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
+                "Spectrum7": (2 * log_Q / (5 + p)) + (log_nu_c / (5 + p)) + (p * log_nu_m / (5 + p)),
             }, 1
         else:
             # This is the NO COOLING case. We have access to S1 and S2 only.
             return {
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_1: (6 * log_Q / 13) + (log_nu_m / 13),
-                self.SPECTRUM_FUNCTIONS.SPECTRUM_2: (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
+                "Spectrum1": (6 * log_Q / 13) + (log_nu_m / 13),
+                "Spectrum2": (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
             }, 2
 
     def _compute_sed_regime_from_nu_a_dict(
         self,
-        log_nu_ssa: dict[_SynchrotronSSACoolingSEDFunctions, float],
+        log_nu_ssa: dict[str, float],
         cooling_regime: int,
         log_nu_m: float,
         log_nu_c: float,
@@ -1590,65 +2042,65 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         if cooling_regime == 0:
             # Fast cooling: S5, S6, or S7
-            if log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_5] < log_nu_c:
+            if log_nu_ssa["Spectrum5"] < log_nu_c:
                 # We get the 2, 11/8, 1/3, -1/2, -p/2 spectrum.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_5, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_5]
-            elif log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7] > log_nu_m:
+                regime, log_nu_a = "Spectrum5", log_nu_ssa["Spectrum5"]
+            elif log_nu_ssa["Spectrum7"] > log_nu_m:
                 # This is the moderate fast cooling case with extreme absorption nu_c < nu_m < nu_a < nu_max.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_7, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7]
-            elif log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_6] < log_nu_m:
+                regime, log_nu_a = "Spectrum7", log_nu_ssa["Spectrum7"]
+            elif log_nu_ssa["Spectrum6"] < log_nu_m:
                 # This is the intermediate fast cooling case with nu_c < nu_a < nu_m < nu_max.
                 # NOTE: the catch on nu_c above allows us to avoid ambiguity with the extreme fast cooling case.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_6, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_6]
+                regime, log_nu_a = "Spectrum6", log_nu_ssa["Spectrum6"]
             else:
                 raise RuntimeError(
                     "Could not determine regime in fast cooling scenario:\n"
                     f"  log_nu_c          = {log_nu_c:0.3f}\n"
                     f"  log_nu_m          = {log_nu_m:0.3f}\n"
                     f"  log_nu_max        = {log_nu_max:0.3f}\n"
-                    f"  log_nu_a (S5)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_5]:0.3f}\n"
-                    f"  log_nu_a (S6)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_6]:0.3f}\n"
-                    f"  log_nu_a (S7)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7]:0.3f}\n"
+                    f"  log_nu_a (S5)     = {log_nu_ssa['Spectrum5']:0.3f}\n"
+                    f"  log_nu_a (S6)     = {log_nu_ssa['Spectrum6']:0.3f}\n"
+                    f"  log_nu_a (S7)     = {log_nu_ssa['Spectrum7']:0.3f}\n"
                 )
 
         # Slow cooling: S3 or S4
         elif cooling_regime == 1:
-            if log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_3] < log_nu_m:
+            if log_nu_ssa["Spectrum3"] < log_nu_m:
                 # This is the optically thin at peak slow cooling case with nu_a < nu_m < nu_c < nu_max.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_3, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_3]
-            elif log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_4] < log_nu_c:
+                regime, log_nu_a = "Spectrum3", log_nu_ssa["Spectrum3"]
+            elif log_nu_ssa["Spectrum4"] < log_nu_c:
                 # This is the case where nu_m < nu_a < nu_c < nu_max. Note that we catch nu_a < nu_m above.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_4, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_4]
-            elif log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7] > log_nu_c:
+                regime, log_nu_a = "Spectrum4", log_nu_ssa["Spectrum4"]
+            elif log_nu_ssa["Spectrum7"] > log_nu_c:
                 # This is the extreme case where nu_m < nu_c < nu_a < nu_max and the cooling break is hidden.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_7, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7]
+                regime, log_nu_a = "Spectrum7", log_nu_ssa["Spectrum7"]
             else:
                 raise RuntimeError(
                     "Could not determine regime in slow cooling scenario:\n"
                     f"  log_nu_c          = {log_nu_c:0.3f}\n"
                     f"  log_nu_m          = {log_nu_m:0.3f}\n"
                     f"  log_nu_max        = {log_nu_max:0.3f}\n"
-                    f"  log_nu_a (S3)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_3]:0.3f}\n"
-                    f"  log_nu_a (S4)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_4]:0.3f}\n"
-                    f"  log_nu_a (S7)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_7]:0.3f}\n"
+                    f"  log_nu_a (S3)     = {log_nu_ssa['Spectrum3']:0.3f}\n"
+                    f"  log_nu_a (S4)     = {log_nu_ssa['Spectrum4']:0.3f}\n"
+                    f"  log_nu_a (S7)     = {log_nu_ssa['Spectrum7']:0.3f}\n"
                 )
 
         # No cooling: S1 or S2
         elif cooling_regime == 2:
-            if log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_1] < log_nu_m:
+            if log_nu_ssa["Spectrum1"] < log_nu_m:
                 # This is the optically thin at peak no cooling case with nu_a < nu_m < nu_max.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_1, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_1]
-            elif log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_2] > log_nu_m:
+                regime, log_nu_a = "Spectrum1", log_nu_ssa["Spectrum1"]
+            elif log_nu_ssa["Spectrum2"] > log_nu_m:
                 # This is the extreme case where nu_m < nu_a < nu_max.
-                regime, log_nu_a = self.SPECTRUM_FUNCTIONS.SPECTRUM_2, log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_2]
+                regime, log_nu_a = "Spectrum2", log_nu_ssa["Spectrum2"]
             else:
                 raise RuntimeError(
                     "Could not determine regime in no cooling scenario:\n"
                     f"  log_nu_m          = {log_nu_m:0.3f}\n"
                     f"  log_nu_max        = {log_nu_max:0.3f}\n"
                     f"  log_nu_c          = {log_nu_c:0.3f}\n"
-                    f"  log_nu_a (S1)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_1]:0.3f}\n"
-                    f"  log_nu_a (S2)     = {log_nu_ssa[self.SPECTRUM_FUNCTIONS.SPECTRUM_2]:0.3f}\n"
+                    f"  log_nu_a (S1)     = {log_nu_ssa['Spectrum1']:0.3f}\n"
+                    f"  log_nu_a (S2)     = {log_nu_ssa['Spectrum2']:0.3f}\n"
                 )
         else:
             raise RuntimeError("Unable to determine SSA spectrum regime: unrecognized cooling regime.")
@@ -1663,7 +2115,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                     "log_nu_c": log_nu_c,
                     "log_nu_max": log_nu_max,
                     "log_nu_ssa": log_nu_a,
-                    "regime": regime.__name__,
+                    "regime": regime,
                 },
             )
 
@@ -1848,7 +2300,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     # noinspection PyCallingNonCallable
     def _log_opt_sed_from_regime(
         self,
-        regime: _SynchrotronSSACoolingSEDFunctions,
+        regime: "str",
         log_nu: "_ArrayLike",
         log_nu_m: float,
         log_nu_a: float,
@@ -1899,33 +2351,38 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         - All SED kernels are evaluated in log-space for numerical stability.
         """
         # Given that we have the regime, we can dispatch to the appropriate function.
-        if regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_1:
-            return regime(log_nu, log_nu_m, log_nu_a, log_nu_max, p, s) + log_F_norm
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_2:
+        if regime == "Spectrum1":
+            return self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s) + log_F_norm
+        elif regime == "Spectrum2":
             return (
-                regime(log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
+                self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
                 + log_F_norm
                 - ((p - 1) / 2) * (log_nu_a - log_nu_m)
             )
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_3:
-            return regime(log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_max, p, s) + log_F_norm
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_4:
+        elif regime == "Spectrum3":
+            return self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_max, p, s) + log_F_norm
+        elif regime == "Spectrum4":
             return (
-                regime(log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_max, p, s)
+                self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_max, p, s)
                 + log_F_norm
                 - ((p - 1) / 2) * (log_nu_a - log_nu_m)
             )
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_5:
-            return regime(log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_ac or log_nu_a, log_nu_max, p, s) + log_F_norm
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_6:
+        elif regime == "Spectrum5":
             return (
-                regime(log_nu, log_nu_m, log_nu_a, log_nu_ac or log_nu_a, log_nu_max, p, s)
+                self.SPECTRUM_FUNCTIONS[regime](
+                    log_nu, log_nu_m, log_nu_c, log_nu_a, log_nu_ac or log_nu_a, log_nu_max, p, s
+                )
+                + log_F_norm
+            )
+        elif regime == "Spectrum6":
+            return (
+                self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_a, log_nu_ac or log_nu_a, log_nu_max, p, s)
                 + log_F_norm
                 - (1 / 2) * (log_nu_a - log_nu_c)
             )
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_7:
+        elif regime == "Spectrum7":
             return (
-                regime(log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
+                self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
                 + log_F_norm
                 + (-1 / 2) * (log_nu_m - log_nu_c)
                 + (-p / 2) * (log_nu_a - log_nu_m)
@@ -2327,7 +2784,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                     "log_nu_max": log_nu_max,
                     "log_nu_a": log_nu_a,
                     "fast_cooling": _FAST_COOLING_FLAG,
-                    "regime": regime.__name__,
+                    "regime": regime,
                     "log_electron_norm": log_electron_norm,
                 },
             )
@@ -2469,6 +2926,715 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_a": np.exp(params_log["nu_a"]) * u.Hz,
             "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
             "regime": params_log["regime"],
+        }
+
+    def _opt_from_params_to_physics(
+        self,
+        regime: str,
+        log_F_peak: "_ArrayLike",
+        log_nu_peak: "_ArrayLike",
+        log_D_L: "_ArrayLike",
+        log_D_A: "_ArrayLike" = None,
+        gamma_min: float = 1.0,
+        gamma_c: float = np.inf,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        f_A: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Low-level inversion of synchrotron peak observables to physical parameters.
+
+        This method implements the **log-space inverse closure relation** for the
+        synchrotron SED including **radiative cooling and synchrotron
+        self-absorption (SSA)**.
+
+        It maps observed spectral peak quantities
+
+        - :math:`F_{\nu,\mathrm{pk}}`
+        - :math:`\nu_{\mathrm{pk}}`
+
+        to the corresponding **source radius** :math:`R` and **magnetic field**
+        :math:`B` under a specific synchrotron spectral regime.
+
+        This routine is the optimized internal implementation used by
+        :meth:`from_params_to_physics`.  All inputs must already be expressed in
+        **natural logarithmic CGS units**, and no unit validation is performed.
+
+        .. important::
+
+            Unlike the simpler optically-thin synchrotron SED, **the inversion is not
+            unique without specifying the spectral regime**.  Different SSA and
+            cooling regimes correspond to different relationships between
+            observables and physical parameters.
+
+            For this reason the caller must explicitly provide the **regime
+            identifier**.
+
+        .. warning::
+
+            This method implements a **closure relation**, not a direct physical
+            measurement.  The inferred values of :math:`R` and :math:`B` are those
+            required to reproduce the supplied observables **under the assumptions
+            of the chosen regime and closure prescription**.
+
+            If the supplied regime does not match the true spectral configuration,
+            the inferred parameters may be significantly incorrect.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier for the synchrotron spectral regime.  Must correspond to one
+            of the regimes defined in :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime encodes a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used.
+
+        log_F_peak : array-like
+            Natural logarithm of the observed peak flux density
+            :math:`F_{\nu,\mathrm{pk}}` in CGS units
+            (:math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`).
+
+        log_nu_peak : array-like
+            Natural logarithm of the observed peak frequency (Hz).
+
+        log_D_L : array-like
+            Natural logarithm of the luminosity distance (cm).
+
+        log_D_A : array-like, optional
+            Natural logarithm of the angular-diameter distance (cm).
+
+            This quantity is required for regimes where the spectral peak occurs
+            in the **optically thick SSA portion of the spectrum**, because those
+            inversions depend explicitly on the **angular size of the emitting
+            region**.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+        gamma_c : float, optional
+            Cooling Lorentz factor.
+
+            Must be finite for regimes where cooling explicitly shapes the
+            spectrum.
+
+        gamma_max : float, optional
+            Maximum electron Lorentz factor.
+
+        p : float, optional
+            Power-law index of the electron energy distribution.
+
+        epsilon_E : float, optional
+            Fraction of post-shock internal energy carried by relativistic
+            electrons.
+
+        epsilon_B : float, optional
+            Fraction of post-shock internal energy stored in magnetic fields.
+
+        f_V : float, optional
+            Volume filling factor of the emitting region.
+
+        f_A : float, optional
+            Area filling factor used in SSA inversions where the emitting surface
+            area must be specified.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            A simple on-axis Doppler transformation is applied to convert the
+            observed peak quantities into the comoving frame prior to inversion.
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            Required if ``pitch_average=False``.
+
+        pitch_average : bool, optional
+            If ``True``, the pitch-angle-averaged synchrotron emissivity is used.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred physical parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+            Values are returned in **linear CGS units**.
+
+        Notes
+        -----
+        **Relativistic corrections**
+
+        Observed quantities are transformed into the comoving frame using
+
+        .. math::
+
+            \nu' = \nu \frac{1+z}{\delta}
+
+            F' = F \frac{1+z}{\delta^3}
+
+        assuming on-axis emission with Doppler factor
+        :math:`\delta(\Gamma, \theta=0)`.
+
+        **Closure assumptions**
+
+        The inversion assumes
+
+        - a single homogeneous emission zone,
+        - synchrotron emission from a power-law electron population,
+        - equipartition-style microphysical closure,
+        - a spherical or quasi-spherical emitting geometry,
+        - on-axis relativistic boosting if bulk motion is present.
+
+        **Why regimes matter**
+
+        Different regimes correspond to different peak-forming mechanisms:
+
+        - optically thin emission near :math:`\nu_m`
+        - optically thick SSA peaks
+        - cooling-dominated peaks
+
+        Each of these produces **different scalings of**
+        :math:`R` and :math:`B` with the observables.
+
+        See Also
+        --------
+        from_params_to_physics
+            Public, unit-aware wrapper for this inversion.
+        determine_sed_regime
+            Utility for determining the appropriate spectral regime.
+        """
+        # ------------------------------------------------------------------ #
+        # Pitch-angle treatment
+        # ------------------------------------------------------------------ #
+        if pitch_average:
+            if alpha is not None:
+                warnings.warn(
+                    "Pitch averaging is enabled, so the provided `alpha` is ignored. "
+                    "(Set `alpha=None` to suppress this warning.)",
+                    stacklevel=2,
+                )
+            sin_alpha = None
+        else:
+            if alpha is None:
+                raise ValueError("Pitch averaging is disabled, so a fixed pitch angle must be provided via `alpha`.")
+            sin_alpha = np.sin(alpha)
+
+        # ------------------------------------------------------------------ #
+        # Handle the regime-specification
+        # ------------------------------------------------------------------ #
+        if regime not in self.SPECTRUM_INVERSION_FUNCTIONS:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        inversion_function = self.SPECTRUM_INVERSION_FUNCTIONS[regime]
+        # ------------------------------------------------------------------ #
+        # Transform observed peak quantities into the comoving frame.
+        #
+        # This applies the same minimal relativistic treatment used elsewhere
+        # in the default closure: an on-axis Doppler correction plus the usual
+        # cosmological redshift correction.
+        #
+        # IMPORTANT: this is intentionally simple and is not a substitute for a
+        # full relativistic radiative-transfer treatment.
+        # ------------------------------------------------------------------ #
+        doppler_factor = compute_doppler_factor(gamma_bulk, 0.0)
+
+        log_nu_peak_comoving = log_nu_peak - np.log(doppler_factor) + np.log1p(redshift)
+        log_F_peak_comoving = log_F_peak - 3.0 * np.log(doppler_factor) + np.log1p(redshift)
+
+        # ------------------------------------------------------------------ #
+        # Invert the default closure in the comoving frame.
+        # ------------------------------------------------------------------ #
+        if regime == "Spectrum1":  # nu_a < nu_m < nu_max < nu_c.
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum2":  # nu_m < nu_a < nu_max < nu_c.
+            if log_D_A is None:
+                raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum2 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                log_D_A,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                f_A=f_A,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum3":  # nu_a < nu_m < nu_c < nu_max.
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum4":  # nu_m < nu_a < nu_c < nu_max.
+            if log_D_A is None:
+                raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum4 regime.")
+            if not np.isfinite(gamma_c):
+                raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum4 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                log_D_A,
+                gamma_min=gamma_min,
+                gamma_c=gamma_c,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                f_A=f_A,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum5":  # nu_a < nu_c < nu_m < nu_max.
+            if not np.isfinite(gamma_c):
+                raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum5 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_c=gamma_c,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum6":  # nu_c < nu_a < nu_m < nu_max.
+            if log_D_A is None:
+                raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum6 regime.")
+            if not np.isfinite(gamma_c):
+                raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum6 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                log_D_A,
+                gamma_min=gamma_min,
+                gamma_c=gamma_c,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                f_A=f_A,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "Spectrum7":  # nu_c, nu_m < nu_a < nu_max.
+            if log_D_A is None:
+                raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum7 regime.")
+            if not np.isfinite(gamma_c):
+                raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum7 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                log_D_A,
+                gamma_min=gamma_min,
+                gamma_c=gamma_c,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                f_A=f_A,
+                sin_alpha=sin_alpha,
+            )
+        else:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        return {
+            "R": np.exp(log_R),
+            "B": np.exp(log_B),
+        }
+
+    def from_params_to_physics(
+        self,
+        regime: str,
+        F_peak: "_UnitBearingScalarLike",
+        nu_peak: "_UnitBearingScalarLike",
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        f_A: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Infer physical source parameters from observed synchrotron peak quantities.
+
+        This method provides the **public, unit-aware interface** for the inverse
+        synchrotron closure relation implemented by
+        :meth:`_opt_from_params_to_physics`.
+
+        It converts observed peak quantities
+
+        - peak flux density :math:`F_{\nu,\mathrm{pk}}`
+        - peak frequency :math:`\nu_{\mathrm{pk}}`
+
+        into estimates of the **source radius** :math:`R` and **magnetic field**
+        :math:`B`, assuming the emission follows one of the spectral regimes
+        described by :class:`PowerLaw_Cooling_SSA_SynchrotronSED`.
+
+        The calculation proceeds by
+
+        1. resolving cosmological distance information,
+        2. converting all quantities into CGS units,
+        3. transforming observables into logarithmic form,
+        4. dispatching to the optimized inversion routine.
+
+        .. important::
+
+            The caller **must specify the synchrotron spectral regime**.  This
+            inversion cannot determine the regime automatically because multiple
+            spectral configurations may produce identical peak observables.
+
+        .. warning::
+
+            The inferred parameters depend strongly on the assumed regime and
+            closure relation.  Incorrect regime identification will generally lead
+            to incorrect physical parameters.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier of the synchrotron spectral regime.
+
+            The spectrum is identified as ``"SpectrumN"``, where ``N`` is an
+            integer corresponding to the regimes defined in
+            :ref:`synch_sed_theory` and implemented internally in
+            :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime corresponds to a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used to infer the physical parameters.
+            The user must ensure that the supplied regime is consistent with the
+            observed spectral configuration.
+
+        F_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak flux density.
+
+            Must be convertible to
+            :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+
+            If an array is provided, the inversion is performed **element-wise**
+            and the returned physical parameters will have the same shape.
+            This makes it possible to evaluate the closure relation across
+            posterior samples, Monte Carlo realizations, or time-series data.
+
+        nu_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak frequency.
+
+            Must be convertible to Hz.
+
+            As with ``F_peak``, array inputs are supported and will produce
+            element-wise solutions for the inferred parameters.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+            By default this is ``1.0``, corresponding to a non-relativistic
+            minimum electron energy. In many astrophysical applications
+            (e.g. shock acceleration), values of
+            :math:`\gamma_{\min} \sim 10-10^3` may be more physically
+            appropriate.
+
+        gamma_max : float, optional
+            Maximum Lorentz factor of the accelerated electron distribution.
+
+            The default value of ``np.inf`` corresponds to no high-energy
+            cutoff. This assumption is typically valid provided that the
+            synchrotron cutoff frequency lies well above the observed band.
+
+        p : float, optional
+            Power-law index of the electron Lorentz factor distribution,
+
+            .. math::
+
+                N(\gamma) \propto \gamma^{-p}.
+
+            The default value ``p = 3.0`` is commonly adopted for
+            shock-accelerated electron populations.
+
+        epsilon_E : float, optional
+            Fraction of the post-shock internal energy carried by relativistic
+            electrons.
+
+            This parameter enters the equipartition-style closure relation used
+            to normalize the electron distribution.
+
+        epsilon_B : float, optional
+            Fraction of the post-shock internal energy stored in magnetic
+            fields.
+
+            Together with ``epsilon_E``, this parameter determines the relative
+            partition of energy between particles and magnetic fields in the
+            emitting region.
+
+        f_V : float, optional
+            Effective **volume filling factor** of the emitting region.
+
+            In optically thin emission scenarios, this parameter represents the
+            fraction of the spherical volume that actively emits synchrotron
+            radiation.
+
+            Physically, this accounts for situations where the emission arises
+            from a thin shell or clumpy medium rather than uniformly filling
+            the entire volume.
+
+            For example:
+
+            - ``f_V = 1`` corresponds to a uniformly filled sphere.
+            - ``f_V < 1`` may represent emission from a thin shocked shell or
+              fragmented ejecta.
+
+        f_A : float, optional
+            Effective **area filling factor** of the emitting region.
+
+            This parameter becomes relevant in regimes where the spectral peak
+            is produced by **synchrotron self-absorption (SSA)**. In such cases,
+            the inversion depends on the projected emitting area rather than
+            the full volume.
+
+            Physically, ``f_A`` represents the fraction of the projected
+            spherical surface that contributes to the optically thick emission.
+
+            For example:
+
+            - ``f_A = 1`` corresponds to a uniformly emitting spherical surface.
+            - ``f_A < 1`` may arise from patchy or filamentary emission regions.
+
+            In many simple models one may take ``f_A ≈ f_V``, but the two
+            parameters are conceptually distinct and correspond to **different
+            geometric aspects** of the emitting region.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            If non-unity, the observed peak quantities are transformed into the
+            comoving frame using relativistic Doppler corrections prior to
+            performing the inversion.
+
+            The implementation assumes **on-axis emission**, corresponding to a
+            Doppler factor
+
+            .. math::
+
+                \delta(\Gamma, \theta=0).
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+            This parameter enters the conversion between observed and comoving
+            frequencies and fluxes and also determines the cosmological
+            distances if they are not supplied explicitly.
+
+        luminosity_distance : quantity, optional
+            Luminosity distance to the source.
+
+            Must be convertible to cm.
+
+            If supplied, this value is used directly in the inversion.
+
+        angular_diameter_distance : quantity, optional
+            Angular-diameter distance to the source.
+
+            Must be convertible to cm.
+
+            This quantity is required in some SSA regimes where the inversion
+            depends explicitly on the **angular size of the emitting region**.
+
+        proper_distance : quantity, optional
+            Proper distance to the source.
+
+            This can be used as an alternative specification of the cosmological
+            distance.
+
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to compute missing distance quantities.
+
+            The distances required by the inversion are resolved using the
+            helper function :func:`resolve_cosmological_distances`, which
+            processes the supplied cosmological parameters as follows:
+
+            1. If explicit distances are provided (e.g. ``luminosity_distance``),
+               those values are used directly.
+
+            2. If only a redshift is provided, the necessary distances are
+               computed using the supplied ``cosmology``.
+
+            3. If no cosmology is provided, the default cosmology returned by
+               :func:`get_cosmology` is used.
+
+            This mechanism ensures that the inversion has access to all
+            required cosmological distance measures while allowing users to
+            specify whichever subset of parameters is most convenient.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            This parameter is required when ``pitch_average=False`` and
+            specifies the angle between the electron velocity and the magnetic
+            field.
+
+        pitch_average : bool, optional
+            If ``True``, the synchrotron emissivity is averaged over an
+            isotropic distribution of pitch angles.
+
+            In this case the explicit pitch angle ``alpha`` is ignored and the
+            appropriate angle-averaged emissivity coefficients are used.
+
+            Pitch-angle averaging is often appropriate when the electron
+            distribution is isotropic in momentum space.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred source parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+        Notes
+        -----
+        **Interpretation**
+
+        These values are **model-dependent estimates**, not direct measurements.
+
+        They represent the values of :math:`R` and :math:`B` that reproduce the
+        observed peak under the assumptions of
+
+        - the selected synchrotron spectral regime,
+        - a single-zone homogeneous emitting region,
+        - a power-law electron population,
+        - equipartition-style microphysical closure.
+
+        **When this method may fail**
+
+        The inversion may produce misleading results if
+
+        - the true spectrum contains multiple emitting zones,
+        - the peak is produced by a process not described by the selected regime,
+        - strong radiative transfer effects modify the spectrum,
+        - relativistic equal-arrival-time surfaces dominate the emission,
+        - the geometry deviates strongly from the assumed configuration.
+
+        In such cases, users should treat the inferred parameters as
+        **order-of-magnitude estimates only**.
+
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        D_A = distances["angular_diameter_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement and conversion to internal log-space representation.
+        # ------------------------------------------------------------------ #
+        log_F_peak = np.log(ensure_in_units(F_peak, "erg cm^-2 s^-1 Hz^-1"))
+        log_nu_peak = np.log(ensure_in_units(nu_peak, "Hz"))
+        log_D_L = np.log(ensure_in_units(D_L, "cm"))
+        log_D_A = np.log(ensure_in_units(D_A, "cm"))
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level inverse closure.
+        # ------------------------------------------------------------------ #
+        results = self._opt_from_params_to_physics(
+            log_F_peak=log_F_peak,
+            log_nu_peak=log_nu_peak,
+            log_D_L=log_D_L,
+            log_D_A=log_D_A,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            p=p,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            f_V=f_V,
+            f_A=f_A,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            alpha=alpha,
+            pitch_average=pitch_average,
+        )
+
+        return {
+            "R": results["R"] * u.cm,
+            "B": results["B"] * u.G,
         }
 
 
@@ -2634,7 +3800,8 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
     :class:`PowerLaw_Cooling_SSA_SynchrotronSED` : Synchrotron SED with cooling and self-absorption.
     """
 
-    SPECTRUM_FUNCTIONS = _SynchrotronCoolingSEDFunctions
+    SPECTRUM_FUNCTIONS = COOLING_SED_FUNCTION_REGISTRY
+    SPECTRUM_INVERSION_FUNCTIONS = COOLING_INV_FUNCTION_REGISTRY
 
     # ------------------------------------------------------------ #
     # Regime determination                                        #
@@ -2685,11 +3852,11 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         not perform unit validation.
         """
         if log_nu_c <= log_nu_m:
-            regime = self.SPECTRUM_FUNCTIONS.SPECTRUM_1
+            regime = "fast_cooling"
         elif log_nu_m < log_nu_c < log_nu_max:
-            regime = self.SPECTRUM_FUNCTIONS.SPECTRUM_2
+            regime = "slow_cooling"
         elif log_nu_c > log_nu_max:
-            regime = self.SPECTRUM_FUNCTIONS.SPECTRUM_3
+            regime = "no_cooling"
         else:
             raise RuntimeError("Could not determine cooling regime.")
 
@@ -2701,7 +3868,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
                     "log_nu_m": log_nu_m,
                     "log_nu_c": log_nu_c,
                     "log_nu_max": log_nu_max,
-                    "regime": regime.__name__,
+                    "regime": regime,
                 },
             )
 
@@ -2814,12 +3981,12 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
           include synchrotron self-absorption.
         - No unit validation is performed.
         """
-        if regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_1:
-            log_sed = regime(log_nu, log_nu_m, log_nu_c, log_nu_max, p, s)
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_2:
-            log_sed = regime(log_nu, log_nu_m, log_nu_c, log_nu_max, p, s)
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_3:
-            log_sed = regime(log_nu, log_nu_m, log_nu_max, p, s)
+        if regime == "fast_cooling":
+            log_sed = self.SPECTRUM_FUNCTIONS["fast_cooling"](log_nu, log_nu_m, log_nu_c, log_nu_max, p, s)
+        elif regime == "slow_cooling":
+            log_sed = self.SPECTRUM_FUNCTIONS["slow_cooling"](log_nu, log_nu_m, log_nu_c, log_nu_max, p, s)
+        elif regime == "no_cooling":
+            log_sed = self.SPECTRUM_FUNCTIONS["no_cooling"](log_nu, log_nu_m, log_nu_max, p, s)
         else:
             raise RuntimeError("Unrecognized cooling regime.")
 
@@ -3160,7 +4327,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
                     "log_nu_m": log_nu_m,
                     "log_nu_c": log_nu_c,
                     "log_nu_max": log_nu_max,
-                    "regime": regime.__name__,
+                    "regime": regime,
                     "log_electron_norm": log_electron_norm,
                 },
             )
@@ -3304,6 +4471,625 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_c": np.exp(params_log["nu_c"]) * u.Hz,
             "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
             "regime": params_log["regime"],
+        }
+
+    def _opt_from_params_to_physics(
+        self,
+        regime: str,
+        log_F_peak: "_ArrayLike",
+        log_nu_peak: "_ArrayLike",
+        log_D_L: "_ArrayLike",
+        gamma_min: float = 1.0,
+        gamma_c: float = np.inf,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Low-level inversion of synchrotron peak observables to physical parameters.
+
+        This method implements the **log-space inverse closure relation** for the
+        synchrotron SED including **radiative cooling and synchrotron
+        self-absorption (SSA)**.
+
+        It maps observed spectral peak quantities
+
+        - :math:`F_{\nu,\mathrm{pk}}`
+        - :math:`\nu_{\mathrm{pk}}`
+
+        to the corresponding **source radius** :math:`R` and **magnetic field**
+        :math:`B` under a specific synchrotron spectral regime.
+
+        This routine is the optimized internal implementation used by
+        :meth:`from_params_to_physics`.  All inputs must already be expressed in
+        **natural logarithmic CGS units**, and no unit validation is performed.
+
+        .. important::
+
+            Unlike the simpler optically-thin synchrotron SED, **the inversion is not
+            unique without specifying the spectral regime**.  Different SSA and
+            cooling regimes correspond to different relationships between
+            observables and physical parameters.
+
+            For this reason the caller must explicitly provide the **regime
+            identifier**.
+
+        .. warning::
+
+            This method implements a **closure relation**, not a direct physical
+            measurement.  The inferred values of :math:`R` and :math:`B` are those
+            required to reproduce the supplied observables **under the assumptions
+            of the chosen regime and closure prescription**.
+
+            If the supplied regime does not match the true spectral configuration,
+            the inferred parameters may be significantly incorrect.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier for the synchrotron spectral regime.  Must correspond to one
+            of the regimes defined in :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime encodes a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used.
+
+        log_F_peak : array-like
+            Natural logarithm of the observed peak flux density
+            :math:`F_{\nu,\mathrm{pk}}` in CGS units
+            (:math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`).
+
+        log_nu_peak : array-like
+            Natural logarithm of the observed peak frequency (Hz).
+
+        log_D_L : array-like
+            Natural logarithm of the luminosity distance (cm).
+
+        log_D_A : array-like, optional
+            Natural logarithm of the angular-diameter distance (cm).
+
+            This quantity is required for regimes where the spectral peak occurs
+            in the **optically thick SSA portion of the spectrum**, because those
+            inversions depend explicitly on the **angular size of the emitting
+            region**.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+        gamma_c : float, optional
+            Cooling Lorentz factor.
+
+            Must be finite for regimes where cooling explicitly shapes the
+            spectrum.
+
+        gamma_max : float, optional
+            Maximum electron Lorentz factor.
+
+        p : float, optional
+            Power-law index of the electron energy distribution.
+
+        epsilon_E : float, optional
+            Fraction of post-shock internal energy carried by relativistic
+            electrons.
+
+        epsilon_B : float, optional
+            Fraction of post-shock internal energy stored in magnetic fields.
+
+        f_V : float, optional
+            Volume filling factor of the emitting region.
+
+        f_A : float, optional
+            Area filling factor used in SSA inversions where the emitting surface
+            area must be specified.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            A simple on-axis Doppler transformation is applied to convert the
+            observed peak quantities into the comoving frame prior to inversion.
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            Required if ``pitch_average=False``.
+
+        pitch_average : bool, optional
+            If ``True``, the pitch-angle-averaged synchrotron emissivity is used.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred physical parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+            Values are returned in **linear CGS units**.
+
+        Notes
+        -----
+        **Relativistic corrections**
+
+        Observed quantities are transformed into the comoving frame using
+
+        .. math::
+
+            \nu' = \nu \frac{1+z}{\delta}
+
+            F' = F \frac{1+z}{\delta^3}
+
+        assuming on-axis emission with Doppler factor
+        :math:`\delta(\Gamma, \theta=0)`.
+
+        **Closure assumptions**
+
+        The inversion assumes
+
+        - a single homogeneous emission zone,
+        - synchrotron emission from a power-law electron population,
+        - equipartition-style microphysical closure,
+        - a spherical or quasi-spherical emitting geometry,
+        - on-axis relativistic boosting if bulk motion is present.
+
+        **Why regimes matter**
+
+        Different regimes correspond to different peak-forming mechanisms:
+
+        - optically thin emission near :math:`\nu_m`
+        - optically thick SSA peaks
+        - cooling-dominated peaks
+
+        Each of these produces **different scalings of**
+        :math:`R` and :math:`B` with the observables.
+
+        See Also
+        --------
+        from_params_to_physics
+            Public, unit-aware wrapper for this inversion.
+        determine_sed_regime
+            Utility for determining the appropriate spectral regime.
+        """
+        # ------------------------------------------------------------------ #
+        # Pitch-angle treatment
+        # ------------------------------------------------------------------ #
+        if pitch_average:
+            if alpha is not None:
+                warnings.warn(
+                    "Pitch averaging is enabled, so the provided `alpha` is ignored. "
+                    "(Set `alpha=None` to suppress this warning.)",
+                    stacklevel=2,
+                )
+            sin_alpha = None
+        else:
+            if alpha is None:
+                raise ValueError("Pitch averaging is disabled, so a fixed pitch angle must be provided via `alpha`.")
+            sin_alpha = np.sin(alpha)
+
+        # ------------------------------------------------------------------ #
+        # Handle the regime-specification
+        # ------------------------------------------------------------------ #
+        if regime not in self.SPECTRUM_INVERSION_FUNCTIONS:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        inversion_function = self.SPECTRUM_INVERSION_FUNCTIONS[regime]
+        # ------------------------------------------------------------------ #
+        # Transform observed peak quantities into the comoving frame.
+        #
+        # This applies the same minimal relativistic treatment used elsewhere
+        # in the default closure: an on-axis Doppler correction plus the usual
+        # cosmological redshift correction.
+        #
+        # IMPORTANT: this is intentionally simple and is not a substitute for a
+        # full relativistic radiative-transfer treatment.
+        # ------------------------------------------------------------------ #
+        doppler_factor = compute_doppler_factor(gamma_bulk, 0.0)
+
+        log_nu_peak_comoving = log_nu_peak - np.log(doppler_factor) + np.log1p(redshift)
+        log_F_peak_comoving = log_F_peak - 3.0 * np.log(doppler_factor) + np.log1p(redshift)
+
+        # ------------------------------------------------------------------ #
+        # Invert the default closure in the comoving frame.
+        # ------------------------------------------------------------------ #
+        if regime == "fast_cooling":  # nu_c < nu_m < nu_max
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                gamma_c=gamma_c,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "slow_cooling":  # nu_m < nu_c < nu_max
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                gamma_c=gamma_c,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "no_cooling":  # nu_m < nu_max < nu_c
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        else:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        return {
+            "R": np.exp(log_R),
+            "B": np.exp(log_B),
+        }
+
+    def from_params_to_physics(
+        self,
+        regime: str,
+        F_peak: "_UnitBearingScalarLike",
+        nu_peak: "_UnitBearingScalarLike",
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Infer physical source parameters from observed synchrotron peak quantities.
+
+        This method provides the **public, unit-aware interface** for the inverse
+        synchrotron closure relation implemented by
+        :meth:`_opt_from_params_to_physics`.
+
+        It converts observed peak quantities
+
+        - peak flux density :math:`F_{\nu,\mathrm{pk}}`
+        - peak frequency :math:`\nu_{\mathrm{pk}}`
+
+        into estimates of the **source radius** :math:`R` and **magnetic field**
+        :math:`B`, assuming the emission follows one of the spectral regimes
+        described by :class:`PowerLaw_Cooling_SSA_SynchrotronSED`.
+
+        The calculation proceeds by
+
+        1. resolving cosmological distance information,
+        2. converting all quantities into CGS units,
+        3. transforming observables into logarithmic form,
+        4. dispatching to the optimized inversion routine.
+
+        .. important::
+
+            The caller **must specify the synchrotron spectral regime**.  This
+            inversion cannot determine the regime automatically because multiple
+            spectral configurations may produce identical peak observables.
+
+        .. warning::
+
+            The inferred parameters depend strongly on the assumed regime and
+            closure relation.  Incorrect regime identification will generally lead
+            to incorrect physical parameters.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier of the synchrotron spectral regime.
+
+            The spectrum is identified as ``"SpectrumN"``, where ``N`` is an
+            integer corresponding to the regimes defined in
+            :ref:`synch_sed_theory` and implemented internally in
+            :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime corresponds to a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used to infer the physical parameters.
+            The user must ensure that the supplied regime is consistent with the
+            observed spectral configuration.
+
+        F_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak flux density.
+
+            Must be convertible to
+            :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+
+            If an array is provided, the inversion is performed **element-wise**
+            and the returned physical parameters will have the same shape.
+            This makes it possible to evaluate the closure relation across
+            posterior samples, Monte Carlo realizations, or time-series data.
+
+        nu_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak frequency.
+
+            Must be convertible to Hz.
+
+            As with ``F_peak``, array inputs are supported and will produce
+            element-wise solutions for the inferred parameters.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+            By default this is ``1.0``, corresponding to a non-relativistic
+            minimum electron energy. In many astrophysical applications
+            (e.g. shock acceleration), values of
+            :math:`\gamma_{\min} \sim 10-10^3` may be more physically
+            appropriate.
+
+        gamma_max : float, optional
+            Maximum Lorentz factor of the accelerated electron distribution.
+
+            The default value of ``np.inf`` corresponds to no high-energy
+            cutoff. This assumption is typically valid provided that the
+            synchrotron cutoff frequency lies well above the observed band.
+
+        p : float, optional
+            Power-law index of the electron Lorentz factor distribution,
+
+            .. math::
+
+                N(\gamma) \propto \gamma^{-p}.
+
+            The default value ``p = 3.0`` is commonly adopted for
+            shock-accelerated electron populations.
+
+        epsilon_E : float, optional
+            Fraction of the post-shock internal energy carried by relativistic
+            electrons.
+
+            This parameter enters the equipartition-style closure relation used
+            to normalize the electron distribution.
+
+        epsilon_B : float, optional
+            Fraction of the post-shock internal energy stored in magnetic
+            fields.
+
+            Together with ``epsilon_E``, this parameter determines the relative
+            partition of energy between particles and magnetic fields in the
+            emitting region.
+
+        f_V : float, optional
+            Effective **volume filling factor** of the emitting region.
+
+            In optically thin emission scenarios, this parameter represents the
+            fraction of the spherical volume that actively emits synchrotron
+            radiation.
+
+            Physically, this accounts for situations where the emission arises
+            from a thin shell or clumpy medium rather than uniformly filling
+            the entire volume.
+
+            For example:
+
+            - ``f_V = 1`` corresponds to a uniformly filled sphere.
+            - ``f_V < 1`` may represent emission from a thin shocked shell or
+              fragmented ejecta.
+
+        f_A : float, optional
+            Effective **area filling factor** of the emitting region.
+
+            This parameter becomes relevant in regimes where the spectral peak
+            is produced by **synchrotron self-absorption (SSA)**. In such cases,
+            the inversion depends on the projected emitting area rather than
+            the full volume.
+
+            Physically, ``f_A`` represents the fraction of the projected
+            spherical surface that contributes to the optically thick emission.
+
+            For example:
+
+            - ``f_A = 1`` corresponds to a uniformly emitting spherical surface.
+            - ``f_A < 1`` may arise from patchy or filamentary emission regions.
+
+            In many simple models one may take ``f_A ≈ f_V``, but the two
+            parameters are conceptually distinct and correspond to **different
+            geometric aspects** of the emitting region.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            If non-unity, the observed peak quantities are transformed into the
+            comoving frame using relativistic Doppler corrections prior to
+            performing the inversion.
+
+            The implementation assumes **on-axis emission**, corresponding to a
+            Doppler factor
+
+            .. math::
+
+                \delta(\Gamma, \theta=0).
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+            This parameter enters the conversion between observed and comoving
+            frequencies and fluxes and also determines the cosmological
+            distances if they are not supplied explicitly.
+
+        luminosity_distance : quantity, optional
+            Luminosity distance to the source.
+
+            Must be convertible to cm.
+
+            If supplied, this value is used directly in the inversion.
+
+        angular_diameter_distance : quantity, optional
+            Angular-diameter distance to the source.
+
+            Must be convertible to cm.
+
+            This quantity is required in some SSA regimes where the inversion
+            depends explicitly on the **angular size of the emitting region**.
+
+        proper_distance : quantity, optional
+            Proper distance to the source.
+
+            This can be used as an alternative specification of the cosmological
+            distance.
+
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to compute missing distance quantities.
+
+            The distances required by the inversion are resolved using the
+            helper function :func:`resolve_cosmological_distances`, which
+            processes the supplied cosmological parameters as follows:
+
+            1. If explicit distances are provided (e.g. ``luminosity_distance``),
+               those values are used directly.
+
+            2. If only a redshift is provided, the necessary distances are
+               computed using the supplied ``cosmology``.
+
+            3. If no cosmology is provided, the default cosmology returned by
+               :func:`get_cosmology` is used.
+
+            This mechanism ensures that the inversion has access to all
+            required cosmological distance measures while allowing users to
+            specify whichever subset of parameters is most convenient.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            This parameter is required when ``pitch_average=False`` and
+            specifies the angle between the electron velocity and the magnetic
+            field.
+
+        pitch_average : bool, optional
+            If ``True``, the synchrotron emissivity is averaged over an
+            isotropic distribution of pitch angles.
+
+            In this case the explicit pitch angle ``alpha`` is ignored and the
+            appropriate angle-averaged emissivity coefficients are used.
+
+            Pitch-angle averaging is often appropriate when the electron
+            distribution is isotropic in momentum space.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred source parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+        Notes
+        -----
+        **Interpretation**
+
+        These values are **model-dependent estimates**, not direct measurements.
+
+        They represent the values of :math:`R` and :math:`B` that reproduce the
+        observed peak under the assumptions of
+
+        - the selected synchrotron spectral regime,
+        - a single-zone homogeneous emitting region,
+        - a power-law electron population,
+        - equipartition-style microphysical closure.
+
+        **When this method may fail**
+
+        The inversion may produce misleading results if
+
+        - the true spectrum contains multiple emitting zones,
+        - the peak is produced by a process not described by the selected regime,
+        - strong radiative transfer effects modify the spectrum,
+        - relativistic equal-arrival-time surfaces dominate the emission,
+        - the geometry deviates strongly from the assumed configuration.
+
+        In such cases, users should treat the inferred parameters as
+        **order-of-magnitude estimates only**.
+
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement and conversion to internal log-space representation.
+        # ------------------------------------------------------------------ #
+        log_F_peak = np.log(ensure_in_units(F_peak, "erg cm^-2 s^-1 Hz^-1"))
+        log_nu_peak = np.log(ensure_in_units(nu_peak, "Hz"))
+        log_D_L = np.log(ensure_in_units(D_L, "cm"))
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level inverse closure.
+        # ------------------------------------------------------------------ #
+        results = self._opt_from_params_to_physics(
+            log_F_peak=log_F_peak,
+            log_nu_peak=log_nu_peak,
+            log_D_L=log_D_L,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            p=p,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            f_V=f_V,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            alpha=alpha,
+            pitch_average=pitch_average,
+        )
+
+        return {
+            "R": results["R"] * u.cm,
+            "B": results["B"] * u.G,
         }
 
 
@@ -3484,7 +5270,8 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         )
     """
 
-    SPECTRUM_FUNCTIONS = _SynchrotronSSASEDFunctions
+    SPECTRUM_FUNCTIONS = SSA_SED_FUNCTION_REGISTRY
+    SPECTRUM_INVERSION_FUNCTIONS = SSA_INV_FUNCTION_REGISTRY
 
     # ============================================================ #
     # Regime determination                                        #
@@ -3542,9 +5329,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         - The returned regime applies **globally** to the SED.
         """
         if log_nu_a < log_nu_m:
-            return self.SPECTRUM_FUNCTIONS.SPECTRUM_1, {}
+            return "optically_thin", {}
         else:
-            return self.SPECTRUM_FUNCTIONS.SPECTRUM_2, {}
+            return "optically_thick", {}
 
     def determine_sed_regime(
         self,
@@ -3780,11 +5567,13 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
           continuity with the anchored normalization at :math:`\nu_m`.
         - No unit validation is performed.
         """
-        if regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_1:
-            log_sed = _log_powerlaw_sbpl_sed_ssa_1(log_nu, log_nu_m, log_nu_a, log_nu_max, p, s) + log_F_norm
-        elif regime == self.SPECTRUM_FUNCTIONS.SPECTRUM_2:
+        if regime == "optically_thin":
             log_sed = (
-                _log_powerlaw_sbpl_sed_ssa_2(log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
+                self.SPECTRUM_FUNCTIONS["optically_thin"](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s) + log_F_norm
+            )
+        elif regime == "optically_thick":
+            log_sed = (
+                self.SPECTRUM_FUNCTIONS["optically_thick"](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
                 + log_F_norm
                 - ((p - 1) / 2) * (log_nu_a - log_nu_m)
             )
@@ -4133,7 +5922,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                     "log_nu_m": log_nu_m,
                     "log_nu_max": log_nu_max,
                     "log_nu_a": log_nu_a,
-                    "regime": regime.__name__,
+                    "regime": regime,
                     "log_electron_norm": log_electron_norm,
                 },
             )
@@ -4259,6 +6048,620 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_a": np.exp(params_log["nu_a"]) * u.Hz,
             "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
             "regime": params_log["regime"],
+        }
+
+    def _opt_from_params_to_physics(
+        self,
+        regime: str,
+        log_F_peak: "_ArrayLike",
+        log_nu_peak: "_ArrayLike",
+        log_D_L: "_ArrayLike",
+        log_D_A: "_ArrayLike" = None,
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        f_A: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Low-level inversion of synchrotron peak observables to physical parameters.
+
+        This method implements the **log-space inverse closure relation** for the
+        synchrotron SED including **radiative cooling and synchrotron
+        self-absorption (SSA)**.
+
+        It maps observed spectral peak quantities
+
+        - :math:`F_{\nu,\mathrm{pk}}`
+        - :math:`\nu_{\mathrm{pk}}`
+
+        to the corresponding **source radius** :math:`R` and **magnetic field**
+        :math:`B` under a specific synchrotron spectral regime.
+
+        This routine is the optimized internal implementation used by
+        :meth:`from_params_to_physics`.  All inputs must already be expressed in
+        **natural logarithmic CGS units**, and no unit validation is performed.
+
+        .. important::
+
+            Unlike the simpler optically-thin synchrotron SED, **the inversion is not
+            unique without specifying the spectral regime**.  Different SSA and
+            cooling regimes correspond to different relationships between
+            observables and physical parameters.
+
+            For this reason the caller must explicitly provide the **regime
+            identifier**.
+
+        .. warning::
+
+            This method implements a **closure relation**, not a direct physical
+            measurement.  The inferred values of :math:`R` and :math:`B` are those
+            required to reproduce the supplied observables **under the assumptions
+            of the chosen regime and closure prescription**.
+
+            If the supplied regime does not match the true spectral configuration,
+            the inferred parameters may be significantly incorrect.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier for the synchrotron spectral regime.  Must correspond to one
+            of the regimes defined in :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime encodes a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used.
+
+        log_F_peak : array-like
+            Natural logarithm of the observed peak flux density
+            :math:`F_{\nu,\mathrm{pk}}` in CGS units
+            (:math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`).
+
+        log_nu_peak : array-like
+            Natural logarithm of the observed peak frequency (Hz).
+
+        log_D_L : array-like
+            Natural logarithm of the luminosity distance (cm).
+
+        log_D_A : array-like, optional
+            Natural logarithm of the angular-diameter distance (cm).
+
+            This quantity is required for regimes where the spectral peak occurs
+            in the **optically thick SSA portion of the spectrum**, because those
+            inversions depend explicitly on the **angular size of the emitting
+            region**.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+        gamma_c : float, optional
+            Cooling Lorentz factor.
+
+            Must be finite for regimes where cooling explicitly shapes the
+            spectrum.
+
+        gamma_max : float, optional
+            Maximum electron Lorentz factor.
+
+        p : float, optional
+            Power-law index of the electron energy distribution.
+
+        epsilon_E : float, optional
+            Fraction of post-shock internal energy carried by relativistic
+            electrons.
+
+        epsilon_B : float, optional
+            Fraction of post-shock internal energy stored in magnetic fields.
+
+        f_V : float, optional
+            Volume filling factor of the emitting region.
+
+        f_A : float, optional
+            Area filling factor used in SSA inversions where the emitting surface
+            area must be specified.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            A simple on-axis Doppler transformation is applied to convert the
+            observed peak quantities into the comoving frame prior to inversion.
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            Required if ``pitch_average=False``.
+
+        pitch_average : bool, optional
+            If ``True``, the pitch-angle-averaged synchrotron emissivity is used.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred physical parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+            Values are returned in **linear CGS units**.
+
+        Notes
+        -----
+        **Relativistic corrections**
+
+        Observed quantities are transformed into the comoving frame using
+
+        .. math::
+
+            \nu' = \nu \frac{1+z}{\delta}
+
+            F' = F \frac{1+z}{\delta^3}
+
+        assuming on-axis emission with Doppler factor
+        :math:`\delta(\Gamma, \theta=0)`.
+
+        **Closure assumptions**
+
+        The inversion assumes
+
+        - a single homogeneous emission zone,
+        - synchrotron emission from a power-law electron population,
+        - equipartition-style microphysical closure,
+        - a spherical or quasi-spherical emitting geometry,
+        - on-axis relativistic boosting if bulk motion is present.
+
+        **Why regimes matter**
+
+        Different regimes correspond to different peak-forming mechanisms:
+
+        - optically thin emission near :math:`\nu_m`
+        - optically thick SSA peaks
+        - cooling-dominated peaks
+
+        Each of these produces **different scalings of**
+        :math:`R` and :math:`B` with the observables.
+
+        See Also
+        --------
+        from_params_to_physics
+            Public, unit-aware wrapper for this inversion.
+        determine_sed_regime
+            Utility for determining the appropriate spectral regime.
+        """
+        # ------------------------------------------------------------------ #
+        # Pitch-angle treatment
+        # ------------------------------------------------------------------ #
+        if pitch_average:
+            if alpha is not None:
+                warnings.warn(
+                    "Pitch averaging is enabled, so the provided `alpha` is ignored. "
+                    "(Set `alpha=None` to suppress this warning.)",
+                    stacklevel=2,
+                )
+            sin_alpha = None
+        else:
+            if alpha is None:
+                raise ValueError("Pitch averaging is disabled, so a fixed pitch angle must be provided via `alpha`.")
+            sin_alpha = np.sin(alpha)
+
+        # ------------------------------------------------------------------ #
+        # Handle the regime-specification
+        # ------------------------------------------------------------------ #
+        if regime not in self.SPECTRUM_INVERSION_FUNCTIONS:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        inversion_function = self.SPECTRUM_INVERSION_FUNCTIONS[regime]
+        # ------------------------------------------------------------------ #
+        # Transform observed peak quantities into the comoving frame.
+        #
+        # This applies the same minimal relativistic treatment used elsewhere
+        # in the default closure: an on-axis Doppler correction plus the usual
+        # cosmological redshift correction.
+        #
+        # IMPORTANT: this is intentionally simple and is not a substitute for a
+        # full relativistic radiative-transfer treatment.
+        # ------------------------------------------------------------------ #
+        doppler_factor = compute_doppler_factor(gamma_bulk, 0.0)
+
+        log_nu_peak_comoving = log_nu_peak - np.log(doppler_factor) + np.log1p(redshift)
+        log_F_peak_comoving = log_F_peak - 3.0 * np.log(doppler_factor) + np.log1p(redshift)
+
+        # ------------------------------------------------------------------ #
+        # Invert the default closure in the comoving frame.
+        # ------------------------------------------------------------------ #
+        if regime == "optically_thick":  # nu_a < nu_m < nu_max < nu_c.
+            if log_D_A is None:
+                raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum2 regime.")
+
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                log_D_A,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        elif regime == "optically_thin":  # nu_m < nu_a < nu_max < nu_c.
+            log_R, log_B = inversion_function(
+                log_nu_peak_comoving,
+                log_F_peak_comoving,
+                log_D_L,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+                p=p,
+                epsilon_e=epsilon_E,
+                epsilon_B=epsilon_B,
+                f_V=f_V,
+                sin_alpha=sin_alpha,
+            )
+        else:
+            raise ValueError(
+                f"Unrecognized SED regime: {regime}."
+                f" Available regimes: {list(self.SPECTRUM_INVERSION_FUNCTIONS.keys())}"
+            )
+
+        return {
+            "R": np.exp(log_R),
+            "B": np.exp(log_B),
+        }
+
+    def from_params_to_physics(
+        self,
+        regime: str,
+        F_peak: "_UnitBearingScalarLike",
+        nu_peak: "_UnitBearingScalarLike",
+        gamma_min: float = 1.0,
+        gamma_max: float = np.inf,
+        p: float = 3.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        f_V: float = 0.5,
+        f_A: float = 0.5,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        alpha: float = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Infer physical source parameters from observed synchrotron peak quantities.
+
+        This method provides the **public, unit-aware interface** for the inverse
+        synchrotron closure relation implemented by
+        :meth:`_opt_from_params_to_physics`.
+
+        It converts observed peak quantities
+
+        - peak flux density :math:`F_{\nu,\mathrm{pk}}`
+        - peak frequency :math:`\nu_{\mathrm{pk}}`
+
+        into estimates of the **source radius** :math:`R` and **magnetic field**
+        :math:`B`, assuming the emission follows one of the spectral regimes
+        described by :class:`PowerLaw_Cooling_SSA_SynchrotronSED`.
+
+        The calculation proceeds by
+
+        1. resolving cosmological distance information,
+        2. converting all quantities into CGS units,
+        3. transforming observables into logarithmic form,
+        4. dispatching to the optimized inversion routine.
+
+        .. important::
+
+            The caller **must specify the synchrotron spectral regime**.  This
+            inversion cannot determine the regime automatically because multiple
+            spectral configurations may produce identical peak observables.
+
+        .. warning::
+
+            The inferred parameters depend strongly on the assumed regime and
+            closure relation.  Incorrect regime identification will generally lead
+            to incorrect physical parameters.
+
+        Parameters
+        ----------
+        regime : str
+            Identifier of the synchrotron spectral regime.
+
+            The spectrum is identified as ``"SpectrumN"``, where ``N`` is an
+            integer corresponding to the regimes defined in
+            :ref:`synch_sed_theory` and implemented internally in
+            :attr:`SPECTRUM_INVERSION_FUNCTIONS`.
+
+            Each regime corresponds to a specific ordering of the characteristic
+            synchrotron frequencies (e.g. :math:`\nu_a`, :math:`\nu_m`,
+            :math:`\nu_c`, :math:`\nu_{\max}`) and therefore determines the
+            analytic inversion formula used to infer the physical parameters.
+            The user must ensure that the supplied regime is consistent with the
+            observed spectral configuration.
+
+        F_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak flux density.
+
+            Must be convertible to
+            :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.
+
+            If an array is provided, the inversion is performed **element-wise**
+            and the returned physical parameters will have the same shape.
+            This makes it possible to evaluate the closure relation across
+            posterior samples, Monte Carlo realizations, or time-series data.
+
+        nu_peak : ~numpy.ndarray or float or ~astropy.units.Quantity
+            Observed (lab-frame) peak frequency.
+
+            Must be convertible to Hz.
+
+            As with ``F_peak``, array inputs are supported and will produce
+            element-wise solutions for the inferred parameters.
+
+        gamma_min : float, optional
+            Minimum Lorentz factor of the accelerated electron distribution.
+
+            By default this is ``1.0``, corresponding to a non-relativistic
+            minimum electron energy. In many astrophysical applications
+            (e.g. shock acceleration), values of
+            :math:`\gamma_{\min} \sim 10-10^3` may be more physically
+            appropriate.
+
+        gamma_max : float, optional
+            Maximum Lorentz factor of the accelerated electron distribution.
+
+            The default value of ``np.inf`` corresponds to no high-energy
+            cutoff. This assumption is typically valid provided that the
+            synchrotron cutoff frequency lies well above the observed band.
+
+        p : float, optional
+            Power-law index of the electron Lorentz factor distribution,
+
+            .. math::
+
+                N(\gamma) \propto \gamma^{-p}.
+
+            The default value ``p = 3.0`` is commonly adopted for
+            shock-accelerated electron populations.
+
+        epsilon_E : float, optional
+            Fraction of the post-shock internal energy carried by relativistic
+            electrons.
+
+            This parameter enters the equipartition-style closure relation used
+            to normalize the electron distribution.
+
+        epsilon_B : float, optional
+            Fraction of the post-shock internal energy stored in magnetic
+            fields.
+
+            Together with ``epsilon_E``, this parameter determines the relative
+            partition of energy between particles and magnetic fields in the
+            emitting region.
+
+        f_V : float, optional
+            Effective **volume filling factor** of the emitting region.
+
+            In optically thin emission scenarios, this parameter represents the
+            fraction of the spherical volume that actively emits synchrotron
+            radiation.
+
+            Physically, this accounts for situations where the emission arises
+            from a thin shell or clumpy medium rather than uniformly filling
+            the entire volume.
+
+            For example:
+
+            - ``f_V = 1`` corresponds to a uniformly filled sphere.
+            - ``f_V < 1`` may represent emission from a thin shocked shell or
+              fragmented ejecta.
+
+        f_A : float, optional
+            Effective **area filling factor** of the emitting region.
+
+            This parameter becomes relevant in regimes where the spectral peak
+            is produced by **synchrotron self-absorption (SSA)**. In such cases,
+            the inversion depends on the projected emitting area rather than
+            the full volume.
+
+            Physically, ``f_A`` represents the fraction of the projected
+            spherical surface that contributes to the optically thick emission.
+
+            For example:
+
+            - ``f_A = 1`` corresponds to a uniformly emitting spherical surface.
+            - ``f_A < 1`` may arise from patchy or filamentary emission regions.
+
+            In many simple models one may take ``f_A ≈ f_V``, but the two
+            parameters are conceptually distinct and correspond to **different
+            geometric aspects** of the emitting region.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+
+            If non-unity, the observed peak quantities are transformed into the
+            comoving frame using relativistic Doppler corrections prior to
+            performing the inversion.
+
+            The implementation assumes **on-axis emission**, corresponding to a
+            Doppler factor
+
+            .. math::
+
+                \delta(\Gamma, \theta=0).
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+            This parameter enters the conversion between observed and comoving
+            frequencies and fluxes and also determines the cosmological
+            distances if they are not supplied explicitly.
+
+        luminosity_distance : quantity, optional
+            Luminosity distance to the source.
+
+            Must be convertible to cm.
+
+            If supplied, this value is used directly in the inversion.
+
+        angular_diameter_distance : quantity, optional
+            Angular-diameter distance to the source.
+
+            Must be convertible to cm.
+
+            This quantity is required in some SSA regimes where the inversion
+            depends explicitly on the **angular size of the emitting region**.
+
+        proper_distance : quantity, optional
+            Proper distance to the source.
+
+            This can be used as an alternative specification of the cosmological
+            distance.
+
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to compute missing distance quantities.
+
+            The distances required by the inversion are resolved using the
+            helper function :func:`resolve_cosmological_distances`, which
+            processes the supplied cosmological parameters as follows:
+
+            1. If explicit distances are provided (e.g. ``luminosity_distance``),
+               those values are used directly.
+
+            2. If only a redshift is provided, the necessary distances are
+               computed using the supplied ``cosmology``.
+
+            3. If no cosmology is provided, the default cosmology returned by
+               :func:`get_cosmology` is used.
+
+            This mechanism ensures that the inversion has access to all
+            required cosmological distance measures while allowing users to
+            specify whichever subset of parameters is most convenient.
+
+        alpha : float, optional
+            Electron pitch angle in radians.
+
+            This parameter is required when ``pitch_average=False`` and
+            specifies the angle between the electron velocity and the magnetic
+            field.
+
+        pitch_average : bool, optional
+            If ``True``, the synchrotron emissivity is averaged over an
+            isotropic distribution of pitch angles.
+
+            In this case the explicit pitch angle ``alpha`` is ignored and the
+            appropriate angle-averaged emissivity coefficients are used.
+
+            Pitch-angle averaging is often appropriate when the electron
+            distribution is isotropic in momentum space.
+
+        Returns
+        -------
+        dict
+            Dictionary containing inferred source parameters
+
+            - ``R`` : source radius (cm)
+            - ``B`` : magnetic field strength (G)
+
+        Notes
+        -----
+        **Interpretation**
+
+        These values are **model-dependent estimates**, not direct measurements.
+
+        They represent the values of :math:`R` and :math:`B` that reproduce the
+        observed peak under the assumptions of
+
+        - the selected synchrotron spectral regime,
+        - a single-zone homogeneous emitting region,
+        - a power-law electron population,
+        - equipartition-style microphysical closure.
+
+        **When this method may fail**
+
+        The inversion may produce misleading results if
+
+        - the true spectrum contains multiple emitting zones,
+        - the peak is produced by a process not described by the selected regime,
+        - strong radiative transfer effects modify the spectrum,
+        - relativistic equal-arrival-time surfaces dominate the emission,
+        - the geometry deviates strongly from the assumed configuration.
+
+        In such cases, users should treat the inferred parameters as
+        **order-of-magnitude estimates only**.
+
+        See Also
+        --------
+        determine_sed_regime
+            Identify the synchrotron spectral regime.
+        from_physics_to_params
+            Forward closure relation.
+        sed
+            Evaluate the SED for a given parameter set.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        D_A = distances["angular_diameter_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement and conversion to internal log-space representation.
+        # ------------------------------------------------------------------ #
+        log_F_peak = np.log(ensure_in_units(F_peak, "erg cm^-2 s^-1 Hz^-1"))
+        log_nu_peak = np.log(ensure_in_units(nu_peak, "Hz"))
+        log_D_L = np.log(ensure_in_units(D_L, "cm"))
+        log_D_A = np.log(ensure_in_units(D_A, "cm"))
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level inverse closure.
+        # ------------------------------------------------------------------ #
+        results = self._opt_from_params_to_physics(
+            log_F_peak=log_F_peak,
+            log_nu_peak=log_nu_peak,
+            log_D_L=log_D_L,
+            log_D_A=log_D_A,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            p=p,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            f_V=f_V,
+            f_A=f_A,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            alpha=alpha,
+            pitch_average=pitch_average,
+        )
+
+        return {
+            "R": results["R"] * u.cm,
+            "B": results["B"] * u.G,
         }
 
 
