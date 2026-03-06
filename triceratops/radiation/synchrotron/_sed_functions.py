@@ -1,7 +1,5 @@
 """Low-Level 1-Zone synchrotron SED functions."""
 
-from enum import Enum
-
 import numpy as np
 
 from triceratops._typing import _ArrayLike
@@ -392,10 +390,12 @@ def _log_powerlaw_sbpl_sed_cool_2(
     return log_sed
 
 
-class _SynchrotronCoolingSEDFunctions(Enum):
-    SPECTRUM_1 = _log_powerlaw_sbpl_sed_cool_1  # fast-cooling
-    SPECTRUM_2 = _log_powerlaw_sbpl_sed_cool_2  # slow-cooling
-    SPECTRUM_3 = _log_powerlaw_sbpl_sed  # non-cooling
+COOLING_SED_FUNCTION_REGISTRY = {
+    "fast_cooling": _log_powerlaw_sbpl_sed_cool_1,
+    "slow_cooling": _log_powerlaw_sbpl_sed_cool_2,
+    "no_cooling": _log_powerlaw_sbpl_sed,
+}
+"""dict: Registry mapping cooling regimes to their corresponding SED functions."""
 
 
 def _log_powerlaw_sbpl_sed_ssa_1(
@@ -539,9 +539,11 @@ def _log_powerlaw_sbpl_sed_ssa_2(
     return log_sed
 
 
-class _SynchrotronSSASEDFunctions(Enum):
-    SPECTRUM_1 = _log_powerlaw_sbpl_sed_ssa_1
-    SPECTRUM_2 = _log_powerlaw_sbpl_sed_ssa_2
+SSA_SED_FUNCTION_REGISTRY = {
+    "optically_thick": _log_powerlaw_sbpl_sed_ssa_2,
+    "optically_thin": _log_powerlaw_sbpl_sed_ssa_1,
+}
+"""dict: Registry mapping SSA regimes to their corresponding SED functions."""
 
 
 def _log_powerlaw_sbpl_sed_ssa_cool_3(
@@ -913,11 +915,13 @@ def _log_powerlaw_sbpl_sed_ssa_cool_7(
     return log_sed
 
 
-class _SynchrotronSSACoolingSEDFunctions(Enum):
-    SPECTRUM_1 = _log_powerlaw_sbpl_sed_ssa_1
-    SPECTRUM_2 = _log_powerlaw_sbpl_sed_ssa_2
-    SPECTRUM_3 = _log_powerlaw_sbpl_sed_ssa_cool_3
-    SPECTRUM_4 = _log_powerlaw_sbpl_sed_ssa_cool_4
-    SPECTRUM_5 = _log_powerlaw_sbpl_sed_ssa_cool_5
-    SPECTRUM_6 = _log_powerlaw_sbpl_sed_ssa_cool_6
-    SPECTRUM_7 = _log_powerlaw_sbpl_sed_ssa_cool_7
+SSA_COOLING_SED_FUNCTION_REGISTRY = {
+    "Spectrum1": _log_powerlaw_sbpl_sed_ssa_1,
+    "Spectrum2": _log_powerlaw_sbpl_sed_ssa_2,
+    "Spectrum3": _log_powerlaw_sbpl_sed_ssa_cool_3,
+    "Spectrum4": _log_powerlaw_sbpl_sed_ssa_cool_4,
+    "Spectrum5": _log_powerlaw_sbpl_sed_ssa_cool_5,
+    "Spectrum6": _log_powerlaw_sbpl_sed_ssa_cool_6,
+    "Spectrum7": _log_powerlaw_sbpl_sed_ssa_cool_7,
+}
+"""dict: Registry mapping SSA cooling regimes to their corresponding SED functions."""

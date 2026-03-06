@@ -382,7 +382,7 @@ def _inv_log_powerlaw_sbpl_sed(
 
 
 # === Single Power-Law, Cooling, No SSA === #
-def _log_powerlaw_sbpl_sed_cool_1(
+def _inv_log_powerlaw_sbpl_sed_cool_1(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -429,7 +429,7 @@ def _log_powerlaw_sbpl_sed_cool_1(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_cool_2(
+def _inv_log_powerlaw_sbpl_sed_cool_2(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -476,7 +476,7 @@ def _log_powerlaw_sbpl_sed_cool_2(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_cool_3(
+def _inv_log_powerlaw_sbpl_sed_cool_3(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -527,7 +527,7 @@ def _log_powerlaw_sbpl_sed_cool_3(
 
 
 # === Single Power-Law, No Cooling, SSA === #
-def _log_powerlaw_sbpl_sed_ssa_1(
+def _inv_log_powerlaw_sbpl_sed_ssa_1(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -573,7 +573,7 @@ def _log_powerlaw_sbpl_sed_ssa_1(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_2(
+def _inv_log_powerlaw_sbpl_sed_ssa_2(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -636,7 +636,7 @@ def _log_powerlaw_sbpl_sed_ssa_2(
 
 
 # === Single Power-Law, Cooling, SSA === #
-def _log_powerlaw_sbpl_sed_ssa_cool_1(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_1(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -682,7 +682,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_1(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_2(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_2(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -744,7 +744,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_2(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_3(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_3(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -791,7 +791,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_3(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_4(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_4(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -854,7 +854,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_4(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_5(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_5(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -901,7 +901,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_5(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_6(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_6(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -964,7 +964,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_6(
     return log_R, log_B
 
 
-def _log_powerlaw_sbpl_sed_ssa_cool_7(
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_7(
     log_nu_peak: float,
     log_F_nu_peak: float,
     log_DL: float,
@@ -1057,3 +1057,28 @@ def _log_powerlaw_sbpl_sed_ssa_cool_7(
     log_B = (ab_1 * A) + (ab_2 * log_P0) + (ab_3 * log_F_nu_peak) + (ab_4 * log_nu_peak)
 
     return log_R, log_B
+
+
+SSA_COOLING_INV_FUNCTION_REGISTRY = {
+    "Spectrum1": _inv_log_powerlaw_sbpl_sed_ssa_1,
+    "Spectrum2": _inv_log_powerlaw_sbpl_sed_ssa_2,
+    "Spectrum3": _inv_log_powerlaw_sbpl_sed_ssa_cool_3,
+    "Spectrum4": _inv_log_powerlaw_sbpl_sed_ssa_cool_4,
+    "Spectrum5": _inv_log_powerlaw_sbpl_sed_ssa_cool_5,
+    "Spectrum6": _inv_log_powerlaw_sbpl_sed_ssa_cool_6,
+    "Spectrum7": _inv_log_powerlaw_sbpl_sed_ssa_cool_7,
+}
+"""dict: Registry mapping SSA cooling regimes to their corresponding SED inversion functions."""
+
+SSA_INV_FUNCTION_REGISTRY = {
+    "optically_thick": _inv_log_powerlaw_sbpl_sed_ssa_1,
+    "optically_thin": _inv_log_powerlaw_sbpl_sed_ssa_2,
+}
+"""dict: Registry mapping SSA regimes to their corresponding SED inversion functions."""
+
+COOLING_INV_FUNCTION_REGISTRY = {
+    "fast_cooling": _inv_log_powerlaw_sbpl_sed_cool_1,
+    "slow_cooling": _inv_log_powerlaw_sbpl_sed_cool_2,
+    "no_cooling": _inv_log_powerlaw_sbpl_sed,
+}
+"""dict: Registry mapping cooling regimes to their corresponding SED inversion functions."""
