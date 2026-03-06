@@ -867,7 +867,7 @@ class BetaPrior(Prior):
         log_norm = np.log(gamma(alpha + beta)) - np.log(gamma(alpha)) - np.log(gamma(beta))
 
         def logp(x: float) -> float:
-            if 0.0 <= x <= 1.0:
+            if 0.0 < x <= 1.0:
                 return log_norm + (alpha - 1.0) * np.log(x) + (beta - 1.0) * np.log(1.0 - x)
             return -np.inf
 
