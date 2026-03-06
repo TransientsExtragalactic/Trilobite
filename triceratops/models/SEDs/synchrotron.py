@@ -79,8 +79,8 @@ from triceratops.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SynchrotronSED,
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
-    smoothed_BPL,
 )
+from triceratops.radiation.synchrotron.SEDs._one_zone_functions import smoothed_BPL
 
 __all__ = [
     "SSA_Cooling_SynchrotronSEDModel",
