@@ -1141,23 +1141,26 @@ def _opt_normalize_BPL_from_magnetic_field(
 
     Assumes CGS units throughout and returns ``N_0`` in ``cm^{-3}``.
     """
-    B = np.asarray(B, dtype="f8")
+    log_B = np.log(np.asarray(B, dtype="f8"))
     epsilon_B = np.asarray(epsilon_B, dtype="f8")
     epsilon_E = np.asarray(epsilon_E, dtype="f8")
 
     # Magnetic energy density
-    u_B = B**2 / (8.0 * np.pi)
+    log_u_B = 2 * log_B - np.log(8.0 * np.pi)
 
     # Energy moment of the BPL distribution
-    moment = gamma_b**2 * _opt_compute_BPL_moment(
-        a1=a1,
-        a2=a2,
-        x_min=gamma_min / gamma_b,
-        x_max=gamma_max / gamma_b,
-        order=1,
-    )
+    log_moment = np.log(
+        _opt_compute_BPL_moment(
+            a1=a1,
+            a2=a2,
+            x_min=gamma_min / gamma_b,
+            x_max=gamma_max / gamma_b,
+            order=1,
+        )
+    ) + 2 * np.log(gamma_b)
 
-    N0 = (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * moment)
+    N0 = np.log(epsilon_E / epsilon_B) + log_u_B - np.log(electron_rest_energy_cgs) - log_moment
+    N0 = np.exp(N0)
 
     return N0.reshape(()) if N0.ndim == 0 else N0
 
