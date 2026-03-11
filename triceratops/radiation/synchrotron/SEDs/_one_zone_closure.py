@@ -31,7 +31,7 @@ from triceratops.radiation.synchrotron.utils import (
 # many of the inversion procedures.
 def compute_log_Qm_cgs(
     filling_factor,
-    luminosity_distance,
+    log_luminosity_distance,
     gamma_min,
     p,
 ):
@@ -41,151 +41,193 @@ def compute_log_Qm_cgs(
     Parameters
     ----------
     filling_factor : float or ndarray
-        Volume filling factor :math:`f_V` entering :math:`V_{\rm eff} = (4\pi/3) R^3 f_V`.
-    luminosity_distance : float or ndarray
-        Luminosity distance :math:`D_L` in cm.
+        Volume filling factor :math:`f_V` entering
+        :math:`V_{\rm eff} = (4\pi/3) R^3 f_V`.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of the luminosity distance :math:`\log D_L` (cm).
+
     gamma_min : float or ndarray
-        Minimum Lorentz factor :math:`\gamma_m` (dimensionless).
+        Minimum Lorentz factor :math:`\gamma_m`.
+
     p : float or ndarray
-        Power-law index :math:`p` of the electron distribution.
+        Electron power-law index.
 
     Returns
     -------
     log_Qm : float or ndarray
-        Natural log of :math:`Q_{m,0}` in CGS.
+        Natural logarithm of :math:`Q_{m,0}`.
 
     Notes
     -----
     Uses
-    :math:`Q_{m,0} = \frac{4}{3}\pi f_V\,\chi\,\gamma_m^{1-p}\,D_L^{-2}`.
-    """
-    log_fv = np.log(filling_factor)
-    log_dL = np.log(luminosity_distance)
 
-    log_qm = np.log((4.0 / 3.0) * np.pi) + (1.0 - p) * np.log(gamma_min)
-    log_qm += log_fv + _log_chi_cgs - 2.0 * log_dL
+    .. math::
+
+        Q_{m,0}
+        =
+        \frac{4}{3}\pi f_V \chi
+        \gamma_m^{1-p}
+        D_L^{-2}.
+    """
+    log_qm = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs
+        + (1.0 - p) * np.log(gamma_min)
+        - 2.0 * log_luminosity_distance
+    )
+
     return log_qm
 
 
 def compute_log_Qm_cgs_iso(
     filling_factor,
-    luminosity_distance,
+    log_luminosity_distance,
     gamma_min,
     p,
 ):
     r"""
-    Compute ``log(Q_m)`` (natural log) for the *isotropic pitch-angle* normalization constant.
+    Compute :math:`\log Q_{m,\mathrm{ISO}}` for isotropic pitch-angle synchrotron normalization.
 
     Parameters
     ----------
     filling_factor : float or ndarray
         Volume filling factor :math:`f_V`.
-    luminosity_distance : float or ndarray
-        Luminosity distance :math:`D_L` in cm.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of luminosity distance :math:`\log D_L`.
+
     gamma_min : float or ndarray
         Minimum Lorentz factor :math:`\gamma_m`.
+
     p : float or ndarray
-        Electron power-law index :math:`p`.
+        Electron power-law index.
 
     Returns
     -------
     log_Qm : float or ndarray
-        Natural log of :math:`Q_{m,\mathrm{ISO}}` in CGS.
+        Natural logarithm of :math:`Q_{m,\mathrm{ISO}}`.
 
     Notes
     -----
     Uses
-    :math:`Q_{m,\mathrm{ISO}} = \frac{4}{3}\pi f_V\,\chi_{\mathrm{ISO}}\,\gamma_m^{1-p}\,D_L^{-2}`.
-    """
-    log_fv = np.log(filling_factor)
-    log_dL = np.log(luminosity_distance)
 
-    log_qm = np.log((4.0 / 3.0) * np.pi) + (1.0 - p) * np.log(gamma_min)
-    log_qm += log_fv + _log_chi_cgs_iso - 2.0 * log_dL
+    .. math::
+
+        Q_{m,\mathrm{ISO}}
+        =
+        \frac{4}{3}\pi f_V \chi_{\rm ISO}
+        \gamma_m^{1-p}
+        D_L^{-2}.
+    """
+    log_qm = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs_iso
+        + (1.0 - p) * np.log(gamma_min)
+        - 2.0 * log_luminosity_distance
+    )
+
     return log_qm
 
 
 def compute_log_Qc_cgs(
     filling_factor,
-    luminosity_distance,
+    log_luminosity_distance,
     gamma_min,
     gamma_c,
 ):
     r"""
-    Compute ``log(Q_c)`` (natural log) for the *fixed pitch-angle* cooling-regime constant.
+    Compute :math:`\log Q_{c,0}` for the cooling-regime normalization constant.
 
     Parameters
     ----------
     filling_factor : float or ndarray
         Volume filling factor :math:`f_V`.
-    luminosity_distance : float or ndarray
-        Luminosity distance :math:`D_L` in cm.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of luminosity distance :math:`\log D_L`.
+
     gamma_min : float or ndarray
         Minimum Lorentz factor :math:`\gamma_m`.
+
     gamma_c : float or ndarray
         Cooling Lorentz factor :math:`\gamma_c`.
 
     Returns
     -------
     log_Qc : float or ndarray
-        Natural log of :math:`Q_{c,0}` in CGS.
+        Natural logarithm of :math:`Q_{c,0}`.
 
     Notes
     -----
     Uses
-    :math:`Q_{c,0} = \frac{4}{3}\pi f_V\,\chi\,\gamma_m^{2}\gamma_c^{-1}\,D_L^{-2}`.
-    """
-    log_fv = np.log(filling_factor)
-    log_dL = np.log(luminosity_distance)
 
-    log_qc = np.log((4.0 / 3.0) * np.pi)
-    log_qc += log_fv + _log_chi_cgs - 2.0 * log_dL
-    log_qc += 2.0 * np.log(gamma_min) - np.log(gamma_c)
+    .. math::
+
+        Q_{c,0}
+        =
+        \frac{4}{3}\pi f_V \chi
+        \gamma_m^{2}
+        \gamma_c^{-1}
+        D_L^{-2}.
+    """
+    log_qc = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs
+        - 2.0 * log_luminosity_distance
+        + 2.0 * np.log(gamma_min)
+        - np.log(gamma_c)
+    )
+
     return log_qc
 
 
 def compute_log_Qc_cgs_iso(
     filling_factor,
-    luminosity_distance,
+    log_luminosity_distance,
     gamma_min,
     gamma_c,
 ):
     r"""
-    Compute ``log(Q_c)`` (natural log) for the *isotropic pitch-angle* cooling-regime constant.
+    Compute :math:`\log Q_{c,\mathrm{ISO}}` for isotropic pitch-angle cooling normalization.
 
     Parameters
     ----------
     filling_factor : float or ndarray
         Volume filling factor :math:`f_V`.
-    luminosity_distance : float or ndarray
-        Luminosity distance :math:`D_L` in cm.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of luminosity distance :math:`\log D_L`.
+
     gamma_min : float or ndarray
         Minimum Lorentz factor :math:`\gamma_m`.
+
     gamma_c : float or ndarray
         Cooling Lorentz factor :math:`\gamma_c`.
 
     Returns
     -------
     log_Qc : float or ndarray
-        Natural log of :math:`Q_{c,\mathrm{ISO}}` in CGS.
-
-    Notes
-    -----
-    Uses
-    :math:`Q_{c,\mathrm{ISO}} = \frac{4}{3}\pi f_V\,\chi_{\mathrm{ISO}}\,\gamma_m^{2}\gamma_c^{-1}\,D_L^{-2}`.
+        Natural logarithm of :math:`Q_{c,\mathrm{ISO}}`.
     """
-    log_fv = np.log(filling_factor)
-    log_dL = np.log(luminosity_distance)
+    log_qc = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs_iso
+        - 2.0 * log_luminosity_distance
+        + 2.0 * np.log(gamma_min)
+        - np.log(gamma_c)
+    )
 
-    log_qc = np.log((4.0 / 3.0) * np.pi)
-    log_qc += log_fv + _log_chi_cgs_iso - 2.0 * log_dL
-    log_qc += 2.0 * np.log(gamma_min) - np.log(gamma_c)
     return log_qc
 
 
 def compute_log_P0_cgs(
     area_factor,
-    angular_diameter_distance,
+    log_angular_diameter_distance,
     sin_pitch_angle=1.0,
 ):
     r"""
@@ -196,8 +238,8 @@ def compute_log_P0_cgs(
     area_factor : float or ndarray
         Angular filling factor :math:`f_A` entering
         :math:`\Omega = (\pi R^2 / D_A^2) f_A`.
-    angular_diameter_distance : float or ndarray
-        Angular diameter distance :math:`D_A` in cm.
+    log_angular_diameter_distance : float or ndarray
+        Log angular diameter distance :math:`D_A` in cm.
     sin_pitch_angle : float or ndarray,
         The sine of the pitch angle :math:`\sin\alpha` (dimensionless). Default is 1.0,
         corresponding to a pitch angle of 90 degrees.
@@ -216,18 +258,17 @@ def compute_log_P0_cgs(
     :math:`F_{\rm brk}\,\nu_{\rm brk}^{-5/2} = P_0 R^2 B^{-1/2}`.
     """
     log_fa = np.log(area_factor)
-    log_dA = np.log(angular_diameter_distance)
     log_sin = np.log(sin_pitch_angle)
 
     log_p0 = np.log(2.0 * np.pi * electron_rest_mass_cgs)
-    log_p0 += log_fa - 2.0 * log_dA
+    log_p0 += log_fa - 2.0 * log_angular_diameter_distance
     log_p0 += -0.5 * _log_c_1_gamma_cgs - 0.5 * log_sin
     return log_p0
 
 
 def compute_log_P0_cgs_iso(
     area_factor,
-    angular_diameter_distance,
+    log_angular_diameter_distance,
 ):
     r"""
     Compute ``log(P0)`` (natural log) for the SSA blackbody-peak condition (isotropic pitch angle).
@@ -236,8 +277,8 @@ def compute_log_P0_cgs_iso(
     ----------
     area_factor : float or ndarray
         Angular filling factor :math:`f_A`.
-    angular_diameter_distance : float or ndarray
-        Angular diameter distance :math:`D_A` in cm.
+    log_angular_diameter_distance : float or ndarray
+        Log angular diameter distance :math:`D_A` in cm.
 
     Returns
     -------
@@ -250,10 +291,9 @@ def compute_log_P0_cgs_iso(
     :math:`P_{0,\mathrm{ISO}} = 2\pi m_e f_A\,D_A^{-2}\,c_{1,\mathrm{ISO}}^{-1/2}`.
     """
     log_fa = np.log(area_factor)
-    log_dA = np.log(angular_diameter_distance)
 
     log_p0 = np.log(2.0 * np.pi * electron_rest_mass_cgs)
-    log_p0 += log_fa - 2.0 * log_dA
+    log_p0 += log_fa - 2.0 * log_angular_diameter_distance
     log_p0 += -0.5 * _log_c_1_gamma_iso_cgs
     return log_p0
 
@@ -276,12 +316,11 @@ def compute_log_N0_fast_cooling(
     The first moment is computed in scaled units x = γ / γ_c.
     """
     # Dimensionless bounds
-    x_min = gamma_min / gamma_c
-    x_max = gamma_max / gamma_c
+    x_min = gamma_c / gamma_min
+    x_max = gamma_max / gamma_min
 
     # First moment of BPL
-    log_moment = np.log(_opt_compute_BPL_moment(-2.0, -(p + 1), x_min, x_max))
-
+    log_moment = np.log(_opt_compute_BPL_moment(-2.0, -(p + 1), x_min, x_max)) + 2 * np.log(gamma_min)
     log_prefactor = np.log(epsilon_e) - np.log(epsilon_B) - np.log(8.0 * np.pi) - np.log(electron_rest_energy_cgs)
 
     return log_prefactor - log_moment
@@ -304,8 +343,7 @@ def compute_log_N0_slow_cooling(
     """
     x_min, x_max = gamma_min / gamma_c, gamma_max / gamma_c
 
-    log_moment = np.log(_opt_compute_BPL_moment(-p, -(p + 1.0), x_min, x_max))
-
+    log_moment = np.log(_opt_compute_BPL_moment(-p, -(p + 1.0), x_min, x_max)) + 2 * np.log(gamma_c)
     log_prefactor = np.log(epsilon_e) - np.log(epsilon_B) - np.log(8.0 * np.pi) - np.log(electron_rest_energy_cgs)
 
     return log_prefactor - log_moment
@@ -324,7 +362,7 @@ def compute_log_N0_no_cooling(
     Distribution:
         slope -p for γ_min < γ < γ_max
     """
-    log_moment = np.log(_opt_compute_PL_moment(-p, gamma_min, gamma_max))
+    log_moment = np.log(_opt_compute_PL_moment(p, gamma_min, gamma_max, order=1))
 
     log_prefactor = np.log(epsilon_e) - np.log(epsilon_B) - np.log(8.0 * np.pi) - np.log(electron_rest_energy_cgs)
 
@@ -376,7 +414,6 @@ def _inv_log_powerlaw_sbpl_sed(
 
     # Compute the correct N0 for this scenario.
     log_N0 = compute_log_N0_no_cooling(gamma_min, p, epsilon_e, epsilon_B, gamma_max)
-
     # Compute the B-field first from the optically thin closure and the definition of the
     # peak frequency.
     log_B = log_nu_peak - 2 * np.log(gamma_min) - log_c1
@@ -604,6 +641,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_2(
             p,
         )
         log_c1 = _log_c_1_gamma_iso_cgs
+
         log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
 
         # Compute A: we just do the angular component here so that
@@ -985,72 +1023,121 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_7(
     p: float = 3,
     sin_alpha: float = None,
 ):
-    # Create a flag to indicate if we are fast cooling or not. This will have
-    # ramifications for the relevant normalization parameters.
-    _is_fast_cooling = gamma_c < gamma_min
+    # Coerce everything to arrays so that we can work cleanly in the
+    # array space without having to worry about scalars vs. arrays for the rest of the function.
+    # This is corrected at the end to return scalars if scalars were input.
+    log_nu_peak = np.asarray(log_nu_peak)
+    log_F_nu_peak = np.asarray(log_F_nu_peak)
+    log_DL = np.asarray(log_DL)
+    log_DA = np.asarray(log_DA)
 
-    # We are pitch averaging in this branch.
+    # --- PITCH-ANGLE MANAGEMENT --- #
     if sin_alpha is None:
-        # Calculate necessary (agnostic) constants before moving into the
-        # branching for fast vs. slow cooling.
-        _is_pitch_averaged = True
-        log_c1 = _log_c_1_gamma_iso_cgs
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
         log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
 
-        if _is_fast_cooling:
-            log_Q = compute_log_Qc_cgs_iso(
-                f_V,
-                log_DL,
-                gamma_min,
-                gamma_c,
-            )
-            log_A = (p / 2) * log_c1 + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
-
-        else:
-            log_Q = compute_log_Qm_cgs_iso(
-                f_V,
-                log_DL,
-                gamma_min,
-                p,
-            )
-            log_A = (p / 2) * log_c1 + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qm_cgs_iso(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_A = (p / 2) * _log_c_1_gamma_iso_cgs + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
 
     else:
-        # Calculate necessary (agnostic) constants before moving into the
-        # branching for fast vs. slow cooling.
-        _is_pitch_averaged = True
-        log_c1 = _log_c_1_gamma_cgs
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
         log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
 
-        if _is_fast_cooling:
-            log_Q = compute_log_Qc_cgs(
-                f_V,
-                log_DL,
-                gamma_min,
-                gamma_c,
-            )
-            log_A = (p / 2) * log_c1 + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qm_cgs(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_A = (
+            (p / 2) * _log_c_1_gamma_cgs
+            + (p - 1) * np.log(gamma_min)
+            + ((p + 2) / 2) * np.log(sin_alpha)
+            + np.log(gamma_c)
+            + log_Q
+        )
 
-        else:
-            log_Q = compute_log_Qm_cgs(
-                f_V,
-                log_DL,
-                gamma_min,
-                p,
-            )
-            log_A = (
-                (p / 2) * log_c1
-                + (p - 1) * np.log(gamma_min)
-                + ((p + 2) / 2) * np.log(sin_alpha)
-                + np.log(gamma_c)
-                + log_Q
-            )
+    # --- COOLING MANAGEMENT --- #
+    log_N0 = compute_log_N0_slow_cooling(gamma_min, gamma_c, p, epsilon_e, epsilon_B, gamma_max)
 
-    # Compute the correct N0 for this scenario.
-    if _is_fast_cooling:
-        log_N0 = compute_log_N0_fast_cooling(gamma_min, gamma_c, p, epsilon_e, epsilon_B, gamma_max)
+    A = log_A + log_N0
+
+    # Compute log R and log B. We will reduce out the exponents so that it's crystal clear
+    # how these play out for easy debugging.
+    ar_1, ar_2, ar_3, ar_4 = -1 / (2 * p + 15), -(p + 6) / (2 * p + 15), (p + 7) / (2 * p + 15), -1
+    ab_1, ab_2, ab_3, ab_4 = -4 / (2 * p + 15), 6 / (2 * p + 15), -2 / (2 * p + 15), 1
+
+    log_R = (ar_1 * A) + (ar_2 * log_P0) + (ar_3 * log_F_nu_peak) + (ar_4 * log_nu_peak)
+    log_B = (ab_1 * A) + (ab_2 * log_P0) + (ab_3 * log_F_nu_peak) + (ab_4 * log_nu_peak)
+
+    return log_R, log_B
+
+
+def _inv_log_powerlaw_sbpl_sed_ssa_cool_8(
+    log_nu_peak: float,
+    log_F_nu_peak: float,
+    log_DL: float,
+    log_DA: float,
+    gamma_min: float = 1,
+    gamma_c: float = 1,
+    gamma_max: float = np.inf,
+    epsilon_e: float = 0.1,
+    epsilon_B: float = 0.01,
+    f_V: float = 0.5,
+    f_A: float = 0.5,
+    p: float = 3,
+    sin_alpha: float = None,
+):
+    # Coerce everything to arrays so that we can work cleanly in the
+    # array space without having to worry about scalars vs. arrays for the rest of the function.
+    # This is corrected at the end to return scalars if scalars were input.
+    log_nu_peak = np.asarray(log_nu_peak)
+    log_F_nu_peak = np.asarray(log_F_nu_peak)
+    log_DL = np.asarray(log_DL)
+    log_DA = np.asarray(log_DA)
+
+    # --- PITCH-ANGLE MANAGEMENT --- #
+    if sin_alpha is None:
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
+        log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
+
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qc_cgs_iso(
+            f_V,
+            log_DL,
+            gamma_min,
+            gamma_c,
+        )
+        log_A = (p / 2) * _log_c_1_gamma_iso_cgs + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
+
     else:
-        log_N0 = compute_log_N0_slow_cooling(gamma_min, gamma_c, p, epsilon_e, epsilon_B, gamma_max)
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
+        log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
+
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qc_cgs(
+            f_V,
+            log_DL,
+            gamma_min,
+            gamma_c,
+        )
+        log_A = (
+            (p / 2) * _log_c_1_gamma_cgs
+            + (p - 1) * np.log(gamma_min)
+            + ((p + 2) / 2) * np.log(sin_alpha)
+            + np.log(gamma_c)
+            + log_Q
+        )
+
+    # --- COOLING MANAGEMENT --- #
+    log_N0 = compute_log_N0_fast_cooling(gamma_min, gamma_c, p, epsilon_e, epsilon_B, gamma_max)
 
     A = log_A + log_N0
 
@@ -1066,19 +1153,20 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_7(
 
 
 SSA_COOLING_INV_FUNCTION_REGISTRY = {
-    "Spectrum1": _inv_log_powerlaw_sbpl_sed_ssa_1,
-    "Spectrum2": _inv_log_powerlaw_sbpl_sed_ssa_2,
+    "Spectrum1": _inv_log_powerlaw_sbpl_sed_ssa_cool_1,
+    "Spectrum2": _inv_log_powerlaw_sbpl_sed_ssa_cool_2,
     "Spectrum3": _inv_log_powerlaw_sbpl_sed_ssa_cool_3,
     "Spectrum4": _inv_log_powerlaw_sbpl_sed_ssa_cool_4,
     "Spectrum5": _inv_log_powerlaw_sbpl_sed_ssa_cool_5,
     "Spectrum6": _inv_log_powerlaw_sbpl_sed_ssa_cool_6,
     "Spectrum7": _inv_log_powerlaw_sbpl_sed_ssa_cool_7,
+    "Spectrum8": _inv_log_powerlaw_sbpl_sed_ssa_cool_8,
 }
 """dict: Registry mapping SSA cooling regimes to their corresponding SED inversion functions."""
 
 SSA_INV_FUNCTION_REGISTRY = {
-    "optically_thick": _inv_log_powerlaw_sbpl_sed_ssa_1,
-    "optically_thin": _inv_log_powerlaw_sbpl_sed_ssa_2,
+    "optically_thin": _inv_log_powerlaw_sbpl_sed_ssa_1,
+    "optically_thick": _inv_log_powerlaw_sbpl_sed_ssa_2,
 }
 """dict: Registry mapping SSA regimes to their corresponding SED inversion functions."""
 

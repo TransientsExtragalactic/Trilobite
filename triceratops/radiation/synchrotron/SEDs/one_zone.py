@@ -1,38 +1,58 @@
 """
-Synchrotron Spectral Energy Distributions (SEDs).
+One-Zone Synchrotron Spectral Energy Distributions (SEDs).
 
-This module implements a comprehensive library of **phenomenological synchrotron
-spectral energy distributions (SEDs)** for power-law electron populations, following
-the standard theoretical framework developed in the literature (e.g. :footcite:t:`GranotSari2002SpectralBreaks`)
+This module implements a library of **one-zone phenomenological synchrotron
+spectral energy distributions (SEDs)** for power-law electron populations,
+following the standard theoretical framework developed in the literature
+(e.g. :footcite:t:`GranotSari2002SpectralBreaks`).
 
-The core design philosophy is to construct SEDs via **log-space SED surgery**:
-complex spectra are assembled by multiplying (adding in log-space) a sequence of
-*scale-free, smoothed broken power-law* factors. Each factor introduces a controlled
-change in spectral slope at a characteristic frequency without altering the overall
-normalization. This approach ensures:
+The models describe emission from a **single homogeneous synchrotron-emitting
+region** containing relativistic electrons with a power-law energy distribution
+and a uniform magnetic field. The implemented SEDs correspond to the canonical
+spectral regimes encountered in synchrotron theory, including radiative cooling
+and synchrotron self-absorption.
 
-- numerical stability over many decades in frequency,
-- clean separation of spectral segments,
-- correct asymptotic slopes,
-- and composability of multiple spectral breaks.
+The core design philosophy is to construct spectra using **log-space SED
+composition**: complex synchrotron spectra are assembled by combining
+(scale-free) smoothed broken power-law components. Each component introduces a
+controlled change in spectral slope at a characteristic break frequency without
+altering the global normalization. Working in logarithmic space ensures:
 
-The module supports:
+- numerical stability across many decades in frequency,
+- correct asymptotic spectral slopes,
+- smooth transitions between spectral segments,
+- modular construction of multi-break spectra.
 
-- non-cooling, slow-cooling, and fast-cooling synchrotron regimes,
-- synchrotron self-absorption (SSA), including stratified SSA cases,
-- hidden or absorbed cooling breaks,
-- smooth or sharp spectral transitions,
-- automatic regime determination from physical parameters,
-- and analytic closure relations linking phenomenological SED parameters to
-  physical quantities (e.g. magnetic field strength, radius).
+The module currently supports the canonical **one-zone synchrotron regimes**:
+
+- optically thin spectra without cooling,
+- slow- and fast-cooling synchrotron emission,
+- synchrotron self-absorption (SSA),
+- combinations of cooling and SSA breaks.
+
+These models assume a **single homogeneous emission region** and therefore do
+not include:
+
+- spatially stratified or multi-zone emission,
+- detailed radiative transfer effects,
+- equal-arrival-time surface effects in relativistic flows,
+- time-dependent particle evolution.
+
+The provided SEDs should therefore be interpreted as **phenomenological spectral
+models** suitable for fitting broadband observations or for order-of-magnitude
+physical inference.
+
+In addition to spectral evaluation, the module provides **closure relations**
+that map between phenomenological SED parameters and physical model parameters
+(e.g. magnetic field strength, emitting volume, electron Lorentz factors) under
+assumed microphysical prescriptions.
 
 .. note::
 
     A complete theoretical discussion of SED construction, including derivations
-    and physical interpretations, is provided in the :ref:`synch_sed_theory`. A
-    user-guide description of this module can be found in :ref:`synchrotron_seds`, including
-    usage examples.
-
+    and physical interpretation of the spectral regimes, is provided in
+    :ref:`synch_sed_theory`. A user-guide description of this module can be
+    found in :ref:`synchrotron_seds`, including usage examples.
 """
 
 import logging
@@ -45,28 +65,14 @@ import numpy as np
 from astropy import cosmology as cosmo
 from astropy import units as u
 
-from triceratops.radiation.constants import (
-    electron_rest_energy_cgs,
-    electron_rest_mass_cgs,
-)
+from triceratops.radiation.constants import electron_rest_energy_cgs
 from triceratops.utils.cosmology import get_cosmology, resolve_cosmological_distances
 from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
 from triceratops.utils.sr_utils import compute_doppler_factor
 
 from ..closure import _compute_ssa_BR_from_spectrum_dm22
-from ..core import _opt_compute_log_synch_frequency
-from ..microphysics import (
-    _opt_normalize_BPL_from_magnetic_field,
-    _opt_normalize_PL_from_magnetic_field,
-)
-from ..utils import (
-    _log_chi_cgs,
-    _log_chi_cgs_iso,
-    c_1_cgs,
-    compute_c5_parameter,
-    compute_c6_parameter,
-)
+from ..utils import c_1_cgs, compute_c5_parameter, compute_c6_parameter
 from ._one_zone_closure import (
     COOLING_INV_FUNCTION_REGISTRY,
     SSA_COOLING_INV_FUNCTION_REGISTRY,
@@ -80,8 +86,22 @@ from ._one_zone_functions import (
     _log_powerlaw_sbpl_sed,
     smoothed_BPL,
 )
+from ._one_zone_normalization import (
+    _log_normalize_powerlaw_sbpl_sed,
+    _log_normalize_powerlaw_sbpl_sed_cool,
+    _log_normalize_powerlaw_sbpl_sed_ssa,
+    _log_normalize_powerlaw_sbpl_sed_ssa_cool,
+)
+from ._one_zone_ssa import (
+    compute_ssa_frequencies_with_cooling,
+    compute_ssa_frequencies_without_cooling,
+    select_ssa_sed_regime_from_candidates_with_cooling,
+    select_ssa_sed_regime_from_candidates_without_cooling,
+)
 
-# Type checking imports
+# =============================================================
+# Type Checking and Management
+# =============================================================
 if TYPE_CHECKING:
     from triceratops._typing import (
         _ArrayLike,
@@ -624,7 +644,7 @@ class MultiSpectrumSynchrotronSED(SynchrotronSED, ABC):
 # codebase, but we provide a few examples here to illustrate the structure.
 class PowerLaw_SynchrotronSED(SynchrotronSED):
     r"""
-    Canonical optically thin power-law synchrotron SED.
+    The canonical 1-zone power-law synchrotron SED (uncooled, optically thin).
 
     This class implements the standard synchrotron spectral energy distribution
     for an **uncooled, optically thin** population of relativistic electrons with
@@ -637,6 +657,19 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
     include young systems whose cooling timescales are long compared to the
     dynamical time, or low-density environments where the emission remains
     optically thin across the observed band.
+
+    .. important::
+
+        This emission model contains some caveats:
+
+        - The SED is strictly valid only for a single homogeneous emission region
+          with a uniform magnetic field and a single power-law electron distribution. Real systems
+          may exhibit spatial or temporal variations that deviate from this idealization.
+        - While the core SED is implemented in the **rest frame** of the emitting material, normalization and
+          closure both assume that any bulk motion is on axis with the observer. Off-axis viewing angles or
+          complex geometries may require additional corrections not captured by this model. Such corrections
+          can be avoided by treating the emitting volume fraction :math:`f_V` as degenerate with the true
+          geometry (allowing for beaming).
 
     .. rubric:: Spectral Structure
 
@@ -803,7 +836,7 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         log_nu_m: float,
         log_nu_max: float = np.inf,
         p: float = 2.5,
-        s: float = 5.0,
+        s: float = -0.5,
     ):
         r"""
         Compute the logarithm of the optically thin power-law synchrotron SED.
@@ -879,7 +912,7 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         nu_m: "_UnitBearingScalarLike",
         nu_max: "_UnitBearingScalarLike" = np.inf * u.Hz,
         p: float = 2.5,
-        s: float = 5.0,
+        s: float = -0.5,
     ):
         r"""
         Evaluate the optically thin power-law synchrotron SED.
@@ -974,268 +1007,296 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
     def _opt_from_physics_to_params(
         self,
         log_B: float,
-        log_V: float,
+        log_R: float,
         log_D_L: float,
         log_gamma_min: float,
         log_gamma_max: float = np.inf,
         p: float = 2.5,
+        f_V: float = 1.0,
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
-        gamma_bulk=1.0,
-        redshift=0.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = 0.0,
         pitch_average: bool = False,
     ):
         r"""
-        Map physical parameters to phenomenological SED parameters.
+        Convert physical synchrotron parameters to phenomenological SED parameters.
 
-        This method implements a deterministic **closure relation** that connects
-        physical model parameters (e.g. magnetic field strength, emitting volume,
-        electron energy fractions) to the phenomenological parameters defining the
-        canonical power-law synchrotron SED.
+        This method implements the **closure relation** that maps the physical
+        description of a one-zone synchrotron source to the phenomenological
+        parameters of the canonical broken power-law SED.
 
-        The mapping is performed under the assumption of **equipartition** between
-        relativistic electrons and magnetic fields and follows the normalization
-        scheme described in :ref:`synch_sed_theory`.
+        The mapping assumes a homogeneous emitting region with a power-law
+        electron distribution and determines the SED normalization under the
+        equipartition assumptions described in :ref:`synch_sed_theory`.
 
-        All computations are carried out in log-space to ensure numerical stability
-        and compatibility with inference workflows.
+        All quantities are provided in **logarithmic form** to ensure numerical
+        stability and compatibility with sampling-based inference workflows.
 
         Parameters
         ----------
         log_B : float
             Natural logarithm of the magnetic field strength (Gauss).
-        log_V : float
-            Natural logarithm of the effective emitting volume (cm^3). This is often
-            parameterized in terms of a filling factor :math:`f`.
+
+        log_R : float
+            Natural logarithm of the effective emitting radius (cm).
+
         log_D_L : float
             Natural logarithm of the luminosity distance (cm).
+
         log_gamma_min : float
             Natural logarithm of the minimum electron Lorentz factor
             :math:`\gamma_{\min}`.
+
         log_gamma_max : float, optional
             Natural logarithm of the maximum electron Lorentz factor
             :math:`\gamma_{\max}`. The default corresponds to no upper cutoff.
+
         p : float, optional
-            Power-law index of the injected electron distribution.
+            Power-law index of the electron distribution.
+
+        f_V: float, optional
+            Filling factor of the emitting region, encoding geometric effects.
+
         epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
+            Fraction of post-shock energy carried by relativistic electrons.
+
         epsilon_B : float, optional
-            Fraction of post-shock internal energy stored in magnetic fields.
+            Fraction of post-shock energy stored in magnetic fields.
+
         alpha : float, optional
-            Electron pitch angle in radians. This parameter is ignored if
+            Electron pitch angle in radians. Ignored if
             ``pitch_average=True``.
+
         gamma_bulk : float, optional
-            Bulk Lorentz factor of the emitting region. This affects the Doppler
-            boosting of the observed frequencies and fluxes.
-        redshift: float, optional
-            Cosmological redshift of the source. This affects the observed frequencies
-            and fluxes via redshift corrections.
+            Bulk Lorentz factor of the emitting region.
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
-            Otherwise, a fixed pitch angle specified by ``alpha`` is used.
 
         Returns
         -------
-        params : dict
-            Dictionary containing the phenomenological SED parameters:
+        dict
+            Dictionary containing the SED parameters
 
-            - ``log_F_norm`` : Natural logarithm of the peak flux density
-              :math:`F_{\nu,\mathrm{pk}}`.
-            - ``log_nu_m`` : Natural logarithm of the injection (peak) frequency
-              :math:`\nu_m`.
-            - ``log_nu_max`` : Natural logarithm of the maximum synchrotron
-              frequency :math:`\nu_{\max}`.
+            - ``F_norm`` :  the flux normalization
+            - ``F_peak`` : the peak flux
+            - ``nu_m`` :  the injection frequency
+            - ``nu_max`` : the maximum synchrotron frequency
 
         Notes
         -----
-        - This closure assumes a **single-zone**, homogeneous emitting region.
-        - Equipartition is an **assumption**, not a physical requirement; alternative
-          closures may be implemented by overriding this method.
-        - This method does not perform any consistency checks on the resulting SED
-          (e.g. cooling or self-absorption); such checks are handled by more
-          specialized SED subclasses.
+        This method is a thin wrapper around
+        :func:`_log_normalize_powerlaw_sbpl_sed`, which performs the
+        actual normalization calculation.
         """
-        # Handle pitch angle details and the relevant values of
-        # the log_chi parameter in each case. This allows us to
-        # permit both a fixed pitch angle and pitch-angle averaging.
-        sin_alpha = np.sin(alpha)
-        log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
-        log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
-
-        # Compute the Doppler factors and redshift corrections for the
-        # fluxes and the frequencies.
-        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
-        delta_bulk = gamma_bulk * (1 + beta_bulk)
-        log_delta_bulk = np.log(delta_bulk)
-        log_nu_correction = log_delta_bulk - np.log1p(redshift)
-        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
-
-        # Characteristic synchrotron frequencies. These are all
-        # OBSERVER FRAME quantities.
-        log_nu_m = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_min,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-
-        log_nu_max = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_max,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-
-        # Electron distribution normalization via equipartition
-        log_N0 = np.log(
-            _opt_normalize_PL_from_magnetic_field(
-                np.exp(log_B),
-                p=p,
-                epsilon_E=epsilon_E,
-                epsilon_B=epsilon_B,
-                gamma_min=np.exp(log_gamma_min),
-                gamma_max=np.exp(log_gamma_max),
-            )
-        )
-
-        # Peak flux normalization
-        log_F_norm = (
-            log_chi
-            + log_B
-            + log_sin_alpha  # Will be zero if pitch-averaged
-            + log_N0
-            + log_V
-            - 2.0 * log_D_L
-            + (1.0 - p) * log_gamma_min
-            + log_flux_correction
+        results = _log_normalize_powerlaw_sbpl_sed(
+            log_B=log_B,
+            log_R=log_R,
+            log_D_L=log_D_L,
+            log_gamma_min=log_gamma_min,
+            log_gamma_max=log_gamma_max,
+            p=p,
+            f_V=f_V,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            pitch_average=pitch_average,
         )
 
         return {
-            "log_F_norm": log_F_norm,
-            "log_nu_m": log_nu_m,
-            "log_nu_max": log_nu_max,
+            "F_norm": np.exp(results["log_F_norm"]),
+            "F_peak": np.exp(results["log_F_peak"]),
+            "nu_m": np.exp(results["log_nu_m"]),
+            "nu_max": np.exp(results["log_nu_max"]),
         }
 
     def from_physics_to_params(
         self,
         B: "_UnitBearingScalarLike",
-        V: "_UnitBearingScalarLike",
-        D_L: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
         gamma_min: float,
         gamma_max: float = np.inf,
         p: float = 2.5,
+        f_V: float = 1.0,
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
-        bulk_gamma=1.0,
-        redshift=0.0,
+        gamma_bulk=1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
         pitch_average: bool = False,
     ):
         r"""
         Construct phenomenological SED parameters from physical model parameters.
 
-        This is the **public, unit-aware interface** to the equipartition-based
-        closure relation implemented by
-        :meth:`_opt_from_physics_to_params`. It maps physical quantities describing
-        the emitting region and electron population onto the parameters defining
-        the canonical power-law synchrotron SED.
+        This method provides the **public, unit-aware interface** to the synchrotron
+        closure relation implemented by :meth:`_opt_from_physics_to_params`. It maps
+        physical parameters describing the emitting region and electron population
+        onto the phenomenological parameters defining the canonical power-law
+        synchrotron spectral energy distribution (SED).
+
+        All physical inputs may be provided as scalars, arrays, or unit-bearing
+        quantities. Internally, values are converted to CGS units and evaluated in
+        log-space for numerical stability.
+
+        Cosmological quantities are resolved automatically. The user may specify a
+        redshift directly or provide one of several distance measures. If necessary,
+        missing quantities are computed using the supplied cosmology.
 
         Parameters
         ----------
-        B : ~numpy.ndarray or float or ~astropy.units.Quantity
+        B : float, array-like, or ~astropy.units.Quantity
             Magnetic field strength in the emitting region. Must be convertible
             to Gauss.
-        V : ~numpy.ndarray or float or ~astropy.units.Quantity
-            Effective emitting volume. Must be convertible to cm³.
-            This is often parameterized in terms of a filling factor.
-        D_L : ~numpy.ndarray or float or ~astropy.units.Quantity
-            Luminosity distance to the source. Must be convertible to cm.
+
+        R : float, array-like, or ~astropy.units.Quantity
+            Effective radius of the emitting region. Must be convertible to cm.
+
         gamma_min : float
-            Minimum electron Lorentz factor :math:`\gamma_{\min}`.
+            Minimum Lorentz factor of the electron population
+            :math:`\gamma_{\min}`.
+
         gamma_max : float, optional
             Maximum electron Lorentz factor :math:`\gamma_{\max}`.
             The default corresponds to no upper cutoff.
+
         p : float, optional
             Power-law index of the injected electron energy distribution.
+
+        f_V : float, optional
+            Filling factor of the emitting region.
+
         epsilon_E : float, optional
             Fraction of post-shock internal energy carried by relativistic electrons.
+
         epsilon_B : float, optional
             Fraction of post-shock internal energy stored in magnetic fields.
+
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
-        bulk_gamma: float, optional
-            Bulk Lorentz factor of the emitting region, affecting Doppler boosting.
-        redshift: float, optional
-            Cosmological redshift of the source, affecting observed frequencies and fluxes.
+
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region. This determines the
+            Doppler boosting applied to observed frequencies and fluxes.
+
+        redshift : float, optional
+            Cosmological redshift of the source.
+
+        luminosity_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Luminosity distance to the source. Must be convertible to cm.
+
+        angular_diameter_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Angular diameter distance to the source.
+
+        proper_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Proper (comoving radial) distance to the source.
+
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to convert between redshift and distance measures.
+            If not provided, the default cosmology returned by
+            :func:`get_cosmology` is used.
+
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
-            Otherwise, use a fixed pitch angle specified by ``alpha``.
+            Otherwise a fixed pitch angle ``alpha`` is used.
 
         Returns
         -------
-        params : dict
-            Dictionary containing the phenomenological SED parameters:
+        dict
+            Dictionary containing the phenomenological SED parameters
 
-            - ``F_norm`` : Peak flux density :math:`F_{\nu,\mathrm{pk}}`
-              with units of ``erg cm^-2 s^-1 Hz^-1``.
-            - ``nu_m`` : Injection (peak) frequency :math:`\nu_m` with units of Hz.
-            - ``nu_max`` : Maximum synchrotron frequency :math:`\nu_{\max}` with
-              units of Hz.
+            - ``F_norm`` : flux normalization
+              (:math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`)
+            - ``F_peak`` : peak flux density
+              (:math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`)
+            - ``nu_m`` : injection (characteristic) frequency
+              (:math:`\mathrm{Hz}`)
+            - ``nu_max`` : maximum synchrotron frequency
+              (:math:`\mathrm{Hz}`)
 
         Notes
         -----
-        - This method assumes a single-zone, homogeneous emitting region.
-        - Equipartition is an **assumption**, not a physical necessity.
-        - This method does not check for radiative cooling or synchrotron
-          self-absorption; those effects are handled by specialized SED subclasses.
+        This closure assumes a **single-zone homogeneous emission region** and
+        determines the electron normalization using equipartition parameters
+        (:math:`\epsilon_E`, :math:`\epsilon_B`). These assumptions are commonly
+        used in phenomenological synchrotron modeling but are not physically
+        required.
+
+        Cosmological inputs are internally resolved into a consistent pair
+        of values for the luminosity distance :math:`D_L` and redshift :math:`z`
+        using :func:`resolve_cosmological_distances`.
+
+        This method performs only the parameter conversion; it does not enforce
+        spectral ordering constraints such as radiative cooling or synchrotron
+        self-absorption.
 
         See Also
         --------
         _opt_from_physics_to_params :
             Log-space implementation of the closure relation.
+
         sed :
             Evaluate the synchrotron SED using the returned parameters.
         """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        redshift = distances["redshift"]
+
         # Enforce units
         B = ensure_in_units(B, "G")
-        V = ensure_in_units(V, "cm^3")
+        R = ensure_in_units(R, "cm")
         D_L = ensure_in_units(D_L, "cm")
 
         # Convert to log-space
         log_B = np.log(B)
-        log_V = np.log(V)
+        log_R = np.log(R)
         log_D_L = np.log(D_L)
         log_gamma_min = np.log(gamma_min)
         log_gamma_max = np.log(gamma_max)
 
         # Dispatch to optimized log-space closure
-        params_log = self._opt_from_physics_to_params(
+        params = self._opt_from_physics_to_params(
             log_B=log_B,
-            log_V=log_V,
+            log_R=log_R,
             log_D_L=log_D_L,
             log_gamma_min=log_gamma_min,
             log_gamma_max=log_gamma_max,
             p=p,
+            f_V=f_V,
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
             pitch_average=pitch_average,
-            gamma_bulk=bulk_gamma,
+            gamma_bulk=gamma_bulk,
             redshift=redshift,
         )
 
         # Convert back to physical units
         return {
-            "F_norm": np.exp(params_log["log_F_norm"]) * u.erg / (u.cm**2 * u.s * u.Hz),
-            "nu_m": np.exp(params_log["log_nu_m"]) * u.Hz,
-            "nu_max": np.exp(params_log["log_nu_max"]) * u.Hz,
+            "F_norm": params["F_norm"] * u.erg / (u.cm**2 * u.s * u.Hz),
+            "F_peak": params["F_peak"] * u.erg / (u.cm**2 * u.s * u.Hz),
+            "nu_m": params["nu_m"] * u.Hz,
+            "nu_max": params["nu_max"] * u.Hz,
         }
 
     def _opt_from_params_to_physics(
@@ -1843,284 +1904,6 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     # must be self-consistently computed from the other parameters for each
     # regime. This requires some careful bookkeeping. We implement this in the
     # _compute_sed_regime method below.
-    def _compute_ssa_frequencies_from_F_norm(
-        self,
-        log_F_norm: float,
-        log_nu_m: float,
-        log_nu_c: float,
-        log_nu_max: float,
-        log_omega: float,
-        log_gamma_m: float,
-        p: float = 3.0,
-    ) -> tuple[dict[str, float], int]:
-        r"""
-        Compute candidate self-absorption frequencies using anchored spectral normalizations.
-
-        This method evaluates analytic expressions for the synchrotron self-absorption
-        frequency :math:`\nu_a` for all spectral regimes compatible with the system’s
-        cooling state, **using explicit spectral normalizations** rather than a single
-        peak flux density.
-
-        Unlike :meth:`_compute_ssa_frequencies_from_F_peak`, which assumes the supplied
-        flux normalization corresponds to the *true spectral peak*, this method allows
-        the spectrum to be anchored at a **specific characteristic frequency**, typically:
-
-        - :math:`\nu_m` (slow-cooling or non-cooling regimes), or
-        - :math:`\nu_c` (fast-cooling regimes).
-
-        This distinction is essential when the dominant emitting electron population
-        does *not* coincide with the observed spectral peak, such as in fast-cooling
-        or heavily self-absorbed scenarios.
-
-        Parameters
-        ----------
-        log_F_norm : float
-            Natural logarithm of the flux normalization.
-        log_nu_m : float
-            Natural logarithm of the injection frequency :math:`\nu_m`.
-        log_nu_c : float
-            Natural logarithm of the cooling frequency :math:`\nu_c`.
-        log_nu_max : float
-            Natural logarithm of the maximum synchrotron frequency
-            :math:`\nu_{\max}`.
-        log_omega : float
-            Natural logarithm of the effective emission solid angle
-            :math:`\log \Omega`.
-        log_gamma_m : float
-            Natural logarithm of the minimum electron Lorentz factor
-            :math:`\log \gamma_m`.
-        p : float, optional
-            Power-law index of the injected electron distribution.
-
-        Returns
-        -------
-        tuple
-            A tuple ``(log_nu_a_dict, cooling_regime)`` where:
-
-            - ``log_nu_a_dict`` maps each candidate spectral regime to its corresponding
-              self-absorption frequency :math:`\log \nu_a`, computed under the assumption
-              that *that regime applies*.
-            - ``cooling_regime`` is an integer flag indicating the cooling state:
-              ``0`` = fast cooling,
-              ``1`` = slow cooling,
-              ``2`` = no cooling.
-
-        Notes
-        -----
-        - This method is required for **physically correct normalization** in regimes
-          where the spectral peak does not coincide with :math:`\nu_m`.
-        - Only regimes compatible with the inferred cooling state are included.
-        - The returned self-absorption frequencies are **candidates**; the final regime
-          selection and consistency check are performed by
-          :meth:`_compute_sed_regime`.
-        - All calculations are performed in **logarithmic CGS units** and assume
-          isotropic pitch-angle distributions.
-
-        See Also
-        --------
-        _compute_ssa_frequencies_from_F_peak :
-            Simplified SSA computation assuming the supplied normalization corresponds
-            to the true spectral peak.
-        _compute_sed_regime :
-            Final regime selection and SSA consistency enforcement.
-        """
-        # Pre-compute the common factor so that we do not need to recompute it.
-        log_Q = log_F_norm - np.log(2) - np.log(electron_rest_mass_cgs) - log_omega - log_gamma_m
-        log_Q_c = log_Q + (1 / 2) * (log_nu_m - log_nu_c)
-
-        # We'll want to quickly check if we are fast, slow, or non-cooling. This will
-        # narrow down the scenarios we need to consider and the corresponding construction
-        # of the relevant SSA frequencies.
-        if log_nu_c < log_nu_m:
-            # This is fast cooling. We have access to S5, S6, and S7 only.
-            return {
-                "Spectrum5": (6 * log_Q_c / 13) + (3 * log_nu_m / 13) - (2 * log_nu_c / 13),
-                "Spectrum6": (log_Q_c / 3) + (log_nu_m / 6) + (log_nu_c / 6),
-                "Spectrum7": (2 * log_Q / (5 + p)) + (log_nu_c / (5 + p)) + (p * log_nu_m / (5 + p)),
-            }, 0
-        elif (log_nu_m < log_nu_c) and (log_nu_c < log_nu_max):
-            # This is slow cooling with nu_c < nu_max. We have access to S3 and S4 and S7 only.
-            return {
-                "Spectrum3": (3 * log_Q / 5) - (log_nu_m / 5),
-                "Spectrum4": (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
-                "Spectrum7": (2 * log_Q / (5 + p)) + (log_nu_c / (5 + p)) + (p * log_nu_m / (5 + p)),
-            }, 1
-        else:
-            # This is the NO COOLING case. We have access to S1 and S2 only.
-            return {
-                "Spectrum1": (6 * log_Q / 13) + (log_nu_m / 13),
-                "Spectrum2": (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4)),
-            }, 2
-
-    def _compute_sed_regime_from_nu_a_dict(
-        self,
-        log_nu_ssa: dict[str, float],
-        cooling_regime: int,
-        log_nu_m: float,
-        log_nu_c: float,
-        log_nu_max: float,
-    ):
-        r"""
-        Select the unique synchrotron spectral regime from candidate SSA frequencies.
-
-        This method determines the **single, globally applicable synchrotron spectral
-        regime** by comparing candidate self-absorption frequencies against the
-        characteristic synchrotron break frequencies.
-
-        The input ``log_nu_ssa`` contains **candidate self-absorption frequencies**
-        appropriate to each allowed spectral regime, computed analytically under the
-        assumption that *that regime applies*. This method resolves that ambiguity by
-        enforcing the correct ordering of frequencies.
-
-        The selection logic depends on the cooling state:
-
-        - **Fast cooling** (:math:`\nu_c < \nu_m`): choose among spectra S5, S6, S7
-        - **Slow cooling** (:math:`\nu_m < \nu_c < \nu_{\max}`): choose among S3, S4, S7
-        - **No cooling** (:math:`\nu_c > \nu_{\max}`): choose among S1, S2
-
-        We implement this so that we do not need to replicate the entire regime determination
-        workflow in each SED evaluation. Instead, we compute all candidate SSA frequencies
-        once, then use this method to select the correct one based on the physical
-        parameters.
-
-        Parameters
-        ----------
-        log_nu_ssa : dict
-            Dictionary mapping candidate spectral regimes to their corresponding
-            self-absorption frequencies :math:`\log \nu_a`, computed under the
-            assumption that each regime applies.
-        cooling_regime : int
-            Cooling classification flag:
-            ``0`` = fast cooling,
-            ``1`` = slow cooling,
-            ``2`` = no cooling.
-        log_nu_m : float
-            Natural logarithm of the injection frequency :math:`\nu_m`.
-        log_nu_c : float
-            Natural logarithm of the cooling frequency :math:`\nu_c`.
-        log_nu_max : float
-            Natural logarithm of the maximum synchrotron frequency :math:`\nu_{\max}`.
-
-        Returns
-        -------
-        tuple
-            ``(regime, log_nu_a)`` where:
-
-            - ``regime`` is a member of
-              :class:`~_SynchrotronSSACoolingSEDFunctions` identifying the selected
-              spectral configuration.
-            - ``log_nu_a`` is the self-absorption frequency consistent with that regime.
-
-        Raises
-        ------
-        RuntimeError
-            If no candidate regime satisfies the required frequency ordering.
-
-        Notes
-        -----
-        - Exactly **one** regime must satisfy the ordering constraints.
-        - This method performs no numerical approximations—only logical selection.
-        - The selected regime applies **globally** to the SED.
-        """
-        # For debugging, we take a minute here to log some detailed information
-        # about the candidate SSA frequencies and the characteristic frequencies. This can be
-        # helpful for diagnosing regime selection issues and ensuring that the logic is working as intended.
-        #
-        # This should not interfere with performance in production as it is gated behind a debug-level log check,
-        # but it provides a valuable window into the internal decision-making process when enabled.
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: performing regime determination step:",
-                extra={
-                    "cooling_regime": cooling_regime,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_c": log_nu_c,
-                    "log_nu_max": log_nu_max,
-                    "log_nu_ssa": log_nu_ssa,
-                },
-            )
-
-        if cooling_regime == 0:
-            # Fast cooling: S5, S6, or S7
-            if log_nu_ssa["Spectrum5"] < log_nu_c:
-                # We get the 2, 11/8, 1/3, -1/2, -p/2 spectrum.
-                regime, log_nu_a = "Spectrum5", log_nu_ssa["Spectrum5"]
-            elif log_nu_ssa["Spectrum7"] > log_nu_m:
-                # This is the moderate fast cooling case with extreme absorption nu_c < nu_m < nu_a < nu_max.
-                regime, log_nu_a = "Spectrum7", log_nu_ssa["Spectrum7"]
-            elif log_nu_ssa["Spectrum6"] < log_nu_m:
-                # This is the intermediate fast cooling case with nu_c < nu_a < nu_m < nu_max.
-                # NOTE: the catch on nu_c above allows us to avoid ambiguity with the extreme fast cooling case.
-                regime, log_nu_a = "Spectrum6", log_nu_ssa["Spectrum6"]
-            else:
-                raise RuntimeError(
-                    "Could not determine regime in fast cooling scenario:\n"
-                    f"  log_nu_c          = {log_nu_c:0.3f}\n"
-                    f"  log_nu_m          = {log_nu_m:0.3f}\n"
-                    f"  log_nu_max        = {log_nu_max:0.3f}\n"
-                    f"  log_nu_a (S5)     = {log_nu_ssa['Spectrum5']:0.3f}\n"
-                    f"  log_nu_a (S6)     = {log_nu_ssa['Spectrum6']:0.3f}\n"
-                    f"  log_nu_a (S7)     = {log_nu_ssa['Spectrum7']:0.3f}\n"
-                )
-
-        # Slow cooling: S3 or S4
-        elif cooling_regime == 1:
-            if log_nu_ssa["Spectrum3"] < log_nu_m:
-                # This is the optically thin at peak slow cooling case with nu_a < nu_m < nu_c < nu_max.
-                regime, log_nu_a = "Spectrum3", log_nu_ssa["Spectrum3"]
-            elif log_nu_ssa["Spectrum4"] < log_nu_c:
-                # This is the case where nu_m < nu_a < nu_c < nu_max. Note that we catch nu_a < nu_m above.
-                regime, log_nu_a = "Spectrum4", log_nu_ssa["Spectrum4"]
-            elif log_nu_ssa["Spectrum7"] > log_nu_c:
-                # This is the extreme case where nu_m < nu_c < nu_a < nu_max and the cooling break is hidden.
-                regime, log_nu_a = "Spectrum7", log_nu_ssa["Spectrum7"]
-            else:
-                raise RuntimeError(
-                    "Could not determine regime in slow cooling scenario:\n"
-                    f"  log_nu_c          = {log_nu_c:0.3f}\n"
-                    f"  log_nu_m          = {log_nu_m:0.3f}\n"
-                    f"  log_nu_max        = {log_nu_max:0.3f}\n"
-                    f"  log_nu_a (S3)     = {log_nu_ssa['Spectrum3']:0.3f}\n"
-                    f"  log_nu_a (S4)     = {log_nu_ssa['Spectrum4']:0.3f}\n"
-                    f"  log_nu_a (S7)     = {log_nu_ssa['Spectrum7']:0.3f}\n"
-                )
-
-        # No cooling: S1 or S2
-        elif cooling_regime == 2:
-            if log_nu_ssa["Spectrum1"] < log_nu_m:
-                # This is the optically thin at peak no cooling case with nu_a < nu_m < nu_max.
-                regime, log_nu_a = "Spectrum1", log_nu_ssa["Spectrum1"]
-            elif log_nu_ssa["Spectrum2"] > log_nu_m:
-                # This is the extreme case where nu_m < nu_a < nu_max.
-                regime, log_nu_a = "Spectrum2", log_nu_ssa["Spectrum2"]
-            else:
-                raise RuntimeError(
-                    "Could not determine regime in no cooling scenario:\n"
-                    f"  log_nu_m          = {log_nu_m:0.3f}\n"
-                    f"  log_nu_max        = {log_nu_max:0.3f}\n"
-                    f"  log_nu_c          = {log_nu_c:0.3f}\n"
-                    f"  log_nu_a (S1)     = {log_nu_ssa['Spectrum1']:0.3f}\n"
-                    f"  log_nu_a (S2)     = {log_nu_ssa['Spectrum2']:0.3f}\n"
-                )
-        else:
-            raise RuntimeError("Unable to determine SSA spectrum regime: unrecognized cooling regime.")
-
-        # Now complete, log that we have completed the step, and return.
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: selected regime.",
-                extra={
-                    "cooling_regime": cooling_regime,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_c": log_nu_c,
-                    "log_nu_max": log_nu_max,
-                    "log_nu_ssa": log_nu_a,
-                    "regime": regime,
-                },
-            )
-
-        return regime, log_nu_a
-
     def _compute_sed_regime(
         self,
         log_F_norm: float,
@@ -2194,10 +1977,10 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         """
         # Begin by calculating the SSA frequency from the other parameters. This also
         # tells some regime information. 0=Fast cooling, 1=Slow cooling, 2=No cooling.
-        log_nu_ssa, cooling_regime = self._compute_ssa_frequencies_from_F_norm(
-            log_F_norm, log_nu_m, log_nu_c, log_nu_max, log_omega, log_gamma_m, p
+        log_nu_ssa, cooling_regime = compute_ssa_frequencies_with_cooling(
+            log_F_norm, log_omega, log_nu_m, log_nu_c, log_nu_max, log_gamma_m, p
         )
-        return self._compute_sed_regime_from_nu_a_dict(
+        return select_ssa_sed_regime_from_candidates_with_cooling(
             log_nu_ssa,
             cooling_regime,
             log_nu_m,
@@ -2387,6 +2170,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 + (-1 / 2) * (log_nu_m - log_nu_c)
                 + (-p / 2) * (log_nu_a - log_nu_m)
             )
+        elif regime == "Spectrum8":
+            return (
+                self.SPECTRUM_FUNCTIONS[regime](log_nu, log_nu_m, log_nu_a, log_nu_max, p, s)
+                + log_F_norm
+                + (-1 / 2) * (log_nu_m - log_nu_c)
+                + (-p / 2) * (log_nu_a - log_nu_m)
+            )
         else:
             raise RuntimeError("Unrecognized regime in _log_opt_sed_from_regime.")
 
@@ -2525,13 +2315,15 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     def _opt_from_physics_to_params(
         self,
         log_B: float,
-        log_V: float,
+        log_R: float,
         log_D_L: float,
-        log_Omega: float,
+        log_D_A: float,
         log_gamma_min: float,
         log_gamma_c: float,
         log_gamma_max: float = np.inf,
         p: float = 2.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
@@ -2540,376 +2332,230 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         pitch_average: bool = False,
     ):
         r"""
-        Low-level equipartition-based closure for synchrotron SED normalization.
+        Convert physical synchrotron source parameters to phenomenological SED parameters.
 
-        This method maps **physical model parameters** describing the emitting region
-        and electron population to a **self-consistent set of phenomenological SED
-        parameters** for synchrotron emission with cooling and self-absorption.
-
-        It is the optimized, log-space implementation underlying
-        :meth:`from_physics_to_params` and is intended **only for internal use**.
-        All inputs and outputs are assumed to be expressed in **natural logarithmic
-        CGS units**, and no unit validation is performed.
-
-        The procedure implemented here follows a physically motivated decision tree:
-
-        1. Compute characteristic synchrotron frequencies
-           (:math:`\nu_m`, :math:`\nu_c`, :math:`\nu_{\max}`) from the supplied Lorentz
-           factors and magnetic field.
-        2. Determine whether the system is **fast-cooling** or **slow-/non-cooling**
-           by comparing :math:`\gamma_c` and :math:`\gamma_m`.
-        3. Select the appropriate electron energy distribution and normalization:
-           - Fast cooling: broken power-law (BPL) anchored at :math:`\gamma_c`,
-           - Slow / no cooling: power-law (PL) anchored at :math:`\gamma_m`.
-        4. Compute a provisional spectral normalization via equipartition.
-        5. Compute candidate self-absorption frequencies for all compatible spectral
-           regimes.
-        6. Select the unique, globally consistent synchrotron regime.
-        7. Propagate the normalization to the **true spectral peak**, if required by
-           the regime (i.e. optically thick cases).
-
-        The output parameters are guaranteed to be **mutually consistent** with the
-        selected synchrotron regime.
+        This low-level method evaluates the SSA+cooling closure relation entirely in
+        logarithmic CGS units. It computes the characteristic synchrotron frequencies,
+        optically thin normalization, self-absorption frequency, and globally
+        consistent synchrotron regime.
 
         Parameters
         ----------
         log_B : float
-            Natural logarithm of the magnetic field strength (Gauss).
-        log_V : float
-            Natural logarithm of the effective emitting volume (cm³).
+            Natural logarithm of the magnetic field strength (G).
+        log_R : float
+            Natural logarithm of the characteristic source radius (cm).
         log_D_L : float
             Natural logarithm of the luminosity distance (cm).
-        log_Omega : float
-            Natural logarithm of the effective emission solid angle
-            :math:`\Omega = A / D^2`.
+        log_D_A: float
+            Natural logarithm of the angular diameter distance (cm).
         log_gamma_min : float
-            Natural logarithm of the minimum electron Lorentz factor
-            :math:`\gamma_m`.
+            Natural logarithm of the minimum electron Lorentz factor.
         log_gamma_c : float
-            Natural logarithm of the cooling Lorentz factor
-            :math:`\gamma_c`.
+            Natural logarithm of the cooling Lorentz factor.
         log_gamma_max : float, optional
             Natural logarithm of the maximum electron Lorentz factor.
-            Defaults to :math:`+\infty`.
         p : float, optional
-            Power-law index of the injected electron energy distribution.
+            Electron power-law index.
+        f_V : float, optional
+            Volume filling factor.
+        f_A: float, optional
+            Area filling factor.
+        epsilon_E : float, optional
+            Fraction of post-shock energy in electrons.
+        epsilon_B : float, optional
+            Fraction of post-shock energy in magnetic fields.
+        alpha : float, optional
+            Pitch angle in radians when ``pitch_average=False``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+        redshift : float, optional
+            Source redshift.
+        pitch_average : bool, optional
+            If ``True``, assume pitch-angle averaged synchrotron emissivity.
+
+        Returns
+        -------
+        dict
+            Dictionary containing phenomenological parameters:
+
+            - ``F_norm``
+            - ``F_peak``
+            - ``nu_m``
+            - ``nu_c``
+            - ``nu_a``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
+        """
+        result = _log_normalize_powerlaw_sbpl_sed_ssa_cool(
+            log_B=log_B,
+            log_R=log_R,
+            log_D_L=log_D_L,
+            log_D_A=log_D_A,
+            log_gamma_min=log_gamma_min,
+            log_gamma_c=log_gamma_c,
+            log_gamma_max=log_gamma_max,
+            p=p,
+            f_V=f_V,
+            f_A=f_A,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            pitch_average=pitch_average,
+        )
+        return {
+            "F_norm": np.exp(result["log_F_norm"]),
+            "F_peak": np.exp(result["log_F_peak"]),
+            "nu_m": np.exp(result["log_nu_m"]),
+            "nu_c": np.exp(result["log_nu_c"]),
+            "nu_a": np.exp(result["log_nu_a"]),
+            "nu_max": np.exp(result["log_nu_max"]),
+            "nu_peak": np.exp(result["log_nu_peak"]),
+            "regime": result["regime"],
+        }
+
+    def from_physics_to_params(
+        self,
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        gamma_min: float,
+        gamma_c: float,
+        gamma_max: float = np.inf,
+        p: float = 2.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Construct phenomenological SSA+cooling SED parameters from physical inputs.
+
+        This is the public, unit-aware interface to the SSA+cooling closure relation.
+        It resolves cosmological distance information, converts inputs to CGS,
+        evaluates the low-level log-space closure, and returns unit-bearing
+        phenomenological SED parameters.
+
+        Parameters
+        ----------
+        B : float, array-like, or ~astropy.units.Quantity
+            Magnetic field strength. Must be convertible to Gauss.
+        R : float, array-like, or ~astropy.units.Quantity
+            Characteristic source radius. Must be convertible to cm.
+        gamma_min : float
+            Minimum electron Lorentz factor :math:`\gamma_{\min}`.
+        gamma_c : float
+            Cooling Lorentz factor :math:`\gamma_c`.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor :math:`\gamma_{\max}`.
+        p : float, optional
+            Electron power-law index.
+        f_V : float, optional
+            Volume filling factor.
+        f_A: float, optional
+            Area filling factor.
         epsilon_E : float, optional
             Fraction of post-shock internal energy carried by relativistic electrons.
         epsilon_B : float, optional
             Fraction of post-shock internal energy stored in magnetic fields.
         alpha : float, optional
             Electron pitch angle in radians. Ignored if ``pitch_average=True``.
-        gamma_bulk: float, optional
-            Bulk Lorentz factor of the emitting region. This can be used to compute the Doppler
-            factor for transforming frequencies and fluxes to the observer frame. Defaults to 1
-            (no relativistic beaming).
-        redshift: float, optional
-            Redshift of the source. This can be used to compute the luminosity distance and to
-            apply cosmological corrections to the frequencies and fluxes. Defaults to 0 (no redshift).
-        pitch_average : bool, optional
-            If ``True``, use pitch-angle averaged synchrotron emissivity.
-            Otherwise, a fixed pitch angle is assumed.
-
-        Returns
-        -------
-        params : dict
-            Dictionary containing **logarithmic** phenomenological SED parameters:
-
-            - ``F_peak`` : :math:`\log F_{\nu,\mathrm{pk}}`
-            - ``nu_m`` : :math:`\log \nu_m`
-            - ``nu_c`` : :math:`\log \nu_c`
-            - ``nu_a`` : :math:`\log \nu_a`
-            - ``nu_max`` : :math:`\log \nu_{\max}`
-            - ``regime`` : Enum identifying the selected synchrotron spectral regime
-
-        Notes
-        -----
-        - This method performs **no unit checking** and assumes all inputs are valid.
-        - All calculations are performed in **log-space** for numerical stability.
-        - Equipartition is an **assumption**, not a physical requirement.
-        - This method enforces **global regime consistency**; mixed-regime solutions
-          are not permitted.
-        - The returned normalization corresponds to the **true spectral peak**, which
-          may differ from the initial anchoring frequency.
-
-        See Also
-        --------
-        from_physics_to_params :
-            Public, unit-aware interface to this closure relation.
-        _compute_sed_regime :
-            Global synchrotron regime determination logic.
-        _compute_ssa_frequencies_from_F_norm :
-            SSA frequency computation using anchored spectral normalizations.
-        """
-        # Handle pitch angle details and the relevant values of
-        # the log_chi parameter in each case. This allows us to
-        # permit both a fixed pitch angle and pitch-angle averaging.
-        sin_alpha = np.sin(alpha)
-        log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
-        log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
-
-        # Compute the Doppler factors and redshift corrections for the
-        # fluxes and the frequencies.
-        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
-        delta_bulk = gamma_bulk * (1 + beta_bulk)
-        log_delta_bulk = np.log(delta_bulk)
-        log_nu_correction = log_delta_bulk - np.log1p(redshift)
-        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
-
-        # --- Compute the Frequencies --- #
-        # We need to use the electron Lorentz factors to compute
-        # the relevant synchrotron frequencies. This should be done for
-        # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_min,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-        log_nu_max = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_max,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-        log_nu_c = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_c,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-
-        # Determine if we are fast cooling or not.
-        _FAST_COOLING_FLAG = log_gamma_c < log_gamma_min
-
-        # Log that we have computed the frequencies, as this is a critical step in the closure.
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: computed characteristic frequencies.",
-                extra={
-                    "log_gamma_min": log_gamma_min,
-                    "log_gamma_c": log_gamma_c,
-                    "log_gamma_max": log_gamma_max,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_c": log_nu_c,
-                    "log_nu_max": log_nu_max,
-                    "fast_cooling": _FAST_COOLING_FLAG,
-                },
-            )
-
-        # --- Determine the Normalizations for the Electrons --- #
-        #  At this stage, we immediately know if we have fast or slow cooling and
-        #  therefore which frequency we are going to anchor the electron distribution to.
-        if _FAST_COOLING_FLAG:
-            # The dominant electron population will occur at nu_c and require us to
-            # normalize via equipartition over a BPL distribution at gamma_c.
-            log_electron_norm = np.log(
-                _opt_normalize_BPL_from_magnetic_field(
-                    np.exp(log_B),
-                    -(p + 1),  # TODO: THIS NEEDS FIXING!
-                    -p,
-                    gamma_b=np.exp(log_gamma_min),
-                    gamma_min=np.exp(log_gamma_c),
-                    gamma_max=np.exp(log_gamma_max),
-                    epsilon_E=epsilon_E,
-                    epsilon_B=epsilon_B,
-                )
-            )
-
-            log_F_norm = (
-                log_chi
-                + log_B
-                + log_sin_alpha  # Zero if pitch averaged
-                + log_electron_norm
-                + log_nu_m
-                - log_nu_c
-                + log_gamma_c
-                + log_V
-                - 2 * log_D_L
-                + log_flux_correction
-            )
-
-            # Compute the SSA frequencies.
-            regime, log_nu_a = self._compute_sed_regime(
-                log_F_norm, log_nu_m, log_nu_c, log_nu_max, log_Omega, log_gamma_min
-            )
-
-        else:
-            # The dominant electron population will occur at nu_m and require us to
-            # normalize via equipartition over a PL distribution at gamma_min.
-            log_electron_norm = np.log(
-                _opt_normalize_PL_from_magnetic_field(
-                    np.exp(log_B),
-                    p,
-                    gamma_min=np.exp(log_gamma_min),
-                    gamma_max=np.exp(log_gamma_max),
-                    epsilon_E=epsilon_E,
-                    epsilon_B=epsilon_B,
-                )
-            )
-            log_F_norm = (
-                log_chi
-                + log_B
-                + log_sin_alpha  # Zero if pitch averaged
-                + log_electron_norm
-                + (1 - p) * log_gamma_min
-                + log_V
-                - 2 * log_D_L
-                + log_flux_correction
-            )
-
-            regime, log_nu_a = self._compute_sed_regime(
-                log_F_norm, log_nu_m, log_nu_c, log_nu_max, log_Omega, log_gamma_min
-            )
-
-        # --- LOG AND RETURN --- #
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: completed normalization.",
-                extra={
-                    "log_gamma_min": log_gamma_min,
-                    "log_gamma_c": log_gamma_c,
-                    "log_gamma_max": log_gamma_max,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_c": log_nu_c,
-                    "log_nu_max": log_nu_max,
-                    "log_nu_a": log_nu_a,
-                    "fast_cooling": _FAST_COOLING_FLAG,
-                    "regime": regime,
-                    "log_electron_norm": log_electron_norm,
-                },
-            )
-
-        return {
-            "F_norm": log_F_norm,
-            "nu_m": log_nu_m,
-            "nu_c": log_nu_c,
-            "nu_a": log_nu_a,
-            "nu_max": log_nu_max,
-            "regime": regime,
-        }
-
-    def from_physics_to_params(
-        self,
-        B: "_UnitBearingScalarLike",
-        V: "_UnitBearingScalarLike",
-        D_L: "_UnitBearingScalarLike",
-        Omega: float,
-        gamma_min: float,
-        gamma_c: float,
-        gamma_max: float = np.inf,
-        p: float = 2.5,
-        epsilon_E: float = 0.1,
-        epsilon_B: float = 0.1,
-        alpha: float = 1.0,
-        gamma_bulk: float = 1.0,
-        redshift: float = 0.0,
-        pitch_average: bool = False,
-    ):
-        r"""
-        Determine the equipartition parameters for this SED from physical inputs.
-
-        This method utilizes the normalization scheme described in :ref:`synch_sed_theory`
-        (specifically :meth:`sed_normalization`) to compute the phenomenological SED parameters
-        (i.e. :math:`F_{\nu,\mathrm{pk}}`, :math:`\nu_m`, :math:`\nu_c`, :math:`\nu_a`, etc.)
-        from the underlying physical parameters of the system.
-
-        .. note::
-
-            Users are **strongly encouraged** to read the notes in :ref:`synch_sed_theory`
-            regarding the assumptions and limitations of this approach before applying
-            it to real systems.
-
-        Parameters
-        ----------
-        B : ~astropy.units.Quantity or float
-            Magnetic field strength. Must be convertible to Gauss.
-        V : ~astropy.units.Quantity or float
-            Effective emitting volume. Must be convertible to ``cm^3``.
-        D_L : ~astropy.units.Quantity or float
-            Luminosity distance to the source. Must be convertible to ``cm``.
-        Omega : float
-            Effective emission solid angle :math:`\Omega = A / D^2`.
-        gamma_min : float
-            Minimum electron Lorentz factor :math:`\gamma_m`.
-        gamma_c : float
-            Cooling Lorentz factor :math:`\gamma_c`.
-        gamma_max : float, optional
-            Maximum electron Lorentz factor. Default corresponds to no cutoff.
-        p : float, optional
-            Power-law index of the injected electron energy distribution.
-        epsilon_E : float, optional
-            Fraction of post-shock internal energy in relativistic electrons.
-        epsilon_B : float, optional
-            Fraction of post-shock internal energy in magnetic fields.
-        alpha : float, optional
-            Electron pitch angle in radians. Ignored if ``pitch_average=True``.
         gamma_bulk : float, optional
-            Bulk Lorentz factor of the emitting region. This can be used to compute the Doppler
-            factor for transforming frequencies and fluxes to the observer frame. Defaults to 1
-            (no relativistic beaming).
+            Bulk Lorentz factor of the emitting region.
         redshift : float, optional
-            Redshift of the source. This can be used to compute the luminosity distance and to
-            apply cosmological corrections to the frequencies and fluxes. Defaults to 0 (no red
-            shift).
+            Cosmological redshift of the source.
+        luminosity_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Luminosity distance to the source.
+        angular_diameter_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Angular diameter distance to the source.
+        proper_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Proper distance to the source.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to resolve missing distance/redshift information.
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
 
         Returns
         -------
-        params : dict
-            Dictionary containing the phenomenological SED parameters:
+        dict
+            Dictionary containing unit-bearing phenomenological parameters:
 
-            - ``F_peak`` : Peak flux density (:math:`F_{\nu,\mathrm{pk}}`)
-              with units ``erg cm^-2 s^-1 Hz^-1``.
-            - ``nu_m`` : Injection frequency :math:`\nu_m` (Hz).
-            - ``nu_c`` : Cooling frequency :math:`\nu_c` (Hz).
-            - ``nu_a`` : Self-absorption frequency :math:`\nu_a` (Hz).
-            - ``nu_max`` : Maximum synchrotron frequency :math:`\nu_{\max}` (Hz).
-            - ``regime`` : Enum identifying the global synchrotron spectral regime.
+            - ``F_norm``
+            - ``nu_m``
+            - ``nu_c``
+            - ``nu_a``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
 
         Notes
         -----
-        - This method assumes a **single-zone, homogeneous emitting region**.
-        - Equipartition is an **assumption**, not a physical necessity.
-        - The returned parameters are guaranteed to be **self-consistent** with
-          the selected synchrotron spectral regime.
-        """
-        # Coerce things down to unit carrying values.
-        B = ensure_in_units(B, "G")
-        V = ensure_in_units(V, "cm^3")
-        D_L = ensure_in_units(D_L, "cm")
+        Cosmological inputs are resolved into a self-consistent luminosity distance
+        and redshift using :func:`resolve_cosmological_distances`, matching the
+        behavior of :class:`PowerLaw_SynchrotronSED`.
 
-        # Get everything in log-space. The low-level implementation is
-        # done natively in log-space for stability.
+        The effective solid angle ``Omega`` is treated as a direct phenomenological
+        input and is not inferred from the cosmology.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        D_A = distances["angular_diameter_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement.
+        # ------------------------------------------------------------------ #
+        B = ensure_in_units(B, "G")
+        R = ensure_in_units(R, "cm")
+        D_L = ensure_in_units(D_L, "cm")
+        D_A = ensure_in_units(D_A, "cm")
+
+        # ------------------------------------------------------------------ #
+        # Convert to logarithmic CGS units.
+        # ------------------------------------------------------------------ #
         log_B = np.log(B)
-        log_V = np.log(V)
+        log_R = np.log(R)
         log_D_L = np.log(D_L)
-        log_Omega = np.log(Omega)
+        log_D_A = np.log(D_A)
 
         log_gamma_min = np.log(gamma_min)
         log_gamma_c = np.log(gamma_c)
         log_gamma_max = np.log(gamma_max)
 
-        # Dispatch to the optimized low-level implementation.
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level closure.
+        # ------------------------------------------------------------------ #
         params_log = self._opt_from_physics_to_params(
             log_B=log_B,
-            log_V=log_V,
+            log_R=log_R,
             log_D_L=log_D_L,
-            log_Omega=log_Omega,
+            log_D_A=log_D_A,
             log_gamma_min=log_gamma_min,
             log_gamma_c=log_gamma_c,
             log_gamma_max=log_gamma_max,
             p=p,
+            f_V=f_V,
+            f_A=f_A,
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
@@ -2918,13 +2564,17 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             pitch_average=pitch_average,
         )
 
-        # Convert back to linear CGS units and return.
+        # ------------------------------------------------------------------ #
+        # Convert back to physical units.
+        # ------------------------------------------------------------------ #
         return {
-            "F_norm": np.exp(params_log["F_norm"]) * u.erg / (u.cm**2 * u.s * u.Hz),
-            "nu_m": np.exp(params_log["nu_m"]) * u.Hz,
-            "nu_c": np.exp(params_log["nu_c"]) * u.Hz,
-            "nu_a": np.exp(params_log["nu_a"]) * u.Hz,
-            "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
+            "F_norm": params_log["F_norm"] * u.erg / (u.s * u.cm**2 * u.Hz),
+            "F_peak": params_log["F_peak"] * u.erg / (u.s * u.cm**2 * u.Hz),
+            "nu_m": params_log["nu_m"] * u.Hz,
+            "nu_c": params_log["nu_c"] * u.Hz,
+            "nu_a": params_log["nu_a"] * u.Hz,
+            "nu_max": params_log["nu_max"] * u.Hz,
+            "nu_peak": params_log["nu_peak"] * u.Hz,
             "regime": params_log["regime"],
         }
 
@@ -3197,6 +2847,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 log_F_peak_comoving,
                 log_D_L,
                 gamma_min=gamma_min,
+                gamma_c=gamma_c,
                 gamma_max=gamma_max,
                 p=p,
                 epsilon_e=epsilon_E,
@@ -3207,7 +2858,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         elif regime == "Spectrum4":  # nu_m < nu_a < nu_c < nu_max.
             if log_D_A is None:
                 raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum4 regime.")
-            if not np.isfinite(gamma_c):
+            if not np.all(np.isfinite(gamma_c)):
                 raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum4 regime.")
 
             log_R, log_B = inversion_function(
@@ -3226,7 +2877,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 sin_alpha=sin_alpha,
             )
         elif regime == "Spectrum5":  # nu_a < nu_c < nu_m < nu_max.
-            if not np.isfinite(gamma_c):
+            if not np.all(np.isfinite(gamma_c)):
                 raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum5 regime.")
 
             log_R, log_B = inversion_function(
@@ -3245,7 +2896,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         elif regime == "Spectrum6":  # nu_c < nu_a < nu_m < nu_max.
             if log_D_A is None:
                 raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum6 regime.")
-            if not np.isfinite(gamma_c):
+            if not np.all(np.isfinite(gamma_c)):
                 raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum6 regime.")
 
             log_R, log_B = inversion_function(
@@ -3266,7 +2917,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         elif regime == "Spectrum7":  # nu_c, nu_m < nu_a < nu_max.
             if log_D_A is None:
                 raise ValueError("Angular diameter distance `D_A` must be provided for Spectrum7 regime.")
-            if not np.isfinite(gamma_c):
+            if not np.all(np.isfinite(gamma_c)):
                 raise ValueError("Cooling Lorentz factor `gamma_c` must be finite for Spectrum7 regime.")
 
             log_R, log_B = inversion_function(
@@ -3301,6 +2952,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         F_peak: "_UnitBearingScalarLike",
         nu_peak: "_UnitBearingScalarLike",
         gamma_min: float = 1.0,
+        gamma_c: float = np.inf,
         gamma_max: float = np.inf,
         p: float = 3.0,
         epsilon_E: float = 0.1,
@@ -3395,6 +3047,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             (e.g. shock acceleration), values of
             :math:`\gamma_{\min} \sim 10-10^3` may be more physically
             appropriate.
+        gamma_c: float, optional
+            Cooling Lorentz factor.
+
+            This parameter is relevant for regimes where radiative cooling explicitly shapes the spectrum.
+            It represents the Lorentz factor at which electrons cool on the dynamical timescale of the system.
+            If cooling is negligible, this can be set to a very large value (e.g. ``np.inf``) to effectively
+            remove its influence from the inversion.
 
         gamma_max : float, optional
             Maximum Lorentz factor of the accelerated electron distribution.
@@ -3615,11 +3274,13 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         # Dispatch to the low-level inverse closure.
         # ------------------------------------------------------------------ #
         results = self._opt_from_params_to_physics(
+            regime=regime,
             log_F_peak=log_F_peak,
             log_nu_peak=log_nu_peak,
             log_D_L=log_D_L,
             log_D_A=log_D_A,
             gamma_min=gamma_min,
+            gamma_c=gamma_c,
             gamma_max=gamma_max,
             p=p,
             epsilon_E=epsilon_E,
@@ -4129,12 +3790,13 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
     def _opt_from_physics_to_params(
         self,
         log_B: float,
-        log_V: float,
+        log_R: float,
         log_D_L: float,
         log_gamma_min: float,
         log_gamma_c: float,
         log_gamma_max: float = np.inf,
         p: float = 2.5,
+        f_V: float = 1.0,
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
@@ -4143,319 +3805,68 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         pitch_average: bool = False,
     ):
         r"""
-        Compute phenomenological synchrotron SED parameters from physical inputs (log-space).
+        Compute phenomenological cooling synchrotron SED parameters from physical inputs.
 
-        This low-level method converts physical parameters describing a synchrotron-
-        emitting plasma into the **phenomenological parameters** required to evaluate
-        an optically thin, cooling synchrotron spectral energy distribution.
-
-        All calculations are performed natively in **logarithmic CGS units** for
-        numerical stability and performance. This method is not intended for direct
-        user access.
-
-        The normalization follows an **equipartition-based prescription**, in which
-        fixed fractions of the post-shock internal energy are assumed to reside in
-        relativistic electrons (:math:`\epsilon_E`) and magnetic fields
-        (:math:`\epsilon_B`).
+        This low-level method evaluates the cooling synchrotron closure relation in
+        logarithmic CGS units and returns the corresponding phenomenological SED
+        parameters in linear CGS units.
 
         Parameters
         ----------
         log_B : float
             Natural logarithm of the magnetic field strength in Gauss.
-        log_V : float
-            Natural logarithm of the effective emitting volume in ``cm^3``.
+        log_R : float
+            Natural logarithm of the characteristic source radius in cm.
         log_D_L : float
-            Natural logarithm of the luminosity distance in ``cm``.
+            Natural logarithm of the luminosity distance in cm.
         log_gamma_min : float
             Natural logarithm of the minimum electron Lorentz factor
-            :math:`\gamma_m`.
+            :math:`\gamma_{\min}`.
         log_gamma_c : float
             Natural logarithm of the cooling Lorentz factor
             :math:`\gamma_c`.
         log_gamma_max : float, optional
-            Natural logarithm of the maximum electron Lorentz factor.
-            Defaults to :math:`+\infty`, corresponding to no high-energy cutoff.
+            Natural logarithm of the maximum electron Lorentz factor
+            :math:`\gamma_{\max}`.
         p : float, optional
-            Power-law index of the injected electron energy distribution.
-            Default is ``2.5``.
+            Electron power-law index.
+        f_V : float, optional
+            Volume filling factor.
         epsilon_E : float, optional
             Fraction of post-shock internal energy carried by relativistic electrons.
-            Default is ``0.1``.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy carried by magnetic fields.
-            Default is ``0.1``.
+            Fraction of post-shock internal energy stored in magnetic fields.
         alpha : float, optional
-            Electron pitch angle in radians. Ignored if ``pitch_average=True``.
-        pitch_average : bool, optional
-            If ``True``, use pitch-angle averaged synchrotron emissivity and
-            normalization.
-
-        Returns
-        -------
-        params : dict
-            Dictionary containing logarithmic phenomenological parameters:
-
-            - ``F_peak`` : Natural logarithm of the peak flux density
-              :math:`F_{\nu,\mathrm{pk}}`.
-            - ``nu_m`` : Natural logarithm of the injection frequency
-              :math:`\nu_m`.
-            - ``nu_c`` : Natural logarithm of the cooling frequency
-              :math:`\nu_c`.
-            - ``nu_max`` : Natural logarithm of the maximum synchrotron frequency
-              :math:`\nu_{\max}`.
-            - ``regime`` : Enum identifying the **global cooling regime** and
-              corresponding spectral kernel.
-
-        Notes
-        -----
-        - The cooling regime is determined **globally** from the ordering of
-          :math:`\nu_m`, :math:`\nu_c`, and :math:`\nu_{\max}`.
-        - In the fast-cooling regime, normalization is performed at
-          :math:`\nu_c`; in other regimes, normalization is performed at
-          :math:`\nu_m`.
-        - This method assumes a **single-zone, homogeneous emitting region**.
-        - No synchrotron self-absorption is included.
-
-        """
-        # Handle pitch angle details and the relevant values of
-        # the log_chi parameter in each case. This allows us to
-        # permit both a fixed pitch angle and pitch-angle averaging.
-        sin_alpha = np.sin(alpha)
-        log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
-        log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
-
-        # Compute the Doppler factors and redshift corrections for the
-        # fluxes and the frequencies.
-        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
-        delta_bulk = gamma_bulk * (1 + beta_bulk)
-        log_delta_bulk = np.log(delta_bulk)
-        log_nu_correction = log_delta_bulk - np.log1p(redshift)
-        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
-
-        # --- Compute the Frequencies --- #
-        # We need to use the electron Lorentz factors to compute
-        # the relevant synchrotron frequencies. This should be done for
-        # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_min,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-        log_nu_max = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_max,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-        log_nu_c = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_c,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-
-        # --- Compute the correct peak flux based on the regime --- #
-        if log_nu_c < log_nu_m:
-            # This is fast cooling, we need to normalize at nu_c.
-            log_electron_norm = _opt_normalize_BPL_from_magnetic_field(
-                log_B,
-                -2,
-                -(p + 1),
-                gamma_b=np.exp(log_gamma_min),
-                gamma_min=np.exp(log_gamma_c),
-                gamma_max=np.exp(log_gamma_max),
-                epsilon_E=epsilon_E,
-                epsilon_B=epsilon_B,
-            )
-
-            log_F_norm = (
-                log_chi
-                + log_B
-                + log_sin_alpha  # Zero if pitch averaged
-                + log_electron_norm
-                + log_nu_m
-                - log_nu_c
-                + log_gamma_c
-                + log_V
-                - 2 * log_D_L
-                + log_flux_correction
-            )
-        elif log_nu_m <= log_nu_c:
-            # This is slow cooling, we need to normalize at nu_m.
-            log_electron_norm = _opt_normalize_PL_from_magnetic_field(
-                log_B,
-                p,
-                gamma_min=np.exp(log_gamma_min),
-                gamma_max=np.exp(log_gamma_max),
-                epsilon_E=epsilon_E,
-                epsilon_B=epsilon_B,
-            )
-
-            log_F_norm = (
-                log_chi
-                + log_B
-                + log_sin_alpha  # Zero if pitch averaged
-                + log_electron_norm
-                + (1 - p) * log_gamma_min
-                + log_V
-                - 2 * log_D_L
-                + log_flux_correction
-            )
-        else:
-            raise RuntimeError("Unrecognized regime in from_physics_to_params.")
-
-        # Return the relevant parameters.
-        regime, _ = self._compute_sed_regime(log_nu_m, log_nu_c, log_nu_max)
-
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: completed normalization.",
-                extra={
-                    "log_gamma_min": log_gamma_min,
-                    "log_gamma_c": log_gamma_c,
-                    "log_gamma_max": log_gamma_max,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_c": log_nu_c,
-                    "log_nu_max": log_nu_max,
-                    "regime": regime,
-                    "log_electron_norm": log_electron_norm,
-                },
-            )
-
-        # Return the output.
-        return {
-            "F_norm": log_F_norm,
-            "nu_m": log_nu_m,
-            "nu_c": log_nu_c,
-            "nu_max": log_nu_max,
-            "regime": regime,
-        }
-
-    def from_physics_to_params(
-        self,
-        B: "_UnitBearingScalarLike",
-        V: "_UnitBearingScalarLike",
-        D_L: "_UnitBearingScalarLike",
-        gamma_min: float,
-        gamma_c: float,
-        gamma_max: float = np.inf,
-        p: float = 2.5,
-        epsilon_E: float = 0.1,
-        epsilon_B: float = 0.1,
-        alpha: float = 1.0,
-        gamma_bulk: float = 1.0,
-        redshift: float = 0.0,
-        pitch_average: bool = False,
-    ):
-        r"""
-        Determine phenomenological synchrotron SED parameters from physical inputs.
-
-        This method computes the phenomenological parameters required to evaluate
-        the optically thin synchrotron spectral energy distribution from a set of
-        physical inputs describing the emitting plasma.
-
-        The normalization follows an **equipartition-based prescription**, in which
-        fixed fractions of the post-shock internal energy are assumed to reside in
-        relativistic electrons (:math:`\epsilon_E`) and magnetic fields
-        (:math:`\epsilon_B`). The resulting parameters are guaranteed to be
-        internally self-consistent with the selected cooling regime.
-
-        Users are **strongly encouraged** to consult :ref:`synch_sed_theory` for a
-        detailed discussion of the assumptions and limitations of this approach.
-
-        Parameters
-        ----------
-        B : ~astropy.units.Quantity or float
-            Magnetic field strength. Must be convertible to Gauss.
-        V : ~astropy.units.Quantity or float
-            Effective emitting volume. Must be convertible to ``cm^3``.
-        D_L : ~astropy.units.Quantity or float
-            Luminosity distance to the source. Must be convertible to ``cm``.
-        gamma_min : float
-            Minimum electron Lorentz factor :math:`\gamma_m`.
-        gamma_c : float
-            Cooling Lorentz factor :math:`\gamma_c`.
-        gamma_max : float, optional
-            Maximum electron Lorentz factor. Default corresponds to no high-energy
-            cutoff.
-        p : float, optional
-            Power-law index of the injected electron energy distribution.
-            Default is ``2.5``.
-        epsilon_E : float, optional
-            Fraction of post-shock internal energy carried by relativistic electrons.
-            Default is ``0.1``.
-        epsilon_B : float, optional
-            Fraction of post-shock internal energy carried by magnetic fields.
-            Default is ``0.1``.
-        alpha : float, optional
-            Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+            Electron pitch angle in radians.
         gamma_bulk : float, optional
-            Bulk Lorentz factor of the emitting plasma. Currently ignored, but may
-            be used in future implementations to account for relativistic beaming effects.
+            Bulk Lorentz factor of the emitting region.
         redshift : float, optional
-            Redshift of the source. Currently ignored, but may be used in future
-            implementations to account for cosmological effects on the observed SED.
+            Source redshift.
         pitch_average : bool, optional
-            If ``True``, use pitch-angle averaged synchrotron emissivity and
-            normalization.
+            If ``True``, use pitch-angle averaged synchrotron emissivity.
 
         Returns
         -------
-        params : dict
-            Dictionary containing the phenomenological SED parameters:
+        dict
+            Dictionary containing linear CGS phenomenological parameters:
 
-            - ``F_peak`` : Peak flux density
-              (:math:`F_{\nu,\mathrm{pk}}`) with units
-              ``erg cm^-2 s^-1 Hz^-1``.
-            - ``nu_m`` : Injection frequency :math:`\nu_m` (Hz).
-            - ``nu_c`` : Cooling frequency :math:`\nu_c` (Hz).
-            - ``nu_max`` : Maximum synchrotron frequency
-              :math:`\nu_{\max}` (Hz).
-            - ``regime`` : Enum identifying the **global synchrotron cooling
-              regime** and corresponding spectral kernel.
-
-        Notes
-        -----
-        - This method assumes a **single-zone, homogeneous emitting region**.
-        - Equipartition is an **assumption**, not a physical necessity.
-        - The cooling regime is determined globally and applies to the entire
-          spectrum.
-        - Synchrotron self-absorption is **not included** in this model.
+            - ``F_norm``
+            - ``F_peak``
+            - ``nu_m``
+            - ``nu_c``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
         """
-        # Coerce things down to unit carrying values.
-        B = ensure_in_units(B, "G")
-        V = ensure_in_units(V, "cm^3")
-        D_L = ensure_in_units(D_L, "cm")
-
-        # Get everything in log-space. The low-level implementation is
-        # done natively in log-space for stability.
-        log_B = np.log(B)
-        log_V = np.log(V)
-        log_D_L = np.log(D_L)
-
-        log_gamma_min = np.log(gamma_min)
-        log_gamma_c = np.log(gamma_c)
-        log_gamma_max = np.log(gamma_max)
-
-        # Dispatch to the optimized low-level implementation.
-        params_log = self._opt_from_physics_to_params(
+        result = _log_normalize_powerlaw_sbpl_sed_cool(
             log_B=log_B,
-            log_V=log_V,
+            log_R=log_R,
             log_D_L=log_D_L,
             log_gamma_min=log_gamma_min,
             log_gamma_c=log_gamma_c,
             log_gamma_max=log_gamma_max,
             p=p,
+            f_V=f_V,
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
@@ -4464,13 +3875,164 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             pitch_average=pitch_average,
         )
 
-        # Convert back to linear CGS units and return.
         return {
-            "F_norm": np.exp(params_log["F_norm"]) * u.erg / (u.cm**2 * u.s * u.Hz),
-            "nu_m": np.exp(params_log["nu_m"]) * u.Hz,
-            "nu_c": np.exp(params_log["nu_c"]) * u.Hz,
-            "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
-            "regime": params_log["regime"],
+            "F_norm": np.exp(result["log_F_norm"]),
+            "F_peak": np.exp(result["log_F_peak"]),
+            "nu_m": np.exp(result["log_nu_m"]),
+            "nu_c": np.exp(result["log_nu_c"]),
+            "nu_max": np.exp(result["log_nu_max"]),
+            "nu_peak": np.exp(result["log_nu_peak"]),
+            "regime": result["regime"],
+        }
+
+    def from_physics_to_params(
+        self,
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        gamma_min: float,
+        gamma_c: float,
+        gamma_max: float = np.inf,
+        p: float = 2.5,
+        f_V: float = 1.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Construct phenomenological cooling synchrotron SED parameters from physical inputs.
+
+        This is the public, unit-aware interface to the cooling synchrotron closure
+        relation without synchrotron self-absorption. It resolves cosmological
+        distance information, converts inputs to CGS, evaluates the low-level
+        closure, and returns unit-bearing phenomenological SED parameters.
+
+        Parameters
+        ----------
+        B : float, array-like, or ~astropy.units.Quantity
+            Magnetic field strength. Must be convertible to Gauss.
+        R : float, array-like, or ~astropy.units.Quantity
+            Characteristic source radius. Must be convertible to cm.
+        gamma_min : float
+            Minimum electron Lorentz factor :math:`\gamma_{\min}`.
+        gamma_c : float
+            Cooling Lorentz factor :math:`\gamma_c`.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor :math:`\gamma_{\max}`.
+        p : float, optional
+            Electron power-law index.
+        f_V : float, optional
+            Volume filling factor.
+        epsilon_E : float, optional
+            Fraction of post-shock internal energy carried by relativistic electrons.
+        epsilon_B : float, optional
+            Fraction of post-shock internal energy stored in magnetic fields.
+        alpha : float, optional
+            Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+        redshift : float, optional
+            Cosmological redshift of the source.
+        luminosity_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Luminosity distance to the source.
+        angular_diameter_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Angular diameter distance to the source.
+        proper_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Proper distance to the source.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to resolve missing distance/redshift information.
+        pitch_average : bool, optional
+            If ``True``, use pitch-angle averaged synchrotron emissivity.
+
+        Returns
+        -------
+        dict
+            Dictionary containing unit-bearing phenomenological parameters:
+
+            - ``F_norm``
+            - ``F_peak``
+            - ``nu_m``
+            - ``nu_c``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
+
+        Notes
+        -----
+        Cosmological inputs are resolved into a self-consistent luminosity distance
+        and redshift using :func:`resolve_cosmological_distances`.
+
+        Although an angular-diameter distance may be supplied to the cosmology
+        resolver, it is not used in this no-SSA cooling closure.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement.
+        # ------------------------------------------------------------------ #
+        B = ensure_in_units(B, "G")
+        R = ensure_in_units(R, "cm")
+        D_L = ensure_in_units(D_L, "cm")
+
+        # ------------------------------------------------------------------ #
+        # Convert to logarithmic CGS units.
+        # ------------------------------------------------------------------ #
+        log_B = np.log(B)
+        log_R = np.log(R)
+        log_D_L = np.log(D_L)
+        log_gamma_min = np.log(gamma_min)
+        log_gamma_c = np.log(gamma_c)
+        log_gamma_max = np.log(gamma_max)
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level closure.
+        # ------------------------------------------------------------------ #
+        params = self._opt_from_physics_to_params(
+            log_B=log_B,
+            log_R=log_R,
+            log_D_L=log_D_L,
+            log_gamma_min=log_gamma_min,
+            log_gamma_c=log_gamma_c,
+            log_gamma_max=log_gamma_max,
+            p=p,
+            f_V=f_V,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            pitch_average=pitch_average,
+        )
+
+        # ------------------------------------------------------------------ #
+        # Attach physical units.
+        # ------------------------------------------------------------------ #
+        return {
+            "F_norm": params["F_norm"] * u.erg / (u.s * u.cm**2 * u.Hz),
+            "F_peak": params["F_peak"] * u.erg / (u.s * u.cm**2 * u.Hz),
+            "nu_m": params["nu_m"] * u.Hz,
+            "nu_c": params["nu_c"] * u.Hz,
+            "nu_max": params["nu_max"] * u.Hz,
+            "nu_peak": params["nu_peak"] * u.Hz,
+            "regime": params["regime"],
         }
 
     def _opt_from_params_to_physics(
@@ -4552,14 +4114,6 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_D_L : array-like
             Natural logarithm of the luminosity distance (cm).
 
-        log_D_A : array-like, optional
-            Natural logarithm of the angular-diameter distance (cm).
-
-            This quantity is required for regimes where the spectral peak occurs
-            in the **optically thick SSA portion of the spectrum**, because those
-            inversions depend explicitly on the **angular size of the emitting
-            region**.
-
         gamma_min : float, optional
             Minimum Lorentz factor of the accelerated electron distribution.
 
@@ -4584,10 +4138,6 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         f_V : float, optional
             Volume filling factor of the emitting region.
-
-        f_A : float, optional
-            Area filling factor used in SSA inversions where the emitting surface
-            area must be specified.
 
         gamma_bulk : float, optional
             Bulk Lorentz factor of the emitting region.
@@ -4761,6 +4311,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         F_peak: "_UnitBearingScalarLike",
         nu_peak: "_UnitBearingScalarLike",
         gamma_min: float = 1.0,
+        gamma_c: float = np.inf,
         gamma_max: float = np.inf,
         p: float = 3.0,
         epsilon_E: float = 0.1,
@@ -4855,6 +4406,15 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             :math:`\gamma_{\min} \sim 10-10^3` may be more physically
             appropriate.
 
+        gamma_c: float, optional
+
+            Cooling Lorentz factor.
+
+            This parameter is required for regimes where radiative cooling explicitly shapes
+            the spectrum (e.g. fast cooling). For regimes where cooling does not affect the
+            spectral shape (e.g. no cooling), this parameter is ignored and can be set to any
+            large value (e.g. ``np.inf``).
+
         gamma_max : float, optional
             Maximum Lorentz factor of the accelerated electron distribution.
 
@@ -4903,26 +4463,6 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``f_V = 1`` corresponds to a uniformly filled sphere.
             - ``f_V < 1`` may represent emission from a thin shocked shell or
               fragmented ejecta.
-
-        f_A : float, optional
-            Effective **area filling factor** of the emitting region.
-
-            This parameter becomes relevant in regimes where the spectral peak
-            is produced by **synchrotron self-absorption (SSA)**. In such cases,
-            the inversion depends on the projected emitting area rather than
-            the full volume.
-
-            Physically, ``f_A`` represents the fraction of the projected
-            spherical surface that contributes to the optically thick emission.
-
-            For example:
-
-            - ``f_A = 1`` corresponds to a uniformly emitting spherical surface.
-            - ``f_A < 1`` may arise from patchy or filamentary emission regions.
-
-            In many simple models one may take ``f_A ≈ f_V``, but the two
-            parameters are conceptually distinct and correspond to **different
-            geometric aspects** of the emitting region.
 
         gamma_bulk : float, optional
             Bulk Lorentz factor of the emitting region.
@@ -5072,10 +4612,12 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
         # Dispatch to the low-level inverse closure.
         # ------------------------------------------------------------------ #
         results = self._opt_from_params_to_physics(
+            regime=regime,
             log_F_peak=log_F_peak,
             log_nu_peak=log_nu_peak,
             log_D_L=log_D_L,
             gamma_min=gamma_min,
+            gamma_c=gamma_c,
             gamma_max=gamma_max,
             p=p,
             epsilon_E=epsilon_E,
@@ -5278,60 +4820,81 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     # ============================================================ #
     def _compute_sed_regime(
         self,
+        log_F_norm: float,
         log_nu_m: float,
-        log_nu_a: float,
-        **_,
+        log_omega: float,
+        log_gamma_m: float,
+        p: float = 3.0,
     ):
         r"""
-        Determine the global SSA spectral regime for a non-cooling synchrotron spectrum.
+        Determine the SSA spectral regime and self-absorption frequency.
 
-        This low-level method classifies the synchrotron spectrum into one of two
-        **self-absorption regimes**, assuming:
+        This method identifies the **global synchrotron self-absorption regime**
+        for the non-cooling power-law synchrotron spectrum and computes the
+        corresponding self-absorption frequency :math:`\nu_a`.
 
-        - No radiative cooling,
-        - A single-zone, homogeneous emitting region,
-        - A power-law electron energy distribution.
+        Two candidate SSA frequencies are computed assuming the two possible
+        spectral orderings:
 
-        The classification depends solely on the ordering of the characteristic
-        frequencies:
+        - **Optically thin injection frequency**
+          (:math:`\nu_a < \nu_m < \nu_{\max}`)
+        - **Optically thick injection frequency**
+          (:math:`\nu_m < \nu_a < \nu_{\max}`)
 
-        - Injection frequency :math:`\nu_m`,
-        - Synchrotron self-absorption frequency :math:`\nu_a`.
+        The physically consistent regime is selected by enforcing the required
+        ordering between the candidate :math:`\nu_a` and the injection frequency
+        :math:`\nu_m`.
 
-        The supported regimes are:
-
-        - :math:`\nu_a < \nu_m` — optically thin at the injection frequency,
-        - :math:`\nu_a > \nu_m` — optically thick at the injection frequency.
+        All quantities are assumed to be in **natural logarithmic space**.
 
         Parameters
         ----------
+        log_F_norm : float
+            Natural logarithm of the optically thin normalization flux density.
+
         log_nu_m : float
-            Natural logarithm of the injection frequency :math:`\nu_m`.
-        log_nu_a : float
-            Natural logarithm of the synchrotron self-absorption frequency
-            :math:`\nu_a`.
-        **_ :
-            Additional unused keyword arguments, accepted for API compatibility with
-            multi-regime SED classes.
+            Natural logarithm of the injection frequency
+            :math:`\log \nu_m`.
+
+        log_omega : float
+            Natural logarithm of the emission solid angle
+            :math:`\log \Omega`.
+
+        log_gamma_m : float
+            Natural logarithm of the minimum electron Lorentz factor
+            :math:`\log \gamma_m`.
+
+        p : float, optional
+            Electron power-law index.
 
         Returns
         -------
-        regime : enum-like
-            Member of :attr:`SPECTRUM_FUNCTIONS` identifying the global SSA spectral
-            regime.
-        metadata : dict
-            Empty dictionary (present for API consistency).
+        tuple[str, float]
+            ``(regime, log_nu_a)`` where
+
+            - ``regime`` is the SSA spectral regime identifier
+            - ``log_nu_a`` is the natural logarithm of the
+              self-absorption frequency.
 
         Notes
         -----
         - This method performs **no unit validation**.
-        - Radiative cooling, stratified SSA, and high-energy cutoffs are not considered.
-        - The returned regime applies **globally** to the SED.
+        - The selected regime applies **globally** to the SED.
         """
-        if log_nu_a < log_nu_m:
-            return "optically_thin", {}
-        else:
-            return "optically_thick", {}
+        # Compute candidate SSA frequencies for each regime
+        log_nu_ssa = compute_ssa_frequencies_without_cooling(
+            log_F_norm,
+            log_omega,
+            log_nu_m,
+            p,
+            log_gamma_m,
+        )
+
+        # Select the physically consistent SSA regime
+        return select_ssa_sed_regime_from_candidates_without_cooling(
+            log_nu_ssa,
+            log_nu_m,
+        )
 
     def determine_sed_regime(
         self,
@@ -5391,114 +4954,18 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_omega = np.log(omega)
         log_gamma_m = np.log(gamma_m)
 
-        log_nu_a = self._compute_ssa_frequency_from_F_norm(
-            log_F_norm,
-            log_nu_m,
-            log_omega,
-            log_gamma_m,
-            p,
-        )
-
         regime, _ = self._compute_sed_regime(
+            log_F_norm=log_F_norm,
             log_nu_m=log_nu_m,
-            log_nu_a=log_nu_a,
+            log_omega=log_omega,
+            log_gamma_m=log_gamma_m,
+            p=p,
         )
         return regime
 
     # ============================================================ #
     # SSA frequency computation                                   #
     # ============================================================ #
-    def _compute_ssa_frequency_from_F_norm(
-        self,
-        log_F_norm: float,
-        log_nu_m: float,
-        log_omega: float,
-        log_gamma_m: float,
-        p: float,
-    ) -> float:
-        r"""
-        Compute the synchrotron self-absorption frequency from an anchored optically thin normalization.
-
-        This method infers the synchrotron self-absorption frequency :math:`\nu_a` for a
-        non-cooling synchrotron spectrum that is **normalized at the injection
-        frequency** :math:`\nu_m`, when the ordering of :math:`\nu_a` relative to
-        :math:`\nu_m` is not known a priori.
-
-        Two candidate solutions are evaluated:
-
-        1. **Optically thin at the injection frequency** (:math:`\nu_a < \nu_m`)
-
-           .. math::
-
-               \nu_a \propto
-               \left(
-                   \frac{F_\nu(\nu_m)}
-                        {m_e c^2 \, \Omega \, \gamma_m}
-               \right)^{6/13}
-               \nu_m^{1/13}
-
-        2. **Optically thick at the injection frequency** (:math:`\nu_a > \nu_m`)
-
-           .. math::
-
-               \nu_a \propto
-               \left(
-                   \frac{F_\nu(\nu_m)}
-                        {m_e c^2 \, \Omega \, \gamma_m}
-               \right)^{2/(p+4)}
-               \nu_m^{p/(p+4)}
-
-        The physically valid solution is selected by enforcing **self-consistent
-        frequency ordering**.
-
-        All calculations are performed in **natural logarithmic CGS units**.
-
-        Parameters
-        ----------
-        log_F_norm : float
-            Natural logarithm of the flux normalization anchored at
-            :math:`\nu_m`, i.e. :math:`\log F_\nu(\nu_m)`.
-        log_nu_m : float
-            Natural logarithm of the injection frequency :math:`\nu_m`.
-        log_omega : float
-            Natural logarithm of the effective emission solid angle
-            :math:`\Omega = A / D^2`.
-        log_gamma_m : float
-            Natural logarithm of the minimum electron Lorentz factor
-            :math:`\gamma_m`.
-        p : float
-            Power-law index of the injected electron energy distribution.
-
-        Returns
-        -------
-        log_nu_a : float
-            Natural logarithm of the synchrotron self-absorption frequency
-            :math:`\nu_a`.
-
-        Raises
-        ------
-        RuntimeError
-            If neither candidate solution satisfies the required frequency ordering.
-
-        Notes
-        -----
-        - This method applies only to **non-cooling synchrotron spectra**.
-        - The returned solution is guaranteed to be **self-consistent** with the
-          assumed spectral ordering.
-        - No unit validation is performed.
-        """
-        log_Q = log_F_norm - np.log(2) - np.log(electron_rest_mass_cgs) - log_omega - log_gamma_m
-
-        # Candidate: optically thin at the peak (nu_a < nu_m)
-        log_nu_a_thin = (6 * log_Q / 13) + (log_nu_m / 13)
-        log_nu_a_thick = (2 * log_Q / (p + 4)) + (p * log_nu_m / (p + 4))
-
-        if log_nu_a_thin < log_nu_m:
-            return log_nu_a_thin
-        elif log_nu_a_thick > log_nu_m:
-            return log_nu_a_thick
-        else:
-            raise RuntimeError("Could not determine a self-consistent SSA frequency from the supplied normalization.")
 
     # ============================================================ #
     # Regime-specific kernel                                      #
@@ -5643,18 +5110,12 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         - No unit validation is performed.
         """
         # Compute the self-absorption frequency
-        log_nu_a = self._compute_ssa_frequency_from_F_norm(
-            log_F_norm,
-            log_nu_m,
-            log_omega,
-            log_gamma_m,
-            p,
-        )
-
-        # Determine the global SSA regime
-        regime, _ = self._compute_sed_regime(
+        regime, log_nu_a = self._compute_sed_regime(
+            log_F_norm=log_F_norm,
             log_nu_m=log_nu_m,
-            log_nu_a=log_nu_a,
+            log_omega=log_omega,
+            log_gamma_m=log_gamma_m,
+            p=p,
         )
 
         # Dispatch to the regime-specific SED kernel
@@ -5762,12 +5223,14 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
     def _opt_from_physics_to_params(
         self,
         log_B: float,
-        log_V: float,
+        log_R: float,
         log_D_L: float,
-        log_Omega: float,
+        log_D_A: float,
         log_gamma_min: float,
         log_gamma_max: float = np.inf,
         p: float = 2.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
         epsilon_E: float = 0.1,
         epsilon_B: float = 0.1,
         alpha: float = 1.0,
@@ -5779,260 +5242,70 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         Compute phenomenological SSA synchrotron parameters from physical inputs.
 
         This low-level method converts physical parameters describing a homogeneous,
-        single-zone synchrotron source into a **self-consistent set of phenomenological
-        SED parameters** for a power-law electron population with synchrotron
-        self-absorption and **no radiative cooling**.
+        single-zone synchrotron source into a self-consistent set of
+        phenomenological SED parameters for a power-law electron population with
+        synchrotron self-absorption and no radiative cooling.
 
-        All calculations are performed in **natural logarithmic CGS units** for
-        numerical stability. This method is intended for internal use only.
-
-        The electron population is assumed to follow
-
-        .. math::
-
-            \frac{dN}{d\gamma} \propto \gamma^{-p},
-            \qquad \gamma \ge \gamma_m,
-
-        and is normalized using an equipartition prescription with energy fractions
-        :math:`\epsilon_E` and :math:`\epsilon_B`.
+        All calculations are performed internally in natural logarithmic CGS units,
+        but the returned values are converted back to linear CGS values (without
+        attaching units).
 
         Parameters
         ----------
         log_B : float
-            Natural logarithm of the magnetic field strength (Gauss).
-        log_V : float
-            Natural logarithm of the effective emitting volume (cm³).
+            Natural logarithm of the magnetic field strength.
+        log_R : float
+            Natural logarithm of the source radius.
         log_D_L : float
-            Natural logarithm of the luminosity distance (cm).
-        log_Omega : float
-            Natural logarithm of the effective emission solid angle
-            :math:`\Omega = A / D^2`.
+            Natural logarithm of the luminosity distance.
+        log_D_A : float
+            Natural logarithm of the angular-diameter distance.
         log_gamma_min : float
-            Natural logarithm of the minimum electron Lorentz factor
-            :math:`\gamma_m`.
+            Natural logarithm of the minimum electron Lorentz factor.
         log_gamma_max : float, optional
             Natural logarithm of the maximum electron Lorentz factor.
         p : float, optional
             Power-law index of the electron energy distribution.
+        f_V : float, optional
+            Volume filling factor.
+        f_A : float, optional
+            Area filling factor.
         epsilon_E : float, optional
             Fraction of post-shock internal energy carried by relativistic electrons.
         epsilon_B : float, optional
-            Fraction of post-shock internal energy carried by magnetic fields.
-        alpha : float, optional
-            Electron pitch angle in radians (ignored if ``pitch_average=True``).
-        pitch_average : bool, optional
-            If ``True``, use pitch-angle averaged synchrotron emissivity.
-
-        Returns
-        -------
-        params : dict
-            Dictionary containing logarithmic phenomenological parameters:
-
-            - ``F_peak`` : :math:`\log F_{\nu,\mathrm{pk}}`
-            - ``nu_m`` : :math:`\log \nu_m`
-            - ``nu_a`` : :math:`\log \nu_a`
-            - ``nu_max`` : :math:`\log \nu_{\max}`
-            - ``regime`` : Enum identifying the global SSA spectral regime
-
-        Notes
-        -----
-        - Radiative cooling is **not included**.
-        - The SSA frequency is computed self-consistently from the normalization.
-        - The returned regime applies **globally** to the spectrum.
-        """
-        # Handle pitch angle details and the relevant values of
-        # the log_chi parameter in each case. This allows us to
-        # permit both a fixed pitch angle and pitch-angle averaging.
-        sin_alpha = np.sin(alpha)
-        log_sin_alpha = np.log(sin_alpha) if not pitch_average else 0.0
-        log_chi = _log_chi_cgs_iso if pitch_average else _log_chi_cgs
-
-        # Compute the Doppler factors and redshift corrections for the
-        # fluxes and the frequencies.
-        beta_bulk = np.sqrt(1 - gamma_bulk**-2)
-        delta_bulk = gamma_bulk * (1 + beta_bulk)
-        log_delta_bulk = np.log(delta_bulk)
-        log_nu_correction = log_delta_bulk - np.log1p(redshift)
-        log_flux_correction = 3 * log_delta_bulk - np.log1p(redshift)
-
-        # --- Compute the Frequencies --- #
-        # We need to use the electron Lorentz factors to compute
-        # the relevant synchrotron frequencies. This should be done for
-        # gamma_c, gamma_min, and gamma_max.
-        log_nu_m = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_min,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-        log_nu_max = (
-            _opt_compute_log_synch_frequency(
-                log_gamma_max,
-                log_B,
-                sin_alpha=sin_alpha,
-                pitch_average=pitch_average,
-            )
-            + log_nu_correction
-        )
-
-        # Compute the normalization flux at nu_m.
-        log_electron_norm = _opt_normalize_PL_from_magnetic_field(
-            log_B,
-            p,
-            gamma_min=np.exp(log_gamma_min),
-            gamma_max=np.exp(log_gamma_max),
-            epsilon_E=epsilon_E,
-            epsilon_B=epsilon_B,
-        )
-
-        log_F_norm = (
-            log_chi
-            + log_B
-            + log_sin_alpha  # Zero if pitch averaged
-            + log_electron_norm
-            + (1 - p) * log_gamma_min
-            + log_V
-            - 2 * log_D_L
-            + log_flux_correction
-        )
-
-        # Compute nu_ssa
-        log_nu_a = self._compute_ssa_frequency_from_F_norm(
-            log_F_norm,
-            log_nu_m,
-            log_Omega,
-            log_gamma_min,
-            p,
-        )
-        regime, _ = self._compute_sed_regime(
-            log_nu_m,
-            log_nu_a,
-        )
-
-        # --- LOG AND RETURN --- #
-        if triceratops_logger.isEnabledFor(logging.DEBUG):
-            triceratops_logger.debug(
-                "PowerLaw_Cooling_SSA_SynchrotronSED: completed normalization.",
-                extra={
-                    "log_gamma_min": log_gamma_min,
-                    "log_gamma_max": log_gamma_max,
-                    "log_nu_m": log_nu_m,
-                    "log_nu_max": log_nu_max,
-                    "log_nu_a": log_nu_a,
-                    "regime": regime,
-                    "log_electron_norm": log_electron_norm,
-                },
-            )
-        return {
-            "F_norm": log_F_norm,
-            "nu_m": log_nu_m,
-            "nu_a": log_nu_a,
-            "nu_max": log_nu_max,
-            "regime": regime,
-        }
-
-    def from_physics_to_params(
-        self,
-        B: "_UnitBearingScalarLike",
-        V: "_UnitBearingScalarLike",
-        D_L: "_UnitBearingScalarLike",
-        Omega: float,
-        gamma_min: float,
-        gamma_max: float = np.inf,
-        p: float = 2.5,
-        epsilon_E: float = 0.1,
-        epsilon_B: float = 0.1,
-        alpha: float = 1.0,
-        gamma_bulk: float = 1.0,
-        redshift: float = 0.0,
-        pitch_average: bool = False,
-    ):
-        r"""
-        Determine SSA synchrotron SED parameters from physical inputs.
-
-        This method computes the phenomenological parameters required to evaluate
-        a **synchrotron spectral energy distribution with self-absorption and no
-        radiative cooling** from a set of physical inputs describing the emitting
-        region.
-
-        The normalization follows an equipartition-based prescription, assuming
-        fixed fractions of the post-shock internal energy reside in relativistic
-        electrons (:math:`\epsilon_E`) and magnetic fields (:math:`\epsilon_B`).
-
-        Parameters
-        ----------
-        B : ~astropy.units.Quantity or float
-            Magnetic field strength. Must be convertible to Gauss.
-        V : ~astropy.units.Quantity or float
-            Effective emitting volume. Must be convertible to ``cm^3``.
-        D_L : ~astropy.units.Quantity or float
-            Luminosity distance to the source. Must be convertible to ``cm``.
-        Omega : float
-            Effective emission solid angle :math:`\Omega = A / D^2`.
-        gamma_min : float
-            Minimum electron Lorentz factor :math:`\gamma_m`.
-        gamma_max : float, optional
-            Maximum electron Lorentz factor.
-        p : float, optional
-            Power-law index of the injected electron energy distribution.
-        epsilon_E : float, optional
-            Fraction of post-shock internal energy in relativistic electrons.
-        epsilon_B : float, optional
-            Fraction of post-shock internal energy in magnetic fields.
-        gamma_bulk: float, optional
-            Bulk Lorentz factor of the emitting region.
-        redshift: float, optional
-            Cosmological redshift of the source.
+            Fraction of post-shock internal energy stored in magnetic fields.
         alpha : float, optional
             Electron pitch angle in radians.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+        redshift : float, optional
+            Source redshift.
         pitch_average : bool, optional
             If ``True``, use pitch-angle averaged synchrotron emissivity.
 
         Returns
         -------
-        params : dict
-            Dictionary containing the phenomenological SED parameters:
+        dict
+            Dictionary containing linear CGS phenomenological parameters:
 
-            - ``F_peak`` : Peak flux density (:math:`F_{\nu,\mathrm{pk}}`)
-            - ``nu_m`` : Injection frequency :math:`\nu_m`
-            - ``nu_a`` : Self-absorption frequency :math:`\nu_a`
-            - ``nu_max`` : Maximum synchrotron frequency :math:`\nu_{\max}`
-            - ``regime`` : Enum identifying the SSA spectral regime
-
-        Notes
-        -----
-        - This method assumes a **single-zone, homogeneous emitting region**.
-        - Radiative cooling is **not included**.
-        - The returned parameters are guaranteed to be internally self-consistent.
-
+            - ``F_norm``
+            - ``F_peak``
+            - ``nu_m``
+            - ``nu_a``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
         """
-        # Coerce things down to unit carrying values.
-        B = ensure_in_units(B, "G")
-        V = ensure_in_units(V, "cm^3")
-        D_L = ensure_in_units(D_L, "cm")
-
-        # Get everything in log-space. The low-level implementation is
-        # done natively in log-space for stability.
-        log_B = np.log(B)
-        log_V = np.log(V)
-        log_D_L = np.log(D_L)
-        log_Omega = np.log(Omega)
-
-        log_gamma_min = np.log(gamma_min)
-        log_gamma_max = np.log(gamma_max)
-
-        # Dispatch to the optimized low-level implementation.
-        params_log = self._opt_from_physics_to_params(
+        log_results = _log_normalize_powerlaw_sbpl_sed_ssa(
             log_B=log_B,
-            log_V=log_V,
+            log_R=log_R,
             log_D_L=log_D_L,
-            log_Omega=log_Omega,
+            log_D_A=log_D_A,
             log_gamma_min=log_gamma_min,
             log_gamma_max=log_gamma_max,
             p=p,
+            f_V=f_V,
+            f_A=f_A,
             epsilon_E=epsilon_E,
             epsilon_B=epsilon_B,
             alpha=alpha,
@@ -6041,13 +5314,173 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             pitch_average=pitch_average,
         )
 
-        # Convert back to linear CGS units and return.
         return {
-            "F_norm": np.exp(params_log["F_norm"]) * u.erg / (u.cm**2 * u.s * u.Hz),
-            "nu_m": np.exp(params_log["nu_m"]) * u.Hz,
-            "nu_a": np.exp(params_log["nu_a"]) * u.Hz,
-            "nu_max": np.exp(params_log["nu_max"]) * u.Hz,
-            "regime": params_log["regime"],
+            "F_norm": np.exp(log_results["log_F_norm"]),
+            "F_peak": np.exp(log_results["log_F_peak"]),
+            "nu_m": np.exp(log_results["log_nu_m"]),
+            "nu_a": np.exp(log_results["log_nu_a"]),
+            "nu_max": np.exp(log_results["log_nu_max"]),
+            "nu_peak": np.exp(log_results["log_nu_peak"]),
+            "regime": log_results["regime"],
+        }
+
+    def from_physics_to_params(
+        self,
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        gamma_min: float,
+        gamma_max: float = np.inf,
+        p: float = 2.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        epsilon_E: float = 0.1,
+        epsilon_B: float = 0.1,
+        alpha: float = 1.0,
+        gamma_bulk: float = 1.0,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+        pitch_average: bool = False,
+    ):
+        r"""
+        Construct phenomenological SSA synchrotron SED parameters from physical inputs.
+
+        This is the public, unit-aware interface to the non-cooling SSA closure
+        relation. Cosmological distance information is resolved, inputs are
+        converted to CGS units, and the resulting phenomenological parameters are
+        returned with units attached.
+
+        Parameters
+        ----------
+        B : float, array-like, or ~astropy.units.Quantity
+            Magnetic field strength. Must be convertible to Gauss.
+        R : float, array-like, or ~astropy.units.Quantity
+            Characteristic source radius. Must be convertible to cm.
+        gamma_min : float
+            Minimum electron Lorentz factor :math:`\gamma_{\min}`.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor :math:`\gamma_{\max}`.
+        p : float, optional
+            Electron power-law index.
+        f_V : float, optional
+            Volume filling factor.
+        f_A : float, optional
+            Area filling factor entering the effective solid angle.
+        epsilon_E : float, optional
+            Fraction of post-shock internal energy carried by relativistic electrons.
+        epsilon_B : float, optional
+            Fraction of post-shock internal energy stored in magnetic fields.
+        alpha : float, optional
+            Electron pitch angle in radians. Ignored if ``pitch_average=True``.
+        gamma_bulk : float, optional
+            Bulk Lorentz factor of the emitting region.
+        redshift : float, optional
+            Cosmological redshift of the source.
+        luminosity_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Luminosity distance to the source.
+        angular_diameter_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Angular-diameter distance to the source.
+        proper_distance : float, array-like, or ~astropy.units.Quantity, optional
+            Proper distance to the source.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to resolve missing distance information.
+        pitch_average : bool, optional
+            If ``True``, use pitch-angle averaged synchrotron emissivity.
+
+        Returns
+        -------
+        dict
+            Dictionary containing unit-bearing phenomenological parameters:
+
+            - ``F_norm``
+            - ``F_peak``
+            - ``nu_m``
+            - ``nu_a``
+            - ``nu_max``
+            - ``nu_peak``
+            - ``regime``
+
+        Notes
+        -----
+        Cosmological inputs are resolved using
+        :func:`resolve_cosmological_distances`. If an angular-diameter distance is
+        not explicitly supplied, it is computed from the resolved luminosity
+        distance and redshift via
+
+        .. math::
+
+            D_A = \frac{D_L}{(1+z)^2}.
+
+        This method assumes a homogeneous single-zone source and does not include
+        radiative cooling.
+        """
+        # ------------------------------------------------------------------ #
+        # Resolve cosmological information.
+        # ------------------------------------------------------------------ #
+        cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=cosmology,
+        )
+        D_L = distances["luminosity_distance"]
+        D_A = distances["angular_diameter_distance"]
+        redshift = distances["redshift"]
+
+        # ------------------------------------------------------------------ #
+        # Unit enforcement.
+        # ------------------------------------------------------------------ #
+        B = ensure_in_units(B, "G")
+        R = ensure_in_units(R, "cm")
+        D_L = ensure_in_units(D_L, "cm")
+        D_A = ensure_in_units(D_A, "cm")
+
+        # ------------------------------------------------------------------ #
+        # Convert to logarithmic CGS values.
+        # ------------------------------------------------------------------ #
+        log_B = np.log(B)
+        log_R = np.log(R)
+        log_D_L = np.log(D_L)
+        log_D_A = np.log(D_A)
+        log_gamma_min = np.log(gamma_min)
+        log_gamma_max = np.log(gamma_max)
+
+        # ------------------------------------------------------------------ #
+        # Dispatch to the low-level closure.
+        # ------------------------------------------------------------------ #
+        params = self._opt_from_physics_to_params(
+            log_B=log_B,
+            log_R=log_R,
+            log_D_L=log_D_L,
+            log_D_A=log_D_A,
+            log_gamma_min=log_gamma_min,
+            log_gamma_max=log_gamma_max,
+            p=p,
+            f_V=f_V,
+            f_A=f_A,
+            epsilon_E=epsilon_E,
+            epsilon_B=epsilon_B,
+            alpha=alpha,
+            gamma_bulk=gamma_bulk,
+            redshift=redshift,
+            pitch_average=pitch_average,
+        )
+
+        # ------------------------------------------------------------------ #
+        # Attach units and return.
+        # ------------------------------------------------------------------ #
+        return {
+            "F_norm": params["F_norm"] * u.erg / (u.cm**2 * u.s * u.Hz),
+            "F_peak": params["F_peak"] * u.erg / (u.cm**2 * u.s * u.Hz),
+            "nu_m": params["nu_m"] * u.Hz,
+            "nu_a": params["nu_a"] * u.Hz,
+            "nu_max": params["nu_max"] * u.Hz,
+            "nu_peak": params["nu_peak"] * u.Hz,
+            "regime": params["regime"],
         }
 
     def _opt_from_params_to_physics(
@@ -6140,12 +5573,6 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         gamma_min : float, optional
             Minimum Lorentz factor of the accelerated electron distribution.
-
-        gamma_c : float, optional
-            Cooling Lorentz factor.
-
-            Must be finite for regimes where cooling explicitly shapes the
-            spectrum.
 
         gamma_max : float, optional
             Maximum electron Lorentz factor.
@@ -6296,6 +5723,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 epsilon_e=epsilon_E,
                 epsilon_B=epsilon_B,
                 f_V=f_V,
+                f_A=f_A,
                 sin_alpha=sin_alpha,
             )
         elif regime == "optically_thin":  # nu_m < nu_a < nu_max < nu_c.
@@ -6642,6 +6070,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         # Dispatch to the low-level inverse closure.
         # ------------------------------------------------------------------ #
         results = self._opt_from_params_to_physics(
+            regime=regime,
             log_F_peak=log_F_peak,
             log_nu_peak=log_nu_peak,
             log_D_L=log_D_L,

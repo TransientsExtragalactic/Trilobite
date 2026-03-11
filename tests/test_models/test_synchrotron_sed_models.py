@@ -1,6 +1,6 @@
 import numpy as np
+from test_model_base import BaseModelTest
 
-from tests.test_models.test_model_base import BaseModelTest
 from triceratops.models import (
     Cooling_SynchrotronSEDModel,
     SSA_Cooling_SynchrotronSEDModel,

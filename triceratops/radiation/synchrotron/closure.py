@@ -215,7 +215,7 @@ def _compute_ssa_BR_from_spectrum_dm22(
         + np.log(c_5)
         + ((1 / 2) * (-5 - 2 * p) * _log_sin_theta)
     )
-    _log_B_denom = 2 * _log_p_norm + 2 * _log_distance + (2 * (_log_F_nu_brk - np.log(0.5))) + (3 * np.log(c_6))
+    _log_B_denom = 2 * _log_p_norm + 2 * _log_distance + (_log_F_nu_brk - np.log(0.5)) + (3 * np.log(c_6))
     _log_B = _log_B_coeff + (2 / (13 + 2 * p)) * (_log_B_num - _log_B_denom)
 
     # Compute the radius following equation (17) of DeMarchi+22. We break this into parts as well on the same

@@ -4246,8 +4246,10 @@ various cases.
 
         .. math::
 
-            \nu_a = \left(\frac{F_0}{2 m_e \Omega \gamma_m}\right)^{4/(10+p)}
-                     \nu_m^{2p/(10+p)} \nu_c^{1/(10+p)}.
+            \nu_a =
+            \left(\frac{F_0}{2 m_e \Omega \gamma_m}\right)^{\frac{2}{p+5}}
+            \nu_m^{\frac{p}{p+5}}
+            \nu_c^{\frac{1}{p+5}}.
 
         .. rubric:: Inversion
 

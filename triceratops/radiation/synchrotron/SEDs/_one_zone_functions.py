@@ -853,7 +853,78 @@ def _log_powerlaw_sbpl_sed_ssa_cool_7(
     s: float,
 ):
     r"""
-    Synchrotron SED with SSA in the **fast-cooling** regime, assuming the ordering :math:`\nu < \nu_m < \nu_a`.
+    Synchrotron SED with SSA in the **slow-cooling** regime, assuming the ordering :math:`\nu < \nu_m < \nu_a`.
+
+    In this case, both the cooling break and any stratified absorption structure
+    are hidden beneath the synchrotron self-absorption photosphere. The observed
+    spectrum transitions directly from optically thick emission to optically thin
+    fast-cooled synchrotron radiation.
+
+    The resulting spectral segments are:
+
+    - :math:`F_\nu \propto \nu^2` for :math:`\nu < \nu_m`,
+    - :math:`F_\nu \propto \nu^{5/2}` for :math:`\nu_m < \nu < \nu_a`,
+    - :math:`F_\nu \propto \nu^{-p/2}` for :math:`\nu > \nu_a`.
+
+    The spectrum is **anchored at the injection frequency** :math:`\nu_m`, since
+    all cooling-related breaks occur at higher frequencies and do not affect the
+    low-frequency emission. The SSA break at :math:`\nu_a` directly connects the
+    optically thick synchrotron emission to the fast-cooled optically thin regime.
+
+    Parameters
+    ----------
+    log_nu : array-like
+        Logarithm of the frequencies at which to evaluate the SED.
+    log_nu_m : float
+        Logarithm of the injection frequency :math:`\nu_m`.
+    log_nu_a : float
+        Logarithm of the synchrotron self-absorption frequency :math:`\nu_a`.
+    log_nu_max : float
+        Logarithm of the maximum synchrotron frequency.
+    p : float
+        Electron energy distribution index.
+    s : float
+        Smoothness parameter for SFBPL transitions.
+
+    Returns
+    -------
+    array-like
+        Logarithm of the synchrotron SED.
+
+    Notes
+    -----
+    - This regime corresponds to extreme self-absorption in a fast-cooling system.
+    - No explicit cooling break appears in the observable spectrum.
+    """
+    # Determine the nu/nu_a and nu/nu_m ratios
+    x_a, x_m, x_max = log_nu - log_nu_a, log_nu - log_nu_m, log_nu - log_nu_max
+
+    # We anchor at the injection break because the cooling break (if present) is not visible behind the
+    # absorption photosphere at the shock. We therefore start with the SPL B -> SPL A transition (2 to 5/2).
+    log_sed = 2 * x_m + (5 / 2) * (log_nu_m - log_nu_a)
+
+    # Now add the SSA break at nu_a which correspond to the transition from optically
+    # thick SSA (A) to optically thin cooled (H) (5/2 to -p/2).
+    log_sed += log_smoothed_SFBPL(x_a, 5 / 2, -p / 2, s)
+
+    # Now we need to add in the injection break at nu_m.
+    log_sed += log_smoothed_SFBPL(x_m, 2, 5 / 2, -s)
+
+    # Truncate
+    log_sed += log_exp_cutoff_sed(x_max)
+    return log_sed
+
+
+def _log_powerlaw_sbpl_sed_ssa_cool_8(
+    log_nu: "_ArrayLike",
+    log_nu_m: float,
+    log_nu_a: float,
+    log_nu_max: float,
+    p: float,
+    s: float,
+):
+    r"""
+    Synchrotron SED with SSA in the **fast-cooling** regime, assuming the ordering :math:`\nu_c < \nu_m < \nu_a`.
 
     In this case, both the cooling break and any stratified absorption structure
     are hidden beneath the synchrotron self-absorption photosphere. The observed
@@ -923,5 +994,6 @@ SSA_COOLING_SED_FUNCTION_REGISTRY = {
     "Spectrum5": _log_powerlaw_sbpl_sed_ssa_cool_5,
     "Spectrum6": _log_powerlaw_sbpl_sed_ssa_cool_6,
     "Spectrum7": _log_powerlaw_sbpl_sed_ssa_cool_7,
+    "Spectrum8": _log_powerlaw_sbpl_sed_ssa_cool_8,
 }
 """dict: Registry mapping SSA cooling regimes to their corresponding SED functions."""
