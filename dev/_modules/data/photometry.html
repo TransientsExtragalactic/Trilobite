@@ -958,6 +958,7 @@
         <span class="n">observables</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="o">...</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">infer_errors</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">detection_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">mask</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;InferenceData&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Convert this :class:`RadioPhotometryContainer` into an :class:`~triceratops.data.core.InferenceData` object.</span>
@@ -1063,6 +1064,11 @@
 <span class="sd">                \sigma = \frac{F_{\rm upper}}{\text{detection_threshold}}.</span>
 
 <span class="sd">            This parameter has no effect unless ``infer_errors=True``.</span>
+<span class="sd">        mask: np.ndarray, optional</span>
+<span class="sd">            Optional boolean mask to apply to the data before conversion. Only rows where</span>
+<span class="sd">            the mask is True will be included in the resulting InferenceData. This allows</span>
+<span class="sd">            users to easily subset the data (e.g. by epoch, frequency, or detection status</span>
+<span class="sd">            before conversion.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1160,6 +1166,11 @@
         <span class="c1"># ------------------------------------------------------------</span>
         <span class="c1"># Construct inference data</span>
         <span class="c1"># ------------------------------------------------------------</span>
+        <span class="k">if</span> <span class="n">mask</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">table</span><span class="p">),):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Mask must have the same length as the number of observations.&quot;</span><span class="p">)</span>
+            <span class="n">table</span> <span class="o">=</span> <span class="n">table</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
         <span class="k">return</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
             <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
             <span class="n">table</span><span class="o">=</span><span class="n">table</span><span class="p">,</span>
@@ -1418,7 +1429,13 @@
 <span class="sd">            The constructed RadioPhotometryContainer instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="o">.</span><span class="n">read</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">column_map</span><span class="o">=</span><span class="n">column_map</span><span class="p">,</span> <span class="n">time_starts</span><span class="o">=</span><span class="n">time_starts</span><span class="p">)</span></div>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+            <span class="n">table</span><span class="p">,</span>
+            <span class="n">column_map</span><span class="o">=</span><span class="n">column_map</span><span class="p">,</span>
+            <span class="n">time_starts</span><span class="o">=</span><span class="n">time_starts</span><span class="p">,</span>
+            <span class="n">internal_time_format</span><span class="o">=</span><span class="n">internal_time_format</span><span class="p">,</span>
+            <span class="n">internal_time_scale</span><span class="o">=</span><span class="n">internal_time_scale</span><span class="p">,</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="RadioPhotometryContainer.to_file">

@@ -484,7 +484,7 @@
 <span class="sd">For purely phenomenological evolving SEDs without</span>
 <span class="sd">microphysical closure, see:</span>
 
-<span class="sd">:mod:`~models.generic.SEDs.evolving_sed.PL_Evolving_SSA_SED_Model`</span>
+<span class="sd">:class:`~models.generic.evolving_seds.evolving_sbpl.PL_Evolving_SBPL_Model`</span>
 
 <span class="sd">For theoretical background and implementation details, see:</span>
 
@@ -497,18 +497,22 @@
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ModelParametersInputRaw</span><span class="p">,</span> <span class="n">_ModelVariablesInputRaw</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.SEDs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span><span class="p">,</span>
     <span class="n">PowerLaw_Cooling_SynchrotronSED</span><span class="p">,</span>
     <span class="n">PowerLaw_SSA_SynchrotronSED</span><span class="p">,</span>
     <span class="n">PowerLaw_SynchrotronSED</span><span class="p">,</span>
-    <span class="n">smoothed_BPL</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.SEDs._one_zone_functions</span><span class="w"> </span><span class="kn">import</span> <span class="n">smoothed_BPL</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">.._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ModelParametersInputRaw</span><span class="p">,</span> <span class="n">_ModelVariablesInputRaw</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">..core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span><span class="p">,</span> <span class="n">ModelParameter</span><span class="p">,</span> <span class="n">ModelVariable</span>
-
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">&quot;SSA_Cooling_SynchrotronSEDModel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SSA_SynchrotronSEDModel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;Cooling_SynchrotronSEDModel&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;SynchrotronSEDModel&quot;</span><span class="p">,</span>
+<span class="p">]</span>
 
 <span class="c1"># ------------------------------------------------- #</span>
 <span class="c1"># Define the Output object                          #</span>
@@ -582,15 +586,21 @@
 <span class="sd">           * - ``log_B``</span>
 <span class="sd">             - :math:`\log B`</span>
 <span class="sd">             - Log magnetic field strength (cgs).</span>
-<span class="sd">           * - ``log_V_eff``</span>
-<span class="sd">             - :math:`\log V_{\rm eff}`</span>
-<span class="sd">             - Log effective emitting volume.</span>
-<span class="sd">           * - ``log_Omega``</span>
-<span class="sd">             - :math:`\log \Omega`</span>
-<span class="sd">             - Log solid angle of emitting region.</span>
+<span class="sd">           * - ``log_R``</span>
+<span class="sd">             - :math:`\log R_{\rm eff}`</span>
+<span class="sd">             - Log effective emitting radius (cm).</span>
+<span class="sd">           * - ``f_V``</span>
+<span class="sd">             - :math:`f_V`</span>
+<span class="sd">             - Volume filling factor of the emitting region.</span>
+<span class="sd">           * - ``f_A``</span>
+<span class="sd">             - :math:`f_A`</span>
+<span class="sd">             - Area filling factor of the emitting region.</span>
 <span class="sd">           * - ``log_D_L``</span>
 <span class="sd">             - :math:`\log D_L`</span>
 <span class="sd">             - Log luminosity distance (cgs).</span>
+<span class="sd">           * - ``log_D_A``</span>
+<span class="sd">             - :math:`\log D_A`</span>
+<span class="sd">             - Log angular diameter distance (cgs).</span>
 <span class="sd">           * - ``redshift``</span>
 <span class="sd">             - :math:`z`</span>
 <span class="sd">             - Cosmological redshift.</span>
@@ -668,9 +678,11 @@
 <span class="sd">            &quot;gamma_bulk&quot;: 2.0,</span>
 <span class="sd">            &quot;alpha&quot;: np.pi / 2,</span>
 <span class="sd">            &quot;log_B&quot;: np.log(1.0),</span>
-<span class="sd">            &quot;log_V_eff&quot;: np.log(1e55),</span>
-<span class="sd">            &quot;log_Omega&quot;: np.log(1e-10),</span>
+<span class="sd">            &quot;log_R&quot;: np.log(1e16),</span>
+<span class="sd">            &quot;f_V&quot;: 1.0,</span>
+<span class="sd">            &quot;f_A&quot;: 1.0,</span>
 <span class="sd">            &quot;log_D_L&quot;: np.log(1e27),</span>
+<span class="sd">            &quot;log_D_A&quot;: np.log(1e27),</span>
 <span class="sd">            &quot;redshift&quot;: 0.01,</span>
 <span class="sd">        }</span>
 
@@ -681,9 +693,9 @@
 <span class="sd">        # Compute break frequencies</span>
 <span class="sd">        norm = model._sed._opt_from_physics_to_params(</span>
 <span class="sd">            log_B=parameters[&quot;log_B&quot;],</span>
-<span class="sd">            log_V=parameters[&quot;log_V_eff&quot;],</span>
+<span class="sd">            log_R=parameters[&quot;log_R&quot;],</span>
 <span class="sd">            log_D_L=parameters[&quot;log_D_L&quot;],</span>
-<span class="sd">            log_Omega=parameters[&quot;log_Omega&quot;],</span>
+<span class="sd">            log_D_A=parameters[&quot;log_D_A&quot;],</span>
 <span class="sd">            log_gamma_min=parameters[&quot;log_gamma_min&quot;],</span>
 <span class="sd">            log_gamma_c=parameters[&quot;log_gamma_c&quot;],</span>
 <span class="sd">            log_gamma_max=parameters[&quot;log_gamma_max&quot;],</span>
@@ -693,6 +705,8 @@
 <span class="sd">            alpha=parameters[&quot;alpha&quot;],</span>
 <span class="sd">            gamma_bulk=parameters[&quot;gamma_bulk&quot;],</span>
 <span class="sd">            redshift=parameters[&quot;redshift&quot;],</span>
+<span class="sd">            f_V=parameters[&quot;f_V&quot;],</span>
+<span class="sd">            f_A=parameters[&quot;f_A&quot;],</span>
 <span class="sd">            pitch_average=True,</span>
 <span class="sd">        )</span>
 
@@ -820,12 +834,12 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_Omega&quot;</span><span class="p">,</span>
-            <span class="o">-</span><span class="mi">5</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the solid angle subtended by the emitting region (steradians).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_D_A&quot;</span><span class="p">,</span>
+            <span class="mf">27.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the angular diameter distance to the source (cgs).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log \Omega&quot;</span><span class="p">,</span>
-            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log_D_A&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="c1"># Core Parameters.</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
@@ -837,12 +851,28 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_V_eff&quot;</span><span class="p">,</span>
-            <span class="mf">57.0</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective volume of the emitting region (cgs).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e16</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective radius (cm).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log V_{\rm eff}&quot;</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log R_{\rm eff}&quot;</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Volume filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_A&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Area filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;F_A&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Redshift of the source&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -918,9 +948,9 @@
         <span class="c1">#           or &quot;slow_cooling&quot;)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_opt_from_physics_to_params</span><span class="p">(</span>
             <span class="n">log_B</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_B&quot;</span><span class="p">],</span>
-            <span class="n">log_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_V_eff&quot;</span><span class="p">],</span>
+            <span class="n">log_R</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_R&quot;</span><span class="p">],</span>
             <span class="n">log_D_L</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_L&quot;</span><span class="p">],</span>
-            <span class="n">log_Omega</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_Omega&quot;</span><span class="p">],</span>
+            <span class="n">log_D_A</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_A&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_min</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_min&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_c</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_c&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_max</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_max&quot;</span><span class="p">],</span>
@@ -930,6 +960,8 @@
             <span class="n">alpha</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
             <span class="n">gamma_bulk</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;gamma_bulk&quot;</span><span class="p">],</span>
             <span class="n">redshift</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">],</span>
+            <span class="n">f_A</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_A&quot;</span><span class="p">],</span>
+            <span class="n">f_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_V&quot;</span><span class="p">],</span>
             <span class="n">pitch_average</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -937,11 +969,11 @@
         <span class="n">log_F_nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_log_opt_sed_from_regime</span><span class="p">(</span>
             <span class="n">regime</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;regime&quot;</span><span class="p">],</span>
             <span class="n">log_nu</span><span class="o">=</span><span class="n">variables</span><span class="p">[</span><span class="s2">&quot;log_nu&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_m&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_a</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_a&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_c</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_c&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_max&quot;</span><span class="p">],</span>
-            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;F_norm&quot;</span><span class="p">],</span>
+            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_m&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_a</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_a&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_c</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_c&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_max&quot;</span><span class="p">]),</span>
+            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;F_norm&quot;</span><span class="p">]),</span>
             <span class="n">p</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
             <span class="n">s</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># We can set s=1 for the smoothing parameter since we&#39;re not modeling a smoothed SED here.</span>
         <span class="p">)</span>
@@ -1011,27 +1043,51 @@
 <span class="sd">             - Pitch angle (ignored if pitch-averaged).</span>
 <span class="sd">           * - ``log_B``</span>
 <span class="sd">             - :math:`\log B`</span>
-<span class="sd">             - Log magnetic field strength.</span>
-<span class="sd">           * - ``log_V_eff``</span>
-<span class="sd">             - :math:`\log V_{\rm eff}`</span>
-<span class="sd">             - Log effective emitting volume.</span>
-<span class="sd">           * - ``log_Omega``</span>
-<span class="sd">             - :math:`\log \Omega`</span>
-<span class="sd">             - Log solid angle of emitting region.</span>
+<span class="sd">             - Log magnetic field strength (cgs).</span>
+<span class="sd">           * - ``log_R``</span>
+<span class="sd">             - :math:`\log R_{\rm eff}`</span>
+<span class="sd">             - Log effective emitting radius (cm).</span>
+<span class="sd">           * - ``f_V``</span>
+<span class="sd">             - :math:`f_V`</span>
+<span class="sd">             - Volume filling factor of the emitting region.</span>
+<span class="sd">           * - ``f_A``</span>
+<span class="sd">             - :math:`f_A`</span>
+<span class="sd">             - Area filling factor of the emitting region.</span>
 <span class="sd">           * - ``log_D_L``</span>
 <span class="sd">             - :math:`\log D_L`</span>
-<span class="sd">             - Log luminosity distance.</span>
+<span class="sd">             - Log luminosity distance (cgs).</span>
+<span class="sd">           * - ``log_D_A``</span>
+<span class="sd">             - :math:`\log D_A`</span>
+<span class="sd">             - Log angular diameter distance (cgs).</span>
 <span class="sd">           * - ``redshift``</span>
 <span class="sd">             - :math:`z`</span>
 <span class="sd">             - Cosmological redshift.</span>
 
 <span class="sd">    .. dropdown:: Variables</span>
 
-<span class="sd">        ``log_nu`` — Log observing frequency (Hz).</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``log_nu``</span>
+<span class="sd">             - :math:`\log \nu`</span>
+<span class="sd">             - Log observing frequency (Hz, observer frame).</span>
 
 <span class="sd">    .. dropdown:: Returns</span>
 
-<span class="sd">        ``flux`` — :math:`\log F_\nu` (cgs units).</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``flux``</span>
+<span class="sd">             - :math:`\log F_\nu`</span>
+<span class="sd">             - Log flux density (cgs units).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1074,14 +1130,15 @@
 <span class="sd">            &quot;epsilon_E&quot;: 0.1,</span>
 <span class="sd">            &quot;epsilon_B&quot;: 0.1,</span>
 <span class="sd">            &quot;log_gamma_min&quot;: np.log(10.0),</span>
-<span class="sd">            &quot;log_gamma_c&quot;: np.log(1e3),</span>
 <span class="sd">            &quot;log_gamma_max&quot;: np.log(1e4),</span>
 <span class="sd">            &quot;gamma_bulk&quot;: 2.0,</span>
 <span class="sd">            &quot;alpha&quot;: np.pi / 2,</span>
 <span class="sd">            &quot;log_B&quot;: np.log(1.0),</span>
-<span class="sd">            &quot;log_V_eff&quot;: np.log(1e55),</span>
-<span class="sd">            &quot;log_Omega&quot;: np.log(1e-15),</span>
+<span class="sd">            &quot;log_R&quot;: np.log(1e16),</span>
+<span class="sd">            &quot;f_V&quot;: 1.0,</span>
+<span class="sd">            &quot;f_A&quot;: 1.0,</span>
 <span class="sd">            &quot;log_D_L&quot;: np.log(1e27),</span>
+<span class="sd">            &quot;log_D_A&quot;: np.log(1e27),</span>
 <span class="sd">            &quot;redshift&quot;: 0.01,</span>
 <span class="sd">        }</span>
 
@@ -1092,9 +1149,9 @@
 <span class="sd">        # Compute break frequencies</span>
 <span class="sd">        norm = model._sed._opt_from_physics_to_params(</span>
 <span class="sd">            log_B=parameters[&quot;log_B&quot;],</span>
-<span class="sd">            log_V=parameters[&quot;log_V_eff&quot;],</span>
+<span class="sd">            log_R=parameters[&quot;log_R&quot;],</span>
 <span class="sd">            log_D_L=parameters[&quot;log_D_L&quot;],</span>
-<span class="sd">            log_Omega=parameters[&quot;log_Omega&quot;],</span>
+<span class="sd">            log_D_A=parameters[&quot;log_D_A&quot;],</span>
 <span class="sd">            log_gamma_min=parameters[&quot;log_gamma_min&quot;],</span>
 <span class="sd">            log_gamma_max=parameters[&quot;log_gamma_max&quot;],</span>
 <span class="sd">            p=parameters[&quot;p&quot;],</span>
@@ -1103,6 +1160,8 @@
 <span class="sd">            alpha=parameters[&quot;alpha&quot;],</span>
 <span class="sd">            gamma_bulk=parameters[&quot;gamma_bulk&quot;],</span>
 <span class="sd">            redshift=parameters[&quot;redshift&quot;],</span>
+<span class="sd">            f_V=parameters[&quot;f_V&quot;],</span>
+<span class="sd">            f_A=parameters[&quot;f_A&quot;],</span>
 <span class="sd">            pitch_average=True,</span>
 <span class="sd">        )</span>
 
@@ -1124,7 +1183,7 @@
 
 <span class="sd">        plt.xlabel(&quot;Frequency [Hz]&quot;)</span>
 <span class="sd">        plt.ylabel(&quot;Flux Density [cgs]&quot;)</span>
-<span class="sd">        plt.title(&quot;Synchrotron SED (Cooling + SSA)&quot;)</span>
+<span class="sd">        plt.title(&quot;Synchrotron SED (SSA Only)&quot;)</span>
 <span class="sd">        plt.grid(alpha=0.3)</span>
 <span class="sd">        plt.tight_layout()</span>
 <span class="sd">        plt.show()</span>
@@ -1191,6 +1250,7 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="c1"># Geometric Parameters.</span>
+        <span class="c1"># Geometric Parameters.</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;log_D_L&quot;</span><span class="p">,</span>
             <span class="mf">27.0</span><span class="p">,</span>
@@ -1200,12 +1260,12 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_Omega&quot;</span><span class="p">,</span>
-            <span class="o">-</span><span class="mi">5</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the solid angle subtended by the emitting region (steradians).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_D_A&quot;</span><span class="p">,</span>
+            <span class="mf">27.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the angular diameter distance to the source (cgs).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log \Omega&quot;</span><span class="p">,</span>
-            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log_D_A&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="c1"># Core Parameters.</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
@@ -1217,12 +1277,28 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_V_eff&quot;</span><span class="p">,</span>
-            <span class="mf">57.0</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective volume of the emitting region (cgs).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e16</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective radius (cm).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log V_{\rm eff}&quot;</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log R_{\rm eff}&quot;</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Volume filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_A&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Area filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;F_A&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Redshift of the source&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1291,9 +1367,9 @@
         <span class="c1"># - regime: an Enum indicating the spectral regime (e.g., &quot;fast_cooling&quot; or &quot;slow_cooling&quot;)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_opt_from_physics_to_params</span><span class="p">(</span>
             <span class="n">log_B</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_B&quot;</span><span class="p">],</span>
-            <span class="n">log_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_V_eff&quot;</span><span class="p">],</span>
+            <span class="n">log_R</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_R&quot;</span><span class="p">],</span>
             <span class="n">log_D_L</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_L&quot;</span><span class="p">],</span>
-            <span class="n">log_Omega</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_Omega&quot;</span><span class="p">],</span>
+            <span class="n">log_D_A</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_A&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_min</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_min&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_max</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_max&quot;</span><span class="p">],</span>
             <span class="n">p</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
@@ -1302,6 +1378,8 @@
             <span class="n">alpha</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
             <span class="n">gamma_bulk</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;gamma_bulk&quot;</span><span class="p">],</span>
             <span class="n">redshift</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">],</span>
+            <span class="n">f_A</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_A&quot;</span><span class="p">],</span>
+            <span class="n">f_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_V&quot;</span><span class="p">],</span>
             <span class="n">pitch_average</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -1309,10 +1387,10 @@
         <span class="n">log_F_nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_log_opt_sed_from_regime</span><span class="p">(</span>
             <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;log_nu&quot;</span><span class="p">],</span>
             <span class="n">regime</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;regime&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_m&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_a</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_a&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_max&quot;</span><span class="p">],</span>
-            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;F_norm&quot;</span><span class="p">],</span>
+            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_m&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_a</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_a&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_max&quot;</span><span class="p">]),</span>
+            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;F_norm&quot;</span><span class="p">]),</span>
             <span class="n">p</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
             <span class="n">s</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># We can set s=1 for the smoothing parameter since we&#39;re not modeling a smoothed SED here.</span>
         <span class="p">)</span>
@@ -1349,16 +1427,78 @@
 
 <span class="sd">    .. dropdown:: Parameters</span>
 
-<span class="sd">        Includes cooling Lorentz factor ``log_gamma_c`` but</span>
-<span class="sd">        does not include ``log_Omega``.</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``p``</span>
+<span class="sd">             - :math:`p`</span>
+<span class="sd">             - Electron power-law index.</span>
+<span class="sd">           * - ``epsilon_E``</span>
+<span class="sd">             - :math:`\epsilon_e`</span>
+<span class="sd">             - Fraction of post-shock energy in electrons.</span>
+<span class="sd">           * - ``epsilon_B``</span>
+<span class="sd">             - :math:`\epsilon_B`</span>
+<span class="sd">             - Fraction of post-shock energy in magnetic fields.</span>
+<span class="sd">           * - ``log_gamma_min``</span>
+<span class="sd">             - :math:`\log \gamma_{\min}`</span>
+<span class="sd">             - Log minimum electron Lorentz factor.</span>
+<span class="sd">           * - ``log_gamma_c``</span>
+<span class="sd">             - :math:`\log \gamma_c`</span>
+<span class="sd">             - Log cooling Lorentz factor.</span>
+<span class="sd">           * - ``log_gamma_max``</span>
+<span class="sd">             - :math:`\log \gamma_{\max}`</span>
+<span class="sd">             - Log maximum electron Lorentz factor.</span>
+<span class="sd">           * - ``gamma_bulk``</span>
+<span class="sd">             - :math:`\Gamma_{\rm bulk}`</span>
+<span class="sd">             - Bulk Lorentz factor of emitting region.</span>
+<span class="sd">           * - ``alpha``</span>
+<span class="sd">             - :math:`\alpha`</span>
+<span class="sd">             - Pitch angle (ignored if pitch-averaged).</span>
+<span class="sd">           * - ``log_B``</span>
+<span class="sd">             - :math:`\log B`</span>
+<span class="sd">             - Log magnetic field strength (cgs).</span>
+<span class="sd">           * - ``log_R``</span>
+<span class="sd">             - :math:`\log R_{\rm eff}`</span>
+<span class="sd">             - Log effective emitting radius (cm).</span>
+<span class="sd">           * - ``f_V``</span>
+<span class="sd">             - :math:`f_V`</span>
+<span class="sd">             - Volume filling factor of the emitting region.</span>
+<span class="sd">           * - ``log_D_L``</span>
+<span class="sd">             - :math:`\log D_L`</span>
+<span class="sd">             - Log luminosity distance (cgs).</span>
+<span class="sd">           * - ``redshift``</span>
+<span class="sd">             - :math:`z`</span>
+<span class="sd">             - Cosmological redshift.</span>
 
 <span class="sd">    .. dropdown:: Variables</span>
 
-<span class="sd">        ``log_nu`` — Log observing frequency (Hz).</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``log_nu``</span>
+<span class="sd">             - :math:`\log \nu`</span>
+<span class="sd">             - Log observing frequency (Hz, observer frame).</span>
 
 <span class="sd">    .. dropdown:: Returns</span>
 
-<span class="sd">        ``flux`` — :math:`\log F_\nu`.</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``flux``</span>
+<span class="sd">             - :math:`\log F_\nu`</span>
+<span class="sd">             - Log flux density (cgs units).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1414,7 +1554,8 @@
 <span class="sd">            &quot;gamma_bulk&quot;: 2.0,</span>
 <span class="sd">            &quot;alpha&quot;: np.pi / 2,</span>
 <span class="sd">            &quot;log_B&quot;: np.log(1.0),</span>
-<span class="sd">            &quot;log_V_eff&quot;: np.log(1e55),</span>
+<span class="sd">            &quot;log_R&quot;: np.log(1e16),</span>
+<span class="sd">            &quot;f_V&quot;: 1.0,</span>
 <span class="sd">            &quot;log_D_L&quot;: np.log(1e27),</span>
 <span class="sd">            &quot;redshift&quot;: 0.01,</span>
 <span class="sd">        }</span>
@@ -1432,7 +1573,7 @@
 
 <span class="sd">        norm = model._sed._opt_from_physics_to_params(</span>
 <span class="sd">            log_B=parameters[&quot;log_B&quot;],</span>
-<span class="sd">            log_V=parameters[&quot;log_V_eff&quot;],</span>
+<span class="sd">            log_R=parameters[&quot;log_R&quot;],</span>
 <span class="sd">            log_D_L=parameters[&quot;log_D_L&quot;],</span>
 <span class="sd">            log_gamma_min=parameters[&quot;log_gamma_min&quot;],</span>
 <span class="sd">            log_gamma_c=parameters[&quot;log_gamma_c&quot;],</span>
@@ -1443,6 +1584,7 @@
 <span class="sd">            alpha=parameters[&quot;alpha&quot;],</span>
 <span class="sd">            gamma_bulk=parameters[&quot;gamma_bulk&quot;],</span>
 <span class="sd">            redshift=parameters[&quot;redshift&quot;],</span>
+<span class="sd">            f_V=parameters[&quot;f_V&quot;],</span>
 <span class="sd">            pitch_average=True,</span>
 <span class="sd">        )</span>
 
@@ -1555,6 +1697,7 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="c1"># Geometric Parameters.</span>
+        <span class="c1"># Geometric Parameters.</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;log_D_L&quot;</span><span class="p">,</span>
             <span class="mf">27.0</span><span class="p">,</span>
@@ -1573,12 +1716,20 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_V_eff&quot;</span><span class="p">,</span>
-            <span class="mf">57.0</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective volume of the emitting region (cgs).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e16</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective radius (cm).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log V_{\rm eff}&quot;</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log R_{\rm eff}&quot;</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Volume filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Redshift of the source&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1648,7 +1799,7 @@
         <span class="c1"># - regime: an Enum indicating the spectral regime (e.g., &quot;fast_cooling&quot; or &quot;slow_cooling&quot;)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_opt_from_physics_to_params</span><span class="p">(</span>
             <span class="n">log_B</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_B&quot;</span><span class="p">],</span>
-            <span class="n">log_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_V_eff&quot;</span><span class="p">],</span>
+            <span class="n">log_R</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_R&quot;</span><span class="p">],</span>
             <span class="n">log_D_L</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_L&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_min</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_min&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_c</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_c&quot;</span><span class="p">],</span>
@@ -1659,6 +1810,7 @@
             <span class="n">alpha</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
             <span class="n">gamma_bulk</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;gamma_bulk&quot;</span><span class="p">],</span>
             <span class="n">redshift</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">],</span>
+            <span class="n">f_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_V&quot;</span><span class="p">],</span>
             <span class="n">pitch_average</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span><span class="p">,</span>
         <span class="p">)</span>
 
@@ -1706,16 +1858,78 @@
 
 <span class="sd">    .. dropdown:: Parameters</span>
 
-<span class="sd">        Includes microphysical parameters and geometry,</span>
-<span class="sd">        but no cooling Lorentz factor and no absorption geometry.</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``p``</span>
+<span class="sd">             - :math:`p`</span>
+<span class="sd">             - Electron power-law index.</span>
+<span class="sd">           * - ``epsilon_E``</span>
+<span class="sd">             - :math:`\epsilon_e`</span>
+<span class="sd">             - Fraction of post-shock energy in electrons.</span>
+<span class="sd">           * - ``epsilon_B``</span>
+<span class="sd">             - :math:`\epsilon_B`</span>
+<span class="sd">             - Fraction of post-shock energy in magnetic fields.</span>
+<span class="sd">           * - ``log_gamma_min``</span>
+<span class="sd">             - :math:`\log \gamma_{\min}`</span>
+<span class="sd">             - Log minimum electron Lorentz factor.</span>
+<span class="sd">           * - ``log_gamma_c``</span>
+<span class="sd">             - :math:`\log \gamma_c`</span>
+<span class="sd">             - Log cooling Lorentz factor (not used for spectral breaks in this model).</span>
+<span class="sd">           * - ``log_gamma_max``</span>
+<span class="sd">             - :math:`\log \gamma_{\max}`</span>
+<span class="sd">             - Log maximum electron Lorentz factor.</span>
+<span class="sd">           * - ``gamma_bulk``</span>
+<span class="sd">             - :math:`\Gamma_{\rm bulk}`</span>
+<span class="sd">             - Bulk Lorentz factor of emitting region.</span>
+<span class="sd">           * - ``alpha``</span>
+<span class="sd">             - :math:`\alpha`</span>
+<span class="sd">             - Pitch angle (ignored if pitch-averaged).</span>
+<span class="sd">           * - ``log_B``</span>
+<span class="sd">             - :math:`\log B`</span>
+<span class="sd">             - Log magnetic field strength (cgs).</span>
+<span class="sd">           * - ``log_R``</span>
+<span class="sd">             - :math:`\log R_{\rm eff}`</span>
+<span class="sd">             - Log effective emitting radius (cm).</span>
+<span class="sd">           * - ``f_V``</span>
+<span class="sd">             - :math:`f_V`</span>
+<span class="sd">             - Volume filling factor of the emitting region.</span>
+<span class="sd">           * - ``log_D_L``</span>
+<span class="sd">             - :math:`\log D_L`</span>
+<span class="sd">             - Log luminosity distance (cgs).</span>
+<span class="sd">           * - ``redshift``</span>
+<span class="sd">             - :math:`z`</span>
+<span class="sd">             - Cosmological redshift.</span>
 
 <span class="sd">    .. dropdown:: Variables</span>
 
-<span class="sd">        ``log_nu`` — Log observing frequency (Hz).</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``log_nu``</span>
+<span class="sd">             - :math:`\log \nu`</span>
+<span class="sd">             - Log observing frequency (Hz, observer frame).</span>
 
 <span class="sd">    .. dropdown:: Returns</span>
 
-<span class="sd">        ``flux`` — :math:`\log F_\nu`.</span>
+<span class="sd">        .. list-table::</span>
+<span class="sd">           :widths: 30 30 40</span>
+<span class="sd">           :header-rows: 1</span>
+
+<span class="sd">           * - **Name**</span>
+<span class="sd">             - **Symbol**</span>
+<span class="sd">             - **Description**</span>
+<span class="sd">           * - ``flux``</span>
+<span class="sd">             - :math:`\log F_\nu`</span>
+<span class="sd">             - Log flux density (cgs units).</span>
 
 <span class="sd">    Notes</span>
 <span class="sd">    -----</span>
@@ -1770,7 +1984,8 @@
 <span class="sd">            &quot;gamma_bulk&quot;: 2.0,</span>
 <span class="sd">            &quot;alpha&quot;: np.pi / 2,</span>
 <span class="sd">            &quot;log_B&quot;: np.log(1.0),</span>
-<span class="sd">            &quot;log_V_eff&quot;: np.log(1e55),</span>
+<span class="sd">            &quot;log_R&quot;: np.log(1e16),</span>
+<span class="sd">            &quot;f_V&quot;: 1.0,</span>
 <span class="sd">            &quot;log_D_L&quot;: np.log(1e27),</span>
 <span class="sd">            &quot;redshift&quot;: 0.01,</span>
 <span class="sd">        }</span>
@@ -1788,7 +2003,7 @@
 
 <span class="sd">        norm = model._sed._opt_from_physics_to_params(</span>
 <span class="sd">            log_B=parameters[&quot;log_B&quot;],</span>
-<span class="sd">            log_V=parameters[&quot;log_V_eff&quot;],</span>
+<span class="sd">            log_R=parameters[&quot;log_R&quot;],</span>
 <span class="sd">            log_D_L=parameters[&quot;log_D_L&quot;],</span>
 <span class="sd">            log_gamma_min=parameters[&quot;log_gamma_min&quot;],</span>
 <span class="sd">            log_gamma_max=parameters[&quot;log_gamma_max&quot;],</span>
@@ -1798,6 +2013,7 @@
 <span class="sd">            alpha=parameters[&quot;alpha&quot;],</span>
 <span class="sd">            gamma_bulk=parameters[&quot;gamma_bulk&quot;],</span>
 <span class="sd">            redshift=parameters[&quot;redshift&quot;],</span>
+<span class="sd">            f_V=parameters[&quot;f_V&quot;],</span>
 <span class="sd">            pitch_average=True,</span>
 <span class="sd">        )</span>
 
@@ -1818,8 +2034,8 @@
 
 <span class="sd">        # Mark breaks</span>
 <span class="sd">        for key, label in [</span>
-<span class="sd">            (&quot;log_nu_m&quot;, r&quot;$\nu_m$&quot;),</span>
-<span class="sd">            (&quot;log_nu_max&quot;, r&quot;$\nu_{\max}$&quot;),</span>
+<span class="sd">            (&quot;nu_m&quot;, r&quot;$\nu_m$&quot;),</span>
+<span class="sd">            (&quot;nu_max&quot;, r&quot;$\nu_{\max}$&quot;),</span>
 <span class="sd">        ]:</span>
 <span class="sd">            plt.axvline(np.exp(norm[key]), ls=&quot;--&quot;, alpha=0.6)</span>
 <span class="sd">            plt.text(</span>
@@ -1908,6 +2124,7 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="c1"># Geometric Parameters.</span>
+        <span class="c1"># Geometric Parameters.</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;log_D_L&quot;</span><span class="p">,</span>
             <span class="mf">27.0</span><span class="p">,</span>
@@ -1926,12 +2143,20 @@
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
-            <span class="s2">&quot;log_V_eff&quot;</span><span class="p">,</span>
-            <span class="mf">57.0</span><span class="p">,</span>
-            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective volume of the emitting region (cgs).&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;log_R&quot;</span><span class="p">,</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e16</span><span class="p">),</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Logarithm of the effective radius (cm).&quot;</span><span class="p">,</span>
             <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
-            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log V_{\rm eff}&quot;</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\log R_{\rm eff}&quot;</span><span class="p">,</span>
             <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">),</span>
+        <span class="n">ModelParameter</span><span class="p">(</span>
+            <span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Volume filling factor of the emitting region (dimensionless).&quot;</span><span class="p">,</span>
+            <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;f_V&quot;</span><span class="p">,</span>
+            <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
         <span class="p">),</span>
         <span class="n">ModelParameter</span><span class="p">(</span>
             <span class="s2">&quot;redshift&quot;</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Redshift of the source&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="s2">&quot;z&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
@@ -1996,7 +2221,7 @@
         <span class="c1"># - regime: an Enum indicating the spectral regime (e.g., &quot;fast_cooling&quot; or &quot;slow_cooling&quot;)</span>
         <span class="n">norm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_opt_from_physics_to_params</span><span class="p">(</span>
             <span class="n">log_B</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_B&quot;</span><span class="p">],</span>
-            <span class="n">log_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_V_eff&quot;</span><span class="p">],</span>
+            <span class="n">log_R</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_R&quot;</span><span class="p">],</span>
             <span class="n">log_D_L</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_D_L&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_min</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_min&quot;</span><span class="p">],</span>
             <span class="n">log_gamma_max</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;log_gamma_max&quot;</span><span class="p">],</span>
@@ -2006,15 +2231,16 @@
             <span class="n">alpha</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
             <span class="n">gamma_bulk</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;gamma_bulk&quot;</span><span class="p">],</span>
             <span class="n">redshift</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">],</span>
+            <span class="n">f_V</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;f_V&quot;</span><span class="p">],</span>
             <span class="n">pitch_average</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_pitch_averaged</span><span class="p">,</span>
         <span class="p">)</span>
 
         <span class="c1"># Now we can use the SED to compute the correct flux density at the given frequencies.</span>
         <span class="n">log_F_nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sed</span><span class="o">.</span><span class="n">_log_opt_sed</span><span class="p">(</span>
             <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;log_nu&quot;</span><span class="p">],</span>
-            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;log_F_norm&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;log_nu_m&quot;</span><span class="p">],</span>
-            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;log_nu_max&quot;</span><span class="p">],</span>
+            <span class="n">log_F_norm</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;F_norm&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_m</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_m&quot;</span><span class="p">]),</span>
+            <span class="n">log_nu_max</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">norm</span><span class="p">[</span><span class="s2">&quot;nu_max&quot;</span><span class="p">]),</span>
             <span class="n">p</span><span class="o">=</span><span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">],</span>
             <span class="n">s</span><span class="o">=-</span><span class="mf">1.0</span><span class="p">,</span>  <span class="c1"># We can set s=1 for the smoothing parameter since we&#39;re not modeling a smoothed SED here.</span>
         <span class="p">)</span>

@@ -24,7 +24,7 @@ from astropy.time import Time
 from triceratops.data.photometry import RadioPhotometryContainer
 from triceratops.inference import GaussianCensoredLikelihood, InferenceProblem
 from triceratops.inference.sampling import EmceeSampler
-from triceratops.models.SEDs import PL_Evolving_SSA_SED_Model
+from triceratops.models.generic import PL_Evolving_SBPL_Model
 from triceratops.utils.plot_utils import set_plot_style
 
 set_plot_style()
@@ -68,7 +68,7 @@ optical_peak_time = Time(58284.3, format="mjd", scale="utc")
 photometry_data = RadioPhotometryContainer.from_file(
     data_file,
     column_map={"time_midobs": "time"},
-    time_starts=optical_peak_time.jd1 * u.day,
+    time_starts=optical_peak_time,
     internal_time_scale="utc",
     internal_time_format="jd",
 )
@@ -116,7 +116,7 @@ plt.show()
 # :class:`~models.SEDs.evolving_sed.PL_Evolving_SSA_SED_Model`.
 
 # Generate the model object.
-model = PL_Evolving_SSA_SED_Model()
+model = PL_Evolving_SBPL_Model()
 
 # Convert the photometry data to the format required for inference. This standardizes
 # the data so that it is more easily ingested by the likelihood and model, and also ensures that all units are

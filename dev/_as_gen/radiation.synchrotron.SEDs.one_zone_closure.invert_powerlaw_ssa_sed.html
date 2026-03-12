@@ -1,0 +1,809 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../_static/logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi.html" />
+    <link rel="prev" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reference/models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../reference/models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../reference/inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../reference/inference/triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/inference/triceratops.inference.likelihood.base.GaussianLikelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/inference/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../reference/physics/shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../reference/physics/radiation/overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active has-children"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_sed</a></li>
+<li class="toctree-l3 current active"><a class="current reference internal" href="#">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed_demarchi.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed_demarchi</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SynchrotronSED.html">SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.html">MultiSpectrumSynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.html">PowerLaw_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.html">PowerLaw_Cooling_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.html">PowerLaw_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.html">PowerLaw_Cooling_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.html">SSA_SED_PowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.__init__.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.sed.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions.log_smoothed_SFBPL.html">radiation.synchrotron.SEDs._one_zone_functions.log_smoothed_SFBPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions.log_exp_cutoff_sed.html">radiation.synchrotron.SEDs._one_zone_functions.log_exp_cutoff_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions.smoothed_BPL.html">radiation.synchrotron.SEDs._one_zone_functions.smoothed_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_1.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_2.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_1.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_2.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_3.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_4.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_5.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_6.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_7.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_8.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_without_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_without_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_with_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_with_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_without_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_without_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_with_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_with_cooling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../api.html" class="nav-link">API</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="radiation.html" class="nav-link">radiation</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="radiation.synchrotron.html" class="nav-link">radiation.synchrotron</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="radiation.synchrotron.SEDs.html" class="nav-link">radiation.synchrotron.SEDs</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="radiation.synchrotron.SEDs.one_zone_closure.html" class="nav-link">radiation.synchrotron.SEDs.one_zone_closure</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="radiation-synchrotron-seds-one-zone-closure-invert-powerlaw-ssa-sed">
+<h1>radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed<a class="headerlink" href="#radiation-synchrotron-seds-one-zone-closure-invert-powerlaw-ssa-sed" title="Link to this heading">#</a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed">
+<span class="sig-prename descclassname"><span class="pre">radiation.synchrotron.SEDs.one_zone_closure.</span></span><span class="sig-name descname"><span class="pre">invert_powerlaw_ssa_sed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">regime</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">F_peak</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu_peak</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_max</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">inf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon_E</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">epsilon_B</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_V</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">f_A</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gamma_bulk</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luminosity_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_diameter_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proper_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingScalarLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">cosmo.Cosmology</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">alpha</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">pitch_average</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/radiation/synchrotron/SEDs/one_zone_closure.html#invert_powerlaw_ssa_sed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed" title="Link to this definition">#</a></dt>
+<dd><p>Infer physical parameters for an SSA synchrotron spectrum without cooling closure.</p>
+<p>This is the public, unit-aware wrapper for the SSA inversion family in
+which the spectral turnover is attributed to synchrotron self-absorption
+but no implicit cooling closure is applied. It maps the observed peak
+frequency and peak flux density to the inferred source radius
+<span class="math notranslate nohighlight">\(R\)</span> and magnetic field strength <span class="math notranslate nohighlight">\(B\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>regime</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the SSA regime to invert.</p></li>
+<li><p><strong>F_peak</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Observed peak flux density. Must be convertible to
+<code class="docutils literal notranslate"><span class="pre">erg</span> <span class="pre">cm^-2</span> <span class="pre">s^-1</span> <span class="pre">Hz^-1</span></code>.</p></li>
+<li><p><strong>nu_peak</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Observed peak frequency. Must be convertible to Hz.</p></li>
+<li><p><strong>gamma_min</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Minimum electron Lorentz factor.</p></li>
+<li><p><strong>gamma_max</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Maximum electron Lorentz factor.</p></li>
+<li><p><strong>p</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Electron power-law index.</p></li>
+<li><p><strong>epsilon_E</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Fraction of internal energy in relativistic electrons.</p></li>
+<li><p><strong>epsilon_B</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Fraction of internal energy in magnetic fields.</p></li>
+<li><p><strong>f_V</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Effective volume filling factor.</p></li>
+<li><p><strong>f_A</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Effective projected-area filling factor for SSA closures.</p></li>
+<li><p><strong>gamma_bulk</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Bulk Lorentz factor for the observer-to-comoving correction.</p></li>
+<li><p><strong>redshift</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Source redshift.</p></li>
+<li><p><strong>luminosity_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Luminosity distance to the source.</p></li>
+<li><p><strong>angular_diameter_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Angular-diameter distance to the source.</p></li>
+<li><p><strong>proper_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <code class="xref py py-class docutils literal notranslate"><span class="pre">array-like</span></code>, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Proper distance to the source.</p></li>
+<li><p><strong>cosmology</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code></a>, <em>optional</em>) – Cosmology used to resolve missing distances.</p></li>
+<li><p><strong>alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Fixed pitch angle in radians when <code class="docutils literal notranslate"><span class="pre">pitch_average=False</span></code>.</p></li>
+<li><p><strong>pitch_average</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">True</span></code>, use pitch-angle-averaged synchrotron coefficients.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><p>Dictionary containing</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;R&quot;</span></code> : inferred source radius as a Quantity in cm</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">&quot;B&quot;</span></code> : inferred magnetic field strength as a Quantity in G</p></li>
+</ul>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This wrapper exposes the non-implicit-cooling SSA inversion family.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-chevron-down" viewBox="0 0 16 16" aria-hidden="true"><path d="M12.78 5.22a.749.749 0 0 1 0 1.06l-4.25 4.25a.749.749 0 0 1-1.06 0L3.22 6.28a.749.749 0 1 1 1.06-1.06L8 8.939l3.72-3.719a.749.749 0 0 1 1.06 0Z"></path></svg></span><span class="sd-summary-text">Available regimes</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">The currently implemented SSA regimes are</p>
+<ul class="simple">
+<li><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">&quot;optically_thick&quot;</span></code></p></li>
+<li><p class="sd-card-text"><code class="docutils literal notranslate"><span class="pre">&quot;optically_thin&quot;</span></code></p></li>
+</ul>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-icon"><svg version="1.1" width="1.0em" height="1.0em" class="sd-octicon sd-octicon-info" viewBox="0 0 16 16" aria-hidden="true"><path d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8Zm8-6.5a6.5 6.5 0 1 0 0 13 6.5 6.5 0 0 0 0-13ZM6.5 7.75A.75.75 0 0 1 7.25 7h1a.75.75 0 0 1 .75.75v2.75h.25a.75.75 0 0 1 0 1.5h-2a.75.75 0 0 1 0-1.5h.25v-2h-.25a.75.75 0 0 1-.75-.75ZM8 6a1 1 0 1 1 0-2 1 1 0 0 1 0 2Z"></path></svg></span><span class="sd-summary-text">Choosing between SSA closures</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Use this function when the SSA turnover matters but the cooling break
+does not need to be solved via the synchrotron cooling closure. For
+the implicit-cooling SSA case, use
+<a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed.html#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed"><code class="xref py py-func docutils literal notranslate"><span class="pre">invert_powerlaw_implicit_cooling_ssa_sed()</span></code></a>.</p>
+</div>
+</details><div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed.html#radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed" title="radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">_invert_powerlaw_ssa_sed</span></code></a></dt><dd><p>Low-level log-space backend.</p>
+</dd>
+<dt><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed.html#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_powerlaw_sed</span></code></a></dt><dd><p>Standard optically thin inversion.</p>
+</dd>
+<dt><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed.html#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_powerlaw_cooling_ssa_sed</span></code></a></dt><dd><p>Explicit-cooling SSA inversion.</p>
+</dd>
+<dt><a class="reference internal" href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed.html#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed" title="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_powerlaw_implicit_cooling_ssa_sed</span></code></a></dt><dd><p>SSA inversion with implicit synchrotron cooling closure.</p>
+</dd>
+<dt><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_sed_theory.html#single-zone-sed-inversion"><span class="std std-ref">Inversion</span></a></dt><dd><p>Standard inversion framework.</p>
+</dd>
+<dt><a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a></dt><dd><p>Synchrotron and SSA theory.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed"><code class="docutils literal notranslate"><span class="pre">invert_powerlaw_ssa_sed()</span></code></a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

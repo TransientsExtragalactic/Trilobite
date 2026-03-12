@@ -32,7 +32,8 @@ parameters = {
     "gamma_bulk": 2.0,
     "alpha": np.pi / 2,
     "log_B": np.log(1.0),
-    "log_V_eff": np.log(1e55),
+    "log_R": np.log(1e16),
+    "f_V": 1.0,
     "log_D_L": np.log(1e27),
     "redshift": 0.01,
 }
@@ -50,7 +51,7 @@ flux = np.exp(output.flux)
 
 norm = model._sed._opt_from_physics_to_params(
     log_B=parameters["log_B"],
-    log_V=parameters["log_V_eff"],
+    log_R=parameters["log_R"],
     log_D_L=parameters["log_D_L"],
     log_gamma_min=parameters["log_gamma_min"],
     log_gamma_max=parameters["log_gamma_max"],
@@ -60,6 +61,7 @@ norm = model._sed._opt_from_physics_to_params(
     alpha=parameters["alpha"],
     gamma_bulk=parameters["gamma_bulk"],
     redshift=parameters["redshift"],
+    f_V=parameters["f_V"],
     pitch_average=True,
 )
 
@@ -80,8 +82,8 @@ plt.scatter(nu, synthetic, s=10, alpha=0.4, label="Synthetic data")
 
 # Mark breaks
 for key, label in [
-    ("log_nu_m", r"$\nu_m$"),
-    ("log_nu_max", r"$\nu_{\max}$"),
+    ("nu_m", r"$\nu_m$"),
+    ("nu_max", r"$\nu_{\max}$"),
 ]:
     plt.axvline(np.exp(norm[key]), ls="--", alpha=0.6)
     plt.text(

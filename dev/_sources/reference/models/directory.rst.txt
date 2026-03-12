@@ -44,17 +44,23 @@ its documentation and source code.
 Quick Navigation
 ----------------
 
-.. grid:: 1 2 3 3
-   :gutter: 3
+.. card-carousel:: 3
 
-   .. grid-item-card:: 📈 Generic Models
-      :link: generic_models
-      :link-type: ref
-      :class-card: sd-shadow-sm
+   .. card:: 📈 Generic Models
+        :link: generic_models
+        :link-type: ref
+        :class-card: sd-shadow-sm
 
-      Flexible, modular models for curve fitting and exploratory analysis.
+        Flexible, modular models for curve fitting and exploratory analysis.
 
-   .. grid-item-card:: 💥 Supernova Models
+   .. card:: Physical SEDs
+        :link: SEDs
+        :link-type: ref
+        :class-card: sd-shadow-sm
+
+        Flexible spectral energy distribution models for multi-wavelength fitting.
+
+   .. card:: 💥 Supernova Models
       :link: supernova_models
       :link-type: ref
       :class-card: sd-shadow-sm
@@ -82,7 +88,7 @@ building likelihood functions.
 
 .. rubric:: Generic Broken Power Laws
 
-.. currentmodule:: models.generic.bpl
+.. currentmodule:: models.generic.curves
 
 .. autosummary::
    :nosignatures:
@@ -119,19 +125,45 @@ analysis and pulse-shape modeling.
    WeibullPulse
    LogisticPulse
 
-SED Models
-^^^^^^^^^^^^
+.. _evolving_models:
 
-These models provide flexible spectral energy distribution (SED) forms for fitting multi-wavelength data.
+Evolving Phenomenological Models
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. rubric:: Generic SED Models
+Models for phenomenological modeling (not tied to specific physical scenarios) that include time-evolution of parameters.
 
-.. currentmodule:: models.generic.evolving_sed
+.. rubric:: Generic SED Evolution
+
+.. currentmodule:: models.generic.evolving_seds
 
 .. autosummary::
    :nosignatures:
 
-   PL_Evolving_SSA_SED_Model
+   ~evolving_sbpl.PL_Evolving_SBPL_Model
+   ~evolving_sbpl.BPL_Evolving_SBPL_Model
+   ~evolving_sbpl.TripleBPL_Evolving_SBPL_Model
+
+---------------------------------------------------------------------
+
+.. _SEDs:
+SED Models
+-----------
+
+SED models are designed to provide full-physics spectral energy distribution modeling for various different
+scenarios, emission mechanisms, and physical assumptions. These models are ideal for multi-wavelength fitting and inference.
+
+.. rubric:: Synchrotron
+
+.. currentmodule:: models.SEDs.synchrotron
+
+.. autosummary::
+   :nosignatures:
+
+    SSA_Cooling_SynchrotronSEDModel
+    SSA_SynchrotronSEDModel
+    Cooling_SynchrotronSEDModel
+    SynchrotronSEDModel
+    Synchrotron_SSA_SBPL_Model
 
 ---------------------------------------------------------------------
 

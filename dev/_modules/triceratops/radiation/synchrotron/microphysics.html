@@ -1608,23 +1608,26 @@
 
 <span class="sd">    Assumes CGS units throughout and returns ``N_0`` in ``cm^{-3}``.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">)</span>
+    <span class="n">log_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">))</span>
     <span class="n">epsilon_B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">)</span>
     <span class="n">epsilon_E</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">&quot;f8&quot;</span><span class="p">)</span>
 
     <span class="c1"># Magnetic energy density</span>
-    <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">log_u_B</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">log_B</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
 
     <span class="c1"># Energy moment of the BPL distribution</span>
-    <span class="n">moment</span> <span class="o">=</span> <span class="n">gamma_b</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">_opt_compute_BPL_moment</span><span class="p">(</span>
-        <span class="n">a1</span><span class="o">=</span><span class="n">a1</span><span class="p">,</span>
-        <span class="n">a2</span><span class="o">=</span><span class="n">a2</span><span class="p">,</span>
-        <span class="n">x_min</span><span class="o">=</span><span class="n">gamma_min</span> <span class="o">/</span> <span class="n">gamma_b</span><span class="p">,</span>
-        <span class="n">x_max</span><span class="o">=</span><span class="n">gamma_max</span> <span class="o">/</span> <span class="n">gamma_b</span><span class="p">,</span>
-        <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
-    <span class="p">)</span>
+    <span class="n">log_moment</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span>
+        <span class="n">_opt_compute_BPL_moment</span><span class="p">(</span>
+            <span class="n">a1</span><span class="o">=</span><span class="n">a1</span><span class="p">,</span>
+            <span class="n">a2</span><span class="o">=</span><span class="n">a2</span><span class="p">,</span>
+            <span class="n">x_min</span><span class="o">=</span><span class="n">gamma_min</span> <span class="o">/</span> <span class="n">gamma_b</span><span class="p">,</span>
+            <span class="n">x_max</span><span class="o">=</span><span class="n">gamma_max</span> <span class="o">/</span> <span class="n">gamma_b</span><span class="p">,</span>
+            <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gamma_b</span><span class="p">)</span>
 
-    <span class="n">N0</span> <span class="o">=</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">moment</span><span class="p">)</span>
+    <span class="n">N0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_u_B</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">electron_rest_energy_cgs</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_moment</span>
+    <span class="n">N0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">N0</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">N0</span><span class="o">.</span><span class="n">reshape</span><span class="p">(())</span> <span class="k">if</span> <span class="n">N0</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">N0</span>
 

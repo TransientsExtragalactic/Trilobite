@@ -467,10 +467,39 @@
 <span class="n">c_1_cgs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">c_1</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
 <span class="sd">&quot;&quot;&quot;float: Synchrotron radiation constant :math:`c_1` in CGS units.&quot;&quot;&quot;</span>
 
+<span class="n">c_1_gamma</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span> <span class="o">/</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity: Synchrotron constant :math:`c_{1,\gamma}`.</span>
+
+<span class="sd">The :math:`c_{1,\gamma}` constant is the coefficient appearing in the synchrotron frequency when expressed</span>
+<span class="sd"> in terms of the electron Lorentz factor :math:`\Gamma` rather than energy:</span>
+
+<span class="sd"> .. math::</span>
+
+<span class="sd">    \nu_c = \frac{3e}{4\pi m_e c} B\sin \alpha \Gamma^2 = c_{1,\gamma} B \sin \alpha \Gamma^2.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">c_1_gamma_cgs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">c_1_gamma</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;float: Synchrotron constant :math:`c_{1,\gamma}` in CGS units.&quot;&quot;&quot;</span>
+<span class="n">_log_c_1_gamma_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_1_gamma_cgs</span><span class="p">)</span>
+
+<span class="n">c_1_gamma_iso</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span> <span class="o">=</span> <span class="p">(</span><span class="mi">3</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">e</span><span class="o">.</span><span class="n">esu</span> <span class="o">/</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="p">))</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;astropy.units.Quantity: Synchrotron constant :math:`c_{1,\gamma}^{\mathrm{iso}}` for isotropic distributions.</span>
+
+<span class="sd">The :math:`c_{1,\gamma}^{\mathrm{iso}}` constant is the coefficient appearing in the synchrotron frequency when</span>
+<span class="sd">expressed</span>
+<span class="sd">in terms of the electron Lorentz factor :math:`\Gamma` and assuming an isotropic distribution of pitch angles.</span>
+<span class="sd">The isotropic pitch-angle averaging factor :math:`2/\pi` is included in this constant, so that the critical</span>
+<span class="sd">frequency for an isotropic distribution can be written as</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    \nu_c^{\mathrm{iso}} = \frac{3e}{2\pi^2 m_e c} B \Gamma^2 = c_{1,\gamma}^{\mathrm{iso}} B \Gamma^2.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">c_1_gamma_iso_cgs</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">c_1_gamma_iso</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>
+<span class="sa">r</span><span class="sd">&quot;&quot;&quot;float: Synchrotron constant :math:`c_{1,\gamma}^{\mathrm{iso}}` for isotropic distributions in CGS units.&quot;&quot;&quot;</span>
+<span class="n">_log_c_1_gamma_iso_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_1_gamma_iso</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
 <span class="c1"># ------------------------------------------------------------------</span>
 <span class="c1"># Synchrotron normalization constants (chi)</span>
 <span class="c1"># ------------------------------------------------------------------</span>
-
 <span class="n">chi_cgs</span> <span class="o">=</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">_c5_coefficient_cgs</span>
 <span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">float</span>

@@ -16,14 +16,15 @@ parameters = {
     "epsilon_E": 0.1,
     "epsilon_B": 0.1,
     "log_gamma_min": np.log(10.0),
-    "log_gamma_c": np.log(1e3),
     "log_gamma_max": np.log(1e4),
     "gamma_bulk": 2.0,
     "alpha": np.pi / 2,
     "log_B": np.log(1.0),
-    "log_V_eff": np.log(1e55),
-    "log_Omega": np.log(1e-15),
+    "log_R": np.log(1e16),
+    "f_V": 1.0,
+    "f_A": 1.0,
     "log_D_L": np.log(1e27),
+    "log_D_A": np.log(1e27),
     "redshift": 0.01,
 }
 
@@ -34,9 +35,9 @@ flux = np.exp(output.flux)
 # Compute break frequencies
 norm = model._sed._opt_from_physics_to_params(
     log_B=parameters["log_B"],
-    log_V=parameters["log_V_eff"],
+    log_R=parameters["log_R"],
     log_D_L=parameters["log_D_L"],
-    log_Omega=parameters["log_Omega"],
+    log_D_A=parameters["log_D_A"],
     log_gamma_min=parameters["log_gamma_min"],
     log_gamma_max=parameters["log_gamma_max"],
     p=parameters["p"],
@@ -45,6 +46,8 @@ norm = model._sed._opt_from_physics_to_params(
     alpha=parameters["alpha"],
     gamma_bulk=parameters["gamma_bulk"],
     redshift=parameters["redshift"],
+    f_V=parameters["f_V"],
+    f_A=parameters["f_A"],
     pitch_average=True,
 )
 
@@ -66,7 +69,7 @@ for key, label in [
 
 plt.xlabel("Frequency [Hz]")
 plt.ylabel("Flux Density [cgs]")
-plt.title("Synchrotron SED (Cooling + SSA)")
+plt.title("Synchrotron SED (SSA Only)")
 plt.grid(alpha=0.3)
 plt.tight_layout()
 plt.show()

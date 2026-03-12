@@ -431,6 +431,7 @@
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.cosmology</span><span class="w"> </span><span class="kn">import</span> <span class="n">FLRW</span><span class="p">,</span> <span class="n">FlatLambdaCDM</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">ruamel.yaml.comments</span><span class="w"> </span><span class="kn">import</span> <span class="n">CommentedMap</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
@@ -534,8 +535,14 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__tag__</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__type__</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> must define both __tag__ and __type__.&quot;</span><span class="p">)</span>
-        <span class="n">yaml</span><span class="o">.</span><span class="n">representer</span><span class="o">.</span><span class="n">add_multi_representer</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__type__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">)</span>
-        <span class="n">yaml</span><span class="o">.</span><span class="n">constructor</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__tag__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__type__</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="nb">set</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">__type__</span><span class="p">:</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">representer</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">)</span>
+                <span class="n">yaml</span><span class="o">.</span><span class="n">constructor</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__tag__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">representer</span><span class="o">.</span><span class="n">add_representer</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__type__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">to_yaml</span><span class="p">)</span>
+            <span class="n">yaml</span><span class="o">.</span><span class="n">constructor</span><span class="o">.</span><span class="n">add_constructor</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">__tag__</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">from_yaml</span><span class="p">)</span>
 
 
 <div class="viewcode-block" id="AstropyQuantityHandler">
@@ -575,6 +582,52 @@
             <span class="n">value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
 
         <span class="k">return</span> <span class="n">value</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">&quot;unit&quot;</span><span class="p">])</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="AstropyCosmologyHandler">
+<a class="viewcode-back" href="../../_as_gen/utils.io_utils.AstropyCosmologyHandler.html#utils.io_utils.AstropyCosmologyHandler">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">AstropyCosmologyHandler</span><span class="p">(</span><span class="n">_YAMLHandler</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    YAML handler for Astropy built-in cosmologies.</span>
+
+<span class="sd">    Stores only the cosmology name (e.g., &quot;Planck18&quot;) and</span>
+<span class="sd">    reconstructs using Astropy&#39;s cosmology registry.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">__tag__</span> <span class="o">=</span> <span class="s2">&quot;!astropy_cosmology&quot;</span>
+    <span class="n">__type__</span> <span class="o">=</span> <span class="p">[</span><span class="n">FlatLambdaCDM</span><span class="p">,</span> <span class="n">FLRW</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AstropyCosmologyHandler.to_yaml">
+<a class="viewcode-back" href="../../_as_gen/utils.io_utils.AstropyCosmologyHandler.to_yaml.html#utils.io_utils.AstropyCosmologyHandler.to_yaml">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_yaml</span><span class="p">(</span><span class="n">representer</span><span class="p">,</span> <span class="n">obj</span><span class="p">:</span> <span class="n">FLRW</span><span class="p">):</span>
+        <span class="c1"># Require that cosmology has a name</span>
+        <span class="k">if</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Only named cosmologies can be serialized. Custom cosmologies are not supported.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">representer</span><span class="o">.</span><span class="n">represent_mapping</span><span class="p">(</span>
+            <span class="n">AstropyCosmologyHandler</span><span class="o">.</span><span class="n">__tag__</span><span class="p">,</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">obj</span><span class="o">.</span><span class="n">name</span><span class="p">},</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AstropyCosmologyHandler.from_yaml">
+<a class="viewcode-back" href="../../_as_gen/utils.io_utils.AstropyCosmologyHandler.from_yaml.html#utils.io_utils.AstropyCosmologyHandler.from_yaml">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_yaml</span><span class="p">(</span><span class="n">loader</span><span class="p">,</span> <span class="n">node</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosmology</span>
+
+        <span class="n">data</span> <span class="o">=</span> <span class="n">CommentedMap</span><span class="p">()</span>
+        <span class="n">loader</span><span class="o">.</span><span class="n">construct_mapping</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">maptyp</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">deep</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">name</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">cosmology</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown built-in cosmology: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span></div>
 </div>
 
 
@@ -676,6 +729,7 @@
     <span class="n">AstropyQuantityHandler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
     <span class="n">PathHandler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
     <span class="n">NumpyArrayHandler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
+    <span class="n">AstropyCosmologyHandler</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="n">yaml</span><span class="p">)</span>
 
     <span class="k">return</span> <span class="n">yaml</span></div>
 

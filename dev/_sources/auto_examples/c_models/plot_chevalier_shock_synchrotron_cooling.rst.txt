@@ -621,17 +621,10 @@ break. A detailed discussion of this construction can be found in
 We now evaluate these parameters as a function of time and track the evolution
 of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
 
-.. GENERATED FROM PYTHON SOURCE LINES 542-594
+.. GENERATED FROM PYTHON SOURCE LINES 542-588
 
 .. code-block:: Python
 
-
-    # --------------------------------------------------
-    # Calculate Shock Volume and Solid Angle
-    # --------------------------------------------------
-    # Assuming a thin shell with volume filling factor f_V and area filling factor f_A.
-    V = f_V * (4 / 3) * np.pi * r_sh**3
-    Omega = f_A * np.pi * r_sh**2 / D_L**2  # Projected solid angle of the emitting region as seen by the observer.
 
     # --------------------------------------------------
     # Compute break frequencies as a function of time
@@ -640,18 +633,19 @@ of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
     parameters = [
         sed.from_physics_to_params(
             B=B_i,
-            V=V_i,
-            D_L=D_L,
-            Omega=Omega_i,
+            R=r_i,
+            luminosity_distance=D_L,
             epsilon_E=epsilon_e,
             epsilon_B=epsilon_B,
             gamma_min=gamma_min,
             gamma_max=gamma_max,
             gamma_c=gamma_c_i,
+            f_V=f_V,
+            f_A=f_A,
             p=p,
             pitch_average=True,
         )
-        for B_i, V_i, Omega_i, gamma_c_i in zip(B, V, Omega, gamma_c)
+        for B_i, r_i, gamma_c_i in zip(B, r_sh, gamma_c)
     ]
 
     # Extract break frequencies (unit-safe)
@@ -689,7 +683,7 @@ of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
 
 
 
-.. GENERATED FROM PYTHON SOURCE LINES 595-621
+.. GENERATED FROM PYTHON SOURCE LINES 589-615
 
 Interpretation of the Break Frequencies
 ---------------------------------------
@@ -718,7 +712,7 @@ With the time-dependent break frequencies in hand, we now turn to the full
 synchrotron spectral energy distributions and examine how the broadband spectrum
 evolves across epochs.
 
-.. GENERATED FROM PYTHON SOURCE LINES 621-674
+.. GENERATED FROM PYTHON SOURCE LINES 615-668
 
 .. code-block:: Python
 
@@ -734,14 +728,14 @@ evolves across epochs.
     norm = LogNorm(vmin=t_days.min(), vmax=t_days.max())
     cmap = plt.cm.viridis
 
-    for par, Omega_i, t_day in zip(parameters, Omega, t_days):
+    for par, r_i, t_day in zip(parameters, r_sh, t_days):
         F_nu = sed.sed(
             frequencies,
             nu_m=par["nu_m"],
             nu_c=par["nu_c"],
             F_norm=par["F_norm"],
             gamma_m=gamma_min,
-            omega=Omega_i,
+            omega=np.pi * (r_i / D_L) ** 2 * f_A,  # Projected solid angle of the emitting region
             p=p,
             s=-smoothing,  # effectively piecewise
         )
@@ -790,7 +784,7 @@ evolves across epochs.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 2.663 seconds)
+   **Total running time of the script:** (0 minutes 2.942 seconds)
 
 
 .. _sphx_glr_download_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py:
