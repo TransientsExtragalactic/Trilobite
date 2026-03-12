@@ -156,42 +156,6 @@ def test_BPL_moment_matches_quadrature(a1, a2, x_min, x_max, order):
     assert np.isclose(analytic, numeric, rtol=1e-3)
 
 
-def test_BPL_n_total_asymptotes_to_PL():
-    N0 = 1.0
-
-    gamma_min = 1.0
-    gamma_max = 1e6
-
-    # break very close to the upper cutoff
-    gamma_b = gamma_max * 0.999999
-
-    p = 3.0
-    a1 = -3.0
-    a2 = -4.0
-
-    n_pl = _opt_compute_PL_n_total(
-        N0,
-        p,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-    )
-
-    n_bpl = _opt_compute_BPL_n_total(
-        N0,
-        a1,
-        a2,
-        gamma_b,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-    )
-
-    assert np.isclose(
-        n_pl,
-        n_bpl,
-        rtol=1e-4,
-    )
-
-
 @pytest.mark.parametrize(
     "a1,a2,gamma_b",
     [

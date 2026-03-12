@@ -321,8 +321,6 @@ def test_metadata_properties():
 # ============================================================
 # Tupled Output Order
 # ============================================================
-
-
 def test_forward_model_tupled():
     """_forward_model_tupled should respect OUTPUT ordering."""
 

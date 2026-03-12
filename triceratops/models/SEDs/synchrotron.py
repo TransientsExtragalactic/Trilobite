@@ -397,12 +397,12 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
             bounds=(0, None),
         ),
         ModelParameter(
-            "log_Omega",
-            -5,
-            description="Logarithm of the solid angle subtended by the emitting region (steradians).",
+            "log_D_A",
+            27.0,
+            description="Logarithm of the angular diameter distance to the source (cgs).",
             base_units=None,
-            latex=r"\log \Omega",
-            bounds=(None, None),
+            latex=r"\log_D_A",
+            bounds=(0, None),
         ),
         # Core Parameters.
         ModelParameter(
@@ -414,12 +414,28 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         ModelParameter(
-            "log_V_eff",
-            57.0,
-            description="Logarithm of the effective volume of the emitting region (cgs).",
+            "log_R",
+            np.log(1e16),
+            description="Logarithm of the effective radius (cm).",
             base_units=None,
-            latex=r"\log V_{\rm eff}",
+            latex=r"\log R_{\rm eff}",
             bounds=(0, None),
+        ),
+        ModelParameter(
+            "f_V",
+            1.0,
+            description="Volume filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"f_V",
+            bounds=(0, 1),
+        ),
+        ModelParameter(
+            "f_A",
+            1.0,
+            description="Area filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"F_A",
+            bounds=(0, 1),
         ),
         ModelParameter(
             "redshift", 0.0, description="Redshift of the source", base_units=None, latex="z", bounds=(0, None)
@@ -492,9 +508,9 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         #           or "slow_cooling")
         norm = self._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
-            log_Omega=parameters["log_Omega"],
+            log_D_A=parameters["log_D_A"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_c=parameters["log_gamma_c"],
             log_gamma_max=parameters["log_gamma_max"],
@@ -504,6 +520,8 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_A=parameters["f_A"],
+            f_V=parameters["f_V"],
             pitch_average=self._pitch_averaged,
         )
 
@@ -511,11 +529,11 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         log_F_nu = self._sed._log_opt_sed_from_regime(
             regime=norm["regime"],
             log_nu=variables["log_nu"],
-            log_nu_m=norm["nu_m"],
-            log_nu_a=norm["nu_a"],
-            log_nu_c=norm["nu_c"],
-            log_nu_max=norm["nu_max"],
-            log_F_norm=norm["F_norm"],
+            log_nu_m=np.log(norm["nu_m"]),
+            log_nu_a=np.log(norm["nu_a"]),
+            log_nu_c=np.log(norm["nu_c"]),
+            log_nu_max=np.log(norm["nu_max"]),
+            log_F_norm=np.log(norm["F_norm"]),
             p=parameters["p"],
             s=-1.0,  # We can set s=1 for the smoothing parameter since we're not modeling a smoothed SED here.
         )
@@ -762,6 +780,7 @@ class SSA_SynchrotronSEDModel(Model):
             bounds=(0, None),
         ),
         # Geometric Parameters.
+        # Geometric Parameters.
         ModelParameter(
             "log_D_L",
             27.0,
@@ -771,12 +790,12 @@ class SSA_SynchrotronSEDModel(Model):
             bounds=(0, None),
         ),
         ModelParameter(
-            "log_Omega",
-            -5,
-            description="Logarithm of the solid angle subtended by the emitting region (steradians).",
+            "log_D_A",
+            27.0,
+            description="Logarithm of the angular diameter distance to the source (cgs).",
             base_units=None,
-            latex=r"\log \Omega",
-            bounds=(None, None),
+            latex=r"\log_D_A",
+            bounds=(0, None),
         ),
         # Core Parameters.
         ModelParameter(
@@ -788,12 +807,28 @@ class SSA_SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         ModelParameter(
-            "log_V_eff",
-            57.0,
-            description="Logarithm of the effective volume of the emitting region (cgs).",
+            "log_R",
+            np.log(1e16),
+            description="Logarithm of the effective radius (cm).",
             base_units=None,
-            latex=r"\log V_{\rm eff}",
+            latex=r"\log R_{\rm eff}",
             bounds=(0, None),
+        ),
+        ModelParameter(
+            "f_V",
+            1.0,
+            description="Volume filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"f_V",
+            bounds=(0, 1),
+        ),
+        ModelParameter(
+            "f_A",
+            1.0,
+            description="Area filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"F_A",
+            bounds=(0, 1),
         ),
         ModelParameter(
             "redshift", 0.0, description="Redshift of the source", base_units=None, latex="z", bounds=(0, None)
@@ -859,9 +894,9 @@ class SSA_SynchrotronSEDModel(Model):
         # - regime: an Enum indicating the spectral regime (e.g., "fast_cooling" or "slow_cooling")
         norm = self._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
-            log_Omega=parameters["log_Omega"],
+            log_D_A=parameters["log_D_A"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_max=parameters["log_gamma_max"],
             p=parameters["p"],
@@ -870,6 +905,8 @@ class SSA_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_A=parameters["f_A"],
+            f_V=parameters["f_V"],
             pitch_average=self._pitch_averaged,
         )
 
@@ -877,10 +914,10 @@ class SSA_SynchrotronSEDModel(Model):
         log_F_nu = self._sed._log_opt_sed_from_regime(
             variables["log_nu"],
             regime=norm["regime"],
-            log_nu_m=norm["nu_m"],
-            log_nu_a=norm["nu_a"],
-            log_nu_max=norm["nu_max"],
-            log_F_norm=norm["F_norm"],
+            log_nu_m=np.log(norm["nu_m"]),
+            log_nu_a=np.log(norm["nu_a"]),
+            log_nu_max=np.log(norm["nu_max"]),
+            log_F_norm=np.log(norm["F_norm"]),
             p=parameters["p"],
             s=-1.0,  # We can set s=1 for the smoothing parameter since we're not modeling a smoothed SED here.
         )
@@ -1120,6 +1157,7 @@ class Cooling_SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         # Geometric Parameters.
+        # Geometric Parameters.
         ModelParameter(
             "log_D_L",
             27.0,
@@ -1138,12 +1176,20 @@ class Cooling_SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         ModelParameter(
-            "log_V_eff",
-            57.0,
-            description="Logarithm of the effective volume of the emitting region (cgs).",
+            "log_R",
+            np.log(1e16),
+            description="Logarithm of the effective radius (cm).",
             base_units=None,
-            latex=r"\log V_{\rm eff}",
+            latex=r"\log R_{\rm eff}",
             bounds=(0, None),
+        ),
+        ModelParameter(
+            "f_V",
+            1.0,
+            description="Volume filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"f_V",
+            bounds=(0, 1),
         ),
         ModelParameter(
             "redshift", 0.0, description="Redshift of the source", base_units=None, latex="z", bounds=(0, None)
@@ -1210,7 +1256,7 @@ class Cooling_SynchrotronSEDModel(Model):
         # - regime: an Enum indicating the spectral regime (e.g., "fast_cooling" or "slow_cooling")
         norm = self._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_c=parameters["log_gamma_c"],
@@ -1221,6 +1267,7 @@ class Cooling_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
             pitch_average=self._pitch_averaged,
         )
 
@@ -1467,6 +1514,7 @@ class SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         # Geometric Parameters.
+        # Geometric Parameters.
         ModelParameter(
             "log_D_L",
             27.0,
@@ -1485,12 +1533,20 @@ class SynchrotronSEDModel(Model):
             bounds=(None, None),
         ),
         ModelParameter(
-            "log_V_eff",
-            57.0,
-            description="Logarithm of the effective volume of the emitting region (cgs).",
+            "log_R",
+            np.log(1e16),
+            description="Logarithm of the effective radius (cm).",
             base_units=None,
-            latex=r"\log V_{\rm eff}",
+            latex=r"\log R_{\rm eff}",
             bounds=(0, None),
+        ),
+        ModelParameter(
+            "f_V",
+            1.0,
+            description="Volume filling factor of the emitting region (dimensionless).",
+            base_units=None,
+            latex=r"f_V",
+            bounds=(0, 1),
         ),
         ModelParameter(
             "redshift", 0.0, description="Redshift of the source", base_units=None, latex="z", bounds=(0, None)
@@ -1552,7 +1608,7 @@ class SynchrotronSEDModel(Model):
         # - regime: an Enum indicating the spectral regime (e.g., "fast_cooling" or "slow_cooling")
         norm = self._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_max=parameters["log_gamma_max"],
@@ -1562,15 +1618,16 @@ class SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
             pitch_average=self._pitch_averaged,
         )
 
         # Now we can use the SED to compute the correct flux density at the given frequencies.
         log_F_nu = self._sed._log_opt_sed(
             variables["log_nu"],
-            log_F_norm=norm["log_F_norm"],
-            log_nu_m=norm["log_nu_m"],
-            log_nu_max=norm["log_nu_max"],
+            log_F_norm=np.log(norm["F_norm"]),
+            log_nu_m=np.log(norm["nu_m"]),
+            log_nu_max=np.log(norm["nu_max"]),
             p=parameters["p"],
             s=-1.0,  # We can set s=1 for the smoothing parameter since we're not modeling a smoothed SED here.
         )
