@@ -5,17 +5,10 @@ This module implements the various spectral energy distributions relevant to syn
 For documentation on synchrotron emission modeling in Triceratops, see :ref:`radiation_overview`.
 """
 
-__all__ = [
-    "PowerLaw_SynchrotronSED",
-    "PowerLaw_Cooling_SSA_SynchrotronSED",
-    "PowerLaw_Cooling_SynchrotronSED",
-    "PowerLaw_SSA_SynchrotronSED",
-    "SSA_SED_PowerLaw",
-]
-from .one_zone import (
-    PowerLaw_Cooling_SSA_SynchrotronSED,
-    PowerLaw_Cooling_SynchrotronSED,
-    PowerLaw_SSA_SynchrotronSED,
-    PowerLaw_SynchrotronSED,
-    SSA_SED_PowerLaw,
-)
+__all__ = ["one_zone", "one_zone_closure"]
+from . import one_zone, one_zone_closure
+from .one_zone import *
+from .one_zone_closure import *
+
+__all__ += one_zone.__all__
+__all__ += one_zone_closure.__all__

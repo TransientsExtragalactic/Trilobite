@@ -59,7 +59,6 @@ __all__ = [
     "compute_bol_emissivity_BPL",
     "compute_bol_emissivity_from_thermal_energy_density",
     "compute_bol_emissivity_BPL_from_thermal_energy_density",
-    "SynchrotronSED",
     "PowerLaw_SSA_SynchrotronSED",
     "PowerLaw_Cooling_SSA_SynchrotronSED",
     "PowerLaw_Cooling_SynchrotronSED",

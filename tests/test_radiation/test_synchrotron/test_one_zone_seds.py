@@ -522,8 +522,8 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     and compares the inferred B(t) and R(t) from the two methods.
     """
 
-    from triceratops.radiation.synchrotron.closure import (
-        compute_ssa_BR_from_spectrum_dm22,
+    from triceratops.radiation.synchrotron.SEDs.one_zone_closure import (
+        invert_powerlaw_ssa_sed_demarchi,
     )
 
     sed_engine = PowerLaw_SSA_SynchrotronSED()
@@ -561,7 +561,7 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     # De Marchi closure
     # ---------------------------------------------------------
 
-    B_dm22, R_dm22 = compute_ssa_BR_from_spectrum_dm22(
+    B_dm22, R_dm22 = invert_powerlaw_ssa_sed_demarchi(
         nu_t,
         F_t,
         luminosity_distance,

@@ -902,6 +902,20 @@ In practice, we use this propagation in two distinct ways:
 Inversion
 ---------
 
+.. note::
+
+    This section describes our "standard" inversion, which is directly packaged into the synchrotron SEDs. This is
+    by no means the only possible inversion, nor is it the only one which is useful. We have chosen this one on the
+    basis that it is widely used in the literature and is a useful starting point for users. However, we encourage users to
+    develop their own inversion schemes as needed for their particular applications.
+
+    In addition, some other inversion schemes are provided in the code with varying levels of applicability. The links
+    below provide some examples of these other inversion schemes:
+
+    - :ref:`synchrotron_cooling_closure` provides a closure relation for which :math:`\gamma_c` may be treated as a dependent
+      variable and thus inferred from the SED. There are a number of caveats and restrictions to this approach
+      which are described in the theory note.
+
 The final theoretical topic which must be discussed in the context of our single-zone SED implementation is that of
 inversion. By inversion, we mean the process of taking an observed SED and inferring the underlying physical parameters which
 produced it. This is a non-trivial process which is often complicated by the fact that knowledge of the

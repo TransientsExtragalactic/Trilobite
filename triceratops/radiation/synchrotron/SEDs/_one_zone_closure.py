@@ -12,6 +12,9 @@ from triceratops.radiation.constants import (
     electron_rest_energy_cgs,
     electron_rest_mass_cgs,
 )
+from triceratops.radiation.synchrotron.cooling import (
+    _synchrotron_cooling_time_coefficient_cgs,
+)
 from triceratops.radiation.synchrotron.microphysics import (
     _opt_compute_BPL_moment,
     _opt_compute_PL_moment,
@@ -1150,6 +1153,279 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_8(
     log_B = (ab_1 * A) + (ab_2 * log_P0) + (ab_3 * log_F_nu_peak) + (ab_4 * log_nu_peak)
 
     return log_R, log_B
+
+
+# === Single Power-Law, Cooling, SSA (Implicit nu_c) === #
+# These closures are based on Ho+22, which implicitly includes the gamma_c closure to allow
+# for self-consistent synchrotron cooling. These are documented and described in detail in the
+# ``reference/physics/radiation/synchrotron/synchrotron_cooling_closure.rst`` file in the documentation.
+#
+# We can only support 3 cases: the optically thin slow cooling SED, and spectra 4 and 7 in the SSA case.
+def _inv_log_powerlaw_sbpl_sed_implicit_cool_2(
+    log_nu_peak: float,
+    log_F_nu_peak: float,
+    log_t: float,
+    log_DL: float,
+    gamma_min: float = 1,
+    gamma_max: float = np.inf,
+    epsilon_e: float = 0.1,
+    epsilon_B: float = 0.01,
+    f_V: float = 0.5,
+    p: float = 3,
+    sin_alpha: float = None,
+):
+    log_nu_peak = np.asarray(log_nu_peak)
+    log_F_nu_peak = np.asarray(log_F_nu_peak)
+    log_t = np.asarray(log_t)
+    log_DL = np.asarray(log_DL)
+
+    # --------- Pitch Averaging --------- #
+    # We need to compute specific Q_m dependent on the pitch averaging convention
+    # and also get our specific c_1 value for the decided convention.
+    if sin_alpha is None:
+        _is_pitch_averaged = True
+        log_Qm = compute_log_Qm_cgs_iso(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_c1 = _log_c_1_gamma_iso_cgs
+    else:
+        _is_pitch_averaged = False
+        log_Qm = compute_log_Qm_cgs(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_c1 = _log_c_1_gamma_cgs
+
+    # ---------- Compute the electron distribution normalization ---------- #
+    # We compute the correct N0 for this scenario. To avoid allowing for implicit
+    # gamma_c dependence in a non-linear manner, we assume a fully uncooled (no cooling) scenario
+    # for the N0. This is a known limitation.
+    log_N0 = compute_log_N0_no_cooling(gamma_min, p, epsilon_e, epsilon_B, gamma_max)
+
+    # --- Compute log B, log gamma_c, and log R --- #
+    # We now apply the closure relations to obtain the correct
+    # B-field from the peak frequency.
+    log_B = log_nu_peak - 2 * np.log(gamma_min) - log_c1
+
+    # With log_B known, we can just use Theta_C and the definition of gamma_c to get log gamma_c.
+    log_theta = np.log(
+        _synchrotron_cooling_time_coefficient_cgs
+    )  # This is just a constant that comes from the definition of the cooling time.
+    log_gamma_c = log_theta - 2 * log_B - log_t
+
+    # Now compute the radius using the standard closure method.
+    log_R = (1 / 3) * (log_F_nu_peak - log_Qm - (3 * log_B) - log_N0)
+
+    # Return everything
+    return log_R, log_B, log_gamma_c
+
+
+def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_7(
+    log_nu_peak: float,
+    log_F_nu_peak: float,
+    log_t: float,
+    log_DL: float,
+    log_DA: float,
+    gamma_min: float = 1,
+    gamma_max: float = np.inf,
+    epsilon_e: float = 0.1,
+    epsilon_B: float = 0.01,
+    f_V: float = 0.5,
+    f_A: float = 0.5,
+    p: float = 3,
+    sin_alpha: float = None,
+):
+    # Coerce everything to arrays so that we can work cleanly in the
+    # array space without having to worry about scalars vs. arrays for the rest of the function.
+    # This is corrected at the end to return scalars if scalars were input.
+    log_nu_peak = np.asarray(log_nu_peak)
+    log_F_nu_peak = np.asarray(log_F_nu_peak)
+    log_DL = np.asarray(log_DL)
+    log_DA = np.asarray(log_DA)
+    log_t = np.asarray(log_t)
+
+    # --- PITCH-ANGLE MANAGEMENT --- #
+    if sin_alpha is None:
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
+        log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
+
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qm_cgs_iso(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_A = (p / 2) * _log_c_1_gamma_iso_cgs + (p - 1) * np.log(gamma_min) + log_Q
+
+    else:
+        # Calculate the necessary (agnostic) constants before moving into the branching for fast vs. slow cooling.
+        log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
+
+        # Compute the Q and A arrays.
+        log_Q = compute_log_Qm_cgs(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_A = (p / 2) * _log_c_1_gamma_cgs + (p - 1) * np.log(gamma_min) + ((p + 2) / 2) * np.log(sin_alpha) + log_Q
+
+    # --- COOLING MANAGEMENT --- #
+    log_N0 = compute_log_N0_no_cooling(gamma_min, p, epsilon_e, epsilon_B, gamma_max)
+    log_A += +log_N0
+
+    # ------ INVERSION LOGIC ------ #
+    # We now simply assemble to coefficients and start getting
+    # the inversion done.
+    log_THETA = np.log(_synchrotron_cooling_time_coefficient_cgs)
+
+    # Compute log R and log B. We will reduce out the exponents so that it's crystal clear
+    # how these play out for easy debugging.
+    ar1, ar2, ar3, ar4, ar5, ar6 = (
+        -1 / (2 * p + 7),
+        -1 / (2 * p + 7),
+        -(p + 6) / (2 * p + 7),
+        (p + 7) / (2 * p + 7),
+        -(2 * p + 5) / (2 * p + 7),
+        1 / (2 * p + 7),
+    )
+    ab1, ab2, ab3, ab4, ab5, ab6 = (
+        -4 / (2 * p + 7),
+        -4 / (2 * p + 7),
+        6 / (2 * p + 7),
+        -2 / (2 * p + 7),
+        (2 * p + 15) / (2 * p + 7),
+        4 / (2 * p + 7),
+    )
+    ac1, ac2, ac3, ac4, ac5, ac6 = (
+        (2 * p + 15) / (2 * p + 7),
+        8 / (2 * p + 7),
+        -12 / (2 * p + 7),
+        4 / (2 * p + 7),
+        -2 * (2 * p + 15) / (2 * p + 7),
+        -(2 * p + 15) / (2 * p + 7),
+    )
+
+    log_R = (
+        (ar1 * log_THETA) + (ar2 * log_A) + (ar3 * log_P0) + (ar4 * log_F_nu_peak) + (ar5 * log_nu_peak) + (ar6 * log_t)
+    )
+    log_B = (
+        (ab1 * log_THETA) + (ab2 * log_A) + (ab3 * log_P0) + (ab4 * log_F_nu_peak) + (ab5 * log_nu_peak) + (ab6 * log_t)
+    )
+    log_gamma_c = (
+        (ac1 * log_THETA) + (ac2 * log_A) + (ac3 * log_P0) + (ac4 * log_F_nu_peak) + (ac5 * log_nu_peak) + (ac6 * log_t)
+    )
+
+    return log_R, log_B, log_gamma_c
+
+
+def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_4(
+    log_nu_peak: float,
+    log_F_nu_peak: float,
+    log_t: float,
+    log_DL: float,
+    log_DA: float,
+    gamma_min: float = 1,
+    gamma_max: float = np.inf,
+    epsilon_e: float = 0.1,
+    epsilon_B: float = 0.01,
+    f_V: float = 0.5,
+    f_A: float = 0.5,
+    p: float = 3,
+    sin_alpha: float = None,
+):
+    # Coerce everything to arrays so that we can work cleanly in the
+    # array space without having to worry about scalars vs. arrays for the rest of the function.
+    # This is corrected at the end to return scalars if scalars were input.
+    log_nu_peak = np.asarray(log_nu_peak)
+    log_F_nu_peak = np.asarray(log_F_nu_peak)
+    log_DL = np.asarray(log_DL)
+    log_DA = np.asarray(log_DA)
+    log_t = np.asarray(log_t)
+
+    # --- PITCH-ANGLE MANAGEMENT --- #
+    if sin_alpha is None:
+        _is_pitch_averaged = True
+        log_Qm = compute_log_Qm_cgs_iso(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_c1 = _log_c_1_gamma_iso_cgs
+        log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
+
+        # Compute A: we just do the angular component here so that
+        # the rest can be done in a single branch for both the pitch-averaged and non-pitch-averaged cases.
+        log_A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm
+    else:
+        _is_pitch_averaged = False
+        log_Qm = compute_log_Qm_cgs(
+            f_V,
+            log_DL,
+            gamma_min,
+            p,
+        )
+        log_c1 = _log_c_1_gamma_cgs
+        log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
+
+        # Compute A: we just do the angular component here so that
+        # the rest can be done in a single branch for both the pitch-averaged and non-pitch-averaged cases.
+        log_A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm + ((p + 1) / 2) * np.log(sin_alpha)
+
+    # --- COOLING MANAGEMENT --- #
+    log_N0 = compute_log_N0_no_cooling(gamma_min, p, epsilon_e, epsilon_B, gamma_max)
+    log_A += log_N0
+
+    # ------ INVERSION LOGIC ------ #
+    # We now simply assemble to coefficients and start getting
+    # the inversion done.
+    log_THETA = np.log(_synchrotron_cooling_time_coefficient_cgs)
+
+    # Compute log R and log B. We will reduce out the exponents so that it's crystal clear
+    # how these play out for easy debugging.
+    ar1, ar2, ar3, ar4, ar5, ar6 = (
+        -1 / (2 * p + 5),
+        -1 / (2 * p + 5),
+        -(p + 1) / (2 * p + 5),
+        (p + 2) / (2 * p + 5),
+        -(2 * p + 3) / (2 * p + 5),
+        1 / (2 * p + 5),
+    )
+    ab1, ab2, ab3, ab4, ab5, ab6 = (
+        -4 / (2 * p + 5),
+        -4 / (2 * p + 5),
+        6 / (2 * p + 5),
+        -2 / (2 * p + 5),
+        (2 * p + 13) / (2 * p + 5),
+        4 / (2 * p + 5),
+    )
+    ac1, ac2, ac3, ac4, ac5, ac6 = (
+        (2 * p + 13) / (2 * p + 5),
+        8 / (2 * p + 5),
+        -12 / (2 * p + 5),
+        4 / (2 * p + 5),
+        -2 * (2 * p + 13) / (2 * p + 5),
+        -(2 * p + 13) / (2 * p + 5),
+    )
+
+    log_R = (
+        (ar1 * log_THETA) + (ar2 * log_A) + (ar3 * log_P0) + (ar4 * log_F_nu_peak) + (ar5 * log_nu_peak) + (ar6 * log_t)
+    )
+    log_B = (
+        (ab1 * log_THETA) + (ab2 * log_A) + (ab3 * log_P0) + (ab4 * log_F_nu_peak) + (ab5 * log_nu_peak) + (ab6 * log_t)
+    )
+    log_gamma_c = (
+        (ac1 * log_THETA) + (ac2 * log_A) + (ac3 * log_P0) + (ac4 * log_F_nu_peak) + (ac5 * log_nu_peak) + (ac6 * log_t)
+    )
+
+    return log_R, log_B, log_gamma_c
 
 
 SSA_COOLING_INV_FUNCTION_REGISTRY = {
