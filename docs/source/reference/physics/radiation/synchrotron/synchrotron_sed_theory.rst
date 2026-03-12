@@ -768,6 +768,65 @@ for each case:
 
             \frac{dN}{d\gamma} = N_0 \begin{cases}
                   0, & \gamma < \gamma_{\rm m} \\
+                  \left(\frac{\gamma}{\gamma_c}\right)^{-p}, & \gamma_{c} \ge \gamma \ge \gamma_{\rm m} \\
+                    \left(\frac{\gamma}{\gamma_c}\right)^{-(p+1)}, & \gamma_{\rm max} \ge \gamma \ge \gamma_{c} \\
+                    0, & \gamma > \gamma_{\max}
+            \end{cases},
+
+        where :math:`N_0` is the normalization constant of the electron distribution. As such
+
+        .. math::
+
+            \left.\frac{dN}{d\gamma}\right|_{\gamma=\gamma_\nu} = N_0 \left(\frac{\gamma_\nu}{\gamma_c}\right)^{-p}.
+
+        so, at the normalizing frequency :math:`\nu_m = \nu(\gamma_{\min})`, we have
+
+        .. math::
+
+            \left.\frac{dN}{d\gamma}\right|_{\gamma=\gamma_m} \gamma_{m} = N_0 \gamma_{\min}^{1-p} \gamma_c^{p}.
+
+        The emissivity is then
+
+        .. math::
+
+            j_\nu \approx
+            \frac{\sqrt{3} q^3 B \sin \alpha}{4\pi m_e c^2}
+            N_0 \gamma_{\min}^{1-p} \gamma_c^{p}.
+
+        Collecting the constants, we have
+
+        .. math::
+
+            \chi = \frac{\sqrt{3} q^3}{4\pi m_e c^2},
+
+        and
+
+        .. math::
+
+            \chi_{\rm iso} = \frac{\sqrt{3} q^3}{2\pi^2 m_e c^2},
+
+        the normalizing flux at :math:`\nu_m` is
+
+        .. math::
+            :label: slow_cooling_norm
+
+            F_{ms,0} \approx \chi (B\sin\alpha) N_0 \gamma_{\rm m}^{1-p} \gamma_c^{p} \frac{V}{D_L^2},
+
+        or, equivalently, for the pitch-angle averaged case,
+
+        .. math::
+            :label: slow_cooling_norm_iso
+
+            F_{ms0,{\rm iso}} \approx \chi_{\rm iso} B N_0 \gamma_{\rm m}^{1-p}  \frac{V}{D_L^2}.
+
+    .. tab-item:: No Cooling
+
+        In the case of a **non-cooling** electron population, the distribution of electrons follows
+
+        .. math::
+
+            \frac{dN}{d\gamma} = N_0 \begin{cases}
+                  0, & \gamma < \gamma_{\rm m} \\
                   \gamma^{-p}, & \gamma_{\max} \ge \gamma \ge \gamma_{\rm m} \\
                     0, & \gamma > \gamma_{\max}
             \end{cases},
@@ -807,18 +866,19 @@ for each case:
         the normalizing flux at :math:`\nu_m` is
 
         .. math::
-            :label: slow_cooling_norm
+            :label: no_cooling_norm
 
             F_{m,0} \approx \chi (B\sin\alpha) N_0 \gamma_{\rm m}^{1-p} \frac{V}{D_L^2},
 
         or, equivalently, for the pitch-angle averaged case,
 
         .. math::
-            :label: slow_cooling_norm_iso
+            :label: no_cooling_norm_iso
 
             F_{m0,{\rm iso}} \approx \chi_{\rm iso} B N_0 \gamma_{\rm m}^{1-p}  \frac{V}{D_L^2}.
 
-Given a selected normalizing population (:math:`F_{c,0}` at :math:`\nu_c` for fast-cooling or :math:`F_{m,0}` at :math:`\nu_m` for slow-cooling),
+Given a selected normalizing population (:math:`F_{c,0}` at :math:`\nu_c` for fast-cooling, :math:`F_{m,0}` at :math:`\nu_m` for non-cooling
+or :math:`F_{ms,0}` at :math:`\nu_m` for slow-cooling),
 one may then use equipartition to compute the relevant coefficients in the flux normalization expressions above. In the sections
 below, we'll go through each of the SED cases and describe how to connect the normalization frequency to the peak emission frequency
 and thus the full SED normalization.
@@ -875,8 +935,9 @@ In practice, we use this propagation in two distinct ways:
 
       (\nu_{\rm pk},F_{\rm pk}) =
       \begin{cases}
-      (\nu_m, F_{m,0}), & \text{slow cooling} \\
-      (\nu_c, F_{c,0}), & \text{fast cooling}.
+      (\nu_m, F_{ms,0}), & \text{slow cooling} \\
+      (\nu_c, F_{c,0}), & \text{fast cooling} \\
+      (\nu_m, F_{m,0}), & \text{no cooling}
       \end{cases}
 
    In this case no propagation is required.
@@ -1014,8 +1075,9 @@ For notational convenience, we introduce the constants
 
             \begin{aligned}
             \nu_{\rm synchrotron}(\gamma) &= c_{1,\rm ISO} B \gamma^2, \\
-            F_{m,0} &= Q_{m,\rm ISO} B^3 R^3 \tilde{N_0} , \\
-            F_{c,0} &= Q_{c,\rm ISO} B^3 R^3 \tilde{N_0} ,
+            F_{ms,0} &= Q_{ms,\rm ISO} B^3 R^3 \tilde{N_0} , \\
+            F_{c,0} &= Q_{c,\rm ISO} B^3 R^3 \tilde{N_0} , \\
+            F_{m,0} &= Q_{m,\rm ISO} B^3 R^3 \tilde{N_0} ,
             \end{aligned}
 
         where
@@ -1024,7 +1086,8 @@ For notational convenience, we introduce the constants
 
             \begin{aligned}
             c_{1,\rm ISO} &= \frac{3 q_e}{2\pi^2 m_e c}, \\
-            Q_{m,\rm ISO} &= \frac{4}{3}\pi f_V \chi_{\rm ISO} \gamma_m^{1-p} D_L^{-2}, \\
+            Q_{m0,\rm ISO} &= \frac{4}{3}\pi f_V \chi_{\rm ISO} \gamma_m^{1-p} D_L^{-2}, \\
+            Q_{ms,\rm ISO} &= \frac{4}{3}\pi f_V \chi_{\rm ISO} \gamma_m^{1-p} \gamma_c^p D_L^{-2}, \\
             Q_{c,\rm ISO} &= \frac{4}{3}\pi f_V \chi_{\rm ISO}  \gamma_m^2 \gamma_c^{-1} D_L^{-2}.
             \end{aligned}
 
@@ -1034,8 +1097,9 @@ For notational convenience, we introduce the constants
 
             \begin{aligned}
             \nu_{\rm synchrotron}(\gamma) &= c_{1} B \gamma^2 \sin\alpha, \\
-            F_{m,0} &= Q_{m,0} B^3 R^3 \tilde{N_0} \sin\alpha, \\
-            F_{c,0} &= Q_{c,0} B^3 R^3 \tilde{N_0} \sin\alpha,
+            F_{ms,0} &= Q_{ms,0} B^3 R^3 \tilde{N_0} \sin\alpha, \\
+            F_{c,0} &= Q_{c,0} B^3 R^3 \tilde{N_0} \sin\alpha, \\
+            F_{m,0} &= Q_{m,0} B^3 R^3 \tilde{N_0} \sin\alpha,
             \end{aligned}
 
         where
@@ -1045,7 +1109,8 @@ For notational convenience, we introduce the constants
             \begin{aligned}
             c_{1} &= \frac{3 q_e}{4\pi m_e c}, \\
             Q_{m,0} &= \frac{4}{3}\pi f_V \chi \gamma_m^{1-p} D_L^{-2}, \\
-            Q_{c,0} &= \frac{4}{3}\pi f_V \chi \gamma_m^2 \gamma_c^{-1} D_L^{-2}.
+            Q_{c,0} &= \frac{4}{3}\pi f_V \chi \gamma_m^2 \gamma_c^{-1} D_L^{-2} \\
+            Q_{ms,0} &= \frac{4}{3}\pi f_V \chi \gamma_m^{1-p} \gamma_c^p D_L^{-2}.
             \end{aligned}
 
 Under these assumptions, each of the SED forms described above may be explicitly inverted.
@@ -1741,10 +1806,11 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
 
                 .. math::
 
-                    F_{m,0} \approx
+                    F_{ms,0} \approx
                     \chi \, (B \sin\alpha)\,
                     N_0 \,
                     \gamma_{\rm min}^{\,1-p}
+                    \gamma_c^{p}
                     \frac{V_{\rm eff}}{D_L^2},
 
             .. tab-item:: Isotropic Pitch Angle
@@ -1754,11 +1820,12 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
 
                 .. math::
 
-                    F_{m,0}^{\rm (iso)} \approx
+                    F_{ms,0}^{\rm (iso)} \approx
                     \chi_{\rm iso}\,
                     B\,
                     N_0 \,
                     \gamma_{\rm min}^{\,1-p}
+                    \gamma_c^{p}
                     \frac{V_{\rm eff}}{D_L^2},
 
 
@@ -1830,7 +1897,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                     \boxed{
                     B = \frac{\nu_{\rm brk}}{c_{1,\rm ISO} \gamma_{\min}^2},
                     \qquad
-                    R = \left(\frac{F_{\rm brk}}{Q_{m,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3}.
+                    R = \left(\frac{F_{\rm brk}}{Q_{ms,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3}.
                     }
 
             .. tab-item:: Fixed Pitch Angle
@@ -1842,7 +1909,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                     \boxed{
                     B = \frac{\nu_{\rm brk}}{c_{1} \gamma_{\min}^2 \sin\alpha},
                     \qquad
-                    R = \left(\frac{F_{\rm brk}}{Q_{m,0} B^3 \tilde{N_0} \sin \alpha}\right)^{1/3}.
+                    R = \left(\frac{F_{\rm brk}}{Q_{ms,0} B^3 \tilde{N_0} \sin \alpha}\right)^{1/3}.
                     }
 
         .. note::
@@ -3143,7 +3210,7 @@ various cases.
 
         .. math::
 
-            F_{\nu,\rm pk} = F_{m,0}.
+            F_{\nu,\rm pk} = F_{ms,0}.
 
         The absorption frequency is precisely that derived previously since the
         peak and the normalization are coincident:
@@ -3211,7 +3278,7 @@ various cases.
                     \boxed{
                     B = \frac{\nu_{\rm brk}}{c_{1,\rm ISO} \gamma_{\min}^2},
                     \qquad
-                    R = \left(\frac{F_{\rm brk}}{Q_{m,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3}.
+                    R = \left(\frac{F_{\rm brk}}{Q_{ms,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3}.
                     }
 
             .. tab-item:: Fixed Pitch Angle
@@ -3223,7 +3290,7 @@ various cases.
                     \boxed{
                     B = \frac{\nu_{\rm brk}}{c_{1} \gamma_{\min}^2 \sin\alpha},
                     \qquad
-                    R = \left(\frac{F_{\rm brk}}{Q_{m,0} B^3 \tilde{N_0} \sin \alpha}\right)^{1/3}.
+                    R = \left(\frac{F_{\rm brk}}{Q_{ms,0} B^3 \tilde{N_0} \sin \alpha}\right)^{1/3}.
                     }
 
     .. tab-item:: Spectrum 4 :math:`(\nu_m < \nu_a < \nu_c < \nu_{\rm max})`
@@ -3360,7 +3427,7 @@ various cases.
 
             F_{\nu,\rm pk}
             =
-            F_{m,0}
+            F_{ms,0}
             \left(\frac{\nu_a}{\nu_m}\right)^{-(p-1)/2}.
 
         The absorption frequency in this regime is given by the SSA
@@ -3495,7 +3562,7 @@ various cases.
 
                 .. math::
 
-                    A = \left[c_1 \gamma_m^2 \sin \alpha\right]^{(p-1)/2} \left(\sin^{(p+1)/2} \alpha\right) Q_{m,0} \tilde{N_0},
+                    A = \left[c_1 \gamma_m^2 \sin \alpha\right]^{(p-1)/2} \left(\sin^{(p+1)/2} \alpha\right) Q_{ms,0} \tilde{N_0},
 
             .. tab-item:: Isotropic Pitch Angle
 
@@ -3512,7 +3579,7 @@ various cases.
 
                 .. math::
 
-                    A = \left[c_{1,\rm ISO} \gamma_m^2 \right]^{(p-1)/2} Q_{m,\rm ISO} \tilde{N_0}.
+                    A = \left[c_{1,\rm ISO} \gamma_m^2 \right]^{(p-1)/2} Q_{ms,\rm ISO} \tilde{N_0}.
 
     .. tab-item:: Spectrum 5 :math:`(\nu_a < \nu_c < \nu_m < \nu_{\rm max})`
 
@@ -4090,7 +4157,7 @@ various cases.
 
                     A = \left[c_{1,\rm ISO} \gamma_c^2 \right]^{1/2} Q_{c,\rm ISO} \tilde{N_0}.
 
-    .. tab-item:: Spectrum 7 :math:`(\nu_c, \nu_m < \nu_a < \nu_{\rm max})`
+    .. tab-item:: Spectrum 7 :math:`(\nu_m < \nu_c < \nu_a < \nu_{\rm max})`
 
         This spectrum corresponds to scenarios where SSA is dominant over both cooling and
         the minimum injection break. In this regime, the relative ordering of :math:`\nu_m` and
@@ -4101,6 +4168,11 @@ various cases.
         :math:`\nu^{5/2}` scaling. Finally, beyond the absorption break, we have optically
         thin emission from the steady state cooled population of electrons deeper in the
         post-shock material producing the typical :math:`\nu^{-p/2}`.
+
+        .. note::
+
+            Despite having the same shape, internally, the flux normalization and inversion logic
+            varies moderately between Spectrum 7 and Spectrum 8.
 
         .. rubric:: SED Shape
 
@@ -4139,7 +4211,7 @@ various cases.
 
             F_\nu
             =
-            F_{\nu_m,0}
+            F_{\nu_{\rm pk},0}
             \,
             F_\nu^{(B,A)}(\nu;\nu_m)
             \,
@@ -4220,30 +4292,16 @@ various cases.
         slow cooling; however, the normalization of the underlying electron population
         is different in each case (as is the resulting normalization flux).
 
-        Let :math:`F_{0}` be the appropriate normalization at either :math:`\nu_c` (fast cooling)
-        or :math:`\nu_m` (slow cooling). In either case, the true peak of the SED occurs at
+        Let :math:`F_{0}` be the appropriate normalization at :math:`\nu_m` (slow cooling).
+        The true peak of the SED occurs at
         :math:`\nu_a` and the normalization must be propagated from
-        :math:`\nu_c` or :math:`\nu_m` up to :math:`\nu_a`. In the fast-cooling case,
+        :math:`\nu_m` up to :math:`\nu_a`.
 
         .. math::
 
-            F_{\rm pk} = F_{c,0} \left(\frac{nu_m}{nu_c}\right)^{-1/2}
-                                         \left(\frac{\nu_a}{\nu_m}\right)^{-p/2}
-                               = F_{c,0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2}.
-
-        In the slow-cooling case,
-
-        .. math::
-
-            F_{\rm pk} = F_{m,0} \left(\frac{\nu_c}{\nu_m}\right)^{-(p-1)/2}
+            F_{\rm pk} = F_{ms,0} \left(\frac{\nu_c}{\nu_m}\right)^{-(p-1)/2}
                                          \left(\frac{\nu_a}{\nu_c}\right)^{-p/2}
-                               = F_{m,0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2}.
-
-        Since the propagation is identical in both cases, we may simply write
-
-        .. math::
-
-            F_{\rm pk} = F_{0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2}.
+                               = F_{ms,0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2}.
 
         The absorption frequency in this regime is given by the SSA
         matching condition derived above,
@@ -4261,7 +4319,7 @@ various cases.
         .. math::
 
             \nu_a =
-            \left(\frac{F_0}{2 m_e \Omega \gamma_m}\right)^{\frac{2}{p+5}}
+            \left(\frac{F_{ms,0}}{2 m_e \Omega \gamma_m}\right)^{\frac{2}{p+5}}
             \nu_m^{\frac{p}{p+5}}
             \nu_c^{\frac{1}{p+5}}.
 
@@ -4334,21 +4392,20 @@ various cases.
 
         .. math::
 
-            F_{\rm pk} = F_{0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2},
+            F_{\rm pk} = F_{\rm ms, 0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2},
 
-        where :math:`F_0` is the appropriate normalization at either :math:`\nu_c` (fast cooling)
-        or :math:`\nu_m` (slow cooling). As such, we have the condition that
+        As such, we have the condition that
 
         .. math::
 
            \nu_{\rm brk}^{p/2} F_{\rm pk} = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha
-           Q_0 \tilde{N}_0 R^3 B^{(p+6)/2}.
+           Q_{\rm ms,0} \tilde{N}_0 R^3 B^{(p+6)/2}.
 
         Letting
 
         .. math::
 
-            A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_0 \tilde{N}_0,
+            A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_{ms,0} \tilde{N}_0,
 
         we have the coupled equations
 
@@ -4379,9 +4436,7 @@ various cases.
 
                 .. math::
 
-                    A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_0 \tilde{N}_0,
-
-                and :math:`Q_0` is either :math:`Q_{c,0}` (fast cooling) or :math:`Q_{m,0}` (slow cooling).
+                    A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_{ms,0} \tilde{N}_0,
 
             .. tab-item:: Isotropic Pitch Angle
 
@@ -4398,10 +4453,305 @@ various cases.
 
                 .. math::
 
-                    A = c_{1,\rm ISO}^{p/2} \gamma_m^{p-1} \gamma_c \alpha Q_{0,\rm ISO} \tilde{N}_0,
+                    A = c_{1,\rm ISO}^{p/2} \gamma_m^{p-1} \gamma_c \alpha Q_{\rm ms,\rm ISO} \tilde{N}_0,
 
-                and :math:`Q_{0,\rm ISO}` is either :math:`Q_{c,\rm ISO}`
-               (fast cooling) or :math:`Q_{m,\rm ISO}` (slow cooling).
+    .. tab-item:: Spectrum 8 :math:`(\nu_c < \nu_m < \nu_a < \nu_{\rm max})`
+
+        This spectrum corresponds to scenarios where SSA is dominant over both cooling and
+        the minimum injection break. In this regime, the relative ordering of :math:`\nu_m` and
+        :math:`\nu_c` is irrelevant because the post-shock material becomes optically thick to
+        SSA immediately and so cooled material does not have the ability to contribute to the
+        spectrum. We therefore see the traditional low-energy tail :math:`\nu^2` up to the
+        minimum injection energy :math:`\nu_m`, beyond which we obtain the standard
+        :math:`\nu^{5/2}` scaling. Finally, beyond the absorption break, we have optically
+        thin emission from the steady state cooled population of electrons deeper in the
+        post-shock material producing the typical :math:`\nu^{-p/2}`.
+
+        .. note::
+
+            Despite having the same shape, internally, the flux normalization and inversion logic
+            varies moderately between Spectrum 7 and Spectrum 8.
+
+        .. rubric:: SED Shape
+
+        In this spectrum, the regimes are as follows
+
+        .. dropdown:: Spectral Segments
+
+            .. list-table::
+                :widths: 15 22 15 15
+                :header-rows: 1
+
+                * - Segment
+                  - Frequency Range
+                  - SPL Type
+                  - Slope
+                * - 1
+                  - :math:`\nu < \nu_m`
+                  - SPL B
+                  - :math:`2`
+                * - 3
+                  - :math:`\nu_m \le \nu < \nu_a`
+                  - SPL A
+                  - :math:`5/2`
+                * - 4
+                  - :math:`\nu_a \le \nu < \nu_{\rm max}`
+                  - SPL H
+                  - :math:`-p/2`
+                * - 5
+                  - :math:`\nu \ge \nu_{\rm max}`
+                  - SPL I
+                  - cutoff
+
+        The SBPL SED may be constructed as:
+
+        .. math::
+
+            F_\nu
+            =
+            F_{\nu_{\rm pk},0}
+            \,
+            F_\nu^{(B,A)}(\nu;\nu_m)
+            \,
+            \tilde{F}_\nu^{(A,H)}(\nu;\nu_a)
+            \,
+            \tilde{\Phi}(\nu;\nu_{\max})
+
+        .. rubric:: The Absorption Frequency
+
+        In this case, the absorption frequency :math:`\nu_a` corresponds to the **peak-frequency** of the SED. The
+        flux from the **optically thin** portion of the SED at :math:`\nu_a` is given by :math:`F_{\nu,\rm pk}`. The
+        optically thick side must be
+
+        .. math::
+
+            F_{nu,\rm pk} = 2\nu_a^2 \gamma_a m_e \Omega = 2\nu_a^2 m_e \Omega \left(\frac{\nu_a}{\nu_m}\right)^{1/2} \gamma_m,
+
+        where we make use of :math:`\gamma_m` as a hyper-parameter to relate :math:`\gamma_a` and :math:`\nu_a`. Thus,
+
+        .. math::
+
+            \boxed{
+            \nu_a = \left(\frac{F_{\nu,\rm pk}}{2 m_e \Omega \gamma_m}\right)^{2/5} \nu_m^{1/5}.
+            }
+
+        .. rubric:: Normalization
+
+        .. dropdown:: Normalization Parameters
+
+            .. list-table::
+                :widths: 10 35 85
+                :header-rows: 1
+
+                * - Parameter
+                  - Name
+                  - Notes
+                * - :math:`B`
+                  - Magnetic Field Strength
+                  - Magnetic field strength in the emission region. Determines the characteristic synchrotron
+                    frequencies and enters the SED normalization.
+                * - :math:`V_{\rm eff}`
+                  - Effective Emitting Volume
+                  - Volume over which relativistic electrons radiate efficiently.
+                * - :math:`D_L`
+                  - Luminosity Distance
+                  - Luminosity distance to the source.
+                * - :math:`p`
+                  - Electron Power-Law Index
+                  - Power-law index of the injected electron distribution.
+                * - :math:`\gamma_{\rm min}`
+                  - Minimum Lorentz Factor
+                  - Lower cutoff of the electron Lorentz factor distribution.
+                * - :math:`\gamma_{\rm max}`
+                  - Maximum Lorentz Factor
+                  - Upper cutoff of the electron Lorentz factor distribution.
+                * - :math:`\gamma_c`
+                  - Cooling Lorentz Factor
+                  - Lorentz factor above which electrons cool efficiently within the dynamical time.
+                * - :math:`\epsilon_e`
+                  - Electron Energy Fraction
+                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                * - :math:`\epsilon_B`
+                  - Magnetic Energy Fraction
+                  - Fraction of post-shock internal energy stored in magnetic fields.
+                * - :math:`\sin\alpha`
+                  - Pitch Angle Factor
+                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                    angles or isotropic pitch-angle averaging.
+                * - :math:`\Omega`
+                  - Angular Size
+                  - Angular size of the emitting region. Required to compute the SSA frequency.
+
+
+        In this case, the absorption frequency lies above both the cooling and
+        the injection frequencies. Therefore, the true peak of the SED occurs at
+        :math:`\nu_a` and the normalization must be propagated. It turns out that,
+        by coincidence, the propagation is identical whether we are fast cooling or
+        slow cooling; however, the normalization of the underlying electron population
+        is different in each case (as is the resulting normalization flux).
+
+        Let :math:`F_{0}` be the appropriate normalization at :math:`\nu_m` (slow cooling).
+        The true peak of the SED occurs at
+        :math:`\nu_a` and the normalization must be propagated from
+        :math:`\nu_m` up to :math:`\nu_a`.
+
+        .. math::
+
+            F_{\rm pk} = F_{c,0} \left(\frac{\nu_c}{\nu_m}\right)^{-(p-1)/2}
+                                         \left(\frac{\nu_a}{\nu_c}\right)^{-p/2}
+                               = F_{c,0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2}.
+
+        The absorption frequency in this regime is given by the SSA
+        matching condition derived above,
+
+        .. math::
+
+            \nu_a
+            =
+            \left(\frac{F_{\nu,\rm pk}}{2 m_e \Omega \gamma_m}\right)^{2/5}
+            \nu_m^{1/5}.
+
+        With these expressions, we may solve self-consistently for
+        :math:`\nu_a`:
+
+        .. math::
+
+            \nu_a =
+            \left(\frac{F_{c,0}}{2 m_e \Omega \gamma_m}\right)^{\frac{2}{p+5}}
+            \nu_m^{\frac{p}{p+5}}
+            \nu_c^{\frac{1}{p+5}}.
+
+        .. rubric:: Inversion
+
+        In this case, we have a more complicated instance of the optically thick peak inversion.
+
+        .. dropdown:: Inversion Parameters
+
+            .. list-table::
+                :widths: 10 35 85
+                :header-rows: 1
+
+                * - Parameter
+                  - Name
+                  - Notes
+                * - :math:`F_{\rm brk}`
+                  - Break Flux
+                  - Flux density at the break frequency used for inversion.
+                * - :math:`\nu_{\rm brk}`
+                  - Break Frequency
+                  - Frequency of the break used for inversion.
+                * - :math:`D_L`
+                  - Luminosity Distance
+                  - Luminosity distance to the source.
+                * - :math:`p`
+                  - Electron Power-Law Index
+                  - Power-law index of the injected electron distribution.
+                * - :math:`\gamma_{\rm min}`
+                  - Minimum Lorentz Factor
+                  - Lower cutoff of the electron Lorentz factor distribution.
+                * - :math:`\gamma_{\rm max}`
+                  - Maximum Lorentz Factor
+                  - Upper cutoff of the electron Lorentz factor distribution.
+                * - :math:`\epsilon_e`
+                  - Electron Energy Fraction
+                  - Fraction of post-shock internal energy carried by relativistic electrons.
+                * - :math:`\epsilon_B`
+                  - Magnetic Energy Fraction
+                  - Fraction of post-shock internal energy stored in magnetic fields.
+                * - :math:`\sin\alpha`
+                  - Pitch Angle Factor
+                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                    angles or isotropic pitch-angle averaging.
+
+        Because the SSA frequency corresponds to the peak, we have the standard equation
+
+        .. tab-set::
+
+            .. tab-item:: Isotropic Pitch Angle
+
+                The inversion for the magnetic field strength and radius in the isotropic pitch-angle case is given by
+
+                .. math::
+
+                    F_{\rm brk} \nu_{\rm brk}^{-5/2} = P_{0,\rm ISO} R^2 B^{-1/2}
+
+            .. tab-item:: Fixed Pitch Angle
+
+                The inversion for the magnetic field strength and radius in the fixed pitch-angle case is given by
+
+                .. math::
+
+                    F_{\rm brk} \nu_{\rm brk}^{-5/2} = P_{0} R^2 B^{-1/2},
+
+                where :math:`P_0` absorbs the pitch-angle dependence.
+
+        The second closure in this case appears because the peak frequency determined from the normalization must
+        match that observed in the data. From above, we have the relationship that
+
+        .. math::
+
+            F_{\rm pk} = F_{\rm c, 0} \nu_m^{(p-1)/2} \nu_c^{1/2} \nu_a^{-p/2},
+
+        As such, we have the condition that
+
+        .. math::
+
+           \nu_{\rm brk}^{p/2} F_{\rm pk} = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha
+           Q_{c,\rm 0} \tilde{N}_0 R^3 B^{(p+6)/2}.
+
+        Letting
+
+        .. math::
+
+            A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_{c,0} \tilde{N}_0,
+
+        we have the coupled equations
+
+        .. math::
+
+            \boxed{
+            F_{\rm brk} \nu_{\rm brk}^{-5/2} = P_{0} R^2 B^{-1/2},
+            \qquad
+            \nu_{\rm brk}^{p/2} F_{\rm pk} = A R^3 B^{(p+6)/2}
+            }
+
+        The solution to which is
+
+        .. tab-set::
+
+            .. tab-item:: Fixed Pitch Angle
+
+                .. math::
+
+                    \boxed{
+                    \begin{aligned}
+                    R &= A^{-1/(2p+15)} P_0^{-(p+6)/(2p+15)} F_{\rm brk}^{(p+7)/(2p+15)} \nu_{\rm brk}^{-1}\\
+                    B &= A^{-4/(2p+15)} P_0^{6/(2p+15)} F_{\rm brk}^{-2/(2p+15)} \nu_{\rm brk},
+                    \end{aligned}
+                    }
+
+                where
+
+                .. math::
+
+                    A = c_1^{p/2} \gamma_m^{p-1} \gamma_c \sin^{p+2/2} \alpha Q_{c,0} \tilde{N}_0,
+
+            .. tab-item:: Isotropic Pitch Angle
+
+                .. math::
+
+                    \boxed{
+                    \begin{aligned}
+                    R &= A^{-1/(2p+15)} P_{0,\rm ISO}^{-(p+6)/(2p+15)} F_{\rm brk}^{(p+7)/(2p+15)} \nu_{\rm brk}^{-1}\\
+                    B &= A^{-4/(2p+15)} P_{0,\rm ISO}^{6/(2p+15)} F_{\rm brk}^{-2/(2p+15)} \nu_{\rm brk},
+                    \end{aligned}
+                    }
+
+                where
+
+                .. math::
+
+                    A = c_{1,\rm ISO}^{p/2} \gamma_m^{p-1} \gamma_c \alpha Q_{\rm c,\rm ISO} \tilde{N}_0,
 
 References
 ----------
