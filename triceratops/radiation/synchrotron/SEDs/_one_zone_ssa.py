@@ -583,7 +583,7 @@ def select_ssa_sed_regime_from_candidates_with_cooling(
             return "Spectrum5", s5
 
         if s8 > log_nu_m:
-            return "Spectrum7", s8
+            return "Spectrum8", s8
 
         if s6 < log_nu_m:
             return "Spectrum6", s6

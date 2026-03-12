@@ -32,7 +32,7 @@ from triceratops.radiation.synchrotron.utils import (
 # ================================================================================ #
 # These functions provide computation of a few of the standard parameters which are used broadly in
 # many of the inversion procedures.
-def compute_log_Qm_cgs(
+def compute_log_Qm_no_cgs(
     filling_factor,
     log_luminosity_distance,
     gamma_min,
@@ -84,7 +84,7 @@ def compute_log_Qm_cgs(
     return log_qm
 
 
-def compute_log_Qm_cgs_iso(
+def compute_log_Qm_no_cgs_iso(
     filling_factor,
     log_luminosity_distance,
     gamma_min,
@@ -129,6 +129,113 @@ def compute_log_Qm_cgs_iso(
         + np.log(filling_factor)
         + _log_chi_cgs_iso
         + (1.0 - p) * np.log(gamma_min)
+        - 2.0 * log_luminosity_distance
+    )
+
+    return log_qm
+
+
+def compute_log_Qm_slow_cgs(
+    filling_factor,
+    log_luminosity_distance,
+    gamma_min,
+    gamma_c,
+    p,
+):
+    r"""
+    Compute :math:`\log Q_{m,0}` (natural log) for the *fixed pitch-angle* normalization constant.
+
+    Parameters
+    ----------
+    filling_factor : float or ndarray
+        Volume filling factor :math:`f_V` entering
+        :math:`V_{\rm eff} = (4\pi/3) R^3 f_V`.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of the luminosity distance :math:`\log D_L` (cm).
+
+    gamma_min : float or ndarray
+        Minimum Lorentz factor :math:`\gamma_m`.
+
+    p : float or ndarray
+        Electron power-law index.
+
+    Returns
+    -------
+    log_Qm : float or ndarray
+        Natural logarithm of :math:`Q_{m,0}`.
+
+    Notes
+    -----
+    Uses
+
+    .. math::
+
+        Q_{m,0}
+        =
+        \frac{4}{3}\pi f_V \chi
+        \gamma_m^{1-p}
+        D_L^{-2}.
+    """
+    log_qm = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs
+        + (1.0 - p) * np.log(gamma_min)
+        - 2.0 * log_luminosity_distance
+        + p * np.log(gamma_c)
+    )
+
+    return log_qm
+
+
+def compute_log_Qm_slow_cgs_iso(
+    filling_factor,
+    log_luminosity_distance,
+    gamma_min,
+    gamma_c,
+    p,
+):
+    r"""
+    Compute :math:`\log Q_{m,\mathrm{ISO}}` for isotropic pitch-angle synchrotron normalization.
+
+    Parameters
+    ----------
+    filling_factor : float or ndarray
+        Volume filling factor :math:`f_V`.
+
+    log_luminosity_distance : float or ndarray
+        Natural logarithm of luminosity distance :math:`\log D_L`.
+
+    gamma_min : float or ndarray
+        Minimum Lorentz factor :math:`\gamma_m`.
+
+    p : float or ndarray
+        Electron power-law index.
+
+    Returns
+    -------
+    log_Qm : float or ndarray
+        Natural logarithm of :math:`Q_{m,\mathrm{ISO}}`.
+
+    Notes
+    -----
+    Uses
+
+    .. math::
+
+        Q_{m,\mathrm{ISO}}
+        =
+        \frac{4}{3}\pi f_V \chi_{\rm ISO}
+        \gamma_m^{1-p}
+        D_L^{-2}.
+    """
+    log_qm = (
+        np.log((4.0 / 3.0) * np.pi)
+        + np.log(filling_factor)
+        + _log_chi_cgs_iso
+        + (1.0 - p) * np.log(gamma_min)
+        + p * np.log(gamma_c)
         - 2.0 * log_luminosity_distance
     )
 
@@ -398,7 +505,7 @@ def _inv_log_powerlaw_sbpl_sed(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -407,7 +514,7 @@ def _inv_log_powerlaw_sbpl_sed(
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -492,19 +599,21 @@ def _inv_log_powerlaw_sbpl_sed_cool_2(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_slow_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_slow_cgs(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_cgs
@@ -542,7 +651,7 @@ def _inv_log_powerlaw_sbpl_sed_cool_3(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -551,7 +660,7 @@ def _inv_log_powerlaw_sbpl_sed_cool_3(
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -589,7 +698,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_1(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -598,7 +707,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_1(
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -637,7 +746,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_2(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -652,7 +761,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_2(
         _A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -699,7 +808,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_1(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -708,7 +817,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_1(
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -747,7 +856,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_2(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -761,7 +870,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_2(
         _A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -808,19 +917,21 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_3(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_slow_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_slow_cgs(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_cgs
@@ -857,10 +968,11 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_4(
     # so that we can run with a single logical branch for the rest of the inversion procedure.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_slow_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_iso_cgs
@@ -871,10 +983,11 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_4(
         _A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_slow_cgs(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_c1 = _log_c_1_gamma_cgs
@@ -1040,10 +1153,11 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_7(
         log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
 
         # Compute the Q and A arrays.
-        log_Q = compute_log_Qm_cgs_iso(
+        log_Q = compute_log_Qm_slow_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_A = (p / 2) * _log_c_1_gamma_iso_cgs + (p - 1) * np.log(gamma_min) + np.log(gamma_c) + log_Q
@@ -1053,10 +1167,11 @@ def _inv_log_powerlaw_sbpl_sed_ssa_cool_7(
         log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
 
         # Compute the Q and A arrays.
-        log_Q = compute_log_Qm_cgs(
+        log_Q = compute_log_Qm_slow_cgs(
             f_V,
             log_DL,
             gamma_min,
+            gamma_c,
             p,
         )
         log_A = (
@@ -1184,7 +1299,7 @@ def _inv_log_powerlaw_sbpl_sed_implicit_cool_2(
     # and also get our specific c_1 value for the decided convention.
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -1193,7 +1308,7 @@ def _inv_log_powerlaw_sbpl_sed_implicit_cool_2(
         log_c1 = _log_c_1_gamma_iso_cgs
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -1216,10 +1331,14 @@ def _inv_log_powerlaw_sbpl_sed_implicit_cool_2(
     log_theta = np.log(
         _synchrotron_cooling_time_coefficient_cgs
     )  # This is just a constant that comes from the definition of the cooling time.
+
     log_gamma_c = log_theta - 2 * log_B - log_t
 
     # Now compute the radius using the standard closure method.
     log_R = (1 / 3) * (log_F_nu_peak - log_Qm - (3 * log_B) - log_N0)
+
+    if np.abs(log_gamma_c - np.log(gamma_min)) < 1:
+        raise ValueError()
 
     # Return everything
     return log_R, log_B, log_gamma_c
@@ -1255,7 +1374,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_7(
         log_P0 = compute_log_P0_cgs_iso(f_A, log_DA)
 
         # Compute the Q and A arrays.
-        log_Q = compute_log_Qm_cgs_iso(
+        log_Q = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -1268,7 +1387,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_7(
         log_P0 = compute_log_P0_cgs(f_A, log_DA, sin_alpha)
 
         # Compute the Q and A arrays.
-        log_Q = compute_log_Qm_cgs(
+        log_Q = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -1278,7 +1397,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_7(
 
     # --- COOLING MANAGEMENT --- #
     log_N0 = compute_log_N0_no_cooling(gamma_min, p, epsilon_e, epsilon_B, gamma_max)
-    log_A += +log_N0
+    log_A += log_N0
 
     # ------ INVERSION LOGIC ------ #
     # We now simply assemble to coefficients and start getting
@@ -1290,8 +1409,8 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_7(
     ar1, ar2, ar3, ar4, ar5, ar6 = (
         -1 / (2 * p + 7),
         -1 / (2 * p + 7),
-        -(p + 6) / (2 * p + 7),
-        (p + 7) / (2 * p + 7),
+        -(p + 2) / (2 * p + 7),
+        (p + 3) / (2 * p + 7),
         -(2 * p + 5) / (2 * p + 7),
         1 / (2 * p + 7),
     )
@@ -1352,7 +1471,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_4(
     # --- PITCH-ANGLE MANAGEMENT --- #
     if sin_alpha is None:
         _is_pitch_averaged = True
-        log_Qm = compute_log_Qm_cgs_iso(
+        log_Qm = compute_log_Qm_no_cgs_iso(
             f_V,
             log_DL,
             gamma_min,
@@ -1366,7 +1485,7 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_4(
         log_A = ((p - 1) / 2) * (log_c1 + 2 * np.log(gamma_min)) + log_Qm
     else:
         _is_pitch_averaged = False
-        log_Qm = compute_log_Qm_cgs(
+        log_Qm = compute_log_Qm_no_cgs(
             f_V,
             log_DL,
             gamma_min,
@@ -1391,28 +1510,28 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_4(
     # Compute log R and log B. We will reduce out the exponents so that it's crystal clear
     # how these play out for easy debugging.
     ar1, ar2, ar3, ar4, ar5, ar6 = (
-        -1 / (2 * p + 5),
-        -1 / (2 * p + 5),
-        -(p + 1) / (2 * p + 5),
-        (p + 2) / (2 * p + 5),
-        -(2 * p + 3) / (2 * p + 5),
-        1 / (2 * p + 5),
+        0,
+        -1 / (2 * p + 13),
+        (-p - 5) / (2 * p + 13),
+        (p + 6) / (2 * p + 13),
+        -1,
+        0,
     )
     ab1, ab2, ab3, ab4, ab5, ab6 = (
-        -4 / (2 * p + 5),
-        -4 / (2 * p + 5),
-        6 / (2 * p + 5),
-        -2 / (2 * p + 5),
-        (2 * p + 13) / (2 * p + 5),
-        4 / (2 * p + 5),
+        0,
+        -4 / (2 * p + 13),
+        6 / (2 * p + 13),
+        -2 / (2 * p + 13),
+        1,
+        0,
     )
     ac1, ac2, ac3, ac4, ac5, ac6 = (
-        (2 * p + 13) / (2 * p + 5),
-        8 / (2 * p + 5),
-        -12 / (2 * p + 5),
-        4 / (2 * p + 5),
-        -2 * (2 * p + 13) / (2 * p + 5),
-        -(2 * p + 13) / (2 * p + 5),
+        1,
+        8 / (2 * p + 13),
+        -12 / (2 * p + 13),
+        4 / (2 * p + 13),
+        -2,
+        -1,
     )
 
     log_R = (
@@ -1424,7 +1543,6 @@ def _inv_log_powerlaw_sbpl_sed_ssa_implicit_cool_4(
     log_gamma_c = (
         (ac1 * log_THETA) + (ac2 * log_A) + (ac3 * log_P0) + (ac4 * log_F_nu_peak) + (ac5 * log_nu_peak) + (ac6 * log_t)
     )
-
     return log_R, log_B, log_gamma_c
 
 

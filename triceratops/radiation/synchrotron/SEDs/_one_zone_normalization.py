@@ -908,6 +908,7 @@ def _log_normalize_powerlaw_sbpl_sed_ssa_cool(
             + log_electron_norm
             + (1.0 - p) * log_gamma_min
             + log_V
+            + p * log_gamma_c  # Added 3/12 to fix the normalization in slow vs. no cooling.
             - 2.0 * log_D_L
             + log_flux_correction
         )
@@ -1184,7 +1185,6 @@ def _log_normalize_powerlaw_sbpl_sed_cool(
                 epsilon_B=epsilon_B,
             )
         )
-
         log_F_norm = (
             log_chi
             + log_B
@@ -1192,6 +1192,7 @@ def _log_normalize_powerlaw_sbpl_sed_cool(
             + log_electron_norm
             + (1.0 - p) * log_gamma_min
             + log_V
+            + p * log_gamma_c  # Added 3/12 to fix the normalization in slow vs. no cooling.
             - 2.0 * log_D_L
             + log_flux_correction
         )
