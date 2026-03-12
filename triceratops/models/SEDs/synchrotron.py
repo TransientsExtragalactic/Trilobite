@@ -59,7 +59,7 @@ in frequency.
 For purely phenomenological evolving SEDs without
 microphysical closure, see:
 
-:mod:`~models.generic.SEDs.evolving_sed.PL_Evolving_SSA_SED_Model`
+:class:`~models.generic.evolving_seds.evolving_sbpl.PL_Evolving_SBPL_Model`
 
 For theoretical background and implementation details, see:
 
@@ -159,15 +159,21 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
            * - ``log_B``
              - :math:`\log B`
              - Log magnetic field strength (cgs).
-           * - ``log_V_eff``
-             - :math:`\log V_{\rm eff}`
-             - Log effective emitting volume.
-           * - ``log_Omega``
-             - :math:`\log \Omega`
-             - Log solid angle of emitting region.
+           * - ``log_R``
+             - :math:`\log R_{\rm eff}`
+             - Log effective emitting radius (cm).
+           * - ``f_V``
+             - :math:`f_V`
+             - Volume filling factor of the emitting region.
+           * - ``f_A``
+             - :math:`f_A`
+             - Area filling factor of the emitting region.
            * - ``log_D_L``
              - :math:`\log D_L`
              - Log luminosity distance (cgs).
+           * - ``log_D_A``
+             - :math:`\log D_A`
+             - Log angular diameter distance (cgs).
            * - ``redshift``
              - :math:`z`
              - Cosmological redshift.
@@ -245,9 +251,11 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
             "gamma_bulk": 2.0,
             "alpha": np.pi / 2,
             "log_B": np.log(1.0),
-            "log_V_eff": np.log(1e55),
-            "log_Omega": np.log(1e-10),
+            "log_R": np.log(1e16),
+            "f_V": 1.0,
+            "f_A": 1.0,
             "log_D_L": np.log(1e27),
+            "log_D_A": np.log(1e27),
             "redshift": 0.01,
         }
 
@@ -258,9 +266,9 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         # Compute break frequencies
         norm = model._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
-            log_Omega=parameters["log_Omega"],
+            log_D_A=parameters["log_D_A"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_c=parameters["log_gamma_c"],
             log_gamma_max=parameters["log_gamma_max"],
@@ -270,6 +278,8 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
+            f_A=parameters["f_A"],
             pitch_average=True,
         )
 
@@ -600,27 +610,51 @@ class SSA_SynchrotronSEDModel(Model):
              - Pitch angle (ignored if pitch-averaged).
            * - ``log_B``
              - :math:`\log B`
-             - Log magnetic field strength.
-           * - ``log_V_eff``
-             - :math:`\log V_{\rm eff}`
-             - Log effective emitting volume.
-           * - ``log_Omega``
-             - :math:`\log \Omega`
-             - Log solid angle of emitting region.
+             - Log magnetic field strength (cgs).
+           * - ``log_R``
+             - :math:`\log R_{\rm eff}`
+             - Log effective emitting radius (cm).
+           * - ``f_V``
+             - :math:`f_V`
+             - Volume filling factor of the emitting region.
+           * - ``f_A``
+             - :math:`f_A`
+             - Area filling factor of the emitting region.
            * - ``log_D_L``
              - :math:`\log D_L`
-             - Log luminosity distance.
+             - Log luminosity distance (cgs).
+           * - ``log_D_A``
+             - :math:`\log D_A`
+             - Log angular diameter distance (cgs).
            * - ``redshift``
              - :math:`z`
              - Cosmological redshift.
 
     .. dropdown:: Variables
 
-        ``log_nu`` — Log observing frequency (Hz).
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``log_nu``
+             - :math:`\log \nu`
+             - Log observing frequency (Hz, observer frame).
 
     .. dropdown:: Returns
 
-        ``flux`` — :math:`\log F_\nu` (cgs units).
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``flux``
+             - :math:`\log F_\nu`
+             - Log flux density (cgs units).
 
     Notes
     -----
@@ -663,14 +697,15 @@ class SSA_SynchrotronSEDModel(Model):
             "epsilon_E": 0.1,
             "epsilon_B": 0.1,
             "log_gamma_min": np.log(10.0),
-            "log_gamma_c": np.log(1e3),
             "log_gamma_max": np.log(1e4),
             "gamma_bulk": 2.0,
             "alpha": np.pi / 2,
             "log_B": np.log(1.0),
-            "log_V_eff": np.log(1e55),
-            "log_Omega": np.log(1e-15),
+            "log_R": np.log(1e16),
+            "f_V": 1.0,
+            "f_A": 1.0,
             "log_D_L": np.log(1e27),
+            "log_D_A": np.log(1e27),
             "redshift": 0.01,
         }
 
@@ -681,9 +716,9 @@ class SSA_SynchrotronSEDModel(Model):
         # Compute break frequencies
         norm = model._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
-            log_Omega=parameters["log_Omega"],
+            log_D_A=parameters["log_D_A"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_max=parameters["log_gamma_max"],
             p=parameters["p"],
@@ -692,6 +727,8 @@ class SSA_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
+            f_A=parameters["f_A"],
             pitch_average=True,
         )
 
@@ -713,7 +750,7 @@ class SSA_SynchrotronSEDModel(Model):
 
         plt.xlabel("Frequency [Hz]")
         plt.ylabel("Flux Density [cgs]")
-        plt.title("Synchrotron SED (Cooling + SSA)")
+        plt.title("Synchrotron SED (SSA Only)")
         plt.grid(alpha=0.3)
         plt.tight_layout()
         plt.show()
@@ -951,16 +988,78 @@ class Cooling_SynchrotronSEDModel(Model):
 
     .. dropdown:: Parameters
 
-        Includes cooling Lorentz factor ``log_gamma_c`` but
-        does not include ``log_Omega``.
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``p``
+             - :math:`p`
+             - Electron power-law index.
+           * - ``epsilon_E``
+             - :math:`\epsilon_e`
+             - Fraction of post-shock energy in electrons.
+           * - ``epsilon_B``
+             - :math:`\epsilon_B`
+             - Fraction of post-shock energy in magnetic fields.
+           * - ``log_gamma_min``
+             - :math:`\log \gamma_{\min}`
+             - Log minimum electron Lorentz factor.
+           * - ``log_gamma_c``
+             - :math:`\log \gamma_c`
+             - Log cooling Lorentz factor.
+           * - ``log_gamma_max``
+             - :math:`\log \gamma_{\max}`
+             - Log maximum electron Lorentz factor.
+           * - ``gamma_bulk``
+             - :math:`\Gamma_{\rm bulk}`
+             - Bulk Lorentz factor of emitting region.
+           * - ``alpha``
+             - :math:`\alpha`
+             - Pitch angle (ignored if pitch-averaged).
+           * - ``log_B``
+             - :math:`\log B`
+             - Log magnetic field strength (cgs).
+           * - ``log_R``
+             - :math:`\log R_{\rm eff}`
+             - Log effective emitting radius (cm).
+           * - ``f_V``
+             - :math:`f_V`
+             - Volume filling factor of the emitting region.
+           * - ``log_D_L``
+             - :math:`\log D_L`
+             - Log luminosity distance (cgs).
+           * - ``redshift``
+             - :math:`z`
+             - Cosmological redshift.
 
     .. dropdown:: Variables
 
-        ``log_nu`` — Log observing frequency (Hz).
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``log_nu``
+             - :math:`\log \nu`
+             - Log observing frequency (Hz, observer frame).
 
     .. dropdown:: Returns
 
-        ``flux`` — :math:`\log F_\nu`.
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``flux``
+             - :math:`\log F_\nu`
+             - Log flux density (cgs units).
 
     Notes
     -----
@@ -1016,7 +1115,8 @@ class Cooling_SynchrotronSEDModel(Model):
             "gamma_bulk": 2.0,
             "alpha": np.pi / 2,
             "log_B": np.log(1.0),
-            "log_V_eff": np.log(1e55),
+            "log_R": np.log(1e16),
+            "f_V": 1.0,
             "log_D_L": np.log(1e27),
             "redshift": 0.01,
         }
@@ -1034,7 +1134,7 @@ class Cooling_SynchrotronSEDModel(Model):
 
         norm = model._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_c=parameters["log_gamma_c"],
@@ -1045,6 +1145,7 @@ class Cooling_SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
             pitch_average=True,
         )
 
@@ -1312,16 +1413,78 @@ class SynchrotronSEDModel(Model):
 
     .. dropdown:: Parameters
 
-        Includes microphysical parameters and geometry,
-        but no cooling Lorentz factor and no absorption geometry.
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``p``
+             - :math:`p`
+             - Electron power-law index.
+           * - ``epsilon_E``
+             - :math:`\epsilon_e`
+             - Fraction of post-shock energy in electrons.
+           * - ``epsilon_B``
+             - :math:`\epsilon_B`
+             - Fraction of post-shock energy in magnetic fields.
+           * - ``log_gamma_min``
+             - :math:`\log \gamma_{\min}`
+             - Log minimum electron Lorentz factor.
+           * - ``log_gamma_c``
+             - :math:`\log \gamma_c`
+             - Log cooling Lorentz factor (not used for spectral breaks in this model).
+           * - ``log_gamma_max``
+             - :math:`\log \gamma_{\max}`
+             - Log maximum electron Lorentz factor.
+           * - ``gamma_bulk``
+             - :math:`\Gamma_{\rm bulk}`
+             - Bulk Lorentz factor of emitting region.
+           * - ``alpha``
+             - :math:`\alpha`
+             - Pitch angle (ignored if pitch-averaged).
+           * - ``log_B``
+             - :math:`\log B`
+             - Log magnetic field strength (cgs).
+           * - ``log_R``
+             - :math:`\log R_{\rm eff}`
+             - Log effective emitting radius (cm).
+           * - ``f_V``
+             - :math:`f_V`
+             - Volume filling factor of the emitting region.
+           * - ``log_D_L``
+             - :math:`\log D_L`
+             - Log luminosity distance (cgs).
+           * - ``redshift``
+             - :math:`z`
+             - Cosmological redshift.
 
     .. dropdown:: Variables
 
-        ``log_nu`` — Log observing frequency (Hz).
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``log_nu``
+             - :math:`\log \nu`
+             - Log observing frequency (Hz, observer frame).
 
     .. dropdown:: Returns
 
-        ``flux`` — :math:`\log F_\nu`.
+        .. list-table::
+           :widths: 30 30 40
+           :header-rows: 1
+
+           * - **Name**
+             - **Symbol**
+             - **Description**
+           * - ``flux``
+             - :math:`\log F_\nu`
+             - Log flux density (cgs units).
 
     Notes
     -----
@@ -1376,7 +1539,8 @@ class SynchrotronSEDModel(Model):
             "gamma_bulk": 2.0,
             "alpha": np.pi / 2,
             "log_B": np.log(1.0),
-            "log_V_eff": np.log(1e55),
+            "log_R": np.log(1e16),
+            "f_V": 1.0,
             "log_D_L": np.log(1e27),
             "redshift": 0.01,
         }
@@ -1394,7 +1558,7 @@ class SynchrotronSEDModel(Model):
 
         norm = model._sed._opt_from_physics_to_params(
             log_B=parameters["log_B"],
-            log_V=parameters["log_V_eff"],
+            log_R=parameters["log_R"],
             log_D_L=parameters["log_D_L"],
             log_gamma_min=parameters["log_gamma_min"],
             log_gamma_max=parameters["log_gamma_max"],
@@ -1404,6 +1568,7 @@ class SynchrotronSEDModel(Model):
             alpha=parameters["alpha"],
             gamma_bulk=parameters["gamma_bulk"],
             redshift=parameters["redshift"],
+            f_V=parameters["f_V"],
             pitch_average=True,
         )
 
@@ -1424,8 +1589,8 @@ class SynchrotronSEDModel(Model):
 
         # Mark breaks
         for key, label in [
-            ("log_nu_m", r"$\nu_m$"),
-            ("log_nu_max", r"$\nu_{\max}$"),
+            ("nu_m", r"$\nu_m$"),
+            ("nu_max", r"$\nu_{\max}$"),
         ]:
             plt.axvline(np.exp(norm[key]), ls="--", alpha=0.6)
             plt.text(

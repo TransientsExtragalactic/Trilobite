@@ -2335,6 +2335,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``nu_max``
             - ``nu_peak``
             - ``regime``
+            - ``omega``
         """
         result = _log_normalize_powerlaw_sbpl_sed_ssa_cool(
             log_B=log_B,
@@ -2362,6 +2363,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_a": np.exp(result["log_nu_a"]),
             "nu_max": np.exp(result["log_nu_max"]),
             "nu_peak": np.exp(result["log_nu_peak"]),
+            "omega": np.exp(result["log_omega"]),
             "regime": result["regime"],
         }
 
@@ -2444,6 +2446,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``nu_a``
             - ``nu_max``
             - ``nu_peak``
+            - ``omega``
             - ``regime``
 
         Notes
@@ -2524,6 +2527,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_max": params_log["nu_max"] * u.Hz,
             "nu_peak": params_log["nu_peak"] * u.Hz,
             "regime": params_log["regime"],
+            "omega": params_log["omega"],
         }
 
     def _opt_from_params_to_physics(
@@ -4781,6 +4785,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``nu_max``
             - ``nu_peak``
             - ``regime``
+            - ``omega``
         """
         log_results = _log_normalize_powerlaw_sbpl_sed_ssa(
             log_B=log_B,
@@ -4808,6 +4813,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_max": np.exp(log_results["log_nu_max"]),
             "nu_peak": np.exp(log_results["log_nu_peak"]),
             "regime": log_results["regime"],
+            "omega": np.exp(log_results["log_omega"]),
         }
 
     def from_physics_to_params(
@@ -4887,6 +4893,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             - ``nu_max``
             - ``nu_peak``
             - ``regime``
+            - ``omega``
 
         Notes
         -----
@@ -4967,6 +4974,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             "nu_max": params["nu_max"] * u.Hz,
             "nu_peak": params["nu_peak"] * u.Hz,
             "regime": params["regime"],
+            "omega": params["omega"],
         }
 
     def _opt_from_params_to_physics(

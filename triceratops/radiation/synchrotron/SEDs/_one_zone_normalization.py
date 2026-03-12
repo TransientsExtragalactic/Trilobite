@@ -978,6 +978,7 @@ def _log_normalize_powerlaw_sbpl_sed_ssa_cool(
         "log_nu_a": log_nu_a,
         "log_nu_max": log_nu_max,
         "log_nu_peak": log_nu_peak,
+        "log_omega": log_Omega,
         "regime": regime,
     }
 
@@ -1451,5 +1452,6 @@ def _log_normalize_powerlaw_sbpl_sed_ssa(
         "log_nu_a": log_nu_a,
         "log_nu_max": log_nu_max,
         "log_nu_peak": log_nu_peak,
+        "log_omega": log_Omega,
         "regime": regime,
     }
