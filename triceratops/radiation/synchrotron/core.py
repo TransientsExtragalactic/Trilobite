@@ -7,7 +7,7 @@ and related calculations.
 """
 
 from collections.abc import Callable
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Any, Union
 
 import numpy as np
 from astropy import constants
@@ -563,7 +563,7 @@ def first_synchrotron_kernel(x: Union[float, np.ndarray]) -> Union[float, np.nda
         )[0]
         F_x[i] = xi * integral
 
-    return F_x[0] if F_x.size == 1 else F_x
+    return F_x if F_x.size == 1 else F_x
 
 
 def second_synchrotron_kernel(x: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
@@ -712,7 +712,7 @@ def compute_first_kernel_interp(x_values: np.ndarray, F_values: np.ndarray, **kw
         _imsk = ~_lmsk & ~_rmsk
         _y[_imsk] = np.exp(interp_func(_x[_imsk]))
 
-        return _y
+        return _y[0] if _y.size == 1 else _y
 
     return _interpolator
 
@@ -765,7 +765,7 @@ def compute_second_kernel_interp(x_values: np.ndarray, G_values: np.ndarray, **k
         _imsk = ~_lmsk & ~_rmsk
         _y[_imsk] = np.exp(interp_func(_x[_imsk]))
 
-        return _y
+        return _y[0] if _y.size == 1 else _y
 
     return _interpolator
 
@@ -1043,8 +1043,8 @@ def _opt_compute_ME_spectrum_from_dist_function(
     B: float,
     alpha: float,
     kernel_function: Callable,
-    **kwargs,
-):
+    **kwargs: object,
+) -> Any:
     r"""
     Compute the synchrotron spectrum from a multi-electron distribution defined as a continuous function N(gamma).
 

@@ -541,31 +541,25 @@ plt.show()
 # of the characteristic synchrotron frequencies :math:`(\nu_m, \nu_c, \nu_a)`.
 
 # --------------------------------------------------
-# Calculate Shock Volume and Solid Angle
-# --------------------------------------------------
-# Assuming a thin shell with volume filling factor f_V and area filling factor f_A.
-V = f_V * (4 / 3) * np.pi * r_sh**3
-Omega = f_A * np.pi * r_sh**2 / D_L**2  # Projected solid angle of the emitting region as seen by the observer.
-
-# --------------------------------------------------
 # Compute break frequencies as a function of time
 # --------------------------------------------------
 
 parameters = [
     sed.from_physics_to_params(
         B=B_i,
-        V=V_i,
-        D_L=D_L,
-        Omega=Omega_i,
+        R=r_i,
+        luminosity_distance=D_L,
         epsilon_E=epsilon_e,
         epsilon_B=epsilon_B,
         gamma_min=gamma_min,
         gamma_max=gamma_max,
         gamma_c=gamma_c_i,
+        f_V=f_V,
+        f_A=f_A,
         p=p,
         pitch_average=True,
     )
-    for B_i, V_i, Omega_i, gamma_c_i in zip(B, V, Omega, gamma_c)
+    for B_i, r_i, gamma_c_i in zip(B, r_sh, gamma_c)
 ]
 
 # Extract break frequencies (unit-safe)
@@ -630,14 +624,14 @@ t_days = times.to_value(u.day)
 norm = LogNorm(vmin=t_days.min(), vmax=t_days.max())
 cmap = plt.cm.viridis
 
-for par, Omega_i, t_day in zip(parameters, Omega, t_days):
+for par, r_i, t_day in zip(parameters, r_sh, t_days):
     F_nu = sed.sed(
         frequencies,
         nu_m=par["nu_m"],
         nu_c=par["nu_c"],
         F_norm=par["F_norm"],
         gamma_m=gamma_min,
-        omega=Omega_i,
+        omega=np.pi * (r_i / D_L) ** 2 * f_A,  # Projected solid angle of the emitting region
         p=p,
         s=-smoothing,  # effectively piecewise
     )
