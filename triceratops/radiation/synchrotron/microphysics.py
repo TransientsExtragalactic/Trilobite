@@ -75,6 +75,8 @@ def _opt_compute_PL_moment(
     x_min = np.asarray(x_min, dtype="f8")
     x_max = np.asarray(x_max, dtype="f8")
 
+    p, x_min, x_max = np.broadcast_arrays(p, x_min, x_max)
+
     # Allocate the output array.
     moment = np.zeros_like(p, dtype="f8")
 
@@ -162,6 +164,8 @@ def _opt_compute_BPL_moment(
     a2 = np.asarray(a2, dtype="f8")
     x_min = np.asarray(x_min, dtype="f8")
     x_max = np.asarray(x_max, dtype="f8")
+
+    a1, a2, x_min, x_max = np.broadcast_arrays(a1, a2, x_min, x_max)
 
     # Define exponents
     k1 = order + 1.0 + a1

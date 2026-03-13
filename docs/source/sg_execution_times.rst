@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.619** total execution time for 10 files **from all galleries**:
+**00:00.395** total execution time for 18 files **from all galleries**:
 
 .. container::
 
@@ -32,11 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py` (``galleries/examples/e_physics_synchro/plot_PL_sed.py``)
-     - 00:01.749
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
-     - 00:00.870
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_ic_vs_synchrotron_cooling.py` (``galleries/examples/e_physics_synchro/plot_ic_vs_synchrotron_cooling.py``)
+     - 00:00.395
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000
@@ -56,9 +53,36 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_b_inference_plot_evolving_sed.py` (``galleries/examples/b_inference/plot_evolving_sed.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py` (``galleries/examples/e_physics_synchro/plot_PL_sed.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_SSA_cooling_SED.py` (``galleries/examples/e_physics_synchro/plot_SSA_cooling_SED.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_bolometric_emissivity.py` (``galleries/examples/e_physics_synchro/plot_bolometric_emissivity.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_forward_closure.py` (``galleries/examples/e_physics_synchro/plot_forward_closure.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_frequency_gamma_relation.py` (``galleries/examples/e_physics_synchro/plot_frequency_gamma_relation.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_inverse_closure.py` (``galleries/examples/e_physics_synchro/plot_inverse_closure.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_sed_model_comparison.py` (``galleries/examples/e_physics_synchro/plot_sed_model_comparison.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_synchrotron_cooling_engine.py` (``galleries/examples/e_physics_synchro/plot_synchrotron_cooling_engine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_synchrotron_kernels.py` (``galleries/examples/e_physics_synchro/plot_synchrotron_kernels.py``)
      - 00:00.000
      - 0.0

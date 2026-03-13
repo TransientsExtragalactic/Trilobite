@@ -143,7 +143,7 @@ class BaseTestOneZoneSynchrotronSED:
             assert np.isclose(
                 recovered["R"].to_value("cm"),
                 R.to_value("cm"),
-                rtol=0.1,
+                rtol=0.01,
             )
 
 
@@ -320,13 +320,13 @@ class Test_PowerLaw_Cooling_SynchrotronSED(BaseTestOneZoneSynchrotronSED):
         assert np.isclose(
             recovered["B"].to_value("G"),
             B.to_value("G"),
-            rtol=0.1,
+            rtol=0.01,
         ), f"B mismatch\nB_true={B}\nB_rec={recovered['B']}\nRegime={regime}"
 
         assert np.isclose(
             recovered["R"].to_value("cm"),
             R.to_value("cm"),
-            rtol=0.1,
+            rtol=0.01,
         )
 
 
@@ -407,7 +407,7 @@ class Test_PowerLaw_SSA_SynchrotronSED(BaseTestOneZoneSynchrotronSED):
         assert np.isclose(
             recovered["B"].to_value("G"),
             B.to_value("G"),
-            rtol=0.1,
+            rtol=0.01,
         ), (
             f"B mismatch\n"
             f"B_true={B}\n"
@@ -420,7 +420,7 @@ class Test_PowerLaw_SSA_SynchrotronSED(BaseTestOneZoneSynchrotronSED):
         assert np.isclose(
             recovered["R"].to_value("cm"),
             R.to_value("cm"),
-            rtol=0.1,
+            rtol=0.01,
         )
 
 
@@ -513,13 +513,13 @@ class Test_PowerLaw_Cooling_SSA_SynchrotronSED(BaseTestOneZoneSynchrotronSED):
         assert np.isclose(
             recovered["B"].to_value("G"),
             B.to_value("G"),
-            rtol=0.1,
+            rtol=0.01,
         ), f"Recovered B does not match original.\nB_true={B}\nB_rec={recovered['B']}\nRegime={regime}"
 
         assert np.isclose(
             recovered["R"].to_value("cm"),
             R.to_value("cm"),
-            rtol=0.1,
+            rtol=0.01,
         )
 
 
