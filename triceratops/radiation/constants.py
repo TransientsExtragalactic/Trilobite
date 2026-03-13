@@ -16,3 +16,13 @@ c_cgs: float = const.c.cgs.value
 """float: Speed of light :math:`c` in CGS units."""
 electron_rest_mass_cgs: float = const.m_e.cgs.value
 """float: Electron rest mass :math:`m_e` in CGS units."""
+
+# ========================================= #
+# Free Free Emission Constants              #
+# ========================================= #
+h_cgs: float = const.h.cgs.value
+"""float: Planck constant :math:`h` in CGS units."""
+kB_cgs: float = const.k_B.cgs.value
+"""float: Boltzmann constant :math:`k_B` in CGS units."""
+Ry_cgs: float = (const.Ryd * const.h * const.c).cgs.value
+"""float: Rydberg energy :math:`R_y = h c R_{\\infty}` in CGS units (erg)."""
