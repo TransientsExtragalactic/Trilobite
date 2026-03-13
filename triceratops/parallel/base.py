@@ -10,7 +10,7 @@ or MPI).
 
 from abc import ABC, abstractmethod
 from collections.abc import Callable, Iterable, Sized
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, TypeVar, Union
 
 from .utils import _callback_wrapper, get_batch_slices
 
@@ -66,7 +66,7 @@ class Pool(ABC, Generic[T, R]):
         self,
         func: Callable[[T], R],
         iterable: Iterable[T],
-        callback: Callable[[R], Any] | None = None,
+        callback: Union[Callable[[R], Any], None] = None,
     ) -> Iterable[R]:
         """
         Apply `func` to each element of `iterable`.
@@ -86,8 +86,8 @@ class Pool(ABC, Generic[T, R]):
     def batched_map(
         self,
         func: Callable[[list[T]], R],
-        tasks: Sized | Iterable[T],
-        callback: Callable[[R], Any] | None = None,
+        tasks: Union[Sized, Iterable[T]],
+        callback: Union[Callable[[R], Any], None] = None,
     ) -> Iterable[R]:
         """
         Split tasks into `self.size` contiguous batches and map over batches.
@@ -106,7 +106,7 @@ class Pool(ABC, Generic[T, R]):
 
     def _call_callback(
         self,
-        callback: Callable[[R], Any] | None,
+        callback: Union[Callable[[R], Any], None],
         results: Iterable[R],
     ) -> Iterable[R]:
         """
@@ -184,7 +184,7 @@ class SerialPool(Pool[T, R]):
         self,
         func: Callable[[T], R],
         iterable: Iterable[T],
-        callback: Callable[[R], Any] | None = None,
+        callback: Union[Callable[[R], Any], None] = None,
     ) -> Iterable[R]:
         """
         Apply `func` to each element of `iterable` sequentially.

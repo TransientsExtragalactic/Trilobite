@@ -1,7 +1,7 @@
 """Multiprocessing utility functions for batching and callbacks."""
 
 from collections.abc import Callable, Iterable, Iterator, Sized
-from typing import Any, TypeVar
+from typing import Any, TypeVar, Union
 
 import numpy as np
 
@@ -56,8 +56,8 @@ def _callback_wrapper(
 
 def get_batch_slices(
     batch_count: int,
-    task_count: int | None = None,
-    data: Sized | None = None,
+    task_count: Union[int, None] = None,
+    data: Union[Sized, None] = None,
 ) -> list[slice]:
     """
     Compute contiguous slices that divide tasks into batches.
