@@ -49,9 +49,22 @@ synchrotron radiation in Triceratops:
 Free-Free Radiation
 --------------------
 
-.. important::
+Thermal free-free (bremsstrahlung) emission and absorption from ionized plasmas.  This is the
+primary opacity source in radio supernova CSM and HII regions modeled by Triceratops.
 
-    Coming Soon!
+.. toctree::
+    :maxdepth: 1
+    :caption: Free-Free Radiation Topics
+
+    free_free/free_free_emission
+
+Additionally, a dedicated theory reference covers the physics in detail:
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Free-Free Theory References
+
+    free_free/free_free_theory
 
 
 Inverse Compton Scattering

@@ -64,7 +64,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Data Loading and Handling" href="a_data/index.html" />
-    <link rel="prev" title="Theory of Synchrotron Electron Populations" href="../reference/physics/radiation/synchrotron/synchrotron_cooling_theory.html" />
+    <link rel="prev" title="Free-Free Radiation Theory" href="../reference/physics/radiation/free_free/free_free_theory.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
@@ -399,7 +399,15 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="e_physics_synchro/index.html">Physics Backend Examples - Synchrotron</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_synchrotron_kernels.html">The Synchrotron Kernel Functions F(x) and G(x)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_PL_sed.html">Synchrotron Spectra from Single Electrons and Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_frequency_gamma_relation.html">The ν–γ–B Relation and Pitch-Angle Effects</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_synchrotron_cooling_engine.html">Electron Cooling — the Synchrotron Radiative Cooling Engine</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_bolometric_emissivity.html">Bolometric Synchrotron Emissivity and Equipartition</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_sed_model_comparison.html">Comparing Synchrotron SED Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_inverse_closure.html">Recovering Physical Parameters from an Observed SED: the Inverse Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_ic_vs_synchrotron_cooling.html">Synchrotron vs Inverse Compton Cooling</a></li>
+<li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_forward_closure.html">From Physical Parameters to SED Parameters: the Forward Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
@@ -535,9 +543,33 @@ The examples illustrate how to set up simulations, configure parameters, and ana
 For detailed documentation regarding synchrotron radiation physics, please refer to the
 <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>. For notes on the synchrotron API and how to use all of the various
 functions, please refer to the <span class="xref std std-ref">synchrotron_overview</span>.</p>
-<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how Triceratops computes synchrotron emission from both individual relativistic electrons and from a population of electrons following a power-law energy distribution."><img alt="" src="../_images/sphx_glr_plot_PL_sed_thumb.png" />
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The synchrotron emission spectrum of a single relativistic electron is governed by two dimensionless kernel functions, F(x) and G(x), where x = \nu / \nu_c is the ratio of the observing frequency to the electron&#x27;s critical synchrotron frequency \nu_c \propto \gamma^2 B."><img alt="" src="../_images/sphx_glr_plot_synchrotron_kernels_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_synchrotron_kernels.html"><span class="doc">The Synchrotron Kernel Functions F(x) and G(x)</span></a></p>
+  <div class="sphx-glr-thumbnail-title">The Synchrotron Kernel Functions F(x) and G(x)</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how Triceratops computes synchrotron emission from both individual relativistic electrons and from a population of electrons following a power-law energy distribution."><img alt="" src="../_images/sphx_glr_plot_PL_sed_thumb.png" />
 <p><a class="reference internal" href="e_physics_synchro/plot_PL_sed.html"><span class="doc">Synchrotron Spectra from Single Electrons and Electron Populations</span></a></p>
   <div class="sphx-glr-thumbnail-title">Synchrotron Spectra from Single Electrons and Electron Populations</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Every synchrotron emitting electron radiates near its characteristic synchrotron frequency \nu_m, which depends on the electron Lorentz factor \gamma and the local magnetic field B:"><img alt="" src="../_images/sphx_glr_plot_frequency_gamma_relation_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_frequency_gamma_relation.html"><span class="doc">The ν–γ–B Relation and Pitch-Angle Effects</span></a></p>
+  <div class="sphx-glr-thumbnail-title">The ν–γ–B Relation and Pitch-Angle Effects</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="When relativistic electrons gyrate in a magnetic field they lose energy through synchrotron radiation at the rate"><img alt="" src="../_images/sphx_glr_plot_synchrotron_cooling_engine_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_synchrotron_cooling_engine.html"><span class="doc">Electron Cooling — the Synchrotron Radiative Cooling Engine</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Electron Cooling — the Synchrotron Radiative Cooling Engine</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The bolometric synchrotron emissivity is the total radiated power per unit volume integrated over all frequencies. For a power-law electron distribution"><img alt="" src="../_images/sphx_glr_plot_bolometric_emissivity_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_bolometric_emissivity.html"><span class="doc">Bolometric Synchrotron Emissivity and Equipartition</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Bolometric Synchrotron Emissivity and Equipartition</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Triceratops provides four one-zone phenomenological synchrotron SED classes that cover progressively more complex physical regimes:"><img alt="" src="../_images/sphx_glr_plot_sed_model_comparison_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_sed_model_comparison.html"><span class="doc">Comparing Synchrotron SED Models</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Comparing Synchrotron SED Models</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The inverse closure maps observed SED parameters — peak flux F_{\rm peak}, peak frequency \nu_{\rm peak}, and spectral regime — back to the physical properties of the emitting region: magnetic field B, emitting radius R, and electron distribution parameters."><img alt="" src="../_images/sphx_glr_plot_inverse_closure_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_inverse_closure.html"><span class="doc">Recovering Physical Parameters from an Observed SED: the Inverse Closure</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Recovering Physical Parameters from an Observed SED: the Inverse Closure</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In the presence of an external radiation field relativistic electrons lose energy not only through synchrotron radiation but also through inverse Compton (IC) scattering — up-scattering photons to higher energies.  In the Thomson regime the IC cooling rate has the same \gamma^2 dependence as synchrotron cooling, but the energy density driving it is the radiation energy density u_{\rm rad} rather than the magnetic energy density u_B = B^2/(8\pi):"><img alt="" src="../_images/sphx_glr_plot_ic_vs_synchrotron_cooling_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_ic_vs_synchrotron_cooling.html"><span class="doc">Synchrotron vs Inverse Compton Cooling</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Synchrotron vs Inverse Compton Cooling</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="The forward closure maps physical parameters of a synchrotron-emitting region — magnetic field B, emitting radius R, microphysical energy fractions \epsilon_E and \epsilon_B, and the electron energy distribution — onto the phenomenological spectral parameters that are directly measured from broadband observations."><img alt="" src="../_images/sphx_glr_plot_forward_closure_thumb.png" />
+<p><a class="reference internal" href="e_physics_synchro/plot_forward_closure.html"><span class="doc">From Physical Parameters to SED Parameters: the Forward Closure</span></a></p>
+  <div class="sphx-glr-thumbnail-title">From Physical Parameters to SED Parameters: the Forward Closure</div>
 </div><div class="sphx-glr-thumbcontainer" tooltip="In practice, synchrotron spectra are made much more complex than the idealized scenarios often presented in textbooks (e.g. :footciteRybickiLightman or :footcite1970ranp.book.....P). In the modern literature of supernova and GRB synchrotron modeling, the effect of synchrotron self absorption (SSA) and radiative cooling of the electron population are often included to better match observed spectra (e.g. :footciteGranotSari2002SpectralBreaks)."><img alt="" src="../_images/sphx_glr_plot_SSA_cooling_SED_thumb.png" />
 <p><a class="reference internal" href="e_physics_synchro/plot_SSA_cooling_SED.html"><span class="doc">Synchrotron Spectra With Cooling and SSA</span></a></p>
   <div class="sphx-glr-thumbnail-title">Synchrotron Spectra With Cooling and SSA</div>
@@ -566,12 +598,12 @@ functions, please refer to the <span class="xref std std-ref">synchrotron_overvi
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../reference/physics/radiation/synchrotron/synchrotron_cooling_theory.html"
+       href="../reference/physics/radiation/free_free/free_free_theory.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Theory of Synchrotron Electron Populations</p>
+        <p class="prev-next-title">Free-Free Radiation Theory</p>
       </div>
     </a>
     <a class="right-next"

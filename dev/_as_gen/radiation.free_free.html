@@ -63,8 +63,8 @@
     <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="radiation.free_free.compute_RJ_FF_absorption_coefficient" href="radiation.free_free.compute_RJ_FF_absorption_coefficient.html" />
-    <link rel="prev" title="radiation.constants.electron_rest_mass_cgs" href="radiation.constants.electron_rest_mass_cgs.html" />
+    <link rel="next" title="radiation.free_free.absorption" href="radiation.free_free.absorption.html" />
+    <link rel="prev" title="radiation.constants.Ry_cgs" href="radiation.constants.Ry_cgs.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
@@ -1543,19 +1543,41 @@
 <li class="toctree-l3"><a class="reference internal" href="radiation.constants.sigma_T_cgs.html">radiation.constants.sigma_T_cgs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="radiation.constants.c_cgs.html">radiation.constants.c_cgs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="radiation.constants.electron_rest_mass_cgs.html">radiation.constants.electron_rest_mass_cgs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.constants.h_cgs.html">radiation.constants.h_cgs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.constants.kB_cgs.html">radiation.constants.kB_cgs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="radiation.constants.Ry_cgs.html">radiation.constants.Ry_cgs</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">radiation.free_free</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_absorption_coefficient.html">radiation.free_free.compute_RJ_FF_absorption_coefficient</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS.html">radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_arrays.html">radiation.free_free.compute_RJ_FF_optical_depth_arrays</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS.html">radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw.html">radiation.free_free.compute_RJ_FF_optical_depth_powerlaw</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS.html">radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_shell.html">radiation.free_free.compute_RJ_FF_optical_depth_shell</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS.html">radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_wind.html">radiation.free_free.compute_RJ_FF_optical_depth_wind</a></li>
-<li class="toctree-l3"><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS.html">radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.free_free.absorption.html">radiation.free_free.absorption</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays.html">radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature.html">radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw.html">radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell.html">radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind.html">radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_optical_depth_from_arrays.html">radiation.free_free.absorption.compute_ff_optical_depth_from_arrays</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature.html">radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_optical_depth_powerlaw.html">radiation.free_free.absorption.compute_ff_optical_depth_powerlaw</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_optical_depth_shell.html">radiation.free_free.absorption.compute_ff_optical_depth_shell</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.absorption.compute_ff_optical_depth_wind.html">radiation.free_free.absorption.compute_ff_optical_depth_wind</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.free_free.core.html">radiation.free_free.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.core.compute_ff_RJ_absorption.html">radiation.free_free.core.compute_ff_RJ_absorption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.core.compute_ff_RJ_emissivity.html">radiation.free_free.core.compute_ff_RJ_emissivity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.core.compute_ff_absorption.html">radiation.free_free.core.compute_ff_absorption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.core.compute_ff_emissivity.html">radiation.free_free.core.compute_ff_emissivity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="radiation.free_free.gaunt_factor.html">radiation.free_free.gaunt_factor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.gaunt_ff_draine.html">radiation.free_free.gaunt_factor.gaunt_ff_draine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.get_default_gaunt_interpolator.html">radiation.free_free.gaunt_factor.get_default_gaunt_interpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator.html">radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase.html">GauntFactorInterpolatorBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator.html">NonRelativisticGauntFactorInterpolator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator.html">RelativisticGauntFactorInterpolator</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="radiation.synchrotron.html">radiation.synchrotron</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1845,41 +1867,19 @@
                   
   <section id="module-radiation.free_free">
 <span id="radiation-free-free"></span><h1>radiation.free_free<a class="headerlink" href="#module-radiation.free_free" title="Link to this heading">#</a></h1>
-<p>Physics utilities for computing free-free absorption of synchrotron radiation from shock interfaces.</p>
-<p>This module’s core objective is to allow the calculation of the free-free attenuation of synchrotron radiation
-as it passes through the ionized medium surrounding the transient shocks studied in the Triceratops framework.</p>
-<p class="rubric">Functions</p>
+<p>Module supporting free-free radiation calculations for Triceratops.</p>
+<p>In dev.</p>
+<p class="rubric">Modules</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_absorption_coefficient.html#radiation.free_free.compute_RJ_FF_absorption_coefficient" title="radiation.free_free.compute_RJ_FF_absorption_coefficient"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_absorption_coefficient</span></code></a>(...[, ...])</p></td>
-<td><p>Compute the free–free absorption coefficient in the Rayleigh–Jeans limit.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.absorption.html#module-radiation.free_free.absorption" title="radiation.free_free.absorption"><code class="xref py py-obj docutils literal notranslate"><span class="pre">absorption</span></code></a></p></td>
+<td><p>Free-free optical depth calculations for structured plasma environments.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS.html#radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS" title="radiation.free_free.compute_RJ_FF_absorption_coefficient_CGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_absorption_coefficient_CGS</span></code></a>(...)</p></td>
-<td><p>Compute the thermal free–free absorption coefficient in the Rayleigh–Jeans limit (CGS).</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.core.html#module-radiation.free_free.core" title="radiation.free_free.core"><code class="xref py py-obj docutils literal notranslate"><span class="pre">core</span></code></a></p></td>
+<td><p>Core free–free (bremsstrahlung) radiation functions.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_arrays.html#radiation.free_free.compute_RJ_FF_optical_depth_arrays" title="radiation.free_free.compute_RJ_FF_optical_depth_arrays"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_arrays</span></code></a>(...[, Z, ...])</p></td>
-<td><p>Compute free–free optical depth from tabulated radial profiles.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS" title="radiation.free_free.compute_RJ_FF_optical_depth_arrays_CGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_arrays_CGS</span></code></a>(...)</p></td>
-<td><p>Compute free–free optical depth from tabulated radial profiles (CGS).</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw.html#radiation.free_free.compute_RJ_FF_optical_depth_powerlaw" title="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_powerlaw</span></code></a>(...[, ...])</p></td>
-<td><p>Compute the free–free optical depth for a power-law density profile.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS" title="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw_CGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_powerlaw_CGS</span></code></a>(...)</p></td>
-<td><p>Low-level CGS version of <a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw.html#radiation.free_free.compute_RJ_FF_optical_depth_powerlaw" title="radiation.free_free.compute_RJ_FF_optical_depth_powerlaw"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_powerlaw()</span></code></a>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_shell.html#radiation.free_free.compute_RJ_FF_optical_depth_shell" title="radiation.free_free.compute_RJ_FF_optical_depth_shell"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_shell</span></code></a>(frequency, ...)</p></td>
-<td><p>Compute the free–free optical depth through a uniform-density shell.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS" title="radiation.free_free.compute_RJ_FF_optical_depth_shell_CGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_shell_CGS</span></code></a>(...[, ...])</p></td>
-<td><p>Low-level CGS version of <a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_shell.html#radiation.free_free.compute_RJ_FF_optical_depth_shell" title="radiation.free_free.compute_RJ_FF_optical_depth_shell"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_shell()</span></code></a>.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_wind.html#radiation.free_free.compute_RJ_FF_optical_depth_wind" title="radiation.free_free.compute_RJ_FF_optical_depth_wind"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_wind</span></code></a>(frequency, ...)</p></td>
-<td><p>Compute the free–free optical depth through a stellar wind in the Rayleigh–Jeans limit (CGS).</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS.html#radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS" title="radiation.free_free.compute_RJ_FF_optical_depth_wind_CGS"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_RJ_FF_optical_depth_wind_CGS</span></code></a>(...[, ...])</p></td>
-<td><p>Compute the free–free optical depth through a steady wind (Rayleigh–Jeans, CGS).</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="radiation.free_free.gaunt_factor.html#module-radiation.free_free.gaunt_factor" title="radiation.free_free.gaunt_factor"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gaunt_factor</span></code></a></p></td>
+<td><p>Gaunt factor support for free–free emission and absorption.</p></td>
 </tr>
 </tbody>
 </table>
@@ -1897,20 +1897,20 @@ as it passes through the ionized medium surrounding the transient shocks studied
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="radiation.constants.electron_rest_mass_cgs.html"
+       href="radiation.constants.Ry_cgs.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">radiation.constants.electron_rest_mass_cgs</p>
+        <p class="prev-next-title">radiation.constants.Ry_cgs</p>
       </div>
     </a>
     <a class="right-next"
-       href="radiation.free_free.compute_RJ_FF_absorption_coefficient.html"
+       href="radiation.free_free.absorption.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">radiation.free_free.compute_RJ_FF_absorption_coefficient</p>
+        <p class="prev-next-title">radiation.free_free.absorption</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

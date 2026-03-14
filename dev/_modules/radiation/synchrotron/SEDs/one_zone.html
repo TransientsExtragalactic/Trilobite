@@ -490,11 +490,15 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">electron_rest_energy_cgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">c_1_cgs</span><span class="p">,</span>
+    <span class="n">compute_c5_parameter</span><span class="p">,</span>
+    <span class="n">compute_c6_parameter</span><span class="p">,</span>
+<span class="p">)</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.cosmology</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cosmology</span><span class="p">,</span> <span class="n">resolve_cosmological_distances</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.log</span><span class="w"> </span><span class="kn">import</span> <span class="n">triceratops_logger</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">..utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_1_cgs</span><span class="p">,</span> <span class="n">compute_c5_parameter</span><span class="p">,</span> <span class="n">compute_c6_parameter</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._one_zone_closure</span><span class="w"> </span><span class="kn">import</span> <span class="n">SSA_INV_FUNCTION_REGISTRY</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">._one_zone_functions</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">COOLING_SED_FUNCTION_REGISTRY</span><span class="p">,</span>
