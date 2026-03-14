@@ -7,12 +7,13 @@ in :mod:`one_zone`.
 
 import numpy as np
 
-from ..core import _opt_compute_log_synch_frequency
-from ..microphysics import (
+from triceratops.radiation.synchrotron.core import _opt_compute_log_synch_frequency
+from triceratops.radiation.synchrotron.microphysics import (
     _opt_normalize_BPL_from_magnetic_field,
     _opt_normalize_PL_from_magnetic_field,
 )
-from ..utils import _log_chi_cgs, _log_chi_cgs_iso
+from triceratops.radiation.synchrotron.utils import _log_chi_cgs, _log_chi_cgs_iso
+
 from ._one_zone_ssa import (
     compute_ssa_frequencies_with_cooling,
     compute_ssa_frequencies_without_cooling,

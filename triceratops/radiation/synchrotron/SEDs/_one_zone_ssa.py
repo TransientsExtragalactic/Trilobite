@@ -23,7 +23,7 @@ elsewhere in the closure logic.
 
 import numpy as np
 
-from ...constants import electron_rest_mass_cgs
+from triceratops.radiation.constants import electron_rest_mass_cgs
 
 
 # ---------------------------------------------------------------------

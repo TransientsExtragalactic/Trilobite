@@ -17,9 +17,31 @@ __all__ = [
     "get_default_gaunt_interpolator",
     "get_default_relativistic_gaunt_interpolator",
     "gaunt_ff_draine",
+    "compute_ff_optical_depth_from_arrays",
+    "compute_ff_RJ_optical_depth_from_arrays",
+    "compute_ff_RJ_optical_depth_from_quadrature",
+    "compute_ff_optical_depth_from_quadrature",
+    "compute_ff_RJ_optical_depth_powerlaw",
+    "compute_ff_RJ_optical_depth_shell",
+    "compute_ff_optical_depth_shell",
+    "compute_ff_optical_depth_wind",
+    "compute_ff_optical_depth_powerlaw",
+    "compute_ff_RJ_optical_depth_wind",
 ]
 
 from . import core, gaunt_factor
+from .absorption import (
+    compute_ff_optical_depth_from_arrays,
+    compute_ff_optical_depth_from_quadrature,
+    compute_ff_optical_depth_powerlaw,
+    compute_ff_optical_depth_shell,
+    compute_ff_optical_depth_wind,
+    compute_ff_RJ_optical_depth_from_arrays,
+    compute_ff_RJ_optical_depth_from_quadrature,
+    compute_ff_RJ_optical_depth_powerlaw,
+    compute_ff_RJ_optical_depth_shell,
+    compute_ff_RJ_optical_depth_wind,
+)
 from .core import (
     compute_ff_absorption,
     compute_ff_emissivity,

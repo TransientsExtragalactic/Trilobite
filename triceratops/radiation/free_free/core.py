@@ -30,8 +30,8 @@ from typing import TYPE_CHECKING, Union
 import numpy as np
 from astropy import units as u
 
-from ...utils.misc_utils import ensure_in_units
-from ..constants import h_cgs, kB_cgs
+from triceratops.radiation.constants import h_cgs, kB_cgs
+from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
@@ -276,8 +276,17 @@ def _log_ff_RJ_emissivity(
     _log_ff_emissivity : Exact form of the emissivity.
     _log_ff_RJ_absorption : Matching RJ absorption coefficient.
     """
-    _ = log_nu  # Unused but accepted for API consistency.
-    return _log_ff_emissivity_coefficient_cgs + 2 * log_Z + log_n_e + log_n_i - 0.5 * log_T + np.log(g_ff)
+    # log_nu is not used in the computation (RJ emissivity is frequency-independent),
+    # but we broadcast against it so the output shape matches the input shape of nu.
+    return (
+        _log_ff_emissivity_coefficient_cgs
+        + 2 * log_Z
+        + log_n_e
+        + log_n_i
+        - 0.5 * log_T
+        + np.log(g_ff)
+        + np.zeros_like(np.asarray(log_nu, dtype=float))
+    )
 
 
 def _log_ff_RJ_absorption(

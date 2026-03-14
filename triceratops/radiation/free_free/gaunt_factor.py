@@ -41,10 +41,9 @@ import numpy as np
 from astropy import units as u
 from scipy.interpolate import RegularGridInterpolator
 
+from triceratops.radiation.constants import Ry_cgs, h_cgs, kB_cgs
+from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
-
-from ...utils.log import triceratops_logger
-from ..constants import Ry_cgs, h_cgs, kB_cgs
 
 if TYPE_CHECKING:
     pass  # Reserved for future type-only imports.
