@@ -10,7 +10,7 @@ cosmological distance measures.
 
 from astropy.cosmology import z_at_value
 
-from .config import triceratops_config
+from triceratops.utils.config import triceratops_config
 
 
 def get_cosmology(cosmology=None):

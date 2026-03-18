@@ -1012,7 +1012,7 @@ class NumericalThinShellShockEngine(ShockEngine):
 
         # --- Extract Data and Check Validity --- #
         if sol.status < 0:
-            raise RuntimeError("ODE solver failed to integrate the thin-shell shock equations.")
+            raise RuntimeError(f"ODE solver failed to integrate the thin-shell shock equations: \n{sol.message}")
 
         # Extract the shock radius and velocity from the solution.
         xi_sol = sol.y[0]

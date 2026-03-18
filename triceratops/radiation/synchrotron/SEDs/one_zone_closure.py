@@ -44,15 +44,18 @@ from typing import TYPE_CHECKING, Union
 import numpy as np
 from astropy import units as u
 
+from triceratops.physics_utils.cosmology import (
+    get_cosmology,
+    resolve_cosmological_distances,
+)
+from triceratops.physics_utils.special_relativity import compute_doppler_factor
 from triceratops.radiation.constants import electron_rest_energy_cgs
 from triceratops.radiation.synchrotron.utils import (
     c_1_cgs,
     compute_c5_parameter,
     compute_c6_parameter,
 )
-from triceratops.utils.cosmology import get_cosmology, resolve_cosmological_distances
 from triceratops.utils.misc_utils import ensure_in_units
-from triceratops.utils.sr_utils import compute_doppler_factor
 
 from ._one_zone_closure import (
     COOLING_INV_FUNCTION_REGISTRY,

@@ -15,6 +15,5 @@ __all__ = [
     "constants",
     "free_free",
     "synchrotron",
-    "utils",
 ]
-from . import constants, free_free, synchrotron, utils
+from . import constants, free_free, synchrotron

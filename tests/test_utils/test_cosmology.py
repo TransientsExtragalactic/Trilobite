@@ -3,8 +3,11 @@ import pytest
 from astropy import units as u
 from astropy.cosmology import Planck18
 
+from triceratops.physics_utils.cosmology import (
+    get_cosmology,
+    resolve_cosmological_distances,
+)
 from triceratops.utils.config import triceratops_config
-from triceratops.utils.cosmology import get_cosmology, resolve_cosmological_distances
 
 
 def test_get_default_cosmology():

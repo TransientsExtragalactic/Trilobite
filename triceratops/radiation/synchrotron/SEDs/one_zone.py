@@ -64,13 +64,16 @@ import numpy as np
 from astropy import cosmology as cosmo
 from astropy import units as u
 
+from triceratops.physics_utils.cosmology import (
+    get_cosmology,
+    resolve_cosmological_distances,
+)
 from triceratops.radiation.constants import electron_rest_energy_cgs
 from triceratops.radiation.synchrotron.utils import (
     c_1_cgs,
     compute_c5_parameter,
     compute_c6_parameter,
 )
-from triceratops.utils.cosmology import get_cosmology, resolve_cosmological_distances
 from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
 
