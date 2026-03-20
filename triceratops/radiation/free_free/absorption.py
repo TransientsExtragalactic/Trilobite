@@ -58,6 +58,9 @@ from .core import _log_ff_absorption, _log_ff_RJ_absorption
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
 
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz deprecated in 2.0.
+_trapz = getattr(np, "trapezoid", np.trapz)
+
 # ============================================== #
 # Module-level CGS constants                     #
 # ============================================== #
@@ -281,7 +284,7 @@ def _compute_ff_optical_depth_from_arrays(
         g_ff=g_ff,
     )
 
-    return np.trapezoid(np.exp(log_alpha), r, axis=-1)
+    return _trapz(np.exp(log_alpha), r, axis=-1)
 
 
 def _compute_RJ_ff_optical_depth_from_arrays(
@@ -344,7 +347,7 @@ def _compute_RJ_ff_optical_depth_from_arrays(
         g_ff=g_ff,
     )
 
-    return np.trapezoid(np.exp(log_alpha), r, axis=-1)
+    return _trapz(np.exp(log_alpha), r, axis=-1)
 
 
 def _compute_ff_optical_depth_wind(

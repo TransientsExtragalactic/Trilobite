@@ -23,6 +23,9 @@ from triceratops.utils.misc_utils import ensure_in_units
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
 
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz deprecated in 2.0.
+_trapz = getattr(np, "trapezoid", np.trapz)
+
 # ============================================ #
 # Frequency Calculations for Synchrotron       #
 # ============================================ #
@@ -1025,12 +1028,11 @@ def _opt_compute_ME_spectrum_from_dist_grid(
     # Compute the prefactor.
     prefactor = _single_electron_power_coef_CGS * B * np.sin(alpha)
 
-    # Prepare the integration. We use the np.trapz implementation which
-    # calls to a low-level C routine for speed. The integrand has shape
-    # (M, N) where M is the number of nu values and N is the number of gamma
-    # values.
+    # Prepare the integration. We use the trapezoidal rule. The integrand has
+    # shape (M, N) where M is the number of nu values and N is the number of
+    # gamma values.
     integrand = N_gamma[None, :] * F_x
-    P_nu = prefactor * np.trapz(integrand, gamma, axis=1)
+    P_nu = prefactor * _trapz(integrand, gamma, axis=1)
 
     return P_nu
 
