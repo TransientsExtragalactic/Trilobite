@@ -3,388 +3,413 @@
 One-Zone Accretion Disk Models: Theory
 =============================================
 
-A common challenge in accretion disk modeling is that the characteristic timescale for disk evolution is the
-**viscous timescale**,
+A central challenge in accretion disk modelling is that the viscous timescale,
 
 .. math::
     :label: eq:viscous_timescale
 
     t_{\rm visc} = \alpha^{-1} \left(\frac{R}{H}\right)^2 \Omega^{-1},
 
+scales as :math:`t_{\rm visc} \propto R^{3/2}`, so different parts of the disk
+evolve on wildly different timescales.  Rather than resolving this hierarchy with
+a full radial grid and adaptive timestepping, we follow
+:footcite:t:`metzgerTimeDependentModelsAccretion2008` and represent the entire disk
+with a **single spatial zone** located at the characteristic radius where the viscous
+timescale is comparable to the elapsed time.  This *one-zone* approach reduces the
+disk evolution to a coupled two-component ODE system that can be integrated very
+efficiently while still capturing global viscous spreading, thermodynamic structure,
+and accretion onto the central object.
 
-where :math:`\alpha` is the Shakura--Sunyaev viscosity parameter :footcite:p:`frank2002accretion, 1973A&A....24..337S`,
-:math:`H` is the disk scale height, and :math:`\Omega` is the orbital frequency. For a disk with a fixed aspect ratio
-:math:`(H/R)`, the viscous timescale scales with radius as :math:`t_{\rm visc} \propto R^{3/2}`.
-
-This strong radial dependence implies that different parts of the disk evolve on
-widely different timescales: the inner disk evolves rapidly, while the outer disk
-changes much more slowly. In principle, one could resolve this hierarchy of timescales
-using adaptive timestepping or full numerical simulations. However, for many
-applications it is sufficient to construct a simplified model that captures the
-global evolution of the disk to order of magnitude.
-
-This motivates the idea of a **one-zone accretion model**, in which we treat the entire disk at a single radius
-and make the approximation that the disk properties at this radius are representative of the entire disk. This allows
-for very efficient modeling of the disk evolution and inclusion of non-standard physical processes without too much
-complexity or computational overhead. Of course, the clear downside of this approach is that it cannot capture the
-detailed radial structure of the disk, and may not be accurate for all applications. However, it can be a useful
-tool for gaining insight into the global behavior of accretion disks and for making order-of-magnitude
-estimates of disk properties and evolution.
-
-A number of one-zone disk models are provided in Triceratops, which can be used for a variety of modeling applications.
-This document provides a brief overview of the theory behind one-zone disk models, and the assumptions and approximations
-that go into them. For details on the usage of the one-zone disk models in Triceratops, see :ref:`one_zone_disk`.
+This document describes the theoretical framework underlying the one-zone disk models
+implemented in Triceratops.  For usage instructions see :ref:`one_zone_disk`.
 
 .. contents::
+    :local:
+    :depth: 2
 
 ----
 
 The Core Model
-----------------
+--------------
 
 .. note::
 
-    We follow here the development of the one-zone formalism as described in
+    We follow the development of the one-zone formalism in
     :footcite:t:`metzgerTimeDependentModelsAccretion2008`.
 
-We will begin by introducing the central tenants of the core model. These are features of one-zone disks which are
-present in effectively all of the one-zone implementations provided in Triceratops.
+The one-zone approximation partitions the disk into three characteristic regions
+based on the ratio :math:`t_{\rm visc}/t`:
 
-At its surface, the one-zone model is motivated by the observation that the viscous timescale :math:`t_{\rm visc}` partitions
-the disk into 3 regions:
+- **Inner disk** (:math:`t_{\rm visc} \ll t`) — in quasi-steady state; mass is
+  rapidly accreted and this region is dynamically subdominant.
+- **Outer disk** (:math:`t_{\rm visc} \gg t`) — has not yet had time to evolve away
+  from the initial conditions.
+- **Middle disk** (:math:`t_{\rm visc} \sim t`) — currently spreading viscously and
+  dominant in mass.
 
-- The **inner disk** where :math:`t_{\rm visc} \ll t` and the disk is effectively steady and is subdominant in mass because
-  mass is rapidly accreted onto the central object.
-- The **outer disk** where :math:`t_{\rm visc} \gg t` where the disk has yet to have time to evolve away from its
-  initial conditions.
-- The **middle disk** where :math:`t_{\rm visc} \sim t` where the disk is evolving on a timescale comparable to
-  the dynamical timescale, and is dominant in mass.
+The one-zone model tracks the middle disk, treating the disk mass :math:`M_D` and
+angular momentum :math:`J_D` as its only two degrees of freedom.
 
-We therefore construct one-zone models to track the evolution of the entire disk using this middle disk region as a
-proxy. In this formalism, the problem of evolution becomes effectively one of energy and momentum conservation. The
-mass of the disk is
+One-Zone Geometry
+^^^^^^^^^^^^^^^^^
 
-.. math::
-
-    M_D = A \pi \Sigma_D R_D^2,
-
-where :math:`A=3.62` is a correction constant used to ensure the model matches the exact Green's function solution.
-Likewise, the angular momentum of the disk is
+Following the Green's function analysis of a viscously spreading ring
+:footcite:p:`metzgerTimeDependentModelsAccretion2008`, the area-averaged surface
+density and characteristic disk radius are related to the state variables by
 
 .. math::
 
-    J_D = B(G M_D R_D)^{1/2} \pi R_D^2 \Sigma_D,
+    M_D = A\, \pi\, \Sigma_D\, R_D^2,
+    \qquad
+    J_D = \frac{B}{A}\, M_D\, \sqrt{G M_{\rm BH} R_D},
 
-where :math:`B=3.24` is another correction constant.
+where :math:`A = 1.62` and :math:`B = 1.33` are dimensionless correction constants
+calibrated to match the exact spreading-ring solution.  Defining the ratio
 
-At its core, the one-zone model is quite simple: we track the evolution in time of the **disk mass** and the
-**disk angular momentum**:
+.. math::
+
+    \xi \equiv \frac{B}{A} \approx 0.821,
+
+the outer disk radius and surface density follow directly from the state vector:
+
+.. math::
+    :label: eq:disk_radius
+
+    R_D = \frac{J_D^2}{\xi^2\, M_D^2\, G M_{\rm BH}},
+    \qquad
+    \Sigma_D = \frac{M_D}{\pi\, A\, R_D^2}.
+
+These algebraic relations are re-evaluated at every integration timestep and require
+no additional free parameters beyond :math:`M_{\rm BH}`.
+
+Evolution Equations
+^^^^^^^^^^^^^^^^^^^
+
+The disk mass and angular momentum evolve as
 
 .. math::
     :label: eq:disk_evolution
 
     \begin{aligned}
-    \dot{M}_D &= -\dot{M}_{\rm acc} + \dot{M}_{\rm inflow} - \dot{M}_{\rm outflows},\\
-    \dot{J}_D &= -\dot{J}_{\rm acc} + \dot{J}_{\rm inflow} - \dot{J}_{\rm outflows}.
+    \dot{M}_D &= -\dot{M}_{\rm acc} + \dot{M}_{\rm inflow} - \dot{M}_{\rm outflow}, \\
+    \dot{J}_D &= -\dot{J}_{\rm acc} + \dot{J}_{\rm inflow} - \dot{J}_{\rm outflow}.
     \end{aligned}
 
-The exact nature of the source terms on the RHS of the equation is determined by the model-specific physics.
-
-The radius of the disk is determined by
+In the base implementation, only the accretion sink terms are active:
 
 .. math::
 
-    R_D = \frac{1}{GM_{\rm BH}} \left(\frac{J_D}{\xi M_D}\right)^2, \;\; \xi = \frac{B}{A}.
+    \dot{M}_{\rm acc}
+    = f_D\,\frac{M_D}{t_{\rm visc}}
+    = f_D\,\nu\,\frac{M_D}{R_D^2},
 
-and the surface density of the disk is simply
+where :math:`\nu` is the kinematic viscosity and
+
+.. math::
+    :label: eq:fd
+
+    f_D = \frac{F_0}{1 - \sqrt{R_{\rm in}/R_D}},
+    \qquad F_0 = 1.6,
+
+enforces a zero-torque inner boundary condition (:math:`F_0 = 1.6` is the
+Metzger+08 calibration value).  Matter draining through the inner edge at
+:math:`R_{\rm in}` carries the local Keplerian specific angular momentum
+:math:`\ell_{\rm in} = \sqrt{G M_{\rm BH} R_{\rm in}}`, so
 
 .. math::
 
-    \Sigma_D = \frac{M_D}{A \pi R_D^2}.
+    \dot{J}_{\rm acc} = \dot{M}_{\rm acc}\,\sqrt{G M_{\rm BH} R_{\rm in}}.
 
-In order to produce interesting behavior in the model, one must specify the relevant terms on the RHS of
-:ref:`eq:disk_evolution`. At a minimum, one must specify the accretion terms (otherwise the disk would simply not
-evolve). We again follow :footcite:t:`metzgerTimeDependentModelsAccretion2008` in adopting the form
-
-.. math::
-
-    \dot{M}_{\rm acc} = f \frac{M_D}{t_{\rm visc}} = f \nu \frac{M_D}{R_D^2},
-
-where :math:`\nu` is the viscosity and :math:`f` is a correction factor of order unity.
-
-.. note::
-
-    Unlike :math:`A` and :math:`B`, the correction factor may have some model dependence. For the standard spreading
-    ring solution (Green's function solution), one requires :math:`f=1.6`; however, we also generally want a zero-torque
-    inner boundary condition, which requires
-
-    .. math::
-
-        f = \frac{1.6}{1 - \sqrt{R_{\rm in}/R_D}}.
-
-    For a steady state disk,
-
-    .. math::
-
-        f = 3/A \sim 0.83.
-
-At its most basic, this is the **one-zone model framework**; however, as will be made clear throughout this document,
-quite a bit of interesting physics and behavior can be captured with this model.
-
-Model Architecture
-------------------
-
-.. note::
-
-    This section introduces some of the basics of the model architecture; however, a detailed discussion of the
-    implementation and usage of the one-zone disk models in Triceratops is deferred to :ref:`one_zone_disk`. This is
-    also where one should look for instructions on implementing new one-zone disk models.
-
-At its core, each one-zone model is a coupled set of ODEs for the disk mass and the angular momentum. Thus,
-for each timestep, one computes the relevant derivatives and then integrates forward in time.
-
-.. figure:: disk_diagram_1
-
-A complicating factor is that, in general, one needs to compute additional properties of the disk reliant on
-a secondary closure. For example, the viscous timescale :math:`t_{\rm visc}` requires a closure for the viscosity :math:`\nu`,
-which in turn requires a closure for the disk thermodynamics. As such, we insert an additional layer in the timestepping
-for each timestep in which we first compute the disk properties (e.g. :math:`t_{\rm visc}`) using the current disk mass and angular
-momentum, and then use these properties to compute the derivatives of the disk mass and angular momentum. This allows
-for a more modular architecture in which the disk properties and the disk evolution are decoupled, and allows for more flexibility in the implementation of different models.
-
-In the sections below, we describe a few specific disk models which are implemented in Triceratops.
-
-.. figure:: disk_diagram_2
-
+Because :math:`\ell_{\rm in} \ll J_D / M_D` when :math:`R_{\rm in} \ll R_D`,
+angular momentum drains more slowly than mass and the disk outer radius grows over
+time — the standard viscous spreading behaviour.
 
 Thermodynamics
-^^^^^^^^^^^^^^^
+--------------
 
-In order to determine the viscosity, one must specify a thermodynamic closure for the disk. In most cases of interest,
-we assume that the disk is optically thick and scattering dominated, such that energy is transported via radiative diffusion.
+Viscous Heating and Radiative Cooling
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The thermal structure of the disk is determined by balancing viscous heating and radiative cooling:
+The thermal structure of the disk is set by balancing viscous heating
+against radiative cooling:
+
+.. math::
+    :label: eq:energy_balance
+
+    Q^+(T_c) = Q^-(T_c).
+
+The viscous heating rate per unit area is
+
+.. math::
+    :label: eq:q_plus
+
+    Q^+ = \frac{9}{8}\,\nu\,\Sigma\,\Omega^2
+        = \frac{9}{8}\,\alpha\,\frac{c_s^2}{\Omega}\,\Sigma\,\Omega^2
+        = \frac{9}{8}\,\alpha\,c_s^2\,\Sigma\,\Omega,
+
+and the radiative cooling rate per unit area (for an optically thick disk in the
+diffusion limit) is
+
+.. math::
+    :label: eq:q_minus
+
+    Q^- = \sigma_{\rm SB}\,T_{\rm eff}^4.
+
+The midplane temperature :math:`T_c` and effective temperature :math:`T_{\rm eff}`
+are related through radiative diffusion:
+
+.. math::
+    :label: eq:tc_teff
+
+    T_c^4 = \frac{3}{4}\,\tau\,T_{\rm eff}^4,
+
+where the optical depth :math:`\tau = \kappa\,\Sigma` depends on the opacity
+prescription.
+
+Energy Balance Residual
+^^^^^^^^^^^^^^^^^^^^^^^
+
+Combining :eq:`eq:q_plus`, :eq:`eq:q_minus`, and :eq:`eq:tc_teff` and substituting
+:math:`\nu = \alpha c_s^2/\Omega`, the energy balance :eq:`eq:energy_balance`
+reduces to a single equation in :math:`T_c`:
+
+.. math::
+    :label: eq:root_equation
+
+    \mathcal{F}(T_c)
+    \equiv
+    \ln Q_0 + 2\ln c_s(T_c) - 4\ln T_c = 0,
+
+where the quantity
+
+.. math::
+    :label: eq:Q0
+
+    Q_0 \equiv \frac{27}{32}\,\frac{\alpha\,\kappa\,\Sigma^2\,\Omega}{\sigma_{\rm SB}}
+
+collects all terms that do not depend on :math:`T_c`.  The sound speed
+:math:`c_s(T_c)` is determined by the equation of state and depends on the
+thermodynamic closure (see below).
+
+.. note::
+
+    All quantities in :eq:`eq:root_equation` are evaluated in log-space
+    internally to avoid floating-point underflow for the extreme temperatures
+    (:math:`10\,{\rm K} \lesssim T_c \lesssim 10^{14}\,{\rm K}`) that arise
+    across the full range of one-zone disk models.
+
+Solution Strategy
+^^^^^^^^^^^^^^^^^
+
+The form of :eq:`eq:root_equation` depends on whether :math:`c_s(T_c)` can
+be expressed analytically.
+
+.. tab-set::
+
+    .. tab-item:: Gas-Pressure Dominated (Analytic)
+
+        For a pure ideal-gas equation of state,
+
+        .. math::
+
+            c_s^2 = \frac{k_B T_c}{\mu m_p},
+
+        the residual :eq:`eq:root_equation` becomes
+
+        .. math::
+
+            \ln Q_0 + \ln\frac{k_B T_c}{\mu m_p} - 4\ln T_c = 0.
+
+        Rearranging:
+
+        .. math::
+
+            \ln Q_0 + \ln\frac{k_B}{\mu m_p} = 3\ln T_c,
+
+        giving a **closed-form solution**:
+
+        .. math::
+            :label: eq:Tc_gas_only
+
+            \boxed{
+            T_c = \left(\frac{Q_0\, k_B}{\mu\, m_p}\right)^{1/3}.
+            }
+
+        No root-finding is needed; the Cython closure evaluates this formula
+        directly at every timestep.
+
+    .. tab-item:: Gas + Radiation Pressure (Implicit)
+
+        When radiation pressure is included, the equation of state is
+
+        .. math::
+
+            P = \frac{\rho k_B T_c}{\mu m_p} + \frac{a T_c^4}{3},
+
+        and :math:`c_s^2 = P/\rho`.  The midplane density is found from vertical
+        hydrostatic equilibrium,
+
+        .. math::
+
+            \rho = \frac{\Sigma}{2 H} = \frac{\Sigma\,\Omega}{2\,c_s},
+
+        which gives a quadratic relation between :math:`c_s` and :math:`T_c` for
+        fixed :math:`\Sigma` and :math:`\Omega`:
+
+        .. math::
+            :label: eq:cs_quadratic
+
+            c_s^2 - \frac{2\,a\,T_c^4}{3\,\Sigma\,\Omega}\,c_s
+                  - \frac{k_B T_c}{\mu m_p} = 0.
+
+        The physically meaningful (positive) root is
+
+        .. math::
+
+            c_s(T_c)
+            =
+            \frac{D + \sqrt{D^2 + 4k_B T_c/(\mu m_p)}}{2},
+            \qquad
+            D \equiv \frac{2\,a\,T_c^4}{3\,\Sigma\,\Omega}.
+
+        Substituting this into :eq:`eq:root_equation` yields a **transcendental
+        equation** in :math:`T_c` that must be solved numerically.  Triceratops
+        uses a two-step procedure:
+
+        1. **Bracket expansion** — starting from an initial guess
+           :math:`T_c^{\rm guess}` derived from the gas-only formula, the bracket
+           :math:`[T_{\rm lo}, T_{\rm hi}]` is expanded geometrically until
+           :math:`\mathcal{F}` changes sign.
+        2. **Brent's method** — once a bracket is established, Brent's method
+           converges to the root with a mix of bisection and inverse quadratic
+           interpolation, guaranteeing superlinear convergence.
+
+        Both steps are implemented in Cython and run entirely without the GIL.
+
+        .. important::
+
+            For physical disk parameters there is always exactly one root:
+            :math:`\mathcal{F}` is a monotone function of :math:`T_c` because
+            :math:`c_s` grows more slowly than :math:`T_c` in both the gas-dominated
+            (:math:`c_s \propto T_c^{1/2}`) and radiation-dominated
+            (:math:`c_s \propto T_c`) limits.  If no root is found, the integrator
+            returns an ``EXPAND_FAIL`` or ``NO_BRACKET`` error (see
+            :ref:`one_zone_disk` for the full error code reference).
+
+Viscosity
+^^^^^^^^^
+
+Given :math:`T_c` and therefore :math:`c_s`, the kinematic viscosity follows from
+the Shakura--Sunyaev :math:`\alpha`-prescription:
 
 .. math::
 
-    Q^+ + Q^+_{(\text{ext. heating)} = Q^-_{(\text{radiative)} + Q^-_{(\text{advected)}},
+    \nu = \alpha\,c_s\,H = \frac{\alpha\,c_s^2}{\Omega},
 
-where the viscous heating rate is
-
-.. math::
-
-    Q^+ = \frac{9}{8} \nu \Sigma \Omega^2 = \frac{9}{8fA} \frac{GM\dot{M}_D}{\pi R_D^3} f_D^4,
-    \; f_D^4 = 1 - \sqrt{R_{\rm in}/R_D},
-
-(see Eq. 12 of :footcite:t:`metzgerTimeDependentModelsAccretion2008`), and the radiative cooling rate is
-
-.. math::
-
-    Q^- = \sigma_{\rm SB} T_{\rm eff}^4.
-
-For a geometrically thin, optically thick disk, the effective temperature is related to the midplane temperature
-through radiative diffusion:
-
-.. math::
-
-    T_c^4 = \frac{3}{4} \tau T_{\rm eff}^4,
-
-where the optical depth is given by
-
-.. math::
-
-    \tau = \kappa(\rho, T_c)\, \Sigma.
-
-Here, :math:`\kappa` is the opacity, which may depend on both density and temperature.
-
-The thermodynamic closure is completed by specifying an equation of state for the disk.
-In general, the total pressure is composed of multiple contributions:
-
-.. math::
-
-    P = P_{\rm gas} + P_{\rm rad} + P_{\rm mag}.
-
-In the gas pressure dominated regime,
-
-.. math::
-
-    P_{\rm gas} = \frac{\rho k_B T_c}{\mu m_p},
-
-while in the radiation pressure dominated regime,
-
-.. math::
-
-    P_{\rm rad} = \frac{a T_c^4}{3}.
-
-Additional contributions, such as magnetic pressure, may also be included depending on the model.
-
-The sound speed is then given by
-
-.. math::
-
-    c_s^2 = \frac{P}{\rho},
-
-and the disk scale height follows from vertical hydrostatic equilibrium:
+and the disk scale height is
 
 .. math::
 
     H = \frac{c_s}{\Omega}.
 
-
-The viscosity is typically parameterized using the :math:`\alpha`-prescription:
-
-.. math::
-
-    \nu = \alpha c_s H.
-
-Solution Strategy
-^^^^^^^^^^^^^^^^^
-
-In general, the solution strategy cannot be performed analytically. One must therefore procure numerical solutions
-to the relevant system of equations. However, in certain limits, one can obtain analytic scalings for the disk properties.
-
-In the general case, Triceratops provides 3 **"entry points"** for control of the thermodynamic closure:
-
-1. **Disk Property Closure**: This is the first closure to be computed and must take the disk state :math:`{\bf S}_D` (:math:`M_D` and :math:`J_D`)
-   as inputs
-   and provide from them as set of disk properties :math:`\boldsymbol{\Theta}_D` (e.g. :math:`\Sigma`, :math:`R_D`, etc.).
-2. **Thermodynamic Closure**: This closure is performed second and may utilize both :math:`\boldsymbol{\Theta}_D` and :math:`{\bf S}_D` as inputs,
-   but must provide the thermodynamic state of the disk :math:`\boldsymbol{\Psi}_D` (e.g. :math:`T_c`, :math:`P`, etc.). This is where
-   computations involving the opacity and EOS should be performed.
-3. **Viscosity Closure**: This is the final closure and must take as input the thermodynamic state :math:`\boldsymbol{\Psi}_D`,
-   the disk properties :math:`\boldsymbol{\Theta}_D`, and the disk state :math:`{\bf S}_D` and provide the viscous timescale :math:`t_{\rm visc}`.
-
-   Once this has been accomplished, the solver may iterate using any of the computed values (thus, they may be used in
-   additional evolution terms).
-
-This structure provides a lot of flexibility in the implementation of the different models.
-
-We now briefly describe a few specific closures which are built into Triceratops by default.
-
-
-Gas Pressure Dominated, Electron Scattering Opacity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In this regime, we assume that the **pressure is dominated by the gas component** and that
-the opacity is **dominated by electron scattering**:
+The viscous timescale that sets the integration timestep is
 
 .. math::
 
-    P \approx P_{\rm gas}, \qquad \kappa = \kappa_{\rm es} = \text{constant}.
+    t_{\rm visc} = \frac{R_D^2}{\nu}.
 
-The solution proceeds as follows:
+Numerical Architecture
+----------------------
 
-1. (Thermodynamic Closure) Use the dissipation balance to determine the effective temperature:
+.. figure:: ../../../images/theory/disks/DiskDiagram1.drawio
 
-   .. math::
+The hot integration loop in Triceratops is a compiled Cython explicit-Euler kernel
+(:func:`~triceratops.dynamics.accretion.one_zone._integrator.run_one_zone_model`)
+that advances the state vector :math:`(M_D, J_D)` by one step at a time.  For each
+step the kernel executes the following operations in strict order:
 
-       \sigma_{\rm SB} T_{\rm eff}^4 = \frac{9}{8fA} \frac{GM\dot{M}_D}{\pi R_D^3} f_D^4,
+1. **Geometry** — compute :math:`R_D`, :math:`\Sigma`, :math:`\Omega` from the
+   current state using :eq:`eq:disk_radius`.
+2. **Closure** — call the thermodynamic closure (a C function pointer injected at
+   construction time) to solve :eq:`eq:root_equation` for :math:`T_c` and to
+   derive all thermodynamic and viscous quantities:
+   :math:`T_{\rm eff}`, :math:`\tau`, :math:`c_s`, :math:`\nu`, :math:`t_{\rm visc}`.
+3. **Derivative** — evaluate :math:`(\dot{M}_D, \dot{J}_D)` using the viscosity
+   from step 2.
+4. **Write** — record all quantities to the result array at the current column.
+5. **Euler update** — :math:`M_D \leftarrow M_D + \dot{M}_D \Delta t`,
+   :math:`J_D \leftarrow J_D + \dot{J}_D \Delta t`, with the adaptive timestep
+   :math:`\Delta t = f_D \cdot t_{\rm visc}`.
 
-2. (Thermodynamic Closure) Compute the optical depth:
+The entire loop runs without the GIL, making it safe to call from multi-threaded
+contexts.
 
-   .. math::
+Closure extensibility is achieved through the :class:`~triceratops.dynamics.accretion.one_zone._integrator.OneZoneClosure`
+extension type.  Each concrete model subclass implements
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase._build_cython_closure`
+to return a closure object with three C function pointers installed:
+a *closure function* (solves the energy balance), a *derivative function* (evaluates
+the ODE right-hand side), and a *writer function* (serialises the full state to the
+result array).  The base class and integrator kernel are completely independent of
+the specific physics choice.
 
-       \tau = \kappa_{\rm es} \Sigma.
+Implemented Closures
+--------------------
 
-3. (Thermodynamic Closure) Relate the midplane temperature to the effective temperature:
+Gas Pressure, Electron-Scattering Opacity
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. math::
+The simplest physically self-consistent closure within the one-zone framework
+follows :footcite:t:`metzgerTimeDependentModelsAccretion2008` and assumes:
 
-       T_c^4 = \frac{3}{4} \tau T_{\rm eff}^4.
+- **Opacity**: pure electron scattering,
+  :math:`\kappa = \kappa_{\rm es} = 0.34\,{\rm cm^2\,g^{-1}}`.
+- **Pressure**: ideal gas,
+  :math:`P = \rho k_B T_c / (\mu m_p)`.
 
-4. (Thermodynamic Closure) Use the ideal gas law:
+The energy balance :eq:`eq:root_equation` then has the closed-form solution
+:eq:`eq:Tc_gas_only`.  The full solution sequence per timestep is:
 
-   .. math::
+1. Evaluate :math:`Q_0 = (27/32)\,\alpha\,\kappa_{\rm es}\,\Sigma^2\,\Omega / \sigma_{\rm SB}`.
+2. Solve analytically:
+   :math:`T_c = (Q_0 k_B / \mu m_p)^{1/3}`.
+3. Compute the effective temperature from :eq:`eq:tc_teff`:
+   :math:`T_{\rm eff} = (T_c^4 / [(3/4)\kappa_{\rm es}\Sigma])^{1/4}`.
+4. Compute the sound speed: :math:`c_s = \sqrt{k_B T_c / (\mu m_p)}`.
+5. Compute the viscosity: :math:`\nu = \alpha c_s^2 / \Omega`.
 
-       c_s^2 = \frac{k_B T_c}{\mu m_p},
+This closure is implemented in
+:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureElectronScatteringDisk`.
 
-6. (Viscous Closure) Compute the viscosity:
+Gas + Radiation Pressure, Electron-Scattering Opacity
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-   .. math::
-
-       \nu = \alpha c_s^2 \Omega^{-1}.
-
-This system can be solved explicitly, yielding analytic scalings for all quantities.
-
-
-Radiation Pressure Dominated, Electron Scattering Opacity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-In this regime, the pressure is dominated by radiation:
+This closure extends the gas-only case by including radiation pressure
+in the equation of state:
 
 .. math::
 
-    P \approx P_{\rm rad} = \frac{a T_c^4}{3}, \qquad \kappa = \kappa_{\rm es}.
+    P = P_{\rm gas} + P_{\rm rad}
+      = \frac{\rho k_B T_c}{\mu m_p} + \frac{a T_c^4}{3}.
 
-The solution proceeds similarly:
+The sound speed :math:`c_s(T_c)` is found from the quadratic :eq:`eq:cs_quadratic`,
+and the energy balance :eq:`eq:root_equation` is solved for :math:`T_c` using
+bracket expansion followed by Brent's method.  The gas-only analytic formula
+provides the initial bracket centre.
 
-1. (Thermodynamic Closure) Use the dissipation balance to determine the effective temperature:
+In the gas-pressure-dominated limit :math:`(a T_c^4 / 3 \ll \rho k_B T_c / \mu m_p)`,
+the two closures agree.  Differences become significant when
 
-   .. math::
+.. math::
 
-       \sigma_{\rm SB} T_{\rm eff}^4 = \frac{9}{8fA} \frac{GM\dot{M}_{\rm acc}}{\pi R_D^3} f_D^4,
+    \frac{P_{\rm rad}}{P_{\rm gas}} \sim \frac{a T_c^3 \mu m_p}{3 \rho k_B} \gtrsim 1,
 
-2. (Thermodynamic Closure) Compute the optical depth:
+which occurs at high temperatures or low densities (high :math:`\alpha`, high
+accretion rate, or large disk radius).
 
-   .. math::
+This closure is implemented in
+:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureElectronScatteringDisk`.
 
-       \tau = \kappa_{\rm es} \Sigma.
+----
 
-3. (Thermodynamic Closure) Relate the midplane temperature to the effective temperature:
-
-   .. math::
-
-       T_c^4 = \frac{3}{4} \tau T_{\rm eff}^4.
-
-4. (Thermodynamic Closure) Using the equation of state,
-
-   .. math::
-
-        P = \frac{a T_c^4}{3}.
-
-   Because we do not immediately know :math:`\rho`, we cannot immediately determine the sound speed. Fortunately,
-   we use the hydrostatic equilibrium of the atmosphere to determine the scale height:
-
-   .. math::
-
-        H = \sqrt{2\pi} P \Sigma^{-1} \Omega^{-2}.
-
-   With that, the density is
-
-   .. math::
-
-        \rho = \frac{\Sigma}{\sqrt{2\pi} H} = \frac{\Sigma^2 \Omega^2}{2\pi P}.
-
-   The sound speed is therefore
-
-   .. math::
-
-        c_s^2 = \frac{P}{\rho} = 2\pi \frac{P^2}{\Sigma^2 \Omega^2}.
-
-4. (Viscous Closure) Using the alpha prescription, the viscosity is
-
-   .. math::
-
-    \nu = \alpha c_s^2 \Omega^{-1} = 2\pi \frac{\alpha}{\Omega^3} \Sigma^{-2} P^2.
-
-Gas Pressure Dominated, Kramers Opacity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. important::
-
-    TODO
-
-
-Ideal Gas and Generic Opacities
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. important::
-
-    TODO
-
-Magnetically Supported Disks
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. important::
-
-    TODO
+.. footbibliography::

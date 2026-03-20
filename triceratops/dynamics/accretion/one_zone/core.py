@@ -1,10 +1,8 @@
 r"""
-Concrete one-zone disk model: gas pressure with electron-scattering opacity.
+Concrete, analytically closed one-zone accretion disk models.
 
-This module provides the canonical :class:`GasPressureElectronScatteringDisk`
-implementation of :class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase`.
-It is the simplest physically self-consistent one-zone closure and serves as
-the reference implementation and the starting point for more elaborate models.
+This module provides a selection of analytically closed one-zone disk models which
+can be used as drop-in closures for the :ref:`one_zone_disk` pipeline.
 
 See Also
 --------
@@ -15,26 +13,19 @@ See Also
 :ref:`one_zone_disk`, :ref:`one_zone_disk_theory`
 """
 
+from typing import Any
+
 import numpy as np
 
+from triceratops.dynamics.accretion.one_zone._typing import _RunParams, _SpecDict
 from triceratops.dynamics.accretion.one_zone.base import OneZoneAccretionDiskBase
-from triceratops.dynamics.accretion.utils import (
-    _compute_log_f,
-    _log_alpha_viscosity,
-    _log_central_temperature,
-    _log_midplane_density,
-    _log_omega_K,
-    _log_optical_depth,
-    _log_scale_height,
-    _log_T_eff_from_visc_dissipation_rate,
-    _log_viscous_timescale,
-)
 from triceratops.physics_utils import IdealGasEOS
-from triceratops.physics_utils.constants import _log_G_cgs, _log_kappa_es_cgs
 
 # ================================================================== #
-# GasPressureElectronScatteringDisk                                  #
+# Ideal Gas Disks                                                    #
 # ================================================================== #
+# These models provide one-zone disks with a few different combinations of pressure and
+# opacity specifications.
 
 
 class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
@@ -76,28 +67,7 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
 
     **Thermodynamic closure**
 
-    Because :math:`\nu` depends on :math:`c_s`, which in turn depends on
-    :math:`T_c`, and :math:`T_c` is set by the viscous heating rate, the
-    system has an apparent circular dependency.  This is resolved by a
-    **warm-start** scheme: the viscous heating rate at step :math:`n` is
-    computed using the viscous timescale from step :math:`n-1`:
-
-    .. math::
-
-        Q^+_{(n)}
-        = \frac{9}{8\pi A F}\,\frac{G M_{\rm BH}\,\dot{M}_{(n-1)}}{R_D^3}
-          \,f(R_D),
-
-    where :math:`\dot{M}_{(n-1)} = F M_D / t_{\rm visc,(n-1)}` and
-    :math:`f(R) = 1 - \sqrt{R_{\rm in}/R}` is the zero-torque inner-boundary
-    correction.  From :math:`Q^+` and :math:`\tau = \Sigma\kappa_{\rm es}`,
-    the central temperature follows:
-
-    .. math::
-
-        T_c = \left(\frac{3\tau}{4}\right)^{1/4} T_{\rm eff},
-        \quad
-        T_{\rm eff} = \left(\frac{Q^+}{\sigma_{\rm SB}}\right)^{1/4}.
+    .. note:: The thermodynamic closure is solved analytically at each timestep by the Cython integrator.
 
     **Angular-momentum evolution**
 
@@ -123,16 +93,13 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         Mean molecular weight of the disk gas (dimensionless).
         Default ``0.6``, appropriate for a solar-composition fully-ionised
         plasma (:math:`\approx 0.62` for solar abundances).
-    A : float, optional
-        Radial-profile correction constant for surface-density averaging.
-        Default ``1.62``
-        (:footcite:t:`metzgerTimeDependentModelsAccretion2008`).
-    B : float, optional
-        Radial-profile correction constant for angular-momentum averaging.
-        Default ``1.33``.
-    F : float, optional
-        Geometric factor relating the mass-loss rate to
-        :math:`M_D / t_{\rm visc}`.  Default ``1.6``.
+
+    Notes
+    -----
+    The disk geometry constants :math:`A = 1.62`, :math:`B = 1.33`, and
+    :math:`F_0 = 1.6` are fixed at the Cython layer as compile-time constants
+    (from :footcite:t:`metzgerTimeDependentModelsAccretion2008`) and are
+    accessible as class attributes :attr:`_A`, :attr:`_B`, :attr:`_F`.
 
     Examples
     --------
@@ -159,13 +126,12 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
                 "M_BH": 3.0 * const.M_sun,
                 "R_in": 3.0e6 * u.cm,
                 "alpha": 0.1,
-                "t_visc_0": 1.0e8 * u.s,
             },
-            t_span=(1.0e6, 5.0e9),
-            t_eval=np.geomspace(1.0e6, 5.0e9, 200),
+            t_span=(1.0e6 * u.s, 5.0e9 * u.s),
+            max_steps=50_000,
         )
 
-        data = result.reconstruct()
+        data = result.data
         print(data["T_c"].to("K"))
         print(data["R_D"].to("cm"))
 
@@ -186,14 +152,14 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
     # ==================================================== #
     # Parameter Declarations                               #
     # ==================================================== #
+    # Geometry constants are fixed Cython compile-time values; only mu is user-tunable.
+    _A: float = 1.62  # Metzger+08 surface-density averaging constant
+    _B: float = 1.33  # Metzger+08 angular-momentum averaging constant
+    _F: float = 1.6  # Metzger+08 geometric mass-loss factor
 
     CONTEXT_PARAMETERS: dict[str, dict] = {
         "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
-        "A": {"description": "Surface density correction", "base_units": None, "default": 1.62},
-        "B": {"description": "Angular momentum correction", "base_units": None, "default": 1.33},
-        "F": {"description": "Geometric mass-loss factor", "base_units": None, "default": 1.6},
     }
-
     RUNTIME_PARAMETERS: dict[str, dict] = {
         "M_BH": {
             "description": "Black hole mass",
@@ -210,12 +176,6 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         "alpha": {
             "description": "Shakura-Sunyaev alpha",
             "base_units": None,
-            "default": None,
-            "log_transform": False,
-        },
-        "t_visc_0": {
-            "description": "Initial viscous timescale",
-            "base_units": "s",
             "default": None,
             "log_transform": False,
         },
@@ -249,54 +209,54 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         "Q_visc": {"description": "Viscous dissipation rate", "units": "erg cm-2 s-1"},
         "mdot": {"description": "Accretion rate", "units": "g/s"},
         "H": {"description": "Scale height", "units": "cm"},
-        "rho_mid": {"description": "Midplane density", "units": "g/cm**3"},
+        "H_over_R": {"description": "Aspect ratio", "units": None},
+        "rho": {"description": "Midplane density", "units": "g/cm**3"},
+    }
+
+    # Maps RESULT_FIELDS keys to Cython result-array row indices (None = derived in Python).
+    # Row layout (GAS_PRESSURE_ES_N_RESULT_FIELDS = 20):
+    #   0=step_index  1=t        2=M        3=J        4=R        5=Sigma
+    #   6=Omega       7=T_eff    8=T_c      9=tau      10=cs      11=nu
+    #   12=q_visc     13=dM_dt   14=dJ_dt   15=dt      16=t_visc
+    #   17=H          18=H/R     19=rho
+    CYTHON_FIELD_MAP: dict = {
+        "R_D": 4,
+        "Sigma": 5,
+        "Omega": 6,
+        "T_eff": 7,
+        "T_c": 8,
+        "tau": 9,
+        "c_s": 10,
+        "nu": 11,
+        "Q_visc": 12,
+        "mdot": 13,
+        "t_visc": 16,
+        "H": 17,
+        "H_over_R": 18,
+        "rho": 19,
     }
 
     # ==================================================== #
     # Initialization                                       #
     # ==================================================== #
 
-    def __init__(
-        self,
-        mu: float = 0.6,
-        A: float = 1.62,
-        B: float = 1.33,
-        F: float = 1.6,
-    ):
-        # Pass off to the base class to handle context parameter storage and validation
-        super().__init__(
-            mu=mu,
-            A=A,
-            B=B,
-            F=F,
-        )
-
-        # In addition to passing everything off to the context parameters, we'll
-        # also generate the equation of state engine.
+    def __init__(self, mu: float = 0.6):
+        super().__init__(mu=mu)
         self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
-        self._A = self._context_parameters["A"]
-        self._B = self._context_parameters["B"]
-        self._F = self._context_parameters["F"]
 
     # ==================================================== #
     # Serialization                                        #
     # ==================================================== #
 
-    def to_spec_dict(self) -> dict:
+    def to_spec_dict(self) -> _SpecDict:
         r"""
         Return a JSON-serialisable spec dict for this model instance.
-
-        The dict encodes the ``mu``, ``A``, ``B``, and ``F`` context
-        parameters alongside a ``"target"`` string so that
-        :meth:`from_spec_dict` (called by
-        :meth:`~OneZoneAccretionResult.from_hdf5`) can reconstruct an
-        identical model instance.
 
         Returns
         -------
         dict
-            JSON-serialisable specification dict with keys ``"target"``,
-            ``"mu"``, ``"A"``, ``"B"``, and ``"F"``.
+            JSON-serialisable specification dict with keys ``"target"`` and
+            ``"mu"``.
 
         Examples
         --------
@@ -315,31 +275,22 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         return {
             "target": "triceratops.dynamics.accretion.one_zone.core:GasPressureElectronScatteringDisk",
             "mu": self._context_parameters["mu"],
-            "A": self._A,
-            "B": self._B,
-            "F": self._F,
         }
 
     @classmethod
-    def from_spec_dict(cls, data: dict) -> "GasPressureElectronScatteringDisk":
+    def from_spec_dict(cls, data: _SpecDict) -> "GasPressureElectronScatteringDisk":
         r"""
         Construct a :class:`GasPressureElectronScatteringDisk` from a spec dict.
-
-        Filters the ``"target"`` key (which identifies the class but is not a
-        constructor argument) and passes the remaining entries directly to
-        ``__init__``.
 
         Parameters
         ----------
         data : dict
-            Spec dict produced by :meth:`to_spec_dict`.  May optionally
-            contain a ``"target"`` key, which is silently ignored.
+            Spec dict produced by :meth:`to_spec_dict`.  The ``"target"``
+            key is silently ignored.
 
         Returns
         -------
         GasPressureElectronScatteringDisk
-            Freshly constructed model instance with parameters matching
-            those in *data*.
 
         Examples
         --------
@@ -360,346 +311,280 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         return cls(**kwargs)
 
     # ==================================================== #
-    # Closure Pipeline                                     #
+    # Cython Integration Interface                        #
     # ==================================================== #
 
-    def _compute_disk_closure(self, t, state, run_params: dict) -> dict:
-        r"""
-        Compute disk radius, surface density, and angular velocity from the ODE state.
-
-        Inverts the one-zone scaling relations to recover :math:`R_D`,
-        :math:`\Sigma`, and :math:`\Omega_K` from the current state vector
-        ``[log(M_D), log(J_D)]``.
-
-        **Disk radius**
-
-        The ratio :math:`\xi = B/A` and the angular-momentum definition
-        :math:`J_D = \xi M_D \sqrt{G M_{\rm BH} R_D}` give:
-
-        .. math::
-
-            R_D = \frac{J_D^2}{\xi^2\,M_D^2\,G M_{\rm BH}},
-
-        or in log-space:
-
-        .. math::
-
-            \ln R_D = 2\bigl(\ln J_D - \ln\xi - \ln M_D\bigr)
-                      - \ln G - \ln M_{\rm BH}.
-
-        **Surface density**
-
-        .. math::
-
-            \Sigma = \frac{M_D}{\pi A R_D^2}
-            \implies
-            \ln\Sigma = \ln M_D - 2\ln R_D - \ln\pi - \ln A.
-
-        **Angular velocity**
-
-        .. math::
-
-            \Omega_K = \sqrt{\frac{G M_{\rm BH}}{R_D^3}}.
-
-        Parameters
-        ----------
-        t : float
-            Current integration time [s].  Not used directly but required
-            by the closure interface.
-        state : np.ndarray, shape (2,)
-            ``[log(M_D / \text{g}),\; log(J_D / (\text{g\,cm}^2\,\text{s}^{-1}))]``.
-        run_params : dict
-            Must contain ``"log_M_BH"`` (log of black hole mass in grams).
-
-        Returns
-        -------
-        dict
-            Keys: ``"log_r"``, ``"log_sigma"``, ``"log_Omega"``.
-        """
-        log_M_BH = run_params["log_M_BH"]
-        A = self._A
-        B = self._B
-
-        log_m, log_j = state
-
-        log_xi = np.log(B) - np.log(A)
-        log_r = 2.0 * (log_j - log_xi - log_m) - _log_G_cgs - log_M_BH
-
-        log_sigma = log_m - 2.0 * log_r - np.log(np.pi) - np.log(A)
-        log_omega = _log_omega_K(log_M_BH, log_r)
-
-        return {
-            "log_r": log_r,
-            "log_sigma": log_sigma,
-            "log_Omega": log_omega,
-        }
-
-    def _compute_thermodynamic_closure(self, t, state, params: dict, run_params: dict) -> None:
-        r"""
-        Compute the central temperature and sound speed.
-
-        Uses the viscous heating rate :math:`Q^+` — computed from the cached
-        viscous timescale of the *previous* step — and the optically thick
-        cooling relation to solve for :math:`T_c` analytically.  This
-        warm-start approach breaks the circular dependency between
-        :math:`T_c`, :math:`c_s`, :math:`\nu`, and :math:`t_{\rm visc}`.
-
-        **Viscous heating rate**
-
-        The one-zone heating rate (integrated over the disk face) is:
-
-        .. math::
-
-            Q^+
-            = \frac{9}{8\pi A F}\,\frac{G M_{\rm BH}\,\dot{M}_{\rm prev}}{R_D^3}
-              \,f(R_D),
-
-        where :math:`\dot{M}_{\rm prev} = F M_D / t_{\rm visc}^{(n-1)}` and
-        :math:`f(R) = 1 - \sqrt{R_{\rm in}/R}` is the inner-boundary
-        correction factor.
-
-        **Effective and central temperatures**
-
-        From :math:`Q^+` and the electron-scattering optical depth
-        :math:`\tau = \Sigma\kappa_{\rm es}`:
-
-        .. math::
-
-            T_{\rm eff} &= \left(\frac{Q^+}{\sigma_{\rm SB}}\right)^{1/4}, \\[4pt]
-            T_c         &= \left(\frac{3\tau}{4}\right)^{1/4} T_{\rm eff}.
-
-        **Sound speed**
-
-        The isothermal sound speed is computed from :math:`T_c` via the
-        equation of state (see :class:`~triceratops.physics_utils.eos.IdealGasEOS`):
-
-        .. math::
-
-            c_s^2 = \frac{k_B T_c}{\mu m_p}.
-
-        Parameters
-        ----------
-        t : float
-            Current integration time [s].  Not used directly.
-        state : np.ndarray, shape (2,)
-            ``[log(M_D), log(J_D)]``.
-        params : dict
-            Modified **in-place**.  Must already contain ``"log_r"`` and
-            ``"log_sigma"`` from :meth:`_compute_disk_closure`.  On exit,
-            adds ``"log_cs"``, ``"log_T_c"``, ``"log_tau"``,
-            ``"log_q_visc"``, ``"log_T_eff"``, and ``"f_disk"``.
-        run_params : dict
-            Must contain ``"log_M_BH"`` and ``"log_R_in"``.
-
-        Raises
-        ------
-        ValueError
-            If ``"t_visc"`` is absent from :attr:`_runtime_cache`.  Seed the
-            cache with ``self._runtime_cache = {"t_visc": t_visc_0}`` before
-            the first closure call, or use :meth:`~OneZoneAccretionDiskBase.solve`
-            which handles this automatically.
-        """
-        A = self._A
-        F = self._F
-        log_M_BH = run_params["log_M_BH"]
-        log_R_in = run_params["log_R_in"]
-
-        t_visc = self._runtime_cache.get("t_visc", None)
-        if t_visc is None:
-            raise ValueError(
-                "t_visc not found in _runtime_cache.  "
-                "Seed self._runtime_cache = {'t_visc': t_visc_0} before calling "
-                "the closure pipeline, or pass 't_visc_0' in runtime_parameters."
-            )
-        log_t_visc = np.log(t_visc)
-
-        log_R = params["log_r"]
-        log_m, _ = state
-
-        log_M_dot_prev = log_m - log_t_visc + np.log(F)
-
-        log_q_visc = (
-            np.log(9.0 / (8.0 * np.pi * A * F))
-            + _log_G_cgs
-            + log_M_BH
-            + log_M_dot_prev
-            - 3.0 * log_R
-            + _compute_log_f(log_R, log_R_in)
+    def _build_cython_closure(self) -> Any:
+        """Return a GasPressureElectronScatteringClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone._ideal_gas_closure import (
+            GasPressureElectronScatteringClosure,
         )
 
-        log_T_eff = _log_T_eff_from_visc_dissipation_rate(log_q_visc)
+        return GasPressureElectronScatteringClosure()
 
-        log_sigma = params["log_sigma"]
-        log_tau = _log_optical_depth(log_sigma, _log_kappa_es_cgs)
+    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        """Return ``[MBH (g), R_in (cm), alpha, mu]`` as a float64 array."""
+        return np.array(
+            [
+                np.exp(run_params["log_M_BH"]),
+                np.exp(run_params["log_R_in"]),
+                run_params["alpha"],
+                self._context_parameters["mu"],
+            ],
+            dtype=np.float64,
+        )
 
-        log_T_c = _log_central_temperature(log_T_eff, log_tau)
 
-        log_cs = self.eos._compute_log_sound_speed(log_T_c)
+# ================================================================== #
+# Gas + Radiation Pressure Disks                                     #
+# ================================================================== #
+class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
+    r"""
+    One-zone disk model with combined gas and radiation pressure, and electron-scattering opacity.
 
-        params["log_cs"] = log_cs
-        params["log_T_c"] = log_T_c
-        params["log_tau"] = log_tau
-        params["log_q_visc"] = log_q_visc
-        params["log_T_eff"] = log_T_eff
-        params["f_disk"] = F
+    Extends :class:`GasPressureElectronScatteringDisk` by including the
+    radiation-pressure contribution to the equation of state.  The midplane
+    temperature can no longer be found analytically; instead, the Cython layer
+    solves the energy balance
 
-    def _compute_viscous_closure(self, t, state, params: dict, run_params: dict) -> None:
-        r"""
-        Compute the kinematic viscosity and viscous timescale.
+    .. math::
 
-        Applies the Shakura-Sunyaev :math:`\alpha`-prescription to obtain the
-        kinematic viscosity :math:`\nu`, then derives the viscous (spreading)
-        timescale :math:`t_{\rm visc}`:
+        q^+(T_c) = q^-(T_c)
 
-        .. math::
+    iteratively at every timestep using bracket expansion followed by Brent's
+    method (see :mod:`triceratops.math_utils._bracket_root_finder`).
 
-            \nu = \alpha \frac{c_s^2}{\Omega},
-            \qquad
-            t_{\rm visc} = \frac{R_D^2}{\nu}.
+    The model assumes:
 
-        The updated :math:`t_{\rm visc}` is stored in
-        :attr:`~OneZoneAccretionDiskBase._runtime_cache` by
-        :meth:`~OneZoneAccretionDiskBase._IVP_kernel` after this method returns,
-        where it seeds the thermodynamic closure at the next solver step.
+    - **Opacity**: pure electron scattering,
+      :math:`\kappa_{\rm es} = 0.34\,\text{cm}^2\,\text{g}^{-1}`.
+    - **Pressure**: combined gas and radiation,
+      :math:`c_s^2 = k_B T_c / (\mu m_p) + (a T_c^4 / 3) / \rho`, solved
+      self-consistently for :math:`c_s` at each temperature trial.
+    - **Viscosity**: Shakura-Sunyaev :math:`\alpha`-prescription,
+      :math:`\nu = \alpha c_s^2 / \Omega`.
+    - **Cooling**: optically thick blackbody radiation.
 
-        Parameters
-        ----------
-        t : float
-            Current integration time [s].  Not used directly.
-        state : np.ndarray, shape (2,)
-            ``[log(M_D), log(J_D)]``.  Not used directly.
-        params : dict
-            Modified **in-place**.  Must already contain ``"log_cs"``,
-            ``"log_Omega"``, and ``"log_r"`` from the preceding closure
-            steps.  On exit, adds ``"log_nu"`` and ``"t_visc"``.
-        run_params : dict
-            Must contain ``"alpha"`` — the Shakura-Sunyaev viscosity
-            parameter.
-        """
-        alpha = run_params["alpha"]
-        log_cs = params["log_cs"]
-        log_Omega = params["log_Omega"]
+    **Regime of applicability**
 
-        log_nu = _log_alpha_viscosity(2.0 * log_cs, log_Omega, alpha)
-        t_visc = np.exp(_log_viscous_timescale(params["log_r"], log_nu))
+    In the gas-pressure-dominated regime the results converge to those of
+    :class:`GasPressureElectronScatteringDisk`.  Differences become significant
+    when the ratio of radiation pressure to gas pressure,
 
-        params["log_nu"] = log_nu
-        params["t_visc"] = t_visc
+    .. math::
 
-    def _compute_angular_momentum_sources(self, t, state, cycle_params: dict, runtime_params: dict) -> float:
-        r"""
-        Viscous angular-momentum sink at the inner disk edge.
+        \beta^{-1} \equiv \frac{a T_c^4 / 3}{n k_B T_c}
+                  \sim \frac{a T_c^3 \mu m_p}{3 \rho k_B},
 
-        Accreted matter leaves the disk carrying the Keplerian specific
-        angular momentum at the inner truncation radius:
+    is no longer negligible, which occurs at high temperatures and low
+    densities (high :math:`\alpha`, high :math:`\dot{M}`, or large disk radius).
 
-        .. math::
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight of the disk gas (dimensionless).
+        Default ``0.6``.
 
-            \ell_{\rm in} = \sqrt{G M_{\rm BH} R_{\rm in}}.
+    Notes
+    -----
+    The disk geometry constants :math:`A = 1.62`, :math:`B = 1.33`, and
+    :math:`F_0 = 1.6` are fixed Cython compile-time constants.
 
-        The resulting angular-momentum drain rate is:
+    Examples
+    --------
+    .. code-block:: python
 
-        .. math::
+        from astropy import constants as const
+        from astropy import units as u
+        from triceratops.dynamics.accretion.one_zone import (
+            FullPressureElectronScatteringDisk,
+        )
 
-            \dot{J}_{\rm visc}
-            = -f_{\rm disk}\,\frac{M_D}{t_{\rm visc}}
-              \,\sqrt{G M_{\rm BH} R_{\rm in}}.
+        disk = FullPressureElectronScatteringDisk(mu=0.62)
 
-        Because :math:`\ell_{\rm in} \ll J_D / M_D` when
-        :math:`R_{\rm in} \ll R_D`, angular momentum drains more slowly
-        than mass, causing the disk outer radius to increase over time
-        as material accretes inward — the standard viscous spreading
-        behaviour of an :math:`\alpha`-disk.
+        result = disk.solve(
+            initial_conditions={
+                "M_D_0": 0.5 * const.M_sun,
+                "J_D_0": 1.5e49 * u.g * u.cm**2 / u.s,
+            },
+            runtime_parameters={
+                "M_BH": 3.0 * const.M_sun,
+                "R_in": 3.0e6 * u.cm,
+                "alpha": 0.1,
+            },
+            t_span=(1.0e6 * u.s, 5.0e9 * u.s),
+            max_steps=50_000,
+        )
 
-        Parameters
-        ----------
-        t : float
-            Current integration time [s].  Not used directly.
-        state : np.ndarray, shape (2,)
-            ``[log(M_D), log(J_D)]``.
-        cycle_params : dict
-            Must contain ``"f_disk"`` and ``"t_visc"``.
-        runtime_params : dict
-            Must contain ``"log_M_BH"`` and ``"log_R_in"``.
+        data = result.data
+        print(data["T_c"].to("K"))
 
-        Returns
-        -------
-        float
-            :math:`\dot{J}_{\rm visc}` [:math:`\text{g cm}^2 \text{s}^{-2}`].
-            Always negative (angular momentum is removed, not added).
-        """
-        m = np.exp(state[0])
-        f = cycle_params["f_disk"]
-        t_visc = cycle_params["t_visc"]
-        l_in = np.exp(0.5 * (_log_G_cgs + runtime_params["log_M_BH"] + runtime_params["log_R_in"]))
-        return -f * m / t_visc * l_in
+    See Also
+    --------
+    GasPressureElectronScatteringDisk :
+        Simpler closure with analytic temperature solve (gas pressure only).
+    OneZoneAccretionDiskBase :
+        Abstract base class describing the full closure pipeline.
 
-    def _extract_result_fields(self, params: dict, state_i: np.ndarray) -> dict:
-        r"""
-        Extract raw float values for every key in :attr:`RESULT_FIELDS`.
+    References
+    ----------
+    .. footbibliography::
+    """
 
-        Translates the fully populated closure parameter dict into the
-        physical output quantities declared in :attr:`RESULT_FIELDS`.
-        Three derived quantities — scale height :math:`H`, midplane density
-        :math:`\rho_{\rm mid}`, and accretion rate :math:`\dot{M}` — are
-        computed here from the closure outputs rather than in the forward-
-        pass closures, since they are only needed during reconstruction and
-        not during the ODE integration.
+    # ==================================================== #
+    # Parameter Declarations                               #
+    # ==================================================== #
 
-        **Scale height**
+    _A: float = 1.62
+    _B: float = 1.33
+    _F: float = 1.6
 
-        .. math::
+    CONTEXT_PARAMETERS: dict[str, dict] = {
+        "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
+    }
+    RUNTIME_PARAMETERS: dict[str, dict] = {
+        "M_BH": {
+            "description": "Black hole mass",
+            "base_units": "g",
+            "default": None,
+            "log_transform": True,
+        },
+        "R_in": {
+            "description": "Inner truncation radius",
+            "base_units": "cm",
+            "default": None,
+            "log_transform": True,
+        },
+        "alpha": {
+            "description": "Shakura-Sunyaev alpha",
+            "base_units": None,
+            "default": None,
+            "log_transform": False,
+        },
+    }
 
-            H = \frac{c_s}{\Omega}
+    INITIAL_CONDITIONS: dict[str, dict] = {
+        "M_D_0": {
+            "description": "Initial disk mass",
+            "base_units": "g",
+            "default": None,
+            "log_transform": True,
+        },
+        "J_D_0": {
+            "description": "Initial disk angular momentum",
+            "base_units": "g*cm**2/s",
+            "default": None,
+            "log_transform": True,
+        },
+    }
 
-        **Midplane density**
+    RESULT_FIELDS: dict[str, dict] = {
+        "R_D": {"description": "Disk outer radius", "units": "cm"},
+        "Sigma": {"description": "Surface density", "units": "g/cm**2"},
+        "Omega": {"description": "Angular velocity", "units": "rad/s"},
+        "T_eff": {"description": "Effective temperature", "units": "K"},
+        "T_c": {"description": "Central temperature", "units": "K"},
+        "tau": {"description": "Optical depth", "units": None},
+        "c_s": {"description": "Sound speed", "units": "cm/s"},
+        "nu": {"description": "Kinematic viscosity", "units": "cm**2/s"},
+        "t_visc": {"description": "Viscous timescale", "units": "s"},
+        "Q_visc": {"description": "Viscous dissipation rate", "units": "erg cm-2 s-1"},
+        "mdot": {"description": "Accretion rate", "units": "g/s"},
+        "H": {"description": "Scale height", "units": "cm"},
+        "H_over_R": {"description": "Aspect ratio", "units": None},
+        "rho": {"description": "Midplane density", "units": "g/cm**3"},
+    }
 
-        .. math::
+    # Row layout identical to GasPressureElectronScatteringClosure (same writer).
+    CYTHON_FIELD_MAP: dict = {
+        "R_D": 4,
+        "Sigma": 5,
+        "Omega": 6,
+        "T_eff": 7,
+        "T_c": 8,
+        "tau": 9,
+        "c_s": 10,
+        "nu": 11,
+        "Q_visc": 12,
+        "mdot": 13,
+        "t_visc": 16,
+        "H": 17,
+        "H_over_R": 18,
+        "rho": 19,
+    }
 
-            \rho_{\rm mid} = \frac{\Sigma}{2H}
+    # ==================================================== #
+    # Initialization                                       #
+    # ==================================================== #
 
-        **Accretion rate**
+    def __init__(self, mu: float = 0.6):
+        super().__init__(mu=mu)
+        self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
 
-        .. math::
+    # ==================================================== #
+    # Serialization                                        #
+    # ==================================================== #
 
-            \dot{M} = f_{\rm disk}\,\frac{M_D}{t_{\rm visc}}
-
-        Parameters
-        ----------
-        params : dict
-            Fully populated closure parameter dict for this timestep (output
-            of all three closure steps applied by
-            :meth:`~OneZoneAccretionDiskBase.reconstruct_state`).  Must
-            contain ``"log_r"``, ``"log_sigma"``, ``"log_Omega"``,
-            ``"log_T_eff"``, ``"log_T_c"``, ``"log_tau"``, ``"log_cs"``,
-            ``"log_nu"``, ``"t_visc"``, ``"log_q_visc"``, and ``"f_disk"``.
-        state_i : np.ndarray, shape (2,)
-            ``[log(M_D), log(J_D)]`` at this timestep.
+    def to_spec_dict(self) -> _SpecDict:
+        """Return a JSON-serialisable spec dict for this model instance.
 
         Returns
         -------
         dict
-            Raw float values keyed exactly by :attr:`RESULT_FIELDS`:
-            ``"R_D"``, ``"Sigma"``, ``"Omega"``, ``"T_eff"``, ``"T_c"``,
-            ``"tau"``, ``"c_s"``, ``"nu"``, ``"t_visc"``, ``"Q_visc"``,
-            ``"mdot"``, ``"H"``, ``"rho_mid"``.
-        """
-        log_m = state_i[0]
-        log_H = _log_scale_height(params["log_cs"], params["log_Omega"])
-        log_rho_mid = _log_midplane_density(params["log_sigma"], log_H)
+            Spec dict with keys ``"target"`` and ``"mu"``.
 
+        See Also
+        --------
+        from_spec_dict :
+            Reconstructs the model from this dict.
+        """
         return {
-            "R_D": np.exp(params["log_r"]),
-            "Sigma": np.exp(params["log_sigma"]),
-            "Omega": np.exp(params["log_Omega"]),
-            "T_eff": np.exp(params["log_T_eff"]),
-            "T_c": np.exp(params["log_T_c"]),
-            "tau": np.exp(params["log_tau"]),
-            "c_s": np.exp(params["log_cs"]),
-            "nu": np.exp(params["log_nu"]),
-            "t_visc": params["t_visc"],
-            "Q_visc": np.exp(params["log_q_visc"]),
-            "mdot": params["f_disk"] * np.exp(log_m) / params["t_visc"],
-            "H": np.exp(log_H),
-            "rho_mid": np.exp(log_rho_mid),
+            "target": "triceratops.dynamics.accretion.one_zone.core:FullPressureElectronScatteringDisk",
+            "mu": self._context_parameters["mu"],
         }
+
+    @classmethod
+    def from_spec_dict(cls, data: _SpecDict) -> "FullPressureElectronScatteringDisk":
+        """Construct a :class:`FullPressureElectronScatteringDisk` from a spec dict.
+
+        Parameters
+        ----------
+        data : dict
+            Spec dict produced by :meth:`to_spec_dict`.  The ``"target"``
+            key is silently ignored.
+
+        Returns
+        -------
+        FullPressureElectronScatteringDisk
+
+        See Also
+        --------
+        to_spec_dict :
+            Instance method that produces the dict this class method reads.
+        """
+        kwargs = {k: v for k, v in data.items() if k != "target"}
+        return cls(**kwargs)
+
+    # ==================================================== #
+    # Cython Integration Interface                        #
+    # ==================================================== #
+
+    def _build_cython_closure(self) -> Any:
+        """Return a FullPressureElectronScatteringClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone._ideal_gas_closure import (
+            FullPressureElectronScatteringClosure,
+        )
+
+        return FullPressureElectronScatteringClosure()
+
+    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        """Return ``[MBH (g), R_in (cm), alpha, mu]`` as a float64 array."""
+        return np.array(
+            [
+                np.exp(run_params["log_M_BH"]),
+                np.exp(run_params["log_R_in"]),
+                run_params["alpha"],
+                self._context_parameters["mu"],
+            ],
+            dtype=np.float64,
+        )
