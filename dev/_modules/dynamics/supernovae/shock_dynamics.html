@@ -1475,7 +1475,7 @@
 
         <span class="c1"># --- Extract Data and Check Validity --- #</span>
         <span class="k">if</span> <span class="n">sol</span><span class="o">.</span><span class="n">status</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">&quot;ODE solver failed to integrate the thin-shell shock equations.&quot;</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ODE solver failed to integrate the thin-shell shock equations: </span><span class="se">\n</span><span class="si">{</span><span class="n">sol</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
         <span class="c1"># Extract the shock radius and velocity from the solution.</span>
         <span class="n">xi_sol</span> <span class="o">=</span> <span class="n">sol</span><span class="o">.</span><span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>

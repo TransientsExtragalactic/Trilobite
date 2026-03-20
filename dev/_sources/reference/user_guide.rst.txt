@@ -88,6 +88,7 @@ the constituent physics:
 
     physics/shocks/overview
     physics/radiation/overview
+    physics/disks/index
 
 
 Extensions and 3rd Party Libraries

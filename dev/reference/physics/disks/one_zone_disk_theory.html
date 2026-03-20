@@ -1,0 +1,1079 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>One-Zone Accretion Disk Models: Theory &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/disks/one_zone_disk_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Triceratops Example Gallery" href="../../../auto_examples/index.html" />
+    <link rel="prev" title="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
+    Triceratops Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../inference/triceratops.inference.likelihood.base.Likelihood.html">triceratops.inference.likelihood.base.Likelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../inference/triceratops.inference.likelihood.base.GaussianLikelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../inference/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</a></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_effective_number_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_implicit_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi.html">radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_ssa_sed.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_implicit_cooling_ssa_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed_demarchi.html">radiation.synchrotron.SEDs.one_zone_closure._invert_powerlaw_ssa_sed_demarchi</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SynchrotronSED.html">SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.html">MultiSpectrumSynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.html">PowerLaw_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.html">PowerLaw_Cooling_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.html">PowerLaw_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.html">PowerLaw_Cooling_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.__init__.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.sed.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.html">SSA_SED_PowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.__init__.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.__init__</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_params_to_physics.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_physics_to_params.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.sed.html">radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions.log_smoothed_SFBPL.html">radiation.synchrotron.SEDs._one_zone_functions.log_smoothed_SFBPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions.log_exp_cutoff_sed.html">radiation.synchrotron.SEDs._one_zone_functions.log_exp_cutoff_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions.smoothed_BPL.html">radiation.synchrotron.SEDs._one_zone_functions.smoothed_BPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_1.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_2.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_cool_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_1.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_2.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_3.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_3</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_4.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_4</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_5.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_6.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_6</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_7.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_7</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_8.html">radiation.synchrotron.SEDs._one_zone_functions._log_powerlaw_sbpl_sed_ssa_cool_8</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_without_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_without_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_with_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.compute_ssa_frequencies_with_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_without_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_without_cooling</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_with_cooling.html">radiation.synchrotron.SEDs._one_zone_ssa.select_ssa_sed_regime_from_candidates_with_cooling</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">One-Zone Accretion Disk Models: Theory</a></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Accretion Disks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">One-Zone Accretion Disk Models: Theory</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="one-zone-accretion-disk-models-theory">
+<span id="one-zone-disk-theory"></span><h1>One-Zone Accretion Disk Models: Theory<a class="headerlink" href="#one-zone-accretion-disk-models-theory" title="Link to this heading">#</a></h1>
+<p>A central challenge in accretion disk modelling is that the viscous timescale,</p>
+<div class="math notranslate nohighlight" id="equation-eq-viscous-timescale">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-viscous-timescale" title="Link to this equation">#</a></span>\[t_{\rm visc} = \alpha^{-1} \left(\frac{R}{H}\right)^2 \Omega^{-1},\]</div>
+<p>scales as <span class="math notranslate nohighlight">\(t_{\rm visc} \propto R^{3/2}\)</span>, so different parts of the disk
+evolve on wildly different timescales.  Rather than resolving this hierarchy with
+a full radial grid and adaptive timestepping, we follow
+Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and represent the entire disk
+with a <strong>single spatial zone</strong> located at the characteristic radius where the viscous
+timescale is comparable to the elapsed time.  This <em>one-zone</em> approach reduces the
+disk evolution to a coupled two-component ODE system that can be integrated very
+efficiently while still capturing global viscous spreading, thermodynamic structure,
+and accretion onto the central object.</p>
+<p>This document describes the theoretical framework underlying the one-zone disk models
+implemented in Triceratops.  For usage instructions see <a class="reference internal" href="one_zone_disk.html#one-zone-disk"><span class="std std-ref">One-Zone Accretion Disk Models</span></a>.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-core-model" id="id6">The Core Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#one-zone-geometry" id="id7">One-Zone Geometry</a></p></li>
+<li><p><a class="reference internal" href="#evolution-equations" id="id8">Evolution Equations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#thermodynamics" id="id9">Thermodynamics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#viscous-heating-and-radiative-cooling" id="id10">Viscous Heating and Radiative Cooling</a></p></li>
+<li><p><a class="reference internal" href="#energy-balance-residual" id="id11">Energy Balance Residual</a></p></li>
+<li><p><a class="reference internal" href="#solution-strategy" id="id12">Solution Strategy</a></p></li>
+<li><p><a class="reference internal" href="#viscosity" id="id13">Viscosity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#numerical-architecture" id="id14">Numerical Architecture</a></p></li>
+<li><p><a class="reference internal" href="#implemented-closures" id="id15">Implemented Closures</a></p>
+<ul>
+<li><p><a class="reference internal" href="#gas-pressure-electron-scattering-opacity" id="id16">Gas Pressure, Electron-Scattering Opacity</a></p></li>
+<li><p><a class="reference internal" href="#gas-radiation-pressure-electron-scattering-opacity" id="id17">Gas + Radiation Pressure, Electron-Scattering Opacity</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="the-core-model">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">The Core Model</a><a class="headerlink" href="#the-core-model" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We follow the development of the one-zone formalism in
+Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</div>
+<p>The one-zone approximation partitions the disk into three characteristic regions
+based on the ratio <span class="math notranslate nohighlight">\(t_{\rm visc}/t\)</span>:</p>
+<ul class="simple">
+<li><p><strong>Inner disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \ll t\)</span>) — in quasi-steady state; mass is
+rapidly accreted and this region is dynamically subdominant.</p></li>
+<li><p><strong>Outer disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \gg t\)</span>) — has not yet had time to evolve away
+from the initial conditions.</p></li>
+<li><p><strong>Middle disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \sim t\)</span>) — currently spreading viscously and
+dominant in mass.</p></li>
+</ul>
+<p>The one-zone model tracks the middle disk, treating the disk mass <span class="math notranslate nohighlight">\(M_D\)</span> and
+angular momentum <span class="math notranslate nohighlight">\(J_D\)</span> as its only two degrees of freedom.</p>
+<section id="one-zone-geometry">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">One-Zone Geometry</a><a class="headerlink" href="#one-zone-geometry" title="Link to this heading">#</a></h3>
+<p>Following the Green’s function analysis of a viscously spreading ring
+<a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, the area-averaged surface
+density and characteristic disk radius are related to the state variables by</p>
+<div class="math notranslate nohighlight">
+\[M_D = A\, \pi\, \Sigma_D\, R_D^2,
+\qquad
+J_D = \frac{B}{A}\, M_D\, \sqrt{G M_{\rm BH} R_D},\]</div>
+<p>where <span class="math notranslate nohighlight">\(A = 1.62\)</span> and <span class="math notranslate nohighlight">\(B = 1.33\)</span> are dimensionless correction constants
+calibrated to match the exact spreading-ring solution.  Defining the ratio</p>
+<div class="math notranslate nohighlight">
+\[\xi \equiv \frac{B}{A} \approx 0.821,\]</div>
+<p>the outer disk radius and surface density follow directly from the state vector:</p>
+<div class="math notranslate nohighlight" id="equation-eq-disk-radius">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-disk-radius" title="Link to this equation">#</a></span>\[R_D = \frac{J_D^2}{\xi^2\, M_D^2\, G M_{\rm BH}},
+\qquad
+\Sigma_D = \frac{M_D}{\pi\, A\, R_D^2}.\]</div>
+<p>These algebraic relations are re-evaluated at every integration timestep and require
+no additional free parameters beyond <span class="math notranslate nohighlight">\(M_{\rm BH}\)</span>.</p>
+</section>
+<section id="evolution-equations">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Evolution Equations</a><a class="headerlink" href="#evolution-equations" title="Link to this heading">#</a></h3>
+<p>The disk mass and angular momentum evolve as</p>
+<div class="math notranslate nohighlight" id="equation-eq-disk-evolution">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-disk-evolution" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
+\dot{M}_D &amp;= -\dot{M}_{\rm acc} + \dot{M}_{\rm inflow} - \dot{M}_{\rm outflow}, \\
+\dot{J}_D &amp;= -\dot{J}_{\rm acc} + \dot{J}_{\rm inflow} - \dot{J}_{\rm outflow}.
+\end{aligned}\end{split}\]</div>
+<p>In the base implementation, only the accretion sink terms are active:</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_{\rm acc}
+= f_D\,\frac{M_D}{t_{\rm visc}}
+= f_D\,\nu\,\frac{M_D}{R_D^2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\nu\)</span> is the kinematic viscosity and</p>
+<div class="math notranslate nohighlight" id="equation-eq-fd">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-fd" title="Link to this equation">#</a></span>\[f_D = \frac{F_0}{1 - \sqrt{R_{\rm in}/R_D}},
+\qquad F_0 = 1.6,\]</div>
+<p>enforces a zero-torque inner boundary condition (<span class="math notranslate nohighlight">\(F_0 = 1.6\)</span> is the
+Metzger+08 calibration value).  Matter draining through the inner edge at
+<span class="math notranslate nohighlight">\(R_{\rm in}\)</span> carries the local Keplerian specific angular momentum
+<span class="math notranslate nohighlight">\(\ell_{\rm in} = \sqrt{G M_{\rm BH} R_{\rm in}}\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[\dot{J}_{\rm acc} = \dot{M}_{\rm acc}\,\sqrt{G M_{\rm BH} R_{\rm in}}.\]</div>
+<p>Because <span class="math notranslate nohighlight">\(\ell_{\rm in} \ll J_D / M_D\)</span> when <span class="math notranslate nohighlight">\(R_{\rm in} \ll R_D\)</span>,
+angular momentum drains more slowly than mass and the disk outer radius grows over
+time — the standard viscous spreading behaviour.</p>
+</section>
+</section>
+<section id="thermodynamics">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Thermodynamics</a><a class="headerlink" href="#thermodynamics" title="Link to this heading">#</a></h2>
+<section id="viscous-heating-and-radiative-cooling">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Viscous Heating and Radiative Cooling</a><a class="headerlink" href="#viscous-heating-and-radiative-cooling" title="Link to this heading">#</a></h3>
+<p>The thermal structure of the disk is set by balancing viscous heating
+against radiative cooling:</p>
+<div class="math notranslate nohighlight" id="equation-eq-energy-balance">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-energy-balance" title="Link to this equation">#</a></span>\[Q^+(T_c) = Q^-(T_c).\]</div>
+<p>The viscous heating rate per unit area is</p>
+<div class="math notranslate nohighlight" id="equation-eq-q-plus">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-q-plus" title="Link to this equation">#</a></span>\[Q^+ = \frac{9}{8}\,\nu\,\Sigma\,\Omega^2
+    = \frac{9}{8}\,\alpha\,\frac{c_s^2}{\Omega}\,\Sigma\,\Omega^2
+    = \frac{9}{8}\,\alpha\,c_s^2\,\Sigma\,\Omega,\]</div>
+<p>and the radiative cooling rate per unit area (for an optically thick disk in the
+diffusion limit) is</p>
+<div class="math notranslate nohighlight" id="equation-eq-q-minus">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-q-minus" title="Link to this equation">#</a></span>\[Q^- = \sigma_{\rm SB}\,T_{\rm eff}^4.\]</div>
+<p>The midplane temperature <span class="math notranslate nohighlight">\(T_c\)</span> and effective temperature <span class="math notranslate nohighlight">\(T_{\rm eff}\)</span>
+are related through radiative diffusion:</p>
+<div class="math notranslate nohighlight" id="equation-eq-tc-teff">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-tc-teff" title="Link to this equation">#</a></span>\[T_c^4 = \frac{3}{4}\,\tau\,T_{\rm eff}^4,\]</div>
+<p>where the optical depth <span class="math notranslate nohighlight">\(\tau = \kappa\,\Sigma\)</span> depends on the opacity
+prescription.</p>
+</section>
+<section id="energy-balance-residual">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Energy Balance Residual</a><a class="headerlink" href="#energy-balance-residual" title="Link to this heading">#</a></h3>
+<p>Combining <a class="reference internal" href="#equation-eq-q-plus">(6)</a>, <a class="reference internal" href="#equation-eq-q-minus">(7)</a>, and <a class="reference internal" href="#equation-eq-tc-teff">(8)</a> and substituting
+<span class="math notranslate nohighlight">\(\nu = \alpha c_s^2/\Omega\)</span>, the energy balance <a class="reference internal" href="#equation-eq-energy-balance">(5)</a>
+reduces to a single equation in <span class="math notranslate nohighlight">\(T_c\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-root-equation">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-root-equation" title="Link to this equation">#</a></span>\[\mathcal{F}(T_c)
+\equiv
+\ln Q_0 + 2\ln c_s(T_c) - 4\ln T_c = 0,\]</div>
+<p>where the quantity</p>
+<div class="math notranslate nohighlight" id="equation-eq-q0">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-q0" title="Link to this equation">#</a></span>\[Q_0 \equiv \frac{27}{32}\,\frac{\alpha\,\kappa\,\Sigma^2\,\Omega}{\sigma_{\rm SB}}\]</div>
+<p>collects all terms that do not depend on <span class="math notranslate nohighlight">\(T_c\)</span>.  The sound speed
+<span class="math notranslate nohighlight">\(c_s(T_c)\)</span> is determined by the equation of state and depends on the
+thermodynamic closure (see below).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All quantities in <a class="reference internal" href="#equation-eq-root-equation">(9)</a> are evaluated in log-space
+internally to avoid floating-point underflow for the extreme temperatures
+(<span class="math notranslate nohighlight">\(10\,{\rm K} \lesssim T_c \lesssim 10^{14}\,{\rm K}\)</span>) that arise
+across the full range of one-zone disk models.</p>
+</div>
+</section>
+<section id="solution-strategy">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Solution Strategy</a><a class="headerlink" href="#solution-strategy" title="Link to this heading">#</a></h3>
+<p>The form of <a class="reference internal" href="#equation-eq-root-equation">(9)</a> depends on whether <span class="math notranslate nohighlight">\(c_s(T_c)\)</span> can
+be expressed analytically.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Gas-Pressure Dominated (Analytic)</label><div class="sd-tab-content docutils">
+<p>For a pure ideal-gas equation of state,</p>
+<div class="math notranslate nohighlight">
+\[c_s^2 = \frac{k_B T_c}{\mu m_p},\]</div>
+<p>the residual <a class="reference internal" href="#equation-eq-root-equation">(9)</a> becomes</p>
+<div class="math notranslate nohighlight">
+\[\ln Q_0 + \ln\frac{k_B T_c}{\mu m_p} - 4\ln T_c = 0.\]</div>
+<p>Rearranging:</p>
+<div class="math notranslate nohighlight">
+\[\ln Q_0 + \ln\frac{k_B}{\mu m_p} = 3\ln T_c,\]</div>
+<p>giving a <strong>closed-form solution</strong>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-tc-gas-only">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-tc-gas-only" title="Link to this equation">#</a></span>\[\boxed{
+T_c = \left(\frac{Q_0\, k_B}{\mu\, m_p}\right)^{1/3}.
+}\]</div>
+<p>No root-finding is needed; the Cython closure evaluates this formula
+directly at every timestep.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Gas + Radiation Pressure (Implicit)</label><div class="sd-tab-content docutils">
+<p>When radiation pressure is included, the equation of state is</p>
+<div class="math notranslate nohighlight">
+\[P = \frac{\rho k_B T_c}{\mu m_p} + \frac{a T_c^4}{3},\]</div>
+<p>and <span class="math notranslate nohighlight">\(c_s^2 = P/\rho\)</span>.  The midplane density is found from vertical
+hydrostatic equilibrium,</p>
+<div class="math notranslate nohighlight">
+\[\rho = \frac{\Sigma}{2 H} = \frac{\Sigma\,\Omega}{2\,c_s},\]</div>
+<p>which gives a quadratic relation between <span class="math notranslate nohighlight">\(c_s\)</span> and <span class="math notranslate nohighlight">\(T_c\)</span> for
+fixed <span class="math notranslate nohighlight">\(\Sigma\)</span> and <span class="math notranslate nohighlight">\(\Omega\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-cs-quadratic">
+<span class="eqno">(12)<a class="headerlink" href="#equation-eq-cs-quadratic" title="Link to this equation">#</a></span>\[c_s^2 - \frac{2\,a\,T_c^4}{3\,\Sigma\,\Omega}\,c_s
+      - \frac{k_B T_c}{\mu m_p} = 0.\]</div>
+<p>The physically meaningful (positive) root is</p>
+<div class="math notranslate nohighlight">
+\[c_s(T_c)
+=
+\frac{D + \sqrt{D^2 + 4k_B T_c/(\mu m_p)}}{2},
+\qquad
+D \equiv \frac{2\,a\,T_c^4}{3\,\Sigma\,\Omega}.\]</div>
+<p>Substituting this into <a class="reference internal" href="#equation-eq-root-equation">(9)</a> yields a <strong>transcendental
+equation</strong> in <span class="math notranslate nohighlight">\(T_c\)</span> that must be solved numerically.  Triceratops
+uses a two-step procedure:</p>
+<ol class="arabic simple">
+<li><p><strong>Bracket expansion</strong> — starting from an initial guess
+<span class="math notranslate nohighlight">\(T_c^{\rm guess}\)</span> derived from the gas-only formula, the bracket
+<span class="math notranslate nohighlight">\([T_{\rm lo}, T_{\rm hi}]\)</span> is expanded geometrically until
+<span class="math notranslate nohighlight">\(\mathcal{F}\)</span> changes sign.</p></li>
+<li><p><strong>Brent’s method</strong> — once a bracket is established, Brent’s method
+converges to the root with a mix of bisection and inverse quadratic
+interpolation, guaranteeing superlinear convergence.</p></li>
+</ol>
+<p>Both steps are implemented in Cython and run entirely without the GIL.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For physical disk parameters there is always exactly one root:
+<span class="math notranslate nohighlight">\(\mathcal{F}\)</span> is a monotone function of <span class="math notranslate nohighlight">\(T_c\)</span> because
+<span class="math notranslate nohighlight">\(c_s\)</span> grows more slowly than <span class="math notranslate nohighlight">\(T_c\)</span> in both the gas-dominated
+(<span class="math notranslate nohighlight">\(c_s \propto T_c^{1/2}\)</span>) and radiation-dominated
+(<span class="math notranslate nohighlight">\(c_s \propto T_c\)</span>) limits.  If no root is found, the integrator
+returns an <code class="docutils literal notranslate"><span class="pre">EXPAND_FAIL</span></code> or <code class="docutils literal notranslate"><span class="pre">NO_BRACKET</span></code> error (see
+<a class="reference internal" href="one_zone_disk.html#one-zone-disk"><span class="std std-ref">One-Zone Accretion Disk Models</span></a> for the full error code reference).</p>
+</div>
+</div>
+</div>
+</section>
+<section id="viscosity">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Viscosity</a><a class="headerlink" href="#viscosity" title="Link to this heading">#</a></h3>
+<p>Given <span class="math notranslate nohighlight">\(T_c\)</span> and therefore <span class="math notranslate nohighlight">\(c_s\)</span>, the kinematic viscosity follows from
+the Shakura–Sunyaev <span class="math notranslate nohighlight">\(\alpha\)</span>-prescription:</p>
+<div class="math notranslate nohighlight">
+\[\nu = \alpha\,c_s\,H = \frac{\alpha\,c_s^2}{\Omega},\]</div>
+<p>and the disk scale height is</p>
+<div class="math notranslate nohighlight">
+\[H = \frac{c_s}{\Omega}.\]</div>
+<p>The viscous timescale that sets the integration timestep is</p>
+<div class="math notranslate nohighlight">
+\[t_{\rm visc} = \frac{R_D^2}{\nu}.\]</div>
+</section>
+</section>
+<section id="numerical-architecture">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Numerical Architecture</a><a class="headerlink" href="#numerical-architecture" title="Link to this heading">#</a></h2>
+<figure class="align-default">
+<img alt="images/theory/disks/DiskDiagram1.drawio" src="images/theory/disks/DiskDiagram1.drawio" />
+</figure>
+<p>The hot integration loop in Triceratops is a compiled Cython explicit-Euler kernel
+(<code class="xref py py-func docutils literal notranslate"><span class="pre">run_one_zone_model()</span></code>)
+that advances the state vector <span class="math notranslate nohighlight">\((M_D, J_D)\)</span> by one step at a time.  For each
+step the kernel executes the following operations in strict order:</p>
+<ol class="arabic simple">
+<li><p><strong>Geometry</strong> — compute <span class="math notranslate nohighlight">\(R_D\)</span>, <span class="math notranslate nohighlight">\(\Sigma\)</span>, <span class="math notranslate nohighlight">\(\Omega\)</span> from the
+current state using <a class="reference internal" href="#equation-eq-disk-radius">(2)</a>.</p></li>
+<li><p><strong>Closure</strong> — call the thermodynamic closure (a C function pointer injected at
+construction time) to solve <a class="reference internal" href="#equation-eq-root-equation">(9)</a> for <span class="math notranslate nohighlight">\(T_c\)</span> and to
+derive all thermodynamic and viscous quantities:
+<span class="math notranslate nohighlight">\(T_{\rm eff}\)</span>, <span class="math notranslate nohighlight">\(\tau\)</span>, <span class="math notranslate nohighlight">\(c_s\)</span>, <span class="math notranslate nohighlight">\(\nu\)</span>, <span class="math notranslate nohighlight">\(t_{\rm visc}\)</span>.</p></li>
+<li><p><strong>Derivative</strong> — evaluate <span class="math notranslate nohighlight">\((\dot{M}_D, \dot{J}_D)\)</span> using the viscosity
+from step 2.</p></li>
+<li><p><strong>Write</strong> — record all quantities to the result array at the current column.</p></li>
+<li><p><strong>Euler update</strong> — <span class="math notranslate nohighlight">\(M_D \leftarrow M_D + \dot{M}_D \Delta t\)</span>,
+<span class="math notranslate nohighlight">\(J_D \leftarrow J_D + \dot{J}_D \Delta t\)</span>, with the adaptive timestep
+<span class="math notranslate nohighlight">\(\Delta t = f_D \cdot t_{\rm visc}\)</span>.</p></li>
+</ol>
+<p>The entire loop runs without the GIL, making it safe to call from multi-threaded
+contexts.</p>
+<p>Closure extensibility is achieved through the <code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneClosure</span></code>
+extension type.  Each concrete model subclass implements
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">_build_cython_closure()</span></code>
+to return a closure object with three C function pointers installed:
+a <em>closure function</em> (solves the energy balance), a <em>derivative function</em> (evaluates
+the ODE right-hand side), and a <em>writer function</em> (serialises the full state to the
+result array).  The base class and integrator kernel are completely independent of
+the specific physics choice.</p>
+</section>
+<section id="implemented-closures">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Implemented Closures</a><a class="headerlink" href="#implemented-closures" title="Link to this heading">#</a></h2>
+<section id="gas-pressure-electron-scattering-opacity">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Gas Pressure, Electron-Scattering Opacity</a><a class="headerlink" href="#gas-pressure-electron-scattering-opacity" title="Link to this heading">#</a></h3>
+<p>The simplest physically self-consistent closure within the one-zone framework
+follows Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and assumes:</p>
+<ul class="simple">
+<li><p><strong>Opacity</strong>: pure electron scattering,
+<span class="math notranslate nohighlight">\(\kappa = \kappa_{\rm es} = 0.34\,{\rm cm^2\,g^{-1}}\)</span>.</p></li>
+<li><p><strong>Pressure</strong>: ideal gas,
+<span class="math notranslate nohighlight">\(P = \rho k_B T_c / (\mu m_p)\)</span>.</p></li>
+</ul>
+<p>The energy balance <a class="reference internal" href="#equation-eq-root-equation">(9)</a> then has the closed-form solution
+<a class="reference internal" href="#equation-eq-tc-gas-only">(11)</a>.  The full solution sequence per timestep is:</p>
+<ol class="arabic simple">
+<li><p>Evaluate <span class="math notranslate nohighlight">\(Q_0 = (27/32)\,\alpha\,\kappa_{\rm es}\,\Sigma^2\,\Omega / \sigma_{\rm SB}\)</span>.</p></li>
+<li><p>Solve analytically:
+<span class="math notranslate nohighlight">\(T_c = (Q_0 k_B / \mu m_p)^{1/3}\)</span>.</p></li>
+<li><p>Compute the effective temperature from <a class="reference internal" href="#equation-eq-tc-teff">(8)</a>:
+<span class="math notranslate nohighlight">\(T_{\rm eff} = (T_c^4 / [(3/4)\kappa_{\rm es}\Sigma])^{1/4}\)</span>.</p></li>
+<li><p>Compute the sound speed: <span class="math notranslate nohighlight">\(c_s = \sqrt{k_B T_c / (\mu m_p)}\)</span>.</p></li>
+<li><p>Compute the viscosity: <span class="math notranslate nohighlight">\(\nu = \alpha c_s^2 / \Omega\)</span>.</p></li>
+</ol>
+<p>This closure is implemented in
+<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></a>.</p>
+</section>
+<section id="gas-radiation-pressure-electron-scattering-opacity">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Gas + Radiation Pressure, Electron-Scattering Opacity</a><a class="headerlink" href="#gas-radiation-pressure-electron-scattering-opacity" title="Link to this heading">#</a></h3>
+<p>This closure extends the gas-only case by including radiation pressure
+in the equation of state:</p>
+<div class="math notranslate nohighlight">
+\[P = P_{\rm gas} + P_{\rm rad}
+  = \frac{\rho k_B T_c}{\mu m_p} + \frac{a T_c^4}{3}.\]</div>
+<p>The sound speed <span class="math notranslate nohighlight">\(c_s(T_c)\)</span> is found from the quadratic <a class="reference internal" href="#equation-eq-cs-quadratic">(12)</a>,
+and the energy balance <a class="reference internal" href="#equation-eq-root-equation">(9)</a> is solved for <span class="math notranslate nohighlight">\(T_c\)</span> using
+bracket expansion followed by Brent’s method.  The gas-only analytic formula
+provides the initial bracket centre.</p>
+<p>In the gas-pressure-dominated limit <span class="math notranslate nohighlight">\((a T_c^4 / 3 \ll \rho k_B T_c / \mu m_p)\)</span>,
+the two closures agree.  Differences become significant when</p>
+<div class="math notranslate nohighlight">
+\[\frac{P_{\rm rad}}{P_{\rm gas}} \sim \frac{a T_c^3 \mu m_p}{3 \rho k_B} \gtrsim 1,\]</div>
+<p>which occurs at high temperatures or low densities (high <span class="math notranslate nohighlight">\(\alpha\)</span>, high
+accretion rate, or large disk radius).</p>
+<p>This closure is implemented in
+<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.FullPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureElectronScatteringDisk</span></code></a>.</p>
+<hr class="docutils" />
+<div class="docutils container" id="id5">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-metzgertimedependentmodelsaccretion2008" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id3">3</a>,<a role="doc-backlink" href="#id4">4</a>)</span>
+<p>B. D. Metzger, A. L. Piro, and E. Quataert. Time-Dependent Models of Accretion Disks Formed from Compact Object Mergers. <em>Monthly Notices of the Royal Astronomical Society</em>, September 2008. arXiv:0805.4415 [astro-ph]. URL: <a class="reference external" href="http://arxiv.org/abs/0805.4415">http://arxiv.org/abs/0805.4415</a> (visited on 2026-03-14), <a class="reference external" href="https://doi.org/10.1111/j.1365-2966.2008.13789.x">doi:10.1111/j.1365-2966.2008.13789.x</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../../auto_examples/index.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Triceratops Example Gallery</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-model">The Core Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-zone-geometry">One-Zone Geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evolution-equations">Evolution Equations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thermodynamics">Thermodynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viscous-heating-and-radiative-cooling">Viscous Heating and Radiative Cooling</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-balance-residual">Energy Balance Residual</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solution-strategy">Solution Strategy</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viscosity">Viscosity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-architecture">Numerical Architecture</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implemented-closures">Implemented Closures</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gas-pressure-electron-scattering-opacity">Gas Pressure, Electron-Scattering Opacity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#gas-radiation-pressure-electron-scattering-opacity">Gas + Radiation Pressure, Electron-Scattering Opacity</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../../../_sources/reference/physics/disks/one_zone_disk_theory.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
