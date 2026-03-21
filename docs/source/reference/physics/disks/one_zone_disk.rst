@@ -83,14 +83,24 @@ Available Models
       - Gas + Radiation
       - Electron scattering
       - Implicit (Brent's method)
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureFallbackDisk`
+      - Gas only + fallback supply
+      - Electron scattering
+      - Analytic (:math:`T_c \propto Q_0^{1/3}`)
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureFallbackDisk`
+      - Gas + Radiation + fallback supply
+      - Electron scattering
+      - Implicit (Brent's method)
 
-Both models are importable from the package top-level:
+All models are importable from the package top-level:
 
 .. code-block:: python
 
     from triceratops.dynamics.accretion.one_zone import (
         GasPressureElectronScatteringDisk,
         FullPressureElectronScatteringDisk,
+        GasPressureFallbackDisk,
+        FullPressureFallbackDisk,
     )
 
 ----
@@ -689,6 +699,8 @@ Disk Models
 
     GasPressureElectronScatteringDisk
     FullPressureElectronScatteringDisk
+    GasPressureFallbackDisk
+    FullPressureFallbackDisk
     OneZoneAccretionDiskBase
 
 Result Container

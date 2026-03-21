@@ -769,13 +769,38 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         """
         ...
 
+    def _pack_base_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        """Pack the standard 4-element base parameter array ``[MBH, R_in, alpha, mu]``.
+
+        Parameters
+        ----------
+        run_params : dict[str, float]
+            Processed per-solve parameters as returned by
+            :meth:`process_runtime_parameters`.
+
+        Returns
+        -------
+        np.ndarray, shape (4,)
+            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous float64 array.
+        """
+        return np.array(
+            [
+                np.exp(run_params["log_M_BH"]),
+                np.exp(run_params["log_R_in"]),
+                run_params["alpha"],
+                self._context_parameters["mu"],
+            ],
+            dtype=np.float64,
+        )
+
     @abstractmethod
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
         """Return the parameter array consumed by ``run_one_zone_model``.
 
         The Cython integrator expects a contiguous float64 array of shape
-        ``(4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu]``
-        in linear CGS.
+        ``(>=4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu, ...]``
+        in linear CGS.  Elements beyond index 3 are closure-specific extra
+        parameters accessible via ``params.extra``.
 
         Parameters
         ----------
@@ -786,11 +811,34 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
         Returns
         -------
-        np.ndarray, shape (4,)
-            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous
+        np.ndarray, shape (>=4,)
+            ``[MBH (g), R_in (cm), alpha, mu, ...]`` as a C-contiguous
             float64 array.
         """
         ...
+
+    def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
+        """Compute Python-side derived result fields.
+
+        Called by :attr:`OneZoneAccretionResult.data` for every
+        :attr:`~OneZoneAccretionDiskBase.CYTHON_FIELD_MAP` entry whose value
+        is ``None``.  Override in subclasses that declare such entries.
+
+        Parameters
+        ----------
+        result_array : np.ndarray, shape (n_result_fields, n_steps)
+            Raw Cython result array from :func:`~._integrator.run_one_zone_model`.
+        run_params : dict[str, float]
+            Processed per-solve parameters as returned by
+            :meth:`process_runtime_parameters`.
+
+        Returns
+        -------
+        dict[str, np.ndarray]
+            Maps each ``None``-mapped field name to its 1-D NumPy array.
+            The base implementation returns an empty dict.
+        """
+        return {}
 
     # ==================================================== #
     # Abstract Serialization Hooks                         #
@@ -1541,6 +1589,14 @@ class OneZoneAccretionResult:
                 if name == "mdot":
                     arr = -arr  # dM_dt is stored negative in the Cython integrator
                 out[name] = arr * unit
+
+        # Python-side derived fields (CYTHON_FIELD_MAP value is None)
+        derived = self.model._compute_derived_result_fields(self.result_array, self.run_params)
+        for name, spec in self.model.RESULT_FIELDS.items():
+            if self.model.CYTHON_FIELD_MAP.get(name) is None and name in derived:
+                units_str = spec["units"]
+                unit = u.Unit(units_str) if units_str else u.dimensionless_unscaled
+                out[name] = derived[name] * unit
 
         # User-added fields
         if self._extra_fields:

@@ -45,6 +45,8 @@ cdef struct DiskParameters:
     double R_in    # cm
     double alpha   # dimensionless
     double mu      # dimensionless (mean molecular weight)
+    double* extra  # pointer into the parameters memoryview (may be NULL)
+    int    n_extra # number of extra parameters
 
 cdef struct DiskDerived:
     double R       # cm
@@ -93,6 +95,14 @@ ctypedef int (*writer_func)(
     int n_steps
 ) nogil
 
+ctypedef int (*source_func)(
+    const DiskState* state,
+    const DiskDerived* derived,
+    const DiskParameters* params,
+    const ClosureResult* closure,
+    DiskStep* step
+) nogil
+
 # ---------------------------------------- #
 # Integrator status codes                  #
 # ---------------------------------------- #
@@ -107,6 +117,7 @@ ctypedef int (*writer_func)(
 #   -4    CLOSURE / MAX_ITER      — Brent's method did not converge within maxiter.
 #   -10   DERIVATIVE_FAIL         — derivative function returned non-zero.
 #   -20   WRITER_FAIL             — writer function returned non-zero.
+#   -30   SOURCE_FAIL             — source function returned non-zero.
 #
 # The magnitude of a closure failure code equals the find_root status:
 #   |status| == 1 → FUNC_ERROR, 2 → EXPAND_FAIL, 3 → NO_BRACKET, 4 → MAX_ITER.
@@ -117,20 +128,28 @@ ctypedef int (*writer_func)(
 
 cdef class OneZoneClosure:
     """
-    Extension type wrapping the three C function pointers consumed by
+    Extension type wrapping the C function pointers consumed by
     :func:`compute_one_zone_model`.
 
     Subclass in ``_closure.pyx``; set ``_closure_fn``, ``_derivative_fn``,
-    ``_writer_fn`` from ``__cinit__`` to install concrete implementations.
+    ``_writer_fn`` (and optionally ``_source_fn``) from ``__cinit__`` to
+    install concrete implementations.
 
     Attributes
     ----------
     n_result_fields : int
         Number of output columns per time step.  Read-only from Python.
+
+    Notes
+    -----
+    ``_source_fn`` defaults to ``NULL``, meaning no source term is applied.
+    The hot loop skips the source call entirely when it is ``NULL``, so
+    existing closures with no source term pay zero overhead.
     """
     cdef closure_func    _closure_fn
     cdef derivative_func _derivative_fn
     cdef writer_func     _writer_fn
+    cdef source_func     _source_fn      # NULL = no source term (default)
     cdef readonly int    n_result_fields
 
     cpdef bint is_ready(self)

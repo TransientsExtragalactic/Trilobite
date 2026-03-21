@@ -6,11 +6,18 @@ container.
 """
 
 from .base import OneZoneAccretionDiskBase, OneZoneAccretionResult
-from .core import FullPressureElectronScatteringDisk, GasPressureElectronScatteringDisk
+from .core import (
+    FullPressureElectronScatteringDisk,
+    FullPressureFallbackDisk,
+    GasPressureElectronScatteringDisk,
+    GasPressureFallbackDisk,
+)
 
 __all__ = [
     "OneZoneAccretionDiskBase",
     "OneZoneAccretionResult",
     "GasPressureElectronScatteringDisk",
     "FullPressureElectronScatteringDisk",
+    "GasPressureFallbackDisk",
+    "FullPressureFallbackDisk",
 ]

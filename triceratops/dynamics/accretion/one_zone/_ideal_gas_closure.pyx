@@ -87,9 +87,11 @@ cdef inline double solve_gas_plus_radiation_eos(
 # Fields: index | t | M | J | R | Sigma | Omega | T_eff | T_c | tau |
 #         cs | nu | q_visc | dM_dt | dJ_dt | dt | t_visc | H | H/R | rho
 DEF GAS_PRESSURE_ES_N_RESULT_FIELDS = 20
+# Python-visible constant so _source_terms.pyx can read it without a second cimport.
+GAS_PRESSURE_ES_N_RESULT_FIELDS_PY = GAS_PRESSURE_ES_N_RESULT_FIELDS
 
 
-cdef inline int gas_pressure_closure_func(
+cdef int gas_pressure_closure_func(
         const DiskState* state,
         const DiskDerived* derived,
         const DiskParameters* params,
@@ -156,7 +158,7 @@ cdef inline int gas_pressure_closure_func(
     return 0
 
 
-cdef inline int gas_pressure_derivative_func(
+cdef int gas_pressure_derivative_func(
     const DiskState* state,
     const DiskDerived* derived,
     const DiskParameters* params,
@@ -190,7 +192,7 @@ cdef inline int gas_pressure_derivative_func(
     return 0
 
 
-cdef inline int gas_pressure_writer_func(
+cdef int gas_pressure_writer_func(
     const int step_index,
     const DiskState* state,
     const DiskDerived* derived,
@@ -279,6 +281,8 @@ cdef class GasPressureElectronScatteringClosure(OneZoneClosure):
 
 # Number of result fields — identical layout to GasPressureElectronScatteringClosure.
 DEF FULL_PRESSURE_ES_N_RESULT_FIELDS = 20
+# Python-visible constant so _source_terms.pyx can read it without a second cimport.
+FULL_PRESSURE_ES_N_RESULT_FIELDS_PY = FULL_PRESSURE_ES_N_RESULT_FIELDS
 
 
 # Context forwarded to the energy-balance root-finding callback.
@@ -328,7 +332,7 @@ cdef int full_pressure_residual(
     return 0
 
 
-cdef inline int full_pressure_closure_func(
+cdef int full_pressure_closure_func(
     const DiskState* state,
     const DiskDerived* derived,
     const DiskParameters* params,

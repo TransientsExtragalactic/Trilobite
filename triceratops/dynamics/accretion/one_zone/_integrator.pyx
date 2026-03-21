@@ -66,10 +66,11 @@ cdef class OneZoneClosure:
         self._closure_fn     = NULL
         self._derivative_fn  = NULL
         self._writer_fn      = NULL
+        self._source_fn      = NULL
         self.n_result_fields = n_result_fields
 
     cpdef bint is_ready(self):
-        """True if all three function pointers are installed."""
+        """True if the three mandatory function pointers are installed."""
         return (self._closure_fn    != NULL and
                 self._derivative_fn != NULL and
                 self._writer_fn     != NULL)
@@ -90,6 +91,7 @@ cdef int compute_one_zone_model(
         closure_func closure_function,
         derivative_func derivative_function,
         writer_func writer_function,
+        source_func source_function,
 ):
     # --- Declare variables --- #
     # Loop temporaries — declared here because Cython requires all cdef declarations before executable statements.
@@ -117,6 +119,13 @@ cdef int compute_one_zone_model(
     params.R_in  = parameters[1]
     params.alpha = parameters[2]
     params.mu    = parameters[3]
+
+    # Extra parameters (indices 4+) — zero-copy pointer into the buffer.
+    params.n_extra = parameters.shape[0] - 4
+    if params.n_extra > 0:
+        params.extra = &parameters[4]
+    else:
+        params.extra = NULL
 
     # Zero-initialise prev_closure (warm-start seed for step 0).
     # t_visc == 0 is the sentinel the closure uses to fall back to state.t.
@@ -172,6 +181,13 @@ cdef int compute_one_zone_model(
             if fn_status != 0:
                 return -10
 
+            # (4b) Apply optional source term (fallback supply, wind loss, etc.).
+            if source_function != NULL:
+                fn_status = source_function(&state, &derived_disk_params, &params,
+                                            &closure_result, &step)
+                if fn_status != 0:
+                    return -30
+
             # (5) Write column actual_steps (column 0 = IC, column k = state after k steps).
             fn_status = writer_function(actual_steps, &state, &derived_disk_params, &params,
                                         &closure_result, &step, &result_array[0, 0], max_steps)
@@ -213,8 +229,10 @@ def run_one_zone_model(
     ----------
     initial_state : ndarray, shape (2,)
         ``[M_D (g), J_D (g cm^2 s^-1)]``.
-    parameters : ndarray, shape (4,)
-        ``[M_BH (g), R_in (cm), alpha, mu]``.
+    parameters : ndarray, shape (>=4,)
+        ``[M_BH (g), R_in (cm), alpha, mu, ...]``.  Elements beyond index 3
+        are passed to the closure as ``params.extra``; their interpretation
+        is closure-specific.
     t_start, t_end : float
         Integration interval in seconds.
     max_steps : int
@@ -249,6 +267,7 @@ def run_one_zone_model(
           the iteration limit.
         * ``-10`` **DERIVATIVE_FAIL** — the derivative function returned non-zero.
         * ``-20`` **WRITER_FAIL** — the writer function returned non-zero.
+        * ``-30`` **SOURCE_FAIL** — the source function returned non-zero.
     """
     cdef double[:, ::1] result
     cdef int status
@@ -261,10 +280,10 @@ def run_one_zone_model(
         raise ValueError(
             f"initial_state must have shape (2,), got shape ({initial_state.shape[0]},)."
         )
-    if parameters.shape[0] != 4:
+    if parameters.shape[0] < 4:
         raise ValueError(
-            f"parameters must have shape (4,), got shape ({parameters.shape[0]},). "
-            f"Expected [MBH, R_in, alpha, mu]."
+            f"parameters must have shape (>=4,), got shape ({parameters.shape[0]},). "
+            f"Expected at least [MBH, R_in, alpha, mu]."
         )
     if t_end <= t_start:
         raise ValueError(f"t_end ({t_end}) must be > t_start ({t_start}).")
@@ -281,6 +300,7 @@ def run_one_zone_model(
         closure._closure_fn,
         closure._derivative_fn,
         closure._writer_fn,
+        closure._source_fn,
     )
 
     if status < 0:
@@ -308,6 +328,10 @@ def run_one_zone_model(
             ),
             -20: (
                 "WRITER_FAIL (-20): the writer function returned a non-zero status "
+                "(internal error)."
+            ),
+            -30: (
+                "SOURCE_FAIL (-30): the source function returned a non-zero status "
                 "(internal error)."
             ),
         }
