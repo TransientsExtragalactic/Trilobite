@@ -28,7 +28,7 @@ from triceratops.physics_utils import IdealGasEOS
 # opacity specifications.
 
 
-class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
+class gP_esDisk(OneZoneAccretionDiskBase):
     r"""
     One-zone disk model dominated by gas pressure with electron-scattering opacity.
 
@@ -112,10 +112,10 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         from astropy import constants as const
         from astropy import units as u
         from triceratops.dynamics.accretion.one_zone import (
-            GasPressureElectronScatteringDisk,
+            gP_esDisk,
         )
 
-        disk = GasPressureElectronScatteringDisk(mu=0.62)
+        disk = gP_esDisk(mu=0.62)
 
         result = disk.solve(
             initial_conditions={
@@ -273,14 +273,14 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
             Class method that reconstructs the model from this dict.
         """
         return {
-            "target": "triceratops.dynamics.accretion.one_zone.core:GasPressureElectronScatteringDisk",
+            "target": "triceratops.dynamics.accretion.one_zone.core:gP_esDisk",
             "mu": self._context_parameters["mu"],
         }
 
     @classmethod
-    def from_spec_dict(cls, data: _SpecDict) -> "GasPressureElectronScatteringDisk":
+    def from_spec_dict(cls, data: _SpecDict) -> "gP_esDisk":
         r"""
-        Construct a :class:`GasPressureElectronScatteringDisk` from a spec dict.
+        Construct a :class:`gP_esDisk` from a spec dict.
 
         Parameters
         ----------
@@ -290,16 +290,14 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
 
         Returns
         -------
-        GasPressureElectronScatteringDisk
+        gP_esDisk
 
         Examples
         --------
         .. code-block:: python
 
             spec = disk.to_spec_dict()
-            loaded = GasPressureElectronScatteringDisk.from_spec_dict(
-                spec
-            )
+            loaded = gP_esDisk.from_spec_dict(spec)
             assert np.isclose(loaded.eos.mu, disk.eos.mu)
 
         See Also
@@ -315,26 +313,23 @@ class GasPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
     # ==================================================== #
 
     def _build_cython_closure(self) -> Any:
-        """Return a GasPressureElectronScatteringClosure for the Cython integrator."""
-        from triceratops.dynamics.accretion.one_zone._ideal_gas_closure import (
-            GasPressureElectronScatteringClosure,
+        """Return a gP_esClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._gP_es import (
+            gP_esClosure,
         )
 
-        return GasPressureElectronScatteringClosure()
+        return gP_esClosure()
 
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
         """Return ``[MBH (g), R_in (cm), alpha, mu]`` as a float64 array."""
         return self._pack_base_cython_parameters(run_params)
 
 
-# ================================================================== #
-# Gas + Radiation Pressure Disks                                     #
-# ================================================================== #
-class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
+class igP_esDisk(OneZoneAccretionDiskBase):
     r"""
     One-zone disk model with combined gas and radiation pressure, and electron-scattering opacity.
 
-    Extends :class:`GasPressureElectronScatteringDisk` by including the
+    Extends :class:`gP_esDisk` by including the
     radiation-pressure contribution to the equation of state.  The midplane
     temperature can no longer be found analytically; instead, the Cython layer
     solves the energy balance
@@ -360,7 +355,7 @@ class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
     **Regime of applicability**
 
     In the gas-pressure-dominated regime the results converge to those of
-    :class:`GasPressureElectronScatteringDisk`.  Differences become significant
+    :class:`gP_esDisk`.  Differences become significant
     when the ratio of radiation pressure to gas pressure,
 
     .. math::
@@ -389,10 +384,10 @@ class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         from astropy import constants as const
         from astropy import units as u
         from triceratops.dynamics.accretion.one_zone import (
-            FullPressureElectronScatteringDisk,
+            igP_esDisk,
         )
 
-        disk = FullPressureElectronScatteringDisk(mu=0.62)
+        disk = igP_esDisk(mu=0.62)
 
         result = disk.solve(
             initial_conditions={
@@ -413,7 +408,7 @@ class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
 
     See Also
     --------
-    GasPressureElectronScatteringDisk :
+    gP_esDisk :
         Simpler closure with analytic temperature solve (gas pressure only).
     OneZoneAccretionDiskBase :
         Abstract base class describing the full closure pipeline.
@@ -487,7 +482,7 @@ class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         "rho": {"description": "Midplane density", "units": "g/cm**3"},
     }
 
-    # Row layout identical to GasPressureElectronScatteringClosure (same writer).
+    # Row layout identical to gP_esClosure (same writer).
     CYTHON_FIELD_MAP: dict = {
         "R_D": 4,
         "Sigma": 5,
@@ -514,60 +509,15 @@ class FullPressureElectronScatteringDisk(OneZoneAccretionDiskBase):
         self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
 
     # ==================================================== #
-    # Serialization                                        #
-    # ==================================================== #
-
-    def to_spec_dict(self) -> _SpecDict:
-        """Return a JSON-serialisable spec dict for this model instance.
-
-        Returns
-        -------
-        dict
-            Spec dict with keys ``"target"`` and ``"mu"``.
-
-        See Also
-        --------
-        from_spec_dict :
-            Reconstructs the model from this dict.
-        """
-        return {
-            "target": "triceratops.dynamics.accretion.one_zone.core:FullPressureElectronScatteringDisk",
-            "mu": self._context_parameters["mu"],
-        }
-
-    @classmethod
-    def from_spec_dict(cls, data: _SpecDict) -> "FullPressureElectronScatteringDisk":
-        """Construct a :class:`FullPressureElectronScatteringDisk` from a spec dict.
-
-        Parameters
-        ----------
-        data : dict
-            Spec dict produced by :meth:`to_spec_dict`.  The ``"target"``
-            key is silently ignored.
-
-        Returns
-        -------
-        FullPressureElectronScatteringDisk
-
-        See Also
-        --------
-        to_spec_dict :
-            Instance method that produces the dict this class method reads.
-        """
-        kwargs = {k: v for k, v in data.items() if k != "target"}
-        return cls(**kwargs)
-
-    # ==================================================== #
     # Cython Integration Interface                        #
     # ==================================================== #
-
     def _build_cython_closure(self) -> Any:
-        """Return a FullPressureElectronScatteringClosure for the Cython integrator."""
-        from triceratops.dynamics.accretion.one_zone._ideal_gas_closure import (
-            FullPressureElectronScatteringClosure,
+        """Return a igP_esClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_es import (
+            igP_esClosure,
         )
 
-        return FullPressureElectronScatteringClosure()
+        return igP_esClosure()
 
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
         """Return ``[MBH (g), R_in (cm), alpha, mu]`` as a float64 array."""
@@ -658,11 +608,11 @@ _FALLBACK_CYTHON_FIELD_MAP: dict = {
 }
 
 
-class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
+class gP_es_fbDisk(OneZoneAccretionDiskBase):
     r"""
     Gas-pressure / electron-scattering disk with a continuous fallback supply.
 
-    Extends :class:`GasPressureElectronScatteringDisk` by adding a power-law
+    Extends :class:`gP_esDisk` by adding a power-law
     mass supply from an external debris stream (TDE fallback, collapsar
     fallback, etc.):
 
@@ -697,10 +647,10 @@ class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
         from astropy import constants as const
         from astropy import units as u
         from triceratops.dynamics.accretion.one_zone import (
-            GasPressureFallbackDisk,
+            gP_es_fbDisk,
         )
 
-        disk = GasPressureFallbackDisk()
+        disk = gP_es_fbDisk()
         result = disk.solve(
             initial_conditions={
                 "M_D_0": 0.05 * const.M_sun,
@@ -719,9 +669,9 @@ class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
 
     See Also
     --------
-    GasPressureElectronScatteringDisk :
+    gP_esDisk :
         Base disk without fallback supply.
-    FullPressureFallbackDisk :
+    igP_es_fbDisk :
         Same model with combined gas + radiation pressure.
     """
 
@@ -763,13 +713,13 @@ class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
             Spec dict with keys ``"target"`` and ``"mu"``.
         """
         return {
-            "target": "triceratops.dynamics.accretion.one_zone.core:GasPressureFallbackDisk",
+            "target": "triceratops.dynamics.accretion.one_zone.core:gP_es_fbDisk",
             "mu": self._context_parameters["mu"],
         }
 
     @classmethod
-    def from_spec_dict(cls, data: _SpecDict) -> "GasPressureFallbackDisk":
-        """Construct a :class:`GasPressureFallbackDisk` from a spec dict.
+    def from_spec_dict(cls, data: _SpecDict) -> "gP_es_fbDisk":
+        """Construct a :class:`gP_es_fbDisk` from a spec dict.
 
         Parameters
         ----------
@@ -778,18 +728,18 @@ class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
 
         Returns
         -------
-        GasPressureFallbackDisk
+        gP_es_fbDisk
         """
         kwargs = {k: v for k, v in data.items() if k != "target"}
         return cls(**kwargs)
 
     def _build_cython_closure(self) -> Any:
-        """Return a GasPressureFallbackClosure for the Cython integrator."""
-        from triceratops.dynamics.accretion.one_zone._source_terms import (
-            GasPressureFallbackClosure,
+        """Return a gP_es_fbClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._gP_es_fb import (
+            gP_es_fbClosure,
         )
 
-        return GasPressureFallbackClosure()
+        return gP_es_fbClosure()
 
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
         """Return ``[MBH, R_in, alpha, mu, M_fb_0, t_fb, beta_fb]`` as float64."""
@@ -826,12 +776,12 @@ class GasPressureFallbackDisk(OneZoneAccretionDiskBase):
         return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
-class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
+class igP_es_fbDisk(OneZoneAccretionDiskBase):
     r"""
     Full-pressure (gas + radiation) / electron-scattering disk with fallback supply.
 
-    Extends :class:`FullPressureElectronScatteringDisk` by adding the same
-    power-law mass supply as :class:`GasPressureFallbackDisk`.  The midplane
+    Extends :class:`igP_esDisk` by adding the same
+    power-law mass supply as :class:`gP_es_fbDisk`.  The midplane
     temperature is solved iteratively at each timestep (bracket expansion +
     Brent's method) rather than analytically.
 
@@ -842,9 +792,9 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
 
     Notes
     -----
-    Identical to :class:`GasPressureFallbackDisk` in all respects except that
-    the Cython closure uses :class:`~._source_terms.FullPressureFallbackClosure`
-    instead of :class:`~._source_terms.GasPressureFallbackClosure`.
+    Identical to :class:`gP_es_fbDisk` in all respects except that
+    the Cython closure uses :class:`~._source_terms.igP_es_fbClosure`
+    instead of :class:`~._source_terms.gP_es_fbClosure`.
 
     Examples
     --------
@@ -853,10 +803,10 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
         from astropy import constants as const
         from astropy import units as u
         from triceratops.dynamics.accretion.one_zone import (
-            FullPressureFallbackDisk,
+            igP_es_fbDisk,
         )
 
-        disk = FullPressureFallbackDisk()
+        disk = igP_es_fbDisk()
         result = disk.solve(
             initial_conditions={
                 "M_D_0": 0.5 * const.M_sun,
@@ -875,9 +825,9 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
 
     See Also
     --------
-    FullPressureElectronScatteringDisk :
+    igP_esDisk :
         Base disk without fallback supply.
-    GasPressureFallbackDisk :
+    gP_es_fbDisk :
         Same model with gas pressure only.
     """
 
@@ -919,13 +869,13 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
             Spec dict with keys ``"target"`` and ``"mu"``.
         """
         return {
-            "target": "triceratops.dynamics.accretion.one_zone.core:FullPressureFallbackDisk",
+            "target": "triceratops.dynamics.accretion.one_zone.core:igP_es_fbDisk",
             "mu": self._context_parameters["mu"],
         }
 
     @classmethod
-    def from_spec_dict(cls, data: _SpecDict) -> "FullPressureFallbackDisk":
-        """Construct a :class:`FullPressureFallbackDisk` from a spec dict.
+    def from_spec_dict(cls, data: _SpecDict) -> "igP_es_fbDisk":
+        """Construct a :class:`igP_es_fbDisk` from a spec dict.
 
         Parameters
         ----------
@@ -934,18 +884,18 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
 
         Returns
         -------
-        FullPressureFallbackDisk
+        igP_es_fbDisk
         """
         kwargs = {k: v for k, v in data.items() if k != "target"}
         return cls(**kwargs)
 
     def _build_cython_closure(self) -> Any:
-        """Return a FullPressureFallbackClosure for the Cython integrator."""
-        from triceratops.dynamics.accretion.one_zone._source_terms import (
-            FullPressureFallbackClosure,
+        """Return a igP_es_fbClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_es_fb import (
+            igP_es_fbClosure,
         )
 
-        return FullPressureFallbackClosure()
+        return igP_es_fbClosure()
 
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
         """Return ``[MBH, R_in, alpha, mu, M_fb_0, t_fb, beta_fb]`` as float64."""
@@ -975,6 +925,491 @@ class FullPressureFallbackDisk(OneZoneAccretionDiskBase):
         dict
             ``{"mdot_fb": np.ndarray}`` in CGS (g s⁻¹).
         """
+        t = result_array[1, :]
+        M_fb_0 = np.exp(run_params["log_M_fb_0"])
+        t_fb = np.exp(run_params["log_t_fb"])
+        beta = run_params["beta_fb"]
+        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+
+
+# ================================================================== #
+# Advective Disks                                                    #
+# ================================================================== #
+# These models extend the igP_es closures by adding an advective cooling term
+# Q_adv that carries a fraction of the viscous heating inward with the flow.
+# The strength of advection is controlled by the entropy gradient parameter xi.
+
+_DEFAULT_XI: float = 0.5
+
+_ADV_RUNTIME_PARAMETERS: dict[str, dict] = {
+    "M_BH": {
+        "description": "Black hole mass",
+        "base_units": "g",
+        "default": None,
+        "log_transform": True,
+    },
+    "R_in": {
+        "description": "Inner truncation radius",
+        "base_units": "cm",
+        "default": None,
+        "log_transform": True,
+    },
+    "alpha": {
+        "description": "Shakura-Sunyaev alpha",
+        "base_units": None,
+        "default": None,
+        "log_transform": False,
+    },
+}
+
+_ADV_RESULT_FIELDS: dict[str, dict] = {
+    "R_D": {"description": "Disk outer radius", "units": "cm"},
+    "Sigma": {"description": "Surface density", "units": "g/cm**2"},
+    "Omega": {"description": "Angular velocity", "units": "rad/s"},
+    "T_eff": {"description": "Effective temperature", "units": "K"},
+    "T_c": {"description": "Central temperature", "units": "K"},
+    "tau": {"description": "Optical depth", "units": None},
+    "c_s": {"description": "Sound speed", "units": "cm/s"},
+    "nu": {"description": "Kinematic viscosity", "units": "cm**2/s"},
+    "t_visc": {"description": "Viscous timescale", "units": "s"},
+    "Q_visc": {"description": "Viscous dissipation rate", "units": "erg cm-2 s-1"},
+    "Q_adv": {"description": "Advective cooling rate", "units": "erg cm-2 s-1"},
+    "mdot": {"description": "Accretion rate", "units": "g/s"},
+    "H": {"description": "Scale height", "units": "cm"},
+    "H_over_R": {"description": "Aspect ratio", "units": None},
+    "rho": {"description": "Midplane density", "units": "g/cm**3"},
+}
+
+# Row layout (ADV_N_RESULT_FIELDS = 21):
+#   0=step_index  1=t        2=M        3=J        4=R        5=Sigma
+#   6=Omega       7=T_eff    8=T_c      9=tau      10=cs      11=nu
+#   12=q_visc     13=q_adv   14=dM_dt   15=dJ_dt   16=dt      17=t_visc
+#   18=H          19=H/R     20=rho
+_ADV_CYTHON_FIELD_MAP: dict = {
+    "R_D": 4,
+    "Sigma": 5,
+    "Omega": 6,
+    "T_eff": 7,
+    "T_c": 8,
+    "tau": 9,
+    "c_s": 10,
+    "nu": 11,
+    "Q_visc": 12,
+    "Q_adv": 13,
+    "mdot": 14,
+    "t_visc": 17,
+    "H": 18,
+    "H_over_R": 19,
+    "rho": 20,
+}
+
+_ADV_FALLBACK_RESULT_FIELDS: dict[str, dict] = {
+    **_ADV_RESULT_FIELDS,
+    "mdot_fb": {"description": "Fallback mass supply rate", "units": "g/s"},
+}
+
+_ADV_FALLBACK_CYTHON_FIELD_MAP: dict = {
+    **_ADV_CYTHON_FIELD_MAP,
+    "mdot_fb": None,  # computed Python-side from time array
+}
+
+
+class igP_es_advDisk(OneZoneAccretionDiskBase):
+    r"""
+    One-zone disk with gas + radiation pressure, electron-scattering opacity, and advective cooling.
+
+    Extends :class:`igP_esDisk` by including an advective energy transport term
+    in the energy balance.  The viscous heating is now split between radiative
+    losses and inward advection of entropy:
+
+    .. math::
+
+        q_{\rm visc} = q_{\rm rad} + q_{\rm adv},
+
+    where
+
+    .. math::
+
+        q_{\rm adv} = q_{\rm visc}\,B\,c_s^2,\quad
+        B = \frac{4}{9\pi}\,\xi\,F_0\,\alpha\,
+            \frac{M_D}{R_D^4\,\Omega^2\,\Sigma}.
+
+    The dimensionless parameter :math:`\xi` (``xi``) controls the strength of
+    advection.  Setting :math:`\xi \to 0` recovers the non-advective
+    :class:`igP_esDisk` limit.
+
+    The midplane temperature is found iteratively at every timestep by solving
+
+    .. math::
+
+        f(\log T_c) = 1 - A\,c_s^{-2}\,T_c^4 - B\,c_s^2 = 0
+
+    via bracket expansion + Brent's method.
+
+    **Output fields**
+
+    This model adds ``Q_adv`` to the standard field set (21 fields total).
+
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight of the disk gas (dimensionless).  Default ``0.6``.
+    xi : float, optional
+        Entropy gradient parameter controlling advective cooling strength
+        (dimensionless, > 0).  Default ``0.5``.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        from astropy import constants as const
+        from astropy import units as u
+        from triceratops.dynamics.accretion.one_zone import (
+            igP_es_advDisk,
+        )
+
+        disk = igP_es_advDisk(mu=0.62, xi=0.5)
+        result = disk.solve(
+            initial_conditions={
+                "M_D_0": 0.1 * const.M_sun,
+                "J_D_0": 1.5e49 * u.g * u.cm**2 / u.s,
+            },
+            runtime_parameters={
+                "M_BH": 3.0 * const.M_sun,
+                "R_in": 3.0e6 * u.cm,
+                "alpha": 0.1,
+            },
+            t_span=(1.0e6 * u.s, 5.0e9 * u.s),
+            max_steps=50_000,
+        )
+        print(
+            result.data["Q_adv"] / result.data["Q_visc"]
+        )
+
+    See Also
+    --------
+    igP_esDisk :
+        Non-advective sibling (xi to 0 limit).
+    igP_es_adv_fbDisk :
+        This model with an additional power-law fallback supply.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+
+    _A: float = 1.62
+    _B: float = 1.33
+    _F: float = 1.6
+
+    CONTEXT_PARAMETERS: dict[str, dict] = {
+        "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
+        "xi": {"description": "Entropy gradient parameter", "base_units": None, "default": _DEFAULT_XI},
+    }
+    RUNTIME_PARAMETERS: dict[str, dict] = _ADV_RUNTIME_PARAMETERS
+    INITIAL_CONDITIONS: dict[str, dict] = {
+        "M_D_0": {
+            "description": "Initial disk mass",
+            "base_units": "g",
+            "default": None,
+            "log_transform": True,
+        },
+        "J_D_0": {
+            "description": "Initial disk angular momentum",
+            "base_units": "g*cm**2/s",
+            "default": None,
+            "log_transform": True,
+        },
+    }
+    RESULT_FIELDS: dict[str, dict] = _ADV_RESULT_FIELDS
+    CYTHON_FIELD_MAP: dict = _ADV_CYTHON_FIELD_MAP
+
+    def __init__(self, mu: float = 0.6, xi: float = _DEFAULT_XI):
+        super().__init__(mu=mu, xi=xi)
+        self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
+
+    def to_spec_dict(self) -> _SpecDict:
+        r"""
+        Return a JSON-serialisable spec dict for this model instance.
+
+        Returns
+        -------
+        dict
+            JSON-serialisable specification dict with keys ``"target"``,
+            ``"mu"``, and ``"xi"``.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            spec = disk.to_spec_dict()
+            import json
+
+            print(json.dumps(spec, indent=2))
+
+        See Also
+        --------
+        from_spec_dict :
+            Class method that reconstructs the model from this dict.
+        """
+        return {
+            "target": "triceratops.dynamics.accretion.one_zone.core:igP_es_advDisk",
+            "mu": self._context_parameters["mu"],
+            "xi": self._context_parameters["xi"],
+        }
+
+    @classmethod
+    def from_spec_dict(cls, data: _SpecDict) -> "igP_es_advDisk":
+        r"""
+        Construct a :class:`igP_es_advDisk` from a spec dict.
+
+        Parameters
+        ----------
+        data : dict
+            Spec dict produced by :meth:`to_spec_dict`.  The ``"target"``
+            key is silently ignored.
+
+        Returns
+        -------
+        igP_es_advDisk
+
+        Examples
+        --------
+        .. code-block:: python
+
+            spec = disk.to_spec_dict()
+            loaded = igP_es_advDisk.from_spec_dict(spec)
+            assert np.isclose(
+                loaded._context_parameters["xi"],
+                disk._context_parameters["xi"],
+            )
+
+        See Also
+        --------
+        to_spec_dict :
+            Instance method that produces the dict this class method reads.
+        """
+        kwargs = {k: v for k, v in data.items() if k != "target"}
+        return cls(**kwargs)
+
+    def _build_cython_closure(self) -> Any:
+        """Return an igP_es_advClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_es_adv import (
+            igP_es_advClosure,
+        )
+
+        return igP_es_advClosure()
+
+    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        """Return ``[MBH, R_in, alpha, mu, xi]`` as a float64 array."""
+        base = self._pack_base_cython_parameters(run_params)
+        return np.append(base, self._context_parameters["xi"])
+
+
+class igP_es_adv_fbDisk(OneZoneAccretionDiskBase):
+    r"""
+    One-zone disk with gas + radiation pressure, ES opacity, advective cooling, and a power-law fallback mass supply.
+
+    Combines the advective energy transport of :class:`igP_es_advDisk` with the
+    power-law debris-stream supply of :class:`igP_es_fbDisk`:
+
+    .. math::
+
+        \dot{M}_{\rm fb}(t)
+        = M_{\rm fb,0}\!\left(\frac{t}{t_{\rm fb}}\right)^{-\beta_{\rm fb}}.
+
+    Parameters
+    ----------
+    mu : float, optional
+        Mean molecular weight (dimensionless).  Default ``0.6``.
+    xi : float, optional
+        Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
+
+    Notes
+    -----
+    The extra-parameter layout passed to the Cython integrator is
+    ``[MBH, R_in, alpha, mu, xi, M_fb_0, t_fb, beta_fb]``.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        from astropy import constants as const
+        from astropy import units as u
+        from triceratops.dynamics.accretion.one_zone import (
+            igP_es_adv_fbDisk,
+        )
+
+        disk = igP_es_adv_fbDisk(xi=0.5)
+        result = disk.solve(
+            initial_conditions={
+                "M_D_0": 0.05 * const.M_sun,
+                "J_D_0": 1e49 * u.g * u.cm**2 / u.s,
+            },
+            runtime_parameters={
+                "M_BH": 3 * const.M_sun,
+                "R_in": 3e6 * u.cm,
+                "alpha": 0.1,
+                "M_fb_0": 1e28 * u.g / u.s,
+                "t_fb": 1e4 * u.s,
+            },
+            t_span=(1e4 * u.s, 1e8 * u.s),
+        )
+        print(
+            result.data["Q_adv"] / result.data["Q_visc"]
+        )
+
+    See Also
+    --------
+    igP_es_advDisk :
+        Base advective disk without fallback supply.
+    igP_es_fbDisk :
+        Non-advective fallback disk.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+
+    _A: float = 1.62
+    _B: float = 1.33
+    _F: float = 1.6
+
+    CONTEXT_PARAMETERS: dict[str, dict] = {
+        "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
+        "xi": {"description": "Entropy gradient parameter", "base_units": None, "default": _DEFAULT_XI},
+    }
+    RUNTIME_PARAMETERS: dict[str, dict] = {
+        **_ADV_RUNTIME_PARAMETERS,
+        "M_fb_0": {
+            "description": "Fallback mass supply rate at t_fb",
+            "base_units": "g/s",
+            "default": None,
+            "log_transform": True,
+        },
+        "t_fb": {
+            "description": "Fallback reference time",
+            "base_units": "s",
+            "default": None,
+            "log_transform": True,
+        },
+        "beta_fb": {
+            "description": "Fallback power-law index",
+            "base_units": None,
+            "default": _DEFAULT_BETA_FB,
+            "log_transform": False,
+        },
+    }
+    INITIAL_CONDITIONS: dict[str, dict] = {
+        "M_D_0": {
+            "description": "Initial disk mass",
+            "base_units": "g",
+            "default": None,
+            "log_transform": True,
+        },
+        "J_D_0": {
+            "description": "Initial disk angular momentum",
+            "base_units": "g*cm**2/s",
+            "default": None,
+            "log_transform": True,
+        },
+    }
+    RESULT_FIELDS: dict[str, dict] = _ADV_FALLBACK_RESULT_FIELDS
+    CYTHON_FIELD_MAP: dict = _ADV_FALLBACK_CYTHON_FIELD_MAP
+
+    def __init__(self, mu: float = 0.6, xi: float = _DEFAULT_XI):
+        super().__init__(mu=mu, xi=xi)
+        self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
+
+    def to_spec_dict(self) -> _SpecDict:
+        r"""
+        Return a JSON-serialisable spec dict for this model instance.
+
+        Returns
+        -------
+        dict
+            JSON-serialisable specification dict with keys ``"target"``,
+            ``"mu"``, and ``"xi"``.  Runtime parameters (``M_fb_0``,
+            ``t_fb``, ``beta_fb``) are per-solve and are not serialised.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            spec = disk.to_spec_dict()
+            import json
+
+            print(json.dumps(spec, indent=2))
+
+        See Also
+        --------
+        from_spec_dict :
+            Class method that reconstructs the model from this dict.
+        """
+        return {
+            "target": "triceratops.dynamics.accretion.one_zone.core:igP_es_adv_fbDisk",
+            "mu": self._context_parameters["mu"],
+            "xi": self._context_parameters["xi"],
+        }
+
+    @classmethod
+    def from_spec_dict(cls, data: _SpecDict) -> "igP_es_adv_fbDisk":
+        r"""
+        Construct a :class:`igP_es_adv_fbDisk` from a spec dict.
+
+        Parameters
+        ----------
+        data : dict
+            Spec dict produced by :meth:`to_spec_dict`.  The ``"target"``
+            key is silently ignored.
+
+        Returns
+        -------
+        igP_es_adv_fbDisk
+
+        Examples
+        --------
+        .. code-block:: python
+
+            spec = disk.to_spec_dict()
+            loaded = igP_es_adv_fbDisk.from_spec_dict(spec)
+            assert np.isclose(
+                loaded._context_parameters["xi"],
+                disk._context_parameters["xi"],
+            )
+
+        See Also
+        --------
+        to_spec_dict :
+            Instance method that produces the dict this class method reads.
+        """
+        kwargs = {k: v for k, v in data.items() if k != "target"}
+        return cls(**kwargs)
+
+    def _build_cython_closure(self) -> Any:
+        """Return an igP_es_adv_fbClosure for the Cython integrator."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_es_adv_fb import (
+            igP_es_adv_fbClosure,
+        )
+
+        return igP_es_adv_fbClosure()
+
+    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        """Return ``[MBH, R_in, alpha, mu, xi, M_fb_0, t_fb, beta_fb]`` as float64."""
+        base = self._pack_base_cython_parameters(run_params)
+        extra = np.array(
+            [
+                self._context_parameters["xi"],
+                np.exp(run_params["log_M_fb_0"]),
+                np.exp(run_params["log_t_fb"]),
+                run_params["beta_fb"],
+            ],
+            dtype=np.float64,
+        )
+        return np.concatenate([base, extra])
+
+    def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
+        """Compute ``mdot_fb`` from the time array and fallback parameters."""
         t = result_array[1, :]
         M_fb_0 = np.exp(run_params["log_M_fb_0"])
         t_fb = np.exp(run_params["log_t_fb"])

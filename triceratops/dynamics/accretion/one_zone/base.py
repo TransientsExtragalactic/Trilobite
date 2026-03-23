@@ -317,10 +317,10 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         from astropy import constants as const
         from astropy import units as u
         from triceratops.dynamics.accretion.one_zone import (
-            GasPressureElectronScatteringDisk,
+            gP_esDisk,
         )
 
-        disk = GasPressureElectronScatteringDisk(mu=0.62)
+        disk = gP_esDisk(mu=0.62)
 
         result = disk.solve(
             initial_conditions={
@@ -342,7 +342,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
     See Also
     --------
-    GasPressureElectronScatteringDisk :
+    gP_esDisk :
         The canonical concrete implementation of this base class.
     OneZoneAccretionResult :
         The result container returned by :meth:`solve`.
@@ -482,9 +482,9 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
         .. code-block:: python
 
-            $ disk = GasPressureElectronScatteringDisk(mu=0.62)
+            $ disk = gP_esDisk(mu=0.62)
             $ repr(disk)
-            'GasPressureElectronScatteringDisk(mu=0.62)'
+            'gP_esDisk(mu=0.62)'
 
         """
         ctx = ", ".join(f"{k}={v!r}" for k, v in self._context_parameters.items())
@@ -514,7 +514,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         .. code-block:: python
 
             $ print(disk)
-            GasPressureElectronScatteringDisk
+            gP_esDisk
               Context parameters (1):
                 mu = 0.62  [dimensionless]  -- mean molecular weight
               Runtime parameters (3):
@@ -755,15 +755,15 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         .. code-block:: python
 
             def _build_cython_closure(self):
-                from ._ideal_gas_closure import (
-                    GasPressureElectronScatteringClosure,
+                from .models._gP_es import (
+                    gP_esClosure,
                 )
 
-                return GasPressureElectronScatteringClosure()
+                return gP_esClosure()
 
         Returns
         -------
-        ~triceratops.dynamics.accretion.one_zone._integrator.OneZoneClosure
+        ~triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure
             A Cython extension type with all three function pointers installed
             (``is_ready()`` returns ``True``).
         """
@@ -843,8 +843,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     # ==================================================== #
     # Abstract Serialization Hooks                         #
     # ==================================================== #
-
-    @abstractmethod
     def to_spec_dict(self) -> dict:
         r"""
         Return a JSON-serialisable dict that fully describes this model instance.
@@ -871,10 +869,12 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         from_spec_dict :
             The class method that reconstructs the model from this dict.
         """
-        ...
+        return {
+            "target": f"triceratops.dynamics.accretion.one_zone.core:{self.__class__.__name__}",
+            **self._context_parameters,
+        }
 
     @classmethod
-    @abstractmethod
     def from_spec_dict(cls, data: _SpecDict) -> "OneZoneAccretionDiskBase":
         r"""
         Construct a model instance from a spec dict.
@@ -902,7 +902,8 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         to_spec_dict :
             The instance method that produces the dict this method reads.
         """
-        ...
+        kwargs = {k: v for k, v in data.items() if k != "target"}
+        return cls(**kwargs)
 
     # ==================================================== #
     # Public Solver Interface                              #
@@ -956,10 +957,10 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             from astropy import constants as const
             from astropy import units as u
             from triceratops.dynamics.accretion.one_zone import (
-                GasPressureElectronScatteringDisk,
+                gP_esDisk,
             )
 
-            disk = GasPressureElectronScatteringDisk(mu=0.62)
+            disk = gP_esDisk(mu=0.62)
 
             result = disk.solve(
                 initial_conditions={
@@ -984,7 +985,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         OneZoneAccretionResult :
             The object returned by this method.
         """
-        from ._integrator import run_one_zone_model
+        from .integrator import run_one_zone_model
 
         # --- Process time span --- #
         t_start = float(ensure_in_units(t_span[0], "s"))
@@ -1669,7 +1670,7 @@ class OneZoneAccretionResult:
             print(result)
 
             OneZoneAccretionResult
-              Model    : GasPressureElectronScatteringDisk(mu=0.62)
+              Model    : gP_esDisk(mu=0.62)
               N steps  : 20
               t range  : [1.000e+06, 5.000e+08] s
               M_D(0)   : 0.100 solMass

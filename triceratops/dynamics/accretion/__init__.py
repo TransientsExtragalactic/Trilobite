@@ -9,10 +9,10 @@ astrophysical transient modeling.  Currently implemented:
 """
 
 from . import one_zone
-from .one_zone import GasPressureElectronScatteringDisk, OneZoneAccretionDiskBase
+from .one_zone import OneZoneAccretionDiskBase, gP_esDisk
 
 __all__ = [
     "one_zone",
     "OneZoneAccretionDiskBase",
-    "GasPressureElectronScatteringDisk",
+    "gP_esDisk",
 ]

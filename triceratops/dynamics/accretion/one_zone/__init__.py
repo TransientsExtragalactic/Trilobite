@@ -7,17 +7,21 @@ container.
 
 from .base import OneZoneAccretionDiskBase, OneZoneAccretionResult
 from .core import (
-    FullPressureElectronScatteringDisk,
-    FullPressureFallbackDisk,
-    GasPressureElectronScatteringDisk,
-    GasPressureFallbackDisk,
+    gP_es_fbDisk,
+    gP_esDisk,
+    igP_es_adv_fbDisk,
+    igP_es_advDisk,
+    igP_es_fbDisk,
+    igP_esDisk,
 )
 
 __all__ = [
     "OneZoneAccretionDiskBase",
     "OneZoneAccretionResult",
-    "GasPressureElectronScatteringDisk",
-    "FullPressureElectronScatteringDisk",
-    "GasPressureFallbackDisk",
-    "FullPressureFallbackDisk",
+    "gP_esDisk",
+    "igP_esDisk",
+    "gP_es_fbDisk",
+    "igP_es_fbDisk",
+    "igP_es_advDisk",
+    "igP_es_adv_fbDisk",
 ]
