@@ -100,13 +100,13 @@ In the tables below, we summarize the various types of quantities used in this d
           - Description
         * - :math:`F_{\rm norm}`
           - The normalization of the SED. This is taken to be the expected flux of the dominant power-law
-            segment at the dominant break frequency. See :ref:`sed_normalization` for details.
+            segment at the dominant break frequency. See :ref:`single_zone_sed_normalization` for details.
         * - :math:`\nu_m`
-          - The minimum injection frequency. See :ref:`synchrotron_sed_injection_frequencies` for details.
+          - The minimum injection frequency. See :ref:`single_zone_injection_frequencies` for details.
         * - :math:`\nu_{\rm max}`
-          - The maximum injection frequency. See :ref:`synchrotron_sed_injection_frequencies` for details.
+          - The maximum injection frequency. See :ref:`single_zone_injection_frequencies` for details.
         * - :math:`\nu_c`
-          - The cooling frequency. See :ref:`synchrotron_sed_cooling_frequency` for details.
+          - The cooling frequency. See :ref:`single_zone_cooling_frequency` for details.
 
 .. dropdown:: SED Hyper-Parameters
 
@@ -127,7 +127,7 @@ In the tables below, we summarize the various types of quantities used in this d
             angle synchrotron emission is desired.
         * - :math:`\Omega`
           - The effective angular radiating area of the source. This is only used when SSA is included in the SED.
-            See :ref:`synchrotron_abs_frequency` for details.
+            See :ref:`single_zone_ssa_frequency` for details.
         * - :math:`\gamma_{\min}`
           - The minimum electron Lorentz factor in the power-law distribution.
         * - :math:`\Gamma_{\rm bulk}`
@@ -145,10 +145,10 @@ In the tables below, we summarize the various types of quantities used in this d
         * - Internal Parameter
           - Description
         * - :math:`\nu_a`
-          - The self-absorption frequency. See :ref:`synchrotron_abs_frequency` for details.
+          - The self-absorption frequency. See :ref:`single_zone_ssa_frequency` for details.
         * - :math:`F_{\rm pk}`
           - The peak flux density of the SED. This is determined by the normalization and the
-            break frequencies. See :ref:`sed_normalization` for details.
+            break frequencies. See :ref:`single_zone_sed_normalization` for details.
 
 
 ---

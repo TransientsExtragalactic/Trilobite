@@ -379,7 +379,7 @@ The energy balance :eq:`eq:root_equation` then has the closed-form solution
 5. Compute the viscosity: :math:`\nu = \alpha c_s^2 / \Omega`.
 
 This closure is implemented in
-:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureElectronScatteringDisk`.
+:class:`~triceratops.dynamics.accretion.one_zone.core.gP_esDisk`.
 
 Gas + Radiation Pressure, Electron-Scattering Opacity
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -408,7 +408,7 @@ which occurs at high temperatures or low densities (high :math:`\alpha`, high
 accretion rate, or large disk radius).
 
 This closure is implemented in
-:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureElectronScatteringDisk`.
+:class:`~triceratops.dynamics.accretion.one_zone.core.igP_esDisk`.
 
 ----
 

@@ -912,7 +912,7 @@ Outside this range, the distribution is assumed to vanish.
         \frac{dN}{dE} = N_{E,0} E^{-p}.
 
     Triceratops adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
-    implemented in the relevant API (see :mod:`radiation.synchrotron.microphysics`).
+    implemented in the relevant API (see :mod:`triceratops.radiation.synchrotron.microphysics`).
 
 .. note::
 
@@ -925,7 +925,7 @@ Equipartition for Power-Law Distributions
 
 .. hint::
 
-    The relevant API in Triceratops is in the :mod:`radiation.synchrotron.microphysics` module. See
+    The relevant API in Triceratops is in the :mod:`triceratops.radiation.synchrotron.microphysics` module. See
     :ref:`synchrotron_microphysics` for details on use.
 
 Assuming a power-law distribution of electrons, we can derive normalization of the distribution
@@ -987,7 +987,7 @@ In terms of the magnetic field, we also have
 .. important::
 
     This is the canonical way to convert dynamics into synchrotron emission in Triceratops when assuming
-    equipartition and a power-law distribution of electrons. See :mod:`radiation.synchrotron.microphysics`
+    equipartition and a power-law distribution of electrons. See :mod:`triceratops.radiation.synchrotron.microphysics`
     for the relevant API.
 
 Another useful computation which is made possible with equipartition is the **total emitted power** from synchrotron.
@@ -1099,7 +1099,8 @@ The corresponding synchrotron frequency is
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.frequencies` module!
+    This is implemented in the :mod:`radiation.synchrotron.cooling` module via
+    :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 
 IC Cooling
@@ -1192,10 +1193,10 @@ within a dynamical time, while lower-energy electrons remain effectively uncoole
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.frequencies` module! See
-    :func:`~radiation.synchrotron.frequencies.compute_IC_cooling_gamma`,
-    :func:`~radiation.synchrotron.frequencies.compute_IC_cooling_frequency`, and the
-    associated low-level API.
+    This is implemented in the :mod:`radiation.synchrotron.cooling` module. See
+    :class:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
+    :meth:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
+    method for the associated API.
 
 Absorption Processes in Synchrotron Radiation
 ---------------------------------------------

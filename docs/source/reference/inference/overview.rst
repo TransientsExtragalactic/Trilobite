@@ -16,7 +16,7 @@ The :mod:`inference` subpackage provides a flexible and modular framework for
 constructing and running inference analyses. It supports:
 
 - integration with third-party samplers such as :mod:`emcee`,
-  :mod:`dynesty`, and :mod:`bilby`,
+  ``dynesty``, and ``bilby``,
 - user-defined likelihood functions and prior distributions,
 - consistent parameter management and unit handling,
 - and configurable workflows tailored to specific scientific goals.
@@ -74,7 +74,7 @@ step by step:
 
 5. **Samplers**: With the inference problem defined, we can now use a sampling algorithm to explore the parameter
    space and estimate the posterior distribution of the model parameters. Triceratops integrates with several
-   third-party sampling libraries, including :mod:`emcee`, :mod:`dynesty`, and :mod:`bilby`. Each of these
+   third-party sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``. Each of these
    samplers has its own strengths and weaknesses, and Triceratops provides a unified interface for using them through the
    :class:`~inference.sampling.base.Sampler` class and its subclasses.
 
@@ -725,4 +725,4 @@ Samplers
     For more information about sampler development, implementation, and integration, see :ref:`samplers_dev`.
 
 What is a sampler: a way to explore the parameter space and find the minimum of the posterior distribution.
-Triceratops provides interfaces to several popular sampling libraries, including :mod:`emcee`, :mod:`dynesty`, and :mod:`bilby`.
+Triceratops provides interfaces to several popular sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``.

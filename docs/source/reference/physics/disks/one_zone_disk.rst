@@ -173,7 +173,7 @@ solves.
               - Entropy gradient parameter (dimensionless, :math:`>0`).  Controls
                 the advective fraction :math:`q_{\rm adv}/q_{\rm visc} \propto
                 \xi\,\alpha\,(H/R)^2`.  Setting :math:`\xi \to 0` recovers
-                :class:`igP_esDisk`.
+                :class:`~triceratops.dynamics.accretion.one_zone.core.igP_esDisk`.
               - ``0.5``
 
         .. code-block:: python

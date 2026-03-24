@@ -392,7 +392,8 @@ factor is
 .. note::
 
     These quantities are implemented in
-    :mod:`radiation.synchrotron.frequencies`.
+    :mod:`radiation.synchrotron.cooling` via
+    :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 Inverse Compton Cooling
 ^^^^^^^^^^^^^^^^^^^^^^^

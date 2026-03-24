@@ -9,7 +9,7 @@ parameters / closures which encapsulate our ignorance of the detailed physics at
 critical to the modeling of synchrotron emission, as they directly influence the resulting spectra and light curves.
 
 In this document, we'll describe the available microphysical closures implemented in Triceratops, how to use them,
-and provide references for further reading on the subject. The :mod:`radiation.synchrotron.microphysics` module is
+and provide references for further reading on the subject. The :mod:`triceratops.radiation.synchrotron.microphysics` module is
 responsible for two core aspects of synchrotron microphysics:
 
 1. Operations regarding electron distributions, including computing moments of the distributions
@@ -73,7 +73,7 @@ A detailed discussion of the physical origin of this distribution can be found i
 
 .. rubric:: API Reference
 
-*current module*: :mod:`radiation.synchrotron.microphysics`
+*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
 
 .. tab-set::
 
@@ -216,7 +216,7 @@ set of utilities for computing these moments directly.
 
 .. rubric:: API Reference
 
-*current module*: :mod:`radiation.synchrotron.microphysics`
+*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
 
 .. tab-set::
 

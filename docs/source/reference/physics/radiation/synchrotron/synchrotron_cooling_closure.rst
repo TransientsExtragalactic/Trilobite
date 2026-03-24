@@ -102,7 +102,7 @@ important, the cooling Lorentz factor is modified and the present
 closure relation does not apply.
 
 Throughout this section we adopt the standard synchrotron normalization
-conventions defined in :ref:`_synch_sed_theory`.
+conventions defined in :ref:`synch_sed_theory`.
 
 Definitions
 -----------

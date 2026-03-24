@@ -113,6 +113,7 @@ intersphinx_mapping = {
     "unyt": ("https://unyt.readthedocs.io/en/latest/", None),
     "h5py": ("https://docs.h5py.org/en/latest/", None),
     "scipy": ("https://docs.scipy.org/doc/scipy/", None),
+    "emcee": ("https://emcee.readthedocs.io/en/stable/", None),
 }
 
 napoleon_use_param = True
