@@ -1934,10 +1934,10 @@ runtime parameters, and solver metadata.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">GasPressureElectronScatteringDisk</span><span class="p">,</span>
+    <span class="n">gP_esDisk</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">disk</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<span class="n">disk</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
     <span class="n">initial_conditions</span><span class="o">=</span><span class="p">{</span>

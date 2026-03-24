@@ -64,7 +64,7 @@
     <link rel="icon" href="../../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html" />
+    <link rel="next" title="triceratops.dynamics.accretion.one_zone.gP_esDisk" href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html" />
     <link rel="prev" title="Accretion Disks" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -533,8 +533,12 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">One-Zone Accretion Disk Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
@@ -685,10 +689,10 @@ underlying physics see <a class="reference internal" href="one_zone_disk_theory.
 and read the result.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">GasPressureElectronScatteringDisk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">gP_esDisk</span>
 
 <span class="c1"># 1. Create the disk model.</span>
-<span class="n">disk</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<span class="n">disk</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
 
 <span class="c1"># 2. Solve the evolution.</span>
 <span class="n">result</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
@@ -737,23 +741,47 @@ automatically by the solver.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html#triceratops.dynamics.accretion.one_zone.gP_esDisk" title="triceratops.dynamics.accretion.one_zone.core.gP_esDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">gP_esDisk</span></code></a></p></td>
 <td><p>Gas only</p></td>
 <td><p>Electron scattering</p></td>
 <td><p>Analytic (<span class="math notranslate nohighlight">\(T_c \propto Q_0^{1/3}\)</span>)</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.FullPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureElectronScatteringDisk</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html#triceratops.dynamics.accretion.one_zone.igP_esDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_esDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_esDisk</span></code></a></p></td>
 <td><p>Gas + Radiation</p></td>
+<td><p>Electron scattering</p></td>
+<td><p>Implicit (Brent’s method)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html#triceratops.dynamics.accretion.one_zone.gP_es_fbDisk" title="triceratops.dynamics.accretion.one_zone.core.gP_es_fbDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">gP_es_fbDisk</span></code></a></p></td>
+<td><p>Gas only + fallback supply</p></td>
+<td><p>Electron scattering</p></td>
+<td><p>Analytic (<span class="math notranslate nohighlight">\(T_c \propto Q_0^{1/3}\)</span>)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_fbDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_es_fbDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_es_fbDisk</span></code></a></p></td>
+<td><p>Gas + Radiation + fallback supply</p></td>
+<td><p>Electron scattering</p></td>
+<td><p>Implicit (Brent’s method)</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_advDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_es_advDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_es_advDisk</span></code></a></p></td>
+<td><p>Gas + Radiation + advection</p></td>
+<td><p>Electron scattering</p></td>
+<td><p>Implicit (Brent’s method)</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_es_adv_fbDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_es_adv_fbDisk</span></code></a></p></td>
+<td><p>Gas + Radiation + advection + fallback</p></td>
 <td><p>Electron scattering</p></td>
 <td><p>Implicit (Brent’s method)</p></td>
 </tr>
 </tbody>
 </table>
 </div>
-<p>Both models are importable from the package top-level:</p>
+<p>All models are importable from the package top-level:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">GasPressureElectronScatteringDisk</span><span class="p">,</span>
-    <span class="n">FullPressureElectronScatteringDisk</span><span class="p">,</span>
+    <span class="n">gP_esDisk</span><span class="p">,</span>
+    <span class="n">igP_esDisk</span><span class="p">,</span>
+    <span class="n">gP_es_fbDisk</span><span class="p">,</span>
+    <span class="n">igP_es_fbDisk</span><span class="p">,</span>
+    <span class="n">igP_es_advDisk</span><span class="p">,</span>
+    <span class="n">igP_es_adv_fbDisk</span><span class="p">,</span>
 <span class="p">)</span>
 </pre></div>
 </div>
@@ -767,7 +795,7 @@ solves.</p>
 <div class="sd-tab-set docutils">
 <input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-0">
-GasPressureElectronScatteringDisk</label><div class="sd-tab-content docutils">
+gP_esDisk</label><div class="sd-tab-content docutils">
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -785,13 +813,13 @@ plasma or <span class="math notranslate nohighlight">\(\approx 0.5\)</span> for 
 </tbody>
 </table>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
 <input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
 <label class="sd-tab-label" for="sd-tab-item-1">
-FullPressureElectronScatteringDisk</label><div class="sd-tab-content docutils">
+igP_esDisk</label><div class="sd-tab-content docutils">
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Parameter</p></th>
@@ -807,7 +835,64 @@ FullPressureElectronScatteringDisk</label><div class="sd-tab-content docutils">
 </tbody>
 </table>
 </div>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">FullPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">igP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-2" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+igP_es_advDisk</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p></td>
+<td><p>Mean molecular weight <span class="math notranslate nohighlight">\(\mu\)</span> (dimensionless).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xi</span></code></p></td>
+<td><p>Entropy gradient parameter (dimensionless, <span class="math notranslate nohighlight">\(&gt;0\)</span>).  Controls
+the advective fraction <span class="math notranslate nohighlight">\(q_{\rm adv}/q_{\rm visc} \propto
+\xi\,\alpha\,(H/R)^2\)</span>.  Setting <span class="math notranslate nohighlight">\(\xi \to 0\)</span> recovers
+<code class="xref py py-class docutils literal notranslate"><span class="pre">igP_esDisk</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">igP_es_advDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+igP_es_adv_fbDisk</label><div class="sd-tab-content docutils">
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Parameter</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">mu</span></code></p></td>
+<td><p>Mean molecular weight <span class="math notranslate nohighlight">\(\mu\)</span> (dimensionless).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.6</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">xi</span></code></p></td>
+<td><p>Entropy gradient parameter (dimensionless, <span class="math notranslate nohighlight">\(&gt;0\)</span>).</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">0.5</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Requires <code class="docutils literal notranslate"><span class="pre">M_fb_0</span></code> and <code class="docutils literal notranslate"><span class="pre">t_fb</span></code> as runtime parameters in addition to the
+standard <code class="docutils literal notranslate"><span class="pre">M_BH</span></code>, <code class="docutils literal notranslate"><span class="pre">R_in</span></code>, <code class="docutils literal notranslate"><span class="pre">alpha</span></code>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">disk</span> <span class="o">=</span> <span class="n">igP_es_adv_fbDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">,</span> <span class="n">xi</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
 </pre></div>
 </div>
 </div>
@@ -990,10 +1075,12 @@ property, which returns a dictionary of unit-bearing
 </section>
 <section id="field-reference">
 <h3><a class="toc-backref" href="#id9" role="doc-backlink">Field Reference</a><a class="headerlink" href="#field-reference" title="Link to this heading">#</a></h3>
-<p>The following fields are available in <code class="docutils literal notranslate"><span class="pre">result.data</span></code> for both
-<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></a>
-and
-<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.core.FullPressureElectronScatteringDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureElectronScatteringDisk</span></code></a>:</p>
+<p>The following fields are available in <code class="docutils literal notranslate"><span class="pre">result.data</span></code> for
+<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html#triceratops.dynamics.accretion.one_zone.gP_esDisk" title="triceratops.dynamics.accretion.one_zone.core.gP_esDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">gP_esDisk</span></code></a>,
+<a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html#triceratops.dynamics.accretion.one_zone.igP_esDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_esDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_esDisk</span></code></a>,
+and all fallback variants.  <a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_advDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_es_advDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_es_advDisk</span></code></a>
+and <a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk" title="triceratops.dynamics.accretion.one_zone.core.igP_es_adv_fbDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">igP_es_adv_fbDisk</span></code></a> additionally
+expose <code class="docutils literal notranslate"><span class="pre">Q_adv</span></code> (advective cooling rate, erg cm⁻² s⁻¹):</p>
 <div class="pst-scrollable-table-container"><table class="table">
 <thead>
 <tr class="row-odd"><th class="head"><p>Field name</p></th>
@@ -1329,9 +1416,9 @@ reconstructed:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">spec</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">to_spec_dict</span><span class="p">()</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">spec</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
-<span class="c1"># {&quot;target&quot;: &quot;...core:GasPressureElectronScatteringDisk&quot;, &quot;mu&quot;: 0.62}</span>
+<span class="c1"># {&quot;target&quot;: &quot;...core:gP_esDisk&quot;, &quot;mu&quot;: 0.62}</span>
 
-<span class="n">disk2</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="o">.</span><span class="n">from_spec_dict</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
+<span class="n">disk2</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="o">.</span><span class="n">from_spec_dict</span><span class="p">(</span><span class="n">spec</span><span class="p">)</span>
 </pre></div>
 </div>
 </section>
@@ -1343,11 +1430,23 @@ reconstructed:</p>
 <h3><a class="toc-backref" href="#id29" role="doc-backlink">Disk Models</a><a class="headerlink" href="#disk-models" title="Link to this heading">#</a></h3>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></a>([mu])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html#triceratops.dynamics.accretion.one_zone.gP_esDisk" title="triceratops.dynamics.accretion.one_zone.gP_esDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gP_esDisk</span></code></a>([mu])</p></td>
 <td><p>One-zone disk model dominated by gas pressure with electron-scattering opacity.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">FullPressureElectronScatteringDisk</span></code></a>([mu])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html#triceratops.dynamics.accretion.one_zone.igP_esDisk" title="triceratops.dynamics.accretion.one_zone.igP_esDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">igP_esDisk</span></code></a>([mu])</p></td>
 <td><p>One-zone disk model with combined gas and radiation pressure, and electron-scattering opacity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html#triceratops.dynamics.accretion.one_zone.gP_es_fbDisk" title="triceratops.dynamics.accretion.one_zone.gP_es_fbDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gP_es_fbDisk</span></code></a>([mu])</p></td>
+<td><p>Gas-pressure / electron-scattering disk with a continuous fallback supply.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_fbDisk" title="triceratops.dynamics.accretion.one_zone.igP_es_fbDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">igP_es_fbDisk</span></code></a>([mu])</p></td>
+<td><p>Full-pressure (gas + radiation) / electron-scattering disk with fallback supply.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_advDisk" title="triceratops.dynamics.accretion.one_zone.igP_es_advDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">igP_es_advDisk</span></code></a>([mu, xi])</p></td>
+<td><p>One-zone disk with gas + radiation pressure, electron-scattering opacity, and advective cooling.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html#triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk" title="triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">igP_es_adv_fbDisk</span></code></a>([mu, xi])</p></td>
+<td><p>One-zone disk with gas + radiation pressure, ES opacity, advective cooling, and a power-law fallback mass supply.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase" title="triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OneZoneAccretionDiskBase</span></code></a>(**context_parameters)</p></td>
 <td><p>Abstract base class for one-zone accretion disk models.</p></td>
@@ -1388,7 +1487,7 @@ adaptive timestep.</p></li>
 column index.</p></li>
 </ul>
 <p>The function signatures are declared in
-<code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.dynamics.accretion.one_zone._integrator</span></code> (<code class="docutils literal notranslate"><span class="pre">.pxd</span></code>); import
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.dynamics.accretion.one_zone.closure</span></code> (<code class="docutils literal notranslate"><span class="pre">.pxd</span></code>); import
 them with <code class="docutils literal notranslate"><span class="pre">cimport</span></code>.  The <code class="docutils literal notranslate"><span class="pre">ClosureResult</span></code> struct carries the standard set of
 thermodynamic outputs:</p>
 <div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">cdef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ClosureResult</span><span class="o">:</span>
@@ -1504,6 +1603,14 @@ tests for your new closure:</p>
     <span class="n">R_D_0</span> <span class="o">=</span> <span class="mf">3.0e13</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
     <span class="n">ALPHA</span> <span class="o">=</span> <span class="mf">0.1</span>
 
+    <span class="c1"># Override this if your closure packs more than the 4 base parameters.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_pack_cython_parameters_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">disk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disk</span><span class="p">()</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">_pack_cython_parameters</span><span class="p">(</span>
+            <span class="n">disk</span><span class="o">.</span><span class="n">process_runtime_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_runtime_parameters</span><span class="p">())</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="n">params</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="mi">5</span><span class="p">,)</span>  <span class="c1"># adjust to match your parameter count</span>
+
     <span class="c1"># Add any closure-specific tests below ...</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_my_specific_physics</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="o">...</span>
@@ -1538,11 +1645,11 @@ tests for your new closure:</p>
       </div>
     </a>
     <a class="right-next"
-       href="generated/triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html"
+       href="generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk</p>
+        <p class="prev-next-title">triceratops.dynamics.accretion.one_zone.gP_esDisk</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

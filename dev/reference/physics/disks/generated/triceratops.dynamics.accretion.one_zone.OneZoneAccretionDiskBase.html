@@ -65,7 +65,7 @@
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
     <link rel="next" title="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult" href="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html" />
-    <link rel="prev" title="triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk" href="triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html" />
+    <link rel="prev" title="triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk" href="triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
@@ -533,8 +533,12 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="../one_zone_disk.html">One-Zone Accretion Disk Models</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
 <li class="toctree-l3 current active"><a class="current reference internal" href="#">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
@@ -649,10 +653,10 @@ transformed before storage, and an optional default.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">GasPressureElectronScatteringDisk</span><span class="p">,</span>
+    <span class="n">gP_esDisk</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">disk</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<span class="n">disk</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
     <span class="n">initial_conditions</span><span class="o">=</span><span class="p">{</span>
@@ -676,7 +680,7 @@ transformed before storage, and an optional default.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk" title="triceratops.dynamics.accretion.one_zone.GasPressureElectronScatteringDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></a></dt><dd><p>The canonical concrete implementation of this base class.</p>
+<dt><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.gP_esDisk.html#triceratops.dynamics.accretion.one_zone.gP_esDisk" title="triceratops.dynamics.accretion.one_zone.gP_esDisk"><code class="xref py py-obj docutils literal notranslate"><span class="pre">gP_esDisk</span></code></a></dt><dd><p>The canonical concrete implementation of this base class.</p>
 </dd>
 <dt><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html#triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult" title="triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a></dt><dd><p>The result container returned by <code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code>.</p>
 </dd>
@@ -774,12 +778,12 @@ parameters.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk.html"
+       href="triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">triceratops.dynamics.accretion.one_zone.FullPressureElectronScatteringDisk</p>
+        <p class="prev-next-title">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</p>
       </div>
     </a>
     <a class="right-next"

@@ -1934,10 +1934,10 @@ transformed before storage, and an optional default.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
-    <span class="n">GasPressureElectronScatteringDisk</span><span class="p">,</span>
+    <span class="n">gP_esDisk</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">disk</span> <span class="o">=</span> <span class="n">GasPressureElectronScatteringDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
+<span class="n">disk</span> <span class="o">=</span> <span class="n">gP_esDisk</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="mf">0.62</span><span class="p">)</span>
 
 <span class="n">result</span> <span class="o">=</span> <span class="n">disk</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span>
     <span class="n">initial_conditions</span><span class="o">=</span><span class="p">{</span>
@@ -1961,7 +1961,7 @@ transformed before storage, and an optional default.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">GasPressureElectronScatteringDisk</span></code></dt><dd><p>The canonical concrete implementation of this base class.</p>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">gP_esDisk</span></code></dt><dd><p>The canonical concrete implementation of this base class.</p>
 </dd>
 <dt><a class="reference internal" href="dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#dynamics.accretion.one_zone.base.OneZoneAccretionResult" title="dynamics.accretion.one_zone.base.OneZoneAccretionResult"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a></dt><dd><p>The result container returned by <a class="reference internal" href="dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a>.</p>
 </dd>

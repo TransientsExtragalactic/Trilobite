@@ -545,9 +545,9 @@ integration. This makes them accurate but slow for population-integral loops.</p
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 18% |█▊        | 🦖 184/1000 [00:00&lt;00:00, 1832.81it/s]
- 45% |████▌     | 🦖 450/1000 [00:00&lt;00:00, 2317.29it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3737.18it/s]
+ 20% |█▉        | 🦖 195/1000 [00:00&lt;00:00, 1942.32it/s]
+ 48% |████▊     | 🦖 485/1000 [00:00&lt;00:00, 2503.86it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3898.05it/s]
 </pre></div>
 </div>
 </section>
@@ -644,27 +644,27 @@ repeatedly (e.g. in an MCMC loop). The speedup factor is typically
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/2000 [00:00&lt;?, ?it/s]
-  7% |▋         | 🦖 141/2000 [00:00&lt;00:01, 1407.30it/s]
- 15% |█▍        | 🦖 297/2000 [00:00&lt;00:01, 1494.41it/s]
- 24% |██▎       | 🦖 473/2000 [00:00&lt;00:00, 1613.30it/s]
- 34% |███▍      | 🦖 679/2000 [00:00&lt;00:00, 1788.56it/s]
- 47% |████▋     | 🦖 941/2000 [00:00&lt;00:00, 2086.42it/s]
- 71% |███████   | 🦖 1416/2000 [00:00&lt;00:00, 2989.25it/s]
-100% |██████████| 🦖 2000/2000 [00:00&lt;00:00, 3082.45it/s]
+  8% |▊         | 🦖 150/2000 [00:00&lt;00:01, 1498.02it/s]
+ 16% |█▌        | 🦖 316/2000 [00:00&lt;00:01, 1591.14it/s]
+ 25% |██▌       | 🦖 506/2000 [00:00&lt;00:00, 1728.95it/s]
+ 36% |███▋      | 🦖 729/2000 [00:00&lt;00:00, 1924.86it/s]
+ 51% |█████▏    | 🦖 1025/2000 [00:00&lt;00:00, 2297.15it/s]
+ 81% |████████  | 🦖 1614/2000 [00:00&lt;00:00, 3516.93it/s]
+100% |██████████| 🦖 2000/2000 [00:00&lt;00:00, 3225.42it/s]
 
   0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 18% |█▊        | 🦖 184/1000 [00:00&lt;00:00, 1835.67it/s]
- 45% |████▌     | 🦖 451/1000 [00:00&lt;00:00, 2322.59it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3747.74it/s]
+ 20% |█▉        | 🦖 195/1000 [00:00&lt;00:00, 1944.87it/s]
+ 49% |████▉     | 🦖 490/1000 [00:00&lt;00:00, 2535.44it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3926.89it/s]
 
   0% |          | 🦖 0/500 [00:00&lt;?, ?it/s]
- 37% |███▋      | 🦖 186/500 [00:00&lt;00:00, 1851.66it/s]
- 91% |█████████▏| 🦖 457/500 [00:00&lt;00:00, 2355.07it/s]
-100% |██████████| 🦖 500/500 [00:00&lt;00:00, 2367.88it/s]
-Interpolator setup time : 649.7 ms
-Exact kernel   (500 calls): 211.5 ms
-Interp kernel  (500 calls): 0.2 ms
-Speedup factor : 1336.3×
+ 39% |███▉      | 🦖 194/500 [00:00&lt;00:00, 1936.53it/s]
+ 97% |█████████▋| 🦖 486/500 [00:00&lt;00:00, 2510.95it/s]
+100% |██████████| 🦖 500/500 [00:00&lt;00:00, 2456.79it/s]
+Interpolator setup time : 620.7 ms
+Exact kernel   (500 calls): 203.8 ms
+Interp kernel  (500 calls): 0.1 ms
+Speedup factor : 1674.7×
 </pre></div>
 </div>
 </section>
@@ -710,7 +710,7 @@ for population integrals. The setup cost (building the interpolation table)
 is paid once, after which each evaluation is essentially free.</p>
 <p>For population-level spectra, see the companion example
 <span class="xref std std-ref">sphx_glr_galleries_examples_e_physics_synchro_plot_PL_sed.py</span>.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.848 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.537 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-synchrotron-kernels-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/bb1c71ab3dee846934b8f8013759d6b6/plot_synchrotron_kernels.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_synchrotron_kernels.ipynb</span></code></a></p>

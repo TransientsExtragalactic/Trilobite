@@ -744,10 +744,10 @@
 <span class="sd">        from astropy import constants as const</span>
 <span class="sd">        from astropy import units as u</span>
 <span class="sd">        from triceratops.dynamics.accretion.one_zone import (</span>
-<span class="sd">            GasPressureElectronScatteringDisk,</span>
+<span class="sd">            gP_esDisk,</span>
 <span class="sd">        )</span>
 
-<span class="sd">        disk = GasPressureElectronScatteringDisk(mu=0.62)</span>
+<span class="sd">        disk = gP_esDisk(mu=0.62)</span>
 
 <span class="sd">        result = disk.solve(</span>
 <span class="sd">            initial_conditions={</span>
@@ -769,7 +769,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    GasPressureElectronScatteringDisk :</span>
+<span class="sd">    gP_esDisk :</span>
 <span class="sd">        The canonical concrete implementation of this base class.</span>
 <span class="sd">    OneZoneAccretionResult :</span>
 <span class="sd">        The result container returned by :meth:`solve`.</span>
@@ -912,9 +912,9 @@
 
 <span class="sd">        .. code-block:: python</span>
 
-<span class="sd">            $ disk = GasPressureElectronScatteringDisk(mu=0.62)</span>
+<span class="sd">            $ disk = gP_esDisk(mu=0.62)</span>
 <span class="sd">            $ repr(disk)</span>
-<span class="sd">            &#39;GasPressureElectronScatteringDisk(mu=0.62)&#39;</span>
+<span class="sd">            &#39;gP_esDisk(mu=0.62)&#39;</span>
 
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">ctx</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2">=</span><span class="si">{</span><span class="n">v</span><span class="si">!r}</span><span class="s2">&quot;</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
@@ -944,7 +944,7 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            $ print(disk)</span>
-<span class="sd">            GasPressureElectronScatteringDisk</span>
+<span class="sd">            gP_esDisk</span>
 <span class="sd">              Context parameters (1):</span>
 <span class="sd">                mu = 0.62  [dimensionless]  -- mean molecular weight</span>
 <span class="sd">              Runtime parameters (3):</span>
@@ -1185,27 +1185,52 @@
 <span class="sd">        .. code-block:: python</span>
 
 <span class="sd">            def _build_cython_closure(self):</span>
-<span class="sd">                from ._ideal_gas_closure import (</span>
-<span class="sd">                    GasPressureElectronScatteringClosure,</span>
+<span class="sd">                from .models._gP_es import (</span>
+<span class="sd">                    gP_esClosure,</span>
 <span class="sd">                )</span>
 
-<span class="sd">                return GasPressureElectronScatteringClosure()</span>
+<span class="sd">                return gP_esClosure()</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        ~triceratops.dynamics.accretion.one_zone._integrator.OneZoneClosure</span>
+<span class="sd">        ~triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure</span>
 <span class="sd">            A Cython extension type with all three function pointers installed</span>
 <span class="sd">            (``is_ready()`` returns ``True``).</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pack_base_cython_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pack the standard 4-element base parameter array ``[MBH, R_in, alpha, mu]``.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        run_params : dict[str, float]</span>
+<span class="sd">            Processed per-solve parameters as returned by</span>
+<span class="sd">            :meth:`process_runtime_parameters`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.ndarray, shape (4,)</span>
+<span class="sd">            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous float64 array.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_M_BH&quot;</span><span class="p">]),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_R_in&quot;</span><span class="p">]),</span>
+                <span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+            <span class="p">],</span>
+            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
+        <span class="p">)</span>
 
     <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_pack_cython_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parameter array consumed by ``run_one_zone_model``.</span>
 
 <span class="sd">        The Cython integrator expects a contiguous float64 array of shape</span>
-<span class="sd">        ``(4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu]``</span>
-<span class="sd">        in linear CGS.</span>
+<span class="sd">        ``(&gt;=4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu, ...]``</span>
+<span class="sd">        in linear CGS.  Elements beyond index 3 are closure-specific extra</span>
+<span class="sd">        parameters accessible via ``params.extra``.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
@@ -1216,17 +1241,38 @@
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray, shape (4,)</span>
-<span class="sd">            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous</span>
+<span class="sd">        np.ndarray, shape (&gt;=4,)</span>
+<span class="sd">            ``[MBH (g), R_in (cm), alpha, mu, ...]`` as a C-contiguous</span>
 <span class="sd">            float64 array.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_derived_result_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Python-side derived result fields.</span>
+
+<span class="sd">        Called by :attr:`OneZoneAccretionResult.data` for every</span>
+<span class="sd">        :attr:`~OneZoneAccretionDiskBase.CYTHON_FIELD_MAP` entry whose value</span>
+<span class="sd">        is ``None``.  Override in subclasses that declare such entries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        result_array : np.ndarray, shape (n_result_fields, n_steps)</span>
+<span class="sd">            Raw Cython result array from :func:`~._integrator.run_one_zone_model`.</span>
+<span class="sd">        run_params : dict[str, float]</span>
+<span class="sd">            Processed per-solve parameters as returned by</span>
+<span class="sd">            :meth:`process_runtime_parameters`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict[str, np.ndarray]</span>
+<span class="sd">            Maps each ``None``-mapped field name to its 1-D NumPy array.</span>
+<span class="sd">            The base implementation returns an empty dict.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="p">{}</span>
+
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Abstract Serialization Hooks                         #</span>
     <span class="c1"># ==================================================== #</span>
-
-    <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_spec_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable dict that fully describes this model instance.</span>
@@ -1253,10 +1299,12 @@
 <span class="sd">        from_spec_dict :</span>
 <span class="sd">            The class method that reconstructs the model from this dict.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;triceratops.dynamics.accretion.one_zone.core:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">,</span>
+        <span class="p">}</span>
 
     <span class="nd">@classmethod</span>
-    <span class="nd">@abstractmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_spec_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">_SpecDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OneZoneAccretionDiskBase&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Construct a model instance from a spec dict.</span>
@@ -1284,7 +1332,8 @@
 <span class="sd">        to_spec_dict :</span>
 <span class="sd">            The instance method that produces the dict this method reads.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
+        <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;target&quot;</span><span class="p">}</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Public Solver Interface                              #</span>
@@ -1338,10 +1387,10 @@
 <span class="sd">            from astropy import constants as const</span>
 <span class="sd">            from astropy import units as u</span>
 <span class="sd">            from triceratops.dynamics.accretion.one_zone import (</span>
-<span class="sd">                GasPressureElectronScatteringDisk,</span>
+<span class="sd">                gP_esDisk,</span>
 <span class="sd">            )</span>
 
-<span class="sd">            disk = GasPressureElectronScatteringDisk(mu=0.62)</span>
+<span class="sd">            disk = gP_esDisk(mu=0.62)</span>
 
 <span class="sd">            result = disk.solve(</span>
 <span class="sd">                initial_conditions={</span>
@@ -1366,7 +1415,7 @@
 <span class="sd">        OneZoneAccretionResult :</span>
 <span class="sd">            The object returned by this method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">._integrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_one_zone_model</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.integrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_one_zone_model</span>
 
         <span class="c1"># --- Process time span --- #</span>
         <span class="n">t_start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t_span</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;s&quot;</span><span class="p">))</span>
@@ -1975,6 +2024,14 @@
                     <span class="n">arr</span> <span class="o">=</span> <span class="o">-</span><span class="n">arr</span>  <span class="c1"># dM_dt is stored negative in the Cython integrator</span>
                 <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">arr</span> <span class="o">*</span> <span class="n">unit</span>
 
+        <span class="c1"># Python-side derived fields (CYTHON_FIELD_MAP value is None)</span>
+        <span class="n">derived</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">_compute_derived_result_fields</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">result_array</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_params</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">spec</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">RESULT_FIELDS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">CYTHON_FIELD_MAP</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">)</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">derived</span><span class="p">:</span>
+                <span class="n">units_str</span> <span class="o">=</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span>
+                <span class="n">unit</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="n">units_str</span><span class="p">)</span> <span class="k">if</span> <span class="n">units_str</span> <span class="k">else</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span>
+                <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">derived</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">unit</span>
+
         <span class="c1"># User-added fields</span>
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">:</span>
             <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">)</span>
@@ -2046,7 +2103,7 @@
 <span class="sd">            print(result)</span>
 
 <span class="sd">            OneZoneAccretionResult</span>
-<span class="sd">              Model    : GasPressureElectronScatteringDisk(mu=0.62)</span>
+<span class="sd">              Model    : gP_esDisk(mu=0.62)</span>
 <span class="sd">              N steps  : 20</span>
 <span class="sd">              t range  : [1.000e+06, 5.000e+08] s</span>
 <span class="sd">              M_D(0)   : 0.100 solMass</span>
