@@ -7,6 +7,8 @@ shared across multiple Triceratops modules.  It is organised by topic:
 - :mod:`.constants` — CGS physical constants and their logs.
 - :mod:`.eos` — Equation of state classes (:class:`~.eos.IdealGasEOS`,
   :class:`~.eos.RadiativeIdealGas`) and standalone sound-speed functions.
+- :mod:`.general_relativity` — Schwarzschild/Kerr radii, ISCO, spin, and
+  orbital precession.
 - :mod:`.composition` — Mean molecular weight helpers.
 - :mod:`.special_relativity` — Lorentz / Doppler transformation utilities.
 - :mod:`.cosmology` — Redshift, distance, and look-back time helpers.
@@ -36,6 +38,15 @@ from .eos import (
     radiative_ideal_gas_disk_sound_speed,
     radiative_ideal_gas_sound_speed,
 )
+from .general_relativity import (
+    compute_gravitational_radius,
+    compute_ISCO,
+    compute_kerr_angular_momentum,
+    compute_kerr_horizon_radius,
+    compute_kerr_spin,
+    compute_precession_per_orbit,
+    compute_schwarzschild_radius,
+)
 from .special_relativity import (
     compute_beta_from_gamma,
     compute_doppler_factor,
@@ -57,6 +68,14 @@ __all__ = [
     "ideal_gas_sound_speed",
     "radiative_ideal_gas_sound_speed",
     "radiative_ideal_gas_disk_sound_speed",
+    # General relativity
+    "compute_gravitational_radius",
+    "compute_schwarzschild_radius",
+    "compute_ISCO",
+    "compute_kerr_horizon_radius",
+    "compute_kerr_spin",
+    "compute_kerr_angular_momentum",
+    "compute_precession_per_orbit",
     # Composition
     "compute_mean_molecular_weight",
     "compute_mean_molecular_weight_per_electron",
