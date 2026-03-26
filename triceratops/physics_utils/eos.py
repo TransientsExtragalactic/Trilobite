@@ -1,17 +1,59 @@
 r"""
 Equation of state (EOS) utilities for Triceratops models.
 
-This module provides a class hierarchy for computing thermodynamic quantities
-(pressure, sound speed) under several common astrophysical equations of state.
-All classes follow the same two-level API: private ``_compute_log_*`` methods
-operate directly on log-space CGS floats for numerical efficiency, while public
-``compute_*`` methods accept :class:`~astropy.units.Quantity` inputs and return
+This module provides two APIs for computing thermodynamic quantities
+(pressure, sound speed) under common astrophysical equations of state.
+
+Module-level functions
+----------------------
+A lightweight functional API that operates without instantiating a class.
+Private ``_log_*`` functions take bare log-CGS floats and return ``ln(quantity)``;
+public wrappers accept :class:`~astropy.units.Quantity` and return
 unit-bearing outputs.
+
++------------------------------------------+--------------------------------------------+
+| Private (log-CGS)                        | Public (:class:`~astropy.units.Quantity`)  |
++==========================================+============================================+
+| :func:`_log_ideal_gas_disk_sound_speed`  | :func:`ideal_gas_sound_speed`              |
++------------------------------------------+--------------------------------------------+
+| :func:`_log_radiative_ideal_gas_         | :func:`radiative_ideal_gas_sound_speed`    |
+| sound_speed`                             |                                            |
++------------------------------------------+--------------------------------------------+
+| :func:`_log_radiative_ideal_gas_disk_    | :func:`radiative_ideal_gas_disk_           |
+| sound_speed`                             | sound_speed`                               |
++------------------------------------------+--------------------------------------------+
+
+Class hierarchy
+---------------
+For use in model objects that need to store EOS parameters:
+
+.. code-block:: text
+
+    EquationOfState           (abstract)
+    ├── IdealGasEOS           P_gas = ρ k_B T / (μ m_p)
+    └── RadiativeIdealGas     P_tot = P_gas + a_rad T⁴ / 3
+
+Each concrete class exposes ``_compute_log_*`` methods (log-CGS, no unit
+overhead) and ``compute_*`` wrappers (:class:`~astropy.units.Quantity`).
+Both delegate to the module-level private functions above.
+
+Notes
+-----
+*Isothermal vs. adiabatic*: disk vertical-structure calculations use the
+**isothermal** sound speed :math:`c_s = \sqrt{k_B T / (\mu m_p)}`, which
+matches the Cython EOS primitives in
+:mod:`~triceratops.dynamics.accretion.one_zone.physics._eos`.  The
+:meth:`~RadiativeIdealGas.compute_sound_speed` method uses the
+**effective adiabatic** sound speed derived from :math:`\gamma_{\rm eff}`,
+which is appropriate for general thermodynamic calculations where the
+density is known directly.
 
 See Also
 --------
 :mod:`.composition` : Mean molecular weight helpers used to set ``mu``.
 :mod:`.constants` : CGS constants consumed internally.
+:mod:`~triceratops.dynamics.accretion.one_zone.physics._eos` : Cython EOS
+    primitives used in the hot-loop integrator.
 """
 
 from abc import ABC, abstractmethod
@@ -21,15 +63,331 @@ import numpy as np
 from astropy import units as u
 
 from ..utils.misc_utils import ensure_in_units
-from .constants import _log_a_rad_cgs, _log_c_cgs, _log_k_B_cgs, _log_m_p_cgs
+from .constants import _log_a_rad_cgs, _log_k_B_cgs, _log_m_p_cgs
 
 if TYPE_CHECKING:
     from .._typing import _ArrayLike, _UnitBearingArrayLike
 
 
+# ================================================================= #
+# Private log-space helpers                                         #
+# ================================================================= #
+
+
+def _log_ideal_gas_disk_sound_speed(
+    log_T: "_ArrayLike",
+    mu: float,
+) -> "_ArrayLike":
+    r"""
+    Compute :math:`\ln c_s` for an isothermal ideal gas (disk use).
+
+    The isothermal sound speed (no adiabatic :math:`\gamma` factor) is
+    used for disk vertical-structure calculations:
+
+    .. math::
+
+        c_s = \sqrt{\frac{k_B\,T}{\mu\,m_p}}
+        \implies
+        \ln c_s = \tfrac{1}{2}\!\left(\ln k_B + \ln T - \ln\mu - \ln m_p\right)
+
+    This mirrors the Cython primitive ``compute_ideal_gas_cs`` in
+    :mod:`~triceratops.dynamics.accretion.one_zone.physics._eos`.
+
+    Parameters
+    ----------
+    log_T : float or ndarray
+        :math:`\ln T` [:math:`\ln(\text{K})`].
+    mu : float
+        Mean molecular weight (dimensionless).
+
+    Returns
+    -------
+    float or ndarray
+        :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
+    """
+    log_T = np.asarray(log_T)
+    result = 0.5 * (_log_k_B_cgs + log_T - np.log(mu) - _log_m_p_cgs)
+    return result if result.ndim > 0 else result.item()
+
+
+def _log_radiative_ideal_gas_sound_speed(
+    log_rho: "_ArrayLike",
+    log_T: "_ArrayLike",
+    mu: float,
+) -> "_ArrayLike":
+    r"""
+    Compute :math:`\ln c_s` for a gas + radiation EOS given density directly.
+
+    Uses the effective adiabatic index
+
+    .. math::
+
+        \gamma_{\rm eff} = \frac{P_{\rm gas} + 4\,P_{\rm rad}}
+                                {P_{\rm gas} + 3\,P_{\rm rad}}
+
+    so that
+
+    .. math::
+
+        c_s = \sqrt{\frac{\gamma_{\rm eff}\,P_{\rm tot}}{\rho}}
+        \implies
+        \ln c_s = \tfrac{1}{2}\!\left(\ln P_{\rm tot} - \ln\rho
+                  + \ln\gamma_{\rm eff}\right)
+
+    with :math:`P_{\rm tot}` computed via :func:`numpy.logaddexp` for
+    numerical stability.
+
+    Parameters
+    ----------
+    log_rho : float or ndarray
+        :math:`\ln\rho` [:math:`\ln(\text{g cm}^{-3})`].
+    log_T : float or ndarray
+        :math:`\ln T` [:math:`\ln(\text{K})`].
+    mu : float
+        Mean molecular weight (dimensionless).
+
+    Returns
+    -------
+    float or ndarray
+        :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
+    """
+    log_T, log_rho = np.asarray(log_T), np.asarray(log_rho)
+
+    log_P_gas = _log_k_B_cgs + log_T + log_rho - np.log(mu) - _log_m_p_cgs
+    log_P_rad = _log_a_rad_cgs - np.log(3.0) + 4.0 * log_T
+    log_P_tot = np.logaddexp(log_P_gas, log_P_rad)
+
+    P_gas = np.exp(log_P_gas)
+    P_rad = np.exp(log_P_rad)
+    gamma_eff = (P_gas + 4.0 * P_rad) / (P_gas + 3.0 * P_rad)
+
+    result = 0.5 * (log_P_tot - log_rho + np.log(gamma_eff))
+    return result if result.ndim > 0 else result.item()
+
+
+def _log_radiative_ideal_gas_disk_sound_speed(
+    log_T: "_ArrayLike",
+    mu: float,
+    log_Sigma: "_ArrayLike",
+    log_Omega: "_ArrayLike",
+) -> "_ArrayLike":
+    r"""
+    Compute :math:`\ln c_s` for a gas + radiation EOS in disk geometry.
+
+    Because the disk scale height :math:`H = c_s / \Omega` and the midplane
+    density :math:`\rho = \Sigma\,\Omega / (\sqrt{2\pi}\,c_s)`, the combined
+    EOS
+
+    .. math::
+
+        c_s^2 = \frac{k_B\,T}{\mu\,m_p} + \frac{a_{\rm rad}\,T^4}{3\,\rho}
+
+    reduces to a quadratic in :math:`c_s`:
+
+    .. math::
+
+        c_s^2 - A\,c_s - B = 0,
+        \quad
+        A = \frac{a_{\rm rad}\,T^4\,\sqrt{2\pi}}{3\,\Sigma\,\Omega},
+        \quad
+        B = \frac{k_B\,T}{\mu\,m_p}.
+
+    The positive physical root :math:`c_s = (A + \sqrt{A^2 + 4B}) / 2`
+    is returned.  With :math:`A \geq 0` and :math:`B > 0` there is no
+    catastrophic cancellation.
+
+    Parameters
+    ----------
+    log_T : float or ndarray
+        :math:`\ln T` [:math:`\ln(\text{K})`].
+    mu : float
+        Mean molecular weight (dimensionless).
+    log_Sigma : float or ndarray
+        :math:`\ln\Sigma` [:math:`\ln(\text{g cm}^{-2})`].
+    log_Omega : float or ndarray
+        :math:`\ln\Omega` [:math:`\ln(\text{s}^{-1})`].
+
+    Returns
+    -------
+    float or ndarray
+        :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
+    """
+    log_T = np.asarray(log_T)
+    log_Sigma = np.asarray(log_Sigma)
+    log_Omega = np.asarray(log_Omega)
+
+    log_A = _log_a_rad_cgs + 4.0 * log_T + 0.5 * np.log(2.0 * np.pi) - np.log(3.0) - log_Sigma - log_Omega
+    log_B = _log_k_B_cgs + log_T - np.log(mu) - _log_m_p_cgs
+
+    A = np.exp(log_A)
+    B = np.exp(log_B)
+    cs = 0.5 * (A + np.sqrt(A * A + 4.0 * B))
+
+    result = np.log(cs)
+    return result if result.ndim > 0 else result.item()
+
+
+# ================================================================= #
+# Public module-level functions                                     #
+# ================================================================= #
+
+
+def ideal_gas_sound_speed(T: u.Quantity, mu: float) -> u.Quantity:
+    r"""
+    Isothermal ideal-gas sound speed.
+
+    .. math::
+
+        c_s = \sqrt{\frac{k_B\,T}{\mu\,m_p}}
+
+    Parameters
+    ----------
+    T : `~astropy.units.Quantity`
+        Temperature.
+    mu : float
+        Mean molecular weight (dimensionless).
+
+    Returns
+    -------
+    `~astropy.units.Quantity`
+        Isothermal sound speed [:math:`\text{cm s}^{-1}`].
+
+    Examples
+    --------
+    .. code-block:: python
+
+        import astropy.units as u
+        from triceratops.physics_utils.eos import (
+            ideal_gas_sound_speed,
+        )
+
+        ideal_gas_sound_speed(1e7 * u.K, mu=0.62)
+    """
+    log_T = np.log(ensure_in_units(T, "K"))
+    return np.exp(_log_ideal_gas_disk_sound_speed(log_T, mu)) * u.cm / u.s
+
+
+def radiative_ideal_gas_sound_speed(
+    rho: u.Quantity,
+    T: u.Quantity,
+    mu: float,
+) -> u.Quantity:
+    r"""
+    Effective adiabatic sound speed for a gas + radiation EOS.
+
+    Uses the effective adiabatic index
+
+    .. math::
+
+        \gamma_{\rm eff} = \frac{P_{\rm gas} + 4\,P_{\rm rad}}
+                                {P_{\rm gas} + 3\,P_{\rm rad}},
+        \qquad
+        c_s = \sqrt{\frac{\gamma_{\rm eff}\,P_{\rm tot}}{\rho}}.
+
+    Parameters
+    ----------
+    rho : `~astropy.units.Quantity`
+        Mass density :math:`\rho`.
+    T : `~astropy.units.Quantity`
+        Temperature.
+    mu : float
+        Mean molecular weight (dimensionless).
+
+    Returns
+    -------
+    `~astropy.units.Quantity`
+        Adiabatic sound speed [:math:`\text{cm s}^{-1}`].
+
+    Examples
+    --------
+    .. code-block:: python
+
+        import astropy.units as u
+        from triceratops.physics_utils.eos import (
+            radiative_ideal_gas_sound_speed,
+        )
+
+        radiative_ideal_gas_sound_speed(
+            1e-3 * u.Unit("g/cm^3"), 1e7 * u.K, mu=0.62
+        )
+    """
+    log_rho = np.log(ensure_in_units(rho, "g/cm^3"))
+    log_T = np.log(ensure_in_units(T, "K"))
+    return np.exp(_log_radiative_ideal_gas_sound_speed(log_rho, log_T, mu)) * u.cm / u.s
+
+
+def radiative_ideal_gas_disk_sound_speed(
+    T: u.Quantity,
+    mu: float,
+    Sigma: u.Quantity,
+    Omega: u.Quantity,
+) -> u.Quantity:
+    r"""
+    Isothermal sound speed for a gas + radiation EOS in disk geometry.
+
+    Because the disk scale height :math:`H = c_s / \Omega` and the midplane
+    density :math:`\rho = \Sigma\,\Omega / (\sqrt{2\pi}\,c_s)`, the combined
+    EOS
+
+    .. math::
+
+        c_s^2 = \frac{k_B\,T}{\mu\,m_p} + \frac{a_{\rm rad}\,T^4}{3\,\rho}
+
+    reduces to a quadratic in :math:`c_s`:
+
+    .. math::
+
+        c_s^2 - A\,c_s - B = 0,
+        \qquad
+        A = \frac{a_{\rm rad}\,T^4\,\sqrt{2\pi}}{3\,\Sigma\,\Omega},
+        \quad
+        B = \frac{k_B\,T}{\mu\,m_p}.
+
+    The physically relevant positive root is returned.
+
+    Parameters
+    ----------
+    T : `~astropy.units.Quantity`
+        Midplane temperature.
+    mu : float
+        Mean molecular weight (dimensionless).
+    Sigma : `~astropy.units.Quantity`
+        Column / surface density.
+    Omega : `~astropy.units.Quantity`
+        Keplerian angular velocity.
+
+    Returns
+    -------
+    `~astropy.units.Quantity`
+        Isothermal sound speed [:math:`\text{cm s}^{-1}`].
+
+    Examples
+    --------
+    .. code-block:: python
+
+        import astropy.units as u
+        from triceratops.physics_utils.eos import (
+            radiative_ideal_gas_disk_sound_speed,
+        )
+
+        radiative_ideal_gas_disk_sound_speed(
+            1e7 * u.K,
+            0.62,
+            1e3 * u.Unit("g/cm^2"),
+            1e-3 / u.s,
+        )
+    """
+    log_T = np.log(ensure_in_units(T, "K"))
+    log_Sigma = np.log(ensure_in_units(Sigma, "g/cm^2"))
+    log_Omega = np.log(ensure_in_units(Omega, "1/s"))
+    return np.exp(_log_radiative_ideal_gas_disk_sound_speed(log_T, mu, log_Sigma, log_Omega)) * u.cm / u.s
+
+
 # ================================================================== #
 # Abstract Base                                                      #
 # ================================================================== #
+
+
 class EquationOfState(ABC):
     r"""
     Abstract base class for all equations of state.
@@ -54,9 +412,13 @@ class EquationOfState(ABC):
         _compute_log_*()   ← operates on bare log-CGS floats, no unit overhead
         compute_*()        ← accepts astropy Quantities, returns Quantities
 
+    Both levels delegate to the module-level private functions in this
+    module (e.g. :func:`_log_ideal_gas_disk_sound_speed`), so the
+    standalone functional API and the class API are always consistent.
+
     See Also
     --------
-    :class:`IdealGasEOS`, :class:`RadiationEOS`, :class:`IdealGasRadiationEOS`
+    :class:`IdealGasEOS`, :class:`RadiativeIdealGas`
     """
 
     def __init__(self, **params):
@@ -65,7 +427,7 @@ class EquationOfState(ABC):
 
         Parameters
         ----------
-        params: dict
+        **params : dict
             EOS-specific parameters (e.g. mean molecular weight ``mu``).
         """
         self.params = params
@@ -122,23 +484,26 @@ class EquationOfState(ABC):
 
 
 # ================================================================== #
-# Ideal Gas                                                           #
+# Ideal Gas                                                          #
 # ================================================================== #
 
 
 class IdealGasEOS(EquationOfState):
     r"""
-    Ideal (monatomic) gas equation of state.
+    Ideal gas equation of state.
 
-    The thermal pressure and adiabatic sound speed are
+    The thermal pressure and **isothermal** sound speed are
 
     .. math::
 
-        P_{\rm gas} = \frac{\rho k_B T}{\mu m_p},
+        P_{\rm gas} = \frac{\rho\,k_B\,T}{\mu\,m_p},
         \qquad
-        c_s = \sqrt{\frac{\gamma k_B T}{\mu m_p}},
+        c_s = \sqrt{\frac{k_B\,T}{\mu\,m_p}}.
 
-    with adiabatic index :math:`\gamma = 5/3` for a monatomic ideal gas.
+    The isothermal form (no :math:`\gamma` factor) is used throughout
+    because the disk vertical-structure equations assume an isothermal
+    atmosphere, consistent with the Cython EOS primitives in
+    :mod:`~triceratops.dynamics.accretion.one_zone.physics._eos`.
 
     Parameters
     ----------
@@ -154,19 +519,21 @@ class IdealGasEOS(EquationOfState):
 
     .. math::
 
-        \mu = \frac{\bar{m}}{m_p} \equiv \frac{\rho}{n_{\rm tot}\, m_p}.
+        \mu = \frac{\bar{m}}{m_p} \equiv \frac{\rho}{n_{\rm tot}\,m_p}.
 
     For a fully ionised hydrogen-helium plasma with mass fractions
     :math:`X = 0.70,\, Y = 0.28`, :math:`\mu \approx 0.62`.
 
     See Also
     --------
-    :func:`~.composition.compute_mean_molecular_weight` : helper to derive
-        ``mu`` from hydrogen/helium/metal mass fractions.
+    :func:`ideal_gas_sound_speed` : standalone functional equivalent.
+    :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from
+        hydrogen/helium/metal mass fractions.
 
     Examples
     --------
-    Compute the gas pressure at :math:`\rho = 10^{-3}` g/cm³, :math:`T = 10^7` K:
+    Compute the gas pressure at :math:`\rho = 10^{-3}` g cm⁻³,
+    :math:`T = 10^7` K:
 
     .. code-block:: python
 
@@ -177,7 +544,7 @@ class IdealGasEOS(EquationOfState):
             1e-3 * u.Unit("g/cm^3"), 1e7 * u.K
         )
 
-    Compute the adiabatic sound speed at :math:`T = 10^7` K:
+    Compute the isothermal sound speed at :math:`T = 10^7` K:
 
     .. code-block:: python
 
@@ -191,33 +558,12 @@ class IdealGasEOS(EquationOfState):
         Parameters
         ----------
         mu : float, optional
-            Mean molecular weight of the gas. This sets the conversion between
-            temperature and internal energy via the ideal gas law. The default
-            value of ``0.6`` is appropriate for a fully ionized plasma with
-            primordial composition.
-
+            Mean molecular weight of the gas (dimensionless).  Controls the
+            conversion between temperature and thermal energy via the ideal
+            gas law.  Default ``0.6`` is appropriate for a fully ionized
+            plasma with primordial composition.
         **kwargs
-            Additional keyword arguments passed to the base
-            :class:`EquationOfState` initializer. These may include parameters
-            such as the adiabatic index ``gamma`` or other model-specific
-            quantities.
-
-        Notes
-        -----
-        The mean molecular weight :math:`\mu` enters thermodynamic relations as
-
-        .. math::
-
-            P = \frac{\rho k_B T}{\mu m_p},
-
-        and therefore controls the relationship between pressure, temperature,
-        and internal energy in the gas.
-
-        For ionized astrophysical plasmas, typical values are:
-
-        - :math:`\mu \approx 0.6` for fully ionized gas (default)
-        - :math:`\mu \approx 1.3` for neutral gas
-
+            Additional keyword arguments passed to :class:`EquationOfState`.
         """
         super().__init__(mu=mu, **kwargs)
         self.mu = mu
@@ -226,18 +572,22 @@ class IdealGasEOS(EquationOfState):
     # Private (log-space CGS)                                        #
     # -------------------------------------------------------------- #
 
-    def _compute_log_pressure(self, log_density: "_ArrayLike", log_temperature: "_ArrayLike") -> "_ArrayLike":
+    def _compute_log_pressure(
+        self,
+        log_density: "_ArrayLike",
+        log_temperature: "_ArrayLike",
+    ) -> "_ArrayLike":
         r"""
         Compute :math:`\ln P_{\rm gas}` in CGS units.
 
         .. math::
 
-            \ln P = \ln k_B + \ln T + \ln \rho - \ln \mu - \ln m_p
+            \ln P_{\rm gas} = \ln k_B + \ln T + \ln\rho - \ln\mu - \ln m_p
 
         Parameters
         ----------
         log_density : float or ndarray
-            :math:`\ln \rho` [:math:`\ln(\text{g cm}^{-3})`].
+            :math:`\ln\rho` [:math:`\ln(\text{g cm}^{-3})`].
         log_temperature : float or ndarray
             :math:`\ln T` [:math:`\ln(\text{K})`].
 
@@ -246,21 +596,20 @@ class IdealGasEOS(EquationOfState):
         float or ndarray
             :math:`\ln P_{\rm gas}` [:math:`\ln(\text{erg cm}^{-3})`].
         """
-        log_temperature, log_density = np.asarray(log_temperature), np.asarray(log_density)
-
-        log_pressure = _log_k_B_cgs + log_temperature + log_density - np.log(self.mu) - _log_m_p_cgs
-
-        return log_pressure if log_pressure.ndim > 0 else log_pressure.item()
+        log_temperature = np.asarray(log_temperature)
+        log_density = np.asarray(log_density)
+        result = _log_k_B_cgs + log_temperature + log_density - np.log(self.mu) - _log_m_p_cgs
+        return result if result.ndim > 0 else result.item()
 
     def _compute_log_sound_speed(self, log_temperature: "_ArrayLike") -> "_ArrayLike":
         r"""
         Compute :math:`\ln c_s` in CGS units.
 
+        Delegates to :func:`_log_ideal_gas_disk_sound_speed`.
+
         .. math::
 
-            \ln c_s = \tfrac{1}{2}\left(
-                \ln\gamma + \ln k_B + \ln T - \ln\mu - \ln m_p
-            \right), \quad \gamma = \tfrac{5}{3}
+            \ln c_s = \tfrac{1}{2}\!\left(\ln k_B + \ln T - \ln\mu - \ln m_p\right)
 
         Parameters
         ----------
@@ -272,17 +621,17 @@ class IdealGasEOS(EquationOfState):
         float or ndarray
             :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
         """
-        log_temperature = np.asarray(log_temperature)
-
-        log_cs = 0.5 * (np.log(5.0 / 3.0) + _log_k_B_cgs + log_temperature - np.log(self.mu) - _log_m_p_cgs)
-
-        return log_cs if log_cs.ndim > 0 else log_cs.item()
+        return _log_ideal_gas_disk_sound_speed(log_temperature, self.mu)
 
     # -------------------------------------------------------------- #
-    # Public (unit-bearing)                                           #
+    # Public (unit-bearing)                                          #
     # -------------------------------------------------------------- #
 
-    def compute_pressure(self, density: u.Quantity, temperature: u.Quantity) -> u.Quantity:
+    def compute_pressure(
+        self,
+        density: u.Quantity,
+        temperature: u.Quantity,
+    ) -> u.Quantity:
         r"""
         Compute the ideal gas pressure.
 
@@ -314,7 +663,7 @@ class IdealGasEOS(EquationOfState):
 
     def compute_sound_speed(self, temperature: u.Quantity) -> u.Quantity:
         r"""
-        Compute the adiabatic sound speed.
+        Compute the isothermal sound speed.
 
         Parameters
         ----------
@@ -324,7 +673,7 @@ class IdealGasEOS(EquationOfState):
         Returns
         -------
         `~astropy.units.Quantity`
-            Adiabatic sound speed :math:`c_s` [:math:`\text{cm s}^{-1}`].
+            Isothermal sound speed :math:`c_s` [:math:`\text{cm s}^{-1}`].
 
         Examples
         --------
@@ -341,164 +690,11 @@ class IdealGasEOS(EquationOfState):
 
 
 # ================================================================== #
-# Radiation                                                           #
+# Combined Ideal Gas + Radiation                                     #
 # ================================================================== #
 
 
-class RadiationEOS(EquationOfState):
-    r"""
-    Pure radiation equation of state.
-
-    The radiation pressure and sound speed are
-
-    .. math::
-
-        P_{\rm rad} = \frac{a_{\rm rad}}{3} T^4,
-        \qquad
-        c_s = \frac{c}{\sqrt{3}},
-
-    where :math:`a_{\rm rad} = 4\sigma_{\rm SB}/c` is the radiation energy
-    density constant.
-
-    Notes
-    -----
-    This EOS describes a photon gas or a radiation-dominated fluid.
-    The sound speed :math:`c/\sqrt{3}` is the relativistic result for a
-    gas with adiabatic index :math:`\gamma = 4/3`.
-
-    See Also
-    --------
-    :class:`IdealGasRadiationEOS` : combined gas + radiation EOS.
-
-    Examples
-    --------
-    Compute the radiation pressure at :math:`T = 10^8` K:
-
-    .. code-block:: python
-
-        import astropy.units as u
-
-        RadiationEOS().compute_pressure(1e8 * u.K)
-
-    Radiation sound speed (independent of temperature):
-
-    .. code-block:: python
-
-        RadiationEOS().compute_sound_speed()
-    """
-
-    def __init__(self, **kwargs):
-        """
-        Initialize the radiation equation of state.
-
-        Parameters
-        ----------
-        **kwargs
-            Additional keyword arguments passed to the base
-            :class:`EquationOfState` initializer.
-        """
-        super().__init__(**kwargs)
-
-    # -------------------------------------------------------------- #
-    # Private (log-space CGS)                                        #
-    # -------------------------------------------------------------- #
-
-    def _compute_log_pressure(self, log_temperature: "_ArrayLike") -> "_ArrayLike":
-        r"""
-        Compute :math:`\ln P_{\rm rad}` in CGS units.
-
-        .. math::
-
-            \ln P_{\rm rad} = \ln\!\left(\frac{a_{\rm rad}}{3}\right) + 4\ln T
-
-        Parameters
-        ----------
-        log_temperature : float or ndarray
-            :math:`\ln T` [:math:`\ln(\text{K})`].
-
-        Returns
-        -------
-        float or ndarray
-            :math:`\ln P_{\rm rad}` [:math:`\ln(\text{erg cm}^{-3})`].
-        """
-        log_temperature = np.asarray(log_temperature)
-
-        log_pressure = _log_a_rad_cgs - np.log(3.0) + 4.0 * log_temperature
-
-        return log_pressure if log_pressure.ndim > 0 else log_pressure.item()
-
-    def _compute_log_sound_speed(self) -> float:
-        r"""
-        Compute :math:`\ln c_s` for a radiation-dominated fluid.
-
-        .. math::
-
-            c_s = \frac{c}{\sqrt{3}}
-            \implies
-            \ln c_s = \ln c - \tfrac{1}{2}\ln 3
-
-        Returns
-        -------
-        float
-            :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
-        """
-        return _log_c_cgs - 0.5 * np.log(3.0)
-
-    # -------------------------------------------------------------- #
-    # Public (unit-bearing)                                           #
-    # -------------------------------------------------------------- #
-
-    def compute_pressure(self, temperature: u.Quantity) -> u.Quantity:
-        r"""
-        Compute the radiation pressure.
-
-        Parameters
-        ----------
-        temperature : `~astropy.units.Quantity`
-            Temperature :math:`T`.
-
-        Returns
-        -------
-        `~astropy.units.Quantity`
-            Radiation pressure :math:`P_{\rm rad}` [:math:`\text{erg cm}^{-3}`].
-
-        Examples
-        --------
-        .. code-block:: python
-
-            import astropy.units as u
-
-            RadiationEOS().compute_pressure(1e8 * u.K)
-        """
-        log_temperature = np.log(ensure_in_units(temperature, "K"))
-        return np.exp(self._compute_log_pressure(log_temperature)) * u.erg / u.cm**3
-
-    def compute_sound_speed(self) -> u.Quantity:
-        r"""
-        Return the radiation sound speed :math:`c_s = c / \sqrt{3}`.
-
-        This is independent of temperature and density.
-
-        Returns
-        -------
-        `~astropy.units.Quantity`
-            Sound speed [:math:`\text{cm s}^{-1}`].
-
-        Examples
-        --------
-        .. code-block:: python
-
-            RadiationEOS().compute_sound_speed()
-        """
-        return np.exp(self._compute_log_sound_speed()) * u.cm / u.s
-
-
-# ================================================================== #
-# Combined Ideal Gas + Radiation                                      #
-# ================================================================== #
-
-
-class IdealGasRadiationEOS(EquationOfState):
+class RadiativeIdealGas(EquationOfState):
     r"""
     Combined ideal gas plus radiation equation of state.
 
@@ -507,7 +703,16 @@ class IdealGasRadiationEOS(EquationOfState):
     .. math::
 
         P_{\rm tot} = P_{\rm gas} + P_{\rm rad}
-        = \frac{\rho k_B T}{\mu m_p} + \frac{a_{\rm rad}}{3} T^4.
+        = \frac{\rho\,k_B\,T}{\mu\,m_p} + \frac{a_{\rm rad}}{3}\,T^4.
+
+    Two sound-speed methods are provided:
+
+    * :meth:`compute_sound_speed` — effective adiabatic sound speed
+      :math:`c_s = \sqrt{\gamma_{\rm eff} P_{\rm tot}/\rho}`, requires
+      the density directly.
+    * :meth:`compute_disk_sound_speed` — isothermal sound speed for disk
+      geometry, solving the quadratic that arises when
+      :math:`\rho = \Sigma\,\Omega / (\sqrt{2\pi}\,c_s)`.
 
     Parameters
     ----------
@@ -522,26 +727,49 @@ class IdealGasRadiationEOS(EquationOfState):
 
     .. math::
 
-        T_{\rm eq} = \left(\frac{3 \rho k_B}{a_{\rm rad} \mu m_p}\right)^{1/3}.
+        T_{\rm eq} = \left(\frac{3\,\rho\,k_B}{a_{\rm rad}\,\mu\,m_p}\right)^{1/3}.
+
+    The effective adiabatic index
+
+    .. math::
+
+        \gamma_{\rm eff} = \frac{P_{\rm gas} + 4\,P_{\rm rad}}
+                                {P_{\rm gas} + 3\,P_{\rm rad}}
+
+    interpolates between :math:`5/3` (gas-dominated) and :math:`4/3`
+    (radiation-dominated).
 
     See Also
     --------
     :class:`IdealGasEOS` : gas-only limit.
-    :class:`RadiationEOS` : radiation-only limit.
+    :func:`radiative_ideal_gas_sound_speed` : standalone functional equivalent
+        for the adiabatic sound speed.
+    :func:`radiative_ideal_gas_disk_sound_speed` : standalone functional
+        equivalent for the disk sound speed.
     :func:`~.composition.compute_mean_molecular_weight` : derive ``mu`` from
         composition.
 
     Examples
     --------
-    Compute the total pressure at :math:`\rho = 1` g/cm³, :math:`T = 10^7` K:
+    Compute the total pressure at :math:`\rho = 1` g cm⁻³, :math:`T = 10^7` K:
 
     .. code-block:: python
 
         import astropy.units as u
 
-        eos = IdealGasRadiationEOS(mu=0.62)
+        eos = RadiativeIdealGas(mu=0.62)
         eos.compute_pressure(
             1.0 * u.Unit("g/cm^3"), 1e7 * u.K
+        )
+
+    Compute the disk isothermal sound speed:
+
+    .. code-block:: python
+
+        eos.compute_disk_sound_speed(
+            1e7 * u.K,
+            Sigma=1e3 * u.Unit("g/cm^2"),
+            Omega=1e-3 / u.s,
         )
     """
 
@@ -554,23 +782,8 @@ class IdealGasRadiationEOS(EquationOfState):
         mu : float, optional
             Mean molecular weight per particle (dimensionless).  Controls the
             gas pressure contribution.  Default ``0.6``.
-
         **kwargs
-            Additional keyword arguments passed to the base
-            :class:`EquationOfState` initializer.
-
-        Notes
-        -----
-        The mean molecular weight :math:`\mu` enters the gas pressure term as
-
-        .. math::
-
-            P_{\rm gas} = \frac{\rho k_B T}{\mu m_p}.
-
-        The radiation term :math:`P_{\rm rad} = a_{\rm rad} T^4 / 3` is
-        independent of :math:`\mu`.  For ionized astrophysical plasmas, typical
-        values are :math:`\mu \approx 0.6` (fully ionized) to
-        :math:`\mu \approx 1.3` (neutral).
+            Additional keyword arguments passed to :class:`EquationOfState`.
         """
         super().__init__(mu=mu, **kwargs)
         self.mu = mu
@@ -579,20 +792,23 @@ class IdealGasRadiationEOS(EquationOfState):
     # Private (log-space CGS)                                        #
     # -------------------------------------------------------------- #
 
-    def _compute_log_pressure(self, log_density: "_ArrayLike", log_temperature: "_ArrayLike") -> "_ArrayLike":
+    def _compute_log_pressure(
+        self,
+        log_density: "_ArrayLike",
+        log_temperature: "_ArrayLike",
+    ) -> "_ArrayLike":
         r"""
         Compute :math:`\ln P_{\rm tot}` using :func:`numpy.logaddexp`.
 
         .. math::
 
-            P_{\rm tot} = P_{\rm gas} + P_{\rm rad}
-            \implies
-            \ln P_{\rm tot} = \ln\!\left(e^{\ln P_{\rm gas}} + e^{\ln P_{\rm rad}}\right)
+            \ln P_{\rm tot} = \ln\!\left(e^{\ln P_{\rm gas}}
+                              + e^{\ln P_{\rm rad}}\right)
 
         Parameters
         ----------
         log_density : float or ndarray
-            :math:`\ln \rho` [:math:`\ln(\text{g cm}^{-3})`].
+            :math:`\ln\rho` [:math:`\ln(\text{g cm}^{-3})`].
         log_temperature : float or ndarray
             :math:`\ln T` [:math:`\ln(\text{K})`].
 
@@ -601,20 +817,75 @@ class IdealGasRadiationEOS(EquationOfState):
         float or ndarray
             :math:`\ln P_{\rm tot}` [:math:`\ln(\text{erg cm}^{-3})`].
         """
-        log_temperature, log_density = np.asarray(log_temperature), np.asarray(log_density)
+        log_temperature = np.asarray(log_temperature)
+        log_density = np.asarray(log_density)
 
         log_P_gas = _log_k_B_cgs + log_temperature + log_density - np.log(self.mu) - _log_m_p_cgs
         log_P_rad = _log_a_rad_cgs - np.log(3.0) + 4.0 * log_temperature
 
-        log_pressure = np.logaddexp(log_P_gas, log_P_rad)
+        result = np.logaddexp(log_P_gas, log_P_rad)
+        return result if result.ndim > 0 else result.item()
 
-        return log_pressure if log_pressure.ndim > 0 else log_pressure.item()
+    def _compute_log_sound_speed(
+        self,
+        log_density: "_ArrayLike",
+        log_temperature: "_ArrayLike",
+    ) -> "_ArrayLike":
+        r"""
+        Compute :math:`\ln c_s` for the effective adiabatic sound speed.
+
+        Delegates to :func:`_log_radiative_ideal_gas_sound_speed`.
+
+        Parameters
+        ----------
+        log_density : float or ndarray
+            :math:`\ln\rho` [:math:`\ln(\text{g cm}^{-3})`].
+        log_temperature : float or ndarray
+            :math:`\ln T` [:math:`\ln(\text{K})`].
+
+        Returns
+        -------
+        float or ndarray
+            :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
+        """
+        return _log_radiative_ideal_gas_sound_speed(log_density, log_temperature, self.mu)
+
+    def _compute_log_disk_sound_speed(
+        self,
+        log_temperature: "_ArrayLike",
+        log_Sigma: "_ArrayLike",
+        log_Omega: "_ArrayLike",
+    ) -> "_ArrayLike":
+        r"""
+        Compute :math:`\ln c_s` for the disk isothermal sound speed.
+
+        Delegates to :func:`_log_radiative_ideal_gas_disk_sound_speed`.
+
+        Parameters
+        ----------
+        log_temperature : float or ndarray
+            :math:`\ln T` [:math:`\ln(\text{K})`].
+        log_Sigma : float or ndarray
+            :math:`\ln\Sigma` [:math:`\ln(\text{g cm}^{-2})`].
+        log_Omega : float or ndarray
+            :math:`\ln\Omega` [:math:`\ln(\text{s}^{-1})`].
+
+        Returns
+        -------
+        float or ndarray
+            :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`].
+        """
+        return _log_radiative_ideal_gas_disk_sound_speed(log_temperature, self.mu, log_Sigma, log_Omega)
 
     # -------------------------------------------------------------- #
-    # Public (unit-bearing)                                           #
+    # Public (unit-bearing)                                          #
     # -------------------------------------------------------------- #
 
-    def compute_pressure(self, density: u.Quantity, temperature: u.Quantity) -> u.Quantity:
+    def compute_pressure(
+        self,
+        density: u.Quantity,
+        temperature: u.Quantity,
+    ) -> u.Quantity:
         r"""
         Compute the total (gas + radiation) pressure.
 
@@ -636,10 +907,104 @@ class IdealGasRadiationEOS(EquationOfState):
 
             import astropy.units as u
 
-            IdealGasRadiationEOS(mu=0.62).compute_pressure(
+            RadiativeIdealGas(mu=0.62).compute_pressure(
                 1.0 * u.Unit("g/cm^3"), 1e7 * u.K
             )
         """
         log_density = np.log(ensure_in_units(density, "g/cm^3"))
         log_temperature = np.log(ensure_in_units(temperature, "K"))
         return np.exp(self._compute_log_pressure(log_density, log_temperature)) * u.erg / u.cm**3
+
+    def compute_sound_speed(
+        self,
+        density: u.Quantity,
+        temperature: u.Quantity,
+    ) -> u.Quantity:
+        r"""
+        Compute the effective adiabatic sound speed.
+
+        .. math::
+
+            c_s = \sqrt{\frac{\gamma_{\rm eff}\,P_{\rm tot}}{\rho}},
+            \qquad
+            \gamma_{\rm eff} = \frac{P_{\rm gas} + 4\,P_{\rm rad}}
+                                    {P_{\rm gas} + 3\,P_{\rm rad}}.
+
+        Parameters
+        ----------
+        density : `~astropy.units.Quantity`
+            Mass density :math:`\rho`.
+        temperature : `~astropy.units.Quantity`
+            Temperature :math:`T`.
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Effective adiabatic sound speed [:math:`\text{cm s}^{-1}`].
+
+        Examples
+        --------
+        .. code-block:: python
+
+            import astropy.units as u
+
+            RadiativeIdealGas(mu=0.62).compute_sound_speed(
+                1.0 * u.Unit("g/cm^3"), 1e7 * u.K
+            )
+        """
+        log_density = np.log(ensure_in_units(density, "g/cm^3"))
+        log_temperature = np.log(ensure_in_units(temperature, "K"))
+        return np.exp(self._compute_log_sound_speed(log_density, log_temperature)) * u.cm / u.s
+
+    def compute_disk_sound_speed(
+        self,
+        temperature: u.Quantity,
+        Sigma: u.Quantity,
+        Omega: u.Quantity,
+    ) -> u.Quantity:
+        r"""
+        Compute the isothermal sound speed in disk geometry.
+
+        Solves the quadratic arising from
+        :math:`\rho = \Sigma\,\Omega / (\sqrt{2\pi}\,c_s)`:
+
+        .. math::
+
+            c_s = \frac{A + \sqrt{A^2 + 4B}}{2},
+            \quad
+            A = \frac{a_{\rm rad}\,T^4\,\sqrt{2\pi}}{3\,\Sigma\,\Omega},
+            \quad
+            B = \frac{k_B\,T}{\mu\,m_p}.
+
+        Parameters
+        ----------
+        temperature : `~astropy.units.Quantity`
+            Midplane temperature :math:`T`.
+        Sigma : `~astropy.units.Quantity`
+            Column / surface density :math:`\Sigma`.
+        Omega : `~astropy.units.Quantity`
+            Keplerian angular velocity :math:`\Omega`.
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Isothermal sound speed :math:`c_s` [:math:`\text{cm s}^{-1}`].
+
+        Examples
+        --------
+        .. code-block:: python
+
+            import astropy.units as u
+
+            RadiativeIdealGas(
+                mu=0.62
+            ).compute_disk_sound_speed(
+                1e7 * u.K,
+                Sigma=1e3 * u.Unit("g/cm^2"),
+                Omega=1e-3 / u.s,
+            )
+        """
+        log_T = np.log(ensure_in_units(temperature, "K"))
+        log_Sigma = np.log(ensure_in_units(Sigma, "g/cm^2"))
+        log_Omega = np.log(ensure_in_units(Omega, "1/s"))
+        return np.exp(self._compute_log_disk_sound_speed(log_T, log_Sigma, log_Omega)) * u.cm / u.s

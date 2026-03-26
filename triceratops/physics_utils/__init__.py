@@ -6,7 +6,7 @@ shared across multiple Triceratops modules.  It is organised by topic:
 
 - :mod:`.constants` — CGS physical constants and their logs.
 - :mod:`.eos` — Equation of state classes (:class:`~.eos.IdealGasEOS`,
-  :class:`~.eos.RadiationEOS`, :class:`~.eos.IdealGasRadiationEOS`).
+  :class:`~.eos.RadiativeIdealGas`) and standalone sound-speed functions.
 - :mod:`.composition` — Mean molecular weight helpers.
 - :mod:`.special_relativity` — Lorentz / Doppler transformation utilities.
 - :mod:`.cosmology` — Redshift, distance, and look-back time helpers.
@@ -28,7 +28,14 @@ from .cosmology import (
     redshift_to_lookback_time,
     resolve_cosmological_distances,
 )
-from .eos import EquationOfState, IdealGasEOS, IdealGasRadiationEOS, RadiationEOS
+from .eos import (
+    EquationOfState,
+    IdealGasEOS,
+    RadiativeIdealGas,
+    ideal_gas_sound_speed,
+    radiative_ideal_gas_disk_sound_speed,
+    radiative_ideal_gas_sound_speed,
+)
 from .special_relativity import (
     compute_beta_from_gamma,
     compute_doppler_factor,
@@ -42,11 +49,14 @@ from .special_relativity import (
 )
 
 __all__ = [
-    # EOS
+    # EOS — classes
     "EquationOfState",
     "IdealGasEOS",
-    "RadiationEOS",
-    "IdealGasRadiationEOS",
+    "RadiativeIdealGas",
+    # EOS — standalone functions
+    "ideal_gas_sound_speed",
+    "radiative_ideal_gas_sound_speed",
+    "radiative_ideal_gas_disk_sound_speed",
     # Composition
     "compute_mean_molecular_weight",
     "compute_mean_molecular_weight_per_electron",
