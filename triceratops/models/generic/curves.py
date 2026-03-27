@@ -783,23 +783,23 @@ class TripleBrokenPowerLaw(Model):
              - **Symbol**
              - **Description**
            * - ``A``
-             — :math:`A`
-             — Normalization.
+             - :math:`A`
+             - Normalization.
            * - ``x_b1``
-             — :math:`x_{b,1}`
-             — First break.
+             - :math:`x_{b,1}`
+             - First break.
            * - ``x_b2``
-             — :math:`x_{b,2}`
-             — Second break.
+             - :math:`x_{b,2}`
+             - Second break.
            * - ``alpha_1``
-             — :math:`\alpha_1`
-             — First slope.
+             - :math:`\alpha_1`
+             - First slope.
            * - ``alpha_2``
-             — :math:`\alpha_2`
-             — Second slope.
+             - :math:`\alpha_2`
+             - Second slope.
            * - ``alpha_3``
-             — :math:`\alpha_3`
-             — Third slope.
+             - :math:`\alpha_3`
+             - Third slope.
 
     .. dropdown:: Variables
 

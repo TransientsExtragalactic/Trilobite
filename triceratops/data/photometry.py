@@ -1028,15 +1028,15 @@ class RadioPhotometryContainer(DataContainer):
 
             - ``detection_fmt``: Format string for detection markers (default: 'o').
             - ``detection_capsize``: Capsize for detection error bars (default: 3).
-            - ``detection_ms: Marker size for detections (default: 5).
-            - ``detection_mec: Marker edge color for detections (default: 'none').
-            - ``upper_limit_fmt: Format string for upper limit markers (default: 'v').
-            - ``upper_limit_capsize: Capsize for upper limit error bars (default: 3).
-            - ``upper_limit_ms: Marker size for upper limits (default: 5).
-            - ``upper_limit_mec: Marker edge color for upper limits (default: 'none').
-            - ``colorbar_label: Label for the colorbar (default: 'Observation Time (days)').
-            - ``xlabel: Label for the x-axis (default: 'Frequency (GHz)').
-            - ``ylabel: Label for the y-axis (default: 'Flux Density (mJy)').
+            - ``detection_ms``: Marker size for detections (default: 5).
+            - ``detection_mec``: Marker edge color for detections (default: 'none').
+            - ``upper_limit_fmt``: Format string for upper limit markers (default: 'v').
+            - ``upper_limit_capsize``: Capsize for upper limit error bars (default: 3).
+            - ``upper_limit_ms``: Marker size for upper limits (default: 5).
+            - ``upper_limit_mec``: Marker edge color for upper limits (default: 'none').
+            - ``colorbar_label``: Label for the colorbar (default: 'Observation Time (days)').
+            - ``xlabel``: Label for the x-axis (default: 'Frequency (GHz)').
+            - ``ylabel``: Label for the y-axis (default: 'Flux Density (mJy)').
 
         Returns
         -------

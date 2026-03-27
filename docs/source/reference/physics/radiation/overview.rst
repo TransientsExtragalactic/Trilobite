@@ -1,4 +1,5 @@
 .. _radiation_overview:
+
 ==================================
 Radiation Processes in Triceratops
 ==================================
@@ -45,6 +46,8 @@ synchrotron radiation in Triceratops:
     synchrotron/synchrotron_theory
     synchrotron/synchrotron_sed_theory
     synchrotron/synchrotron_cooling_theory
+    synchrotron/synchrotron_cooling_closure
+    synchrotron/synchrotron_stratified_absorption
 
 Free-Free Radiation
 --------------------

@@ -19,15 +19,17 @@ _PYX_SOURCES = [
     "triceratops/dynamics/accretion/one_zone/physics/_eos.pyx",
     "triceratops/dynamics/accretion/one_zone/physics/_viscous.pyx",
     "triceratops/dynamics/accretion/one_zone/physics/_fallback.pyx",
-    # assembled disk closures
-    "triceratops/dynamics/accretion/one_zone/models/_gP_es.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP_es.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_gP_es_fb.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP_es_fb.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP_es_adv.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP_es_adv_fb.pyx",
+    "triceratops/dynamics/accretion/one_zone/physics/_opacity.pyx",
+    # assembled disk closures (generic opacity — new names)
+    "triceratops/dynamics/accretion/one_zone/models/_gP.pyx",
+    "triceratops/dynamics/accretion/one_zone/models/_igP.pyx",
+    "triceratops/dynamics/accretion/one_zone/models/_igP_adv.pyx",
     # math utilities
     "triceratops/math_utils/_bracket_root_finder.pyx",
+    # opacity infrastructure (radiation/opacity/)
+    "triceratops/radiation/opacity/opacity_base.pyx",
+    "triceratops/radiation/opacity/models/_electron_scattering.pyx",
+    "triceratops/radiation/opacity/models/_kramers.pyx",
 ]
 
 setup(

@@ -1,4 +1,5 @@
 .. _user_guide:
+
 ========================
 Triceratops User Guide
 ========================
@@ -87,6 +88,8 @@ the constituent physics:
     :maxdepth: 1
 
     physics/shocks/overview
+    physics/shocks/chevalier
+    physics/shocks/numeric_thin_shell
     physics/radiation/overview
     physics/disks/index
 

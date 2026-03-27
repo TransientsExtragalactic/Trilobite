@@ -873,7 +873,7 @@ class InferenceProblem:
         self,
         theta: np.ndarray,
     ) -> tuple[np.ndarray, float]:
-        """
+        r"""
         Transform a full physical parameter vector into sampling space.
 
         Returns
@@ -881,7 +881,7 @@ class InferenceProblem:
         z : np.ndarray
             Sampling-space parameter vector.
         log_det : float
-            Log absolute determinant of the transformation |dz/dθ|.
+            Log absolute determinant of the transformation :math:`|dz/d\theta|`.
         """
         theta = np.asarray(theta, dtype=float)
 
@@ -918,7 +918,7 @@ class InferenceProblem:
         self,
         z: np.ndarray,
     ) -> tuple[np.ndarray, float]:
-        """
+        r"""
         Convert sampling-space vector z to physical space theta and compute total log-Jacobian.
 
         Returns
@@ -926,7 +926,7 @@ class InferenceProblem:
         theta : np.ndarray
             Physical-space parameter vector.
         log_det : float
-            Log absolute determinant |dθ/dz|.
+            Log absolute determinant :math:`|d\theta/dz|`.
         """
         z = np.asarray(z, dtype=float)
 
@@ -960,7 +960,7 @@ class InferenceProblem:
         self,
         theta_free: np.ndarray,
     ) -> tuple[np.ndarray, float]:
-        """
+        r"""
         Transform free physical-space parameters into sampling space.
 
         Returns
@@ -969,7 +969,7 @@ class InferenceProblem:
             Free parameters in sampling space.
         log_det : float
             Log absolute determinant of the transformation
-            |dz/dθ|.
+            :math:`|dz/d\theta|`.
         """
         theta_free = np.asarray(theta_free, dtype=float)
 
@@ -1006,7 +1006,7 @@ class InferenceProblem:
         self,
         z_free: np.ndarray,
     ) -> tuple[np.ndarray, float]:
-        """
+        r"""
         Transform free sampling-space parameters into physical space.
 
         Returns
@@ -1015,7 +1015,7 @@ class InferenceProblem:
             Free parameters in physical space.
         log_det : float
             Log absolute determinant of the transformation
-            |dθ/dz|.
+            :math:`|d\theta/dz|`.
         """
         z_free = np.asarray(z_free, dtype=float)
 

@@ -1172,12 +1172,10 @@ class InferenceData:
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), returns array with shape:
-                (*base_shape, n_variables)
-
-            If True, reshapes to:
-                (n_points, n_variables),
-            where n_points = product(base_shape).
+            If False (default), returns array with shape
+            ``(*base_shape, n_variables)``.
+            If True, reshapes to ``(n_points, n_variables)``
+            where ``n_points = product(base_shape)``.
 
         Returns
         -------
@@ -1207,11 +1205,8 @@ class InferenceData:
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), returns:
-                (*base_shape, n_observables)
-
-            If True, reshapes to:
-                (n_points, n_observables)
+            If False (default), returns ``(*base_shape, n_observables)``.
+            If True, reshapes to ``(n_points, n_observables)``.
 
         Returns
         -------
@@ -1347,11 +1342,8 @@ class InferenceData:
         Parameters
         ----------
         flatten : bool, optional
-            If False (default), returns shape:
-                (*base_shape, n_variables)
-
-            If True, reshapes to:
-                (n_points, n_variables)
+            If False (default), returns shape ``(*base_shape, n_variables)``.
+            If True, reshapes to ``(n_points, n_variables)``.
 
         Returns
         -------
@@ -1394,8 +1386,7 @@ class InferenceData:
         Returns
         -------
         np.ndarray
-            Upper-limit array with shape:
-                (*base_shape, n_variables)
+            Upper-limit array with shape ``(*base_shape, n_variables)``.
         """
         base_shape = self.get_x_array(flatten=False).shape[:-1]
 
@@ -1472,27 +1463,22 @@ class InferenceData:
 
         The method performs:
 
-        1. **Name validation**
-           - All model-declared variables and observables must be present.
-           - Extra keys are ignored.
-           - Missing required entries raise immediately.
+        1. **Name validation** — all model-declared variables and observables
+           must be present; extra keys are ignored; missing required entries
+           raise immediately.
 
-        2. **Unit coercion**
-           - If a value is provided as a `Quantity`, it is converted to the
-             units declared by the model.
-           - If a value is a plain NumPy array, it is assumed to already be in
-             model-expected units.
-           - Unit incompatibilities raise a `ValueError`.
+        2. **Unit coercion** — if a value is provided as a ``Quantity`` it is
+           converted to the units declared by the model; plain NumPy arrays are
+           assumed to already be in model-expected units; incompatible units
+           raise a ``ValueError``.
 
-        3. **Shape validation**
-           - All independent variables must share identical shape.
-           - All observables must match the independent-variable shape.
-           - Optional uncertainty/limit arrays must match the same shape.
+        3. **Shape validation** — all independent variables must share
+           identical shape; all observables must match; optional
+           uncertainty/limit arrays must match the same shape.
 
-        4. **Construction**
-           - Observable objects are created internally.
-           - The resulting :class:`InferenceData` instance is fully validated
-             and immutable.
+        4. **Construction** — observable objects are created internally and the
+           resulting :class:`InferenceData` instance is fully validated and
+           immutable.
 
         Parameters
         ----------

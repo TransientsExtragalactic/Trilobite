@@ -1895,7 +1895,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_F_norm : float
             Natural logarithm of the normalization flux density corresponding to the *optically thin* equivalent
             emission at the dominant electron frequency. See
-            :ref:`sed_normalization` for details on how to determine the appropriate normalization.
+            :ref:`single_zone_sed_normalization` for details on how to determine the appropriate normalization.
         log_nu_m : float
             Natural logarithm of the injection frequency
             :math:`\log \nu_m`.
@@ -1969,8 +1969,8 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Normalization flux density corresponding to the *optically thin* equivalent
             emission at the dominant electron frequency. This should be a :class:`~astropy.units.Quantity`
             with units convertible to :math:`\mathrm{erg} \, \mathrm{cm}^{-2} \, \mathrm{s}^{-1} \, \mathrm{Hz}^{-1}`
-            or a float in CGS units. See :ref:`sed_normalization` for details on how to determine the appropriate
-            normalization.
+            or a float in CGS units. See :ref:`single_zone_sed_normalization` for details on how to determine the
+            appropriate normalization.
         nu_m : ~astropy.units.Quantity or float
             Injection frequency :math:`\nu_m`. May be either a :class:`~astropy.units.Quantity`
             with units convertible to Hz or a float in CGS units.
@@ -2070,7 +2070,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         log_F_norm : float
             Natural logarithm of the flux normalization corresponding to the *optically thin* equivalent
             emission at the dominant electron frequency. See
-            :ref:`sed_normalization` for details on how to determine the appropriate normalization.
+            :ref:`single_zone_sed_normalization` for details on how to determine the appropriate normalization.
         log_nu_ac : float, optional
             Natural logarithm of the stratified SSA transition frequency.
         p : float
@@ -2215,7 +2215,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Injection, cooling, and maximum synchrotron frequencies.
         F_norm : ~astropy.units.Quantity or float
             The normalization flux density corresponding to the *optically thin* equivalent
-            emission at the dominant electron frequency. See :ref:`sed_normalization` for details on how
+            emission at the dominant electron frequency. See :ref:`single_zone_sed_normalization` for details on how
             to determine the appropriate normalization.
         nu_ac : ~astropy.units.Quantity or float, optional
             Stratified SSA transition frequency.
@@ -2988,7 +2988,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
                 * - Flux normalization
                   - :math:`F_{\nu,\mathrm{norm}}`
                   - Flux density normalization corresponding to the *optically thin* equivalent
-                    emission at the dominant electron frequency. See :ref:`sed_normalization` for details
+                    emission at the dominant electron frequency. See :ref:`single_zone_sed_normalization` for details
                     on how to determine the appropriate normalization.
                 * - Injection frequency
                   - :math:`\nu_m`
@@ -3340,7 +3340,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
             Cooling break frequency :math:`\nu_c`.
         F_norm : ~astropy.units.Quantity or float-like
             Flux density normalization corresponding to the *optically thin* equivalent emission
-            at the dominant electron frequency. See :ref:`sed_normalization` for details
+            at the dominant electron frequency. See :ref:`single_zone_sed_normalization` for details
             on how to determine the appropriate normalization.
         nu_max : ~astropy.units.Quantity or float-like, optional
             Maximum synchrotron frequency :math:`\nu_{\max}`.
@@ -4656,7 +4656,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             :math:`\nu_m`.
         F_norm : ~astropy.units.Quantity or float-like
             The flux density normalization anchored at :math:`\nu_m`, i.e. :math:`F_\nu(\nu_m)`.
-            See :ref:`sed_normalization` for details on how to compute this from physical parameters.
+            See :ref:`single_zone_sed_normalization` for details on how to compute this from physical parameters.
         nu_max : ~astropy.units.Quantity or float-like, optional
             Maximum synchrotron frequency
             :math:`\nu_{\max}`.

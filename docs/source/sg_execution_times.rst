@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.477** total execution time for 23 files **from all galleries**:
+**00:07.382** total execution time for 23 files **from all galleries**:
 
 .. container::
 
@@ -33,7 +33,7 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_tde_adv_fb_disk.py` (``galleries/examples/f_accretion/plot_tde_adv_fb_disk.py``)
-     - 00:01.477
+     - 00:07.382
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000

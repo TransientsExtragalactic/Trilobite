@@ -28,11 +28,10 @@ from triceratops.utils.misc_utils import ensure_in_units
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike
 
+
 # ================================================================== #
 # Private (log-space CGS)                                            #
 # ================================================================== #
-
-
 def _log_omega_K(log_M_BH: "_ArrayLike", log_R: "_ArrayLike") -> "_ArrayLike":
     r"""
     Compute :math:`\ln \Omega_K` from the BH mass and radius.
@@ -265,7 +264,7 @@ def keplerian_angular_velocity(M_BH: u.Quantity, R: u.Quantity) -> u.Quantity:
     log_Omega = np.asarray(_log_omega_K(log_M_BH, log_R))
 
     result = np.exp(log_Omega)
-    return (result.item() if result.ndim == 0 else result) * u.rad / u.s
+    return (result.item() if result.ndim == 0 else result) / u.s
 
 
 def inner_boundary_correction(R: u.Quantity, R_in: u.Quantity) -> "_ArrayLike":
