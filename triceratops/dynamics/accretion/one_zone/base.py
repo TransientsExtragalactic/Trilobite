@@ -914,6 +914,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         runtime_parameters: dict,
         t_span: tuple[Any, Any],  # (t_start, t_end); plain float [s] or Quantity
         max_steps: int = 100_000,
+        epsilon: float = 1e-6,
         fail_fast: bool = True,
     ) -> "OneZoneAccretionResult":
         r"""
@@ -939,6 +940,11 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             floats (seconds) or :class:`~astropy.units.Quantity` objects.
         max_steps : int, optional
             Maximum number of integration steps.  Default is 100 000.
+        epsilon : float, optional
+            Adaptive time-step fraction passed to the Cython integrator.
+            The step size is :math:`\Delta t = \epsilon\,\min(t_{\rm visc},
+            |M/\dot{M}|, |J/\dot{J}|)`.  Must be in ``(0, 1)``.  Default is
+            ``1e-6``.
         fail_fast : bool, optional
             If ``True`` (default), raise :exc:`RuntimeError` when the
             integrator signals failure.  If ``False``, issue a warning and
@@ -1005,7 +1011,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         message = "Cython integrator completed successfully."
         raw = None
         try:
-            raw = run_one_zone_model(initial_state, params_array, t_start, t_end, max_steps, closure)
+            raw = run_one_zone_model(initial_state, params_array, t_start, t_end, max_steps, closure, epsilon)
         except (RuntimeError, ValueError) as exc:
             success = False
             message = str(exc)

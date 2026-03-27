@@ -68,13 +68,13 @@ class TestigP_es_advDisk(BaseTestOneZoneDisk):
         assert np.isclose(disk._F, 1.6)
 
     def test_closure_is_adv_type(self):
-        """_build_cython_closure() returns an igP_es_advClosure."""
-        from triceratops.dynamics.accretion.one_zone.models._igP_es_adv import (
-            igP_es_advClosure,
+        """_build_cython_closure() returns an igPAdvClosure."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_adv import (
+            igPAdvClosure,
         )
 
         closure = self._disk()._build_cython_closure()
-        assert isinstance(closure, igP_es_advClosure)
+        assert isinstance(closure, igPAdvClosure)
 
     def test_all_fields_finite(self):
         """Every field in result.data is finite and non-NaN."""
@@ -114,16 +114,16 @@ class TestigP_es_advDisk(BaseTestOneZoneDisk):
         assert np.isclose(loaded._context_parameters["xi"], disk._context_parameters["xi"])
 
     def test_spec_dict_target(self):
-        """to_spec_dict target string identifies igP_es_advDisk."""
+        """to_spec_dict target string identifies AdvectiveDisk."""
         spec = self._disk().to_spec_dict()
-        assert "igP_es_advDisk" in spec["target"]
+        assert "AdvectiveDisk" in spec["target"]
 
     def test_pack_cython_parameters_shape(self):
-        """_pack_cython_parameters returns [MBH, R_in, alpha, mu, xi] — 5 elements."""
+        """_pack_cython_parameters returns [MBH, R_in, alpha, mu, xi, M_fb_0, t_fb, beta_fb] — 8 elements."""
         disk = self._disk()
         run_params = disk.process_runtime_parameters(self._runtime_parameters())
         params = disk._pack_cython_parameters(run_params)
-        assert params.shape == (5,)
+        assert params.shape == (8,)
 
 
 # ================================================================== #
@@ -205,7 +205,7 @@ class TestigP_es_adv_fbDisk:
 
     @classmethod
     def _disk(cls):
-        return igP_es_adv_fbDisk(mu=cls.MU, xi=cls.XI)
+        return igP_es_adv_fbDisk(mu=cls.MU, xi=cls.XI, fallback=True)
 
     @classmethod
     def _J_D_0(cls, disk):
@@ -231,13 +231,13 @@ class TestigP_es_adv_fbDisk:
         )
 
     def test_closure_is_adv_fb_type(self):
-        """_build_cython_closure() returns an igP_es_adv_fbClosure."""
-        from triceratops.dynamics.accretion.one_zone.models._igP_es_adv_fb import (
-            igP_es_adv_fbClosure,
+        """_build_cython_closure() returns an igPAdvClosure (with fallback)."""
+        from triceratops.dynamics.accretion.one_zone.models._igP_adv import (
+            igPAdvClosure,
         )
 
         closure = self._disk()._build_cython_closure()
-        assert isinstance(closure, igP_es_adv_fbClosure)
+        assert isinstance(closure, igPAdvClosure)
 
     def test_all_fields_finite(self):
         """Every field in result.data is finite and non-NaN."""
@@ -270,6 +270,6 @@ class TestigP_es_adv_fbDisk:
         assert np.isclose(loaded._context_parameters["xi"], disk._context_parameters["xi"])
 
     def test_spec_dict_target(self):
-        """to_spec_dict target string identifies igP_es_adv_fbDisk."""
+        """to_spec_dict target string identifies AdvectiveDisk."""
         spec = self._disk().to_spec_dict()
-        assert "igP_es_adv_fbDisk" in spec["target"]
+        assert "AdvectiveDisk" in spec["target"]

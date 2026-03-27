@@ -5,49 +5,6 @@ Three model classes are provided, each encoding a distinct thermal physics
 closure.  All three support runtime-configurable opacity and an optional
 power-law fallback mass supply:
 
-===================  ================================================
-Class                Physics
-===================  ================================================
-:class:`GasPressureDisk`   Gas pressure only; analytic T solve (fast).
-:class:`FullPressureDisk`  Gas + radiation pressure; iterative T solve.
-:class:`AdvectiveDisk`     Gas + radiation pressure + advective cooling.
-===================  ================================================
-
-**Opacity**
-
-The ``opacity`` context parameter selects the opacity model at construction
-time.  Currently supported values:
-
-* ``"electron_scattering"`` (default) — constant ES opacity, κ = 0.34 cm² g⁻¹.
-
-Stubs (not yet implemented):
-
-* ``"kramers_ff"``  — free-free Kramers opacity.
-* ``"kramers_bf"``  — bound-free Kramers opacity.
-
-**Fallback supply**
-
-Setting ``fallback=True`` installs a power-law debris-stream source term.
-The three extra runtime parameters ``M_fb_0``, ``t_fb``, and ``beta_fb``
-must then be supplied to :meth:`~.base.OneZoneAccretionDiskBase.solve`.
-
-**Backward-compatible aliases**
-
-The original six-class API is preserved through module-level aliases::
-
-    gP_esDisk = GasPressureDisk  # fallback=False
-    igP_esDisk = FullPressureDisk  # fallback=False
-    igP_es_advDisk = AdvectiveDisk  # fallback=False
-    gP_es_fbDisk = (
-        GasPressureDisk  # must pass fallback=True
-    )
-    igP_es_fbDisk = (
-        FullPressureDisk  # must pass fallback=True
-    )
-    igP_es_adv_fbDisk = (
-        AdvectiveDisk  # must pass fallback=True
-    )
-
 See Also
 --------
 :mod:`triceratops.dynamics.accretion.one_zone.base` :
@@ -204,13 +161,42 @@ _ADV_CYTHON_FIELD_MAP: dict = {
 # ================================================================== #
 
 
-def _build_closure_with_opacity(closure_cls, opacity: str, with_fallback: bool):
-    """Instantiate *closure_cls*, install the requested opacity, return it."""
-    from triceratops.dynamics.accretion.one_zone.physics._opacity import get_kappa_ptr
+_OPACITY_FACTORY: dict = {
+    "electron_scattering": "ElectronScatteringOpacity",
+    "kramers_ff": "KramersFFOpacity",
+    "kramers_bf": "KramersBFOpacity",
+    "kramers": "KramersOpacity",
+}
+
+
+def _build_closure_with_opacity(closure_cls, opacity, with_fallback: bool):
+    """Instantiate *closure_cls*, install the requested opacity, return it.
+
+    Parameters
+    ----------
+    closure_cls :
+        A :class:`~.closure.OneZoneClosure` subclass to instantiate.
+    opacity : str or GreyOpacityLaw
+        Opacity model name (``"electron_scattering"``, ``"kramers_ff"``,
+        ``"kramers_bf"``, ``"kramers"``) or a
+        :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance.
+    with_fallback : bool
+        If ``True``, enable the power-law fallback source term.
+    """
+    from triceratops.radiation.opacity import models as _opacity_models
+    from triceratops.radiation.opacity.base import GreyOpacityLaw
+
+    if isinstance(opacity, str):
+        if opacity not in _OPACITY_FACTORY:
+            raise ValueError(f"Unknown opacity model {opacity!r}.  Available: {sorted(_OPACITY_FACTORY)}.")
+        opacity_obj = getattr(_opacity_models, _OPACITY_FACTORY[opacity])()
+    elif isinstance(opacity, GreyOpacityLaw):
+        opacity_obj = opacity
+    else:
+        raise TypeError(f"opacity must be a str or GreyOpacityLaw instance, got {type(opacity).__name__}.")
 
     closure = closure_cls(with_fallback=with_fallback)
-    fn_ptr, data_ptr = get_kappa_ptr(opacity)
-    closure.set_opacity(fn_ptr, data_ptr)
+    closure.opacity = opacity_obj
     return closure
 
 
@@ -232,9 +218,11 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
     mu : float, optional
         Mean molecular weight of the disk gas (dimensionless).
         Default ``0.6``.
-    opacity : str, optional
-        Opacity model name.  Default ``"electron_scattering"``.
-        See :func:`~.physics._opacity.get_kappa_ptr` for available names.
+    opacity : str or GreyOpacityLaw, optional
+        Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
+        may also be passed directly.
     fallback : bool, optional
         If ``True``, enable a power-law debris-stream mass supply.  The
         runtime parameters ``M_fb_0``, ``t_fb``, and ``beta_fb`` must then
@@ -332,8 +320,11 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
     mu : float, optional
         Mean molecular weight of the disk gas (dimensionless).
         Default ``0.6``.
-    opacity : str, optional
-        Opacity model name.  Default ``"electron_scattering"``.
+    opacity : str or GreyOpacityLaw, optional
+        Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
+        may also be passed directly.
     fallback : bool, optional
         If ``True``, enable a power-law debris-stream mass supply.
         Default ``False``.
@@ -442,8 +433,11 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         Default ``0.6``.
     xi : float, optional
         Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
-    opacity : str, optional
-        Opacity model name.  Default ``"electron_scattering"``.
+    opacity : str or GreyOpacityLaw, optional
+        Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
+        may also be passed directly.
     fallback : bool, optional
         If ``True``, enable a power-law debris-stream mass supply.
         Default ``False``.

@@ -66,8 +66,16 @@ if TYPE_CHECKING:
 # ================================================================ #
 _SIGMA_SB: float = const.sigma_sb.cgs.value  # erg cm⁻² s⁻¹ K⁻⁴
 _DISK_F0: float = 1.6  # Metzger+08 disk correction factor (dimensionless)
-_KAPPA_ES_CGS: float = 0.34  # cm² g⁻¹ — electron scattering
-_KNOWN_OPACITIES: dict = {"electron_scattering": _KAPPA_ES_CGS}
+
+
+# Sourced from the canonical opacity module — single source of truth.
+def _get_kappa_es() -> float:
+    from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+
+    return ElectronScatteringOpacity().kappa_es
+
+
+_KRAMERS_OPACITIES = {"kramers_ff", "kramers_bf", "kramers"}
 
 
 # ================================================================ #
@@ -76,11 +84,14 @@ _KNOWN_OPACITIES: dict = {"electron_scattering": _KAPPA_ES_CGS}
 def _resolve_kappa(opacity: Union[str, float]) -> float:
     r"""Return opacity :math:`\kappa` in cm² g⁻¹ from a name or a bare float.
 
+    Only state-independent (constant) opacities can be reduced to a single
+    float.  Kramers-type opacities depend on density and temperature; use the
+    full disk model instead.
+
     Parameters
     ----------
     opacity : str or float
-        Either a recognised string model name (``"electron_scattering"``) or a
-        constant opacity value already in cm² g⁻¹.
+        Either ``"electron_scattering"`` or a constant opacity value in cm² g⁻¹.
 
     Returns
     -------
@@ -90,13 +101,19 @@ def _resolve_kappa(opacity: Union[str, float]) -> float:
     Raises
     ------
     ValueError
-        If *opacity* is a string that is not in the known table.
+        If *opacity* is a Kramers string or an unrecognised name.
     """
     if isinstance(opacity, (int, float)):
         return float(opacity)
-    if opacity not in _KNOWN_OPACITIES:
-        raise ValueError(f"Unknown opacity model {opacity!r}.  Known models: {sorted(_KNOWN_OPACITIES)}.")
-    return _KNOWN_OPACITIES[opacity]
+    if opacity in _KRAMERS_OPACITIES:
+        raise ValueError(
+            f"Kramers opacity {opacity!r} is state-dependent (κ ∝ ρ T⁻³·⁵) and cannot "
+            "be represented as a single float.  Use a full disk model with the desired "
+            "opacity string instead of the equilibrium utilities."
+        )
+    if opacity == "electron_scattering":
+        return _get_kappa_es()
+    raise ValueError(f"Unknown opacity model {opacity!r}.  Known constant opacities: ['electron_scattering'].")
 
 
 # ================================================================ #

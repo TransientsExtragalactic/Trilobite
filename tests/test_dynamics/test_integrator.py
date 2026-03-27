@@ -22,7 +22,7 @@ Result array layout
 -------------------
 ``run_one_zone_model`` returns ``(n_result_fields, n_steps)``: rows are
 physical fields, columns are time steps.  For
-``gP_esClosure`` the field indices are:
+``gPClosure`` the field indices are:
     0: step_index, 1: t,      2: M,      3: J,       4: R,      5: Sigma,
     6: Omega,      7: T_eff,  8: T_c,    9: tau,     10: cs,    11: nu,
     12: q_visc,   13: dM_dt, 14: dJ_dt, 15: dt,     16: t_visc,
@@ -63,12 +63,12 @@ _PARAMETERS = np.array([_M_BH, _R_IN, _ALPHA, _MU], dtype=np.float64)
 
 
 def _make_closure():
-    """Return a ready gP_esClosure."""
-    from triceratops.dynamics.accretion.one_zone.models._gP_es import (
-        gP_esClosure,
+    """Return a ready gPClosure."""
+    from triceratops.dynamics.accretion.one_zone.models._gP import (
+        gPClosure,
     )
 
-    return gP_esClosure()
+    return gPClosure()
 
 
 # ------------------------------------------------------------------ #
@@ -95,7 +95,7 @@ class TestOneZoneClosureAttributes:
         assert not closure.is_ready()
 
     def test_gas_pressure_closure_is_ready(self):
-        """gP_esClosure has all pointers set."""
+        """gPClosure has all pointers set."""
         assert _make_closure().is_ready()
 
 
@@ -176,7 +176,7 @@ class TestRunOneZoneModelValidation:
 
 
 class TestRunOneZoneModelIntegration:
-    """Physics and shape tests using gP_esClosure."""
+    """Physics and shape tests using gPClosure."""
 
     def test_smoke_returns_float64_array(self):
         """Wrapper returns a C-contiguous float64 ndarray."""

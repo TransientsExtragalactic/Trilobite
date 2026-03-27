@@ -11,5 +11,6 @@ __all__ = [
     "rankine_hugoniot",
     "shock_engine",
     "supernovae",
+    "accretion",
 ]
-from triceratops.dynamics import rankine_hugoniot, shock_engine, supernovae
+from triceratops.dynamics import accretion, rankine_hugoniot, shock_engine, supernovae

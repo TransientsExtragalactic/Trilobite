@@ -64,13 +64,13 @@ class TestigP_esDisk(BaseTestOneZoneDisk):
         assert np.isclose(disk._F, 1.6)
 
     def test_closure_is_full_pressure_type(self):
-        """_build_cython_closure() returns a igP_esClosure."""
-        from triceratops.dynamics.accretion.one_zone.models._igP_es import (
-            igP_esClosure,
+        """_build_cython_closure() returns a igPClosure."""
+        from triceratops.dynamics.accretion.one_zone.models._igP import (
+            igPClosure,
         )
 
         closure = self._disk()._build_cython_closure()
-        assert isinstance(closure, igP_esClosure)
+        assert isinstance(closure, igPClosure)
 
     def test_from_spec_dict_preserves_mu(self):
         """Round-trip through spec dict preserves the EOS mean molecular weight."""
@@ -101,9 +101,9 @@ class TestigP_esDisk(BaseTestOneZoneDisk):
             assert np.all(np.isfinite(arr.value)), f"Field '{name}' contains non-finite values"
 
     def test_spec_dict_target(self):
-        """to_spec_dict target string identifies igP_esDisk."""
+        """to_spec_dict target string identifies FullPressureDisk."""
         spec = self._disk().to_spec_dict()
-        assert "igP_esDisk" in spec["target"]
+        assert "FullPressureDisk" in spec["target"]
 
 
 # ================================================================== #

@@ -224,6 +224,10 @@ class BaseTestOneZoneDisk:
     N_EVAL = 20
     T_SPAN_FRACTION = (0.01, 5.0)
     BOOTSTRAP_T0 = 1.0e8  # [s] — rough t_visc estimate used only for t_span scaling
+    # Expected shape of _pack_cython_parameters() output.
+    # Base disks: [MBH, R_in, alpha, mu, M_fb_0, t_fb, beta_fb] = 7
+    # Adv disks:  [MBH, R_in, alpha, mu, xi, M_fb_0, t_fb, beta_fb] = 8
+    EXPECTED_CYTHON_PARAM_SHAPE = (7,)
 
     # Per-subclass cache — each concrete class gets its own via __init_subclass__
     def __init_subclass__(cls, **kwargs):
@@ -362,11 +366,11 @@ class BaseTestOneZoneDisk:
         assert closure.is_ready()
 
     def test_pack_cython_parameters_shape(self):
-        """_pack_cython_parameters() returns a float64 array of shape (4,)."""
+        """_pack_cython_parameters() returns a float64 array of the expected shape."""
         disk = self._disk()
         rp = disk.process_runtime_parameters(self._runtime_parameters())
         params = disk._pack_cython_parameters(rp)
-        assert params.shape == (4,)
+        assert params.shape == self.EXPECTED_CYTHON_PARAM_SHAPE
         assert params.dtype == np.float64
         assert np.all(np.isfinite(params))
 
