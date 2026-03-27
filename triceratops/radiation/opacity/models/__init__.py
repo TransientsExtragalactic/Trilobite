@@ -10,7 +10,10 @@ from .core import (
     KAPPA_KR_0,
     ConstantOpacity,
     ElectronScatteringOpacity,
+    KramersBFESOpacity,
     KramersBFOpacity,
+    KramersESOpacity,
+    KramersFFESOpacity,
     KramersFFOpacity,
     KramersOpacity,
 )
@@ -26,4 +29,7 @@ __all__ = [
     "KramersFFOpacity",
     "KramersBFOpacity",
     "KramersOpacity",
+    "KramersFFESOpacity",
+    "KramersBFESOpacity",
+    "KramersESOpacity",
 ]

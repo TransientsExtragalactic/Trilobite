@@ -166,6 +166,9 @@ _OPACITY_FACTORY: dict = {
     "kramers_ff": "KramersFFOpacity",
     "kramers_bf": "KramersBFOpacity",
     "kramers": "KramersOpacity",
+    "kramers_ff_es": "KramersFFESOpacity",
+    "kramers_bf_es": "KramersBFESOpacity",
+    "kramers_es": "KramersESOpacity",
 }
 
 
@@ -220,7 +223,8 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
         Default ``0.6``.
     opacity : str or GreyOpacityLaw, optional
         Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
-        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
+        ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
         A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
         may also be passed directly.
     fallback : bool, optional
@@ -322,7 +326,8 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
         Default ``0.6``.
     opacity : str or GreyOpacityLaw, optional
         Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
-        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
+        ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
         A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
         may also be passed directly.
     fallback : bool, optional
@@ -435,7 +440,8 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
     opacity : str or GreyOpacityLaw, optional
         Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
-        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``.
+        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
+        ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
         A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
         may also be passed directly.
     fallback : bool, optional
