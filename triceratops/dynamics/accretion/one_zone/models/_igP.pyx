@@ -120,7 +120,7 @@ cdef int igP_closure_func(
     cdef int status
 
     log_Q_coef = (
-        log(27.0 / 128.0)
+        log(27.0 / 32.0)
         + log(params.alpha)
         + 2.0 * log(derived.Sigma)
         + log(derived.Omega)
@@ -132,7 +132,7 @@ cdef int igP_closure_func(
     else:
         # Gas-only analytic temperature as a cold-start seed (uses ES as proxy).
         log_T_guess = (1.0 / 3.0) * (
-              log(27.0 / 128.0)
+              log(27.0 / 32.0)
             + LOG_K_B_CGS
             + log(params.alpha)
             + LOG_KAPPA_ES
@@ -152,9 +152,9 @@ cdef int igP_closure_func(
     status = find_root(
         igP_residual, &root_data,
         log_T_guess,
-        0.01,   # step: initial half-width of bracket in log-T
+        0.05,   # step: initial half-width of bracket in log-T
         2.0,    # grow_factor
-        2,      # max_expand
+        64,      # max_expand
         log(1.0e1), log(1.0e14),  # domain: 10 K – 1e14 K
         1.0e-30,                  # tolerance
         1.0e-10, 1.0e-12,         # tol_x, tol_f

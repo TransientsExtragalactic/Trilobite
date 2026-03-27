@@ -1,31 +1,37 @@
 r"""Accretion physics utility functions for one-zone disk models.
 
-This module provides three levels of functionality:
+This module provides several levels of functionality:
 
-1. **Opacity resolution** — :func:`_resolve_kappa` converts a string name or a bare
-   float into a CGS opacity value.
+1. **State conversion** — :func:`disk_state` converts any two of
+   :math:`(M_D, R_D, J_D, \Sigma_D)` into the full disk state, including
+   :math:`\Omega`.
 
-2. **Heating/cooling curves** — :func:`igP_es_trial_curves` and
-   :func:`igP_es_adv_trial_curves` evaluate the heating and cooling rates as
-   functions of temperature for fixed disk parameters, returning the individual
-   rates and their residual.  Zero-crossings of the residual are thermal equilibrium
-   points.  These are primarily diagnostic: plot :math:`q^+` and :math:`q^-` vs.
-   :math:`T` to verify that a root exists before running the integrator.
+2. **Heating/cooling curves** — :func:`compute_heating_curves` and
+   :func:`compute_advective_heating_curves` evaluate the heating and cooling
+   rates as functions of temperature for fixed disk parameters, returning
+   individual rates as :class:`~astropy.units.Quantity` arrays.
 
-3. **Equilibrium temperature** — :func:`compute_equilibrium_temperature` and
-   :func:`compute_advective_equilibrium_temperature` find all thermal equilibrium
-   temperatures for fixed :math:`\Sigma` and :math:`\Omega` using
-   :func:`scipy.optimize.brentq` bracketed by sign changes on a coarse temperature
-   grid.
-
-4. **S-curves** — :func:`compute_standard_s_curve` and
-   :func:`compute_advective_s_curve` trace the full thermal equilibrium locus in
-   :math:`\Sigma`–:math:`T` space by sweeping a :math:`T`–:math:`\Sigma` grid and
-   locating zero-crossings column by column.
+3. **S-curves** — :func:`compute_advection_s_curve` traces the full thermal
+   equilibrium locus in :math:`\Sigma`–:math:`T` space.
 
 All public functions accept :class:`~astropy.units.Quantity` inputs and return
-:class:`~astropy.units.Quantity` outputs.  Private functions (prefixed ``_``) work
-directly in CGS floats and may accept or return :class:`numpy.ndarray`.
+:class:`~astropy.units.Quantity` outputs.  Private functions (prefixed ``_``)
+work directly in CGS floats.
+
+Geometry
+--------
+The one-zone disk uses the Metzger+08 self-similar geometry constants:
+
+.. math::
+
+    A = 1.62, \quad B = 1.33, \quad \xi = B/A \approx 0.821
+
+such that:
+
+.. math::
+
+    J_D = \xi\,M_D\,\sqrt{G\,M_{\rm BH}\,R_D}, \qquad
+    \Sigma_D = \frac{M_D}{\pi\,A\,R_D^2}
 
 Physics reference
 -----------------
@@ -34,11 +40,8 @@ Heating/cooling balance:
 .. math::
 
     q^+ &= \tfrac{9}{8}\,\alpha\,\Sigma\,\Omega\,c_s^2(T) \\
-    q^- &= \frac{16\,\sigma_{\rm SB}\,T^4}{3\,\kappa\,\Sigma}  \\
-    q_{\rm adv} &= q^+\,B\,c_s^2,
-    \quad B = \frac{4\,\xi\,F_0\,\alpha\,M}{9\pi\,R^4\,\Omega^2\,\Sigma}
-
-where :math:`F_0 = 1.6` is the Metzger+08 disk correction factor.
+    q^- &= \frac{4\,\sigma_{\rm SB}\,T^4}{3\,\kappa\,\Sigma} \\
+    q_{\rm adv} &= \frac{3}{2}\,\xi\,\alpha\,\Sigma\,\frac{c_s^4}{\Omega\,R^2}
 
 See Also
 --------
@@ -53,157 +56,280 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 from scipy.optimize import brentq
+from tqdm.auto import tqdm
 
 from triceratops.physics_utils.eos import _log_radiative_ideal_gas_disk_sound_speed
+from triceratops.radiation.opacity.base import GreyOpacityLaw
+from triceratops.radiation.opacity.utils import get_opacity
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
-    from triceratops._typing import _UnitBearingArrayLike
-
+    from triceratops._typing import _UnitBearingArrayLike, _UnitBearingScalarLike
 
 # ================================================================ #
 #  Physical constants (CGS)                                        #
 # ================================================================ #
 _SIGMA_SB: float = const.sigma_sb.cgs.value  # erg cm⁻² s⁻¹ K⁻⁴
+_G_CGS: float = const.G.cgs.value  # cm³ g⁻¹ s⁻²
 _DISK_F0: float = 1.6  # Metzger+08 disk correction factor (dimensionless)
-
-
-# Sourced from the canonical opacity module — single source of truth.
-def _get_kappa_es() -> float:
-    from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
-
-    return ElectronScatteringOpacity().kappa_es
-
-
-_KRAMERS_OPACITIES = {"kramers_ff", "kramers_bf", "kramers"}
+_DISK_A: float = 1.62  # Metzger+08 geometry constant (dimensionless)
+_DISK_B: float = 1.33  # Metzger+08 geometry constant (dimensionless)
+_DISK_XI: float = _DISK_B / _DISK_A  # ≈ 0.821
 
 
 # ================================================================ #
-#  Opacity resolution                                              #
+#  Low-level CGS helpers                                           #
 # ================================================================ #
-def _resolve_kappa(opacity: Union[str, float]) -> float:
-    r"""Return opacity :math:`\kappa` in cm² g⁻¹ from a name or a bare float.
 
-    Only state-independent (constant) opacities can be reduced to a single
-    float.  Kramers-type opacities depend on density and temperature; use the
-    full disk model instead.
+
+def _log_heating_curves(
+    log_T: np.ndarray,
+    log_Sigma: float,
+    log_Omega: float,
+    alpha: float,
+    mu: float,
+    opacity_obj: GreyOpacityLaw,
+):
+    r"""Viscous heating and radiative cooling rates in log-space (CGS).
 
     Parameters
     ----------
-    opacity : str or float
-        Either ``"electron_scattering"`` or a constant opacity value in cm² g⁻¹.
+    log_T : array-like
+        Natural log of midplane temperature (K).
+    log_Sigma : float
+        Natural log of surface density (g cm⁻²).
+    log_Omega : float
+        Natural log of Keplerian angular velocity (rad s⁻¹).
+    alpha : float
+        Shakura–Sunyaev viscosity parameter.
+    mu : float
+        Mean molecular weight.
+    opacity_obj : GreyOpacityLaw
+        Opacity law instance.
 
     Returns
     -------
-    float
-        Opacity in cm² g⁻¹.
+    log_q_visc, log_q_rad : ndarray
+        Natural logs of viscous heating and radiative cooling rates
+        (erg cm⁻² s⁻¹).
+    """
+    log_T = np.asarray(log_T, dtype=float)
+    log_cs = _log_radiative_ideal_gas_disk_sound_speed(log_T, mu, log_Sigma, log_Omega)
+    log_rho = log_Sigma + log_Omega - log_cs - 0.5 * np.log(2.0 * np.pi)
+    log_kappa = opacity_obj._log_opacity(log_T, log_rho)
+
+    log_q_visc = np.log(9.0 / 8.0) + np.log(alpha) + log_Sigma + log_Omega + 2.0 * log_cs
+    log_q_rad = np.log(4.0 * _SIGMA_SB / 3.0) + 4.0 * log_T - log_kappa - log_Sigma
+
+    return log_q_visc, log_q_rad
+
+
+def _log_advective_heating_curves(
+    log_T: np.ndarray,
+    log_Sigma: float,
+    log_Omega: float,
+    log_R: float,
+    alpha: float,
+    mu: float,
+    xi: float,
+    opacity_obj: GreyOpacityLaw,
+):
+    r"""Viscous heating, radiative cooling, and advective cooling rates in log-space (CGS).
+
+    Parameters
+    ----------
+    log_T : array-like
+        Natural log of midplane temperature (K).
+    log_Sigma : float
+        Natural log of surface density (g cm⁻²).
+    log_Omega : float
+        Natural log of Keplerian angular velocity (rad s⁻¹).
+    log_R : float
+        Natural log of disk radius (cm).
+    alpha : float
+        Shakura–Sunyaev viscosity parameter.
+    mu : float
+        Mean molecular weight.
+    xi : float
+        Entropy gradient parameter (dimensionless, > 0).
+    opacity_obj : GreyOpacityLaw
+        Opacity law instance.
+
+    Returns
+    -------
+    log_q_visc, log_q_rad, log_q_adv : ndarray
+        Natural logs of viscous heating, radiative cooling, and advective
+        cooling rates (erg cm⁻² s⁻¹).
+    """
+    log_T = np.asarray(log_T, dtype=float)
+    log_cs = _log_radiative_ideal_gas_disk_sound_speed(log_T, mu, log_Sigma, log_Omega)
+    log_rho = log_Sigma + log_Omega - log_cs - 0.5 * np.log(2.0 * np.pi)
+    log_kappa = opacity_obj._log_opacity(log_T, log_rho)
+
+    log_q_visc = np.log(9.0 / 8.0) + np.log(alpha) + log_Sigma + log_Omega + 2.0 * log_cs
+    log_q_rad = np.log(4.0 * _SIGMA_SB / 3.0) + 4.0 * log_T - log_kappa - log_Sigma
+    log_q_adv = np.log(3.0 * xi * alpha / 2.0) + log_Sigma - log_Omega - 2.0 * log_R + 4.0 * log_cs
+
+    return log_q_visc, log_q_rad, log_q_adv
+
+
+def _log_heating_residual(
+    log_T: float,
+    log_Sigma: float,
+    log_Omega: float,
+    alpha: float,
+    mu: float,
+    opacity_obj: GreyOpacityLaw,
+) -> float:
+    r"""Thermal residual :math:`q^+ - q^-` (erg cm⁻² s⁻¹) for a non-advective disk.
+
+    Positive when the disk is over-heated; zero at thermal equilibrium.
+    """
+    log_q_visc, log_q_rad = _log_heating_curves(log_T, log_Sigma, log_Omega, alpha, mu, opacity_obj)
+    return float(np.exp(log_q_visc) - np.exp(log_q_rad))
+
+
+def _log_advective_heating_residual(
+    log_T: float,
+    log_Sigma: float,
+    log_Omega: float,
+    log_R: float,
+    alpha: float,
+    mu: float,
+    xi: float,
+    opacity_obj: GreyOpacityLaw,
+) -> float:
+    r"""Thermal residual :math:`q^+ - q^- - q_{\rm adv}` (erg cm⁻² s⁻¹).
+
+    Positive when the disk is over-heated; zero at thermal equilibrium.
+    """
+    log_q_visc, log_q_rad, log_q_adv = _log_advective_heating_curves(
+        log_T, log_Sigma, log_Omega, log_R, alpha, mu, xi, opacity_obj
+    )
+    return float(np.exp(log_q_visc) - np.exp(log_q_rad) - np.exp(log_q_adv))
+
+
+# ================================================================ #
+#  Disk state conversion                                           #
+# ================================================================ #
+
+
+def disk_state(
+    M_BH: "_UnitBearingScalarLike",
+    M_D: "_UnitBearingScalarLike" = None,
+    R_D: "_UnitBearingScalarLike" = None,
+    J_D: "_UnitBearingScalarLike" = None,
+    Sigma_D: "_UnitBearingScalarLike" = None,
+) -> dict:
+    r"""Compute the full one-zone disk state from any two of the four disk variables.
+
+    Given the black hole mass and exactly **two** of :math:`(M_D, R_D, J_D, \Sigma_D)`,
+    this function infers the remaining two variables and the Keplerian angular velocity
+    :math:`\Omega` using the Metzger+08 one-zone geometry:
+
+    .. math::
+
+        J_D = \xi\,M_D\,\sqrt{G\,M_{\rm BH}\,R_D}, \qquad
+        \Sigma_D = \frac{M_D}{\pi\,A\,R_D^2}, \qquad
+        \Omega = \sqrt{\frac{G\,M_{\rm BH}}{R_D^3}}
+
+    with :math:`A = 1.62`, :math:`B = 1.33`, :math:`\xi = B/A \approx 0.821`.
+
+    Parameters
+    ----------
+    M_BH : Quantity [mass]
+        Black hole mass.
+    M_D : Quantity [mass], optional
+        Disk mass.
+    R_D : Quantity [length], optional
+        Characteristic disk radius.
+    J_D : Quantity [angular momentum], optional
+        Disk angular momentum.
+    Sigma_D : Quantity [surface density], optional
+        Disk surface density.
+
+    Returns
+    -------
+    dict
+        Dictionary with keys ``"M_D"``, ``"R_D"``, ``"J_D"``, ``"Sigma_D"``,
+        ``"Omega"``, all as :class:`~astropy.units.Quantity` in CGS units.
 
     Raises
     ------
     ValueError
-        If *opacity* is a Kramers string or an unrecognised name.
+        If not exactly two of the four disk variables are provided.
     """
-    if isinstance(opacity, (int, float)):
-        return float(opacity)
-    if opacity in _KRAMERS_OPACITIES:
-        raise ValueError(
-            f"Kramers opacity {opacity!r} is state-dependent (κ ∝ ρ T⁻³·⁵) and cannot "
-            "be represented as a single float.  Use a full disk model with the desired "
-            "opacity string instead of the equilibrium utilities."
-        )
-    if opacity == "electron_scattering":
-        return _get_kappa_es()
-    raise ValueError(f"Unknown opacity model {opacity!r}.  Known constant opacities: ['electron_scattering'].")
+    provided = {
+        "M_D": M_D,
+        "R_D": R_D,
+        "J_D": J_D,
+        "Sigma_D": Sigma_D,
+    }
+    given = {k: v for k, v in provided.items() if v is not None}
+    if len(given) != 2:
+        raise ValueError(f"Exactly 2 of (M_D, R_D, J_D, Sigma_D) must be provided; got {list(given.keys())}.")
 
+    # Work in CGS floats internally.
+    MBH = ensure_in_units(M_BH, u.g)
+    G = _G_CGS
+    xi = _DISK_XI
+    A = _DISK_A
 
-# ================================================================ #
-#  Low-level CGS helpers (private)                                 #
-# ================================================================ #
+    def _cgs(val, unit):
+        return ensure_in_units(val, unit)
 
+    keys = set(given.keys())
 
-def _cs_cgs(
-    T: np.ndarray,
-    Sigma: np.ndarray,
-    Omega: np.ndarray,
-    mu: float,
-) -> np.ndarray:
-    """Gas + radiation disk sound speed in CGS (cm s⁻¹).
+    if keys == {"M_D", "R_D"}:
+        M = _cgs(M_D, u.g)
+        R = _cgs(R_D, u.cm)
+        J = xi * M * np.sqrt(G * MBH * R)
+        Sigma = M / (np.pi * A * R**2)
 
-    Thin wrapper around :func:`~triceratops.physics_utils.eos.\
-_log_radiative_ideal_gas_disk_sound_speed` that works directly on CGS floats
-    or arrays.
-    """
-    return np.exp(_log_radiative_ideal_gas_disk_sound_speed(np.log(T), mu, np.log(Sigma), np.log(Omega)))
+    elif keys == {"M_D", "J_D"}:
+        M = _cgs(M_D, u.g)
+        J = _cgs(J_D, u.g * u.cm**2 / u.s)
+        # J = xi * M * sqrt(G * MBH * R)  =>  R = (J / (xi * M))^2 / (G * MBH)
+        R = (J / (xi * M)) ** 2 / (G * MBH)
+        Sigma = M / (np.pi * A * R**2)
 
+    elif keys == {"M_D", "Sigma_D"}:
+        M = _cgs(M_D, u.g)
+        Sigma = _cgs(Sigma_D, u.g / u.cm**2)
+        # Sigma = M / (pi * A * R^2)  =>  R = sqrt(M / (pi * A * Sigma))
+        R = np.sqrt(M / (np.pi * A * Sigma))
+        J = xi * M * np.sqrt(G * MBH * R)
 
-def _standard_residual_cgs(
-    T: np.ndarray,
-    Sigma: float,
-    Omega: float,
-    alpha: float,
-    mu: float,
-    kappa: float,
-) -> np.ndarray:
-    r"""Net cooling rate :math:`q^- - q^+` (erg cm⁻² s⁻¹) for the standard closure.
+    elif keys == {"R_D", "J_D"}:
+        R = _cgs(R_D, u.cm)
+        J = _cgs(J_D, u.g * u.cm**2 / u.s)
+        # J = xi * M * sqrt(G * MBH * R)  =>  M = J / (xi * sqrt(G * MBH * R))
+        M = J / (xi * np.sqrt(G * MBH * R))
+        Sigma = M / (np.pi * A * R**2)
 
-    Positive means the disk is over-cooling; zero means thermal equilibrium.
+    elif keys == {"R_D", "Sigma_D"}:
+        R = _cgs(R_D, u.cm)
+        Sigma = _cgs(Sigma_D, u.g / u.cm**2)
+        M = np.pi * A * Sigma * R**2
+        J = xi * M * np.sqrt(G * MBH * R)
 
-    Parameters
-    ----------
-    T : array-like (K)
-        Midplane temperature.
-    Sigma : float (g cm⁻²)
-        Surface density.
-    Omega : float (s⁻¹)
-        Keplerian angular velocity.
-    alpha, mu, kappa : float
-        Viscosity, mean molecular weight, opacity (cm² g⁻¹).
-    """
-    c_s = _cs_cgs(np.asarray(T, dtype=float), Sigma, Omega, mu)
-    q_visc = (9.0 / 8.0) * alpha * Sigma * Omega * c_s**2
-    q_rad = 16.0 * _SIGMA_SB * np.asarray(T, dtype=float) ** 4 / (3.0 * kappa * Sigma)
-    return q_rad - q_visc
+    else:  # keys == {"J_D", "Sigma_D"}
+        J = _cgs(J_D, u.g * u.cm**2 / u.s)
+        Sigma = _cgs(Sigma_D, u.g / u.cm**2)
+        # J = xi * pi * A * Sigma * sqrt(G * MBH) * R^(5/2)
+        # R = (J / (xi * pi * A * Sigma * sqrt(G * MBH)))^(2/5)
+        R = (J / (xi * np.pi * A * Sigma * np.sqrt(G * MBH))) ** (2.0 / 5.0)
+        M = np.pi * A * Sigma * R**2
 
+    Omega = np.sqrt(G * MBH / R**3)
 
-def _advective_residual_cgs(
-    T: np.ndarray,
-    Sigma: float,
-    Omega: float,
-    M: float,
-    R: float,
-    xi: float,
-    alpha: float,
-    mu: float,
-    kappa: float,
-) -> np.ndarray:
-    r"""Net cooling rate :math:`(q^- + q_{\rm adv}) - q^+` (erg cm⁻² s⁻¹).
-
-    Positive means the disk is over-cooling; zero means thermal equilibrium.
-
-    Parameters
-    ----------
-    T : array-like (K)
-        Midplane temperature.
-    Sigma : float (g cm⁻²)
-        Surface density.
-    Omega : float (s⁻¹)
-        Keplerian angular velocity.
-    M : float (g)
-        Disk mass.
-    R : float (cm)
-        Disk radius.
-    xi : float
-        Entropy gradient parameter (dimensionless, > 0).
-    alpha, mu, kappa : float
-        Viscosity, mean molecular weight, opacity (cm² g⁻¹).
-    """
-    T_arr = np.asarray(T, dtype=float)
-    c_s = _cs_cgs(T_arr, Sigma, Omega, mu)
-    q_visc = (9.0 / 8.0) * alpha * Sigma * Omega * c_s**2
-    q_rad = 16.0 * _SIGMA_SB * T_arr**4 / (3.0 * kappa * Sigma)
-    B = (4.0 / (9.0 * np.pi)) * xi * _DISK_F0 * alpha * M / (R**4 * Omega**2 * Sigma)
-    q_adv = B * c_s**2 * q_visc
-    return (q_rad + q_adv) - q_visc
+    return {
+        "M_D": M * u.g,
+        "R_D": R * u.cm,
+        "J_D": J * u.g * u.cm**2 / u.s,
+        "Sigma_D": Sigma * u.g / u.cm**2,
+        "Omega": Omega * u.rad / u.s,
+    }
 
 
 # ================================================================ #
@@ -211,625 +337,272 @@ def _advective_residual_cgs(
 # ================================================================ #
 
 
-def igP_es_trial_curves(
-    T: "_UnitBearingArrayLike",
-    alpha: float,
-    Sigma: "_UnitBearingArrayLike",
-    Omega: "_UnitBearingArrayLike",
+def compute_heating_curves(
+    M_disk: "_UnitBearingScalarLike" = None,
+    J_disk: "_UnitBearingScalarLike" = None,
+    R_disk: "_UnitBearingScalarLike" = None,
+    Sigma_disk: "_UnitBearingScalarLike" = None,
+    M_BH: "_UnitBearingScalarLike" = None,
+    alpha: float = 0.1,
     mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-) -> tuple[u.Quantity, u.Quantity, u.Quantity]:
-    r"""Heating and cooling rates for the non-advective full-pressure closure.
+    opacity: Union[str, float, GreyOpacityLaw] = "electron_scattering",
+    T_grid: Optional["_UnitBearingArrayLike"] = None,
+    T_grid_n: int = 500,
+    T_min: Optional["_UnitBearingScalarLike"] = 1e3 * u.K,
+    T_max: Optional["_UnitBearingScalarLike"] = 1e8 * u.K,
+):
+    r"""Compute viscous heating and radiative cooling as functions of temperature.
 
-    Evaluates the viscous heating rate :math:`q^+` and radiative cooling rate
-    :math:`q^-` as functions of temperature for fixed disk parameters, using the
-    same physics as the Cython ``igP`` closure.  A sign change in the residual
-    :math:`q^- - q^+` indicates a thermal equilibrium root.
-
-    .. math::
-
-        q^+ &= \tfrac{9}{8}\,\alpha\,\Sigma\,\Omega\,c_s^2(T) \\
-        q^- &= \frac{16\,\sigma_{\rm SB}\,T^4}{3\,\kappa\,\Sigma}
-
-    where :math:`c_s(T)` is the gas + radiation isothermal sound speed.
+    Exactly two of ``(M_disk, J_disk, R_disk, Sigma_disk)`` must be provided
+    together with ``M_BH`` to fully specify the disk state.
 
     Parameters
     ----------
-    T : `~astropy.units.Quantity`
-        Array of midplane temperatures to evaluate.
-    alpha : float
-        Shakura–Sunyaev viscosity parameter (dimensionless).
-    Sigma : `~astropy.units.Quantity`
-        Disk surface density.
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    mu : float, optional
-        Mean molecular weight (default 0.615 for fully ionised solar composition).
-    opacity : str or float, optional
-        Opacity model name (``"electron_scattering"``) or constant opacity in
-        cm² g⁻¹ (default ``"electron_scattering"`` → 0.34 cm² g⁻¹).
-
-    Returns
-    -------
-    q_visc : `~astropy.units.Quantity`
-        Viscous heating rate :math:`q^+` (erg cm⁻² s⁻¹).
-    q_rad : `~astropy.units.Quantity`
-        Radiative cooling rate :math:`q^-` (erg cm⁻² s⁻¹).
-    residual : `~astropy.units.Quantity`
-        Net cooling :math:`q^- - q^+` (erg cm⁻² s⁻¹).  A sign change indicates
-        a thermal equilibrium root.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-        from triceratops.dynamics.accretion.one_zone.utils import igP_es_trial_curves
-
-        T = np.logspace(4, 12, 500) * u.K
-        q_visc, q_rad, residual = igP_es_trial_curves(
-            T, alpha=0.1, Sigma=1e4 * u.g / u.cm**2, Omega=1e-3 / u.s
-        )
-        fig, ax = plt.subplots()
-        ax.loglog(T, q_visc.value, label=r"$q^+$ (viscous)")
-        ax.loglog(T, q_rad.value,  label=r"$q^-$ (radiative)")
-        ax.set_xlabel("T (K)")
-        ax.set_ylabel(r"$q$ (erg cm$^{-2}$ s$^{-1}$)")
-        ax.legend()
-    """
-    kappa = _resolve_kappa(opacity)
-    T_cgs = ensure_in_units(T, u.K)
-    Sig_cgs = ensure_in_units(Sigma, u.g / u.cm**2)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-
-    c_s = _cs_cgs(T_cgs, Sig_cgs, Omg_cgs, mu)
-    q_visc = (9.0 / 8.0) * alpha * Sig_cgs * Omg_cgs * c_s**2
-    q_rad = 16.0 * _SIGMA_SB * T_cgs**4 / (3.0 * kappa * Sig_cgs)
-
-    flux_unit = u.erg / u.cm**2 / u.s
-    return q_visc * flux_unit, q_rad * flux_unit, (q_rad - q_visc) * flux_unit
-
-
-def igP_es_adv_trial_curves(
-    T: "_UnitBearingArrayLike",
-    alpha: float,
-    Sigma: "_UnitBearingArrayLike",
-    Omega: "_UnitBearingArrayLike",
-    M: "_UnitBearingArrayLike",
-    R: "_UnitBearingArrayLike",
-    xi: float,
-    mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-) -> tuple[u.Quantity, u.Quantity, u.Quantity, u.Quantity]:
-    r"""Heating and cooling rates for the advective full-pressure closure.
-
-    Extends :func:`igP_es_trial_curves` with an advective cooling term.  The
-    thermal balance is :math:`q^+ = q^- + q_{\rm adv}`, giving the residual
-    :math:`(q^- + q_{\rm adv}) - q^+`.
-
-    .. math::
-
-        q^+        &= \tfrac{9}{8}\,\alpha\,\Sigma\,\Omega\,c_s^2(T) \\
-        q^-        &= \frac{16\,\sigma_{\rm SB}\,T^4}{3\,\kappa\,\Sigma} \\
-        q_{\rm adv}&= q^+\,B\,c_s^2,
-        \quad
-        B = \frac{4\,\xi\,F_0\,\alpha\,M}{9\pi\,R^4\,\Omega^2\,\Sigma}
-
-    where :math:`\xi` is the entropy gradient parameter and
-    :math:`F_0 = 1.6` is the Metzger+08 disk correction factor.
-    Setting :math:`\xi \to 0` recovers the non-advective limit.
-
-    Parameters
-    ----------
-    T : `~astropy.units.Quantity`
-        Array of midplane temperatures to evaluate.
-    alpha : float
-        Shakura–Sunyaev viscosity parameter (dimensionless).
-    Sigma : `~astropy.units.Quantity`
-        Disk surface density.
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    M : `~astropy.units.Quantity`
+    M_disk : Quantity [mass], optional
         Disk mass.
-    R : `~astropy.units.Quantity`
-        Disk radius.
-    xi : float
-        Entropy gradient parameter (dimensionless, > 0).
-    mu : float, optional
-        Mean molecular weight (default 0.615).
-    opacity : str or float, optional
-        Opacity model name or constant opacity in cm² g⁻¹
-        (default ``"electron_scattering"``).
+    J_disk : Quantity [angular momentum], optional
+        Disk angular momentum.
+    R_disk : Quantity [length], optional
+        Characteristic disk radius.
+    Sigma_disk : Quantity [surface density], optional
+        Disk surface density.
+    M_BH : Quantity [mass]
+        Black hole mass.
+    alpha : float
+        Shakura–Sunyaev viscosity parameter.
+    mu : float
+        Mean molecular weight.
+    opacity : str, float, or GreyOpacityLaw
+        Opacity specification.
+    T_grid : Quantity [temperature], optional
+        Explicit temperature grid.  If ``None``, a log-spaced grid between
+        ``T_min`` and ``T_max`` with ``T_grid_n`` points is used.
+    T_grid_n : int
+        Number of temperature grid points (used only when ``T_grid`` is ``None``).
+    T_min, T_max : Quantity [temperature]
+        Temperature range for the default grid.
 
     Returns
     -------
-    q_visc : `~astropy.units.Quantity`
-        Viscous heating rate :math:`q^+` (erg cm⁻² s⁻¹).
-    q_rad : `~astropy.units.Quantity`
-        Radiative cooling rate :math:`q^-` (erg cm⁻² s⁻¹).
-    q_adv : `~astropy.units.Quantity`
-        Advective cooling rate :math:`q_{\rm adv}` (erg cm⁻² s⁻¹).
-    residual : `~astropy.units.Quantity`
-        Net cooling :math:`(q^- + q_{\rm adv}) - q^+` (erg cm⁻² s⁻¹).
-
-    Examples
-    --------
-    .. code-block:: python
-
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-        from triceratops.dynamics.accretion.one_zone.utils import igP_es_adv_trial_curves
-
-        T = np.logspace(4, 12, 500) * u.K
-        q_visc, q_rad, q_adv, residual = igP_es_adv_trial_curves(
-            T,
-            alpha=0.1,
-            Sigma=1e4 * u.g / u.cm**2,
-            Omega=1e-3 / u.s,
-            M=1e29 * u.g,
-            R=1e11 * u.cm,
-            xi=1.0,
-        )
-        fig, ax = plt.subplots()
-        ax.loglog(T, q_visc.value, label=r"$q^+$ (viscous)")
-        ax.loglog(T, q_rad.value,  label=r"$q^-$ (radiative)")
-        ax.loglog(T, q_adv.value,  label=r"$q_{\rm adv}$")
-        ax.set_xlabel("T (K)")
-        ax.set_ylabel(r"$q$ (erg cm$^{-2}$ s$^{-1}$)")
-        ax.legend()
+    T : Quantity, shape (T_grid_n,) [K]
+        Temperature grid.
+    q_visc : Quantity, shape (T_grid_n,) [erg cm⁻² s⁻¹]
+        Viscous heating rate.
+    q_rad : Quantity, shape (T_grid_n,) [erg cm⁻² s⁻¹]
+        Radiative cooling rate.
     """
-    kappa = _resolve_kappa(opacity)
-    T_cgs = ensure_in_units(T, u.K)
-    Sig_cgs = ensure_in_units(Sigma, u.g / u.cm**2)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-    M_cgs = ensure_in_units(M, u.g)
-    R_cgs = ensure_in_units(R, u.cm)
+    if M_BH is None:
+        raise ValueError("M_BH must be provided.")
 
-    c_s = _cs_cgs(T_cgs, Sig_cgs, Omg_cgs, mu)
-    q_visc = (9.0 / 8.0) * alpha * Sig_cgs * Omg_cgs * c_s**2
-    q_rad = 16.0 * _SIGMA_SB * T_cgs**4 / (3.0 * kappa * Sig_cgs)
-    B = (4.0 / (9.0 * np.pi)) * xi * _DISK_F0 * alpha * M_cgs / (R_cgs**4 * Omg_cgs**2 * Sig_cgs)
-    q_adv = B * c_s**2 * q_visc
+    state = disk_state(M_BH, M_D=M_disk, R_D=R_disk, J_D=J_disk, Sigma_D=Sigma_disk)
+    Sigma = state["Sigma_D"].to(u.g / u.cm**2).value
+    Omega = state["Omega"].to(u.rad / u.s).value
 
-    flux_unit = u.erg / u.cm**2 / u.s
+    T_min_val = ensure_in_units(T_min, u.K)
+    T_max_val = ensure_in_units(T_max, u.K)
+
+    if T_grid is not None:
+        T_arr = ensure_in_units(T_grid, u.K)
+    else:
+        T_arr = np.geomspace(T_min_val, T_max_val, T_grid_n)
+
+    log_T = np.log(T_arr)
+    log_Sigma = np.log(Sigma)
+    log_Omega = np.log(Omega)
+
+    opacity_obj = get_opacity(opacity)
+    log_q_visc, log_q_rad = _log_heating_curves(log_T, log_Sigma, log_Omega, alpha, mu, opacity_obj)
+
+    erg_unit = u.erg / u.cm**2 / u.s
+    return T_arr * u.K, np.exp(log_q_visc) * erg_unit, np.exp(log_q_rad) * erg_unit
+
+
+def compute_advective_heating_curves(
+    M_disk: "_UnitBearingScalarLike" = None,
+    J_disk: "_UnitBearingScalarLike" = None,
+    R_disk: "_UnitBearingScalarLike" = None,
+    Sigma_disk: "_UnitBearingScalarLike" = None,
+    M_BH: "_UnitBearingScalarLike" = None,
+    alpha: float = 0.1,
+    xi: float = 1.5,
+    mu: float = 0.615,
+    opacity: Union[str, float, GreyOpacityLaw] = "electron_scattering",
+    T_grid: Optional["_UnitBearingArrayLike"] = None,
+    T_grid_n: int = 500,
+    T_min: Optional["_UnitBearingScalarLike"] = 1e3 * u.K,
+    T_max: Optional["_UnitBearingScalarLike"] = 1e8 * u.K,
+):
+    r"""Compute viscous heating, radiative cooling, and advective cooling as functions of temperature.
+
+    Exactly two of ``(M_disk, J_disk, R_disk, Sigma_disk)`` must be provided
+    together with ``M_BH`` to fully specify the disk state.
+
+    Parameters
+    ----------
+    M_disk : Quantity [mass], optional
+        Disk mass.
+    J_disk : Quantity [angular momentum], optional
+        Disk angular momentum.
+    R_disk : Quantity [length], optional
+        Characteristic disk radius.
+    Sigma_disk : Quantity [surface density], optional
+        Disk surface density.
+    M_BH : Quantity [mass]
+        Black hole mass.
+    alpha : float
+        Shakura–Sunyaev viscosity parameter.
+    xi : float
+        Entropy gradient (advection) parameter.
+    mu : float
+        Mean molecular weight.
+    opacity : str, float, or GreyOpacityLaw
+        Opacity specification.
+    T_grid : Quantity [temperature], optional
+        Explicit temperature grid.
+    T_grid_n : int
+        Number of temperature grid points (used only when ``T_grid`` is ``None``).
+    T_min, T_max : Quantity [temperature]
+        Temperature range for the default grid.
+
+    Returns
+    -------
+    T : Quantity, shape (T_grid_n,) [K]
+        Temperature grid.
+    q_visc : Quantity, shape (T_grid_n,) [erg cm⁻² s⁻¹]
+        Viscous heating rate.
+    q_rad : Quantity, shape (T_grid_n,) [erg cm⁻² s⁻¹]
+        Radiative cooling rate.
+    q_adv : Quantity, shape (T_grid_n,) [erg cm⁻² s⁻¹]
+        Advective cooling rate.
+    """
+    if M_BH is None:
+        raise ValueError("M_BH must be provided.")
+
+    state = disk_state(M_BH, M_D=M_disk, R_D=R_disk, J_D=J_disk, Sigma_D=Sigma_disk)
+    R = state["R_D"].to(u.cm).value
+    Sigma = state["Sigma_D"].to(u.g / u.cm**2).value
+    Omega = state["Omega"].to(u.rad / u.s).value
+
+    T_min_val = ensure_in_units(T_min, u.K)
+    T_max_val = ensure_in_units(T_max, u.K)
+
+    if T_grid is not None:
+        T_arr = ensure_in_units(T_grid, u.K)
+    else:
+        T_arr = np.geomspace(T_min_val, T_max_val, T_grid_n)
+
+    log_T = np.log(T_arr)
+    log_Sigma = np.log(Sigma)
+    log_Omega = np.log(Omega)
+    log_R = np.log(R)
+
+    opacity_obj = get_opacity(opacity)
+    log_q_visc, log_q_rad, log_q_adv = _log_advective_heating_curves(
+        log_T, log_Sigma, log_Omega, log_R, alpha, mu, xi, opacity_obj
+    )
+
+    erg_unit = u.erg / u.cm**2 / u.s
     return (
-        q_visc * flux_unit,
-        q_rad * flux_unit,
-        q_adv * flux_unit,
-        (q_rad + q_adv - q_visc) * flux_unit,
+        T_arr * u.K,
+        np.exp(log_q_visc) * erg_unit,
+        np.exp(log_q_rad) * erg_unit,
+        np.exp(log_q_adv) * erg_unit,
     )
 
 
 # ================================================================ #
-#  Low-level T-equilibrium finders (private, CGS scalar inputs)    #
+#  S-curves                                                        #
 # ================================================================ #
 
-_DEFAULT_T_LO: float = 1e1  # K
-_DEFAULT_T_HI: float = 1e14  # K
-_DEFAULT_N_BRACKET: int = 500
 
+def compute_advection_s_curve(
+    R_disk: "_UnitBearingScalarLike",
+    M_BH: "_UnitBearingScalarLike",
+    alpha: float = 0.1,
+    xi: float = 1.5,
+    mu: float = 0.615,
+    opacity: Union[str, float, GreyOpacityLaw] = "electron_scattering",
+    T_grid: Optional["_UnitBearingArrayLike"] = None,
+    T_grid_n: int = 500,
+    T_min: Optional["_UnitBearingScalarLike"] = 1e3 * u.K,
+    T_max: Optional["_UnitBearingScalarLike"] = 1e8 * u.K,
+    sigma_max: Optional["_UnitBearingScalarLike"] = 1e6 * u.g / u.cm**2,
+    sigma_min: Optional["_UnitBearingScalarLike"] = 1e2 * u.g / u.cm**2,
+):
+    r"""Compute the thermal equilibrium S-curve for an advective disk.
 
-def _find_equilibrium_T_standard(
-    Sigma_cgs: float,
-    Omega_cgs: float,
-    alpha: float,
-    mu: float,
-    kappa: float,
-    T_lo: float = _DEFAULT_T_LO,
-    T_hi: float = _DEFAULT_T_HI,
-    n: int = _DEFAULT_N_BRACKET,
-) -> list[float]:
-    """Find all thermal equilibrium temperatures (K) for the standard closure.
-
-    Evaluates the residual on a coarse log-spaced temperature grid, then refines
-    each sign-change bracket with :func:`scipy.optimize.brentq`.
-
-    Parameters
-    ----------
-    Sigma_cgs : float (g cm⁻²)
-    Omega_cgs : float (s⁻¹)
-    alpha, mu, kappa : float
-    T_lo, T_hi : float (K)
-        Search bounds.
-    n : int
-        Number of points in the coarse grid.
-
-    Returns
-    -------
-    list of float
-        Equilibrium temperature(s) in K (empty if none found in the range).
-    """
-    T_grid = np.geomspace(T_lo, T_hi, n)
-    F = _standard_residual_cgs(T_grid, Sigma_cgs, Omega_cgs, alpha, mu, kappa)
-    roots: list[float] = []
-    for i in np.where(np.diff(np.sign(F)))[0]:
-        root = brentq(
-            lambda T: _standard_residual_cgs(T, Sigma_cgs, Omega_cgs, alpha, mu, kappa),
-            T_grid[i],
-            T_grid[i + 1],
-        )
-        roots.append(float(root))
-    return roots
-
-
-def _find_equilibrium_T_advective(
-    Sigma_cgs: float,
-    Omega_cgs: float,
-    M_cgs: float,
-    R_cgs: float,
-    xi: float,
-    alpha: float,
-    mu: float,
-    kappa: float,
-    T_lo: float = _DEFAULT_T_LO,
-    T_hi: float = _DEFAULT_T_HI,
-    n: int = _DEFAULT_N_BRACKET,
-) -> list[float]:
-    """Find all thermal equilibrium temperatures (K) for the advective closure.
+    For each temperature in the grid, finds the surface density :math:`\Sigma`
+    at which :math:`q^+ = q^- + q_{\rm adv}` using :func:`scipy.optimize.brentq`.
 
     Parameters
     ----------
-    Sigma_cgs : float (g cm⁻²)
-    Omega_cgs : float (s⁻¹)
-    M_cgs : float (g)
-    R_cgs : float (cm)
+    R_disk : Quantity [length]
+        Characteristic disk radius.
+    M_BH : Quantity [mass]
+        Black hole mass.
+    alpha : float
+        Shakura–Sunyaev viscosity parameter.
     xi : float
-        Entropy gradient parameter.
-    alpha, mu, kappa : float
-    T_lo, T_hi : float (K)
-        Search bounds.
-    n : int
-        Number of points in the coarse grid.
+        Entropy gradient (advection) parameter.
+    mu : float
+        Mean molecular weight.
+    opacity : str, float, or GreyOpacityLaw
+        Opacity specification.
+    T_grid : Quantity [temperature], optional
+        Explicit temperature grid.
+    T_grid_n : int
+        Number of temperature grid points (used only when ``T_grid`` is ``None``).
+    T_min, T_max : Quantity [temperature]
+        Temperature range for the default grid.
+    sigma_min, sigma_max : Quantity [surface density]
+        Surface density search bracket for brentq.
 
     Returns
     -------
-    list of float
-        Equilibrium temperature(s) in K.
+    T : Quantity, shape (T_grid_n,) [K]
+        Temperature grid (NaN entries where no equilibrium was found).
+    Sigma : Quantity, shape (T_grid_n,) [g cm⁻²]
+        Equilibrium surface density (NaN where no root exists).
     """
-    T_grid = np.geomspace(T_lo, T_hi, n)
-    F = _advective_residual_cgs(T_grid, Sigma_cgs, Omega_cgs, M_cgs, R_cgs, xi, alpha, mu, kappa)
-    roots: list[float] = []
-    for i in np.where(np.diff(np.sign(F)))[0]:
-        root = brentq(
-            lambda T: _advective_residual_cgs(T, Sigma_cgs, Omega_cgs, M_cgs, R_cgs, xi, alpha, mu, kappa),
-            T_grid[i],
-            T_grid[i + 1],
-        )
-        roots.append(float(root))
-    return roots
+    R_disk = ensure_in_units(R_disk, u.cm)
+    M_BH = ensure_in_units(M_BH, u.g)
+    T_min_val = ensure_in_units(T_min, u.K)
+    T_max_val = ensure_in_units(T_max, u.K)
+    sigma_min_val = ensure_in_units(sigma_min, u.g / u.cm**2)
+    sigma_max_val = ensure_in_units(sigma_max, u.g / u.cm**2)
 
+    if T_grid is not None:
+        T_arr = ensure_in_units(T_grid, u.K)
+    else:
+        T_arr = np.geomspace(T_min_val, T_max_val, T_grid_n)
 
-# ================================================================ #
-#  Public T-equilibrium functions                                  #
-# ================================================================ #
+    Omega = np.sqrt(_G_CGS * M_BH / R_disk**3)
+    log_T = np.log(T_arr)
+    log_Omega = np.log(Omega)
+    log_R = np.log(R_disk)
 
+    opacity_obj = get_opacity(opacity)
 
-def compute_equilibrium_temperature(
-    Sigma: "_UnitBearingArrayLike",
-    Omega: "_UnitBearingArrayLike",
-    alpha: float,
-    mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-    T_range: Optional[tuple] = None,
-    n_bracket: int = _DEFAULT_N_BRACKET,
-) -> list[u.Quantity]:
-    r"""Find all thermal equilibrium temperatures for fixed :math:`\Sigma` and :math:`\Omega`.
+    sigma_equilibrium = np.full_like(T_arr, np.nan)
 
-    Solves :math:`q^-(T) = q^+(T)` for the non-advective full-pressure disk using
-    :func:`scipy.optimize.brentq` applied to sign-change brackets on a log-spaced
-    temperature grid.
-
-    Parameters
-    ----------
-    Sigma : `~astropy.units.Quantity`
-        Disk surface density.
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    alpha : float
-        Shakura–Sunyaev viscosity parameter.
-    mu : float, optional
-        Mean molecular weight (default 0.615).
-    opacity : str or float, optional
-        Opacity model name or constant opacity in cm² g⁻¹.
-    T_range : (Quantity, Quantity), optional
-        Lower and upper temperature search bounds.  Defaults to (10 K, 10¹⁴ K).
-    n_bracket : int, optional
-        Number of points in the initial coarse grid (default 500).
-
-    Returns
-    -------
-    list of `~astropy.units.Quantity`
-        Equilibrium temperature(s) in K.  Typically 1 (stable) or 3
-        (cold, unstable, and hot branch) values depending on the disk regime.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        from astropy import units as u
-        from triceratops.dynamics.accretion.one_zone.utils import (
-            compute_equilibrium_temperature,
-        )
-
-        roots = compute_equilibrium_temperature(
-            Sigma=1e4 * u.g / u.cm**2,
-            Omega=1e-3 / u.s,
-            alpha=0.1,
-        )
-        for T_eq in roots:
-            print(f"T_eq = {T_eq:.3e}")
-    """
-    kappa = _resolve_kappa(opacity)
-    Sig_cgs = ensure_in_units(Sigma, u.g / u.cm**2)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-    T_lo = ensure_in_units(T_range[0], u.K) if T_range is not None else _DEFAULT_T_LO
-    T_hi = ensure_in_units(T_range[1], u.K) if T_range is not None else _DEFAULT_T_HI
-
-    roots = _find_equilibrium_T_standard(Sig_cgs, Omg_cgs, alpha, mu, kappa, T_lo, T_hi, n_bracket)
-    return [T * u.K for T in roots]
-
-
-def compute_advective_equilibrium_temperature(
-    Sigma: "_UnitBearingArrayLike",
-    Omega: "_UnitBearingArrayLike",
-    M: "_UnitBearingArrayLike",
-    R: "_UnitBearingArrayLike",
-    xi: float,
-    alpha: float,
-    mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-    T_range: Optional[tuple] = None,
-    n_bracket: int = _DEFAULT_N_BRACKET,
-) -> list[u.Quantity]:
-    r"""Find all thermal equilibrium temperatures for the advective disk closure.
-
-    Solves :math:`q^-(T) + q_{\rm adv}(T) = q^+(T)` using
-    :func:`scipy.optimize.brentq` applied to sign-change brackets on a log-spaced
-    temperature grid.
-
-    Parameters
-    ----------
-    Sigma : `~astropy.units.Quantity`
-        Disk surface density.
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    M : `~astropy.units.Quantity`
-        Disk mass.
-    R : `~astropy.units.Quantity`
-        Disk radius.
-    xi : float
-        Entropy gradient parameter (dimensionless, > 0).
-    alpha : float
-        Shakura–Sunyaev viscosity parameter.
-    mu : float, optional
-        Mean molecular weight (default 0.615).
-    opacity : str or float, optional
-        Opacity model name or constant opacity in cm² g⁻¹.
-    T_range : (Quantity, Quantity), optional
-        Temperature search bounds.  Defaults to (10 K, 10¹⁴ K).
-    n_bracket : int, optional
-        Number of points in the initial coarse grid (default 500).
-
-    Returns
-    -------
-    list of `~astropy.units.Quantity`
-        Equilibrium temperature(s) in K.
-    """
-    kappa = _resolve_kappa(opacity)
-    Sig_cgs = ensure_in_units(Sigma, u.g / u.cm**2)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-    M_cgs = ensure_in_units(M, u.g)
-    R_cgs = ensure_in_units(R, u.cm)
-    T_lo = ensure_in_units(T_range[0], u.K) if T_range is not None else _DEFAULT_T_LO
-    T_hi = ensure_in_units(T_range[1], u.K) if T_range is not None else _DEFAULT_T_HI
-
-    roots = _find_equilibrium_T_advective(Sig_cgs, Omg_cgs, M_cgs, R_cgs, xi, alpha, mu, kappa, T_lo, T_hi, n_bracket)
-    return [T * u.K for T in roots]
-
-
-# ================================================================ #
-#  S-curve computation                                             #
-# ================================================================ #
-
-_DEFAULT_T_RANGE = (1e1 * u.K, 1e14 * u.K)
-_DEFAULT_SIGMA_RANGE = (1e-2 * u.g / u.cm**2, 1e8 * u.g / u.cm**2)
-_DEFAULT_N_GRID = 400
-
-
-def compute_standard_s_curve(
-    Omega: "_UnitBearingArrayLike",
-    alpha: float,
-    mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-    T_range: Optional[tuple] = None,
-    Sigma_range: Optional[tuple] = None,
-    n_T: int = _DEFAULT_N_GRID,
-    n_Sigma: int = _DEFAULT_N_GRID,
-) -> dict:
-    r"""Trace the thermal equilibrium S-curve in :math:`\Sigma`–:math:`T` space.
-
-    For each temperature in a log-spaced :math:`T` grid, sweeps a log-spaced
-    :math:`\Sigma` grid and locates all :math:`\Sigma` roots of
-    :math:`q^-(T, \Sigma) - q^+(T, \Sigma) = 0` using sign-change detection and
-    :func:`scipy.optimize.brentq`.  The collected :math:`(T, \Sigma)` pairs form
-    the equilibrium locus, which has the characteristic S-shape in log–log space.
-
-    Parameters
-    ----------
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    alpha : float
-        Shakura–Sunyaev viscosity parameter.
-    mu : float, optional
-        Mean molecular weight (default 0.615).
-    opacity : str or float, optional
-        Opacity model name or constant opacity in cm² g⁻¹.
-    T_range : (Quantity, Quantity), optional
-        Lower and upper temperature bounds.  Defaults to (10 K, 10¹⁴ K).
-    Sigma_range : (Quantity, Quantity), optional
-        Surface density bounds.  Defaults to (10⁻² g cm⁻², 10⁸ g cm⁻²).
-    n_T : int, optional
-        Number of temperature grid points (default 400).
-    n_Sigma : int, optional
-        Number of surface density grid points per temperature (default 400).
-
-    Returns
-    -------
-    dict
-        ``"T"`` : `~astropy.units.Quantity`
-            Equilibrium temperatures (K).
-        ``"Sigma"`` : `~astropy.units.Quantity`
-            Equilibrium surface densities (g cm⁻²) at each temperature.
-
-    Notes
-    -----
-    The multi-valued region (where three branches coexist) produces multiple
-    entries at nearby temperatures, one per branch.  Sort by ``T`` and plot
-    ``Sigma`` vs ``T`` to reproduce the classic S-shape.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-        from triceratops.dynamics.accretion.one_zone.utils import (
-            compute_standard_s_curve,
-        )
-
-        sc = compute_standard_s_curve(
-            Omega=1e-3 / u.s, alpha=0.1
-        )
-        fig, ax = plt.subplots()
-        ax.loglog(sc["T"].value, sc["Sigma"].value, "k.")
-        ax.set_xlabel("T (K)")
-        ax.set_ylabel(r"$\Sigma$ (g cm$^{-2}$)")
-    """
-    kappa = _resolve_kappa(opacity)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-
-    T_lo = ensure_in_units(T_range[0] if T_range is not None else _DEFAULT_T_RANGE[0], u.K)
-    T_hi = ensure_in_units(T_range[1] if T_range is not None else _DEFAULT_T_RANGE[1], u.K)
-    Sig_lo = ensure_in_units(
-        Sigma_range[0] if Sigma_range is not None else _DEFAULT_SIGMA_RANGE[0],
-        u.g / u.cm**2,
-    )
-    Sig_hi = ensure_in_units(
-        Sigma_range[1] if Sigma_range is not None else _DEFAULT_SIGMA_RANGE[1],
-        u.g / u.cm**2,
-    )
-
-    T_grid = np.geomspace(T_lo, T_hi, n_T)
-    Sig_grid = np.geomspace(Sig_lo, Sig_hi, n_Sigma)
-
-    T_pts: list[float] = []
-    Sig_pts: list[float] = []
-
-    for T_val in T_grid:
-        F = _standard_residual_cgs(T_val, Sig_grid, Omg_cgs, alpha, mu, kappa)
-        for i in np.where(np.diff(np.sign(F)))[0]:
-            sig_root = brentq(
-                lambda S: _standard_residual_cgs(T_val, S, Omg_cgs, alpha, mu, kappa),  # noqa: B023
-                Sig_grid[i],
-                Sig_grid[i + 1],
+    for T_idx, _log_T in tqdm(enumerate(log_T), total=len(log_T)):
+        try:
+            log_sigma_root = brentq(
+                lambda log_Sigma: _log_advective_heating_residual(
+                    _log_T,  # noqa: B023
+                    log_Sigma,
+                    log_Omega,
+                    log_R,
+                    alpha=alpha,
+                    mu=mu,
+                    xi=xi,
+                    opacity_obj=opacity_obj,
+                ),
+                np.log(sigma_min_val),
+                np.log(sigma_max_val),
             )
-            T_pts.append(float(T_val))
-            Sig_pts.append(float(sig_root))
+            sigma_equilibrium[T_idx] = log_sigma_root
+        except ValueError:
+            pass  # No root in bracket — leave as NaN
 
-    return {
-        "T": np.array(T_pts) * u.K,
-        "Sigma": np.array(Sig_pts) * u.g / u.cm**2,
-    }
-
-
-def compute_advective_s_curve(
-    Omega: "_UnitBearingArrayLike",
-    M: "_UnitBearingArrayLike",
-    R: "_UnitBearingArrayLike",
-    xi: float,
-    alpha: float,
-    mu: float = 0.615,
-    opacity: Union[str, float] = "electron_scattering",
-    T_range: Optional[tuple] = None,
-    Sigma_range: Optional[tuple] = None,
-    n_T: int = _DEFAULT_N_GRID,
-    n_Sigma: int = _DEFAULT_N_GRID,
-) -> dict:
-    r"""Trace the advective thermal equilibrium S-curve in :math:`\Sigma`–:math:`T` space.
-
-    Extends :func:`compute_standard_s_curve` to include the advective cooling term
-    :math:`q_{\rm adv}`.
-
-    Parameters
-    ----------
-    Omega : `~astropy.units.Quantity`
-        Keplerian angular velocity.
-    M : `~astropy.units.Quantity`
-        Disk mass.
-    R : `~astropy.units.Quantity`
-        Disk radius.
-    xi : float
-        Entropy gradient parameter (dimensionless, > 0).
-    alpha : float
-        Shakura–Sunyaev viscosity parameter.
-    mu : float, optional
-        Mean molecular weight (default 0.615).
-    opacity : str or float, optional
-        Opacity model name or constant opacity in cm² g⁻¹.
-    T_range : (Quantity, Quantity), optional
-        Temperature bounds.  Defaults to (10 K, 10¹⁴ K).
-    Sigma_range : (Quantity, Quantity), optional
-        Surface density bounds.  Defaults to (10⁻² g cm⁻², 10⁸ g cm⁻²).
-    n_T : int, optional
-        Number of temperature grid points (default 400).
-    n_Sigma : int, optional
-        Number of surface density grid points per temperature (default 400).
-
-    Returns
-    -------
-    dict
-        ``"T"`` : `~astropy.units.Quantity`
-            Equilibrium temperatures (K).
-        ``"Sigma"`` : `~astropy.units.Quantity`
-            Equilibrium surface densities (g cm⁻²).
-    """
-    kappa = _resolve_kappa(opacity)
-    Omg_cgs = ensure_in_units(Omega, 1 / u.s)
-    M_cgs = ensure_in_units(M, u.g)
-    R_cgs = ensure_in_units(R, u.cm)
-
-    T_lo = ensure_in_units(T_range[0] if T_range is not None else _DEFAULT_T_RANGE[0], u.K)
-    T_hi = ensure_in_units(T_range[1] if T_range is not None else _DEFAULT_T_RANGE[1], u.K)
-    Sig_lo = ensure_in_units(
-        Sigma_range[0] if Sigma_range is not None else _DEFAULT_SIGMA_RANGE[0],
-        u.g / u.cm**2,
-    )
-    Sig_hi = ensure_in_units(
-        Sigma_range[1] if Sigma_range is not None else _DEFAULT_SIGMA_RANGE[1],
-        u.g / u.cm**2,
-    )
-
-    T_grid = np.geomspace(T_lo, T_hi, n_T)
-    Sig_grid = np.geomspace(Sig_lo, Sig_hi, n_Sigma)
-
-    T_pts: list[float] = []
-    Sig_pts: list[float] = []
-
-    for T_val in T_grid:
-        F = _advective_residual_cgs(T_val, Sig_grid, Omg_cgs, M_cgs, R_cgs, xi, alpha, mu, kappa)
-        for i in np.where(np.diff(np.sign(F)))[0]:
-            sig_root = brentq(
-                lambda S: _advective_residual_cgs(T_val, S, Omg_cgs, M_cgs, R_cgs, xi, alpha, mu, kappa),  # noqa: B023
-                Sig_grid[i],
-                Sig_grid[i + 1],
-            )
-            T_pts.append(float(T_val))
-            Sig_pts.append(float(sig_root))
-
-    return {
-        "T": np.array(T_pts) * u.K,
-        "Sigma": np.array(Sig_pts) * u.g / u.cm**2,
-    }
+    return T_arr * u.K, np.exp(sigma_equilibrium) * (u.g / u.cm**2)

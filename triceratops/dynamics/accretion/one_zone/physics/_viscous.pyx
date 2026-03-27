@@ -73,8 +73,13 @@ cdef int viscous_derivative_func(
     """
     cdef double f_corr = DISK_F0 / (1.0 - sqrt(params.R_in / derived.R))
 
-    out.dM_dt += -exp(log(state.M) - log(closure.t_visc) + log(f_corr))
-    out.dJ_dt += out.dM_dt * exp(0.5 * (LOG_G_CGS + log(params.MBH) + log(params.R_in)))
+    # Compute only the viscous mass drain rate and use it for the J drain.
+    # We must NOT read out.dM_dt here because the source function (e.g. fallback)
+    # may have already added to it — using the accumulated total would spuriously
+    # couple the fallback mass rate into the viscous angular-momentum drain.
+    cdef double dM_visc = -exp(log(state.M) - log(closure.t_visc) + log(f_corr))
+    out.dM_dt += dM_visc
+    out.dJ_dt += dM_visc * exp(0.5 * (LOG_G_CGS + log(params.MBH) + log(params.R_in)))
 
     # Adaptive timestep: dt = epsilon * min(dt_M, dt_J, dt_visc), where each
     # partial constraint ensures the state variable changes by at most epsilon
@@ -83,5 +88,6 @@ cdef int viscous_derivative_func(
     cdef double dt_M = fabs(state.M / out.dM_dt)
     cdef double dt_visc = closure.t_visc
 
-    out.dt = params.epsilon * fmin(fmin(dt_J, dt_M), dt_visc)
-    return 0
+    printf("dt_M = %.3e, dt_J = %.3e, dt_visc = %.3e\n", dt_M, dt_J, dt_visc)
+
+    out.dt = params.epsilon * dt_M

@@ -61,10 +61,16 @@ cdef int fallback_source_func(
 ) nogil:
     r"""Add a power-law fallback mass supply to the current time step.
 
-    Reads the fallback parameters from the **last three** elements of
-    ``params.extra`` (indices ``n_extra-3``, ``n_extra-2``, ``n_extra-1``).
-    This works for both non-advective closures (n_extra=3) and advective
-    closures (n_extra=4, where ``extra[0]`` = ``xi`` is reserved).
+    This source function (and all fallback implementations) expect that the
+    4 runtime parameters immediately following the defaults are as follows:
+
+        - ``M_fb_0``: fallback rate at the reference time (g s⁻¹)
+        - ``R_C``: fallback circularization radius (cm)
+        - ``t_fb``: fallback reference time (s)
+        - ``beta_fb``: fallback power-law index (dimensionless)
+
+    If this contract is not maintained, a new source function should be defined to
+    correct the behavior.
 
     Parameters
     ----------
@@ -85,12 +91,14 @@ cdef int fallback_source_func(
     int
         Always 0 (SUCCESS).
     """
+    # In fallback implementing closures, we always allocate the first 4
     cdef int n = params.n_extra
-    cdef double M_fb_0  = params.extra[n - 3]
+    cdef double M_fb_0  = params.extra[n - 4]
+    cdef double R_C     = params.extra[n - 3]
     cdef double t_fb    = params.extra[n - 2]
     cdef double beta_fb = params.extra[n - 1]
     cdef double mdot_fb = M_fb_0 * pow(state.t / t_fb, -beta_fb)
 
     step.dM_dt += mdot_fb
-    step.dJ_dt += mdot_fb * exp(0.5 * (LOG_G_CGS + log(params.MBH) + log(derived.R)))
+    step.dJ_dt += mdot_fb * exp(0.5 * (LOG_G_CGS + log(params.MBH) + log(R_C)))
     return 0

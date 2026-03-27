@@ -50,6 +50,7 @@ from ._typing import (
     _RunParams,
     _SpecDict,
 )
+from .integrator import run_one_zone_model
 
 # ------------------------------------------------------------- #
 # Package versioning and Type checking                          #
@@ -426,7 +427,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     :attr:`CYTHON_FIELD_MAP`), or computed as derived quantities in Python.
     """
 
-    CYTHON_FIELD_MAP: ClassVar[dict] = {}
+    CYTHON_FIELD_MAP: dict = {}
     """dict : Mapping from :attr:`RESULT_FIELDS` keys to Cython result row indices.
 
     Each entry maps a field name to either an :class:`int` row index in the
@@ -991,8 +992,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         OneZoneAccretionResult :
             The object returned by this method.
         """
-        from .integrator import run_one_zone_model
-
         # --- Process time span --- #
         t_start = float(ensure_in_units(t_span[0], "s"))
         t_end = float(ensure_in_units(t_span[1], "s"))

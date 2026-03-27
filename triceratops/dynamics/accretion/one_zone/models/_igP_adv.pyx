@@ -152,21 +152,17 @@ cdef int igP_adv_closure_func(
     xi = params.extra[0]
 
     log_A_base = (
-        log(128.0 / 27.0)
+        log(32.0 / 27.0)
         + LOG_SIGMA_SB_CGS
         - log(params.alpha)
         - log(derived.Omega)
         - 2.0 * log(derived.Sigma)
     )
     log_B = (
-        log(4.0 / (9.0 * pi))
+        log(4.0 / 3.0)
         + log(xi)
-        + LOG_DISK_F0
-        + log(params.alpha)
-        + log(state.M)
-        - 4.0 * log(derived.R)
+        - 2.0 * log(derived.R)
         - 2.0 * log(derived.Omega)
-        - log(derived.Sigma)
     )
 
     if prev.log_T_c != 0.0:
@@ -195,7 +191,7 @@ cdef int igP_adv_closure_func(
     status = find_root(
         igP_adv_residual, &root_data,
         log_T_guess,
-        0.5,             # step: initial half-width of bracket in log-T
+        0.05,             # step: initial half-width of bracket in log-T
         2.0,             # grow_factor
         60,              # max_expand
         log(1.0e1), log(1.0e14),  # domain: 10 K – 1e14 K
@@ -356,6 +352,7 @@ cdef class igPAdvClosure(OneZoneClosure):
         self.n_result_fields = ADV_N_RESULT_FIELDS
         # Default to ES opacity.
         self.opacity = ElectronScatteringOpacity()
+
         if with_fallback:
             self._source_fn = fallback_source_func
         else:

@@ -51,7 +51,7 @@ from .._writer cimport N_RESULT_FIELDS, standard_writer_func
 from ..physics._eos cimport compute_ideal_gas_cs
 from ..physics._viscous cimport viscous_derivative_func
 from ..physics._fallback cimport fallback_source_func
-
+from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
 
 # ======================================================== #
 #  Root-finding context (iterative path)                   #
@@ -108,7 +108,7 @@ cdef int gP_closure_func(
     cdef int status
 
     log_Q_coef = (
-        log(27.0 / 128.0)
+        log(27.0 / 32.0)
         + LOG_K_B_CGS
         - LOG_M_P_CGS
         - log(params.mu)
@@ -191,13 +191,19 @@ cdef class gPClosure(OneZoneClosure):
     """
 
     def __cinit__(self, bint with_fallback=False):
-        from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+
+        # Setup the closures and the writers.
         self._closure_fn     = gP_closure_func
         self._derivative_fn  = viscous_derivative_func
         self._writer_fn      = standard_writer_func
         self.n_result_fields = N_RESULT_FIELDS
-        # Default to ES opacity.
+
+        # Set the opacity to electron scattering. WE OVERRIDE THIS LATER
+        # IF WE WANT SOMETHING ELSE.
         self.opacity = ElectronScatteringOpacity()
+
+        # If fallback is enabled, we need to use the fallback source function instead
+        # of the null source.
         if with_fallback:
             self._source_fn = fallback_source_func
         else:

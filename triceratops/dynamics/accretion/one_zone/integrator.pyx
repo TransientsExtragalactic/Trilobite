@@ -41,7 +41,6 @@ from .closure cimport (
 # ---------------------------------------- #
 # Explicit Marcher                         #
 # ---------------------------------------- #
-
 @cython.boundscheck(False)
 @cython.wraparound(False)
 cdef int compute_one_zone_model(
@@ -150,6 +149,13 @@ cdef int compute_one_zone_model(
 
     # Thread the opacity object pointer into DiskParameters.
     params.opacity = opacity
+
+    # Zero-initialise step — C stack structs are not guaranteed to be zero.
+    # The source and derivative functions use += so a dirty first iteration
+    # would corrupt the initial state update.
+    step.dM_dt = 0.0
+    step.dJ_dt = 0.0
+    step.dt    = 0.0
 
     # Zero-initialise prev_closure (warm-start seed for step 0).
     # t_visc == 0 is the sentinel the closure uses to fall back to state.t.

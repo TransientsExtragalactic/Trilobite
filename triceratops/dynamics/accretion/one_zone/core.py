@@ -18,196 +18,22 @@ import numpy as np
 
 from triceratops.dynamics.accretion.one_zone._typing import _RunParams
 from triceratops.dynamics.accretion.one_zone.base import OneZoneAccretionDiskBase
-from triceratops.physics_utils import IdealGasEOS
+from triceratops.physics_utils import IdealGasEOS, RadiativeIdealGas
+from triceratops.radiation.opacity.utils import get_opacity
 
-# ================================================================== #
-# Shared parameter declarations                                      #
-# ================================================================== #
-
-_DEFAULT_BETA_FB: float = 5.0 / 3.0
-_DEFAULT_XI: float = 0.5
-
-_BASE_RUNTIME_PARAMETERS: dict = {
-    "M_BH": {
-        "description": "Black hole mass",
-        "base_units": "g",
-        "default": None,
-        "log_transform": True,
-    },
-    "R_in": {
-        "description": "Inner truncation radius",
-        "base_units": "cm",
-        "default": None,
-        "log_transform": True,
-    },
-    "alpha": {
-        "description": "Shakura-Sunyaev alpha",
-        "base_units": None,
-        "default": None,
-        "log_transform": False,
-    },
-    # Fallback parameters — always declared; only required when fallback=True.
-    # Default values are harmless dummies: they are packed into the parameter
-    # array regardless of fallback mode, but the Cython source function is
-    # NULL when fallback=False, so these values are never read.
-    "M_fb_0": {
-        "description": "Fallback mass supply rate at t_fb",
-        "base_units": "g/s",
-        "default": 1.0,  # dummy; user must override when fallback=True
-        "log_transform": True,
-    },
-    "t_fb": {
-        "description": "Fallback reference time",
-        "base_units": "s",
-        "default": 1.0,  # dummy; user must override when fallback=True
-        "log_transform": True,
-    },
-    "beta_fb": {
-        "description": "Fallback power-law index",
-        "base_units": None,
-        "default": _DEFAULT_BETA_FB,
-        "log_transform": False,
-    },
-}
-
-_BASE_INITIAL_CONDITIONS: dict = {
-    "M_D_0": {
-        "description": "Initial disk mass",
-        "base_units": "g",
-        "default": None,
-        "log_transform": True,
-    },
-    "J_D_0": {
-        "description": "Initial disk angular momentum",
-        "base_units": "g*cm**2/s",
-        "default": None,
-        "log_transform": True,
-    },
-}
-
-_BASE_RESULT_FIELDS: dict = {
-    "R_D": {"description": "Disk outer radius", "units": "cm"},
-    "Sigma": {"description": "Surface density", "units": "g/cm**2"},
-    "Omega": {"description": "Angular velocity", "units": "rad/s"},
-    "T_eff": {"description": "Effective temperature", "units": "K"},
-    "T_c": {"description": "Central temperature", "units": "K"},
-    "tau": {"description": "Optical depth", "units": None},
-    "c_s": {"description": "Sound speed", "units": "cm/s"},
-    "nu": {"description": "Kinematic viscosity", "units": "cm**2/s"},
-    "t_visc": {"description": "Viscous timescale", "units": "s"},
-    "Q_visc": {"description": "Viscous dissipation rate", "units": "erg cm-2 s-1"},
-    "mdot": {"description": "Accretion rate", "units": "g/s"},
-    "H": {"description": "Scale height", "units": "cm"},
-    "H_over_R": {"description": "Aspect ratio", "units": None},
-    "rho": {"description": "Midplane density", "units": "g/cm**3"},
-    # Fallback field — always declared; only populated in data when fallback=True.
-    "mdot_fb": {"description": "Fallback mass supply rate", "units": "g/s"},
-}
-
-# Row layout (N_RESULT_FIELDS = 20):
-#   0=step_index  1=t  2=M  3=J  4=R  5=Sigma  6=Omega  7=T_eff  8=T_c
-#   9=tau  10=cs  11=nu  12=q_visc  13=dM_dt  14=dJ_dt  15=dt
-#   16=t_visc  17=H  18=H/R  19=rho
-_BASE_CYTHON_FIELD_MAP: dict = {
-    "R_D": 4,
-    "Sigma": 5,
-    "Omega": 6,
-    "T_eff": 7,
-    "T_c": 8,
-    "tau": 9,
-    "c_s": 10,
-    "nu": 11,
-    "Q_visc": 12,
-    "mdot": 13,
-    "t_visc": 16,
-    "H": 17,
-    "H_over_R": 18,
-    "rho": 19,
-    "mdot_fb": None,  # computed Python-side
-}
-
-_ADV_RESULT_FIELDS: dict = {
-    **{k: v for k, v in _BASE_RESULT_FIELDS.items() if k not in ("mdot_fb",)},
-    "Q_adv": {"description": "Advective cooling rate", "units": "erg cm-2 s-1"},
-    "mdot_fb": {"description": "Fallback mass supply rate", "units": "g/s"},
-}
-
-# Row layout (ADV_N_RESULT_FIELDS = 21):
-#   0=step_index  1=t  2=M  3=J  4=R  5=Sigma  6=Omega  7=T_eff  8=T_c
-#   9=tau  10=cs  11=nu  12=q_visc  13=q_adv  14=dM_dt  15=dJ_dt
-#   16=dt  17=t_visc  18=H  19=H/R  20=rho
-_ADV_CYTHON_FIELD_MAP: dict = {
-    "R_D": 4,
-    "Sigma": 5,
-    "Omega": 6,
-    "T_eff": 7,
-    "T_c": 8,
-    "tau": 9,
-    "c_s": 10,
-    "nu": 11,
-    "Q_visc": 12,
-    "Q_adv": 13,
-    "mdot": 14,
-    "t_visc": 17,
-    "H": 18,
-    "H_over_R": 19,
-    "rho": 20,
-    "mdot_fb": None,  # computed Python-side
-}
-
-
-# ================================================================== #
-# Helper: build a validated Cython closure with opacity installed    #
-# ================================================================== #
-
-
-_OPACITY_FACTORY: dict = {
-    "electron_scattering": "ElectronScatteringOpacity",
-    "kramers_ff": "KramersFFOpacity",
-    "kramers_bf": "KramersBFOpacity",
-    "kramers": "KramersOpacity",
-    "kramers_ff_es": "KramersFFESOpacity",
-    "kramers_bf_es": "KramersBFESOpacity",
-    "kramers_es": "KramersESOpacity",
-}
-
-
-def _build_closure_with_opacity(closure_cls, opacity, with_fallback: bool):
-    """Instantiate *closure_cls*, install the requested opacity, return it.
-
-    Parameters
-    ----------
-    closure_cls :
-        A :class:`~.closure.OneZoneClosure` subclass to instantiate.
-    opacity : str or GreyOpacityLaw
-        Opacity model name (``"electron_scattering"``, ``"kramers_ff"``,
-        ``"kramers_bf"``, ``"kramers"``) or a
-        :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance.
-    with_fallback : bool
-        If ``True``, enable the power-law fallback source term.
-    """
-    from triceratops.radiation.opacity import models as _opacity_models
-    from triceratops.radiation.opacity.base import GreyOpacityLaw
-
-    if isinstance(opacity, str):
-        if opacity not in _OPACITY_FACTORY:
-            raise ValueError(f"Unknown opacity model {opacity!r}.  Available: {sorted(_OPACITY_FACTORY)}.")
-        opacity_obj = getattr(_opacity_models, _OPACITY_FACTORY[opacity])()
-    elif isinstance(opacity, GreyOpacityLaw):
-        opacity_obj = opacity
-    else:
-        raise TypeError(f"opacity must be a str or GreyOpacityLaw instance, got {type(opacity).__name__}.")
-
-    closure = closure_cls(with_fallback=with_fallback)
-    closure.opacity = opacity_obj
-    return closure
+from ._closure_specs import (
+    ADV_FB_CYTHON_FIELD_MAP,
+    ADV_FB_RESULT_FIELDS,
+    BASE_INITIAL_CONDITIONS,
+    FALLBACK_CYTHON_FIELD_MAP,
+    FALLBACK_RESULT_FIELDS,
+    FALLBACK_RUNTIME_PARAMETERS,
+)
 
 
 # ================================================================== #
 # Concrete Models                                                    #
 # ================================================================== #
-
-
 class GasPressureDisk(OneZoneAccretionDiskBase):
     r"""
     One-zone disk model with gas pressure and configurable opacity.
@@ -216,21 +42,12 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
     framework.  The midplane temperature is solved **analytically** when
     electron-scattering opacity is active, making this the fastest closure.
 
-    Parameters
-    ----------
-    mu : float, optional
-        Mean molecular weight of the disk gas (dimensionless).
-        Default ``0.6``.
-    opacity : str or GreyOpacityLaw, optional
-        Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
-        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
-        ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
-        A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
-        may also be passed directly.
-    fallback : bool, optional
-        If ``True``, enable a power-law debris-stream mass supply.  The
-        runtime parameters ``M_fb_0``, ``t_fb``, and ``beta_fb`` must then
-        be provided to :meth:`solve`.  Default ``False``.
+    For alternative opacity models, the temperature is determined by root finding
+    under the condition that the disk reach thermal stability at each timestep. Thus,
+
+    .. math::
+
+        Q^{+} = Q^{-}.
 
     Examples
     --------
@@ -262,38 +79,101 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
         Sibling with combined gas + radiation pressure.
     """
 
-    _A: float = 1.62
-    _B: float = 1.33
-    _F: float = 1.6
-
+    # ================================================== #
+    # Model-specific parameters and metadata             #
+    # ================================================== #
+    # Each of these is used to declare the parameters, outputs, initial conditions, etc.
+    # of the model.  See the base class for details on how these are used.
+    #
+    # In this class, to permit specifying if fallback should be included
+    # or not, we use the FALLBACK parameters and simply ignore the relevant
+    # parameters when fallback is not turned on. This saves us a bit
+    # of namespace complexity.
     CONTEXT_PARAMETERS: dict = {
         "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
         "opacity": {"description": "Opacity model name", "base_units": None, "default": "electron_scattering"},
         "fallback": {"description": "Enable power-law fallback supply", "base_units": None, "default": False},
     }
-    RUNTIME_PARAMETERS: dict = _BASE_RUNTIME_PARAMETERS
-    INITIAL_CONDITIONS: dict = _BASE_INITIAL_CONDITIONS
-    RESULT_FIELDS: dict = _BASE_RESULT_FIELDS
-    CYTHON_FIELD_MAP: dict = _BASE_CYTHON_FIELD_MAP
+    RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
+    INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    RESULT_FIELDS: dict = FALLBACK_RESULT_FIELDS
+    CYTHON_FIELD_MAP: dict = FALLBACK_CYTHON_FIELD_MAP
 
+    # ================================================== #
+    # Initialization and Cython closure construction     #
+    # ================================================== #
     def __init__(self, mu: float = 0.6, opacity: str = "electron_scattering", fallback: bool = False):
+        """
+        Instantiate the class.
+
+        Parameters
+        ----------
+        mu : float, optional
+            Mean molecular weight of the disk gas (dimensionless).
+            Default ``0.6``.
+        opacity : str or GreyOpacityLaw, optional
+            Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
+            ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
+            ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
+            A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
+            may also be passed directly.
+        fallback : bool, optional
+            If ``True``, enable a power-law debris-stream mass supply.  The
+            runtime parameters ``M_fb_0``, ``t_fb``, and ``beta_fb`` must then
+            be provided to :meth:`solve`.  Default ``False``.
+        """
+        # Callback to the superclass to get things setup. This ensures
+        # the context parameters are generated.
         super().__init__(mu=mu, opacity=opacity, fallback=fallback)
+        self.fallback = fallback
+
+        # Instantiate an equation of state. THIS DOESN'T TIE TO C. We provide this
+        # as a helper for the python-side convenience functions, not because it does
+        # anything at the C-level.
         self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
 
+        # Generate the opacity.
+        try:
+            self.opacity = get_opacity(opacity)
+        except Exception as e:
+            raise ValueError(f"Error initializing opacity: {e}") from e
+
+    # ================================================== #
+    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # ================================================== #
+    # At this level, we need to construct a closure with the desired properties for
+    # performing the computation and then ensure that everything is packed properly.
+    #
+    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
+        # noinspection PyUnresolvedReferences
+        # (CYTHON)
         from triceratops.dynamics.accretion.one_zone.models._gP import gPClosure
 
-        return _build_closure_with_opacity(
-            gPClosure,
-            self._context_parameters["opacity"],
-            self._context_parameters["fallback"],
+        # We need to construct the closure a little bit carefully to ensure that the opacity
+        # is correctly coerced.
+
+        _closure = gPClosure(  # noqa: F821
+            with_fallback=self.fallback,
         )
 
+        # Set the opacity object attached to the closure so that
+        # we can use it to compute the opacity at each step.
+        _closure.opacity = self.opacity
+
+        # Now just return the closure.
+        return _closure
+
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        # Hand off to the baseclass to pack the 4 standard runtime parameters
+        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
         base = self._pack_base_cython_parameters(run_params)
+
+        # Add on the runtime parameters for the fallback behavior.
         extra = np.array(
             [
                 np.exp(run_params["log_M_fb_0"]),
+                np.exp(run_params["log_R_c"]),
                 np.exp(run_params["log_t_fb"]),
                 run_params["beta_fb"],
             ],
@@ -302,14 +182,24 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
         return np.concatenate([base, extra])
 
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
+        # This is where we get to derive the various additional properties we want in the
+        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
+
+        # Check if we have fallback enabled. If not, we can just return a zero for the
+        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        t = result_array[1, :]
-        M_fb_0 = np.exp(run_params["log_M_fb_0"])
-        t_fb = np.exp(run_params["log_t_fb"])
-        beta = run_params["beta_fb"]
-        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        else:
+            # We need to compute the fallback behavior. To do this, we'll use the
+            # built-in form of the fallback function.
+            t = result_array[1, :]
+            M_fb_0 = np.exp(run_params["log_M_fb_0"])
+            t_fb = np.exp(run_params["log_t_fb"])
+            beta = run_params["beta_fb"]
+
+            # Return the computed mdot_fb.
+            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
 class FullPressureDisk(OneZoneAccretionDiskBase):
@@ -318,21 +208,6 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
 
     The midplane temperature is solved **iteratively** at each timestep
     via bracket expansion + Brent's method.
-
-    Parameters
-    ----------
-    mu : float, optional
-        Mean molecular weight of the disk gas (dimensionless).
-        Default ``0.6``.
-    opacity : str or GreyOpacityLaw, optional
-        Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
-        ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
-        ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
-        A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
-        may also be passed directly.
-    fallback : bool, optional
-        If ``True``, enable a power-law debris-stream mass supply.
-        Default ``False``.
 
     Examples
     --------
@@ -366,38 +241,102 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
         Extended closure with advective cooling term.
     """
 
-    _A: float = 1.62
-    _B: float = 1.33
-    _F: float = 1.6
-
+    # ================================================== #
+    # Model-specific parameters and metadata             #
+    # ================================================== #
+    # Each of these is used to declare the parameters, outputs, initial conditions, etc.
+    # of the model.  See the base class for details on how these are used.
+    #
+    # In this class, to permit specifying if fallback should be included
+    # or not, we use the FALLBACK parameters and simply ignore the relevant
+    # parameters when fallback is not turned on. This saves us a bit
+    # of namespace complexity.
     CONTEXT_PARAMETERS: dict = {
         "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
         "opacity": {"description": "Opacity model name", "base_units": None, "default": "electron_scattering"},
         "fallback": {"description": "Enable power-law fallback supply", "base_units": None, "default": False},
     }
-    RUNTIME_PARAMETERS: dict = _BASE_RUNTIME_PARAMETERS
-    INITIAL_CONDITIONS: dict = _BASE_INITIAL_CONDITIONS
-    RESULT_FIELDS: dict = _BASE_RESULT_FIELDS
-    CYTHON_FIELD_MAP: dict = _BASE_CYTHON_FIELD_MAP
+    RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
+    INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    RESULT_FIELDS: dict = FALLBACK_RESULT_FIELDS
+    CYTHON_FIELD_MAP: dict = FALLBACK_CYTHON_FIELD_MAP
 
+    # ================================================== #
+    # Initialization and Cython closure construction     #
+    # ================================================== #
     def __init__(self, mu: float = 0.6, opacity: str = "electron_scattering", fallback: bool = False):
-        super().__init__(mu=mu, opacity=opacity, fallback=fallback)
-        self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
+        """
+        Instantiate the class.
 
+        Parameters
+        ----------
+        mu : float, optional
+            Mean molecular weight of the disk gas (dimensionless).
+            Default ``0.6``.
+        opacity : str or GreyOpacityLaw, optional
+            Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
+            ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
+            ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
+            A :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` instance
+            may also be passed directly.
+        fallback : bool, optional
+            If ``True``, enable a power-law debris-stream mass supply.  The
+            runtime parameters ``M_fb_0``, ``t_fb``, and ``beta_fb`` must then
+            be provided to :meth:`solve`.  Default ``False``.
+        """
+        # Callback to the superclass to get things setup. This ensures
+        # the context parameters are generated.
+        super().__init__(mu=mu, opacity=opacity, fallback=fallback)
+        self.fallback = fallback
+
+        # Instantiate an equation of state. THIS DOESN'T TIE TO C. We provide this
+        # as a helper for the python-side convenience functions, not because it does
+        # anything at the C-level.
+        self.eos = RadiativeIdealGas(mu=self._context_parameters["mu"])
+
+        # Generate the opacity.
+        try:
+            self.opacity = get_opacity(opacity)
+        except Exception as e:
+            raise ValueError(f"Error initializing opacity: {e}") from e
+
+    # ================================================== #
+    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # ================================================== #
+    # At this level, we need to construct a closure with the desired properties for
+    # performing the computation and then ensure that everything is packed properly.
+    #
+    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
+        # noinspection PyUnresolvedReferences
+        # (CYTHON)
         from triceratops.dynamics.accretion.one_zone.models._igP import igPClosure
 
-        return _build_closure_with_opacity(
-            igPClosure,
-            self._context_parameters["opacity"],
-            self._context_parameters["fallback"],
+        # We need to construct the closure a little bit carefully to ensure that the opacity
+        # is correctly coerced.
+        # noinspection PyUnresolvedReferences
+        # (CYTHON)
+        _closure = igPClosure(  # noqa: F821
+            with_fallback=self.fallback,
         )
 
+        # Set the opacity object attached to the closure so that
+        # we can use it to compute the opacity at each step.
+        _closure.opacity = self.opacity
+
+        # Now just return the closure.
+        return _closure
+
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        # Hand off to the baseclass to pack the 4 standard runtime parameters
+        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
         base = self._pack_base_cython_parameters(run_params)
+
+        # Add on the runtime parameters for the fallback behavior.
         extra = np.array(
             [
                 np.exp(run_params["log_M_fb_0"]),
+                np.exp(run_params["log_R_c"]),
                 np.exp(run_params["log_t_fb"]),
                 run_params["beta_fb"],
             ],
@@ -406,14 +345,32 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
         return np.concatenate([base, extra])
 
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
+        # This is where we get to derive the various additional properties we want in the
+        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
+
+        # Check if we have fallback enabled. If not, we can just return a zero for the
+        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        t = result_array[1, :]
-        M_fb_0 = np.exp(run_params["log_M_fb_0"])
-        t_fb = np.exp(run_params["log_t_fb"])
-        beta = run_params["beta_fb"]
-        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        else:
+            # We need to compute the fallback behavior. To do this, we'll use the
+            # built-in form of the fallback function.
+            t = result_array[1, :]
+            M_fb_0 = np.exp(run_params["log_M_fb_0"])
+            t_fb = np.exp(run_params["log_t_fb"])
+            beta = run_params["beta_fb"]
+
+            # Return the computed mdot_fb.
+            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+
+
+# ================================================================== #
+# Advective Disks                                                    #
+# ================================================================== #
+# We now add in advection as an additional source of cooling. This is commonly
+# used to emulate the inefficient cooling present in many super-Eddington
+# disks.
 
 
 class AdvectiveDisk(OneZoneAccretionDiskBase):
@@ -481,49 +438,88 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         Non-advective sibling (xi → 0 limit).
     """
 
-    _A: float = 1.62
-    _B: float = 1.33
-    _F: float = 1.6
-
+    # ================================================== #
+    # Model-specific parameters and metadata             #
+    # ================================================== #
+    # Each of these is used to declare the parameters, outputs, initial conditions, etc.
+    # of the model.  See the base class for details on how these are used.
+    #
+    # In this class, to permit specifying if fallback should be included
+    # or not, we use the FALLBACK parameters and simply ignore the relevant
+    # parameters when fallback is not turned on. This saves us a bit
+    # of namespace complexity.
     CONTEXT_PARAMETERS: dict = {
         "mu": {"description": "Mean molecular weight", "base_units": None, "default": 0.6},
-        "xi": {"description": "Entropy gradient parameter", "base_units": None, "default": _DEFAULT_XI},
+        "xi": {"description": "Advection parameter", "base_units": None, "default": 0.5},
         "opacity": {"description": "Opacity model name", "base_units": None, "default": "electron_scattering"},
         "fallback": {"description": "Enable power-law fallback supply", "base_units": None, "default": False},
     }
-    RUNTIME_PARAMETERS: dict = {
-        **_BASE_RUNTIME_PARAMETERS,
-    }
-    INITIAL_CONDITIONS: dict = _BASE_INITIAL_CONDITIONS
-    RESULT_FIELDS: dict = _ADV_RESULT_FIELDS
-    CYTHON_FIELD_MAP: dict = _ADV_CYTHON_FIELD_MAP
+    RUNTIME_PARAMETERS: dict = FALLBACK_RUNTIME_PARAMETERS
+    INITIAL_CONDITIONS: dict = BASE_INITIAL_CONDITIONS
+    RESULT_FIELDS: dict = ADV_FB_RESULT_FIELDS
+    CYTHON_FIELD_MAP: dict = ADV_FB_CYTHON_FIELD_MAP
 
     def __init__(
         self,
         mu: float = 0.6,
-        xi: float = _DEFAULT_XI,
+        xi: float = 1.5,
         opacity: str = "electron_scattering",
         fallback: bool = False,
     ):
+        # Callback to the superclass to get things setup. This ensures
+        # the context parameters are generated.
         super().__init__(mu=mu, xi=xi, opacity=opacity, fallback=fallback)
-        self.eos = IdealGasEOS(mu=self._context_parameters["mu"])
+        self.fallback = fallback
 
+        # Instantiate an equation of state. THIS DOESN'T TIE TO C. We provide this
+        # as a helper for the python-side convenience functions, not because it does
+        # anything at the C-level.
+        self.eos = RadiativeIdealGas(mu=self._context_parameters["mu"])
+
+        # Generate the opacity.
+        try:
+            self.opacity = get_opacity(opacity)
+        except Exception as e:
+            raise ValueError(f"Error initializing opacity: {e}") from e
+
+    # ================================================== #
+    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # ================================================== #
+    # At this level, we need to construct a closure with the desired properties for
+    # performing the computation and then ensure that everything is packed properly.
+    #
+    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
-        from triceratops.dynamics.accretion.one_zone.models._igP_adv import igPAdvClosure
+        # noinspection PyUnresolvedReferences
+        # (CYTHON)
+        from .models._igP_adv import igPAdvClosure
 
-        return _build_closure_with_opacity(
-            igPAdvClosure,
-            self._context_parameters["opacity"],
-            self._context_parameters["fallback"],
+        # We need to construct the closure a little bit carefully to ensure that the opacity
+        # is correctly coerced.
+        # noinspection PyUnresolvedReferences
+        # (CYTHON)
+        _closure = igPAdvClosure(
+            with_fallback=self.fallback,
         )
 
+        # Set the opacity object attached to the closure so that
+        # we can use it to compute the opacity at each step.
+        _closure.opacity = self.opacity
+
+        # Now just return the closure.
+        return _closure
+
     def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
+        # Hand off to the baseclass to pack the 4 standard runtime parameters
+        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
         base = self._pack_base_cython_parameters(run_params)
-        xi = self._context_parameters["xi"]
+
+        # Add on the runtime parameters for the fallback behavior.
         extra = np.array(
             [
-                xi,
+                self._context_parameters["xi"],
                 np.exp(run_params["log_M_fb_0"]),
+                np.exp(run_params["log_R_c"]),
                 np.exp(run_params["log_t_fb"]),
                 run_params["beta_fb"],
             ],
@@ -532,14 +528,24 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         return np.concatenate([base, extra])
 
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
+        # This is where we get to derive the various additional properties we want in the
+        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
+
+        # Check if we have fallback enabled. If not, we can just return a zero for the
+        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        t = result_array[1, :]
-        M_fb_0 = np.exp(run_params["log_M_fb_0"])
-        t_fb = np.exp(run_params["log_t_fb"])
-        beta = run_params["beta_fb"]
-        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        else:
+            # We need to compute the fallback behavior. To do this, we'll use the
+            # built-in form of the fallback function.
+            t = result_array[1, :]
+            M_fb_0 = np.exp(run_params["log_M_fb_0"])
+            t_fb = np.exp(run_params["log_t_fb"])
+            beta = run_params["beta_fb"]
+
+            # Return the computed mdot_fb.
+            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
 # ================================================================== #

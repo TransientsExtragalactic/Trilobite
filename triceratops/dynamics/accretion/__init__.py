@@ -20,19 +20,14 @@ from .one_zone import (
     GasPressureDisk,
     OneZoneAccretionDiskBase,
     OneZoneAccretionResult,
-    compute_advective_equilibrium_temperature,
-    compute_advective_s_curve,
-    compute_equilibrium_temperature,
-    compute_standard_s_curve,
+    compute_advection_s_curve,
     gP_es_fbDisk,
     # Backward-compat aliases
     gP_esDisk,
     igP_es_adv_fbDisk,
-    igP_es_adv_trial_curves,
     igP_es_advDisk,
     igP_es_fbDisk,
     # Utilities
-    igP_es_trial_curves,
     igP_esDisk,
 )
 
@@ -49,12 +44,7 @@ __all__ = [
     "gP_es_fbDisk",
     "igP_es_fbDisk",
     "igP_es_adv_fbDisk",
-    "igP_es_trial_curves",
-    "igP_es_adv_trial_curves",
-    "compute_equilibrium_temperature",
-    "compute_advective_equilibrium_temperature",
-    "compute_standard_s_curve",
-    "compute_advective_s_curve",
+    "compute_advection_s_curve",
     "compute_ISCO",
     "compute_schwarzschild_radius",
 ]

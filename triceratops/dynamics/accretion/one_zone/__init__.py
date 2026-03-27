@@ -134,12 +134,10 @@ from .core import (
     igP_esDisk,
 )
 from .utils import (
-    compute_advective_equilibrium_temperature,
-    compute_advective_s_curve,
-    compute_equilibrium_temperature,
-    compute_standard_s_curve,
-    igP_es_adv_trial_curves,
-    igP_es_trial_curves,
+    compute_advection_s_curve,
+    compute_advective_heating_curves,
+    compute_heating_curves,
+    disk_state,
 )
 
 __all__ = [
@@ -159,12 +157,10 @@ __all__ = [
     "igP_es_adv_fbDisk",
     # Utilities
     "radiative_ideal_gas_disk_sound_speed",
-    "igP_es_trial_curves",
-    "igP_es_adv_trial_curves",
-    "compute_equilibrium_temperature",
-    "compute_advective_equilibrium_temperature",
-    "compute_standard_s_curve",
-    "compute_advective_s_curve",
+    "disk_state",
+    "compute_heating_curves",
+    "compute_advective_heating_curves",
+    "compute_advection_s_curve",
     # GR utilities
     "compute_ISCO",
     "compute_schwarzschild_radius",
