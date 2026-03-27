@@ -36,11 +36,11 @@ cdef class C_GreyOpacityBase:
     # Override these in every concrete subclass.  Callers that cimport
     # this type can call them directly as fast C method calls.
 
-    cdef double _opacity(self, double rho, double T) except *
+    cdef double _opacity(self, double rho, double T) nogil
 
     # log_T first, log_rho second — matches kappa_func_t convention.
-    cdef double _log_opacity(self, double log_T, double log_rho) except *
+    cdef double _log_opacity(self, double log_T, double log_rho) nogil
 
-    cdef double _dlogkappa_dlogrho(self, double log_T, double log_rho) except *
+    cdef double _dlogkappa_dlogrho(self, double log_T, double log_rho) nogil
 
-    cdef double _dlogkappa_dlogT(self, double log_T, double log_rho) except *
+    cdef double _dlogkappa_dlogT(self, double log_T, double log_rho) nogil

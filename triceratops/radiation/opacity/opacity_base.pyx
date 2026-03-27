@@ -28,46 +28,50 @@ cdef class C_GreyOpacityBase:
     #  C hot path — override these in every concrete subclass          #
     # ================================================================ #
 
-    cdef double _opacity(self, double rho, double T) except *:
+    cdef double _opacity(self, double rho, double T) nogil:
         r""":math:`\kappa` (:math:`\mathrm{cm^2\,g^{-1}}`) in linear space.
 
         Subclasses may override with a direct formula; the default calls
         ``exp(_log_opacity(log(T), log(rho)))``.
         """
-        raise NotImplementedError(
-            f"{type(self).__name__} must implement _opacity(rho, T)."
-        )
+        with gil:
+            raise NotImplementedError(
+                f"{type(self).__name__} must implement _opacity(rho, T)."
+            )
 
-    cdef double _log_opacity(self, double log_T, double log_rho) except *:
+    cdef double _log_opacity(self, double log_T, double log_rho) nogil:
         r""":math:`\ln\kappa` (:math:`\mathrm{log\,cm^2\,g^{-1}}`).  *Primary method to implement.*
 
         Takes ``log_T`` :math:`= \ln T` and ``log_rho`` :math:`= \ln\rho`,
         returns :math:`\ln\kappa`.  Called in the hot path by disk closures
         and radiative-transfer loops.
         """
-        raise NotImplementedError(
-            f"{type(self).__name__} must implement _log_opacity(log_T, log_rho)."
-        )
+        with gil:
+            raise NotImplementedError(
+                f"{type(self).__name__} must implement _log_opacity(log_T, log_rho)."
+            )
 
-    cdef double _dlogkappa_dlogrho(self, double log_T, double log_rho) except *:
+    cdef double _dlogkappa_dlogrho(self, double log_T, double log_rho) nogil:
         r""":math:`\partial\ln\kappa/\partial\ln\rho` (dimensionless).
 
         For power-law :math:`\kappa \propto \rho^a` returns *a*.  For
         :math:`\rho`-independent opacity returns 0.
         """
-        raise NotImplementedError(
-            f"{type(self).__name__} must implement _dlogkappa_dlogrho(log_T, log_rho)."
-        )
+        with gil:
+            raise NotImplementedError(
+                f"{type(self).__name__} must implement _dlogkappa_dlogrho(log_T, log_rho)."
+            )
 
-    cdef double _dlogkappa_dlogT(self, double log_T, double log_rho) except *:
+    cdef double _dlogkappa_dlogT(self, double log_T, double log_rho) nogil:
         r""":math:`\partial\ln\kappa/\partial\ln T` (dimensionless).
 
         For power-law :math:`\kappa \propto T^b` returns *b*.  For
         T-independent opacity returns 0.
         """
-        raise NotImplementedError(
-            f"{type(self).__name__} must implement _dlogkappa_dlogT(log_T, log_rho)."
-        )
+        with gil:
+            raise NotImplementedError(
+                f"{type(self).__name__} must implement _dlogkappa_dlogT(log_T, log_rho)."
+            )
 
     # ================================================================ #
     #  Scalar Python wrappers — inherited; do not override             #
