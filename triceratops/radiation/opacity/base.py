@@ -144,17 +144,29 @@ class GreyOpacityLaw(OpacityLaw):
         # to _c_object instead, so this branch is only reached for pure-Python
         # grey laws.
         if self.IS_C_BACKED:
+            if np.ndim(log_T) > 0:
+                log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+                log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+                return self._c_object.log_opacity_array(log_T_c, log_rho_c)
             return self._c_object.log_opacity(log_T, log_rho)
         return self._LOG_KAPPA
 
     def _dlogkappa_dlogrho(self, log_T, log_rho):
         # Grey opacity has no density dependence.
         if self.IS_C_BACKED:
+            if np.ndim(log_T) > 0:
+                log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+                log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+                return self._c_object.dlogkappa_dlogrho_array(log_T_c, log_rho_c)
             return self._c_object.dlogkappa_dlogrho(log_T, log_rho)
         return 0.0
 
     def _dlogkappa_dlogT(self, log_T, log_rho):
         # Grey opacity has no temperature dependence.
         if self.IS_C_BACKED:
+            if np.ndim(log_T) > 0:
+                log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+                log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+                return self._c_object.dlogkappa_dlogT_array(log_T_c, log_rho_c)
             return self._c_object.dlogkappa_dlogT(log_T, log_rho)
         return 0.0

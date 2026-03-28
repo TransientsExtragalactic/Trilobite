@@ -49,7 +49,7 @@ FALLBACK_RUNTIME_PARAMETERS: dict = {
     "R_c": {
         "description": "Fallback circularization radius",
         "base_units": "cm",
-        "default": None,
+        "default": 1.0,  # dummy; user must override when fallback=True
         "log_transform": True,
     },
     "t_fb": {

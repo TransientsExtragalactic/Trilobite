@@ -365,14 +365,13 @@ class BaseTestOneZoneDisk:
         closure = disk._build_cython_closure()
         assert closure.is_ready()
 
-    def test_pack_cython_parameters_shape(self):
-        """_pack_cython_parameters() returns a float64 array of the expected shape."""
+    def test_bind_runtime_parameters_succeeds(self):
+        """bind_runtime_parameters() runs without error and closure remains ready."""
         disk = self._disk()
         rp = disk.process_runtime_parameters(self._runtime_parameters())
-        params = disk._pack_cython_parameters(rp)
-        assert params.shape == self.EXPECTED_CYTHON_PARAM_SHAPE
-        assert params.dtype == np.float64
-        assert np.all(np.isfinite(params))
+        closure = disk._build_cython_closure()
+        closure.bind_runtime_parameters(rp)  # should not raise
+        assert closure.is_ready()
 
     # ================================================================== #
     # ODE Solve                                                          #

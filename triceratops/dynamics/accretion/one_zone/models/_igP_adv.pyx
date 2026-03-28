@@ -1,10 +1,10 @@
 #cython: language_level=3, boundscheck=False
 r"""
-``igP_adv`` closure — ideal-gas / full pressure with advective cooling and runtime opacity (Cython).
+``igP_adv`` / ``AdvectiveClosure`` — full-pressure disk with advective cooling (Cython).
 
-Defines the closure function and :class:`OneZoneClosure` subclass for a
-one-zone accretion disk governed by combined gas and radiation pressure,
-including an advective cooling term.
+Defines the closure function and :class:`AdvectiveClosure` for a one-zone
+accretion disk with combined gas and radiation pressure including an advective
+cooling term.
 
 The energy balance is
 
@@ -26,15 +26,9 @@ where:
     A &= \frac{128}{27}\,\frac{\sigma_{\rm SB}}{\kappa\,\alpha\,\Omega\,\Sigma^2},\\
     B &= \frac{4}{9\pi}\,\xi\,F_0\,\alpha\,\frac{M_D}{R_D^4\,\Omega^2\,\Sigma}.
 
-The opacity :math:`\kappa` is supplied at runtime via ``params.kappa_func``
-and is re-evaluated at each temperature trial inside the residual.
-
-The parameter :math:`\xi` (``params.extra[0]``) is the entropy gradient
-parameter.  Setting :math:`\xi \to 0` recovers the non-advective ``igP``
-limit.
-
-Naming convention: ``igP`` = ideal-gas / full (gas + radiation) pressure EOS,
-``adv`` = advective cooling.
+The entropy-gradient parameter :math:`\xi` (``params.advection.xi``) controls
+advection strength.  Setting :math:`\xi \to 0` recovers the non-advective
+:class:`~._igP.FullPressureClosure` limit.
 
 Physics building blocks used
 -----------------------------
@@ -42,15 +36,11 @@ Physics building blocks used
 * Viscous derivative: :func:`~..physics._viscous.viscous_derivative_func`
 * Output writer: :func:`igP_adv_writer_func` (custom 21-field writer)
 
-Extra parameters
-----------------
-``params.extra[0]``: ``xi`` — entropy gradient parameter (dimensionless, > 0).
-
 See Also
 --------
 :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` :
     Python-level model class that uses this closure.
-:class:`~._igP.igPClosure` :
+:class:`~._igP.FullPressureClosure` :
     Non-advective sibling closure.
 """
 from libc.math cimport exp, log, pi, sqrt
@@ -61,12 +51,14 @@ from triceratops.math_utils._bracket_root_finder cimport find_root
 
 from ..closure cimport (
     LOG_DISK_F0, LOG_K_B_CGS, LOG_KAPPA_ES, LOG_M_P_CGS, LOG_SIGMA_SB_CGS,
+    FallbackParams, AdvectionParams,
     OneZoneClosure,
     ClosureResult, DiskDerived, DiskParameters, DiskState, DiskStep,
 )
 from ..physics._eos cimport compute_gas_rad_cs
 from ..physics._viscous cimport viscous_derivative_func
 from ..physics._fallback cimport fallback_source_func
+from ..physics._param_wrappers cimport CFallback, CAdvection
 
 
 # ======================================================== #
@@ -135,7 +127,8 @@ cdef int igP_adv_closure_func(
     derived
         Geometry/kinematics (R, Sigma, Omega).
     params
-        Fixed model parameters.  ``params.extra[0]`` must be ``xi``.
+        Fixed model parameters.  ``params.advection`` must point to a valid
+        :c:type:`AdvectionParams` struct with ``xi > 0``.
     prev
         Previous-step closure result (warm-start source for ``log_T_c``).
     out
@@ -146,10 +139,12 @@ cdef int igP_adv_closure_func(
     int
         0 on success; non-zero propagates the :func:`find_root` error code.
     """
-    cdef double log_A_base, log_B, log_T_guess, log_T, log_rho, log_kappa, c_s, xi
+    cdef double log_A_base, log_B, log_T_guess, log_T, log_rho, log_kappa, c_s
+    cdef double xi
     cdef igP_advRootData root_data
     cdef int status
-    xi = params.extra[0]
+
+    xi = params.advection.xi
 
     log_A_base = (
         log(32.0 / 27.0)
@@ -279,7 +274,7 @@ cdef int igP_adv_writer_func(
     20     ρ             g cm⁻³
     =====  ============  =================
     """
-    cdef double xi = params.extra[0]
+    cdef double xi = params.advection.xi
     cdef double log_B = (
         log(4.0 / (9.0 * pi))
         + log(xi)
@@ -319,41 +314,98 @@ cdef int igP_adv_writer_func(
 
 
 # ======================================================== #
-#  Closure class                                           #
+#  AdvectiveClosure                                        #
 # ======================================================== #
 
-cdef class igPAdvClosure(OneZoneClosure):
+cdef class AdvectiveClosure(OneZoneClosure):
     """
-    ``igP_adv`` closure — full pressure (gas + radiation) + advective cooling.
-
-    Assembles :func:`igP_adv_closure_func`,
-    :func:`~..physics._viscous.viscous_derivative_func`, and
-    :func:`igP_adv_writer_func` into a runnable
-    :class:`~..closure.OneZoneClosure`.
-
-    Requires ``params.extra[0]`` = ``xi`` (entropy gradient parameter, > 0).
-    Set ``n_result_fields = 21`` (one more than the standard writer).
-
-    Defaults to electron-scattering opacity.  Set ``closure.opacity`` to
-    use a different opacity law.
+    Full-pressure + advective cooling closure with optional fallback.
 
     Parameters
     ----------
     with_fallback : bool, optional
-        If ``True``, install :func:`~..physics._fallback.fallback_source_func`
-        as the source term.  Default ``False``.
+        If ``True``, install
+        :func:`~..physics._fallback.fallback_source_func` as the source term.
+        Default ``False``.
+    mu : double, optional
+        Mean molecular weight (dimensionless).  Default ``0.6``.
+    xi : double, optional
+        Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
+
+    Notes
+    -----
+    Call :meth:`bind_runtime_parameters` before passing to the integrator.
+    The advection parameter ``xi`` is a context-level constant (set at
+    construction time), not a runtime parameter.
     """
 
-    def __cinit__(self, bint with_fallback=False):
+    def __cinit__(
+        self,
+        bint with_fallback=False,
+        double mu=0.6,
+        double xi=0.5,
+    ):
         from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+
         self._closure_fn     = igP_adv_closure_func
         self._derivative_fn  = viscous_derivative_func
         self._writer_fn      = igP_adv_writer_func
         self.n_result_fields = ADV_N_RESULT_FIELDS
-        # Default to ES opacity.
+        self._mu             = mu
+        self._xi             = xi
+        self._has_fallback   = with_fallback
+        self._fallback_ptr   = NULL
+        self._advection_ptr  = NULL  # populated in bind_runtime_parameters
+
+        # Default to ES opacity; caller overrides via .opacity setter.
         self.opacity = ElectronScatteringOpacity()
 
         if with_fallback:
             self._source_fn = fallback_source_func
         else:
             self._source_fn = NULL
+
+    def bind_runtime_parameters(self, dict run_params):
+        """Populate closure fields from the processed runtime parameter dict.
+
+        Parameters
+        ----------
+        run_params : dict
+            Processed parameter dict as returned by
+            :meth:`~..base.OneZoneAccretionDiskBase.process_runtime_parameters`.
+            Expected keys: ``"log_M_BH"``, ``"log_R_in"``, ``"alpha"`` and,
+            when ``with_fallback=True``, also ``"log_M_fb_0"``, ``"log_R_c"``,
+            ``"log_t_fb"``, ``"beta_fb"``.
+        """
+        self._M_BH  = exp(run_params["log_M_BH"])
+        self._R_in  = exp(run_params["log_R_in"])
+        self._alpha = run_params["alpha"]
+
+        # Advection is always active; construct the wrapper once per solve.
+        self._advection_obj = CAdvection(self._xi)
+        self._advection_ptr = self._advection_obj.ptr()
+
+        if self._has_fallback:
+            self._fallback_obj = CFallback(
+                exp(run_params["log_M_fb_0"]),
+                exp(run_params["log_R_c"]),
+                exp(run_params["log_t_fb"]),
+                run_params["beta_fb"],
+            )
+            self._fallback_ptr = self._fallback_obj.ptr()
+        else:
+            self._fallback_ptr = NULL
+
+    cdef void _pack_params(self, DiskParameters* p) nogil:
+        """Fill *p* from closure-owned fields.  Called GIL-free by the integrator."""
+        p.MBH       = self._M_BH
+        p.R_in      = self._R_in
+        p.alpha     = self._alpha
+        p.mu        = self._mu
+        p.fallback  = self._fallback_ptr
+        p.advection = self._advection_ptr
+        p.opacity   = self._opacity_ptr
+
+
+# Backward-compatible alias (the old name remains importable).
+igPAdvClosure = AdvectiveClosure

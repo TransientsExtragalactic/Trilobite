@@ -118,12 +118,13 @@ class TestigP_es_advDisk(BaseTestOneZoneDisk):
         spec = self._disk().to_spec_dict()
         assert "AdvectiveDisk" in spec["target"]
 
-    def test_pack_cython_parameters_shape(self):
-        """_pack_cython_parameters returns [MBH, R_in, alpha, mu, xi, M_fb_0, t_fb, beta_fb] — 8 elements."""
+    def test_bind_runtime_parameters_succeeds(self):
+        """bind_runtime_parameters() runs without error and closure remains ready."""
         disk = self._disk()
-        run_params = disk.process_runtime_parameters(self._runtime_parameters())
-        params = disk._pack_cython_parameters(run_params)
-        assert params.shape == (8,)
+        rp = disk.process_runtime_parameters(self._runtime_parameters())
+        closure = disk._build_cython_closure()
+        closure.bind_runtime_parameters(rp)
+        assert closure.is_ready()
 
 
 # ================================================================== #

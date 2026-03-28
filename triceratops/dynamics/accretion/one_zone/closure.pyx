@@ -14,6 +14,7 @@ See Also
     Optional source-term functions (e.g. fallback supply).
 """
 from libc.math cimport log, pi
+from cpython.ref cimport PyObject
 from triceratops.radiation.opacity.opacity_base cimport C_GreyOpacityBase
 
 
@@ -157,6 +158,7 @@ cdef class OneZoneClosure:
         self._source_fn      = NULL
         self._c_opacity      = None
         self._opacity_obj    = None
+        self._opacity_ptr    = NULL
         self.n_result_fields = n_result_fields
 
     cpdef bint is_ready(self):
@@ -186,3 +188,10 @@ cdef class OneZoneClosure:
             )
         self._opacity_obj = obj    # retain Python reference for GC safety
         self._c_opacity   = c_obj  # typed C reference for integrator
+        # Pre-extract a raw void* so _pack_params can set params.opacity without the GIL.
+        # Safe as long as self._c_opacity is alive (guaranteed by the ref above).
+        self._opacity_ptr = <void*>(<PyObject*>c_obj)
+
+    cdef void _pack_params(self, DiskParameters* p) nogil:
+        """Base no-op: concrete closures override this to fill DiskParameters."""
+        pass

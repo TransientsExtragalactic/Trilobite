@@ -310,8 +310,7 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
     1. Populate the four declaration dicts and :attr:`CYTHON_FIELD_MAP`.
     2. Implement :meth:`_build_cython_closure` to return the compiled closure.
-    3. Implement :meth:`_pack_cython_parameters` to pack the parameter array.
-    4. Implement :meth:`to_spec_dict` and :meth:`from_spec_dict` for HDF5.
+    3. Implement :meth:`to_spec_dict` and :meth:`from_spec_dict` for HDF5.
 
     .. code-block:: python
 
@@ -438,6 +437,16 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     Every key in :attr:`RESULT_FIELDS` must appear here; missing keys are
     rejected by :class:`_OneZoneMeta` at class-definition time.
     """
+
+    # ==================================================== #
+    # Metzger+08 disk geometry constants                   #
+    # ==================================================== #
+    # These mirror the C-level DISK_A / DISK_B / DISK_F0 constants defined in
+    # closure.pyx and are exposed here so Python-side helpers (e.g. computing
+    # a self-consistent J_D_0) can reference them without importing Cython.
+    _A: ClassVar[float] = 1.62  # Metzger+08 disk correction factor A
+    _B: ClassVar[float] = 1.33  # Metzger+08 disk correction factor B
+    _F: ClassVar[float] = 1.6  # Metzger+08 disk correction factor F0
 
     # ==================================================== #
     # Initialization                                       #
@@ -770,54 +779,6 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
         """
         ...
 
-    def _pack_base_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
-        """Pack the standard 4-element base parameter array ``[MBH, R_in, alpha, mu]``.
-
-        Parameters
-        ----------
-        run_params : dict[str, float]
-            Processed per-solve parameters as returned by
-            :meth:`process_runtime_parameters`.
-
-        Returns
-        -------
-        np.ndarray, shape (4,)
-            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous float64 array.
-        """
-        return np.array(
-            [
-                np.exp(run_params["log_M_BH"]),
-                np.exp(run_params["log_R_in"]),
-                run_params["alpha"],
-                self._context_parameters["mu"],
-            ],
-            dtype=np.float64,
-        )
-
-    @abstractmethod
-    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
-        """Return the parameter array consumed by ``run_one_zone_model``.
-
-        The Cython integrator expects a contiguous float64 array of shape
-        ``(>=4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu, ...]``
-        in linear CGS.  Elements beyond index 3 are closure-specific extra
-        parameters accessible via ``params.extra``.
-
-        Parameters
-        ----------
-        run_params : dict[str, float]
-            Processed per-solve parameters as returned by
-            :meth:`process_runtime_parameters`.  Log-transformed parameters
-            are stored under ``"log_{key}"``; others under ``"{key}"``.
-
-        Returns
-        -------
-        np.ndarray, shape (>=4,)
-            ``[MBH (g), R_in (cm), alpha, mu, ...]`` as a C-contiguous
-            float64 array.
-        """
-        ...
-
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
         """Compute Python-side derived result fields.
 
@@ -1002,15 +963,19 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
 
         # y0 is log-CGS; the Cython integrator expects linear CGS.
         initial_state = np.ascontiguousarray(np.exp(y0), dtype=np.float64)
-        params_array = np.ascontiguousarray(self._pack_cython_parameters(run_params), dtype=np.float64)
+
+        # Build the closure, then bind all per-solve parameters into it.
+        # bind_runtime_parameters constructs any physics-component wrappers
+        # (CFallback, CAdvection) and stores raw pointers for _pack_params.
         closure = self._build_cython_closure()
+        closure.bind_runtime_parameters(run_params)
 
         # --- Run the Cython integrator --- #
         success = True
         message = "Cython integrator completed successfully."
         raw = None
         try:
-            raw = run_one_zone_model(initial_state, params_array, t_start, t_end, max_steps, closure, epsilon)
+            raw = run_one_zone_model(initial_state, t_start, t_end, max_steps, closure, epsilon)
         except (RuntimeError, ValueError) as exc:
             success = False
             message = str(exc)

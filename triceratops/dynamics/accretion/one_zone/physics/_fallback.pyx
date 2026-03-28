@@ -6,24 +6,13 @@ Implements a power-law mass supply rate representing the fallback of tidally
 disrupted debris onto the accretion disk, as in tidal disruption event (TDE)
 models.
 
-Extra-parameter layout (``params.extra``, last 3 indices)
-----------------------------------------------------------
-The fallback parameters always occupy the **last three** slots of
-``params.extra``, regardless of how many preceding extra parameters exist
-(e.g. the advective entropy gradient ``xi``):
-
-=======  =========  ========================================
-Index    Symbol     Description
-=======  =========  ========================================
-n_extra-3  M_fb_0   Fallback rate at ``t_fb`` (g s⁻¹)
-n_extra-2  t_fb     Reference (peak) time (s)
-n_extra-1  beta_fb  Power-law index (dimensionless; typically 5/3)
-=======  =========  ========================================
-
-This convention accommodates both non-advective closures (where
-``extra = [M_fb_0, t_fb, beta_fb]``, n_extra=3, reads ``[0,1,2]``) and
-advective closures (where ``extra = [xi, M_fb_0, t_fb, beta_fb]``,
-n_extra=4, reads ``[1,2,3]``).
+Parameter access
+----------------
+Fallback parameters are read from ``params.fallback`` (a ``FallbackParams*``),
+which is set by the closure's ``_pack_params`` method before the hot loop.
+The pointer is ``NULL`` when fallback is disabled; this function is only
+registered as a source term when fallback is active, so it will always receive
+a valid pointer.
 
 The inflow rate is
 
@@ -79,8 +68,8 @@ cdef int fallback_source_func(
     derived
         Derived quantities; ``derived.R`` is the disk outer radius (cm).
     params
-        Model parameters.  ``params.extra`` must point to at least 3 elements
-        with ``[M_fb_0 (g s⁻¹), t_fb (s), beta_fb]`` in the last three slots.
+        Model parameters.  ``params.fallback`` must be a valid
+        :c:type:`FallbackParams*` (set by the closure's ``_pack_params``).
     closure
         Thermodynamic closure result (not used here).
     step
@@ -91,12 +80,10 @@ cdef int fallback_source_func(
     int
         Always 0 (SUCCESS).
     """
-    # In fallback implementing closures, we always allocate the first 4
-    cdef int n = params.n_extra
-    cdef double M_fb_0  = params.extra[n - 4]
-    cdef double R_C     = params.extra[n - 3]
-    cdef double t_fb    = params.extra[n - 2]
-    cdef double beta_fb = params.extra[n - 1]
+    cdef double M_fb_0  = params.fallback.M_fb_0
+    cdef double R_C     = params.fallback.R_c
+    cdef double t_fb    = params.fallback.t_fb
+    cdef double beta_fb = params.fallback.beta_fb
     cdef double mdot_fb = M_fb_0 * pow(state.t / t_fb, -beta_fb)
 
     step.dM_dt += mdot_fb

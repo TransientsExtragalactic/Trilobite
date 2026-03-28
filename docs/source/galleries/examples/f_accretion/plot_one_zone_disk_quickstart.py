@@ -127,8 +127,8 @@ print(disk)
 # :math:`R_{\rm ISCO} \approx 2.7 \times 10^6\;\mathrm{cm}`, consistent with
 # our adopted :math:`R_{\rm in} = 3 \times 10^6\;\mathrm{cm}`.
 
-M_BH = 3.0 * const.M_sun  # Black hole mass
-R_in = 3.0e6 * u.cm  # Inner truncation radius (~ISCO for 3 Msun BH)
+M_BH = 1e6 * const.M_sun  # Black hole mass
+R_in = 1e7 * u.cm  # Inner truncation radius (~ISCO for 3 Msun BH)
 alpha = 0.1  # Shakura-Sunyaev viscosity parameter
 
 # %%
@@ -147,8 +147,8 @@ alpha = 0.1  # Shakura-Sunyaev viscosity parameter
 
 ic = disk.generate_initial_conditions(
     M_BH=M_BH,
-    M_D_0=0.05 * const.M_sun,
-    R_D_0=3.0e11 * u.cm,
+    M_D_0=0.005 * const.M_sun,
+    R_D_0=3.0e12 * u.cm,
 )
 print("Initial disk mass:              ", ic["M_D_0"].to(u.Msun))
 print("Initial angular momentum:       ", ic["J_D_0"].to(u.g * u.cm**2 / u.s))
@@ -174,7 +174,7 @@ result = disk.solve(
     initial_conditions=ic,
     runtime_parameters={"M_BH": M_BH, "R_in": R_in, "alpha": alpha},
     t_span=(1.0e3 * u.s, 5.0e9 * u.s),
-    max_steps=100_000,
+    max_steps=1000000,
 )
 
 print(f"Integration successful:  {result.success}")

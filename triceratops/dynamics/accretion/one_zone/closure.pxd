@@ -30,6 +30,22 @@ cdef double LOG_RAD_A_CGS
 cdef double LOG_SIGMA_SB_CGS
 
 # ---------------------------------------- #
+# Physics Component Parameter Structs      #
+# ---------------------------------------- #
+# Named structs replace the old ``double* extra`` catch-all in DiskParameters.
+# Each physics feature owns its own struct, which is pointed to from
+# DiskParameters.  NULL means the feature is disabled.
+
+cdef struct FallbackParams:
+    double M_fb_0   # g s^-1  — fallback rate at the reference time t_fb
+    double R_c      # cm      — circularisation radius
+    double t_fb     # s       — reference (peak) time
+    double beta_fb  # dimensionless — power-law index (typically 5/3)
+
+cdef struct AdvectionParams:
+    double xi       # dimensionless — entropy gradient parameter (> 0)
+
+# ---------------------------------------- #
 # Core Structures                          #
 # ---------------------------------------- #
 
@@ -49,8 +65,8 @@ cdef struct DiskParameters:
     double alpha        # dimensionless
     double mu           # dimensionless (mean molecular weight)
     double epsilon      # dimensionless (adaptive time-step fraction)
-    double* extra       # pointer into the parameters memoryview (may be NULL)
-    int    n_extra      # number of extra parameters
+    FallbackParams* fallback   # NULL = fallback disabled
+    AdvectionParams* advection  # NULL = advection disabled
     void*  opacity      # raw PyObject* to a C_GreyOpacityBase instance (set by integrator)
 
 cdef struct DiskDerived:
@@ -151,10 +167,9 @@ cdef class OneZoneClosure:
     The hot loop skips the source call entirely when it is ``NULL``, so
     closures with no source term pay zero overhead.
 
-    ``_kappa_fn`` defaults to ``NULL``; call :meth:`set_opacity` (or set it
-    in ``__cinit__``) before passing the closure to the integrator.  The
-    integrator threads ``_kappa_fn`` / ``_kappa_data`` into ``DiskParameters``
-    so that all closure and writer functions can call ``params.kappa_func``.
+    ``_opacity_ptr`` is a pre-extracted raw ``void*`` to the C-level opacity
+    object. It is set automatically by the ``opacity`` property setter and used
+    in ``_pack_params`` without acquiring the GIL.
     """
     cdef closure_func    _closure_fn
     cdef derivative_func _derivative_fn
@@ -162,6 +177,9 @@ cdef class OneZoneClosure:
     cdef source_func     _source_fn      # NULL = no source term (default)
     cdef C_GreyOpacityBase _c_opacity    # typed reference (keeps object alive for GC)
     cdef object          _opacity_obj    # original GreyOpacityLaw (for opacity getter)
+    cdef void*           _opacity_ptr    # pre-extracted raw pointer (GIL-free in _pack_params)
     cdef readonly int    n_result_fields
 
     cpdef bint is_ready(self)
+
+    cdef void _pack_params(self, DiskParameters* p) nogil

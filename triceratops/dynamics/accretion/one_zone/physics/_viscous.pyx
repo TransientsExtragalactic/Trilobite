@@ -19,7 +19,6 @@ See Also
     ``derivative_func`` typedef and struct definitions.
 """
 from libc.math cimport exp, log, sqrt, fmin, fabs
-from libc.stdio cimport printf
 
 from ..closure cimport (
     DISK_F0, LOG_G_CGS,
@@ -87,7 +86,5 @@ cdef int viscous_derivative_func(
     cdef double dt_J = fabs(state.J / out.dJ_dt)
     cdef double dt_M = fabs(state.M / out.dM_dt)
     cdef double dt_visc = closure.t_visc
-
-    printf("dt_M = %.3e, dt_J = %.3e, dt_visc = %.3e\n", dt_M, dt_J, dt_visc)
 
     out.dt = params.epsilon * dt_M

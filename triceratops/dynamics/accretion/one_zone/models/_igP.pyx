@@ -1,13 +1,22 @@
 #cython: language_level=3, boundscheck=False
 r"""
-``igP`` closure — ideal-gas / full pressure with runtime-configurable opacity (Cython).
+``igP`` / ``FullPressureClosure`` — full-pressure closure with runtime opacity (Cython).
 
-Defines the closure function and :class:`OneZoneClosure` subclass for a
-one-zone accretion disk governed by combined gas and radiation pressure.
-The midplane temperature is found iteratively via bracket expansion + Brent's
-method at each step.
+Defines the closure function and :class:`FullPressureClosure` for one-zone
+accretion disk models.  :class:`FullPressureClosure` is the single concrete
+class that covers both gas-pressure-only and combined gas+radiation pressure
+physics:
 
-The energy balance solved is:
+* ``gas_pressure_only=True``  → uses :func:`gP_closure_func` (analytic-seed
+  iterative solve using the ideal-gas EOS).
+* ``gas_pressure_only=False`` → uses :func:`igP_closure_func` (iterative solve
+  using the combined gas+radiation EOS).
+
+In both modes the same derivative, writer, and (optional) fallback source term
+are used, so a single class replaces what were formerly two separate classes
+(``gPClosure`` and ``igPClosure``).
+
+The energy balance solved by :func:`igP_closure_func` is:
 
 .. math::
 
@@ -20,27 +29,23 @@ where
     Q = \frac{27}{64}\,\frac{\alpha\,\kappa\,\Omega\,\Sigma^2}{\sigma_{\rm SB}},
 
 and :math:`c_s(T_c)` is the combined gas+radiation sound speed from
-:func:`~..physics._eos.compute_gas_rad_cs`.  The opacity :math:`\kappa` is
-supplied at runtime via ``params.kappa_func``.
-
-Naming convention: ``igP`` = ideal-gas / full (gas + radiation) pressure EOS.
-The opacity is no longer encoded in the class name — it is a runtime parameter
-set via :meth:`~..closure.OneZoneClosure.set_opacity`.
+:func:`~..physics._eos.compute_gas_rad_cs`.
 
 Physics building blocks used
 -----------------------------
-* EOS: :func:`~..physics._eos.compute_gas_rad_cs`
+* EOS: :func:`~..physics._eos.compute_ideal_gas_cs` (gP path),
+  :func:`~..physics._eos.compute_gas_rad_cs` (igP path)
 * Viscous derivative: :func:`~..physics._viscous.viscous_derivative_func`
 * Output writer: :func:`~.._writer.standard_writer_func`
 
 See Also
 --------
+:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` :
+    Python-level model that selects ``gas_pressure_only=True``.
 :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` :
-    Python-level model class that uses this closure.
-:class:`~._gP.gPClosure` :
-    Simpler sibling with analytic temperature solve (gas pressure only).
-:class:`~._igP_adv.igPAdvClosure` :
-    Extended sibling with advective cooling.
+    Python-level model that selects ``gas_pressure_only=False``.
+:class:`~._igP_adv.AdvectiveClosure` :
+    Extended closure with advective cooling.
 """
 from libc.math cimport exp, log, pi, sqrt
 from cpython.ref cimport PyObject
@@ -50,6 +55,7 @@ from triceratops.math_utils._bracket_root_finder cimport find_root
 
 from ..closure cimport (
     LOG_K_B_CGS, LOG_KAPPA_ES, LOG_M_P_CGS, LOG_SIGMA_SB_CGS,
+    FallbackParams,
     OneZoneClosure,
     ClosureResult, DiskDerived, DiskParameters, DiskState,
 )
@@ -57,6 +63,8 @@ from .._writer cimport N_RESULT_FIELDS, standard_writer_func
 from ..physics._eos cimport compute_gas_rad_cs
 from ..physics._viscous cimport viscous_derivative_func
 from ..physics._fallback cimport fallback_source_func
+from ..physics._param_wrappers cimport CFallback
+from ._gP cimport gP_closure_func
 
 
 # ======================================================== #
@@ -189,37 +197,116 @@ cdef int igP_closure_func(
 
 
 # ======================================================== #
-#  Closure class                                           #
+#  FullPressureClosure                                     #
 # ======================================================== #
 
-cdef class igPClosure(OneZoneClosure):
+cdef class FullPressureClosure(OneZoneClosure):
     """
-    ``igP`` closure — full pressure (gas + radiation) with runtime opacity.
+    Merged gas-pressure / full-pressure closure with optional fallback.
 
-    Assembles :func:`igP_closure_func`,
-    :func:`~..physics._viscous.viscous_derivative_func`, and
-    :func:`~.._writer.standard_writer_func` into a runnable
-    :class:`~..closure.OneZoneClosure`.
-
-    Defaults to electron-scattering opacity.  Set ``closure.opacity`` to
-    use a different opacity law.
+    This single class replaces the former ``gPClosure`` and ``igPClosure``
+    pair.  The temperature-solve path is selected at construction time via
+    ``gas_pressure_only`` — there is no branch inside the hot loop.
 
     Parameters
     ----------
+    gas_pressure_only : bool, optional
+        If ``True``, use the gas-pressure-only analytic-seed iterative solve
+        (:func:`~._gP.gP_closure_func`).  If ``False`` (default), use the
+        combined gas+radiation iterative solve (:func:`igP_closure_func`).
     with_fallback : bool, optional
-        If ``True``, install :func:`~..physics._fallback.fallback_source_func`
-        as the source term.  Default ``False``.
+        If ``True``, install
+        :func:`~..physics._fallback.fallback_source_func` as the source term.
+        The runtime parameters ``M_fb_0``, ``R_c``, ``t_fb``, and ``beta_fb``
+        must then be provided to :meth:`bind_runtime_parameters`.
+        Default ``False``.
+    mu : double, optional
+        Mean molecular weight of the disk gas (dimensionless).  Default ``0.6``.
+
+    Notes
+    -----
+    Call :meth:`bind_runtime_parameters` with the processed runtime parameter
+    dict (output of
+    :meth:`~..base.OneZoneAccretionDiskBase.process_runtime_parameters`)
+    **before** passing this closure to
+    :func:`~..integrator.run_one_zone_model`.  The integrator calls
+    :meth:`_pack_params` once (before the hot loop) to fill a
+    ``DiskParameters`` struct from the values stored by
+    :meth:`bind_runtime_parameters`.
     """
 
-    def __cinit__(self, bint with_fallback=False):
+    def __cinit__(
+        self,
+        bint gas_pressure_only=False,
+        bint with_fallback=False,
+        double mu=0.6,
+    ):
         from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
-        self._closure_fn     = igP_closure_func
+
+        if gas_pressure_only:
+            self._closure_fn = gP_closure_func
+        else:
+            self._closure_fn = igP_closure_func
         self._derivative_fn  = viscous_derivative_func
         self._writer_fn      = standard_writer_func
         self.n_result_fields = N_RESULT_FIELDS
-        # Default to ES opacity.
+        self._mu             = mu
+        self._has_fallback   = with_fallback
+        self._fallback_ptr   = NULL
+
+        # Default to electron-scattering opacity; caller overrides via .opacity setter.
         self.opacity = ElectronScatteringOpacity()
+
         if with_fallback:
             self._source_fn = fallback_source_func
         else:
             self._source_fn = NULL
+
+    def bind_runtime_parameters(self, dict run_params):
+        """Populate closure fields from the processed runtime parameter dict.
+
+        Must be called once per solve, before passing this closure to
+        :func:`~..integrator.run_one_zone_model`.  After this call,
+        :meth:`_pack_params` can be called (GIL-free) to assemble the
+        ``DiskParameters`` struct for the integrator.
+
+        Parameters
+        ----------
+        run_params : dict
+            Processed parameter dict as returned by
+            :meth:`~..base.OneZoneAccretionDiskBase.process_runtime_parameters`.
+            Expected keys: ``"log_M_BH"``, ``"log_R_in"``, ``"alpha"`` and,
+            when ``with_fallback=True``, also ``"log_M_fb_0"``, ``"log_R_c"``,
+            ``"log_t_fb"``, ``"beta_fb"``.
+        """
+        self._M_BH  = exp(run_params["log_M_BH"])
+        self._R_in  = exp(run_params["log_R_in"])
+        self._alpha = run_params["alpha"]
+
+        if self._has_fallback:
+            self._fallback_obj = CFallback(
+                exp(run_params["log_M_fb_0"]),
+                exp(run_params["log_R_c"]),
+                exp(run_params["log_t_fb"]),
+                run_params["beta_fb"],
+            )
+            self._fallback_ptr = self._fallback_obj.ptr()
+        else:
+            self._fallback_ptr = NULL
+
+    cdef void _pack_params(self, DiskParameters* p) nogil:
+        """Fill *p* from closure-owned fields.  Called GIL-free by the integrator."""
+        p.MBH       = self._M_BH
+        p.R_in      = self._R_in
+        p.alpha     = self._alpha
+        p.mu        = self._mu
+        p.fallback  = self._fallback_ptr
+        p.advection = NULL
+        p.opacity   = self._opacity_ptr
+
+
+# ======================================================== #
+# Backward-compatible aliases                              #
+# ======================================================== #
+# igPClosure was the old name before the gP/igP merger.
+igPClosure = FullPressureClosure

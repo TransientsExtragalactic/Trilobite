@@ -58,17 +58,24 @@ _R_D_INIT = 3.0e13  # cm
 _XI = 1.33 / 1.62  # B/A
 _J_DISK = _XI * _M_DISK * np.sqrt(_G_CGS * _M_BH * _R_D_INIT)  # g cm^2 s^-1
 
+import math as _math
+
 _INITIAL_STATE = np.array([_M_DISK, _J_DISK], dtype=np.float64)
-_PARAMETERS = np.array([_M_BH, _R_IN, _ALPHA, _MU], dtype=np.float64)
 
 
 def _make_closure():
-    """Return a ready gPClosure."""
-    from triceratops.dynamics.accretion.one_zone.models._gP import (
-        gPClosure,
-    )
+    """Return a ready FullPressureClosure (gas-pressure-only mode) with parameters bound."""
+    from triceratops.dynamics.accretion.one_zone.models._igP import FullPressureClosure
 
-    return gPClosure()
+    closure = FullPressureClosure(gas_pressure_only=True, mu=_MU)
+    closure.bind_runtime_parameters(
+        {
+            "log_M_BH": _math.log(_M_BH),
+            "log_R_in": _math.log(_R_IN),
+            "alpha": _ALPHA,
+        }
+    )
+    return closure
 
 
 # ------------------------------------------------------------------ #
@@ -108,7 +115,6 @@ class TestRunOneZoneModelValidation:
         with pytest.raises(ValueError, match="uninitialised function pointers"):
             run_one_zone_model(
                 _INITIAL_STATE.copy(),
-                _PARAMETERS.copy(),
                 t_start=0.0,
                 t_end=1.0,
                 max_steps=10,
@@ -122,21 +128,6 @@ class TestRunOneZoneModelValidation:
         with pytest.raises(ValueError, match="initial_state must have shape"):
             run_one_zone_model(
                 bad_state,
-                _PARAMETERS.copy(),
-                t_start=0.0,
-                t_end=1.0,
-                max_steps=10,
-                closure=closure,
-            )
-
-    def test_wrong_parameters_shape_raises(self):
-        """``parameters`` with length != 5 raises :exc:`ValueError`."""
-        closure = _make_closure()
-        bad_params = np.array([_M_BH, _R_IN], dtype=np.float64)
-        with pytest.raises(ValueError, match="parameters must have shape"):
-            run_one_zone_model(
-                _INITIAL_STATE.copy(),
-                bad_params,
                 t_start=0.0,
                 t_end=1.0,
                 max_steps=10,
@@ -149,7 +140,6 @@ class TestRunOneZoneModelValidation:
         with pytest.raises(ValueError, match="t_end"):
             run_one_zone_model(
                 _INITIAL_STATE.copy(),
-                _PARAMETERS.copy(),
                 t_start=1.0,
                 t_end=0.0,
                 max_steps=10,
@@ -162,7 +152,6 @@ class TestRunOneZoneModelValidation:
         with pytest.raises(ValueError, match="t_end"):
             run_one_zone_model(
                 _INITIAL_STATE.copy(),
-                _PARAMETERS.copy(),
                 t_start=0.0,
                 t_end=0.0,
                 max_steps=10,
@@ -183,7 +172,6 @@ class TestRunOneZoneModelIntegration:
         closure = _make_closure()
         result = run_one_zone_model(
             _INITIAL_STATE.copy(),
-            _PARAMETERS.copy(),
             t_start=1e6,
             t_end=1e9,
             max_steps=100,
@@ -199,7 +187,6 @@ class TestRunOneZoneModelIntegration:
         closure = _make_closure()
         result = run_one_zone_model(
             _INITIAL_STATE.copy(),
-            _PARAMETERS.copy(),
             t_start=1e6,
             t_end=1e9,
             max_steps=100,
@@ -214,7 +201,6 @@ class TestRunOneZoneModelIntegration:
         t_start = 1e6
         result = run_one_zone_model(
             _INITIAL_STATE.copy(),
-            _PARAMETERS.copy(),
             t_start=t_start,
             t_end=1e9,
             max_steps=100,
@@ -232,7 +218,6 @@ class TestRunOneZoneModelIntegration:
         # Short t_end so the integrator stops on the t_end condition.
         result = run_one_zone_model(
             _INITIAL_STATE.copy(),
-            _PARAMETERS.copy(),
             t_start=1e6,
             t_end=1e7,
             max_steps=max_steps,
@@ -245,7 +230,6 @@ class TestRunOneZoneModelIntegration:
         closure = _make_closure()
         result = run_one_zone_model(
             _INITIAL_STATE.copy(),
-            _PARAMETERS.copy(),
             t_start=1e6,
             t_end=1e9,
             max_steps=500,

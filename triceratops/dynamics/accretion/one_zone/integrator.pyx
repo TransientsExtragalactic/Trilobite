@@ -27,8 +27,6 @@ import cython
 cimport cython
 
 from libc.math cimport exp, log
-from cpython.ref cimport PyObject
-from triceratops.radiation.opacity.opacity_base cimport C_GreyOpacityBase
 
 from .closure cimport (
     LOG_DISK_XI, LOG_DISK_A, LOG_G_CGS, LOG_PI,
@@ -45,7 +43,6 @@ from .closure cimport (
 @cython.wraparound(False)
 cdef int compute_one_zone_model(
         double[::1] initial_state,
-        double[::1] parameters,
         double[:, ::1] result_array,
         double t_start,
         double t_end,
@@ -55,66 +52,37 @@ cdef int compute_one_zone_model(
         derivative_func derivative_function,
         writer_func writer_function,
         source_func source_function,
-        void* opacity,
+        DiskParameters params,
 ):
     """
     Compute the one-zone disk evolution using an explicit Euler scheme.
 
     Parameters
     ----------
-    initial_state: double
-        Initial disk state: ``[M_D (g), J_D (g cm^2 s^-1)]``. This acts as the initial conditions
-        for the simulation.
-    parameters: double
-        Model parameters: ``[M_BH (g), R_in (cm), alpha, mu, ...]``. The first four elements are interpreted as
-         the black hole mass, inner disk radius, viscosity parameter, and mean molecular weight, respectively.
-         Elements beyond index 3 are passed to the closure as ``params.extra``; their interpretation is
-         closure-specific.
-
-         This is where implementations can add additional runtime parameters.
-
-    result_array: double
-        The array into which the results will be written.  It is pre-allocated by the caller as
-        ``(n_result_fields, max_steps)`` and is field-major: field ``f`` at step ``i`` lives at offset
-        ``f * max_steps + i``.  The integrator writes exactly one column per step, starting with column 0 for the
-        initial state.
-
-        The ``writer_function`` determines how data is packed into the array.
-
-    t_start: double
-        Start time of the integration in seconds.
-    t_end: double
-        End time of the integration in seconds.  The integrator will terminate early if this time is reached.
-    max_steps:
-        Maximum number of integration steps.  The integrator will terminate if this number of steps is taken, even if
-        t_end is not reached.
-    epsilon:
-        Adaptive time-step fraction. For a relevant update timescale dt, we actually step epsilon * dt. The literature
-        (Piro & Mockler 2025) suggest epsilon < 1e-3.
-    closure_function:
-        C function pointer for the thermodynamic closure.  This is a required argument; the integrator does not
-        support a default closure.
-    derivative_function:
-        C function pointer for the ODE derivative.  This is a required argument; the integrator does not support a
-        default derivative.
-    writer_function:
-        C function pointer for writing output.  This is a required argument; the integrator does not support a default
-        writer.
-    source_function:
-        Optional C function pointer for source terms.  If NULL, no source term is applied.  If non-NULL, this function
-        is called after the closure and before the derivative at each step, and can modify the derivative state to
-        add source terms to the ODEs.
-    opacity: C_GreyOpacityBase
-        An opacity object pointer, threaded through to the closure and source functions.  This is passed as a void* to
-        avoid Cython's type-checking overhead on the closure and source function pointers; the
-        relevant opacity methods must be called from the C hot path in the closure and source functions,
-        not from Python code.
+    initial_state: double[::1]
+        Initial disk state: ``[M_D (g), J_D (g cm^2 s^-1)]``.
+    result_array: double[:, ::1]
+        Pre-allocated output array of shape ``(n_result_fields, max_steps)``.
+        Written field-major: field ``f`` at step ``i`` lives at offset
+        ``f * max_steps + i``.
+    t_start, t_end: double
+        Integration interval in seconds.
+    max_steps: int
+        Maximum number of integration steps.
+    epsilon: double
+        Adaptive time-step fraction.
+    closure_function, derivative_function, writer_function: function pointers
+        Mandatory physics callbacks (set by the closure).
+    source_function: function pointer
+        Optional source-term callback; ``NULL`` = no source term.
+    params: DiskParameters
+        Fully populated parameter struct (filled by ``closure._pack_params``
+        before this function is called).
 
     Returns
     -------
     int
-        The number of steps actually taken (columns written to the result array).  This may be less than max_steps if
-        t_end is reached first.
+        Number of steps actually written (>= 0 on success; negative on error).
     """
     # --- Declare variables --- #
     cdef double log_m, log_j, log_MBH, log_r, log_sigma, log_omega
@@ -125,7 +93,6 @@ cdef int compute_one_zone_model(
     cdef ClosureResult prev_closure
 
     cdef DiskState state
-    cdef DiskParameters params
     cdef DiskStep step
 
     # Populate the state.
@@ -133,26 +100,7 @@ cdef int compute_one_zone_model(
     state.M = initial_state[0]
     state.J = initial_state[1]
 
-    # Populate the parameters.
-    params.MBH     = parameters[0]
-    params.R_in    = parameters[1]
-    params.alpha   = parameters[2]
-    params.mu      = parameters[3]
-    params.epsilon = epsilon
-
-    # Extra parameters (indices 4+) — zero-copy pointer into the buffer.
-    params.n_extra = parameters.shape[0] - 4
-    if params.n_extra > 0:
-        params.extra = &parameters[4] # Start extra at index 4.
-    else:
-        params.extra = NULL
-
-    # Thread the opacity object pointer into DiskParameters.
-    params.opacity = opacity
-
     # Zero-initialise step — C stack structs are not guaranteed to be zero.
-    # The source and derivative functions use += so a dirty first iteration
-    # would corrupt the initial state update.
     step.dM_dt = 0.0
     step.dJ_dt = 0.0
     step.dt    = 0.0
@@ -178,8 +126,8 @@ cdef int compute_one_zone_model(
         while actual_steps < max_steps:
             # Canonical step order:
             # (1) compute log quantities → (2) pack DiskDerived → (3) call closure
-            # → (4) call derivative → (5) write row → (6) update state
-            # → (7) copy prev_closure → (8) increment actual_steps → (9) check t_end.
+            # → (4b) apply optional source → (4) call derivative → (5) write row
+            # → (6) update state → (7) copy prev_closure → (8) increment → (9) check t_end.
 
             # (1) Compute log quantities.
             log_m   = log(state.M)
@@ -228,8 +176,8 @@ cdef int compute_one_zone_model(
             state.M += step.dM_dt * step.dt
             state.J += step.dJ_dt * step.dt
 
-            # Clear the current derivative state to prevent
-            # accumulations in the source and derivative functions from affecting the next step.
+            # Clear the current derivative state to prevent accumulations from
+            # the source and derivative functions affecting the next step.
             step.dM_dt = 0.0
             step.dJ_dt = 0.0
             step.dt = 0.0
@@ -252,7 +200,6 @@ cdef int compute_one_zone_model(
 # ---------------------------------------- #
 def run_one_zone_model(
     double[::1] initial_state not None,
-    double[::1] parameters not None,
     double t_start,
     double t_end,
     int max_steps,
@@ -262,56 +209,48 @@ def run_one_zone_model(
     """
     Run the one-zone disk integrator; return the populated result array.
 
+    Before calling this function, the caller must:
+
+    1. Call ``closure.bind_runtime_parameters(run_params)`` to populate the
+       closure's internal parameter fields.
+    2. Set ``closure.opacity`` to the desired opacity law.
+
+    The integrator then calls ``closure._pack_params`` once (before the hot
+    loop) to fill a ``DiskParameters`` struct on the C stack, and releases
+    the GIL for the duration of the integration.
+
     Parameters
     ----------
     initial_state : ndarray, shape (2,)
-        ``[M_D (g), J_D (g cm^2 s^-1)]``.
-    parameters : ndarray, shape (>=4,)
-        ``[M_BH (g), R_in (cm), alpha, mu, ...]``.  Elements beyond index 3
-        are passed to the closure as ``params.extra``; their interpretation
-        is closure-specific.
+        ``[M_D (g), J_D (g cm^2 s^-1)]`` in linear CGS.
     t_start, t_end : float
         Integration interval in seconds.
     max_steps : int
         Maximum number of integration steps.
     closure : OneZoneClosure
-        Closure with all three mandatory function pointers installed.
+        Closure with all three mandatory function pointers installed and
+        ``bind_runtime_parameters`` already called.
     epsilon : float, optional
         Adaptive time-step fraction: :math:`\\Delta t = \\epsilon\\,\\min(t_{\\rm visc},
-        |M/\\dot{M}|, |J/\\dot{J}|)`.  Smaller values give finer time resolution at
-        the cost of more steps.  Default is ``1e-6``.
+        |M/\\dot{M}|, |J/\\dot{J}|)`.  Default ``1e-6``.
 
     Returns
     -------
     ndarray, shape (n_result_fields, actual_steps)
-        Column ``k`` holds the disk state and all derived quantities after
-        ``k`` explicit-Euler steps; column 0 is the initial condition with
-        its full thermodynamic closure computed.  Row ``i`` holds field ``i``
-        across all steps.
+        Column ``k`` holds the disk state after ``k`` explicit-Euler steps;
+        column 0 is the initial condition with its full thermodynamic closure.
 
     Raises
     ------
     ValueError
-        Bad array shapes, ``t_end <= t_start``, or uninitialised closure.
+        Bad array shapes, ``t_end <= t_start``, uninitialised closure, or
+        missing opacity.
     RuntimeError
-        Integrator returned a negative status code.  The message identifies the
-        failure mode; possible codes and their meanings are:
-
-        * ``-1`` **CLOSURE / FUNC_ERROR** — the root-finding residual callback
-          returned non-zero (NaN or Inf encountered in state or residual).
-        * ``-2`` **CLOSURE / EXPAND_FAIL** — bracket-expansion could not find a
-          sign change in ``[T_min, T_max]``.  The disk parameters may have driven
-          the surface density or Ω outside the physical range of this closure.
-        * ``-3`` **CLOSURE / NO_BRACKET** — the initial bracket had the same sign
-          at both endpoints after expansion.
-        * ``-4`` **CLOSURE / MAX_ITER** — Brent's method did not converge within
-          the iteration limit.
-        * ``-10`` **DERIVATIVE_FAIL** — the derivative function returned non-zero.
-        * ``-20`` **WRITER_FAIL** — the writer function returned non-zero.
-        * ``-30`` **SOURCE_FAIL** — the source function returned non-zero.
+        Integrator returned a negative status code.
     """
     cdef double[:, ::1] result
     cdef int status
+    cdef DiskParameters params
 
     import numpy as np
 
@@ -320,11 +259,6 @@ def run_one_zone_model(
     if initial_state.shape[0] != 2:
         raise ValueError(
             f"initial_state must have shape (2,), got shape ({initial_state.shape[0]},)."
-        )
-    if parameters.shape[0] < 4:
-        raise ValueError(
-            f"parameters must have shape (>=4,), got shape ({parameters.shape[0]},). "
-            f"Expected at least [MBH, R_in, alpha, mu]."
         )
     if t_end <= t_start:
         raise ValueError(f"t_end ({t_end}) must be > t_start ({t_start}).")
@@ -338,18 +272,24 @@ def run_one_zone_model(
             "Set closure.opacity before passing to the integrator."
         )
 
+    # Assemble DiskParameters from the closure's bound fields.
+    # _pack_params is a cdef nogil method — called here (with GIL) for safety,
+    # since it only writes C scalars and pointers.
+    closure._pack_params(&params)
+    params.epsilon = epsilon
+
     result = np.zeros(
         (closure.n_result_fields, max_steps), dtype=np.float64
     )
 
     status = compute_one_zone_model(
-        initial_state, parameters, result,
+        initial_state, result,
         t_start, t_end, max_steps, epsilon,
         closure._closure_fn,
         closure._derivative_fn,
         closure._writer_fn,
         closure._source_fn,
-        <void*>(<PyObject*>closure._c_opacity),
+        params,
     )
 
     if status < 0:

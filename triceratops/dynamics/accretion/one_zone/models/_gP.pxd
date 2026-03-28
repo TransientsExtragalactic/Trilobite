@@ -11,7 +11,3 @@ cdef int gP_closure_func(
     const ClosureResult* prev,
     ClosureResult* out,
 ) nogil
-
-
-cdef class gPClosure(OneZoneClosure):
-    pass

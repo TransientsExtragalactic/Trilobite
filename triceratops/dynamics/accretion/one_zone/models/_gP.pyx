@@ -1,40 +1,32 @@
 #cython: language_level=3, boundscheck=False
 r"""
-``gP`` closure — gas pressure with runtime-configurable opacity (Cython).
+``gP`` closure function — gas pressure with runtime-configurable opacity (Cython).
 
-Defines the closure function and :class:`OneZoneClosure` subclass for a
-one-zone accretion disk governed by ideal-gas pressure.  The midplane
-temperature is solved **analytically** when electron-scattering opacity is
-active (fast path), and falls back to iterative root-finding for other
-opacity prescriptions.
+Defines the low-level closure function for a one-zone accretion disk governed
+by ideal-gas pressure.  The midplane temperature is determined iteratively via
+bracket expansion + Brent's method at each step.
 
-The fast-path analytic temperature follows from vertical energy balance:
+The energy balance solved is:
 
 .. math::
 
-    T_c^3 = \frac{27}{64}\,\frac{k_B}{\mu\,m_p}\,
-            \alpha\,\kappa\,\Omega\,\Sigma^2,
+    T_c^3 \propto \alpha\,\kappa\,\Omega\,\Sigma^2,
 
-where :math:`\kappa` is the opacity returned by ``params.kappa_func``.
-For constant electron-scattering opacity this reduces to an explicit
-:math:`T_c`, resolved by a single pointer comparison at runtime.
-
-Naming convention: ``gP`` = gas pressure EOS.  The opacity is no longer
-encoded in the class name — it is a runtime parameter set via
-:meth:`~..closure.OneZoneClosure.set_opacity`.
+This module exposes only the ``cdef`` function :func:`gP_closure_func`; the
+concrete closure class :class:`~._igP.FullPressureClosure` (with
+``gas_pressure_only=True``) bundles this function with the standard derivative,
+writer, and optional source term.
 
 Physics building blocks used
 -----------------------------
 * EOS: :func:`~..physics._eos.compute_ideal_gas_cs`
-* Viscous derivative: :func:`~..physics._viscous.viscous_derivative_func`
-* Output writer: :func:`~.._writer.standard_writer_func`
 
 See Also
 --------
+:class:`~._igP.FullPressureClosure` :
+    Concrete closure class that selects this function via ``gas_pressure_only=True``.
 :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` :
-    Python-level model class that uses this closure.
-:class:`~._igP.igPClosure` :
-    Sibling closure with combined gas and radiation pressure.
+    Python-level model class.
 """
 from libc.math cimport exp, log, pi, sqrt
 from cpython.ref cimport PyObject
@@ -47,11 +39,7 @@ from ..closure cimport (
     OneZoneClosure,
     ClosureResult, DiskDerived, DiskParameters, DiskState,
 )
-from .._writer cimport N_RESULT_FIELDS, standard_writer_func
 from ..physics._eos cimport compute_ideal_gas_cs
-from ..physics._viscous cimport viscous_derivative_func
-from ..physics._fallback cimport fallback_source_func
-from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
 
 # ======================================================== #
 #  Root-finding context (iterative path)                   #
@@ -165,46 +153,3 @@ cdef int gP_closure_func(
 
     out.t_visc = exp(2.0 * log(derived.R) - out.log_nu)
     return 0
-
-
-# ======================================================== #
-#  Closure class                                           #
-# ======================================================== #
-
-cdef class gPClosure(OneZoneClosure):
-    """
-    ``gP`` closure — gas pressure with runtime-configurable opacity.
-
-    Assembles :func:`gP_closure_func`,
-    :func:`~..physics._viscous.viscous_derivative_func`, and
-    :func:`~.._writer.standard_writer_func` into a runnable
-    :class:`~..closure.OneZoneClosure`.
-
-    Defaults to electron-scattering opacity.  Set ``closure.opacity`` to
-    use a different opacity law.
-
-    Parameters
-    ----------
-    with_fallback : bool, optional
-        If ``True``, install :func:`~..physics._fallback.fallback_source_func`
-        as the source term.  Default ``False``.
-    """
-
-    def __cinit__(self, bint with_fallback=False):
-
-        # Setup the closures and the writers.
-        self._closure_fn     = gP_closure_func
-        self._derivative_fn  = viscous_derivative_func
-        self._writer_fn      = standard_writer_func
-        self.n_result_fields = N_RESULT_FIELDS
-
-        # Set the opacity to electron scattering. WE OVERRIDE THIS LATER
-        # IF WE WANT SOMETHING ELSE.
-        self.opacity = ElectronScatteringOpacity()
-
-        # If fallback is enabled, we need to use the fallback source function instead
-        # of the null source.
-        if with_fallback:
-            self._source_fn = fallback_source_func
-        else:
-            self._source_fn = NULL

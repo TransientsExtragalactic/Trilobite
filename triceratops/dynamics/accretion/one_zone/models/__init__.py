@@ -9,20 +9,22 @@ Closures
 --------
 
 _gP
-    Gas-pressure EOS (:func:`~..physics._eos.compute_ideal_gas_cs`).
-    Temperature solved iteratively via bracket-expansion + Brent's method.
+    Defines :func:`~._gP.gP_closure_func` — the gas-pressure iterative
+    temperature solve used when ``FullPressureClosure(gas_pressure_only=True)``.
 _igP
-    Full (gas + radiation) pressure EOS
-    (:func:`~..physics._eos.compute_gas_rad_cs`).
-    Same iterative solve; radiation pressure dominates at high :math:`T`.
+    Defines :func:`~._igP.igP_closure_func` and
+    :class:`~._igP.FullPressureClosure`.  ``FullPressureClosure`` is the
+    single concrete class replacing the former ``gPClosure`` / ``igPClosure``
+    pair; pass ``gas_pressure_only=True/False`` to select the EOS path.
 _igP_adv
-    Full pressure plus an advective cooling term
-    :math:`q_{\\rm adv} = B\\,c_s^2\\,q_{\\rm visc}`, controlled by an
-    entropy-gradient parameter :math:`\\xi` (``params.extra[0]``).
+    Defines :class:`~._igP_adv.AdvectiveClosure` — full pressure plus an
+    advective cooling term controlled by an entropy-gradient parameter
+    :math:`\\xi` (stored in ``params.advection.xi``).
     Setting :math:`\\xi \\to 0` recovers the non-advective ``igP`` limit.
 
-All three closures default to electron-scattering opacity and accept any
+All closures default to electron-scattering opacity and accept any
 :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` via the
-``opacity`` property.  Each can optionally install the power-law fallback
-source term via ``with_fallback=True``.
+``opacity`` property.  Call :meth:`~..closure.OneZoneClosure.bind_runtime_parameters`
+before passing to the integrator; each can optionally install the power-law
+fallback source term via ``with_fallback=True``.
 """

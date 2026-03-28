@@ -19,6 +19,7 @@ _PYX_SOURCES = [
     "triceratops/dynamics/accretion/one_zone/physics/_eos.pyx",
     "triceratops/dynamics/accretion/one_zone/physics/_viscous.pyx",
     "triceratops/dynamics/accretion/one_zone/physics/_fallback.pyx",
+    "triceratops/dynamics/accretion/one_zone/physics/_param_wrappers.pyx",
     # assembled disk closures (generic opacity — new names)
     "triceratops/dynamics/accretion/one_zone/models/_gP.pyx",
     "triceratops/dynamics/accretion/one_zone/models/_igP.pyx",

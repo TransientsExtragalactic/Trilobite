@@ -139,67 +139,28 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
             raise ValueError(f"Error initializing opacity: {e}") from e
 
     # ================================================== #
-    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # C-LEVEL CLOSURE CONSTRUCTION                       #
     # ================================================== #
-    # At this level, we need to construct a closure with the desired properties for
-    # performing the computation and then ensure that everything is packed properly.
-    #
-    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
-        # noinspection PyUnresolvedReferences
-        # (CYTHON)
-        from triceratops.dynamics.accretion.one_zone.models._gP import gPClosure
+        from triceratops.dynamics.accretion.one_zone.models._igP import FullPressureClosure
 
-        # We need to construct the closure a little bit carefully to ensure that the opacity
-        # is correctly coerced.
-
-        _closure = gPClosure(  # noqa: F821
+        _closure = FullPressureClosure(
+            gas_pressure_only=True,
             with_fallback=self.fallback,
+            mu=self._context_parameters["mu"],
         )
-
-        # Set the opacity object attached to the closure so that
-        # we can use it to compute the opacity at each step.
         _closure.opacity = self.opacity
-
-        # Now just return the closure.
         return _closure
 
-    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
-        # Hand off to the baseclass to pack the 4 standard runtime parameters
-        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
-        base = self._pack_base_cython_parameters(run_params)
-
-        # Add on the runtime parameters for the fallback behavior.
-        extra = np.array(
-            [
-                np.exp(run_params["log_M_fb_0"]),
-                np.exp(run_params["log_R_c"]),
-                np.exp(run_params["log_t_fb"]),
-                run_params["beta_fb"],
-            ],
-            dtype=np.float64,
-        )
-        return np.concatenate([base, extra])
-
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
-        # This is where we get to derive the various additional properties we want in the
-        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
-
-        # Check if we have fallback enabled. If not, we can just return a zero for the
-        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        else:
-            # We need to compute the fallback behavior. To do this, we'll use the
-            # built-in form of the fallback function.
-            t = result_array[1, :]
-            M_fb_0 = np.exp(run_params["log_M_fb_0"])
-            t_fb = np.exp(run_params["log_t_fb"])
-            beta = run_params["beta_fb"]
-
-            # Return the computed mdot_fb.
-            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        t = result_array[1, :]
+        M_fb_0 = np.exp(run_params["log_M_fb_0"])
+        t_fb = np.exp(run_params["log_t_fb"])
+        beta = run_params["beta_fb"]
+        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
 class FullPressureDisk(OneZoneAccretionDiskBase):
@@ -301,68 +262,28 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
             raise ValueError(f"Error initializing opacity: {e}") from e
 
     # ================================================== #
-    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # C-LEVEL CLOSURE CONSTRUCTION                       #
     # ================================================== #
-    # At this level, we need to construct a closure with the desired properties for
-    # performing the computation and then ensure that everything is packed properly.
-    #
-    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
-        # noinspection PyUnresolvedReferences
-        # (CYTHON)
-        from triceratops.dynamics.accretion.one_zone.models._igP import igPClosure
+        from triceratops.dynamics.accretion.one_zone.models._igP import FullPressureClosure
 
-        # We need to construct the closure a little bit carefully to ensure that the opacity
-        # is correctly coerced.
-        # noinspection PyUnresolvedReferences
-        # (CYTHON)
-        _closure = igPClosure(  # noqa: F821
+        _closure = FullPressureClosure(
+            gas_pressure_only=False,
             with_fallback=self.fallback,
+            mu=self._context_parameters["mu"],
         )
-
-        # Set the opacity object attached to the closure so that
-        # we can use it to compute the opacity at each step.
         _closure.opacity = self.opacity
-
-        # Now just return the closure.
         return _closure
 
-    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
-        # Hand off to the baseclass to pack the 4 standard runtime parameters
-        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
-        base = self._pack_base_cython_parameters(run_params)
-
-        # Add on the runtime parameters for the fallback behavior.
-        extra = np.array(
-            [
-                np.exp(run_params["log_M_fb_0"]),
-                np.exp(run_params["log_R_c"]),
-                np.exp(run_params["log_t_fb"]),
-                run_params["beta_fb"],
-            ],
-            dtype=np.float64,
-        )
-        return np.concatenate([base, extra])
-
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
-        # This is where we get to derive the various additional properties we want in the
-        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
-
-        # Check if we have fallback enabled. If not, we can just return a zero for the
-        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        else:
-            # We need to compute the fallback behavior. To do this, we'll use the
-            # built-in form of the fallback function.
-            t = result_array[1, :]
-            M_fb_0 = np.exp(run_params["log_M_fb_0"])
-            t_fb = np.exp(run_params["log_t_fb"])
-            beta = run_params["beta_fb"]
-
-            # Return the computed mdot_fb.
-            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        t = result_array[1, :]
+        M_fb_0 = np.exp(run_params["log_M_fb_0"])
+        t_fb = np.exp(run_params["log_t_fb"])
+        beta = run_params["beta_fb"]
+        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
 # ================================================================== #
@@ -483,69 +404,28 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
             raise ValueError(f"Error initializing opacity: {e}") from e
 
     # ================================================== #
-    # C-LEVEL CLOSURE CONSTRUCTION AND PARAMETER PACKING #
+    # C-LEVEL CLOSURE CONSTRUCTION                       #
     # ================================================== #
-    # At this level, we need to construct a closure with the desired properties for
-    # performing the computation and then ensure that everything is packed properly.
-    #
-    # In this case, we use the gPClosure which utilizes a pure gas pressure approach.
     def _build_cython_closure(self) -> Any:
-        # noinspection PyUnresolvedReferences
-        # (CYTHON)
-        from .models._igP_adv import igPAdvClosure
+        from .models._igP_adv import AdvectiveClosure
 
-        # We need to construct the closure a little bit carefully to ensure that the opacity
-        # is correctly coerced.
-        # noinspection PyUnresolvedReferences
-        # (CYTHON)
-        _closure = igPAdvClosure(
+        _closure = AdvectiveClosure(
             with_fallback=self.fallback,
+            mu=self._context_parameters["mu"],
+            xi=self._context_parameters["xi"],
         )
-
-        # Set the opacity object attached to the closure so that
-        # we can use it to compute the opacity at each step.
         _closure.opacity = self.opacity
-
-        # Now just return the closure.
         return _closure
 
-    def _pack_cython_parameters(self, run_params: _RunParams) -> np.ndarray:
-        # Hand off to the baseclass to pack the 4 standard runtime parameters
-        # (M_BH, R_in, alpha, and mu), then we can start adding extras.
-        base = self._pack_base_cython_parameters(run_params)
-
-        # Add on the runtime parameters for the fallback behavior.
-        extra = np.array(
-            [
-                self._context_parameters["xi"],
-                np.exp(run_params["log_M_fb_0"]),
-                np.exp(run_params["log_R_c"]),
-                np.exp(run_params["log_t_fb"]),
-                run_params["beta_fb"],
-            ],
-            dtype=np.float64,
-        )
-        return np.concatenate([base, extra])
-
     def _compute_derived_result_fields(self, result_array: np.ndarray, run_params: _RunParams) -> dict:
-        # This is where we get to derive the various additional properties we want in the
-        # derived fields. We must; however, match the specified output fields in RESULT_FIELDS.
         n_steps = result_array.shape[1]
-
-        # Check if we have fallback enabled. If not, we can just return a zero for the
-        # fallback mass supply rate.
         if not self._context_parameters["fallback"]:
             return {"mdot_fb": np.zeros(n_steps)}
-        else:
-            # We need to compute the fallback behavior. To do this, we'll use the
-            # built-in form of the fallback function.
-            t = result_array[1, :]
-            M_fb_0 = np.exp(run_params["log_M_fb_0"])
-            t_fb = np.exp(run_params["log_t_fb"])
-            beta = run_params["beta_fb"]
-
-            # Return the computed mdot_fb.
-            return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
+        t = result_array[1, :]
+        M_fb_0 = np.exp(run_params["log_M_fb_0"])
+        t_fb = np.exp(run_params["log_t_fb"])
+        beta = run_params["beta_fb"]
+        return {"mdot_fb": M_fb_0 * (t / t_fb) ** (-beta)}
 
 
 # ================================================================== #
