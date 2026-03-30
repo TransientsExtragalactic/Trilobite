@@ -388,10 +388,17 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_SED_fit.html">Fit Radio Photometry to a BPL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_evolving_sed.html">Fitting a Time-Evolving Synchrotron SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_censored_SED_fit.html">Fit Censored Radio Photometry to a BPL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_multi_epoch_sed_evolution.html">Multi-Epoch SED Fitting: Tracking Shock Evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_upper_limit_inference.html">Upper Limit Constraints: Non-Detections as Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_shock_parameter_inference.html">Inferring Physical Shock Parameters from a Radio Supernova</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../c_models/index.html">Forward Modeling with Triceratops Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_ffa_fadeout_evolution.html">Time-Resolved Spectral Modeling: FFA Fade-out in a Radio SN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../c_models/plot_chevalier_shock_synchrotron_cooling.html">Synchrotron Emission from Fast-Cooling SN Shocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_tde_radio_afterglow.html">TDE Radio Afterglow: Sub-Relativistic Outflow in ISM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_phenomenological_lc_fit.html">Phenomenological Radio Light Curve Fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_type_IIn_SN_dense_CSM.html">Type IIn Supernova in a Dense Circumstellar Wind</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../d_physics_shocks/index.html">Physics Backend Examples - Shocks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -399,6 +406,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../e_physics_synchro/index.html">Physics Backend Examples - Synchrotron</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_equipartition_analysis.html">Equipartition Analysis from a Radio SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_synchrotron_kernels.html">The Synchrotron Kernel Functions F(x) and G(x)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_PL_sed.html">Synchrotron Spectra from Single Electrons and Electron Populations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_frequency_gamma_relation.html">The ν–γ–B Relation and Pitch-Angle Effects</a></li>
@@ -408,12 +416,15 @@
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_inverse_closure.html">Recovering Physical Parameters from an Observed SED: the Inverse Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_ic_vs_synchrotron_cooling.html">Synchrotron vs Inverse Compton Cooling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_forward_closure.html">From Physical Parameters to SED Parameters: the Forward Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_sed_to_source_size.html">From SED to Source Size: The Inverse Closure Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_scurve.html">Disk Thermal Equilibrium: The S-curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_tde_disk_observables.html">TDE Disk Evolution and Observable Signatures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
 </ul>
@@ -492,6 +503,15 @@ includes tools for loading, processing, and utilizing observational data in mode
 </div><div class="sphx-glr-thumbcontainer" tooltip="In this example, we&#x27;ll do consider the relatively simple task of fitting a single epoch of censored radio photometry data using a broken power-law (BPL) model. This is an excellent example of the robust data handling and likelihood construction of the Triceratops library."><img alt="" src="../../_images/sphx_glr_plot_censored_SED_fit_thumb.png" />
 <p><a class="reference internal" href="plot_censored_SED_fit.html"><span class="doc">Fit Censored Radio Photometry to a BPL</span></a></p>
   <div class="sphx-glr-thumbnail-title">Fit Censored Radio Photometry to a BPL</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="A densely sampled radio monitoring campaign — spanning multiple epochs over weeks to months — allows us to track how the synchrotron SED evolves over time. By fitting the SED independently at each epoch, we can extract the time dependence of the spectral peak:"><img alt="" src="../../_images/sphx_glr_plot_multi_epoch_sed_evolution_thumb.png" />
+<p><a class="reference internal" href="plot_multi_epoch_sed_evolution.html"><span class="doc">Multi-Epoch SED Fitting: Tracking Shock Evolution</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Multi-Epoch SED Fitting: Tracking Shock Evolution</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In radio surveys, newly discovered transients are often not detected at early times. Rather than discarding these non-detections, they can be incorporated as upper limits that constrain the parameter space just as powerfully as detections — sometimes more so."><img alt="" src="../../_images/sphx_glr_plot_upper_limit_inference_thumb.png" />
+<p><a class="reference internal" href="plot_upper_limit_inference.html"><span class="doc">Upper Limit Constraints: Non-Detections as Information</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Upper Limit Constraints: Non-Detections as Information</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates the full science-grade inference workflow for recovering the astrophysical parameters of a radio supernova from multi-frequency radio observations."><img alt="" src="../../_images/sphx_glr_plot_shock_parameter_inference_thumb.png" />
+<p><a class="reference internal" href="plot_shock_parameter_inference.html"><span class="doc">Inferring Physical Shock Parameters from a Radio Supernova</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Inferring Physical Shock Parameters from a Radio Supernova</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 </section>

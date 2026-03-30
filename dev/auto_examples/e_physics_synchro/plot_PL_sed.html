@@ -389,10 +389,17 @@
 <li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_SED_fit.html">Fit Radio Photometry to a BPL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_evolving_sed.html">Fitting a Time-Evolving Synchrotron SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_censored_SED_fit.html">Fit Censored Radio Photometry to a BPL</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_multi_epoch_sed_evolution.html">Multi-Epoch SED Fitting: Tracking Shock Evolution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_upper_limit_inference.html">Upper Limit Constraints: Non-Detections as Information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../b_inference/plot_shock_parameter_inference.html">Inferring Physical Shock Parameters from a Radio Supernova</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../c_models/index.html">Forward Modeling with Triceratops Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_ffa_fadeout_evolution.html">Time-Resolved Spectral Modeling: FFA Fade-out in a Radio SN</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../c_models/plot_chevalier_shock_synchrotron_cooling.html">Synchrotron Emission from Fast-Cooling SN Shocks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_tde_radio_afterglow.html">TDE Radio Afterglow: Sub-Relativistic Outflow in ISM</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_phenomenological_lc_fit.html">Phenomenological Radio Light Curve Fitting</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../c_models/plot_type_IIn_SN_dense_CSM.html">Type IIn Supernova in a Dense Circumstellar Wind</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../d_physics_shocks/index.html">Physics Backend Examples - Shocks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -400,6 +407,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Physics Backend Examples - Synchrotron</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="plot_equipartition_analysis.html">Equipartition Analysis from a Radio SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_synchrotron_kernels.html">The Synchrotron Kernel Functions F(x) and G(x)</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Synchrotron Spectra from Single Electrons and Electron Populations</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_frequency_gamma_relation.html">The ν–γ–B Relation and Pitch-Angle Effects</a></li>
@@ -409,12 +417,15 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_inverse_closure.html">Recovering Physical Parameters from an Observed SED: the Inverse Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_ic_vs_synchrotron_cooling.html">Synchrotron vs Inverse Compton Cooling</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_forward_closure.html">From Physical Parameters to SED Parameters: the Forward Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_sed_to_source_size.html">From SED to Source Size: The Inverse Closure Workflow</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_scurve.html">Disk Thermal Equilibrium: The S-curve</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_tde_disk_observables.html">TDE Disk Evolution and Observable Signatures</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
 </ul>
@@ -576,11 +587,11 @@ improve performance with negligible loss of accuracy.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 15% |█▍        | 🦖 149/1000 [00:00&lt;00:00, 1482.84it/s]
- 34% |███▍      | 🦖 340/1000 [00:00&lt;00:00, 1730.26it/s]
- 71% |███████   | 🦖 708/1000 [00:00&lt;00:00, 2618.35it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3079.77it/s]
-Interpolated kernel setup time: 0.3254 seconds
+ 15% |█▍        | 🦖 148/1000 [00:00&lt;00:00, 1478.11it/s]
+ 34% |███▍      | 🦖 338/1000 [00:00&lt;00:00, 1724.39it/s]
+ 70% |██████▉   | 🦖 698/1000 [00:00&lt;00:00, 2578.57it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3070.66it/s]
+Interpolated kernel setup time: 0.3263 seconds
 </pre></div>
 </div>
 </section>
@@ -645,9 +656,9 @@ unit volume.</p>
 <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Interpolation speedup factor: </span><span class="si">{</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">dt_interp</span></a><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">100</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">end_time</span></a><span class="w"> </span><span class="o">-</span><span class="w"> </span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">start_time</span></a><span class="p">)</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">x&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 4.9283 seconds
-Predicted naive computation time without interpolation on (100,) gamma resolution: 32.5417 seconds.
-Interpolation speedup factor: 6.6x
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Population spectrum computation time: 4.7908 seconds
+Predicted naive computation time without interpolation on (100,) gamma resolution: 32.6288 seconds.
+Interpolation speedup factor: 6.8x
 </pre></div>
 </div>
 </section>
@@ -774,7 +785,7 @@ self-absorption, and time-dependent spectra—can be found in:</p>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a></p></li>
 <li><p><a class="reference internal" href="../../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a></p></li>
 </ul>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.472 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.392 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-pl-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/88720a1edd7e08eca5b35a49569eae25/plot_PL_sed.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_PL_sed.ipynb</span></code></a></p>
