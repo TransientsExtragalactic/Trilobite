@@ -7,4 +7,11 @@ behaviors of GRBs, allowing researchers to study their radio emissions, jet dyna
 and other relevant phenomena.
 """
 
-__all__ = []
+__all__ = [
+    "band",
+]
+
+from . import band
+from .band import *
+
+__all__.extend(band.__all__)
