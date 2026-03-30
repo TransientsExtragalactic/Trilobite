@@ -4,7 +4,7 @@
 Data Loading, Handling, and Visualization
 =========================================
 
-The :mod:`data` module provides the foundational
+The :mod:`triceratops.data` module provides the foundational
 abstractions used to represent observational data throughout
 the Triceratops library. These objects form the boundary between
 raw measurements and the modeling and inference systems.
@@ -18,7 +18,7 @@ At a high level, the data layer serves three purposes:
 The design is intentionally layered. User-facing containers wrap
 :class:`astropy.table.Table` objects and provide semantic meaning
 to specific columns. These containers can then generate
-:class:`~data.InferenceData` objects, which are the
+:class:`~triceratops.data.InferenceData` objects, which are the
 sole data representation recognized by likelihood classes.
 
 
@@ -27,9 +27,9 @@ Architecture of the Data Layer
 
 There are three principal observational container types in Triceratops:
 
-- :class:`~data.light_curve.RadioLightCurveContainer`
-- :class:`~data.photometry.RadioPhotometryContainer`
-- :class:`~data.spectra` (spectral containers)
+- :class:`~triceratops.data.light_curve.RadioLightCurveContainer`
+- :class:`~triceratops.data.photometry.RadioPhotometryContainer`
+- :class:`~triceratops.data.spectra` (spectral containers)
 
 Each container enforces a schema, ensures unit compatibility,
 and provides convenience accessors tailored to the structure of
@@ -37,7 +37,7 @@ the underlying data.
 
 These containers are **not** themselves used directly in inference.
 Instead, they provide a bridge to the inference system via
-the :class:`~data.core.InferenceData` object.
+the :class:`~triceratops.data.core.InferenceData` object.
 
 The flow is therefore:
 
@@ -63,8 +63,8 @@ Light curves represent single-frequency time-series data:
     F_\nu(t)
 
 They are implemented in the
-:mod:`data.light_curve` module via
-:class:`~data.light_curve.RadioLightCurveContainer`.
+:mod:`triceratops.data.light_curve` module via
+:class:`~triceratops.data.light_curve.RadioLightCurveContainer`.
 
 A light curve container wraps a validated
 :class:`astropy.table.Table`, enforces required columns
@@ -94,8 +94,8 @@ Photometry Tables
 
 Photometry containers generalize light curves to heterogeneous
 multi-frequency observations. They are implemented in
-:mod:`data.photometry` via
-:class:`~data.photometry.RadioPhotometryContainer`.
+:mod:`triceratops.data.photometry` via
+:class:`~triceratops.data.photometry.RadioPhotometryContainer`.
 
 Unlike light curves, photometry tables may contain multiple
 observing frequencies and may group measurements into epochs.
@@ -133,7 +133,7 @@ frequency at a fixed time:
 
     F_\nu(\nu)
 
-They are implemented in :mod:`data.spectra`.
+They are implemented in :mod:`triceratops.data.spectra`.
 
 While conceptually similar to photometry tables, spectral
 containers assume that all rows correspond to a single epoch.
@@ -146,7 +146,7 @@ rather than time evolution.
 Inference Data
 --------------
 
-The :class:`~data.InferenceData` object is the
+The :class:`~triceratops.data.InferenceData` object is the
 numerical representation of observational data used by the
 inference layer.
 
@@ -273,7 +273,7 @@ the inference system.
 In typical workflows:
 
 1. Load or construct a light curve or photometry container.
-2. Convert it to :class:`~data.core.InferenceData`.
+2. Convert it to :class:`~triceratops.data.core.InferenceData`.
 3. Pass the inference data to a likelihood object.
 4. Evaluate models against the data.
 

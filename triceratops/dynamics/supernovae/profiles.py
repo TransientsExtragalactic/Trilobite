@@ -1,7 +1,7 @@
 """
 Helper module containing various routines for CSM / ejecta profile calculations relevant to supernovae.
 
-In the :mod:`dynamics.supernovae.shock_dynamics` module, various shock engines require knowledge of the
+In the :mod:`triceratops.dynamics.supernovae.shock_dynamics` module, various shock engines require knowledge of the
 ejecta and circumstellar medium (CSM) density profiles to compute shock dynamics. This module provides
 routines to compute these profiles based on standard models in the literature.
 """

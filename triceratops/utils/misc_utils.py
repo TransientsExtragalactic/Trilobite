@@ -10,7 +10,7 @@ def ensure_unit(value, unit):
 
     Parameters
     ----------
-    value : astropy.units.Quantity or numeric
+    value : astropy.units.Quantity, int, or float
         The value to check or convert.
     unit : astropy.units.Unit
         The desired unit.

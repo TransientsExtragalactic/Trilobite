@@ -1,9 +1,10 @@
 """
 Abstract base class for inference problem definitions.
 
-This module defines the :class:`InferenceProblem` abstract base class, which serves as a
+This module defines the :class:`~triceratops.inference.problem.InferenceProblem` abstract base class, which serves as a
 template for defining specific inference problems in the Triceratops library. It takes, as input, a
-:class:`~inference.likelihood.base.Likelihood` instance and allows the user to handling things like fixed and
+:class:`~triceratops.inference.likelihood.base.Likelihood` instance and allows the user to handling things like fixed
+and
 free parameters, priors, and other problem-specific settings.
 """
 
@@ -61,17 +62,20 @@ class InferenceParameter:
     """
     Dataclass to hold information about an inference parameter.
 
-    When an :class:`InferenceProblem` is initialized, it creates an :class:`InferenceParameter`
-    object for each of the parameters defined in the corresponding :class:`~models.core.base.Model` provided
-    as part of the input :class:`~inference.likelihood.base.Likelihood` object.
+    When an :class:`~triceratops.inference.problem.InferenceProblem` is initialized, it
+    creates an :class:`~triceratops.inference.problem.InferenceParameter`
+    object for each of the parameters defined in the corresponding :class:`~triceratops.models.core.base.Model` provided
+    as part of the input :class:`~triceratops.inference.likelihood.base.Likelihood` object.
 
     Parameters
     ----------
-    model_parameter: `~models.core.parameters.ModelParameter`
+    model_parameter: `~triceratops.models.core.parameters.ModelParameter`
         The model parameter associated with this inference parameter. This is where we
         get the name, default value, bounds, and other metadata about the parameter. This should be
-        selected from the model's :attr:`~models.core.base.Model.PARAMETERS` list. Because :class:`InferenceParameter`
-        instances are generated automatically during :class:`InferenceProblem` initialization, users typically
+        selected from the model's :attr:`~triceratops.models.core.base.Model.PARAMETERS` list. Because
+        :class:`~triceratops.inference.problem.InferenceParameter`
+        instances are generated automatically during :class:`~triceratops.inference.problem.InferenceProblem`
+        initialization, users typically
         do not need to create them manually.
     freeze: bool, optional
         Whether to freeze this parameter during inference. If `True`, the parameter
@@ -96,14 +100,14 @@ class InferenceParameter:
     """
 
     model_parameter: "ModelParameter"
-    """`~models.core.parameters.ModelParameter`: The model parameter associated with this inference parameter.
+    """~triceratops.models.core.parameters.ModelParameter: The model parameter associated with this inference parameter.
 
     This is where we get the name, default value, bounds, and other metadata about the parameter.
     """
     freeze: bool = False
     """bool: Whether to freeze this parameter during inference."""
     prior: "Prior" = None
-    r"""~inference.prior.Prior: Prior distribution for this parameter.
+    r""":class:`~triceratops.inference.prior.Prior`: Prior distribution for this parameter.
 
     The prior defines the log-probability density
     :math:`\log p(\theta)` in **physical parameter space**.
@@ -136,11 +140,11 @@ class InferenceParameter:
     - If a transform is present, the log-Jacobian correction is
       applied separately and is **not** part of the prior.
     - Custom priors must be importable and JSON-serializable
-      in order for :class:`InferenceProblem` serialization
+      in order for :class:`~triceratops.inference.problem.InferenceProblem` serialization
       to remain fully reconstructible.
     """
     transform: "ParameterTransform" = None
-    r"""~inference.transform.ParameterTransform: Optional transformation applied
+    r""":class:`~triceratops.inference.transform.ParameterTransform`: Optional transformation applied
     to this parameter during sampling.
 
     If provided, the sampler operates in a transformed space
@@ -278,7 +282,7 @@ class InferenceParameter:
     # ------------------------------------------------- #
     def to_dict(self) -> dict:
         """
-        Serialize the :class:`InferenceParameter` to a JSON-safe dictionary.
+        Serialize the :class:`~triceratops.inference.problem.InferenceParameter` to a JSON-safe dictionary.
 
         This method can be used to transfer an inference parameter either to
         disk or, in multiprocessing scenarios, between processes. The
@@ -355,7 +359,7 @@ class InferenceParameter:
         model: "Model",
     ) -> "InferenceParameter":
         """
-        Reconstruct an :class:`InferenceParameter` from a serialized dictionary.
+        Reconstruct an :class:`~triceratops.inference.problem.InferenceParameter` from a serialized dictionary.
 
         Parameters
         ----------
@@ -364,7 +368,7 @@ class InferenceParameter:
 
         model : Model
             The model instance that owns the corresponding
-            :class:`~models.core.parameters.ModelParameter`. This is required in order
+            :class:`~triceratops.models.core.parameters.ModelParameter`. This is required in order
             to resolve the parameter definition (name, bounds,
             units, default value, etc.).
 
@@ -448,8 +452,8 @@ class InferenceProblem:
     r"""
     Abstract base class representing a statistical inference problem.
 
-    An :class:`InferenceProblem` defines the **glue layer** between a physical
-    :class:`~models.core.base.Model`, observational data, and a statistical
+    An :class:`~triceratops.inference.problem.InferenceProblem` defines the **glue layer** between a physical
+    :class:`~triceratops.models.core.base.Model`, observational data, and a statistical
     inference engine. It combines a likelihood function with a structured
     parameter management system, enabling consistent evaluation of priors,
     likelihoods, and posteriors across a wide range of inference scenarios.
@@ -462,7 +466,7 @@ class InferenceProblem:
     Core responsibilities
     ---------------------
     - **Parameter management**
-        Each model parameter is wrapped in an :class:`InferenceParameter`,
+        Each model parameter is wrapped in an :class:`~triceratops.inference.problem.InferenceParameter`,
         which tracks whether the parameter is free or fixed, its prior,
         optional transformations, and initial value. Parameters retain a
         deterministic ordering inherited from the underlying model to ensure
@@ -476,7 +480,7 @@ class InferenceProblem:
 
     - **Likelihood evaluation**
         The inference problem delegates likelihood computation to the associated
-        :class:`~inference.likelihood.base.Likelihood` object, which encapsulates
+        :class:`~triceratops.inference.likelihood.base.Likelihood` object, which encapsulates
         the model–data comparison logic.
 
     - **Posterior evaluation**
@@ -496,7 +500,7 @@ class InferenceProblem:
 
     Design philosophy
     -----------------
-    The :class:`InferenceProblem` enforces a clear separation of concerns:
+    The :class:`~triceratops.inference.problem.InferenceProblem` enforces a clear separation of concerns:
 
     - **Models** define physical parameters and predictions.
     - **Likelihoods** define how predictions are compared to data.
@@ -510,7 +514,7 @@ class InferenceProblem:
 
     Intended usage
     --------------
-    Users typically do not instantiate :class:`InferenceProblem` directly.
+    Users typically do not instantiate :class:`~triceratops.inference.problem.InferenceProblem` directly.
     Instead, concrete subclasses may:
 
     - Customize parameter freezing or transformations
@@ -527,16 +531,16 @@ class InferenceProblem:
     - Parameter transformations are assumed to operate in unconstrained
       sampling space; inverse transforms are applied before evaluating priors.
     - This class does not store sampling results; results are handled by
-      classes in :mod:`inference.sampling`.
+      classes in :mod:`triceratops.inference.sampling`.
 
     See Also
     --------
-    inference.likelihood.base.Likelihood
+    triceratops.inference.likelihood.base.Likelihood
         Defines the model–data comparison used by the inference problem.
-    inference.prior
+    triceratops.inference.prior
         Collection of prior distributions usable with inference parameters.
-    inference.sampling
-        Samplers that operate on :class:`InferenceProblem` instances.
+    triceratops.inference.sampling
+        Samplers that operate on :class:`~triceratops.inference.problem.InferenceProblem` instances.
     """
 
     # ------------------------------------------------- #
@@ -545,11 +549,11 @@ class InferenceProblem:
     # Initialize the InferenceProblem with a Likelihood object.
     def __init__(self, likelihood: "Likelihood", *_, **__):
         """
-        Initialize the :class:`InferenceProblem` object.
+        Initialize the :class:`~triceratops.inference.problem.InferenceProblem` object.
 
         Parameters
         ----------
-        likelihood: `~inference.likelihood.base.Likelihood`
+        likelihood: `~triceratops.inference.likelihood.base.Likelihood`
             The likelihood object that defines the model and data for this inference problem.
         args:
             Additional positional arguments. (Not used in this base class.)
@@ -1426,16 +1430,17 @@ class InferenceProblem:
     # Properties to access the likelihood, model, data, and parameters.
     @property
     def likelihood(self) -> "Likelihood":
-        """`~inference.likelihood.base.Likelihood`: The likelihood associated with this inference problem.
+        """`~triceratops.inference.likelihood.base.Likelihood`: The likelihood associated with this inference problem.
 
-        The :class:`~inference.likelihood.base.Likelihood` object defines the model and data for the problem and,
+        The :class:`~triceratops.inference.likelihood.base.Likelihood` object defines the model and data
+        for the problem and,
         most importantly, determines how the model predictions are compared to the data via the likelihood function.
         """
         return self.__likelihood__
 
     @property
     def model(self) -> "Model":
-        """`~models.core.base.Model`: The model associated with this inference problem."""
+        """`~triceratops.models.core.base.Model`: The model associated with this inference problem."""
         return self.__likelihood__._model
 
     @property
@@ -1444,7 +1449,7 @@ class InferenceProblem:
 
         This data container is that data which is being fit by the problem. It is provided to the likelihood object
         when it is initialized and is used during likelihood evaluations. This may be any number of data container types
-        defined in the :mod:`data` module.
+        defined in the :mod:`triceratops.data` module.
         """
         return self.__likelihood__._data_container
 
@@ -1699,7 +1704,7 @@ class InferenceProblem:
     # ------------------------------------------------- #
     def to_dict(self, **extra_metadata) -> dict:
         """
-        Serialize the :class:`InferenceProblem` to a fully reconstructible dictionary.
+        Serialize the :class:`~triceratops.inference.problem.InferenceProblem` to a fully reconstructible dictionary.
 
         This method produces a JSON-safe representation of the complete inference
         configuration, including:
@@ -1827,7 +1832,7 @@ class InferenceProblem:
     @classmethod
     def from_dict(cls, dict_spec: dict) -> "InferenceProblem":
         """
-        Reconstruct an :class:`InferenceProblem` from a serialized dictionary.
+        Reconstruct an :class:`~triceratops.inference.problem.InferenceProblem` from a serialized dictionary.
 
         This method reverses the operation performed by
         :meth:`InferenceProblem.to_dict` and rebuilds:
@@ -1942,7 +1947,7 @@ class InferenceProblem:
 
     def to_json(self, path: Optional[str] = None, **extra_metadata) -> str:
         """
-        Serialize the :class:`InferenceProblem` to a JSON string or file.
+        Serialize the :class:`~triceratops.inference.problem.InferenceProblem` to a JSON string or file.
 
         This method is a thin wrapper around :meth:`to_dict`. It converts
         the fully reconstructible dictionary representation into a
@@ -1981,7 +1986,7 @@ class InferenceProblem:
     @classmethod
     def from_json(cls, source: Union[str, bytes]) -> "InferenceProblem":
         """
-        Reconstruct an :class:`InferenceProblem` from a JSON string or file.
+        Reconstruct an :class:`~triceratops.inference.problem.InferenceProblem` from a JSON string or file.
 
         Parameters
         ----------
@@ -2019,7 +2024,7 @@ class InferenceProblem:
 
     def to_yaml(self, path: Optional[str] = None, **extra_metadata) -> str:
         """
-        Serialize the :class:`InferenceProblem` to a YAML string or file.
+        Serialize the :class:`~triceratops.inference.problem.InferenceProblem` to a YAML string or file.
 
         This method uses :meth:`to_dict` internally and converts the
         resulting dictionary to YAML format.
@@ -2062,7 +2067,7 @@ class InferenceProblem:
     @classmethod
     def from_yaml(cls, source: Union[str, bytes]) -> "InferenceProblem":
         """
-        Reconstruct an :class:`InferenceProblem` from a YAML string or file.
+        Reconstruct an :class:`~triceratops.inference.problem.InferenceProblem` from a YAML string or file.
 
         Parameters
         ----------

@@ -5,41 +5,67 @@ Advective Cooling in One-Zone Accretion Disks
 Viscously heated accretion disks do not always radiate all of their dissipated
 energy locally.  When the accretion rate is high (or the disk is geometrically
 thick) a substantial fraction of the viscous heating can be carried inward with
-the accreting gas rather than radiated away — a process called *advective
+the accreting gas rather than radiated away, a process called *advective
 cooling*.
 
-:class:`~triceratops.dynamics.accretion.one_zone.igP_es_advDisk` extends the
-standard :class:`~triceratops.dynamics.accretion.one_zone.igP_esDisk` by
+:class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` extends the
+standard :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` by
 splitting the viscous dissipation rate into a radiated component and an
 advected component:
 
 .. math::
 
-    q_{\rm visc} = q_{\rm rad} + q_{\rm adv},\quad
-    q_{\rm adv}  = q_{\rm visc}\,B\,c_s^2,
+    q_{\rm visc} = q_{\rm rad} + q_{\rm adv}.
 
-where
+The midplane temperature :math:`T_c` is determined at each timestep by solving
+the dimensionless residual
 
 .. math::
 
-    B = \frac{4}{9\pi}\,\xi\,F_0\,\alpha\,\frac{M_D}{R_D^4\,\Omega^2\,\Sigma}.
+    f(\log T_c) = 1
+        - A\,c_s^{-2}(T_c)\,T_c^4
+        - B\,c_s^2(T_c)
+    = 0,
 
-The dimensionless entropy-gradient parameter :math:`\xi` controls the
-advective fraction.  In the standard ADAF (Advection-Dominated Accretion
-Flow) scaling the advective fraction is proportional to :math:`\xi\alpha(H/R)^2`.
+where the radiative and advective coefficients are
 
+.. math::
+
+    A = \frac{32}{27}\,\frac{\sigma_{\rm SB}}{\kappa(\rho,T_c)\,\alpha\,\Omega\,\Sigma^2},
+    \qquad
+    B = \frac{4}{3}\,\frac{\xi}{R_D^2\,\Omega^2}.
+
+The dimensionless entropy-gradient parameter :math:`\xi` sets the strength of
+advective transport.  :math:`A\,c_s^{-2}\,T_c^4` is the fraction of viscous
+heating that is radiated away, while :math:`B\,c_s^2` is the advected fraction.
 Setting :math:`\xi \to 0` recovers the non-advective
-:class:`~triceratops.dynamics.accretion.one_zone.igP_esDisk` limit.
+:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` limit.
 
-Relevant API References
+.. note::
+
+    The advective flux recorded in the output field ``Q_adv`` is computed from
+    the converged closure state as
+
+    .. math::
+
+        \frac{q_{\rm adv}}{q_{\rm visc}}
+            = \frac{4}{9\pi}\,\xi\,F_0\,\alpha\,
+              \frac{M_D\,c_s^2}{R_D^4\,\Omega^2\,\Sigma},
+
+    where :math:`F_0 = 1 - \sqrt{R_{\rm in}/R_D}` is the standard
+    no-torque boundary factor.  This full expression is used for the
+    output diagnostics; the simplified :math:`B` above is the form used
+    in the root-finding step.
+
+See Also
 -----------------------
-- :class:`~triceratops.dynamics.accretion.one_zone.igP_es_advDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.igP_esDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.solve`
+- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 
 .. hint::
 
-    For the derivation of the advective energy balance and the B factor see
+    For the derivation of the advective energy balance see
     :ref:`one_zone_disk_theory`.
 """
 
@@ -52,7 +78,7 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import igP_esDisk, igP_es_advDisk
+from triceratops.dynamics.accretion.one_zone import FullPressureDisk, AdvectiveDisk
 from triceratops.utils.plot_utils import set_plot_style
 
 set_plot_style()
@@ -61,48 +87,55 @@ set_plot_style()
 # Shared Parameters
 # -----------------
 #
-# We use a 3 M☉ BH with a 0.1 M☉ initial disk — a configuration representative
-# of a compact-object TDE or a neutron-star merger remnant.
+# We use a :math:`1 \;{\rm M_{\odot}}` BH with a :math:`0.02 \;{\rm M_{\odot}}` initial disk, a configuration
+# representative of a compact-object TDE or a neutron-star merger remnant. We can also
+# set the inner radius of the black hole based on the black hole's ISCO. To do this, we'll use the
+# :func:`~triceratops.physics_utils.general_relativity.compute_ISCO`.
+from triceratops.physics_utils.general_relativity import compute_ISCO
+from triceratops.radiation.opacity import KramersBFESOpacity
 
-M_BH = 3.0 * const.M_sun
-R_in = 3.0e6 * u.cm
+M_BH = 1 * const.M_sun
+R_in = compute_ISCO(M_BH, spin=0)
 alpha = 0.1
 mu = 0.62
 
+print(R_in)
+
 # All models share the same geometry constants so we can use any of them
 # to generate consistent initial conditions.
-_ref_disk = igP_es_advDisk(mu=mu, xi=0.5)
+_ref_disk = AdvectiveDisk(mu=mu, xi=1.5, opacity=KramersBFESOpacity())
 
 ic = _ref_disk.generate_initial_conditions(
     M_BH=M_BH,
-    M_D_0=0.1 * const.M_sun,
-    R_D_0=3.0e13 * u.cm,
+    M_D_0=0.02 * const.M_sun,
+    R_D_0=5e13 * u.cm,
 )
 
 run_params = {"M_BH": M_BH, "R_in": R_in, "alpha": alpha}
 t_span = (1.0e6 * u.s, 1.0e9 * u.s)
-max_steps = 50_000
+max_steps = 500_000
 
 # %%
-# Effect of the ξ Parameter
-# --------------------------
+# Effect of the :math:`\xi` Parameter
+# ------------------------------------
 #
-# We run ``igP_es_advDisk`` for three values of ξ to show how the advective
-# fraction Q_adv / Q_visc scales with the entropy-gradient parameter.
+# We run :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` for three values of
+# :math:`\xi` to show how the advective fraction :math:`q_{\rm adv}/q_{\rm visc}` scales with the
+# entropy-gradient parameter.
 
-xi_values = [0.1, 0.5, 1.0]
+xi_values = [0.1, 1.0, 1.5]
 adv_results = {}
 
 for xi_val in xi_values:
-    disk = igP_es_advDisk(mu=mu, xi=xi_val)
+    disk = AdvectiveDisk(mu=mu, xi=xi_val, opacity=KramersBFESOpacity())
     adv_results[xi_val] = disk.solve(ic, run_params, t_span, max_steps=max_steps)
 
 # %%
 # Advective Fraction vs. Time
 # ----------------------------
 #
-# The advective fraction Q_adv / Q_visc shows the fraction of viscous heating
-# that is carried inward rather than radiated.  For thin disks (H/R ≪ 1) this
+# The advective fraction :math:`q_{\rm adv}/q_{\rm visc}` shows the fraction of viscous heating
+# that is carried inward rather than radiated.  For thin disks (:math:`H/R \ll 1`) this
 # fraction is small; it grows as the disk thickens at early times.
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))
@@ -118,7 +151,7 @@ axes[0].set_title("Advective Fraction")
 axes[0].legend()
 axes[0].grid(True, which="both", ls="--", alpha=0.4)
 
-# ---- Aspect ratio (H/R) — governs how thick the disk is ----
+# ---- Aspect ratio (H/R) - governs how thick the disk is ----
 for xi_val, res in adv_results.items():
     t = res.data["t"].to(u.day).value
     H_over_R = res.data["H_over_R"].value
@@ -137,20 +170,21 @@ plt.show()
 # Temperature Suppression by Advection
 # --------------------------------------
 #
-# Because advection carries away a fraction of the viscous heating, less energy
-# is available for radiation.  The energy-balance equation
+# Because advection carries away a fraction :math:`B\,c_s^2` of the viscous
+# heating, less energy is available for radiation and the root of
 #
 # .. math::
 #
-#     1 = A\,c_s^{-2}\,T_c^4 + B\,c_s^2
+#     f(\log T_c) = 1 - A\,c_s^{-2}\,T_c^4 - B\,c_s^2 = 0
 #
-# has a lower root :math:`T_c` when :math:`B > 0` compared with the pure
-# radiation solution :math:`T_c^{(0)} \propto c_s (A^{-1})^{1/4}`.
+# is pushed to a lower :math:`T_c` than the pure-radiation solution
+# :math:`T_c^{(0)}` (recovered when :math:`\xi \to 0`).
 #
-# Here we compare the midplane temperature T_c for the non-advective baseline
-# (``igP_esDisk``, ξ = 0) and two advective runs.
+# Here we compare the midplane temperature :math:`T_c` for the non-advective baseline
+# (:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`, :math:`\xi = 0`)
+# and two advective runs.
 
-disk_no_adv = igP_esDisk(mu=mu)
+disk_no_adv = FullPressureDisk(mu=mu, opacity=KramersBFESOpacity())
 result_no_adv = disk_no_adv.solve(ic, run_params, t_span, max_steps=max_steps)
 
 fig, axes = plt.subplots(1, 2, figsize=(12, 4))
@@ -158,7 +192,7 @@ fig, axes = plt.subplots(1, 2, figsize=(12, 4))
 # ---- Midplane temperature ----
 t_ref = result_no_adv.data["t"].to(u.day).value
 T_ref = result_no_adv.data["T_c"].to(u.K).value
-axes[0].loglog(t_ref, T_ref, "k--", lw=1.5, label=r"$\xi = 0$ (no advection)")
+axes[0].loglog(t_ref, T_ref, "k--", lw=1.5, label=r"FullPressureDisk ($\xi = 0$)")
 
 for xi_val in [0.1, 1.0]:
     res = adv_results[xi_val]
@@ -178,7 +212,7 @@ axes[1].loglog(
     result_no_adv.data["mdot"].to(u.Msun / u.yr).value,
     "k--",
     lw=1.5,
-    label=r"$\xi = 0$ (no advection)",
+    label=r"FullPressureDisk ($\xi = 0$)",
 )
 for xi_val in [0.1, 1.0]:
     res = adv_results[xi_val]

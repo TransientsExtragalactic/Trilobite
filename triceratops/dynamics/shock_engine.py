@@ -4,9 +4,9 @@ Shock engine module for shock computation in astrophysical transients.
 The :class:`ShockEngine` is an abstract base class which encapsulates all of the necessary
 physical tooling to compute the dynamical evolution of shocks in astrophysical transients,
 including supernovae and gamma-ray bursts. Specific implementations of shock engines can be
-found in submodules of the :mod:`dynamics` and will vary in their structure.
+found in submodules of the :mod:`triceratops.dynamics` and will vary in their structure.
 
-These shock engines can then be instantiated by :class:`~models.core.base.Model` classes to provide
+These shock engines can then be instantiated by :class:`~triceratops.models.core.base.Model` classes to provide
 an engine for forward modeling of astrophysical transients.
 """
 

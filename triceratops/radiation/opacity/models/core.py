@@ -99,7 +99,7 @@ class KramersFFOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Normalisation constant in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.  Defaults to
-        :data:`KAPPA_FF_0`.  Override with a composition- or
+        :data:`~triceratops.radiation.opacity.models.core.KAPPA_FF_0`.  Override with a composition- or
         Gaunt-factor-corrected value when available.
     """
 
@@ -133,7 +133,7 @@ class KramersBFOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Normalisation constant in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.  Defaults to
-        :data:`KAPPA_BF_0`.
+        :data:`~triceratops.radiation.opacity.models.core.KAPPA_BF_0`.
     """
 
     IS_C_BACKED = True
@@ -171,7 +171,7 @@ class KramersOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Combined normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.  Defaults to
-        :data:`KAPPA_KR_0` = ``KAPPA_FF_0 + KAPPA_BF_0``.
+        :data:`~triceratops.radiation.opacity.models.core.KAPPA_KR_0` = ``KAPPA_FF_0 + KAPPA_BF_0``.
     """
 
     IS_C_BACKED = True
@@ -203,7 +203,7 @@ class KramersFFESOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.
-        Defaults to :data:`KAPPA_FF_0`.
+        Defaults to :data:`~triceratops.radiation.opacity.models.core.KAPPA_FF_0`.
     kappa_es : float, optional
         Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.
         Default 0.34.
@@ -233,7 +233,7 @@ class KramersBFESOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.
-        Defaults to :data:`KAPPA_BF_0`.
+        Defaults to :data:`~triceratops.radiation.opacity.models.core.KAPPA_BF_0`.
     kappa_es : float, optional
         Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.
         Default 0.34.
@@ -267,7 +267,7 @@ class KramersESOpacity(GreyOpacityLaw):
     ----------
     kappa0 : float, optional
         Combined Kramers normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.
-        Defaults to :data:`KAPPA_KR_0` = ``KAPPA_FF_0 + KAPPA_BF_0``.
+        Defaults to :data:`~triceratops.radiation.opacity.models.core.KAPPA_KR_0` = ``KAPPA_FF_0 + KAPPA_BF_0``.
     kappa_es : float, optional
         Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.
         Default 0.34.

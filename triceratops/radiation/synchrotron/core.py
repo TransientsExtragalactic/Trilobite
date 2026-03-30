@@ -540,7 +540,7 @@ def first_synchrotron_kernel(x: Union[float, np.ndarray]) -> Union[float, np.nda
 
         This is NOT an efficient option for large-scale synchrotron calculation. It uses
         the :func:`scipy.integrate.quad` function to compute the integral over calls to
-        :func:`scipy.special.kv`, which can be slow for large arrays.
+        ``scipy.special.kv``, which can be slow for large arrays.
 
     Parameters
     ----------

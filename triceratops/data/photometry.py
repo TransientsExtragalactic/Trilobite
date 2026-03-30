@@ -1227,7 +1227,7 @@ class RadioPhotometryEpochContainer(XYDataContainer):
     where frequency is treated as the independent variable and flux density as
     the dependent variable.
 
-    The container inherits from :class:`XYDataContainer`, exposing a standardized
+    The container inherits from :class:`~triceratops.data.core.XYDataContainer`, exposing a standardized
     ``(x, y)`` interface with optional uncertainties and censoring while retaining
     domain-specific column semantics relevant to radio astronomy.
 

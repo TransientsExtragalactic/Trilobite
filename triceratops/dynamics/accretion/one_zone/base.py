@@ -1877,7 +1877,7 @@ class OneZoneAccretionResult:
         Returns
         -------
         fig : `~matplotlib.figure.Figure`
-        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`, shape (2,)
+        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`
 
         Examples
         --------
@@ -1925,7 +1925,7 @@ class OneZoneAccretionResult:
             Existing axes to draw into.  If ``None``, axes are created from *fig*.
         **plot_kwargs
             Additional keyword arguments forwarded to
-            :func:`matplotlib.axes.Axes.loglog`.
+            ``matplotlib.axes.Axes.loglog``.
 
         Returns
         -------

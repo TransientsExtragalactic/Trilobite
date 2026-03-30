@@ -18,7 +18,7 @@ These models implement elementary functional forms such as:
 - Exponentials
 - Constant functions
 
-All models follow the standard :class:`~triceratops.models.core.Model`
+All models follow the standard :class:`~triceratops.models.core.base.Model`
 interface and are fully compatible with:
 
 - :class:`~triceratops.inference.likelihood.base.Likelihood`

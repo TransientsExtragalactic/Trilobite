@@ -26,10 +26,10 @@ tabulated interpolators for accurate Gaunt factor evaluation.
 
 Relevant API
 ------------
-- :class:`~radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
-- :class:`~radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
-- :func:`~radiation.free_free.gaunt_factor.get_default_gaunt_interpolator`
-- :func:`~radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator`
+- :class:`~triceratops.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
+- :class:`~triceratops.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
+- :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator`
+- :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator`
 """
 
 from abc import ABC, abstractmethod

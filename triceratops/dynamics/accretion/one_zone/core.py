@@ -111,7 +111,7 @@ class GasPressureDisk(OneZoneAccretionDiskBase):
         mu : float, optional
             Mean molecular weight of the disk gas (dimensionless).
             Default ``0.6``.
-        opacity : str or GreyOpacityLaw, optional
+        opacity : str or ~triceratops.radiation.opacity.base.GreyOpacityLaw, optional
             Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
             ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
             ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
@@ -234,7 +234,7 @@ class FullPressureDisk(OneZoneAccretionDiskBase):
         mu : float, optional
             Mean molecular weight of the disk gas (dimensionless).
             Default ``0.6``.
-        opacity : str or GreyOpacityLaw, optional
+        opacity : str or ~triceratops.radiation.opacity.base.GreyOpacityLaw, optional
             Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
             ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
             ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.
@@ -316,7 +316,7 @@ class AdvectiveDisk(OneZoneAccretionDiskBase):
         Default ``0.6``.
     xi : float, optional
         Entropy gradient parameter (dimensionless, > 0).  Default ``0.5``.
-    opacity : str or GreyOpacityLaw, optional
+    opacity : str or ~triceratops.radiation.opacity.base.GreyOpacityLaw, optional
         Opacity model.  Accepted strings: ``"electron_scattering"`` (default),
         ``"kramers_ff"``, ``"kramers_bf"``, ``"kramers"``,
         ``"kramers_ff_es"``, ``"kramers_bf_es"``, ``"kramers_es"``.

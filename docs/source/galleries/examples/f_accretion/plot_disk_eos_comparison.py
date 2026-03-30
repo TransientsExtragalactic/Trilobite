@@ -5,10 +5,10 @@ Gas Pressure vs. Full Pressure — Equation-of-State Comparison
 Triceratops provides two one-zone disk closures that differ only in the
 treatment of the equation of state (EOS):
 
-- :class:`~triceratops.dynamics.accretion.one_zone.gP_esDisk`
+- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
   — ideal gas pressure only, with an analytic temperature solve.
-- :class:`~triceratops.dynamics.accretion.one_zone.igP_esDisk`
-  — combined gas **and radiation pressure**, with an iterative temperature solve
+- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+  — combined gas **and** radiation pressure, with an iterative temperature solve
   (bracket expansion + Brent's method) at every time-step.
 
 This example compares the two models side-by-side under identical initial
@@ -51,11 +51,11 @@ the same :math:`T_c`, the full-pressure closure implies a higher equilibrium
 :math:`T_c` for the same :math:`(\Sigma, \Omega)` — and correspondingly a
 faster viscous timescale and more rapid disk evolution.
 
-Relevant API References
------------------------
-- :class:`~triceratops.dynamics.accretion.one_zone.gP_esDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.igP_esDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.solve`
+See Also
+--------
+- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 
 .. hint::
 
@@ -73,8 +73,8 @@ from astropy import constants as const
 from astropy import units as u
 
 from triceratops.dynamics.accretion.one_zone import (
-    igP_esDisk,
-    gP_esDisk,
+    GasPressureDisk,
+    FullPressureDisk,
 )
 from triceratops.utils.plot_utils import set_plot_style
 
@@ -92,11 +92,11 @@ M_BH = 3.0 * const.M_sun
 R_in = 3.0e6 * u.cm
 alpha = 0.1
 
-# Use the gas-pressure model to compute J_D_0 — both models share the same
+# Use the gas-pressure model to compute J_D_0; both models share the same
 # Metzger+08 geometry constants (A, B, F_0), so the initial conditions are
 # physically identical.
-disk_gas = gP_esDisk(mu=0.6)
-disk_full = igP_esDisk(mu=0.6)
+disk_gas = GasPressureDisk(mu=0.6)
+disk_full = FullPressureDisk(mu=0.6)
 
 ic = disk_gas.generate_initial_conditions(
     M_BH=M_BH,

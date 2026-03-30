@@ -1,8 +1,8 @@
 .. _free_free_theory:
 
-=========================
+==========================
 Free-Free Radiation Theory
-=========================
+==========================
 
 Free-free radiation—also called **bremsstrahlung** ("braking radiation" in German)—is the continuum
 emission produced when a free electron is accelerated by the Coulomb field of an ion without being

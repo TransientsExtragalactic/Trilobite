@@ -1,4 +1,5 @@
 .. _synchrotron_cooling:
+
 =====================================
 Radiative Cooling Engines
 =====================================
@@ -8,9 +9,9 @@ Radiative Cooling Engines
     See :ref:`synchrotron_theory` for a detailed discussion of radiative cooling
     processes and their role in shaping synchrotron spectra.
 
-The :mod:`radiation.synchrotron.cooling` module provides the **low-level and
+The :mod:`triceratops.radiation.synchrotron.cooling` module provides the **low-level and
 high-level tools required to compute radiative cooling of relativistic
-electrons**. Whereas the :mod:`radiation.synchrotron.core` module focuses on
+electrons**. Whereas the :mod:`triceratops.radiation.synchrotron.core` module focuses on
 *emission*, this module focuses on *energy loss* and the evolution of electron
 Lorentz factors.
 
@@ -29,7 +30,7 @@ Overview of the API
 
 Radiative cooling is exposed through **cooling engines**, each corresponding to
 a distinct physical process. Each engine implements a common interface defined
-by :class:`~radiation.synchrotron.cooling.SynchrotronCoolingEngine`.
+by :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronCoolingEngine`.
 
 Every cooling engine provides methods to compute:
 
@@ -83,9 +84,9 @@ magnetic field. In the isotropic, Thomson-regime limit, the energy loss rate is
     u_B = \frac{B^2}{8\pi}.
 
 This process is implemented by
-:class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+:class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
-.. currentmodule:: radiation.synchrotron.cooling
+.. currentmodule:: triceratops.radiation.synchrotron.cooling
 
 .. tab-set::
 
@@ -169,7 +170,7 @@ with radiation energy density
     \frac{L_{\rm bol}}{4\pi R^2 c}.
 
 This process is implemented by
-:class:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine`.
+:class:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine`.
 
 .. tab-set::
 

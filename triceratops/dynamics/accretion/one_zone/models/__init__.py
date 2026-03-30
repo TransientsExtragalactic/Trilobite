@@ -1,7 +1,7 @@
 r"""
 Assembled one-zone disk closures.
 
-Each module here defines a concrete :class:`~..closure.OneZoneClosure` subclass
+Each module here defines a concrete :class:`~triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure` subclass
 that combines an EOS, the standard alpha-disk viscous derivative, and a writer
 into a self-contained closure ready for the integrator.
 
@@ -24,7 +24,8 @@ _igP_adv
 
 All closures default to electron-scattering opacity and accept any
 :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` via the
-``opacity`` property.  Call :meth:`~..closure.OneZoneClosure.bind_runtime_parameters`
+``opacity`` property.  Call
+:meth:`~triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure.bind_runtime_parameters`
 before passing to the integrator; each can optionally install the power-law
 fallback source term via ``with_fallback=True``.
 """

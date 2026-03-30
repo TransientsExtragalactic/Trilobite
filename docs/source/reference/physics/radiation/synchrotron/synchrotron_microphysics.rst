@@ -1,4 +1,5 @@
 .. _synchrotron_microphysics:
+
 =========================================
 Synchrotron Microphysics
 =========================================
@@ -67,7 +68,7 @@ A detailed discussion of the physical origin of this distribution can be found i
 
     From the perspective of **model building**, the important point is that essentially all synchrotron
     observables depend on *moments* of this distribution rather than on its detailed shape. Thus, there are
-    a number of useful functions in the :mod:`radiation.synchrotron` module for computing these moments
+    a number of useful functions in the :mod:`triceratops.radiation.synchrotron` module for computing these moments
     directly without needing to manipulate the distribution itself.
 
 
@@ -84,7 +85,6 @@ A detailed discussion of the physical origin of this distribution can be found i
 
         .. currentmodule:: triceratops.radiation.synchrotron.microphysics
         .. autosummary::
-           :toctree: ../../../../_as_gen
            :nosignatures:
 
            compute_electron_gamma_PL_moment
@@ -166,7 +166,7 @@ corresponding Lorentz factor normalization, one could use the following code:
     print(f"Power-law normalization in gamma: {N0_gamma:.2e} cm^-3")
 
 Broken Power-Law Electron Distributions
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In many astrophysical environments, a single power-law electron distribution is insufficient to
 accurately describe the non-thermal particle population. In such cases, a **broken power-law (BPL)**
@@ -227,7 +227,6 @@ set of utilities for computing these moments directly.
 
         .. currentmodule:: triceratops.radiation.synchrotron.microphysics
         .. autosummary::
-           :toctree: ../../../../_as_gen
            :nosignatures:
 
            compute_electron_gamma_BPL_moment
@@ -341,7 +340,7 @@ sources (e.g. :footcite:t:`Margutti2019COW`,
 :footcite:t:`demarchiRadioAnalysisSN2004C2022`, :footcite:t:`wuDelayedRadioEmission2025`, etc.)
 
 In Triceratops, the helper functions for performing equipartition closure are provided in the
-:mod:`radiation.synchrotron.microphysics` module. Before highlighting some of these functions, we'll provide
+:mod:`triceratops.radiation.synchrotron.microphysics` module. Before highlighting some of these functions, we'll provide
 the API in the tab-set below:
 
 .. tab-set::
@@ -352,7 +351,6 @@ the API in the tab-set below:
 
         .. currentmodule:: triceratops.radiation.synchrotron.microphysics
         .. autosummary::
-           :toctree: ../../../../_as_gen
            :nosignatures:
 
            compute_PL_norm_from_magnetic_field

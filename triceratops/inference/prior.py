@@ -19,7 +19,7 @@ MCMC-based inference.
 
 Usage within Triceratops
 ------------------------
-When defining an :class:`~inference.problem.InferenceProblem`,
+When defining an :class:`~triceratops.inference.problem.InferenceProblem`,
 users may specify priors in one of two ways:
 
 1. By providing an instance of a :class:`Prior` subclass defined in this

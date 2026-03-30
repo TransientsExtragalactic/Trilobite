@@ -27,18 +27,18 @@ class Likelihood(ABC):
     """
     Abstract base class for statistical likelihood functions.
 
-    The :class:`Likelihood` class defines the interface and execution
+    The :class:`~triceratops.inference.likelihood.base.Likelihood` class defines the interface and execution
     semantics for evaluating the probability of observational data
     given a physical model.
 
     This class operates strictly on:
 
-    - A validated :class:`~triceratops.inference.data.InferenceData` object
+    - A validated :class:`~triceratops.data.core.InferenceData` object
     - A concrete subclass of :class:`~triceratops.models.core.base.Model`
 
     It performs **no unit coercion, column resolution, or table parsing**.
     Those responsibilities belong to the data ingestion layer
-    (e.g. :class:`DataContainer` → :class:`InferenceData`).
+    (e.g. :class:`~triceratops.data.core.DataContainer` → :class:`~triceratops.data.core.InferenceData`).
 
     Architectural Role
     ------------------
@@ -57,7 +57,7 @@ class Likelihood(ABC):
     4. **Model**
        Encodes forward physics.
 
-    The :class:`Likelihood` layer is therefore a **pure statistical engine**
+    The :class:`~triceratops.inference.likelihood.base.Likelihood` layer is therefore a **pure statistical engine**
     operating on already-validated numerical data.
 
     Design Principles
@@ -101,7 +101,7 @@ class Likelihood(ABC):
         ----------
         model : Model
             The forward model used to generate predicted observables.
-            Must be an instance of :class:`Model`.
+            Must be an instance of :class:`~triceratops.models.core.base.Model`.
 
         data : InferenceData
             Fully validated, immutable dataset containing
@@ -115,7 +115,7 @@ class Likelihood(ABC):
         Raises
         ------
         TypeError
-            If `model` is not a :class:`Model` instance.
+            If `model` is not a :class:`~triceratops.models.core.base.Model` instance.
         TypeError
             If `data` is not an :class:`InferenceData` instance.
         """
@@ -208,7 +208,7 @@ class Likelihood(ABC):
         ----------
         parameters : dict
             Mapping of model parameter names to values in any format
-            accepted by :meth:`Model.coerce_model_parameters`.
+            accepted by :meth:`~triceratops.models.core.base.Model.coerce_model_parameters`.
 
         Returns
         -------
@@ -298,7 +298,7 @@ class GaussianLikelihood(Likelihood):
 
     See Also
     --------
-    ~inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.
+    ~triceratops.inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.
     """
 
     # ============================================================
@@ -481,7 +481,7 @@ class GaussianCensoredLikelihood(Likelihood):
 
     See Also
     --------
-    ~inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.
+    ~triceratops.inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.
     """
 
     # ============================================================

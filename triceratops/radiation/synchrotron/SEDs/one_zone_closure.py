@@ -932,9 +932,9 @@ def _invert_powerlaw_ssa_sed(
     .. dropdown:: When to use other closures
        :icon: info
 
-       Use :func:`_invert_powerlaw_cooling_ssa_sed` when an explicit cooling
+       Use ``_invert_powerlaw_cooling_ssa_sed`` when an explicit cooling
        Lorentz factor must be supplied, and
-       :func:`_invert_powerlaw_implicit_cooling_ssa_sed` when
+       ``_invert_powerlaw_implicit_cooling_ssa_sed`` when
        :math:`\gamma_c` should instead be obtained from the synchrotron
        cooling closure.
 
@@ -1333,7 +1333,7 @@ def _invert_powerlaw_implicit_cooling_ssa_sed(
          timescale rather than supplied directly.
 
        For explicit-cooling SSA inversions, use
-       :func:`_invert_powerlaw_cooling_ssa_sed`.
+       ``_invert_powerlaw_cooling_ssa_sed``.
 
     See Also
     --------
@@ -1651,7 +1651,7 @@ def invert_powerlaw_sed(
     :ref:`single_zone_sed_inversion`. Cosmological distances are resolved
     using :func:`resolve_cosmological_distances`, all quantities are
     converted to CGS units, and the inversion is then delegated to
-    :func:`_invert_powerlaw_sed`.
+    ``_invert_powerlaw_sed``.
 
     Parameters
     ----------
@@ -1811,7 +1811,7 @@ def invert_powerlaw_cooling_ssa_sed(
 
     Distance information is resolved cosmologically, inputs are converted to
     CGS units, and the inversion is delegated to
-    :func:`_invert_powerlaw_cooling_ssa_sed`.
+    ``_invert_powerlaw_cooling_ssa_sed``.
 
     Parameters
     ----------

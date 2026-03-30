@@ -1,4 +1,5 @@
 .. _synch_sed_theory:
+
 ===========================================
 Methods: Single-Zone Synchrotron SEDs
 ===========================================
@@ -154,6 +155,7 @@ In the tables below, we summarize the various types of quantities used in this d
 ---
 
 .. _single_zone_sed_structure:
+
 Single-Zone SED Structure
 -------------------------
 
@@ -239,6 +241,7 @@ with which we compute the various break frequencies used in the SEDs. In each of
 this methodology in detail.
 
 .. _single_zone_injection_frequencies:
+
 The Injection Frequencies
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -305,6 +308,7 @@ are as follows:
     a manner most in keeping with the general theory of synchrotron radiation as described in :ref:`synchrotron_theory`.
 
 .. _single_zone_cooling_frequency:
+
 The Cooling Frequency
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -382,6 +386,7 @@ frequency as
     :mod:`~radiation.synchrotron.cooling`.
 
 .. _single_zone_ssa_frequency:
+
 The Absorption Frequency
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -577,6 +582,7 @@ not interfere with the normalization of the SED at lower frequencies. We therefo
     \end{cases}
 
 .. _single_zone_sed_normalization:
+
 SED Normalization
 ------------------
 
@@ -599,7 +605,7 @@ itself. The user may then implement any desired closure scheme to connect the SE
 choose to implement equipartition, or one may choose to implement a different closure based on, e.g., observations or theoretical
 considerations.
 
-For convenience, we do provide a normalization scheme implemented directly in the SED classes of :mod:`radiation.synchrotron.SEDs`
+For convenience, we do provide a normalization scheme implemented directly in the SED classes of :mod:`triceratops.radiation.synchrotron.SEDs`
 which is based on Equipartition and is described here.
 
 .. admonition:: Convention Note
@@ -960,6 +966,7 @@ In practice, we use this propagation in two distinct ways:
    :math:`(\nu_c,F_{c,0})` in fast cooling.
 
 .. _single_zone_sed_inversion:
+
 Inversion
 ---------
 
@@ -1167,7 +1174,7 @@ The flux normalization at the break frequency may then be used to determine the 
     .. tab-item:: Isotropic Pitch Angle
 
         .. math::
-            :label: inversion_R_iso_thin
+            :label: inversion_R_iso_thin_sed
 
             \boxed{
             R = \left(\frac{F_{m,0}}{Q_{m,\rm ISO} B^3 \tilde{N_0}}\right)^{1/3},
@@ -1176,7 +1183,7 @@ The flux normalization at the break frequency may then be used to determine the 
     .. tab-item:: Fixed Pitch Angle
 
         .. math::
-            :label: inversion_R_fixed_thin
+            :label: inversion_R_fixed_thin_sed
 
             \boxed{
             R = \left(\frac{F_{0}}{Q_{0} B^3 \tilde{N_0} \sin \alpha}\right)^{1/3},
@@ -1201,7 +1208,7 @@ to "extrapolate" from the optically thin normalization to the observed peak freq
 Regardless of the spectral regime, the peak flux will correspond to the blackbody flux at :math:`\nu_a`:
 
 .. math::
-    :label: inversion_F_a_fixed
+    :label: inversion_F_a_fixed_sed
 
     F_\nu(\nu_a)
     =
@@ -1415,7 +1422,7 @@ The inversion is the simple case of an optically thin peak at :math:`\nu_m`.
           - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
             angles or isotropic pitch-angle averaging.
 
-Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
 invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
 or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -1668,7 +1675,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed` but instead using :math:`\nu_c`, we can invert for the magnetic field strength.
-        Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -1882,7 +1889,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
-        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -2096,7 +2103,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
-        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -2292,7 +2299,7 @@ We now progress to the case with SSA but no cooling. In this case, there are 2(3
                   - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
-        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -2766,7 +2773,7 @@ various cases.
                   - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
-        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -3263,7 +3270,7 @@ various cases.
                   - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
-        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 
@@ -3828,7 +3835,7 @@ various cases.
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed` but instead using :math:`\nu_c`, we can invert for the magnetic field strength.
-        Using :eq:`inversion_R_fixed_thin`, we can then
+        Using :eq:`inversion_R_fixed_thin_sed`, we can then
         invert for the radius of the emitting region. The remaining parameters are either fixed by assumptions (e.g., :math:`p`)
         or are degenerate with the normalization (e.g., :math:`\epsilon_e` and :math:`\epsilon_B`).
 

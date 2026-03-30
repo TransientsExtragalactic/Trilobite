@@ -23,10 +23,11 @@ in different scenarios. These models can be used to simulate observations, fit d
     :recursive:
     :template: module.rst
 
-    models.supernovae
-    models.core
-    models.generic
-    models.SEDs
+    triceratops.models.core
+    triceratops.models.generic
+    triceratops.models.SEDs
+    triceratops.models.GRBs
+    triceratops.models.supernovae
 
 Data Modules
 ------------
@@ -38,10 +39,10 @@ and visualizing data sets.
     :recursive:
     :template: module.rst
 
-    data.core
-    data.light_curve
-    data.spectra
-    data.photometry
+    triceratops.data.core
+    triceratops.data.light_curve
+    triceratops.data.spectra
+    triceratops.data.photometry
 
 Inference Modules
 -----------------
@@ -54,10 +55,10 @@ estimation, and conducting statistical analysis.
     :recursive:
     :template: module.rst
 
-    inference.prior
-    inference.likelihood
-    inference.sampling
-    inference.problem
+    triceratops.inference.prior
+    triceratops.inference.likelihood
+    triceratops.inference.sampling
+    triceratops.inference.problem
 
 
 
@@ -76,8 +77,8 @@ radiation mechanisms, and ejecta evolution.
     :recursive:
     :template: module.rst
 
-    radiation
-    dynamics
+    triceratops.radiation
+    triceratops.dynamics
 
 Computation
 ^^^^^^^^^^^
@@ -89,7 +90,7 @@ for differential equations, interpolation routines, and data handling utilities.
     :recursive:
     :template: module.rst
 
-    parallel
+    triceratops.parallel
 
 Utilities
 ---------
@@ -101,7 +102,10 @@ These include data I/O, configuration management, and common mathematical operat
     :recursive:
     :template: module.rst
 
-    utils.plot_utils
-    utils.io_utils
-    utils.log
-    utils.config
+    triceratops.utils.plot_utils
+    triceratops.utils.io_utils
+    triceratops.utils.log
+    triceratops.utils.config
+    triceratops.utils.misc_utils
+    triceratops.physics_utils
+    triceratops.math_utils

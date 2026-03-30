@@ -40,7 +40,7 @@ class DataContainer(ABC):
     """
     Abstract base class for validated, immutable data containers in Triceratops.
 
-    A :class:`DataContainer` provides a **structured, unit-aware, read-only interface**
+    A :class:`~triceratops.data.core.DataContainer` provides a **structured, unit-aware, read-only interface**
     to observational or synthetic datasets used throughout the Triceratops modeling
     and inference pipeline. It acts as a *boundary object* between raw input data
     (typically stored as :class:`astropy.table.Table` instances) and downstream
@@ -435,7 +435,7 @@ class DataContainer(ABC):
         path : str or pathlib.Path
             The file path to the FITS file containing the data.
         read_kws : dict
-            Additional keyword arguments to pass to :meth:`astropy.table.Table.read`.
+            Additional keyword arguments to pass to ``astropy.table.Table.read()``.
         kwargs:
             Additional keyword arguments to pass to :meth:`from_table`.
 
@@ -461,7 +461,7 @@ class DataContainer(ABC):
         path : str or pathlib.Path
             The file path where the FITS file will be saved.
         write_kws : dict
-            Additional keyword arguments to pass to :meth:`astropy.table.Table.write`.
+            Additional keyword arguments to pass to ``astropy.table.Table.write()``.
         **kwargs:
             Additional keyword arguments to be used in subclasses.
         """
@@ -480,12 +480,12 @@ class DataContainer(ABC):
         **_,
     ) -> "InferenceData":
         """
-        Convert this :class:`DataContainer` into an :class:`InferenceData` instance.
+        Convert this :class:`~triceratops.data.core.DataContainer` into :class:`~triceratops.data.core.InferenceData`.
 
         This method provides a high-level interface for preparing data for use
         in the inference pipeline. Internally, it delegates all validation,
         column resolution, and unit coercion to
-        :meth:`InferenceData.from_table`.
+        :meth:`~triceratops.data.core.InferenceData.from_table`.
 
         The conversion process is guided entirely by the provided ``model``:
 
@@ -499,7 +499,7 @@ class DataContainer(ABC):
 
         Parameters
         ----------
-        model : ~models.core.base.Model
+        model : ~triceratops.models.core.base.Model
             The model against which inference will be performed.
             This determines:
 
@@ -796,8 +796,8 @@ class InferenceData:
 
     The :class:`InferenceData` class is the **canonical numerical representation**
     consumed by likelihood objects in Triceratops. It defines the contract between
-    the :mod:`data` layer (which performs column resolution and unit coercion)
-    and the :mod:`inference` layer (which performs statistical evaluation).
+    the :mod:`triceratops.data` layer (which performs column resolution and unit coercion)
+    and the :mod:`triceratops.inference` layer (which performs statistical evaluation).
 
     In a typical workflow:
 
@@ -925,10 +925,10 @@ class InferenceData:
 
     See Also
     --------
-    :class:`data.core.DataContainer`
+    :class:`triceratops.data.core.DataContainer`
         High-level data ingestion and column resolution.
 
-    :class:`inference.likelihood.base.Likelihood`
+    :class:`triceratops.inference.likelihood.base.Likelihood`
         Statistical layer that consumes :class:`InferenceData`.
 
     :class:`Observable`
@@ -1730,7 +1730,7 @@ class InferenceData:
 
         This method extracts columns from a table, performs name resolution
         and unit coercion, and delegates validation to
-        :meth:`InferenceData.from_arrays`.
+        :meth:`~triceratops.data.core.InferenceData.from_arrays`.
 
         Parameters
         ----------
@@ -1906,7 +1906,7 @@ class InferenceData:
         -----
         The dictionary structure has the following canonical form:
 
-        .. code-block:: json
+        .. code-block:: text
 
             {
               "attrs": {
@@ -2471,7 +2471,7 @@ class XYDataContainer(DataContainer, ABC):
     """
     Abstract base class for two-dimensional ``(x, y)`` datasets with optional uncertainties and censoring.
 
-    An :class:`XYDataContainer` represents observational or synthetic data that
+    An :class:`~triceratops.data.core.XYDataContainer` represents observational or synthetic data that
     can be expressed as pairs of an independent variable ``x`` and a dependent
     variable ``y``. This abstraction is intended to support a wide range of
     inference problems, including curve fitting, spectral modeling, and
@@ -2497,22 +2497,22 @@ class XYDataContainer(DataContainer, ABC):
     Key features
     ------------
     - **Axis abstraction**:
-    Independent and dependent variables are identified via class attributes
-    rather than hard-coded column names.
+      Independent and dependent variables are identified via class attributes
+      rather than hard-coded column names.
 
     - **Optional uncertainties**:
-    Support for symmetric uncertainties on ``x`` and/or ``y`` without
-    imposing a statistical model.
+      Support for symmetric uncertainties on ``x`` and/or ``y`` without
+      imposing a statistical model.
 
     - **Censoring-aware**:
-    Upper and lower limits on either axis are detected automatically and
-    exposed through boolean masks.
+      Upper and lower limits on either axis are detected automatically and
+      exposed through boolean masks.
 
     - **Unit-safe**:
-    All values are validated and returned as Astropy quantities.
+      All values are validated and returned as Astropy quantities.
 
     - **Immutable**:
-    Like all :class:`DataContainer` subclasses, this container is read-only.
+      Like all :class:`~triceratops.data.core.DataContainer` subclasses, this container is read-only.
 
     Detection and censoring model
     -----------------------------
@@ -2537,7 +2537,7 @@ class XYDataContainer(DataContainer, ABC):
 
     Intended use
     ------------
-    :class:`XYDataContainer` is intended to serve as a *common interface* between
+    :class:`~triceratops.data.core.XYDataContainer` is intended to serve as a *common interface* between
     diverse data products and inference machinery, including:
 
     - spectral energy distributions,
@@ -2592,14 +2592,14 @@ class XYDataContainer(DataContainer, ABC):
     X_COLUMN = None
     """str: Name of the x-axis column.
 
-    For :class:`XYDataContainer` subclasses, this should be overridden to specify
+    For :class:`~triceratops.data.core.XYDataContainer` subclasses, this should be overridden to specify
     the name of the column representing the x-axis data. In upstream processing,
     this is how the independent variable is identified.
     """
     Y_COLUMN = None
     """str: Name of the y-axis column.
 
-    For :class:`XYDataContainer` subclasses, this should be overridden to specify
+    For :class:`~triceratops.data.core.XYDataContainer` subclasses, this should be overridden to specify
     the name of the column representing the y-axis data. In upstream processing,
     this is how the dependent variable is identified.
     """

@@ -35,7 +35,7 @@ class Sampler(ABC):
 
         Parameters
         ----------
-        inference_problem: ~sampling.problem.InferenceProblem
+        inference_problem: ~triceratops.inference.problem.InferenceProblem
             The inference problem to sample from.
         **kwargs:
             Additional arguments specific to the sampler implementation.
@@ -57,7 +57,7 @@ class Sampler(ABC):
 
         Returns
         -------
-        ~sampling.problem.InferenceProblem
+        ~triceratops.inference.problem.InferenceProblem
             The inference problem configured for this sampler.
         """
         return self._problem
@@ -78,7 +78,7 @@ class Sampler(ABC):
 
         Returns
         -------
-        ~sampling.result.SamplingResult
+        ~triceratops.inference.sampling.result.SamplingResult
             The result of the sampling procedure, encapsulated in a SamplingResult object.
         """
         pass

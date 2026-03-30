@@ -1,4 +1,5 @@
 .. _one_zone_disk_theory:
+
 =============================================
 One-Zone Accretion Disk Models: Theory
 =============================================

@@ -11,17 +11,15 @@ Private ``_log_*`` functions take bare log-CGS floats and return ``ln(quantity)`
 public wrappers accept :class:`~astropy.units.Quantity` and return
 unit-bearing outputs.
 
-+------------------------------------------+--------------------------------------------+
-| Private (log-CGS)                        | Public (:class:`~astropy.units.Quantity`)  |
-+==========================================+============================================+
-| :func:`_log_ideal_gas_disk_sound_speed`  | :func:`ideal_gas_sound_speed`              |
-+------------------------------------------+--------------------------------------------+
-| :func:`_log_radiative_ideal_gas_         | :func:`radiative_ideal_gas_sound_speed`    |
-| sound_speed`                             |                                            |
-+------------------------------------------+--------------------------------------------+
-| :func:`_log_radiative_ideal_gas_disk_    | :func:`radiative_ideal_gas_disk_           |
-| sound_speed`                             | sound_speed`                               |
-+------------------------------------------+--------------------------------------------+
++----------------------------------------------+----------------------------------------------+
+| Private (log-CGS)                            | Public (:class:`~astropy.units.Quantity`)    |
++==============================================+==============================================+
+| ``_log_ideal_gas_disk_sound_speed``          | :func:`ideal_gas_sound_speed`                |
++----------------------------------------------+----------------------------------------------+
+| ``_log_radiative_ideal_gas_sound_speed``     | :func:`radiative_ideal_gas_sound_speed`      |
++----------------------------------------------+----------------------------------------------+
+| ``_log_radiative_ideal_gas_disk_sound_speed``| :func:`radiative_ideal_gas_disk_sound_speed` |
++----------------------------------------------+----------------------------------------------+
 
 Class hierarchy
 ---------------
@@ -50,8 +48,8 @@ density is known directly.
 
 See Also
 --------
-:mod:`.composition` : Mean molecular weight helpers used to set ``mu``.
-:mod:`.constants` : CGS constants consumed internally.
+:mod:`triceratops.physics_utils.composition` : Mean molecular weight helpers used to set ``mu``.
+:mod:`triceratops.physics_utils.constants` : CGS constants consumed internally.
 :mod:`~triceratops.dynamics.accretion.one_zone.physics._eos` : Cython EOS
     primitives used in the hot-loop integrator.
 """

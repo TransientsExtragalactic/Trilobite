@@ -1,4 +1,5 @@
 .. _synchrotron_theory:
+
 ===================================
 Synchrotron Radiation Theory
 ===================================
@@ -38,7 +39,7 @@ The Cyclotron Frequency
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the classical case, we consider a magnetic field :math:`{\bf B} = B_0 \hat{\bf z}` and a particle of
-charge :math:`q` bound to the :math:`x-y`plane. The **Lorentz Force** dictates that
+charge :math:`q` bound to the :math:`x-y` plane. The **Lorentz Force** dictates that
 
 .. math::
 
@@ -535,6 +536,7 @@ where :math:`\nu_c` is the characteristic synchrotron frequency defined previous
 
 
 .. _synch_theory_populations:
+
 Synchrotron From A Population of Electrons
 ------------------------------------------
 
@@ -831,6 +833,7 @@ of order unity.
     routines return the angle-averaged emissivity using the isotropic assumption.
 
 .. _synch_equipartition_theory:
+
 Microphysical Closures and Equipartition
 ----------------------------------------
 
@@ -1024,6 +1027,7 @@ From equipartition, we know :math:`N_0` in terms of :math:`U_{\rm thermal}` and 
         P_{\rm total} = \frac{4}{3} \sigma_T c U_B N_{\rm eff}.
 
 .. _electron_cooling:
+
 Cooling of Electrons
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -1099,8 +1103,8 @@ The corresponding synchrotron frequency is
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.cooling` module via
-    :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+    This is implemented in the :mod:`triceratops.radiation.synchrotron.cooling` module via
+    :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 
 IC Cooling
@@ -1193,9 +1197,9 @@ within a dynamical time, while lower-energy electrons remain effectively uncoole
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.cooling` module. See
-    :class:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
-    :meth:`~radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
+    This is implemented in the :mod:`triceratops.radiation.synchrotron.cooling` module. See
+    :class:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
+    :meth:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
     method for the associated API.
 
 Absorption Processes in Synchrotron Radiation
@@ -1208,6 +1212,7 @@ processes that can affect synchrotron radiation are synchrotron self-absorption 
 In this section, we'll discuss both processes and derive the critical results.
 
 .. _ssa:
+
 Synchrotron Self-Absorption
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

@@ -21,10 +21,10 @@ orbital period of the most bound debris).
 Triceratops implements this fallback channel through a pluggable **source term**
 architecture: a C-level function applied after the base viscous derivative at
 every integration step.  The
-:class:`~triceratops.dynamics.accretion.one_zone.gP_es_fbDisk`
+:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` (with ``fallback=True``)
 and
-:class:`~triceratops.dynamics.accretion.one_zone.igP_es_fbDisk`
-classes wire this source term onto the gas-pressure and full-pressure EOS
+:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` (with ``fallback=True``)
+wire this source term onto the gas-pressure and full-pressure EOS
 closures respectively, without any modifications to the integrator.
 
 Physical Picture
@@ -53,25 +53,25 @@ injection from the fallback stream.
 In this example we compare three scenarios:
 
 1. **No fallback** — a bare viscously draining disk
-   (:class:`~triceratops.dynamics.accretion.one_zone.gP_esDisk`).
+   (:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`).
 
-2. **Moderate fallback** — :math:`M_{\rm fb,0} = 10^{28}\;\text{g\,s}^{-1}`
+2. **Moderate fallback** — :math:`\dot{M}_{\rm fb,0} = 10^{28}\;\text{g\,s}^{-1}`
    (comparable to the initial viscous drain rate).
 
-3. **Strong fallback** — :math:`M_{\rm fb,0} = 10^{29}\;\text{g\,s}^{-1}`
+3. **Strong fallback** — :math:`\dot{M}_{\rm fb,0} = 10^{29}\;\text{g\,s}^{-1}`
    (dominant at early times).
 
-Relevant API References
------------------------
-- :class:`~triceratops.dynamics.accretion.one_zone.gP_es_fbDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.igP_es_fbDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.gP_esDisk`
+See Also
+--------
+- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 
 .. hint::
 
     The fallback parameters ``M_fb_0``, ``t_fb``, and ``beta_fb`` are ordinary
     runtime parameters — they appear in
-    :attr:`~triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.RUNTIME_PARAMETERS`
+    :attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RUNTIME_PARAMETERS`
     and are processed through the same unit-conversion and log-transform
     pipeline as all other disk parameters.  The default ``beta_fb = 5/3``
     follows the standard TDE debris decay.
@@ -86,10 +86,7 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import (
-    gP_esDisk,
-    gP_es_fbDisk,
-)
+from triceratops.dynamics.accretion.one_zone import GasPressureDisk
 from triceratops.utils.plot_utils import set_plot_style
 
 set_plot_style()
@@ -114,8 +111,8 @@ t_start = 1.0e4 * u.s  # Integrate from t = t_fb
 t_end = 1.0e9 * u.s  # ~ 3 years
 
 # Fallback normalization scenarios
-M_fb_0_moderate = 1e-2 * u.Msun / u.yr  # Comparable to initial viscous drain
-M_fb_0_strong = 1e1 * u.Msun / u.yr  # Dominant at early times
+M_fb_0_moderate = 1e28 * u.g / u.s  # Comparable to initial viscous drain
+M_fb_0_strong = 1e29 * u.g / u.s  # Dominant at early times
 
 # %%
 # Initial Conditions
@@ -127,7 +124,7 @@ M_fb_0_strong = 1e1 * u.Msun / u.yr  # Dominant at early times
 # The same initial conditions are shared by all three models so that
 # differences in the light curves are due solely to the fallback supply.
 
-disk_base = gP_esDisk(mu=0.6)
+disk_base = GasPressureDisk(mu=0.6)
 
 ic = disk_base.generate_initial_conditions(
     M_BH=M_BH,
@@ -143,10 +140,10 @@ print("Initial J_D:        ", ic["J_D_0"].to(u.g * u.cm**2 / u.s))
 # -------------------------
 #
 # We instantiate one
-# :class:`~triceratops.dynamics.accretion.one_zone.gP_esDisk`
-# (no fallback) and two
-# :class:`~triceratops.dynamics.accretion.one_zone.gP_es_fbDisk`
-# objects with different :math:`M_{\rm fb,0}`.
+# :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+# (no fallback) and one
+# :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` (with ``fallback=True``)
+# run at two different :math:`\dot{M}_{\rm fb,0}` values.
 #
 # .. note::
 #
@@ -154,7 +151,7 @@ print("Initial J_D:        ", ic["J_D_0"].to(u.g * u.cm**2 / u.s))
 #     base counterparts, plus the three fallback parameters
 #     ``M_fb_0``, ``t_fb``, and ``beta_fb`` (default :math:`5/3`).
 
-disk_fallback = gP_es_fbDisk(mu=0.6)
+disk_fallback = GasPressureDisk(mu=0.6, fallback=True)
 
 base_run_params = {"M_BH": M_BH, "R_in": R_in, "alpha": alpha}
 
@@ -238,7 +235,7 @@ plt.show()
 # The ``mdot_fb`` field is computed Python-side from the time array and the
 # fallback parameters — it is a **derived result field** with
 # ``CYTHON_FIELD_MAP["mdot_fb"] = None``, meaning it is calculated by
-# :meth:`~triceratops.dynamics.accretion.one_zone.gP_es_fbDisk._compute_derived_result_fields`
+# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase._compute_derived_result_fields`
 # after the Cython integration rather than inside the hot loop.
 
 data_mod = result_mod.data
@@ -372,7 +369,7 @@ plt.show()
 # ---------------------
 #
 # The
-# :meth:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.solve_parameter_grid`
+# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_parameter_grid`
 # method solves the disk ODE across a Cartesian grid of parameter combinations
 # in a single call.  Here we use it to map how the disk mass at
 # :math:`t = 10^7\;\text{s}` depends on the fallback normalization

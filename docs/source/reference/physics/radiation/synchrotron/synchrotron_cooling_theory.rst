@@ -1,4 +1,5 @@
 .. _synchrotron_cooling_theory:
+
 ==========================================
 Theory of Synchrotron Electron Populations
 ==========================================
@@ -392,8 +393,8 @@ factor is
 .. note::
 
     These quantities are implemented in
-    :mod:`radiation.synchrotron.cooling` via
-    :class:`~radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+    :mod:`triceratops.radiation.synchrotron.cooling` via
+    :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 Inverse Compton Cooling
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -562,6 +563,7 @@ population and, ultimately, the observed synchrotron spectral energy
 distribution.
 
 .. _equipart_cooling_theory:
+
 Equipartition for Cooled Electron Populations
 ---------------------------------------------
 

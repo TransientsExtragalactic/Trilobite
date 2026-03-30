@@ -312,7 +312,7 @@ class EvolvingSEDModel(Model, ABC):
         This method computes only the dimensionless shape component of the
         evolving SED model, without applying the time-dependent normalization.
         It performs full variable/parameter coercion, bounds checking, and
-        broadcasting consistent with :meth:`Model.forward_model`.
+        broadcasting consistent with :meth:`~triceratops.models.core.base.Model.forward_model`.
 
         Parameters
         ----------
@@ -378,7 +378,7 @@ class EvolvingSEDModel(Model, ABC):
         --------
         compute_sed_norm
         compute_sed_breaks
-        Model.forward_model
+        ~triceratops.models.core.base.Model.forward_model
         """
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         return self._forward_model_sed_shape(vars_, pars_)
@@ -389,7 +389,7 @@ class EvolvingSEDModel(Model, ABC):
 
         This method computes only the normalization component of the SED,
         with units attached. It performs full input coercion and bounds
-        validation consistent with :meth:`Model.forward_model`.
+        validation consistent with :meth:`~triceratops.models.core.base.Model.forward_model`.
 
         Parameters
         ----------
@@ -447,7 +447,7 @@ class EvolvingSEDModel(Model, ABC):
         See Also
         --------
         compute_sed_shape
-        Model.forward_model
+        ~triceratops.models.core.base.Model.forward_model
         """
         vars_, pars_ = self._prepare_inputs(variables, parameters)
         raw = self._forward_model_norm(vars_, pars_)
@@ -480,7 +480,8 @@ class EvolvingSEDModel(Model, ABC):
         dict[str, astropy.units.Quantity]
             Dictionary mapping break names to physical values.
 
-            If a break name is not found in :attr:`BREAK_UNITS`,
+            If a break name is not found in
+            :attr:`~triceratops.models.generic.evolving_seds.base.EvolvingSEDModel.BREAK_UNITS`,
             it is assumed to have units of Hz.
 
         Raises

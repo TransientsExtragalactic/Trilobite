@@ -1,4 +1,5 @@
 .. _shock_overview:
+
 ===================================
 Shocks in Triceratops
 ===================================
@@ -36,7 +37,7 @@ common shock models.
 Shock Engines
 =============
 
-At the core of every shock model in Triceratops is a **shock engine** (:class:`dynamics.shock_engine.ShockEngine`),
+At the core of every shock model in Triceratops is a **shock engine** (:class:`triceratops.dynamics.shock_engine.ShockEngine`),
 which is responsible for computing the dynamical evolution of the shock front over time. Each implementation of a
 shock engine provides (at least) a method
 
@@ -67,7 +68,7 @@ The output of these methods is a dictionary containing the key shock properties 
 
 .. note::
 
-    Like :class:`~models.core.base.Model` the :class:`~dynamics.shock_engine.ShockEngine` and its subclasses are not
+    Like :class:`~triceratops.models.core.base.Model` the :class:`~triceratops.dynamics.shock_engine.ShockEngine` and its subclasses are not
     state-carrying objects. Instead, they are stateless computational engines that take in parameters and return computed
     properties. This design allows for easy integration into larger modeling frameworks and ensures that
     shock engines can be reused across different models without concern for internal state management.
@@ -132,9 +133,9 @@ to distinguish between the different cases.
 
 .. rubric:: API Methods
 
-*current module*: :mod:`dynamics.rankine_hugoniot`
+*current module*: :mod:`triceratops.dynamics.rankine_hugoniot`
 
-.. currentmodule:: dynamics.rankine_hugoniot
+.. currentmodule:: triceratops.dynamics.rankine_hugoniot
 
 .. tab-set::
 
@@ -197,7 +198,7 @@ Chevalier Self-Similar Engines
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The Chevalier self-similar solution
-(:class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine`)
+(:class:`~triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine`)
 is a widely used model for shocks produced by supernovae and other explosive
 transients interacting with a surrounding circumstellar medium (CSM).
 
@@ -255,9 +256,9 @@ Usage
 
 To use a Chevalier self-similar shock engine in Triceratops, you can choose between either
 the standard implementation
-(:class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine`)
+(:class:`~triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine`)
 or the wind-specific implementation
-(:class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`). In the
+(:class:`~triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`). In the
 latter case, the CSM density profile is fixed to a wind-like profile with :math:`s=2`. See :ref:`chevalier_theory` for
 details on the differences between these two implementations.
 
@@ -325,7 +326,7 @@ properties:
                 but are often in the range of :math:`10^{-6}` to :math:`10^{-4} M_{\odot}\, {\rm yr^{-1}}`.
               - :math:`M_{\odot}\, {\rm yr^{-1}}`
             * - ``v_w``
-              - Wind velocity of the progenitor star. This parameter, together with ``M_dot`
+              - Wind velocity of the progenitor star. This parameter, together with ``M_dot``
                 sets the density normalization of the wind-like CSM profile. Typical values are
                 on the order of :math:`10^{6}` to :math:`10^{8}\, {\rm cm\, s^{-1}}`.
               - :math:`{\rm cm\, s^{-1}}`
@@ -429,7 +430,7 @@ The Thin Shell Approximation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The most common numerical shock engine implemented in Triceratops is the **thin-shell approximation** engine
-(:class:`~dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`), which models the shock as a thin shell
+(:class:`~triceratops.dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`), which models the shock as a thin shell
 whose dynamics are governed by the conservation of momentum. This approach allows for arbitrary density profiles
 for both the ejecta and CSM, enabling the modeling of more complex shock scenarios. This boils down (under the hood)
 to numerically integrating the equation of motion for the shock front given specified density profiles.
@@ -441,7 +442,7 @@ to numerically integrating the equation of motion for the shock front given spec
 Usage
 ~~~~~
 
-Stemming from the base-class :class:`~dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`, there are
+Stemming from the base-class :class:`~triceratops.dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`, there are
 many subclasses which implement different specific channels all of which share the same underlying numerical thin-shell
 framework. The various parameters for these engines will depend on the specific subclass being used. Use the tab
 set below to explore the parameters for some of the more common numerical shock engines.

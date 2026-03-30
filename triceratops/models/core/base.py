@@ -5,7 +5,8 @@ This module defines the abstract base class structure for all Triceratops models
 foundation upon which specific physical models are built, ensuring consistency and
 standardization across different implementations.
 
-At their core, all of the models in Triceratops inherit from the :class:`Model` abstract base class, which
+At their core, all of the models in Triceratops inherit from the
+:class:`~triceratops.models.core.base.Model` abstract base class, which
 effectively declares a set of ``parameters``, a set of ``variables``, and a method to compute the model's outputs
 based on those parameters and variables.
 """
@@ -47,7 +48,7 @@ class Model(ABC):
 
     This abstract base class defines the structure that all Triceratops models must adhere to. Specifically, each
     model must declare its parameters and variables as class-level attributes, and implement the
-    :meth:`_forward_model` method to compute the model's outputs.
+    :meth:`~triceratops.models.core.base.Model._forward_model` method to compute the model's outputs.
     """
 
     # =============================================== #
@@ -82,7 +83,7 @@ class Model(ABC):
 
     ``OUTPUTS`` must be a NamedTuple instance whose field names define the
     names of the model outputs. These names must match the keys returned by
-    the model's :meth:`_forward_model` evaluation method.
+    the model's :meth:`~triceratops.models.core.base.Model._forward_model` evaluation method.
 
     Each field value should be a string representing the output name. The
     field ordering defines the canonical ordering of outputs throughout the
@@ -246,7 +247,7 @@ class Model(ABC):
 
         Returns
         -------
-        outputs : OUTPUTS
+        outputs : namedtuple
             Instance of the model's ``OUTPUTS`` NamedTuple. Each field contains
             the computed output value, returned as either a NumPy scalar/ndarray
             or an :class:`~astropy.units.Quantity` depending on whether units are defined.
@@ -259,7 +260,8 @@ class Model(ABC):
         """
         Compute the model's outputs as a tuple based on the provided variables and parameters.
 
-        This is a convenience method that wraps around :meth:`_forward_model` to return
+        This is a convenience method that wraps around
+        :meth:`~triceratops.models.core.base.Model._forward_model` to return
         the outputs as a tuple in the order defined by :attr:`OUTPUTS`.
 
         Parameters
@@ -307,7 +309,7 @@ class Model(ABC):
 
         Returns
         -------
-        outputs : OUTPUTS
+        outputs : namedtuple
             NamedTuple containing the model outputs in the canonical
             order defined by :attr:`OUTPUTS`. Fields with defined units
             are returned as :class:`~astropy.units.Quantity` objects; fields
@@ -375,7 +377,7 @@ class Model(ABC):
 
         Returns
         -------
-        outputs : OUTPUTS
+        outputs : namedtuple
             NamedTuple containing the model outputs in the canonical
             order defined by :attr:`OUTPUTS`. Fields with defined units
             are returned as :class:`~astropy.units.Quantity` objects; fields

@@ -88,24 +88,24 @@ Choose based on which physical processes are important for your source:
      - Cooling
      - SSA
      - Use when…
-   * - :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+   * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
      - ✗
      - ✗
      - Simple power-law spectra; no breaks beyond :math:`\nu_m`
-   * - :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+   * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
      - ✓
      - ✗
      - Optically thin emission with a fast- or slow-cooling break
-   * - :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+   * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
      - ✗
      - ✓
      - Compact or dense sources with an SSA turnover; electrons do not cool appreciably
-   * - :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+   * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
      - ✓
      - ✓
      - Full broadband modeling (GRBs, SNe, TDEs); up to 8 spectral regimes
 
-:class:`~radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw` is a phenomenological
+:class:`~triceratops.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw` is a phenomenological
 alternative where the break frequency is supplied directly by the user rather than derived from
 microphysics, following the closure of :footcite:t:`demarchiRadioAnalysisSN2004C2022`. Use it
 when you prefer to fit the SSA turnover without invoking any closure assumptions.
@@ -141,7 +141,7 @@ hidden state.
 Calling ``sed()``
 ^^^^^^^^^^^^^^^^^
 
-The primary interface for evaluating a synchrotron spectrum is :meth:`~radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`.
+The primary interface for evaluating a synchrotron spectrum is :meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`.
 Supply a frequency array and the phenomenological parameters:
 
 .. code-block:: python
@@ -204,9 +204,9 @@ The following example shows a slow-cooling spectrum with annotated break frequen
 
 .. note::
 
-   :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`,
-   :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`, and
-   :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED` use
+   :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`,
+   :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`, and
+   :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED` use
    keyword-only arguments after ``nu``; supplying parameters positionally will raise a
    ``TypeError``.
 
@@ -219,7 +219,7 @@ Normalizing from Physical Parameters
 
 If you have physical source parameters (magnetic field :math:`B`, radius :math:`R`,
 energy partition fractions :math:`\varepsilon_E`, :math:`\varepsilon_B`, …) rather than
-phenomenological ones, use :meth:`~radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params`
+phenomenological ones, use :meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params`
 to compute all required SED inputs in one step.
 
 .. code-block:: python
@@ -246,7 +246,7 @@ to compute all required SED inputs in one step.
    )
    # params contains: F_norm, nu_m, nu_c, nu_a, nu_max, nu_peak, F_peak, regime (all with units)
 
-Pass the result directly to :meth:`~radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`:
+Pass the result directly to :meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`:
 
 .. code-block:: python
 
@@ -294,7 +294,7 @@ Inverting the SED
 
 Given observed peak flux and peak frequency, you can recover physical source parameters
 (radius :math:`R`, magnetic field :math:`B`) using
-:meth:`~radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics`:
+:meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics`:
 
 .. code-block:: python
 
@@ -343,12 +343,11 @@ All closure logic is also available as standalone functions in
 interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
 inversions) that are not exposed through any SED class method.
 
-.. currentmodule:: radiation.synchrotron.SEDs.one_zone_closure
+.. currentmodule:: triceratops.radiation.synchrotron.SEDs.one_zone_closure
 
 .. rubric:: Public Inversion Functions
 
 .. autosummary::
-   :toctree: ../../../../_as_gen
    :nosignatures:
 
    invert_powerlaw_sed
@@ -366,7 +365,6 @@ distance resolution. They operate on logarithmic CGS inputs and are intended for
 routines where unit overhead must be minimized.
 
 .. autosummary::
-   :toctree: ../../../../_as_gen
    :nosignatures:
 
    _invert_powerlaw_sed
@@ -384,9 +382,9 @@ routines where unit overhead must be minimized.
 Inspecting the Spectral Regime
 -------------------------------
 
-For :class:`~radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` subclasses, you
+For :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` subclasses, you
 can query which spectral regime was selected for a given set of parameters via
-:meth:`~radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime`:
+:meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime`:
 
 .. code-block:: python
 
@@ -421,10 +419,9 @@ debugging or verifying physical parameter ranges.
 API Reference
 -------------
 
-.. currentmodule:: radiation.synchrotron.SEDs.one_zone
+.. currentmodule:: triceratops.radiation.synchrotron.SEDs.one_zone
 
 .. autosummary::
-   :toctree: ../../../../_as_gen
    :nosignatures:
 
    SynchrotronSED
@@ -512,12 +509,11 @@ Shape Functions
 Shape functions define the mathematical form of spectral transitions independently of any
 specific physical scenario. They operate entirely in logarithmic space.
 
-.. currentmodule:: radiation.synchrotron.SEDs._one_zone_functions
+.. currentmodule:: triceratops.radiation.synchrotron.SEDs._one_zone_functions
 
 .. rubric:: Shape Function API
 
 .. autosummary::
-   :toctree: ../../../../_as_gen
    :nosignatures:
 
    log_smoothed_SFBPL
@@ -529,7 +525,7 @@ specific physical scenario. They operate entirely in logarithmic space.
 - :func:`log_exp_cutoff_sed` — smooth exponential truncation at high frequencies
   (the :math:`\nu_{\max}` cutoff).
 - :func:`smoothed_BPL` — un-logged smoothed broken power law, used by
-  :class:`~radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw`.
+  :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw`.
 
 .. rubric:: Log-Space SED Composition Example
 
@@ -580,13 +576,12 @@ For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
 .. dropdown:: Available Low-Level SED Functions
 
    The following low-level SED functions are implemented in
-   :mod:`radiation.synchrotron.SEDs._one_zone_functions`. Each corresponds
+   :mod:`triceratops.radiation.synchrotron.SEDs._one_zone_functions`. Each corresponds
    to a unique spectral regime defined in :ref:`synch_sed_theory`.
 
    .. rubric:: Power Law (No Cooling, No SSA)
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed
@@ -594,7 +589,6 @@ For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
    .. rubric:: Power Law + Cooling
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed_cool_1
@@ -603,7 +597,6 @@ For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
    .. rubric:: Power Law + SSA
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed_ssa_1
@@ -612,7 +605,6 @@ For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
    .. rubric:: Power Law + Cooling + SSA
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed_ssa_cool_3
@@ -630,12 +622,11 @@ SSA Utilities
 SSA utilities compute the self-absorption frequency :math:`\nu_a` and select the physically
 consistent SSA regime for a given set of input parameters.
 
-.. currentmodule:: radiation.synchrotron.SEDs._one_zone_ssa
+.. currentmodule:: triceratops.radiation.synchrotron.SEDs._one_zone_ssa
 
 .. rubric:: SSA Utility API
 
 .. autosummary::
-   :toctree: ../../../../_as_gen
    :nosignatures:
 
    compute_ssa_frequencies_without_cooling
@@ -654,7 +645,7 @@ regimes or physical processes can be incorporated without modifying existing cod
 **Step 1: Implement any new low-level SED functions**
 
 If the new SED requires spectral shapes not already provided, add them to
-:mod:`radiation.synchrotron.SEDs._one_zone_functions` following the established naming
+:mod:`triceratops.radiation.synchrotron.SEDs._one_zone_functions` following the established naming
 convention. Each function should:
 
 - Accept ``log_nu`` (natural log of frequency in Hz) and regime-specific break frequencies in
@@ -664,15 +655,15 @@ convention. Each function should:
 
 **Step 2: Subclass the appropriate base class**
 
-For a **single-regime SED** (like :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`),
-subclass :class:`~radiation.synchrotron.SEDs.one_zone.SynchrotronSED` and implement:
+For a **single-regime SED** (like :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`),
+subclass :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` and implement:
 
 - ``_log_opt_sed(self, log_nu, **params)`` — the log-space kernel,
 - ``sed(self, nu, **params)`` — the unit-aware public interface.
 
 For a **multi-regime SED** (like
-:class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`), subclass
-:class:`~radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` and implement:
+:class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`), subclass
+:class:`~triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` and implement:
 
 - ``_compute_sed_regime(self, **params) -> (regime, derived)`` — regime logic,
 - ``determine_sed_regime(self, **params) -> regime`` — unit-aware public wrapper,
@@ -693,8 +684,8 @@ If physical inversion is needed, implement:
 
 **Step 4: Register and export**
 
-Add the new class to ``__all__`` in :mod:`radiation.synchrotron.SEDs.one_zone` and to the
-parent :mod:`radiation.synchrotron.SEDs.__init__` re-exports.
+Add the new class to ``__all__`` in :mod:`triceratops.radiation.synchrotron.SEDs.one_zone` and to the
+parent :mod:`triceratops.radiation.synchrotron.SEDs.__init__` re-exports.
 
 .. rubric:: Minimal SED Skeleton
 

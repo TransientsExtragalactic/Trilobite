@@ -24,7 +24,7 @@ def get_likelihood_target(likelihood: "Likelihood") -> str:
 
     Parameters
     ----------
-    likelihood : Likelihood
+    likelihood : ~triceratops.inference.likelihood.base.Likelihood
         Likelihood instance.
 
     Returns
@@ -48,14 +48,14 @@ def build_likelihood(
     ----------
     target : str
         Import path in the form "module:ClassName".
-    model : Model
+    model : ~triceratops.models.core.base.Model
         Forward model instance.
     data : InferenceData
         Validated inference dataset.
 
     Returns
     -------
-    Likelihood
+    ~triceratops.inference.likelihood.base.Likelihood
         Instantiated likelihood object.
 
     Raises

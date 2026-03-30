@@ -11,8 +11,11 @@ from .models import (
     KramersFFOpacity,
     KramersOpacity,
 )
+from .utils import get_opacity
 
 __all__ = [
+    # Resolver
+    "get_opacity",
     # Abstract / base
     "OpacityLaw",
     "GreyOpacityLaw",

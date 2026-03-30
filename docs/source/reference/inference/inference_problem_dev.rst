@@ -26,8 +26,8 @@ Design Goals
 The :class:`InferenceProblem` class serves as the **statistical glue layer**
 between:
 
-- a physical :class:`~models.core.base.Model`,
-- a :class:`~inference.likelihood.base.Likelihood`,
+- a physical :class:`~triceratops.models.core.base.Model`,
+- a :class:`~triceratops.inference.likelihood.base.Likelihood`,
 - and external sampling backends.
 
 Its responsibilities are strictly limited to:
@@ -57,7 +57,7 @@ Each model parameter is wrapped in an
 
 This dataclass stores:
 
-- the underlying :class:`~models.core.parameters.ModelParameter`,
+- the underlying :class:`~triceratops.models.core.parameters.ModelParameter`,
 - freeze status,
 - prior object,
 - optional transforms,

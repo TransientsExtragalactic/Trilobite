@@ -12,7 +12,7 @@ make **no assumptions** about:
 
 They are therefore intended to be used as **low-level building blocks**
 inside higher-level likelihood classes (e.g.
-:class:`~inference.likelihood.base.Likelihood`), which are responsible for:
+:class:`~triceratops.inference.likelihood.base.Likelihood`), which are responsible for:
 
 - Model–data compatibility validation,
 - Unit coercion and consistency,

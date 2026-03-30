@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:07.382** total execution time for 23 files **from all galleries**:
+**00:40.203** total execution time for 33 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,14 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_f_accretion_plot_tde_adv_fb_disk.py` (``galleries/examples/f_accretion/plot_tde_adv_fb_disk.py``)
-     - 00:07.382
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_upper_limit_inference.py` (``galleries/examples/b_inference/plot_upper_limit_inference.py``)
+     - 00:20.466
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_ffa_fadeout_evolution.py` (``galleries/examples/c_models/plot_ffa_fadeout_evolution.py``)
+     - 00:18.107
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_tde_radio_afterglow.py` (``galleries/examples/c_models/plot_tde_radio_afterglow.py``)
+     - 00:01.630
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000
@@ -53,7 +59,19 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_b_inference_plot_evolving_sed.py` (``galleries/examples/b_inference/plot_evolving_sed.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_multi_epoch_sed_evolution.py` (``galleries/examples/b_inference/plot_multi_epoch_sed_evolution.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_shock_parameter_inference.py` (``galleries/examples/b_inference/plot_shock_parameter_inference.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_phenomenological_lc_fit.py` (``galleries/examples/c_models/plot_phenomenological_lc_fit.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_type_IIn_SN_dense_CSM.py` (``galleries/examples/c_models/plot_type_IIn_SN_dense_CSM.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
@@ -66,6 +84,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_bolometric_emissivity.py` (``galleries/examples/e_physics_synchro/plot_bolometric_emissivity.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_equipartition_analysis.py` (``galleries/examples/e_physics_synchro/plot_equipartition_analysis.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_forward_closure.py` (``galleries/examples/e_physics_synchro/plot_forward_closure.py``)
@@ -83,6 +104,9 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_sed_model_comparison.py` (``galleries/examples/e_physics_synchro/plot_sed_model_comparison.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_sed_to_source_size.py` (``galleries/examples/e_physics_synchro/plot_sed_to_source_size.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_synchrotron_cooling_engine.py` (``galleries/examples/e_physics_synchro/plot_synchrotron_cooling_engine.py``)
      - 00:00.000
      - 0.0
@@ -95,9 +119,15 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_disk_eos_comparison.py` (``galleries/examples/f_accretion/plot_disk_eos_comparison.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_f_accretion_plot_disk_scurve.py` (``galleries/examples/f_accretion/plot_disk_scurve.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_fallback_disk.py` (``galleries/examples/f_accretion/plot_fallback_disk.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_one_zone_disk_quickstart.py` (``galleries/examples/f_accretion/plot_one_zone_disk_quickstart.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_f_accretion_plot_tde_disk_observables.py` (``galleries/examples/f_accretion/plot_tde_disk_observables.py``)
      - 00:00.000
      - 0.0

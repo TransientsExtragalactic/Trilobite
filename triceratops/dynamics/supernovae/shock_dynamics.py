@@ -2,7 +2,7 @@
 Ejecta property computation for supernova models.
 
 Function in this module compute various properties of the supernova ejecta and ambient CSM in
-different physical scenarios of interest. They can then be baked into the models of :mod:`models`.
+different physical scenarios of interest. They can then be baked into the models of :mod:`triceratops.models`.
 """
 
 from collections.abc import Callable
@@ -33,7 +33,7 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
     r"""
     Implementation of the "classical" Chevalier 1982 self-similar supernova shock model.
 
-    This :class:`~dynamics.shock_engine.ShockEngine` subclass implements the self-similar shock solutions
+    This :class:`~triceratops.dynamics.shock_engine.ShockEngine` subclass implements the self-similar shock solutions
     described in :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982` for the interaction between
     supernova ejecta and a surrounding circumstellar medium (CSM). The model assumes power-law density profiles
     for both the ejecta and the CSM, leading to a self-similar evolution of the shock structure over time.
@@ -44,7 +44,7 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
     .. note::
 
-        A derivation of this model can be found on the :ref:`supernova_shocks_theory` guide. Much of the
+        A derivation of this model can be found on the :ref:`chevalier_theory` guide. Much of the
         relevant detail omitted here can be found there.
 
     Notes
@@ -185,7 +185,7 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
                         { 3(1-\lambda)^2-4\frac{ (\lambda  -1)\lambda}{n-3}},
 
         where :math:`\lambda = \frac{3-n}{s-n}`. A derivation of this parameter can be found in
-        :ref:`supernova_shocks_theory`.
+        :ref:`chevalier_theory`.
         """
         # Construct lambda from n and s.
         _lambda = (3 - n) / (s - n)
@@ -502,7 +502,7 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
 
     .. note::
 
-        A derivation of this model can be found on the :ref:`supernova_shocks_theory` guide. Much of the
+        A derivation of this model can be found on the :ref:`chevalier_theory` guide. Much of the
         relevant detail omitted here can be found there.
 
     """
@@ -672,7 +672,7 @@ class NumericalThinShellShockEngine(ShockEngine):
     r"""
     Base class for numerically integrated thin-shell shock models with arbitrary ejecta and CSM profiles.
 
-    This :class:`~dynamics.shock_engine.ShockEngine` subclass implements a general thin-shell shock model
+    This :class:`~triceratops.dynamics.shock_engine.ShockEngine` subclass implements a general thin-shell shock model
     dependent on arbitrary ejecta and circumstellar medium (CSM) density profiles. The model assumes a thin-shell
     shock model and utilizes conservation of momentum in the form
 
@@ -747,7 +747,8 @@ class NumericalThinShellShockEngine(ShockEngine):
         Parameters
         ----------
         kwargs:
-            Additional keyword arguments passed to the base :class:`~dynamics.shock_engine.ShockEngine` class.
+            Additional keyword arguments passed to the base
+            :class:`~triceratops.dynamics.shock_engine.ShockEngine` class.
         """
         super().__init__(**kwargs)
 

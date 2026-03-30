@@ -3,7 +3,7 @@
 This module defines and configures the global logger (:attr:`triceratops_logger`),
 which serves as the main entry point for logging messages across the triceratops
 codebase. Logging behavior—such as log level, formatting, and enable/disable
-switches—is controlled by the central configuration (:attr:`~utils.config.triceratops_config`) under
+switches—is controlled by the central configuration (:attr:`~triceratops.utils.config.triceratops_config`) under
 the ``logging.main`` namespace.
 
 """

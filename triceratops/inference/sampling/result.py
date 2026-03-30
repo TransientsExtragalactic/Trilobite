@@ -1,7 +1,8 @@
 """
 Sampling output handling for Triceratops.
 
-This module contains the :class:`SamplingResult` class, which is used to store and manage
+This module contains the :class:`~triceratops.inference.sampling.result.SamplingResult` class,
+which is used to store and manage
 the results of sampling procedures performed during model inference. It provides methods
 to access and analyze the sampled parameter distributions, as well as to visualize the
 results.
@@ -35,8 +36,8 @@ class SamplingResult(ABC):
     r"""
     Abstract base class representing the result of a sampling procedure.
 
-    A :class:`SamplingResult` stores posterior samples along with the
-    associated :class:`~triceratops.inference.InferenceProblem` required
+    A :class:`~triceratops.inference.sampling.result.SamplingResult` stores posterior samples along with the
+    associated :class:`~triceratops.inference.problem.InferenceProblem` required
     to fully reconstruct the inference configuration.
 
     The result is designed to be:
@@ -226,7 +227,7 @@ class SamplingResult(ABC):
         path: Union[str, Path],
     ) -> "SamplingResult":
         """
-        Reconstruct a :class:`SamplingResult` from disk.
+        Reconstruct a :class:`~triceratops.inference.sampling.result.SamplingResult` from disk.
 
         This method expects:
 
@@ -234,7 +235,7 @@ class SamplingResult(ABC):
         - ``<path>.meta`` — JSON file containing serialized metadata.
 
         The inference problem is reconstructed using
-        :meth:`InferenceProblem.from_dict`.
+        :meth:`~triceratops.inference.problem.InferenceProblem.from_dict`.
 
         Parameters
         ----------
@@ -245,7 +246,7 @@ class SamplingResult(ABC):
         -------
         SamplingResult
             Reconstructed sampling result instance. If the metadata
-            specifies a subclass of :class:`SamplingResult`, that subclass
+            specifies a subclass of :class:`~triceratops.inference.sampling.result.SamplingResult`, that subclass
             will be instantiated.
 
         Raises
@@ -337,7 +338,7 @@ class MCMCSamplingResult(SamplingResult):
     r"""
     Sampling result for MCMC samplers.
 
-    This subclass of :class:`SamplingResult` stores samples with explicit
+    This subclass of :class:`~triceratops.inference.sampling.result.SamplingResult` stores samples with explicit
     chain structure. Samples must be provided in the form:
 
         (n_steps, n_walkers, n_dim)

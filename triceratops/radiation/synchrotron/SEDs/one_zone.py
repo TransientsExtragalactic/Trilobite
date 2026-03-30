@@ -340,7 +340,7 @@ class SynchrotronSED(ABC):
         -----
         - This method may perform unit validation, coercion, or shape checking
           before dispatching to the low-level optimized implementation
-          :meth:`_opt_from_params_to_physics`.
+          ``_opt_from_params_to_physics``.
         - The mapping is not guaranteed to be unique; degeneracies may be present
           depending on the assumed microphysics.
         """
@@ -383,7 +383,7 @@ class SynchrotronSED(ABC):
         Low-level optimized conversion from physical parameters to SED parameters.
 
         This method implements the inverse mapping of
-        :meth:`_opt_from_params_to_physics`, converting physical quantities—such as
+        ``_opt_from_params_to_physics``, converting physical quantities—such as
         magnetic field strength, system size, particle energy scales, or energy
         densities—into phenomenological SED parameters like break frequencies or
         peak fluxes.
@@ -448,7 +448,7 @@ class SynchrotronSED(ABC):
         -----
         - This method may perform unit validation, coercion, or shape checking
           before dispatching to the low-level optimized implementation
-          :meth:`_opt_from_physics_to_params`.
+          ``_opt_from_physics_to_params``.
         - Subclasses that do not support inversion of closure relations may leave
           this method unimplemented.
         """
@@ -1158,7 +1158,7 @@ class PowerLaw_SynchrotronSED(SynchrotronSED):
         Construct phenomenological SED parameters from physical model parameters.
 
         This method provides the **public, unit-aware interface** to the synchrotron
-        closure relation implemented by :meth:`_opt_from_physics_to_params`. It maps
+        closure relation implemented by ``_opt_from_physics_to_params``. It maps
         physical parameters describing the emitting region and electron population
         onto the phenomenological parameters defining the canonical power-law
         synchrotron spectral energy distribution (SED).
@@ -2604,7 +2604,7 @@ class PowerLaw_Cooling_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         This method provides the **public, unit-aware interface** for the inverse
         synchrotron closure relation implemented by
-        :meth:`_opt_from_params_to_physics`.
+        ``_opt_from_params_to_physics``.
 
         It converts observed peak quantities
 
@@ -3854,7 +3854,7 @@ class PowerLaw_Cooling_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         This method provides the **public, unit-aware interface** for the inverse
         synchrotron closure relation implemented by
-        :meth:`_opt_from_params_to_physics`.
+        ``_opt_from_params_to_physics``.
 
         It converts observed peak quantities
 
@@ -5210,7 +5210,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
 
         This method provides the **public, unit-aware interface** for the inverse
         synchrotron closure relation implemented by
-        :meth:`_opt_from_params_to_physics`.
+        ``_opt_from_params_to_physics``.
 
         It converts observed peak quantities
 

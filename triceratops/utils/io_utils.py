@@ -66,14 +66,14 @@ class _YAMLHandler(ABC):
 
         Parameters
         ----------
-        representer : ruamel.yaml.representer.Representer
+        representer : ``ruamel.yaml.representer.Representer``
             The YAML representer to use for creating the node.
         obj : Any
             The Python object to serialize.
 
         Returns
         -------
-        ruamel.yaml.nodes.Node
+        ``ruamel.yaml.nodes.Node``
             A YAML node representing the serialized object.
         """
         pass
@@ -86,9 +86,9 @@ class _YAMLHandler(ABC):
 
         Parameters
         ----------
-        loader : ruamel.yaml.constructor.Constructor
+        loader : ``ruamel.yaml.constructor.Constructor``
             The YAML loader to use for constructing the Python object.
-        node : ruamel.yaml.nodes.Node
+        node : ``ruamel.yaml.nodes.Node``
             The YAML node to deserialize.
 
         Returns
@@ -105,7 +105,7 @@ class _YAMLHandler(ABC):
 
         Parameters
         ----------
-        yaml : ruamel.yaml.YAML
+        yaml : ``ruamel.yaml.YAML``
             The YAML instance to register the handler with.
         """
         if cls.__tag__ is None or cls.__type__ is None:
@@ -256,7 +256,7 @@ def get_unit_compatible_yaml() -> "YAML":
 
     Returns
     -------
-    ruamel.yaml.YAML
+    ``ruamel.yaml.YAML``
         A YAML instance with unyt support.
     """
     from ruamel.yaml import YAML

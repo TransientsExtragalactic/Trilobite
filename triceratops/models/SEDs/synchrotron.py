@@ -3,10 +3,10 @@ Physical synchrotron spectral energy distribution (SED) models.
 
 This module provides physically motivated single-zone synchrotron
 SED models built on top of the low-level implementations in
-:mod:`radiation.synchrotron.SEDs`.
+:mod:`triceratops.radiation.synchrotron.SEDs`.
 
 The classes defined here wrap the optimized synchrotron backends
-and expose them through the generic :class:`~models.core.base.Model`
+and expose them through the generic :class:`~triceratops.models.core.base.Model`
 interface, making them suitable for:
 
 - Forward modeling
@@ -59,7 +59,7 @@ in frequency.
 For purely phenomenological evolving SEDs without
 microphysical closure, see:
 
-:class:`~models.generic.evolving_seds.evolving_sbpl.PL_Evolving_SBPL_Model`
+:class:`~triceratops.models.generic.evolving_seds.evolving_sbpl.PL_Evolving_SBPL_Model`
 
 For theoretical background and implementation details, see:
 
@@ -111,8 +111,8 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
     - Cosmological redshift corrections
 
     The model wraps
-    :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
-    and exposes it through the generic :class:`~models.core.base.Model`
+    :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
+    and exposes it through the generic :class:`~triceratops.models.core.base.Model`
     interface for inference and forward modeling.
 
     All internal calculations are performed in log-space for numerical
@@ -318,7 +318,7 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
     :class:`SynchrotronSEDModel`
         Optically thin synchrotron model without cooling or absorption.
 
-    :mod:`radiation.synchrotron.SEDs`
+    :mod:`triceratops.radiation.synchrotron.SEDs`
         Low-level SED implementations and normalization routines.
 
     :ref:`synchrotron_theory`
@@ -491,7 +491,7 @@ class SSA_Cooling_SynchrotronSEDModel(Model):
         Internally, this constructor instantiates the low-level
         synchrotron SED backend:
 
-        :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`.
+        :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`.
         """
         super().__init__()
 
@@ -566,8 +566,8 @@ class SSA_SynchrotronSEDModel(Model):
     Radiative cooling is not included in this formulation.
 
     The model wraps
-    :class:`~radiation.synchrotron.SEDs.PowerLaw_SSA_SynchrotronSED`
-    and exposes it through the generic :class:`~models.core.base.Model`
+    :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_SSA_SynchrotronSED`
+    and exposes it through the generic :class:`~triceratops.models.core.base.Model`
     interface.
 
     All internal calculations are performed in log-space for numerical
@@ -905,7 +905,7 @@ class SSA_SynchrotronSEDModel(Model):
 
         Internally, this constructor instantiates:
 
-        :class:`~radiation.synchrotron.SEDs.PowerLaw_SSA_SynchrotronSED`
+        :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_SSA_SynchrotronSED`
         """
         super().__init__()
 
@@ -977,7 +977,7 @@ class Cooling_SynchrotronSEDModel(Model):
     Synchrotron self-absorption is not included.
 
     The model wraps
-    :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SynchrotronSED`.
+    :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SynchrotronSED`.
 
     All computations are performed in log-space.
 
@@ -1331,7 +1331,7 @@ class Cooling_SynchrotronSEDModel(Model):
 
         Internally, this constructor instantiates:
 
-        :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SynchrotronSED`
+        :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SynchrotronSED`
         """
         super().__init__()
 
@@ -1402,7 +1402,7 @@ class SynchrotronSEDModel(Model):
     No cooling or absorption breaks are included.
 
     The model wraps
-    :class:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`.
+    :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`.
 
     All computations are performed in log-space.
 
@@ -1749,7 +1749,7 @@ class SynchrotronSEDModel(Model):
 
         Internally, this constructor instantiates:
 
-        :class:`~radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`
+        :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_SynchrotronSED`
         """
         self._sed = PowerLaw_SynchrotronSED()
         self._pitch_averaged = pitch_averaged

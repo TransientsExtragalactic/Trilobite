@@ -1,4 +1,5 @@
 .. _accretion_disks:
+
 =========================================
 Accretion Disks
 =========================================
@@ -46,9 +47,31 @@ parameters.  The ODE system is integrated by a compiled Cython explicit-Euler ke
 that evaluates all thermodynamic and structural quantities at each step inside a
 GIL-free hot loop.
 
-*Full user guide:* :ref:`one_zone_disk`
+.. grid:: 3
+    :gutter: 2
 
-*Theory note:* :ref:`one_zone_disk_theory`
+    .. grid-item-card:: User Guide
+        :link: one_zone_disk
+        :link-type: ref
+
+        How to instantiate disk models, configure initial conditions, run the solver,
+        access results, perform parameter-grid sweeps, and save/load HDF5 files.
+
+    .. grid-item-card:: Theory
+        :link: one_zone_disk_theory
+        :link-type: ref
+
+        The one-zone formalism, viscous evolution equations, thermodynamic closures
+        (gas pressure, radiation pressure, advection, fallback accretion), and the
+        energy-balance structure.
+
+    .. grid-item-card:: Developer Guide
+        :link: one_zone_disk_dev
+        :link-type: ref
+
+        Step-by-step instructions for adding a new Cython thermodynamic closure,
+        declaring the Python model class, passing parameters through the integration
+        layer, and registering tests.
 
 .. toctree::
     :maxdepth: 1
@@ -56,3 +79,4 @@ GIL-free hot loop.
 
     one_zone_disk
     one_zone_disk_theory
+    one_zone_disk_dev

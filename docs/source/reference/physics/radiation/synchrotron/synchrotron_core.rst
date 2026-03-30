@@ -1,4 +1,5 @@
 .. _synchrotron_core:
+
 =====================================
 Core Synchrotron Tools
 =====================================
@@ -7,7 +8,7 @@ Core Synchrotron Tools
 
     See :ref:`synchrotron_theory` for a detailed overview of the theory of synchrotron radiation.
 
-The :mod:`radiation.synchrotron.core` module provides the foundational building
+The :mod:`triceratops.radiation.synchrotron.core` module provides the foundational building
 blocks for synchrotron radiation calculations in Triceratops. Unlike higher-level
 modules, this module does **not** assume any particular electron distribution,
 microphysical closure, or spectral regime. Instead, it exposes the minimal
@@ -46,7 +47,7 @@ this quantity sets the fundamental frequency scale of the problem. In
 Triceratops, the gyrofrequency is implemented in both optimized CGS form and a
 unit-aware public API:
 
-.. currentmodule:: radiation.synchrotron.core
+.. currentmodule:: triceratops.radiation.synchrotron.core
 
 .. tab-set::
 
@@ -93,7 +94,7 @@ frequency.
 
 In Triceratops, this frequency can be computed using
 
-.. currentmodule:: radiation.synchrotron.core
+.. currentmodule:: triceratops.radiation.synchrotron.core
 
 .. tab-set::
 
@@ -282,7 +283,7 @@ magnetic field, :math:`\nu_c` is the critical frequency defined above, and
 
 This functionality is implemented in both high-level and low-level APIs:
 
-.. currentmodule:: radiation.synchrotron.core
+.. currentmodule:: triceratops.radiation.synchrotron.core
 
 .. tab-set::
 
@@ -347,7 +348,7 @@ integrating the single-electron spectrum over the distribution:
     P_{\text{single}}(\nu, \gamma)\,
     d\gamma.
 
-The :mod:`radiation.synchrotron.core` module provides **two complementary
+The :mod:`triceratops.radiation.synchrotron.core` module provides **two complementary
 numerical strategies** for evaluating this expression, depending on how the
 electron distribution is specified. For each strategy, Triceratops exposes both
 a **public, unit-aware API** and a **low-level, optimized CGS API**.

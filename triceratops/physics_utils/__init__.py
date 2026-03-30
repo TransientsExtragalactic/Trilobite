@@ -4,7 +4,7 @@ Physics utility functions and classes for Triceratops models.
 This sub-package collects low-level, reusable physical utilities that are
 shared across multiple Triceratops modules.  It is organised by topic:
 
-- :mod:`.constants` — CGS physical constants and their logs.
+- :mod:`triceratops.physics_utils.constants` — CGS physical constants and their logs.
 - :mod:`.eos` — Equation of state classes (:class:`~.eos.IdealGasEOS`,
   :class:`~.eos.RadiativeIdealGas`) and standalone sound-speed functions.
 - :mod:`.general_relativity` — Schwarzschild/Kerr radii, ISCO, spin, and

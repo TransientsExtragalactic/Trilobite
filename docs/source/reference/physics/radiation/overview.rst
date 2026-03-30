@@ -70,6 +70,37 @@ Additionally, a dedicated theory reference covers the physics in detail:
     free_free/free_free_theory
 
 
+Grey Opacity Laws
+-----------------
+
+The :mod:`triceratops.radiation.opacity` module provides a set of grey (frequency-independent)
+opacity laws for use across Triceratops: as the Rosseland mean opacity driving radiative
+diffusion in accretion disks, as an effective photon-absorption cross-section in CSM
+optical-depth calculations, and as a building block in any custom thermal solver.  The module
+exposes a uniform interface for evaluating :math:`\kappa(\rho, T)` and its logarithmic
+derivatives, and is designed to be context-agnostic so the same opacity object can be dropped
+into any part of the codebase that needs it.
+
+Implemented laws include constant (grey), electron-scattering (Thomson), free-free and
+bound-free Kramers power laws, and combined Kramers + electron-scattering forms.
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Opacity Topics
+
+    opacity/opacity_user_guide
+
+Additionally, a dedicated theory document covers the physics of each law in detail, and a
+developer guide explains how to implement new opacity laws:
+
+.. toctree::
+    :maxdepth: 1
+    :caption: Opacity References
+
+    opacity/opacity_theory
+    opacity/opacity_dev_guide
+
+
 Inverse Compton Scattering
 --------------------------
 

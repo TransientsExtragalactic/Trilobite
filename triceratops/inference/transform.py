@@ -2,7 +2,7 @@
 Transformation functions for use in inference pipelines.
 
 Transformations may be provided for any of the parameters in an
-:class:`~inference.problem.InferenceProblem`, and are applied to the parameters before they are
+:class:`~triceratops.inference.problem.InferenceProblem`, and are applied to the parameters before they are
 passed to the likelihood and prior functions. This allows for flexible reparameterization of
 inference problems, which can be useful for improving convergence or handling constraints.
 """

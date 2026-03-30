@@ -99,8 +99,12 @@ class EmceeSampler(Sampler):
         Parameters
         ----------
         scale : float
-            Relative scale of the Gaussian perturbation applied to the
-            initial parameter vector.
+            Fractional scale of the log-space Gaussian perturbation applied to
+            each component of the initial parameter vector.  Walkers are placed
+            at ``theta0 * exp(scale * N(0, 1))``, which is scale-invariant and
+            works correctly for parameters that span many orders of magnitude.
+            For any component whose initial value is exactly zero an absolute
+            perturbation of ``scale`` is used instead.
         rng : numpy.random.Generator, optional
             Random number generator.
 
@@ -116,7 +120,16 @@ class EmceeSampler(Sampler):
         theta0 = self.problem.initial_theta
         ndim = theta0.size
 
-        return theta0 + scale * rng.standard_normal(size=(self.n_walkers, ndim))
+        noise = scale * rng.standard_normal(size=(self.n_walkers, ndim))
+
+        # Use a multiplicative (log-space) perturbation so that the spread is
+        # proportional to the magnitude of each parameter.  This avoids the
+        # near-zero absolute perturbations that arise when theta0 contains
+        # values spanning many orders of magnitude.
+        nonzero = theta0 != 0.0
+        positions = np.where(nonzero, theta0 * np.exp(noise), noise)
+
+        return positions
 
     def run(
         self,
@@ -132,7 +145,7 @@ class EmceeSampler(Sampler):
         This method executes the MCMC sampling procedure using the ``emcee`` library
         on the configured inference problem. It initializes the walker ensemble,
         runs the MCMC chains for the specified number of steps, and collects the
-        results into a :class:`~inference.sampling.result.MCMCSamplingResult` object.
+        results into a :class:`~triceratops.inference.sampling.result.MCMCSamplingResult` object.
 
         Parameters
         ----------

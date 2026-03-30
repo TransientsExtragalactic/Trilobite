@@ -39,7 +39,7 @@ Bardeen, Press & Teukolsky (1972).
 
 See Also
 --------
-:mod:`.constants` : CGS constants consumed internally.
+:mod:`triceratops.physics_utils.constants` : CGS constants consumed internally.
 """
 
 from typing import Optional
