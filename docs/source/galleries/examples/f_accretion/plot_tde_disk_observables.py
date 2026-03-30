@@ -1,0 +1,260 @@
+r"""
+=================================================
+TDE Disk Evolution and Observable Signatures
+=================================================
+
+In a **tidal disruption event (TDE)**, a star is torn apart by the tidal
+field of a supermassive black hole.  The stellar debris falls back onto the
+nucleus at a rate set by the orbital energy spread of the disrupted material,
+initially far exceeding the Eddington limit and driving a geometrically thick,
+radiation-pressure-dominated accretion disk.
+
+This example models the disk evolution following a Solar-type star disrupted
+by a :math:`10^6\,M_\odot` black hole, and translates the simulated disk
+properties into three key observables:
+
+- **Bolometric luminosity**
+  :math:`L(t) = 2\pi R_D^2\,\sigma_{\rm SB}\,T_{\rm eff}^4`
+- **Eddington ratio** :math:`\lambda = L / L_{\rm Edd}` — encoding whether the
+  disk is super- or sub-Eddington
+- **Disk aspect ratio** :math:`H/R` — a proxy for the geometrical thickness
+  that grows dramatically during the super-Eddington phase
+
+The super-Eddington phase lasts for weeks to months; during this time the disk
+is geometrically thick and advective cooling is essential.  As the fallback
+rate declines (:math:`\propto t^{-5/3}`) the disk becomes thinner and
+eventually sub-Eddington.
+
+Physical Setup
+--------------
+We use :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+with a power-law fallback supply, which combines:
+
+- Gas + radiation pressure EOS
+- Electron-scattering opacity
+- Advective cooling (controlled by :math:`\xi`)
+- Power-law fallback mass supply:
+  :math:`\dot{M}_{\rm fb}(t) = \dot{M}_{\rm fb,0}\,(t/t_{\rm fb})^{-5/3}`
+
+We compare two values of the **advection parameter** :math:`\xi` to show how
+stronger advection suppresses the observable luminosity at fixed accretion rate.
+In the super-Eddington regime the disk surface density is so high that a
+pure-radiative closure has no thermal equilibrium; some degree of advective
+cooling is physically required.
+
+Relevant API
+------------
+- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+"""
+
+# %%
+# Setup
+# -----
+
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import constants as const
+from astropy import units as u
+
+from triceratops.dynamics.accretion.one_zone import AdvectiveDisk
+from triceratops.utils.plot_utils import set_plot_style
+
+set_plot_style()
+
+# %%
+# Physical Parameters
+# -------------------
+#
+# We consider a Solar-type star disrupted by a :math:`10^6\,M_\odot`
+# supermassive black hole.  The inner disk radius is the Schwarzschild ISCO;
+# the fallback circularization radius is set to twice the tidal disruption
+# radius.  The **fallback timescale** :math:`t_{\rm fb}` is the orbital
+# period of the most-bound debris (Rees 1988):
+#
+# .. math::
+#
+#     t_{\rm fb} = \frac{\pi}{\sqrt{2}}\,
+#     \sqrt{\frac{M_{\rm BH}\,R_\star^3}{G\,M_\star^2}},
+#
+# and the **peak fallback rate**
+# :math:`\dot{M}_{\rm fb,0} \approx M_\star / (5\,t_{\rm fb})`.
+
+M_BH = 1.0e6 * const.M_sun
+M_star = 1.0 * u.Msun
+R_star = 1.0 * u.Rsun
+alpha = 0.1
+mu = 0.62  # fully ionized solar composition
+
+R_in = (6.0 * const.G * M_BH / const.c**2).to(u.cm)  # Schwarzschild ISCO
+R_T = (R_star * (M_BH / M_star) ** (1.0 / 3.0)).to(u.cm)  # tidal radius
+R_C = (2.0 * R_T).to(u.cm)  # circularization radius
+
+t_fb = ((np.pi / np.sqrt(2)) * np.sqrt(M_BH * R_star**3 / (const.G * M_star**2))).to(u.day)
+M_fb_0 = ((1.0 / 5.0) * M_star / t_fb).to(u.Msun / u.yr)
+
+# Eddington luminosity L_Edd = 4πGM_BH c / κ_es  (κ_es = 0.34 cm² g⁻¹)
+L_Edd = (4.0 * np.pi * const.G * M_BH * const.c / (0.34 * u.cm**2 / u.g)).to(u.erg / u.s)
+
+print(f"M_BH    = {M_BH.to(u.Msun):.2e}")
+print(f"R_ISCO  = {R_in:.3e}")
+print(f"R_T     = {R_T:.3e}")
+print(f"R_C     = {R_C:.3e}")
+print(f"t_fb    = {t_fb:.2f}")
+print(f"M_fb_0  = {M_fb_0:.2f}")
+print(f"L_Edd   = {L_Edd:.3e}")
+
+# %%
+# Initial Conditions and Runtime Parameters
+# -----------------------------------------
+#
+# We generate self-consistent initial conditions via
+# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`.
+# The initial disk mass is :math:`M_{D,0} = M_\star / 5` (the fraction
+# that reaches the inner region on the fallback timescale) and the
+# initial radius is the circularization radius.
+#
+# The integration starts at :math:`t_{\rm fb}` (so that the fallback rate
+# equals :math:`\dot{M}_{\rm fb,0}` at the first step) and runs for
+# :math:`\sim 3` years.
+
+_ref = AdvectiveDisk(mu=mu, xi=1.0, fallback=True)
+ic = _ref.generate_initial_conditions(
+    M_BH=M_BH,
+    M_D_0=M_star / 5.0,
+    R_D_0=R_C,
+)
+
+run_params = {
+    "M_BH": M_BH,
+    "R_in": R_in,
+    "alpha": alpha,
+    "M_fb_0": M_fb_0,
+    "t_fb": t_fb,
+    "R_c": R_C,
+    "beta_fb": 5.0 / 3.0,
+}
+t_span = (t_fb, 1000.0 * u.day)
+max_steps = 2_000_000
+
+# %%
+# Running the Integrations
+# -------------------------
+#
+# We solve the disk evolution for :math:`\xi = 0.5` (mild advection) and
+# :math:`\xi = 1.5` (strong advection, canonical for super-Eddington thick
+# disks).  Both values are physically required at early times when the high
+# surface density prevents a pure-radiative thermal equilibrium.
+
+xi_values = {0.5: r"$\xi = 0.5$", 1.5: r"$\xi = 1.5$"}
+results = {}
+
+for xi_val, label in xi_values.items():
+    disk = AdvectiveDisk(mu=mu, xi=xi_val, fallback=True)
+    results[xi_val] = disk.solve(ic, run_params, t_span, max_steps=max_steps, epsilon=1e-4)
+    print(
+        f"  ξ = {xi_val:3.1f}: {results[xi_val].n_steps:,} steps,  "
+        f"t_end = {results[xi_val].data['t'][-1].to(u.day):.1f}"
+    )
+
+# %%
+# Bolometric Luminosity and Eddington Ratio
+# ------------------------------------------
+#
+# The bolometric luminosity is:
+#
+# .. math::
+#
+#     L(t) = 2\pi R_D(t)^2\,\sigma_{\rm SB}\,T_{\rm eff}(t)^4,
+#
+# where the factor of 2 accounts for radiation from both disk faces.
+# The disk begins super-Eddington (:math:`\lambda > 1`) and transitions to
+# sub-Eddington as the fallback rate declines.  Advection (large :math:`\xi`)
+# suppresses :math:`L` relative to the pure-radiative case by diverting a
+# fraction of the viscous energy inward rather than outward.
+
+colors = {0.5: "C0", 1.5: "C2"}
+labels = {0.5: r"$\xi = 0.5$", 1.5: r"$\xi = 1.5$"}
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+for xi_val, res in results.items():
+    data = res.data
+    t = data["t"].to(u.day).value
+    L = (2.0 * np.pi * data["R_D"] ** 2 * const.sigma_sb * data["T_eff"] ** 4).to(u.erg / u.s)
+    lam = (L / L_Edd).decompose().value
+
+    axes[0].loglog(t, L.value, color=colors[xi_val], label=labels[xi_val])
+    axes[1].loglog(t, lam, color=colors[xi_val], label=labels[xi_val])
+
+axes[0].axhline(L_Edd.value, color="k", ls="--", lw=0.8, label=r"$L_{\rm Edd}$")
+axes[1].axhline(1.0, color="k", ls="--", lw=0.8, label=r"$\lambda = 1$")
+
+for ax in axes:
+    ax.set_xlabel("Time [days]")
+    ax.legend(fontsize=9)
+    ax.grid(True, which="both", ls="--", alpha=0.4)
+
+axes[0].set_ylabel(r"$L\;[\mathrm{erg\,s^{-1}}]$")
+axes[0].set_title("Bolometric Luminosity")
+axes[1].set_ylabel(r"$\lambda = L / L_{\rm Edd}$")
+axes[1].set_title("Eddington Ratio")
+
+plt.tight_layout()
+plt.show()
+
+# %%
+# Disk Geometry and Mass Budget
+# ------------------------------
+#
+# The aspect ratio :math:`H/R` is a direct measure of the disk's geometrical
+# thickness.  During the super-Eddington phase :math:`H/R \sim 1`, confirming
+# that the thin-disk approximation breaks down and that advective cooling is
+# physically motivated.  As the disk drains, :math:`H/R` decreases and the
+# disk approaches the standard thin-disk regime.
+#
+# The lower panel shows the disk mass :math:`M_D(t)` alongside the fallback
+# supply rate :math:`\dot{M}_{\rm fb}`.  The disk mass peaks where the
+# fallback supply balances the viscous drain, after which the viscous drain
+# wins and the disk depletes.
+
+res_ref = results[1.5]
+data_ref = res_ref.data
+t_ref = data_ref["t"].to(u.day).value
+
+fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+
+# ---- Aspect ratio ----
+for xi_val, res in results.items():
+    data = res.data
+    t = data["t"].to(u.day).value
+    axes[0].loglog(t, data["H_over_R"].value, color=colors[xi_val], label=labels[xi_val])
+
+axes[0].axhline(1.0, color="k", ls="--", lw=0.8, label=r"$H/R = 1$")
+axes[0].set_xlabel("Time [days]")
+axes[0].set_ylabel(r"$H / R$")
+axes[0].set_title("Disk Aspect Ratio")
+axes[0].legend(fontsize=9)
+axes[0].grid(True, which="both", ls="--", alpha=0.4)
+
+# ---- Disk mass and fallback rate ----
+axes[1].loglog(t_ref, data_ref["M_D"].to(u.Msun).value, color="C1", label=r"$M_D$")
+
+ax_twin = axes[1].twinx()
+ax_twin.loglog(t_ref, data_ref["mdot_fb"].to(u.Msun / u.yr).value, color="C3", ls="--", label=r"$\dot{M}_{\rm fb}$")
+ax_twin.set_ylabel(r"$\dot{M}_{\rm fb}\;[M_\odot\,\mathrm{yr}^{-1}]$")
+ax_twin.set_ylim(bottom=1e-4)
+
+lines_1, labels_1 = axes[1].get_legend_handles_labels()
+lines_2, labels_2 = ax_twin.get_legend_handles_labels()
+axes[1].legend(lines_1 + lines_2, labels_1 + labels_2, fontsize=9, loc="lower left")
+
+axes[1].set_xlabel("Time [days]")
+axes[1].set_ylabel(r"$M_D\;[M_\odot]$")
+axes[1].set_title(r"Mass Budget ($\xi = 1.5$)")
+axes[1].grid(True, which="both", ls="--", alpha=0.4)
+
+# sphinx_gallery_thumbnail_number = -1
+plt.tight_layout()
+plt.show()

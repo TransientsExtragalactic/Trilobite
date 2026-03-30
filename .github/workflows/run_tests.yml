@@ -32,7 +32,7 @@ jobs:
         run: python -m pip install --upgrade pip
 
       - name: Install package with test dependencies
-        run: pip install .[test]
+        run: pip install -e .[test]
 
       - name: Run tests
         run: pytest --tb=short --disable-warnings
