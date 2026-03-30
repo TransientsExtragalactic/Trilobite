@@ -11,10 +11,8 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.supernovae.shock_dynamics import (
-    ChevalierSelfSimilarShockEngine,
-    NumericalThinShellShockEngine,
-)
+from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
+from triceratops.dynamics.supernovae.shock_dynamics import ChevalierSelfSimilarShockEngine
 
 
 class TestChevalierSelfSimilarShockEngine:

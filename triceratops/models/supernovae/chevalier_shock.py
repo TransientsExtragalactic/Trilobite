@@ -14,7 +14,7 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.rankine_hugoniot import _compute_s_c_shock_magnetic_field_cgs
+from triceratops.dynamics.shocks.rankine_hugoniot import _compute_s_c_shock_magnetic_field_cgs
 from triceratops.dynamics.supernovae.shock_dynamics import (
     ChevalierSelfSimilarShockEngine,
 )

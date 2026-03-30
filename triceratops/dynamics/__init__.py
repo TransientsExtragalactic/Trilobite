@@ -8,9 +8,8 @@ the :mod:`triceratops.models` module.
 """
 
 __all__ = [
-    "rankine_hugoniot",
-    "shock_engine",
+    "shocks",
     "supernovae",
     "accretion",
 ]
-from triceratops.dynamics import accretion, rankine_hugoniot, shock_engine, supernovae
+from triceratops.dynamics import accretion, shocks, supernovae

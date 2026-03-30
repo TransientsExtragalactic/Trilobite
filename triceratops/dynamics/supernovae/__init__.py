@@ -11,12 +11,10 @@ __all__ = [
     "shock_dynamics",
     "ChevalierSelfSimilarWindShockEngine",
     "ChevalierSelfSimilarShockEngine",
-    "NumericalThinShellShockEngine",
 ]
 
 from . import shock_dynamics
 from .shock_dynamics import (
     ChevalierSelfSimilarShockEngine,
     ChevalierSelfSimilarWindShockEngine,
-    NumericalThinShellShockEngine,
 )

@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:40.203** total execution time for 33 files **from all galleries**:
+**00:34.199** total execution time for 33 files **from all galleries**:
 
 .. container::
 
@@ -32,14 +32,23 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_b_inference_plot_upper_limit_inference.py` (``galleries/examples/b_inference/plot_upper_limit_inference.py``)
-     - 00:20.466
-     - 0.0
    * - :ref:`sphx_glr_auto_examples_c_models_plot_ffa_fadeout_evolution.py` (``galleries/examples/c_models/plot_ffa_fadeout_evolution.py``)
-     - 00:18.107
+     - 00:19.271
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_type_IIn_SN_dense_CSM.py` (``galleries/examples/c_models/plot_type_IIn_SN_dense_CSM.py``)
+     - 00:08.735
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_f_accretion_plot_fallback_disk.py` (``galleries/examples/f_accretion/plot_fallback_disk.py``)
+     - 00:03.215
      - 0.0
    * - :ref:`sphx_glr_auto_examples_c_models_plot_tde_radio_afterglow.py` (``galleries/examples/c_models/plot_tde_radio_afterglow.py``)
-     - 00:01.630
+     - 00:01.702
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
+     - 00:00.881
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
+     - 00:00.395
      - 0.0
    * - :ref:`sphx_glr_auto_examples_a_data_plot_epoch_photometry.py` (``galleries/examples/a_data/plot_epoch_photometry.py``)
      - 00:00.000
@@ -65,16 +74,10 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_b_inference_plot_shock_parameter_inference.py` (``galleries/examples/b_inference/plot_shock_parameter_inference.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_c_models_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/examples/c_models/plot_chevalier_shock_synchrotron_cooling.py``)
+   * - :ref:`sphx_glr_auto_examples_b_inference_plot_upper_limit_inference.py` (``galleries/examples/b_inference/plot_upper_limit_inference.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_c_models_plot_phenomenological_lc_fit.py` (``galleries/examples/c_models/plot_phenomenological_lc_fit.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_c_models_plot_type_IIn_SN_dense_CSM.py` (``galleries/examples/c_models/plot_type_IIn_SN_dense_CSM.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_d_physics_shocks_plot_numerical_shock_engine.py` (``galleries/examples/d_physics_shocks/plot_numerical_shock_engine.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py` (``galleries/examples/e_physics_synchro/plot_PL_sed.py``)
@@ -120,9 +123,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_disk_scurve.py` (``galleries/examples/f_accretion/plot_disk_scurve.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_f_accretion_plot_fallback_disk.py` (``galleries/examples/f_accretion/plot_fallback_disk.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_f_accretion_plot_one_zone_disk_quickstart.py` (``galleries/examples/f_accretion/plot_one_zone_disk_quickstart.py``)

@@ -37,7 +37,7 @@ common shock models.
 Shock Engines
 =============
 
-At the core of every shock model in Triceratops is a **shock engine** (:class:`triceratops.dynamics.shock_engine.ShockEngine`),
+At the core of every shock model in Triceratops is a **shock engine** (:class:`triceratops.dynamics.shocks.shock_engine.ShockEngine`),
 which is responsible for computing the dynamical evolution of the shock front over time. Each implementation of a
 shock engine provides (at least) a method
 
@@ -68,7 +68,7 @@ The output of these methods is a dictionary containing the key shock properties 
 
 .. note::
 
-    Like :class:`~triceratops.models.core.base.Model` the :class:`~triceratops.dynamics.shock_engine.ShockEngine` and its subclasses are not
+    Like :class:`~triceratops.models.core.base.Model` the :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` and its subclasses are not
     state-carrying objects. Instead, they are stateless computational engines that take in parameters and return computed
     properties. This design allows for easy integration into larger modeling frameworks and ensures that
     shock engines can be reused across different models without concern for internal state management.
@@ -81,7 +81,7 @@ Rankine–Hugoniot Jump Conditions
 
 .. hint::
 
-    Canned routines for performing Rankine–Hugoniot calculations are available in the :mod:`~dynamics.rankine_hugoniot`
+    Canned routines for performing Rankine–Hugoniot calculations are available in the :mod:`~dynamics.shocks.rankine_hugoniot`
     module.
 
 The `Rankine–Hugoniot <https://en.wikipedia.org/wiki/Rankine%E2%80%93Hugoniot_conditions>`__ jump conditions describe
@@ -133,9 +133,9 @@ to distinguish between the different cases.
 
 .. rubric:: API Methods
 
-*current module*: :mod:`triceratops.dynamics.rankine_hugoniot`
+*current module*: :mod:`triceratops.dynamics.shocks.rankine_hugoniot`
 
-.. currentmodule:: triceratops.dynamics.rankine_hugoniot
+.. currentmodule:: triceratops.dynamics.shocks.rankine_hugoniot
 
 .. tab-set::
 
@@ -430,7 +430,7 @@ The Thin Shell Approximation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The most common numerical shock engine implemented in Triceratops is the **thin-shell approximation** engine
-(:class:`~triceratops.dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`), which models the shock as a thin shell
+(:class:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine`), which models the shock as a thin shell
 whose dynamics are governed by the conservation of momentum. This approach allows for arbitrary density profiles
 for both the ejecta and CSM, enabling the modeling of more complex shock scenarios. This boils down (under the hood)
 to numerically integrating the equation of motion for the shock front given specified density profiles.
@@ -442,7 +442,7 @@ to numerically integrating the equation of motion for the shock front given spec
 Usage
 ~~~~~
 
-Stemming from the base-class :class:`~triceratops.dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`, there are
+Stemming from the base-class :class:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine`, there are
 many subclasses which implement different specific channels all of which share the same underlying numerical thin-shell
 framework. The various parameters for these engines will depend on the specific subclass being used. Use the tab
 set below to explore the parameters for some of the more common numerical shock engines.
@@ -509,7 +509,7 @@ set below to explore the parameters for some of the more common numerical shock 
 
         import numpy as np
         import matplotlib.pyplot as plt
-        from triceratops.dynamics.supernovae.shock_dynamics import NumericalThinShellShockEngine
+        from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
         from triceratops.dynamics.supernovae.profiles import get_broken_power_law_ejecta_kernel_func
         from triceratops.utils.plot_utils import set_plot_style
         from astropy import units as u
