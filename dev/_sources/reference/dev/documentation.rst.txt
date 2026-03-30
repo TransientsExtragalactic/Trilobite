@@ -1,4 +1,7 @@
+:orphan:
+
 .. _documentation:
+
 ====================
 Documentation Guide
 ====================

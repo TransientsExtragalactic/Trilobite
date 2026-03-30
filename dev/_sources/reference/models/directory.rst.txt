@@ -15,7 +15,7 @@ The goal of the model library is twofold:
 
 Models span a range of complexity, from lightweight mathematical
 curve-fitting forms to physically grounded shock and emission models.
-All models share a unified interface through the :class:`~models.core.base.Model`
+All models share a unified interface through the :class:`~triceratops.models.core.base.Model`
 base class, ensuring consistent parameter handling, unit support,
 and compatibility with likelihood and inference tools.
 
@@ -54,7 +54,7 @@ Quick Navigation
         Flexible, modular models for curve fitting and exploratory analysis.
 
    .. card:: Physical SEDs
-        :link: SEDs
+        :link: sed_models
         :link-type: ref
         :class-card: sd-shadow-sm
 
@@ -67,9 +67,17 @@ Quick Navigation
 
       Physically motivated explosion and shock interaction models.
 
+   .. card:: 🌟 GRB Models
+      :link: grb_models
+      :link-type: ref
+      :class-card: sd-shadow-sm
+
+      Empirical and physical models for gamma-ray burst emission.
+
 ---------------------------------------------------------------------
 
 .. _generic_models:
+
 Generic Models
 ----------------
 
@@ -88,7 +96,7 @@ building likelihood functions.
 
 .. rubric:: Generic Broken Power Laws
 
-.. currentmodule:: models.generic.curves
+.. currentmodule:: triceratops.models.generic.curves
 
 .. autosummary::
    :nosignatures:
@@ -109,7 +117,7 @@ analysis and pulse-shape modeling.
 
 .. rubric:: Generic Light Curve Models
 
-.. currentmodule:: models.generic.light_curve
+.. currentmodule:: triceratops.models.generic.light_curve
 
 .. autosummary::
    :nosignatures:
@@ -134,7 +142,7 @@ Models for phenomenological modeling (not tied to specific physical scenarios) t
 
 .. rubric:: Generic SED Evolution
 
-.. currentmodule:: models.generic.evolving_seds
+.. currentmodule:: triceratops.models.generic.evolving_seds
 
 .. autosummary::
    :nosignatures:
@@ -145,7 +153,8 @@ Models for phenomenological modeling (not tied to specific physical scenarios) t
 
 ---------------------------------------------------------------------
 
-.. _SEDs:
+.. _sed_models:
+
 SED Models
 -----------
 
@@ -154,7 +163,7 @@ scenarios, emission mechanisms, and physical assumptions. These models are ideal
 
 .. rubric:: Synchrotron
 
-.. currentmodule:: models.SEDs.synchrotron
+.. currentmodule:: triceratops.models.SEDs.synchrotron
 
 .. autosummary::
    :nosignatures:
@@ -177,7 +186,7 @@ radiation processes, and circumstellar interaction physics.
 
 .. rubric:: Self-Similar Shock Models
 
-.. currentmodule:: models.supernovae
+.. currentmodule:: triceratops.models.supernovae
 
 .. autosummary::
    :nosignatures:
@@ -186,9 +195,26 @@ radiation processes, and circumstellar interaction physics.
 
 ---------------------------------------------------------------------
 
-Extending the Model Library
-----------------------------
+.. _grb_models:
 
+GRB Models
+----------
 
+These models are designed to describe the spectral and temporal
+properties of gamma-ray burst (GRB) emission. They range from
+empirical spectral characterisation to physically motivated
+jet and afterglow models.
+
+.. rubric:: Prompt-Emission Spectral Models
+
+.. currentmodule:: triceratops.models.GRBs
+
+.. autosummary::
+   :nosignatures:
+
+   band.BandFunctionModel
 
 ---------------------------------------------------------------------
+
+Extending the Model Library
+----------------------------

@@ -411,6 +411,13 @@
 <li class="toctree-l2"><a class="reference internal" href="e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -469,7 +476,7 @@
                 <article class="bd-article">
                   
   <section id="triceratops-example-gallery">
-<span id="examples"></span><h1>Triceratops Example Gallery<a class="headerlink" href="#triceratops-example-gallery" title="Link to this heading">#</a></h1>
+<span id="gallery-examples"></span><h1>Triceratops Example Gallery<a class="headerlink" href="#triceratops-example-gallery" title="Link to this heading">#</a></h1>
 <p>Welcome to the <strong>Triceratops Example Gallery</strong>!</p>
 <p>This section presents a curated collection of concise, hands-on examples illustrating the key features and modeling
 capabilities of the Triceratops library.
@@ -490,6 +497,7 @@ templates to accelerate your scientific modeling.</p>
 <li><p><a class="reference internal" href="#forward-modeling-with-triceratops-models" id="id3">Forward Modeling with Triceratops Models</a></p></li>
 <li><p><a class="reference internal" href="#physics-backend-examples-shocks" id="id4">Physics Backend Examples - Shocks</a></p></li>
 <li><p><a class="reference internal" href="#physics-backend-examples-synchrotron" id="id5">Physics Backend Examples - Synchrotron</a></p></li>
+<li><p><a class="reference internal" href="#physics-backend-examples-accretion-disks" id="id6">Physics Backend Examples — Accretion Disks</a></p></li>
 </ul>
 </nav>
 <div class="sphx-glr-thumbnails"></div><section id="data-loading-and-handling">
@@ -531,7 +539,7 @@ includes how to set up models, determine parameters, and visualize results.</p>
 </div></div></section>
 <section id="physics-backend-examples-shocks">
 <h2><a class="toc-backref" href="#id4" role="doc-backlink">Physics Backend Examples - Shocks</a><a class="headerlink" href="#physics-backend-examples-shocks" title="Link to this heading">#</a></h2>
-<p>This gallery showcases examples from the <a class="reference internal" href="../_as_gen/dynamics.html#module-dynamics" title="dynamics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code></a> module regarding shock propagation and related phenomena.
+<p>This gallery showcases examples from the <code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code> module regarding shock propagation and related phenomena.
 The examples illustrate how to set up simulations, configure parameters, and analyze results using the physics backend.</p>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the NumericalThinShellShockEngine to model the evolution of a supernova shock expanding into a non-uniform circumstellar medium (CSM)."><img alt="" src="../_images/sphx_glr_plot_numerical_shock_engine_thumb.png" />
 <p><a class="reference internal" href="d_physics_shocks/plot_numerical_shock_engine.html"><span class="doc">Numerical Thin-Shell Shock in a Broken CSM</span></a></p>
@@ -539,10 +547,10 @@ The examples illustrate how to set up simulations, configure parameters, and ana
 </div></div></section>
 <section id="physics-backend-examples-synchrotron">
 <h2><a class="toc-backref" href="#id5" role="doc-backlink">Physics Backend Examples - Synchrotron</a><a class="headerlink" href="#physics-backend-examples-synchrotron" title="Link to this heading">#</a></h2>
-<p>In this example gallery, we’ll showcase the <a class="reference internal" href="../_as_gen/radiation.synchrotron.html#module-radiation.synchrotron" title="radiation.synchrotron"><code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron</span></code></a> module and its capabilities.
+<p>In this example gallery, we’ll showcase the <code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron</span></code> module and its capabilities.
 For detailed documentation regarding synchrotron radiation physics, please refer to the
 <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>. For notes on the synchrotron API and how to use all of the various
-functions, please refer to the <span class="xref std std-ref">synchrotron_overview</span>.</p>
+functions, please refer to <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a>, <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a>, <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a>, and <a class="reference internal" href="../reference/physics/radiation/synchrotron/synchrotron_cooling.html#synchrotron-cooling"><span class="std std-ref">Radiative Cooling Engines</span></a>.</p>
 <div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="The synchrotron emission spectrum of a single relativistic electron is governed by two dimensionless kernel functions, F(x) and G(x), where x = \nu / \nu_c is the ratio of the observing frequency to the electron&#x27;s critical synchrotron frequency \nu_c \propto \gamma^2 B."><img alt="" src="../_images/sphx_glr_plot_synchrotron_kernels_thumb.png" />
 <p><a class="reference internal" href="e_physics_synchro/plot_synchrotron_kernels.html"><span class="doc">The Synchrotron Kernel Functions F(x) and G(x)</span></a></p>
   <div class="sphx-glr-thumbnail-title">The Synchrotron Kernel Functions F(x) and G(x)</div>
@@ -573,6 +581,27 @@ functions, please refer to the <span class="xref std std-ref">synchrotron_overvi
 </div><div class="sphx-glr-thumbcontainer" tooltip="In practice, synchrotron spectra are made much more complex than the idealized scenarios often presented in textbooks (e.g. :footciteRybickiLightman or :footcite1970ranp.book.....P). In the modern literature of supernova and GRB synchrotron modeling, the effect of synchrotron self absorption (SSA) and radiative cooling of the electron population are often included to better match observed spectra (e.g. :footciteGranotSari2002SpectralBreaks)."><img alt="" src="../_images/sphx_glr_plot_SSA_cooling_SED_thumb.png" />
 <p><a class="reference internal" href="e_physics_synchro/plot_SSA_cooling_SED.html"><span class="doc">Synchrotron Spectra With Cooling and SSA</span></a></p>
   <div class="sphx-glr-thumbnail-title">Synchrotron Spectra With Cooling and SSA</div>
+</div></div></section>
+<section id="physics-backend-examples-accretion-disks">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Physics Backend Examples — Accretion Disks</a><a class="headerlink" href="#physics-backend-examples-accretion-disks" title="Link to this heading">#</a></h2>
+<p>This gallery showcases the <a class="reference internal" href="../_as_gen/triceratops.dynamics.accretion.one_zone.html#module-triceratops.dynamics.accretion.one_zone" title="triceratops.dynamics.accretion.one_zone"><code class="xref py py-mod docutils literal notranslate"><span class="pre">one_zone</span></code></a> module:
+time-dependent, one-zone accretion disk models driven by a compiled Cython
+explicit-Euler integrator.</p>
+<p>The examples progress from a minimal quickstart through physical model
+comparisons to scenarios with external mass supply.  For theoretical background,
+see <a class="reference internal" href="../reference/physics/disks/one_zone_disk_theory.html#one-zone-disk-theory"><span class="std std-ref">One-Zone Accretion Disk Models: Theory</span></a>.  For the full API, see <a class="reference internal" href="../reference/physics/disks/one_zone_disk.html#one-zone-disk"><span class="std std-ref">One-Zone Accretion Disk Models</span></a>.</p>
+<div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="Viscously heated accretion disks do not always radiate all of their dissipated energy locally.  When the accretion rate is high (or the disk is geometrically thick) a substantial fraction of the viscous heating can be carried inward with the accreting gas rather than radiated away, a process called advective cooling."><img alt="" src="../_images/sphx_glr_plot_adv_disk_thumb.png" />
+<p><a class="reference internal" href="f_accretion/plot_adv_disk.html"><span class="doc">Advective Cooling in One-Zone Accretion Disks</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Advective Cooling in One-Zone Accretion Disks</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example introduces the one-zone accretion disk framework in Triceratops. It walks through the minimal workflow end-to-end: constructing a disk model, generating physically consistent initial conditions, running the Cython integrator, and visualising the time evolution of the key disk observables."><img alt="" src="../_images/sphx_glr_plot_one_zone_disk_quickstart_thumb.png" />
+<p><a class="reference internal" href="f_accretion/plot_one_zone_disk_quickstart.html"><span class="doc">One-Zone Accretion Disk — Quickstart</span></a></p>
+  <div class="sphx-glr-thumbnail-title">One-Zone Accretion Disk — Quickstart</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Triceratops provides two one-zone disk closures that differ only in the treatment of the equation of state (EOS):"><img alt="" src="../_images/sphx_glr_plot_disk_eos_comparison_thumb.png" />
+<p><a class="reference internal" href="f_accretion/plot_disk_eos_comparison.html"><span class="doc">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="In many astrophysical transients — tidal disruption events (TDEs), collapsars, and compact binary mergers — the accretion disk does not simply drain passively.  A fallback debris stream continuously replenishes the disk at a rate that declines as a power law in time:"><img alt="" src="../_images/sphx_glr_plot_fallback_disk_thumb.png" />
+<p><a class="reference internal" href="f_accretion/plot_fallback_disk.html"><span class="doc">Accretion Disk with Fallback Mass Supply</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Accretion Disk with Fallback Mass Supply</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 <div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
@@ -639,6 +668,7 @@ functions, please refer to the <span class="xref std std-ref">synchrotron_overvi
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#forward-modeling-with-triceratops-models">Forward Modeling with Triceratops Models</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-backend-examples-shocks">Physics Backend Examples - Shocks</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-backend-examples-synchrotron">Physics Backend Examples - Synchrotron</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#physics-backend-examples-accretion-disks">Physics Backend Examples — Accretion Disks</a></li>
 </ul>
   </nav></div>
 

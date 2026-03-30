@@ -411,6 +411,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -482,7 +489,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="plot-radio-photometry-epochs">
 <span id="sphx-glr-auto-examples-a-data-plot-epoch-photometry-py"></span><h1>Plot Radio Photometry Epochs<a class="headerlink" href="#plot-radio-photometry-epochs" title="Link to this heading">#</a></h1>
 <p>This example will demonstrate how to load radio photometry data and separate it into epochs for
-plotting using the Triceratops library. We’ll utilize the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>
+plotting using the Triceratops library. We’ll utilize the <code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>
 to manage and visualize the data.</p>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
@@ -497,7 +504,7 @@ to manage and visualize the data.</p>
 <p>We’ll use a set of synthetically generated radio photometry data for this example. The data is
 stored in the <code class="docutils literal notranslate"><span class="pre">_data/example_photometry.fits</span></code> file within the documentation source directory.</p>
 <p>This dataset is almost in the perfect format for loading into a
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
+<code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
 we will need to select one. We also need to give a reference time for the observations, which we will set to the JD
 of the first observation.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resolve the path to the dataset. In this case, we seek out the data in the</span>
@@ -544,9 +551,9 @@ obs1_K_band1of4    0.00821531350281548 ...            2.65      -66.2
 Length = 62 rows
 </pre></div>
 </div>
-<p>Now that we have loaded the data, we can plot it. The <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>
+<p>Now that we have loaded the data, we can plot it. The <code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code>
 includes a built-in plotting method that makes this straightforward:
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.plot_photometry.html#data.photometry.RadioPhotometryContainer.plot_photometry" title="data.photometry.RadioPhotometryContainer.plot_photometry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_photometry()</span></code></a>.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_photometry()</span></code>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the plot style.</span>
 <span class="n">set_plot_style</span><span class="p">()</span>
 
@@ -563,7 +570,7 @@ includes a built-in plotting method that makes this straightforward:
 <img src="../../_images/sphx_glr_plot_epoch_photometry_001.png" srcset="../../_images/sphx_glr_plot_epoch_photometry_001.png" alt="plot epoch photometry" class = "sphx-glr-single-img"/><p>As you may notice, the data points (even sorted by color) are not all that easy to pick apart. Let’s instead
 plot the empirical SEDs at different epochs to better visualize the evolution of the radio emission over time.
 To do this, we’ll need to use the built-in epoching functionality of the
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>.</p>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code>.</p>
 <p>Let’s first look at the various time ranges covered by the data:</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create a histogram of observation times.</span>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
@@ -576,8 +583,8 @@ To do this, we’ll need to use the built-in epoching functionality of the
 </div>
 <img src="../../_images/sphx_glr_plot_epoch_photometry_002.png" srcset="../../_images/sphx_glr_plot_epoch_photometry_002.png" alt="Histogram of Observation Times" class = "sphx-glr-single-img"/><p>If you already have clearly defined epochs in mind, you can specify them directly in your table using the
 <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> column, or you can use the built-in method
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_indices.html#data.photometry.RadioPhotometryContainer.set_epochs_from_indices" title="data.photometry.RadioPhotometryContainer.set_epochs_from_indices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code></a>; however, we do not have that information here.</p>
-<p>Instead, we can use the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps.html#data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps" title="data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code></a> method to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code>; however, we do not have that information here.</p>
+<p>Instead, we can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code> method to
 automatically define epochs based on gaps in the observation times. We’ll specify a gap threshold of 2 days to
 separate the epochs.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set epochs based on time gaps of 2 days.</span>
@@ -636,7 +643,7 @@ separate the epochs.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.show.html#matplotlib.figure.Figure.show" title="matplotlib.figure.Figure.show" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_epoch_photometry_004.png" srcset="../../_images/sphx_glr_plot_epoch_photometry_004.png" alt="Radio SEDs at Different Epochs" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.366 seconds)</p>
+<img src="../../_images/sphx_glr_plot_epoch_photometry_004.png" srcset="../../_images/sphx_glr_plot_epoch_photometry_004.png" alt="Radio SEDs at Different Epochs" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.576 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-a-data-plot-epoch-photometry-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a510156a7ef61f0dbc56ce545b550316/plot_epoch_photometry.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_epoch_photometry.ipynb</span></code></a></p>

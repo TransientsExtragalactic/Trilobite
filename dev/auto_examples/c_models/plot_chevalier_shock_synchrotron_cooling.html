@@ -412,6 +412,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -543,7 +550,7 @@ This framework assumes:</p>
 <li><p>A strong, non-relativistic forward shock.</p></li>
 </ul>
 <p>In Triceratops, this evolution is handled by
-<a class="reference internal" href="../../_as_gen/dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.html#dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine" title="dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code></a>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code>,
 which provides the forward-shock radius and velocity as functions of time. These
 quantities set the geometric scale of the emitting region and determine the
 post-shock energy density that feeds directly into the microphysical and
@@ -551,12 +558,12 @@ radiative calculations.</p>
 <p>Given the shock velocity and upstream density, we compute the downstream
 magnetic field strength assuming a strong, cold shock and a fixed magnetic
 energy fraction <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, using
-<a class="reference internal" href="../../_as_gen/dynamics.rankine_hugoniot.compute_strong_cold_shock_magnetic_field.html#dynamics.rankine_hugoniot.compute_strong_cold_shock_magnetic_field" title="dynamics.rankine_hugoniot.compute_strong_cold_shock_magnetic_field"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_strong_cold_shock_magnetic_field()</span></code></a>.</p>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">compute_strong_cold_shock_magnetic_field()</span></code>.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>Other shock engines could be easily substituted here, including the numerical
 shock engines for generic density profiles or even relativistic shocks, depending on the physical scenario of
-interest. See <a class="reference internal" href="../../_as_gen/dynamics.html#module-dynamics" title="dynamics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code></a> for an API description. User-Guide discussion of dynamics can be
+interest. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code> for an API description. User-Guide discussion of dynamics can be
 found in <a class="reference internal" href="../../reference/physics/shocks/overview.html#shock-overview"><span class="std std-ref">Shocks in Triceratops</span></a>.</p>
 </div>
 </section>
@@ -590,12 +597,12 @@ self-consistently in this pipeline:</p>
 <dt><strong>Synchrotron cooling</strong></dt><dd><p>Radiative losses steepen the electron distribution above a cooling Lorentz
 factor <span class="math notranslate nohighlight">\(\gamma_c\)</span>, introducing a corresponding cooling break frequency
 <span class="math notranslate nohighlight">\(\nu_c\)</span>. We compute <span class="math notranslate nohighlight">\(\gamma_c(t)\)</span> using
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>,
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code>,
 given the time-dependent magnetic field and shock age.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>One could easily use a different cooling engine (e.g. including inverse Compton losses)
-from <a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.html#module-radiation.synchrotron.cooling" title="radiation.synchrotron.cooling"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cooling</span></code></a>
+from <code class="xref py py-mod docutils literal notranslate"><span class="pre">cooling</span></code>
 or even a custom cooling prescription by implementing a new engine.</p>
 </div>
 </dd>
@@ -614,7 +621,7 @@ are computed and passed to
 to generate a time series of evolving spectra.</p>
 <p>For this example, we neglect free-free absorption, which can be important in very dense CSM environments at low
 frequencies. Triceratops does include a free-free absorption engine that can be easily integrated into this pipeline if
-desired. See <a class="reference internal" href="../../_as_gen/radiation.free_free.html#module-radiation.free_free" title="radiation.free_free"><code class="xref py py-mod docutils literal notranslate"><span class="pre">free_free</span></code></a>.</p>
+desired. See <code class="xref py py-mod docutils literal notranslate"><span class="pre">free_free</span></code>.</p>
 </section>
 </section>
 <section id="goals-of-this-example">
@@ -796,7 +803,7 @@ four diagnostic panels showing the time dependence of:</p>
 <li><p>Post-shock temperature,</p></li>
 <li><p>Downstream magnetic field strength.</p></li>
 </ul>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.rankine_hugoniot</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.rankine_hugoniot</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">compute_strong_cold_shock_magnetic_field</span><span class="p">,</span>
     <span class="n">compute_strong_cold_shock_temperature</span><span class="p">,</span>
 <span class="p">)</span>
@@ -887,7 +894,7 @@ integrates the synchrotron loss rate using the time-dependent magnetic field.
 Given the downstream magnetic field <span class="math notranslate nohighlight">\(B(t)\)</span> and the system age, the engine
 computes <span class="math notranslate nohighlight">\(\gamma_c(t)\)</span> self-consistently.</p>
 <p>For this example, we compute the cooling Lorentz factor using
-<code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code>
+<a class="reference internal" href="../../_as_gen/triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>
 and visualize its temporal evolution below.</p>
 <p>The behavior of <span class="math notranslate nohighlight">\(\gamma_c(t)\)</span> provides immediate physical insight:</p>
 <ul class="simple">
@@ -1086,7 +1093,7 @@ evolves across epochs.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_chevalier_shock_synchrotron_cooling_004.png" srcset="../../_images/sphx_glr_plot_chevalier_shock_synchrotron_cooling_004.png" alt="Synchrotron SED Evolution (Cooling + SSA)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.485 seconds)</p>
+<img src="../../_images/sphx_glr_plot_chevalier_shock_synchrotron_cooling_004.png" srcset="../../_images/sphx_glr_plot_chevalier_shock_synchrotron_cooling_004.png" alt="Synchrotron SED Evolution (Cooling + SSA)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.638 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-c-models-plot-chevalier-shock-synchrotron-cooling-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/1fdb9bec560236b28145bdedff871076/plot_chevalier_shock_synchrotron_cooling.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_chevalier_shock_synchrotron_cooling.ipynb</span></code></a></p>

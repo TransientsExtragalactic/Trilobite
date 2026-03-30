@@ -1,4 +1,5 @@
 .. _user_guide:
+
 ========================
 Triceratops User Guide
 ========================
@@ -80,11 +81,35 @@ Building Blocks
 
 Behind every Triceratops model are a set of modular building blocks that define the physical processes and components
 of the system being modeled. These building blocks can be combined in various ways to create complex models that
-capture the nuances of radio observations. The following guides provide an overview of the various modules and
-the constituent physics:
+capture the nuances of radio observations. Each major division of the building-block layer has its own landing page
+that provides an overview of the available modules and links to detailed user, theory, and developer documentation:
+
+.. grid:: 3
+    :gutter: 2
+
+    .. grid-item-card:: Shocks
+        :link: shock_overview
+        :link-type: ref
+
+        Shock dynamics, Rankine--Hugoniot jump conditions, self-similar and numerical shock engines.
+
+    .. grid-item-card:: Radiation
+        :link: radiation_overview
+        :link-type: ref
+
+        Synchrotron emission and self-absorption, free-free (bremsstrahlung) emission, and grey
+        opacity laws.
+
+    .. grid-item-card:: Accretion Disks
+        :link: accretion_disks
+        :link-type: ref
+
+        Time-dependent one-zone disk models: thermodynamic closures, viscous spreading, fallback
+        accretion, and the advective RIAF regime.
 
 .. toctree::
     :maxdepth: 1
+    :hidden:
 
     physics/shocks/overview
     physics/radiation/overview

@@ -4,6 +4,7 @@
    :align: center
 
 .. _getting_started:
+
 ==================
 Quickstart Guide
 ==================

@@ -1,4 +1,7 @@
+:orphan:
+
 .. _developer_guide:
+
 ===========================
 Triceratops Developer Guide
 ===========================

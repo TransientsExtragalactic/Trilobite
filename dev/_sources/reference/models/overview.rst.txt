@@ -1,4 +1,5 @@
 .. _models_overview:
+
 ====================================
 Triceratops Models
 ====================================
@@ -24,7 +25,7 @@ In this guide, we'll discuss the steps and the nuances to consider when building
 The Model Class
 ----------------
 
-In order to explain the model building process, we first need to understand the :class:`models.core.base.Model` class,
+In order to explain the model building process, we first need to understand the :class:`triceratops.models.core.base.Model` class,
 which is the building block for all Triceratops models. This class provides a basic template for building a model, and
 its suggested that you actually look at the source code of the model class while building your own so you can understand
 what the different wrapper methods are doing.
@@ -32,8 +33,8 @@ what the different wrapper methods are doing.
 The Forward Modelling Directive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The most important method in the :class:`models.core.base.Model` class is the
-:meth:`models.core.base.Model._forward_model` method:
+The most important method in the :class:`triceratops.models.core.base.Model` class is the
+:meth:`triceratops.models.core.base.Model._forward_model` method:
 
 .. code-block:: python
 
@@ -107,8 +108,8 @@ There are a few pieces of advice to be aware of when implementing this method:
    - **Vectorization**: Whenever possible, use vectorized operations instead of loops. Numpy and similar libraries
      are optimized for vectorized computations, which can significantly speed up your model evaluations.
    - **No Units**: Units should **never** be coerced within the computational layer. The public-facing method
-     :meth:`models.core.base.Model.forward_model` handles all unit conversions before and after calling
-     :meth:`models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient
+     :meth:`triceratops.models.core.base.Model.forward_model` handles all unit conversions before and after calling
+     :meth:`triceratops.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient
      as possible. The convention for base units is discussed in :ref:`model_parameters`.
    - **Low-Level Building Blocks**: Whenever possible, leverage low-level building blocks from the Triceratops
      library. These building blocks are designed to be efficient and can help you avoid reinventing the wheel.
@@ -118,11 +119,12 @@ There are a few pieces of advice to be aware of when implementing this method:
    other developers (and your future self) understand how to use your model effectively.
 
 .. _model_parameters:
+
 Model Parameters and Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-At the top of every :class:`models.core.base.Model` class are two important class attributes: the
-:attr:`models.core.base.Model.PARAMETERS` and :attr:`models.core.base.Model.VARIABLES`.
+At the top of every :class:`triceratops.models.core.base.Model` class are two important class attributes: the
+:attr:`triceratops.models.core.base.Model.PARAMETERS` and :attr:`triceratops.models.core.base.Model.VARIABLES`.
 
 .. code-block:: python
 
@@ -149,8 +151,8 @@ At the top of every :class:`models.core.base.Model` class are two important clas
     """
 
 These two attributes are used to define the parameters and variables that your model will use. Each parameter
-and variable is represented by an instance of the :class:`models.core.parameters.ModelParameter` and
-:class:`models.core.parameters.ModelVariable` classes, respectively.
+and variable is represented by an instance of the :class:`triceratops.models.core.parameters.ModelParameter` and
+:class:`triceratops.models.core.parameters.ModelVariable` classes, respectively.
 
 When building your own model, you'll need to populate these attributes with the appropriate parameters and
 variables for your model. This will help ensure that your model is well-defined and can be used effectively
@@ -224,14 +226,14 @@ For example,
 The ModelParameter and ModelVariable Classes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each element of the :attr:`~models.core.base.Model.PARAMETERS` and :attr:`~models.core.base.Model.VARIABLES` must be
-an instance of the :class:`~models.core.parameters.ModelParameter` and :class:`~models.core.parameters.ModelVariable` classes, respectively.
+Each element of the :attr:`~triceratops.models.core.base.Model.PARAMETERS` and :attr:`~triceratops.models.core.base.Model.VARIABLES` must be
+an instance of the :class:`~triceratops.models.core.parameters.ModelParameter` and :class:`~triceratops.models.core.parameters.ModelVariable` classes, respectively.
 
 By means of a brief introduction to each of these classes, we can understand how to use them effectively when defining our model's parameters and variables.
 The core idea with these classes is that they provide a simple structure for tracking a parameters / variables name,
 its base units, and other metadata that is useful for documentation and validation.
 
-From the :class:`~models.core.parameters.ModelParameter` documentation:
+From the :class:`~triceratops.models.core.parameters.ModelParameter` documentation:
 
 .. code-block:: python
 
@@ -271,8 +273,8 @@ From the :class:`~models.core.parameters.ModelParameter` documentation:
 
         """
 
-Thus, a :class:`~models.core.parameters.ModelParameter` instance requires a name, a default value, and optionally accepts base units, a description,
-a LaTeX representation, and bounds for valid values. Likewise, the :class:`~models.core.parameters.ModelVariable` class has a similar structure:
+Thus, a :class:`~triceratops.models.core.parameters.ModelParameter` instance requires a name, a default value, and optionally accepts base units, a description,
+a LaTeX representation, and bounds for valid values. Likewise, the :class:`~triceratops.models.core.parameters.ModelVariable` class has a similar structure:
 
 .. code-block:: python
 
@@ -299,7 +301,7 @@ a LaTeX representation, and bounds for valid values. Likewise, the :class:`~mode
 Parameter Bounds
 ~~~~~~~~~~~~~~~~
 
-One confusing aspect of the :class:`~models.core.parameters.ModelParameter` class is the
+One confusing aspect of the :class:`~triceratops.models.core.parameters.ModelParameter` class is the
 ``bounds`` argument. This argument can either be a tuple of ``(min, max)`` values or a callable function that
 takes in a value and returns whether that value is valid. For example, a parameter which must be positive
 could be specified as
@@ -330,8 +332,8 @@ Likewise, a parameter which must be any value except for 2.0 would require a cal
 .. important::
 
     Bounds checking is not performed automatically by ``_forward_model``: this is for performance reasons. Instead,
-    bounds checking is performed at the public-facing method :meth:`models.core.base.Model.forward_model`, which
-    handles all unit conversions and validation before and after calling :meth:`models.core.base.Model._forward_model`.
+    bounds checking is performed at the public-facing method :meth:`triceratops.models.core.base.Model.forward_model`, which
+    handles all unit conversions and validation before and after calling :meth:`triceratops.models.core.base.Model._forward_model`.
     This ensures that the computational layer remains as efficient as possible.
 
     In inference workflows, it is instead the likelihood object which evaluates the bounds of the parameters during
@@ -347,18 +349,18 @@ the model's computations are performed in a consistent unit system. When buildin
 choose appropriate base units for each parameter and variable. The choice of base units can impact the performance and
 accuracy of your model, so it's worth taking the time to consider this carefully.
 
-When implementing the :meth:`models.core.base.Model._forward_model` method, you can assume that all inputs are provided
+When implementing the :meth:`triceratops.models.core.base.Model._forward_model` method, you can assume that all inputs are provided
 in their base units. Likewise, the outputs you return from this method should also be in the appropriate base units.
 
-The public facing API method :meth:`models.core.base.Model.forward_model` will handle all unit conversions before and after
-calling :meth:`models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient as possible.
+The public facing API method :meth:`triceratops.models.core.base.Model.forward_model` will handle all unit conversions before and after
+calling :meth:`triceratops.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient as possible.
 
 Unitless variables should have ``""`` as their base units.
 
 A Simple Example
 -----------------
 
-Let's look at the simple mode :class:`~models.emission.synchrotron.Synchrotron_SSA_SBPL_SED`,
+Let's look at the simple mode :class:`~triceratops.models.emission.synchrotron.Synchrotron_SSA_SBPL_SED`,
 which models a synchrotron self-absorbed broken power-law spectral energy distribution (SED).
 
 Looking at the source code, the variables and parameters are

@@ -1,10 +1,11 @@
 .. _inference_data:
+
 ================================
 Inference Data Containers
 ================================
 
 The :class:`~triceratops.data.core.InferenceData` class defines the numerical
-interface between the :mod:`data` layer and the :mod:`inference` layer.
+interface between the :mod:`triceratops.data` layer and the :mod:`triceratops.inference` layer.
 
 It is the only data object recognized by likelihood classes.
 

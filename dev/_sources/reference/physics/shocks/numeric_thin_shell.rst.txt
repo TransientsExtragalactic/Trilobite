@@ -1,4 +1,5 @@
 .. _numeric_thin_shell_shocks:
+
 ==========================================
 Numeric Thin-Shell Shock Models
 ==========================================

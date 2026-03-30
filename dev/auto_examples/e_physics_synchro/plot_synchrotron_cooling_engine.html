@@ -412,6 +412,13 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -501,20 +508,20 @@ at which electrons cool significantly within the dynamical time:</p>
 <p>Electrons with <span class="math notranslate nohighlight">\(\gamma &gt; \gamma_c\)</span> are in the fast-cooling regime;
 those with <span class="math notranslate nohighlight">\(\gamma &lt; \gamma_c\)</span> are in the slow-cooling regime.</p>
 <p>This example demonstrates the
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>
+<code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code>
 class which encapsulates all of these calculations.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
-<p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code>
 must be imported directly from
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.html#module-radiation.synchrotron.cooling" title="radiation.synchrotron.cooling"><code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron.cooling</span></code></a>.  The top-level
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.html#module-radiation.synchrotron" title="radiation.synchrotron"><code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron</span></code></a> namespace only exports the abstract
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron.cooling</span></code>.  The top-level
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">radiation.synchrotron</span></code> namespace only exports the abstract
 base class <code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronCoolingEngine</span></code>.</p>
 </div>
 <section id="relevant-api-references">
 <h2>Relevant API References<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></p></li>
 </ul>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -527,7 +534,7 @@ base class <code class="xref py py-class docutils literal notranslate"><span cla
 </section>
 <section id="engine-instantiation">
 <h2>Engine Instantiation<a class="headerlink" href="#engine-instantiation" title="Link to this heading">#</a></h2>
-<p>The <a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code></a>
+<p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronRadiativeCoolingEngine</span></code>
 is a stateless engine: physical parameters are passed at call time, not stored
 at construction.  The only configuration choice at instantiation is whether to
 use the pitch-angle averaged loss rate (default, <code class="docutils literal notranslate"><span class="pre">pitch_averaged=True</span></code>).</p>
@@ -573,7 +580,7 @@ In log–log space this is a slope-2 line whose intercept increases by
 <img src="../../_images/sphx_glr_plot_synchrotron_cooling_engine_001.png" srcset="../../_images/sphx_glr_plot_synchrotron_cooling_engine_001.png" alt="Synchrotron Cooling Rate vs Lorentz Factor" class = "sphx-glr-single-img"/></section>
 <section id="section-2-cooling-time-vs-and-the-cooling-lorentz-factor">
 <h2>Section 2: Cooling Time vs γ and the Cooling Lorentz Factor<a class="headerlink" href="#section-2-cooling-time-vs-and-the-cooling-lorentz-factor" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_cooling_time"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_cooling_time()</span></code></a>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_cooling_time()</span></code>
 returns <span class="math notranslate nohighlight">\(t_{\rm cool}(\gamma, B)\)</span>.  We overlay a representative
 dynamical time <span class="math notranslate nohighlight">\(t_{\rm dyn}\)</span> and identify the crossing point
 <span class="math notranslate nohighlight">\(\gamma_c\)</span> where <span class="math notranslate nohighlight">\(t_{\rm cool} = t_{\rm dyn}\)</span>.</p>
@@ -648,7 +655,7 @@ slow-cooling.</p>
 <p>The synchrotron frequency of the cooling electron,
 <span class="math notranslate nohighlight">\(\nu_c = \nu_{\rm synch}(\gamma_c, B)\)</span>, traces a
 characteristic <strong>cooling track</strong> as a function of <span class="math notranslate nohighlight">\(t_{\rm dyn}\)</span>.</p>
-<p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency.html#radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency" title="radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine.compute_characteristic_frequency"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_characteristic_frequency()</span></code></a>
+<p><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_characteristic_frequency()</span></code>
 combines <span class="math notranslate nohighlight">\(\gamma_c(B, t)\)</span> and <span class="math notranslate nohighlight">\(\nu(\gamma, B)\)</span> into a
 single convenience method.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_dyn_arr</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.geomspace.html#numpy.geomspace" title="numpy.geomspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span></a><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1000.0</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">day</span></a>
@@ -699,7 +706,7 @@ rapidly with time, eventually leaving the observing band.</p></li>
 <p>For the role of inverse Compton cooling (which modifies <span class="math notranslate nohighlight">\(\gamma_c\)</span>
 when an external radiation field is present) see the companion example on
 synchrotron vs IC cooling.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.599 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.575 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-synchrotron-cooling-engine-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/f7f8354686fdcb46cb0cacb89e7348ce/plot_synchrotron_cooling_engine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_synchrotron_cooling_engine.ipynb</span></code></a></p>

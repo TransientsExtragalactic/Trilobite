@@ -3,7 +3,7 @@ Numerical Thin-Shell Shock in a Broken CSM
 ==========================================
 
 This example demonstrates how to use the
-:class:`~dynamics.supernovae.shock_dynamics.NumericalThinShellShockEngine`
+:class:`~dynamics.shocks.numerical.NumericalThinShellShockEngine`
 to model the evolution of a supernova shock expanding into a **non-uniform
 circumstellar medium (CSM)**.
 
@@ -17,7 +17,7 @@ In this example, we consider:
 - Supernova ejecta with a broken power-law density profile in velocity space
 - A circumstellar medium consisting of:
 
-  - a wind-like :math:`\rho \propto r^{-2}` profile close to the progenitor
+  - a wind-like :math:`\\rho \propto r^{-2}` profile close to the progenitor
   - a transition to a uniform-density interstellar medium (ISM) at larger radii
 
 We then compute and visualize the evolution of the shock radius, velocity,
@@ -38,7 +38,7 @@ from astropy import units as u
 from triceratops.dynamics.supernovae.profiles import (
     get_broken_power_law_ejecta_kernel_func,
 )
-from triceratops.dynamics.supernovae.shock_dynamics import NumericalThinShellShockEngine
+from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
 from triceratops.utils.plot_utils import set_plot_style
 
 # %%

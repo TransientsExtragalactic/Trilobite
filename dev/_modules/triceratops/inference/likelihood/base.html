@@ -449,23 +449,23 @@
 <span class="c1"># Likelihood Base Class                                        #</span>
 <span class="c1"># ============================================================ #</span>
 <div class="viewcode-block" id="Likelihood">
-<a class="viewcode-back" href="../../../../reference/inference/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">Likelihood</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for statistical likelihood functions.</span>
 
-<span class="sd">    The :class:`Likelihood` class defines the interface and execution</span>
+<span class="sd">    The :class:`~triceratops.inference.likelihood.base.Likelihood` class defines the interface and execution</span>
 <span class="sd">    semantics for evaluating the probability of observational data</span>
 <span class="sd">    given a physical model.</span>
 
 <span class="sd">    This class operates strictly on:</span>
 
-<span class="sd">    - A validated :class:`~triceratops.inference.data.InferenceData` object</span>
+<span class="sd">    - A validated :class:`~triceratops.data.core.InferenceData` object</span>
 <span class="sd">    - A concrete subclass of :class:`~triceratops.models.core.base.Model`</span>
 
 <span class="sd">    It performs **no unit coercion, column resolution, or table parsing**.</span>
 <span class="sd">    Those responsibilities belong to the data ingestion layer</span>
-<span class="sd">    (e.g. :class:`DataContainer` → :class:`InferenceData`).</span>
+<span class="sd">    (e.g. :class:`~triceratops.data.core.DataContainer` → :class:`~triceratops.data.core.InferenceData`).</span>
 
 <span class="sd">    Architectural Role</span>
 <span class="sd">    ------------------</span>
@@ -484,7 +484,7 @@
 <span class="sd">    4. **Model**</span>
 <span class="sd">       Encodes forward physics.</span>
 
-<span class="sd">    The :class:`Likelihood` layer is therefore a **pure statistical engine**</span>
+<span class="sd">    The :class:`~triceratops.inference.likelihood.base.Likelihood` layer is therefore a **pure statistical engine**</span>
 <span class="sd">    operating on already-validated numerical data.</span>
 
 <span class="sd">    Design Principles</span>
@@ -520,8 +520,6 @@
     <span class="c1"># ============================================================ #</span>
     <span class="c1"># Initialization                                               #</span>
     <span class="c1"># ============================================================ #</span>
-<div class="viewcode-block" id="Likelihood.__init__">
-<a class="viewcode-back" href="../../../../reference/inference/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">InferenceData</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialize the likelihood object.</span>
@@ -530,7 +528,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        model : Model</span>
 <span class="sd">            The forward model used to generate predicted observables.</span>
-<span class="sd">            Must be an instance of :class:`Model`.</span>
+<span class="sd">            Must be an instance of :class:`~triceratops.models.core.base.Model`.</span>
 
 <span class="sd">        data : InferenceData</span>
 <span class="sd">            Fully validated, immutable dataset containing</span>
@@ -544,7 +542,7 @@
 <span class="sd">        Raises</span>
 <span class="sd">        ------</span>
 <span class="sd">        TypeError</span>
-<span class="sd">            If `model` is not a :class:`Model` instance.</span>
+<span class="sd">            If `model` is not a :class:`~triceratops.models.core.base.Model` instance.</span>
 <span class="sd">        TypeError</span>
 <span class="sd">            If `data` is not an :class:`InferenceData` instance.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
@@ -561,8 +559,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
 
         <span class="c1"># Validate model–data compatibility</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span></div>
-
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
 
     <span class="c1"># ============================================================ #</span>
     <span class="c1"># Configuration &amp; Validation                                   #</span>
@@ -621,6 +618,8 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">raise</span> <span class="ne">NotImplementedError</span>
 
+<div class="viewcode-block" id="Likelihood.log_likelihood">
+<a class="viewcode-back" href="../../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html#triceratops.inference.likelihood.base.Likelihood.log_likelihood">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">],</span>
@@ -638,7 +637,7 @@
 <span class="sd">        ----------</span>
 <span class="sd">        parameters : dict</span>
 <span class="sd">            Mapping of model parameter names to values in any format</span>
-<span class="sd">            accepted by :meth:`Model.coerce_model_parameters`.</span>
+<span class="sd">            accepted by :meth:`~triceratops.models.core.base.Model.coerce_model_parameters`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -653,11 +652,12 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span></div>
+</div>
 
 
 
 <div class="viewcode-block" id="GaussianLikelihood">
-<a class="viewcode-back" href="../../../../reference/inference/triceratops.inference.likelihood.base.GaussianLikelihood.html#triceratops.inference.likelihood.base.GaussianLikelihood">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html#triceratops.inference.likelihood.base.GaussianLikelihood">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihood</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Multivariate Gaussian log-likelihood for uncensored observations.</span>
@@ -731,7 +731,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    ~triceratops.inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># ============================================================</span>
@@ -833,7 +833,7 @@
 
 
 <div class="viewcode-block" id="GaussianCensoredLikelihood">
-<a class="viewcode-back" href="../../../../reference/inference/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood">[docs]</a>
+<a class="viewcode-back" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">GaussianCensoredLikelihood</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Multivariate Gaussian log-likelihood with support for censored data.</span>
@@ -917,7 +917,7 @@
 
 <span class="sd">    See Also</span>
 <span class="sd">    --------</span>
-<span class="sd">    ~inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    ~triceratops.inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># ============================================================</span>

@@ -1,6 +1,7 @@
 :orphan:
 
-.. _examples:
+.. _gallery_examples:
+
 ###########################
 Triceratops Example Gallery
 ###########################

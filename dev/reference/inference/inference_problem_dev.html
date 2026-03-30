@@ -427,7 +427,7 @@
   <section id="inference-problem-developer-guide">
 <span id="inference-problem-dev"></span><h1>Inference Problem Developer Guide<a class="headerlink" href="#inference-problem-developer-guide" title="Link to this heading">#</a></h1>
 <p>This document describes how to extend and customize the
-<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> framework.</p>
+<a class="reference internal" href="../../_as_gen/triceratops.inference.problem.InferenceProblem.html#triceratops.inference.problem.InferenceProblem" title="triceratops.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a> framework.</p>
 <p>If you are writing new likelihoods, you should read
 <a class="reference internal" href="likelihood_dev.html#likelihood-dev"><span class="std std-ref">Likelihood Development Guide</span></a> first. This guide focuses specifically on:</p>
 <ul class="simple">
@@ -443,8 +443,8 @@
 <p>The <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> class serves as the <strong>statistical glue layer</strong>
 between:</p>
 <ul class="simple">
-<li><p>a physical <a class="reference internal" href="../../_as_gen/models.core.base.Model.html#models.core.base.Model" title="models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>,</p></li>
-<li><p>a <a class="reference internal" href="../../_as_gen/inference.likelihood.base.Likelihood.html#inference.likelihood.base.Likelihood" title="inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>,</p></li>
+<li><p>a physical <a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>,</p></li>
+<li><p>a <a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>,</p></li>
 <li><p>and external sampling backends.</p></li>
 </ul>
 <p>Its responsibilities are strictly limited to:</p>
@@ -468,10 +468,10 @@ between:</p>
 <section id="inferenceparameter">
 <h3>InferenceParameter<a class="headerlink" href="#inferenceparameter" title="Link to this heading">#</a></h3>
 <p>Each model parameter is wrapped in an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code>.</p>
+<a class="reference internal" href="../../_as_gen/triceratops.inference.problem.InferenceParameter.html#triceratops.inference.problem.InferenceParameter" title="triceratops.inference.problem.InferenceParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code></a>.</p>
 <p>This dataclass stores:</p>
 <ul class="simple">
-<li><p>the underlying <a class="reference internal" href="../../_as_gen/models.core.parameters.ModelParameter.html#models.core.parameters.ModelParameter" title="models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a>,</p></li>
+<li><p>the underlying <a class="reference internal" href="../../_as_gen/triceratops.models.core.parameters.ModelParameter.html#triceratops.models.core.parameters.ModelParameter" title="triceratops.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a>,</p></li>
 <li><p>freeze status,</p></li>
 <li><p>prior object,</p></li>
 <li><p>optional transforms,</p></li>
@@ -624,7 +624,7 @@ Let’s use more prose and fewer bulleted list. I want to focus on a nice readab
 <section id="id1">
 <h1>Inference Problem Developer Guide<a class="headerlink" href="#id1" title="Link to this heading">#</a></h1>
 <p>This guide describes the internal structure and intended extension points of
-<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code>. It is written for
+<a class="reference internal" href="../../_as_gen/triceratops.inference.problem.InferenceProblem.html#triceratops.inference.problem.InferenceProblem" title="triceratops.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a>. It is written for
 developers who wish to customize parameter handling, introduce new inference
 workflows, or build higher-level abstractions on top of the core inference layer.</p>
 <p>If you are implementing a new likelihood, see <a class="reference internal" href="likelihood_dev.html#likelihood-dev"><span class="std std-ref">Likelihood Development Guide</span></a> first.
@@ -649,11 +649,11 @@ engine</em> with strong bookkeeping guarantees.</p>
 <section id="parameter-wrapping-and-internal-representation">
 <h2>Parameter Wrapping and Internal Representation<a class="headerlink" href="#parameter-wrapping-and-internal-representation" title="Link to this heading">#</a></h2>
 <p>When an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code> is initialized, it receives a fully
-constructed <a class="reference internal" href="triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>
+constructed <a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>
 instance. From this likelihood, it extracts the underlying model and reads
 the model’s declared parameter definitions.</p>
 <p>Each model parameter is wrapped in an
-<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code> object. This wrapper
+<a class="reference internal" href="../../_as_gen/triceratops.inference.problem.InferenceParameter.html#triceratops.inference.problem.InferenceParameter" title="triceratops.inference.problem.InferenceParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceParameter</span></code></a> object. This wrapper
 stores:</p>
 <ul class="simple">
 <li><p>whether the parameter is frozen,</p></li>

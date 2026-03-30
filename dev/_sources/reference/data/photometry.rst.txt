@@ -1,9 +1,10 @@
 .. _light_curves:
+
 ============================
 Photometry
 ============================
 
-Photometry data in Triceratops is handled through the :class:`~data.photometry.RadioPhotometryContainer` class, which
+Photometry data in Triceratops is handled through the :class:`~triceratops.data.photometry.RadioPhotometryContainer` class, which
 is effectively a wrapper around a standard :class:`astropy.table.Table` object with an enforced schema dictating the
 required columns and their meanings. This structure allows for easy loading, manipulation, and access to photometric
 data. The photometry container includes methods for common operations such as filtering data by time or frequency,
@@ -95,7 +96,7 @@ the photometry container in analysis and modeling.
 Creating a Photometry Container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To create a :class:`~data.photometry.RadioPhotometryContainer`, you can either load data from a file or create it
+To create a :class:`~triceratops.data.photometry.RadioPhotometryContainer`, you can either load data from a file or create it
 directly from an :class:`astropy.table.Table` object.
 
 From a Table

@@ -411,6 +411,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -483,8 +490,8 @@ to download the full example code.</p>
 <span id="sphx-glr-auto-examples-a-data-plot-specific-epochs-py"></span><h1>Plot Single Epochs<a class="headerlink" href="#plot-single-epochs" title="Link to this heading">#</a></h1>
 <p>In this simple cookbook, we’ll load in some data and
 break it into epochs and then plot a subset of those
-epochs using the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.plot_epoch.html#data.photometry.RadioPhotometryContainer.plot_epoch" title="data.photometry.RadioPhotometryContainer.plot_epoch"><code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_epoch()</span></code></a>
-method of <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>.</p>
+epochs using the <code class="xref py py-meth docutils literal notranslate"><span class="pre">plot_epoch()</span></code>
+method of <code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>.</p>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <p>First, we need to import the necessary libraries and set up the plotting style.</p>
@@ -498,7 +505,7 @@ method of <a class="reference internal" href="../../_as_gen/data.photometry.Radi
 <p>We’ll use a set of synthetically generated radio photometry data for this example. The data is
 stored in the <code class="docutils literal notranslate"><span class="pre">_data/example_photometry.fits</span></code> file within the documentation source directory.</p>
 <p>This dataset is almost in the perfect format for loading into a
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
+<code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
 we will need to select one. We also need to give a reference time for the observations, which we will set to the JD
 of the first observation.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resolve the path to the dataset. In this case, we seek out the data in the</span>
@@ -547,8 +554,8 @@ Length = 62 rows
 </div>
 <p>If you already have clearly defined epochs in mind, you can specify them directly in your table using the
 <code class="docutils literal notranslate"><span class="pre">epoch_id</span></code> column, or you can use the built-in method
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_indices.html#data.photometry.RadioPhotometryContainer.set_epochs_from_indices" title="data.photometry.RadioPhotometryContainer.set_epochs_from_indices"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code></a>; however, we do not have that information here.</p>
-<p>Instead, we can use the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps.html#data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps" title="data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps"><code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code></a> method to
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_indices()</span></code>; however, we do not have that information here.</p>
+<p>Instead, we can use the <code class="xref py py-meth docutils literal notranslate"><span class="pre">set_epochs_from_time_gaps()</span></code> method to
 automatically define epochs based on gaps in the observation times. We’ll specify a gap threshold of 2 days to
 separate the epochs.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set epochs based on time gaps of 2 days.</span>
@@ -584,7 +591,7 @@ separate the epochs.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_specific_epochs_001.png" srcset="../../_images/sphx_glr_plot_specific_epochs_001.png" alt="Radio Photometry for Specific Epochs" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.200 seconds)</p>
+<img src="../../_images/sphx_glr_plot_specific_epochs_001.png" srcset="../../_images/sphx_glr_plot_specific_epochs_001.png" alt="Radio Photometry for Specific Epochs" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.225 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-a-data-plot-specific-epochs-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/9bc345da5cef454260175aa532186ef1/plot_specific_epochs.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_specific_epochs.ipynb</span></code></a></p>

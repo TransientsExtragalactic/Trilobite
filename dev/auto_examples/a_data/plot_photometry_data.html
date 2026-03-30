@@ -411,6 +411,13 @@
 <li class="toctree-l2"><a class="reference internal" href="../e_physics_synchro/plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -482,7 +489,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="plot-radio-photometry-data">
 <span id="sphx-glr-auto-examples-a-data-plot-photometry-data-py"></span><h1>Plot Radio Photometry Data<a class="headerlink" href="#plot-radio-photometry-data" title="Link to this heading">#</a></h1>
 <p>This example demonstrates how to load and plot radio photometry data using the
-Triceratops library. We’ll be using the <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>
+Triceratops library. We’ll be using the <code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>
 to manage and visualize the data.</p>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
@@ -497,7 +504,7 @@ to manage and visualize the data.</p>
 <p>We’ll use a set of synthetically generated radio photometry data for this example. The data is
 stored in the <code class="docutils literal notranslate"><span class="pre">_data/example_photometry.fits</span></code> file within the documentation source directory.</p>
 <p>This dataset is almost in the perfect format for loading into a
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
+<code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>, except that it doesn’t have an explicit <code class="docutils literal notranslate"><span class="pre">time</span></code> column, so
 we will need to select one. We also need to give a reference time for the observations, which we will set to the JD
 of the first observation.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Resolve the path to the dataset. In this case, we seek out the data in the</span>
@@ -544,9 +551,9 @@ obs1_K_band1of4    0.00821531350281548 ...            2.65      -66.2
 Length = 62 rows
 </pre></div>
 </div>
-<p>Now that we have loaded the data, we can plot it. The <a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.html#data.photometry.RadioPhotometryContainer" title="data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code></a>
+<p>Now that we have loaded the data, we can plot it. The <code class="xref py py-class docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer</span></code>
 includes a built-in plotting method that makes this straightforward:
-<a class="reference internal" href="../../_as_gen/data.photometry.RadioPhotometryContainer.plot_photometry.html#data.photometry.RadioPhotometryContainer.plot_photometry" title="data.photometry.RadioPhotometryContainer.plot_photometry"><code class="xref py py-meth docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer.plot_photometry()</span></code></a>.</p>
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">data.photometry.RadioPhotometryContainer.plot_photometry()</span></code>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Set the plot style.</span>
 <span class="n">set_plot_style</span><span class="p">()</span>
 
@@ -560,7 +567,7 @@ includes a built-in plotting method that makes this straightforward:
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.show.html#matplotlib.figure.Figure.show" title="matplotlib.figure.Figure.show" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-method"><span class="n">fig</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_photometry_data_001.png" srcset="../../_images/sphx_glr_plot_photometry_data_001.png" alt="plot photometry data" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.372 seconds)</p>
+<img src="../../_images/sphx_glr_plot_photometry_data_001.png" srcset="../../_images/sphx_glr_plot_photometry_data_001.png" alt="plot photometry data" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.414 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-a-data-plot-photometry-data-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/0d39832746ccda535cb736979b68a094/plot_photometry_data.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_photometry_data.ipynb</span></code></a></p>

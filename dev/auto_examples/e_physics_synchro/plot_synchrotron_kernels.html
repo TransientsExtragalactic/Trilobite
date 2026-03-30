@@ -412,6 +412,13 @@
 <li class="toctree-l2"><a class="reference internal" href="plot_SSA_cooling_SED.html">Synchrotron Spectra With Cooling and SSA</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../f_accretion/index.html">Physics Backend Examples — Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_adv_disk.html">Advective Cooling in One-Zone Accretion Disks</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_one_zone_disk_quickstart.html">One-Zone Accretion Disk — Quickstart</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_disk_eos_comparison.html">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../f_accretion/plot_fallback_disk.html">Accretion Disk with Fallback Mass Supply</a></li>
+</ul>
+</details></li>
 </ul>
 </div>
 </nav></div>
@@ -507,10 +514,10 @@ Triceratops and validates that the interpolation is accurate for practical use.<
 <section id="relevant-api-references">
 <h2>Relevant API References<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.first_synchrotron_kernel.html#radiation.synchrotron.core.first_synchrotron_kernel" title="radiation.synchrotron.core.first_synchrotron_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">first_synchrotron_kernel()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.second_synchrotron_kernel.html#radiation.synchrotron.core.second_synchrotron_kernel" title="radiation.synchrotron.core.second_synchrotron_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">second_synchrotron_kernel()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.get_first_kernel_interpolator.html#radiation.synchrotron.core.get_first_kernel_interpolator" title="radiation.synchrotron.core.get_first_kernel_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.get_second_kernel_interpolator.html#radiation.synchrotron.core.get_second_kernel_interpolator" title="radiation.synchrotron.core.get_second_kernel_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_second_kernel_interpolator()</span></code></a></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">first_synchrotron_kernel()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">second_synchrotron_kernel()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code></p></li>
+<li><p><code class="xref py py-func docutils literal notranslate"><span class="pre">get_second_kernel_interpolator()</span></code></p></li>
 </ul>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">time</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/time.html#time.perf_counter" title="time.perf_counter" class="sphx-glr-backref-module-time sphx-glr-backref-type-py-function"><span class="n">perf_counter</span></a>
 
@@ -534,7 +541,7 @@ low-frequency regime (<span class="math notranslate nohighlight">\(x \ll 1\)</sp
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The exact kernel functions use modified Bessel functions (<span class="math notranslate nohighlight">\(K_{5/3}\)</span> and
-<span class="math notranslate nohighlight">\(K_{2/3}\)</span>) from <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/special.html#module-scipy.special" title="(in SciPy v1.17.0)"><code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.special</span></code></a> and are computed via numerical
+<span class="math notranslate nohighlight">\(K_{2/3}\)</span>) from <code class="xref py py-mod docutils literal notranslate"><span class="pre">scipy.special</span></code> and are computed via numerical
 integration. This makes them accurate but slow for population-integral loops.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">x</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.geomspace.html#numpy.geomspace" title="numpy.geomspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span></a><span class="p">(</span><span class="mf">1e-4</span><span class="p">,</span> <span class="mf">1e2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
@@ -545,9 +552,9 @@ integration. This makes them accurate but slow for population-integral loops.</p
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 20% |█▉        | 🦖 195/1000 [00:00&lt;00:00, 1942.32it/s]
- 48% |████▊     | 🦖 485/1000 [00:00&lt;00:00, 2503.86it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3898.05it/s]
+ 18% |█▊        | 🦖 183/1000 [00:00&lt;00:00, 1829.75it/s]
+ 45% |████▍     | 🦖 448/1000 [00:00&lt;00:00, 2310.49it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3742.25it/s]
 </pre></div>
 </div>
 </section>
@@ -608,12 +615,12 @@ distribution, the net polarization vanishes.</p>
 <p>For population-level spectra that integrate over the electron distribution,
 the kernel is called inside an inner loop over Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span>.
 Triceratops provides interpolated kernels via
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.get_first_kernel_interpolator.html#radiation.synchrotron.core.get_first_kernel_interpolator" title="radiation.synchrotron.core.get_first_kernel_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code></a> that
+<code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code> that
 pre-tabulate <span class="math notranslate nohighlight">\(F(x)\)</span> on a log-space grid.</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>Use the interpolated kernel whenever you call
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.compute_ME_spectrum_from_dist_function.html#radiation.synchrotron.core.compute_ME_spectrum_from_dist_function" title="radiation.synchrotron.core.compute_ME_spectrum_from_dist_function"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ME_spectrum_from_dist_function()</span></code></a>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ME_spectrum_from_dist_function()</span></code>
 repeatedly (e.g. in an MCMC loop). The speedup factor is typically
 <span class="math notranslate nohighlight">\(10\)</span>–<span class="math notranslate nohighlight">\(100\times\)</span> with negligible accuracy loss.</p>
 </div>
@@ -644,27 +651,27 @@ repeatedly (e.g. in an MCMC loop). The speedup factor is typically
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/2000 [00:00&lt;?, ?it/s]
-  8% |▊         | 🦖 150/2000 [00:00&lt;00:01, 1498.02it/s]
- 16% |█▌        | 🦖 316/2000 [00:00&lt;00:01, 1591.14it/s]
- 25% |██▌       | 🦖 506/2000 [00:00&lt;00:00, 1728.95it/s]
- 36% |███▋      | 🦖 729/2000 [00:00&lt;00:00, 1924.86it/s]
- 51% |█████▏    | 🦖 1025/2000 [00:00&lt;00:00, 2297.15it/s]
- 81% |████████  | 🦖 1614/2000 [00:00&lt;00:00, 3516.93it/s]
-100% |██████████| 🦖 2000/2000 [00:00&lt;00:00, 3225.42it/s]
+  7% |▋         | 🦖 140/2000 [00:00&lt;00:01, 1398.55it/s]
+ 15% |█▍        | 🦖 294/2000 [00:00&lt;00:01, 1480.72it/s]
+ 23% |██▎       | 🦖 468/2000 [00:00&lt;00:00, 1598.00it/s]
+ 34% |███▎      | 🦖 672/2000 [00:00&lt;00:00, 1769.87it/s]
+ 46% |████▌     | 🦖 922/2000 [00:00&lt;00:00, 2030.84it/s]
+ 68% |██████▊   | 🦖 1370/2000 [00:00&lt;00:00, 2860.98it/s]
+100% |██████████| 🦖 2000/2000 [00:00&lt;00:00, 3052.98it/s]
 
   0% |          | 🦖 0/1000 [00:00&lt;?, ?it/s]
- 20% |█▉        | 🦖 195/1000 [00:00&lt;00:00, 1944.87it/s]
- 49% |████▉     | 🦖 490/1000 [00:00&lt;00:00, 2535.44it/s]
-100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3926.89it/s]
+ 18% |█▊        | 🦖 185/1000 [00:00&lt;00:00, 1847.87it/s]
+ 45% |████▌     | 🦖 454/1000 [00:00&lt;00:00, 2340.85it/s]
+100% |██████████| 🦖 1000/1000 [00:00&lt;00:00, 3767.86it/s]
 
   0% |          | 🦖 0/500 [00:00&lt;?, ?it/s]
- 39% |███▉      | 🦖 194/500 [00:00&lt;00:00, 1936.53it/s]
- 97% |█████████▋| 🦖 486/500 [00:00&lt;00:00, 2510.95it/s]
-100% |██████████| 🦖 500/500 [00:00&lt;00:00, 2456.79it/s]
-Interpolator setup time : 620.7 ms
-Exact kernel   (500 calls): 203.8 ms
+ 37% |███▋      | 🦖 185/500 [00:00&lt;00:00, 1843.43it/s]
+ 91% |█████████ | 🦖 455/500 [00:00&lt;00:00, 2346.27it/s]
+100% |██████████| 🦖 500/500 [00:00&lt;00:00, 2363.86it/s]
+Interpolator setup time : 655.9 ms
+Exact kernel   (500 calls): 211.8 ms
 Interp kernel  (500 calls): 0.1 ms
-Speedup factor : 1674.7×
+Speedup factor : 1524.6×
 </pre></div>
 </div>
 </section>
@@ -703,14 +710,14 @@ Their asymptotic forms — <span class="math notranslate nohighlight">\(F \propt
 <span class="math notranslate nohighlight">\(F \propto \sqrt{x}\,e^{-x}\)</span> at high <span class="math notranslate nohighlight">\(x\)</span> — directly produce the
 spectral slopes observed in radio-to-X-ray synchrotron sources.</p>
 <p>The interpolated kernel available via
-<a class="reference internal" href="../../_as_gen/radiation.synchrotron.core.get_first_kernel_interpolator.html#radiation.synchrotron.core.get_first_kernel_interpolator" title="radiation.synchrotron.core.get_first_kernel_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code></a>
+<code class="xref py py-func docutils literal notranslate"><span class="pre">get_first_kernel_interpolator()</span></code>
 reproduces the exact values to better than 0.1% over the range
 <span class="math notranslate nohighlight">\(x \in [10^{-5}, 10^2]\)</span> while offering a substantial speed advantage
 for population integrals. The setup cost (building the interpolation table)
 is paid once, after which each evaluation is essentially free.</p>
 <p>For population-level spectra, see the companion example
-<span class="xref std std-ref">sphx_glr_galleries_examples_e_physics_synchro_plot_PL_sed.py</span>.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.537 seconds)</p>
+<a class="reference internal" href="plot_PL_sed.html#sphx-glr-auto-examples-e-physics-synchro-plot-pl-sed-py"><span class="std std-ref">Synchrotron Spectra from Single Electrons and Electron Populations</span></a>.</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.676 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-e-physics-synchro-plot-synchrotron-kernels-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/bb1c71ab3dee846934b8f8013759d6b6/plot_synchrotron_kernels.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_synchrotron_kernels.ipynb</span></code></a></p>

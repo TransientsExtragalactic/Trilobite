@@ -188,7 +188,7 @@ A convenience constructor allows column renaming:
 From a File
 ^^^^^^^^^^^
 
-Files readable by :func:`astropy.table.Table.read` may be loaded directly:
+Files readable by :meth:`astropy.table.Table.read` may be loaded directly:
 
 .. code-block:: python
 

@@ -475,6 +475,7 @@
     <span class="n">_RunParams</span><span class="p">,</span>
     <span class="n">_SpecDict</span><span class="p">,</span>
 <span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.integrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_one_zone_model</span>
 
 <span class="c1"># ------------------------------------------------------------- #</span>
 <span class="c1"># Package versioning and Type checking                          #</span>
@@ -695,7 +696,7 @@
 
 
 <div class="viewcode-block" id="OneZoneAccretionDiskBase">
-<a class="viewcode-back" href="../../../../../reference/physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">OneZoneAccretionDiskBase</span><span class="p">(</span><span class="n">ABC</span><span class="p">,</span> <span class="n">metaclass</span><span class="o">=</span><span class="n">_OneZoneMeta</span><span class="p">):</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Abstract base class for one-zone accretion disk models.</span>
@@ -736,8 +737,7 @@
 
 <span class="sd">    1. Populate the four declaration dicts and :attr:`CYTHON_FIELD_MAP`.</span>
 <span class="sd">    2. Implement :meth:`_build_cython_closure` to return the compiled closure.</span>
-<span class="sd">    3. Implement :meth:`_pack_cython_parameters` to pack the parameter array.</span>
-<span class="sd">    4. Implement :meth:`to_spec_dict` and :meth:`from_spec_dict` for HDF5.</span>
+<span class="sd">    3. Implement :meth:`to_spec_dict` and :meth:`from_spec_dict` for HDF5.</span>
 
 <span class="sd">    .. code-block:: python</span>
 
@@ -853,7 +853,7 @@
 <span class="sd">    :attr:`CYTHON_FIELD_MAP`), or computed as derived quantities in Python.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
-    <span class="n">CYTHON_FIELD_MAP</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">CYTHON_FIELD_MAP</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{}</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;dict : Mapping from :attr:`RESULT_FIELDS` keys to Cython result row indices.</span>
 
 <span class="sd">    Each entry maps a field name to either an :class:`int` row index in the</span>
@@ -866,10 +866,20 @@
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="c1"># ==================================================== #</span>
+    <span class="c1"># Metzger+08 disk geometry constants                   #</span>
+    <span class="c1"># ==================================================== #</span>
+    <span class="c1"># These mirror the C-level DISK_A / DISK_B / DISK_F0 constants defined in</span>
+    <span class="c1"># closure.pyx and are exposed here so Python-side helpers (e.g. computing</span>
+    <span class="c1"># a self-consistent J_D_0) can reference them without importing Cython.</span>
+    <span class="n">_A</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.62</span>  <span class="c1"># Metzger+08 disk correction factor A</span>
+    <span class="n">_B</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.33</span>  <span class="c1"># Metzger+08 disk correction factor B</span>
+    <span class="n">_F</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.6</span>  <span class="c1"># Metzger+08 disk correction factor F0</span>
+
+    <span class="c1"># ==================================================== #</span>
     <span class="c1"># Initialization                                       #</span>
     <span class="c1"># ==================================================== #</span>
 <div class="viewcode-block" id="OneZoneAccretionDiskBase.__init__">
-<a class="viewcode-back" href="../../../../../reference/physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.__init__">[docs]</a>
+<a class="viewcode-back" href="../../../../../reference/physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">context_parameters</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Initialise the one-zone disk model.</span>
@@ -1018,6 +1028,8 @@
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Parameter Processing                                 #</span>
     <span class="c1"># ==================================================== #</span>
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.process_runtime_parameters">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.process_runtime_parameters.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.process_runtime_parameters">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_runtime_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">runtime_parameters</span><span class="p">:</span> <span class="n">_ParamDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_RunParams</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Validate and convert runtime parameters to a log-CGS float dict.</span>
@@ -1097,8 +1109,11 @@
             <span class="k">else</span><span class="p">:</span>
                 <span class="n">run_params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">cgs_value</span>
 
-        <span class="k">return</span> <span class="n">run_params</span>
+        <span class="k">return</span> <span class="n">run_params</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.process_initial_conditions">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.process_initial_conditions.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.process_initial_conditions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">process_initial_conditions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">initial_conditions</span><span class="p">:</span> <span class="n">_ParamDict</span><span class="p">,</span>
@@ -1169,7 +1184,8 @@
 
             <span class="n">y0</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cgs_value</span><span class="p">)</span> <span class="k">if</span> <span class="n">spec</span><span class="p">[</span><span class="s2">&quot;log_transform&quot;</span><span class="p">]</span> <span class="k">else</span> <span class="n">cgs_value</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y0</span><span class="p">)</span></div>
+
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Abstract Cython Interface                            #</span>
@@ -1199,54 +1215,6 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="o">...</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_pack_base_cython_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Pack the standard 4-element base parameter array ``[MBH, R_in, alpha, mu]``.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        run_params : dict[str, float]</span>
-<span class="sd">            Processed per-solve parameters as returned by</span>
-<span class="sd">            :meth:`process_runtime_parameters`.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray, shape (4,)</span>
-<span class="sd">            ``[MBH (g), R_in (cm), alpha, mu]`` as a C-contiguous float64 array.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
-            <span class="p">[</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_M_BH&quot;</span><span class="p">]),</span>
-                <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_R_in&quot;</span><span class="p">]),</span>
-                <span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
-            <span class="p">],</span>
-            <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span>
-        <span class="p">)</span>
-
-    <span class="nd">@abstractmethod</span>
-    <span class="k">def</span><span class="w"> </span><span class="nf">_pack_cython_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return the parameter array consumed by ``run_one_zone_model``.</span>
-
-<span class="sd">        The Cython integrator expects a contiguous float64 array of shape</span>
-<span class="sd">        ``(&gt;=4,)`` with elements ``[MBH (g), R_in (cm), alpha, mu, ...]``</span>
-<span class="sd">        in linear CGS.  Elements beyond index 3 are closure-specific extra</span>
-<span class="sd">        parameters accessible via ``params.extra``.</span>
-
-<span class="sd">        Parameters</span>
-<span class="sd">        ----------</span>
-<span class="sd">        run_params : dict[str, float]</span>
-<span class="sd">            Processed per-solve parameters as returned by</span>
-<span class="sd">            :meth:`process_runtime_parameters`.  Log-transformed parameters</span>
-<span class="sd">            are stored under ``&quot;log_{key}&quot;``; others under ``&quot;{key}&quot;``.</span>
-
-<span class="sd">        Returns</span>
-<span class="sd">        -------</span>
-<span class="sd">        np.ndarray, shape (&gt;=4,)</span>
-<span class="sd">            ``[MBH (g), R_in (cm), alpha, mu, ...]`` as a C-contiguous</span>
-<span class="sd">            float64 array.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        <span class="o">...</span>
-
     <span class="k">def</span><span class="w"> </span><span class="nf">_compute_derived_result_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">result_array</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="n">_RunParams</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute Python-side derived result fields.</span>
 
@@ -1273,6 +1241,8 @@
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Abstract Serialization Hooks                         #</span>
     <span class="c1"># ==================================================== #</span>
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.to_spec_dict">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.to_spec_dict.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.to_spec_dict">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_spec_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Return a JSON-serialisable dict that fully describes this model instance.</span>
@@ -1302,8 +1272,11 @@
         <span class="k">return</span> <span class="p">{</span>
             <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;triceratops.dynamics.accretion.one_zone.core:</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
             <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">,</span>
-        <span class="p">}</span>
+        <span class="p">}</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.from_spec_dict">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.from_spec_dict.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.from_spec_dict">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_spec_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">_SpecDict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OneZoneAccretionDiskBase&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1333,17 +1306,21 @@
 <span class="sd">            The instance method that produces the dict this method reads.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="n">kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;target&quot;</span><span class="p">}</span>
-        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Public Solver Interface                              #</span>
     <span class="c1"># ==================================================== #</span>
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">initial_conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">runtime_parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
         <span class="n">t_span</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span>  <span class="c1"># (t_start, t_end); plain float [s] or Quantity</span>
         <span class="n">max_steps</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100_000</span><span class="p">,</span>
+        <span class="n">epsilon</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span>
         <span class="n">fail_fast</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OneZoneAccretionResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -1369,6 +1346,11 @@
 <span class="sd">            floats (seconds) or :class:`~astropy.units.Quantity` objects.</span>
 <span class="sd">        max_steps : int, optional</span>
 <span class="sd">            Maximum number of integration steps.  Default is 100 000.</span>
+<span class="sd">        epsilon : float, optional</span>
+<span class="sd">            Adaptive time-step fraction passed to the Cython integrator.</span>
+<span class="sd">            The step size is :math:`\Delta t = \epsilon\,\min(t_{\rm visc},</span>
+<span class="sd">            |M/\dot{M}|, |J/\dot{J}|)`.  Must be in ``(0, 1)``.  Default is</span>
+<span class="sd">            ``1e-6``.</span>
 <span class="sd">        fail_fast : bool, optional</span>
 <span class="sd">            If ``True`` (default), raise :exc:`RuntimeError` when the</span>
 <span class="sd">            integrator signals failure.  If ``False``, issue a warning and</span>
@@ -1415,8 +1397,6 @@
 <span class="sd">        OneZoneAccretionResult :</span>
 <span class="sd">            The object returned by this method.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.integrator</span><span class="w"> </span><span class="kn">import</span> <span class="n">run_one_zone_model</span>
-
         <span class="c1"># --- Process time span --- #</span>
         <span class="n">t_start</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t_span</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;s&quot;</span><span class="p">))</span>
         <span class="n">t_end</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t_span</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s2">&quot;s&quot;</span><span class="p">))</span>
@@ -1427,15 +1407,19 @@
 
         <span class="c1"># y0 is log-CGS; the Cython integrator expects linear CGS.</span>
         <span class="n">initial_state</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y0</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
-        <span class="n">params_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pack_cython_parameters</span><span class="p">(</span><span class="n">run_params</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="c1"># Build the closure, then bind all per-solve parameters into it.</span>
+        <span class="c1"># bind_runtime_parameters constructs any physics-component wrappers</span>
+        <span class="c1"># (CFallback, CAdvection) and stores raw pointers for _pack_params.</span>
         <span class="n">closure</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_cython_closure</span><span class="p">()</span>
+        <span class="n">closure</span><span class="o">.</span><span class="n">bind_runtime_parameters</span><span class="p">(</span><span class="n">run_params</span><span class="p">)</span>
 
         <span class="c1"># --- Run the Cython integrator --- #</span>
         <span class="n">success</span> <span class="o">=</span> <span class="kc">True</span>
         <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Cython integrator completed successfully.&quot;</span>
         <span class="n">raw</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="k">try</span><span class="p">:</span>
-            <span class="n">raw</span> <span class="o">=</span> <span class="n">run_one_zone_model</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">params_array</span><span class="p">,</span> <span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">closure</span><span class="p">)</span>
+            <span class="n">raw</span> <span class="o">=</span> <span class="n">run_one_zone_model</span><span class="p">(</span><span class="n">initial_state</span><span class="p">,</span> <span class="n">t_start</span><span class="p">,</span> <span class="n">t_end</span><span class="p">,</span> <span class="n">max_steps</span><span class="p">,</span> <span class="n">closure</span><span class="p">,</span> <span class="n">epsilon</span><span class="p">)</span>
         <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
             <span class="n">success</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">message</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">exc</span><span class="p">)</span>
@@ -1452,8 +1436,11 @@
             <span class="n">run_params</span><span class="o">=</span><span class="n">run_params</span><span class="p">,</span>
             <span class="n">success</span><span class="o">=</span><span class="n">success</span><span class="p">,</span>
             <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.solve_parameter_grid">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_parameter_grid.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_parameter_grid">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">solve_parameter_grid</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">initial_conditions_grid</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">list</span><span class="p">],</span>
@@ -1567,8 +1554,11 @@
             <span class="p">)</span>
             <span class="n">results</span><span class="p">[</span><span class="n">combo_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
 
-        <span class="k">return</span> <span class="n">results</span>
+        <span class="k">return</span> <span class="n">results</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.solve_initial_state">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_initial_state.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_initial_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">solve_initial_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">initial_conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -1634,8 +1624,11 @@
             <span class="n">t_span</span><span class="o">=</span><span class="n">t_span</span><span class="p">,</span>
             <span class="n">max_steps</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
             <span class="n">fail_fast</span><span class="o">=</span><span class="n">fail_fast</span><span class="p">,</span>
-        <span class="p">)</span>
+        <span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.test_initial_state">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.test_initial_state.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.test_initial_state">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">test_initial_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">initial_conditions</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
@@ -1762,11 +1755,14 @@
                 <span class="s2">&quot;note&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;Disk outer radius R_D &gt; R_in (</span><span class="si">{</span><span class="n">R_in_val</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">,</span>
             <span class="p">}</span>
 
-        <span class="k">return</span> <span class="n">report</span>
+        <span class="k">return</span> <span class="n">report</span></div>
+
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Helpers and Utilities                                #</span>
     <span class="c1"># ==================================================== #</span>
+<div class="viewcode-block" id="OneZoneAccretionDiskBase.generate_initial_conditions">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_initial_conditions</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">M_BH</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -1856,6 +1852,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="c1"># M_D_0 and J_D_0 both supplied — normalise units and return.</span>
             <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;M_D_0&quot;</span><span class="p">:</span> <span class="n">M_D_0</span><span class="p">,</span> <span class="s2">&quot;J_D_0&quot;</span><span class="p">:</span> <span class="n">J_D_0</span><span class="p">}</span></div>
+</div>
 
 
 
@@ -1863,7 +1860,7 @@
 <span class="c1"># Result Container                                     #</span>
 <span class="c1"># ==================================================== #</span>
 <div class="viewcode-block" id="OneZoneAccretionResult">
-<a class="viewcode-back" href="../../../../../reference/physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html#triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult">[docs]</a>
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult">[docs]</a>
 <span class="nd">@dataclass</span>
 <span class="k">class</span><span class="w"> </span><span class="nc">OneZoneAccretionResult</span><span class="p">:</span>
 <span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -2157,13 +2154,18 @@
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
 
+<div class="viewcode-block" id="OneZoneAccretionResult.keys">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.keys.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.keys">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">keys</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return all field names present in :attr:`data`, sorted.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span></div>
+
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># HDF5 Persistence                               #</span>
     <span class="c1"># ---------------------------------------------- #</span>
+<div class="viewcode-block" id="OneZoneAccretionResult.to_hdf5">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_hdf5.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_hdf5">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_hdf5</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">_FilePath</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">        Write the result to an HDF5 file.</span>
@@ -2235,8 +2237,11 @@
                 <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
                     <span class="n">arr</span> <span class="o">=</span> <span class="n">val</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">val</span><span class="p">)</span>
                     <span class="n">ds</span> <span class="o">=</span> <span class="n">grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">arr</span><span class="p">)</span>
-                    <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+                    <span class="n">ds</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;units&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="o">.</span><span class="n">unit</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">val</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.from_hdf5">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.from_hdf5.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.from_hdf5">[docs]</a>
     <span class="nd">@classmethod</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">from_hdf5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="n">_FilePath</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OneZoneAccretionResult&quot;</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
@@ -2316,12 +2321,15 @@
             <span class="n">message</span><span class="o">=</span><span class="n">message</span><span class="p">,</span>
         <span class="p">)</span>
         <span class="n">result</span><span class="o">.</span><span class="n">_extra_fields</span> <span class="o">=</span> <span class="n">extra_fields</span>
-        <span class="k">return</span> <span class="n">result</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># Plotting                                       #</span>
     <span class="c1"># ---------------------------------------------- #</span>
 
+<div class="viewcode-block" id="OneZoneAccretionResult.plot_state_variables">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_state_variables.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_state_variables">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_state_variables</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot disk mass and angular momentum versus time.</span>
 
@@ -2340,7 +2348,7 @@
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        fig : `~matplotlib.figure.Figure`</span>
-<span class="sd">        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`, shape (2,)</span>
+<span class="sd">        axes : `numpy.ndarray` of `~matplotlib.axes.Axes`</span>
 
 <span class="sd">        Examples</span>
 <span class="sd">        --------</span>
@@ -2371,8 +2379,11 @@
         <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">))</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.plot_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">plot_kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot a single derived field versus time.</span>
 
@@ -2388,7 +2399,7 @@
 <span class="sd">            Existing axes to draw into.  If ``None``, axes are created from *fig*.</span>
 <span class="sd">        **plot_kwargs</span>
 <span class="sd">            Additional keyword arguments forwarded to</span>
-<span class="sd">            :func:`matplotlib.axes.Axes.loglog`.</span>
+<span class="sd">            ``matplotlib.axes.Axes.loglog``.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -2423,8 +2434,11 @@
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">RESULT_FIELDS</span><span class="p">:</span>
             <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">RESULT_FIELDS</span><span class="p">[</span><span class="n">field_name</span><span class="p">][</span><span class="s2">&quot;description&quot;</span><span class="p">])</span>
 
-        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.plot_all_fields">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_all_fields.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.plot_all_fields">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">plot_all_fields</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ncols</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span><span class="p">,</span> <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Plot every :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS` entry in a grid.</span>
 
@@ -2486,12 +2500,15 @@
         <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> </span><span class="se">\u2014</span><span class="s2"> all fields&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
         <span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
 
-        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">axes</span><span class="p">)</span></div>
+
 
     <span class="c1"># ---------------------------------------------- #</span>
     <span class="c1"># Field Interaction Methods                      #</span>
     <span class="c1"># ---------------------------------------------- #</span>
 
+<div class="viewcode-block" id="OneZoneAccretionResult.get_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_FieldValue</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return a single field by name from :attr:`data` with an informative error.</span>
 
@@ -2529,12 +2546,18 @@
         <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">d</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; not found. Available fields: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">d</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.has_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.has_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.has_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">has_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Return ``True`` if *name* is present in :attr:`data`.&quot;&quot;&quot;</span>
-        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">return</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.add_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.add_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.add_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">add_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">value</span><span class="p">:</span> <span class="n">_FieldValue</span><span class="p">,</span> <span class="n">overwrite</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Add a user-computed field that is included in :attr:`data` and saved to HDF5.</span>
 
@@ -2559,8 +2582,11 @@
             <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span> <span class="o">=</span> <span class="p">{}</span>
         <span class="k">if</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">overwrite</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; already exists. Pass overwrite=True to replace it.&quot;</span><span class="p">)</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.remove_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.remove_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.remove_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">remove_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Remove a user-added field.</span>
 
@@ -2584,12 +2610,15 @@
             <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span>
                 <span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; is not present in user-added fields. Available: </span><span class="si">{</span><span class="nb">sorted</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="w"> </span><span class="ow">or</span><span class="w"> </span><span class="p">{})</span><span class="si">}</span><span class="s2">&quot;</span>
             <span class="p">)</span>
-        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">_extra_fields</span><span class="p">[</span><span class="n">name</span><span class="p">]</span></div>
+
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Field Interpolation                                  #</span>
     <span class="c1"># ==================================================== #</span>
 
+<div class="viewcode-block" id="OneZoneAccretionResult.get_field_interpolator">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">get_field_interpolator</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return a cubic spline interpolator for a result field as a function of time.</span>
 
@@ -2632,8 +2661,11 @@
         <span class="n">arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
         <span class="n">y</span> <span class="o">=</span> <span class="n">arr</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
         <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
-        <span class="k">return</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.interpolate_field">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.interpolate_field.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.interpolate_field">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">interpolate_field</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">field_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
@@ -2690,8 +2722,11 @@
         <span class="k">if</span> <span class="n">field_name</span> <span class="ow">in</span> <span class="n">_builtin_units</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">values</span> <span class="o">*</span> <span class="n">_builtin_units</span><span class="p">[</span><span class="n">field_name</span><span class="p">]</span>
 
-        <span class="k">return</span> <span class="n">values</span>
+        <span class="k">return</span> <span class="n">values</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.compute_thin_disk_effective_temperature">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_thin_disk_effective_temperature.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_thin_disk_effective_temperature">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_thin_disk_effective_temperature</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">radius</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
@@ -2742,8 +2777,11 @@
         <span class="n">R_D_cm</span> <span class="o">=</span> <span class="n">R_D</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">R_D</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">R_D</span><span class="p">)</span>
         <span class="n">radius_cm</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">radius</span><span class="p">,</span> <span class="s2">&quot;cm&quot;</span><span class="p">))</span>
 
-        <span class="k">return</span> <span class="n">T_eff_RD_K</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_D_cm</span> <span class="o">/</span> <span class="n">radius_cm</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+        <span class="k">return</span> <span class="n">T_eff_RD_K</span> <span class="o">*</span> <span class="p">(</span><span class="n">R_D_cm</span> <span class="o">/</span> <span class="n">radius_cm</span><span class="p">)</span> <span class="o">**</span> <span class="mf">0.75</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.compute_luminosity">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_luminosity.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_luminosity">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">compute_luminosity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">interpolator</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute the disk bolometric luminosity at *time*.</span>
 
@@ -2784,11 +2822,14 @@
         <span class="n">mdot</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">interpolate_field</span><span class="p">(</span><span class="s2">&quot;mdot&quot;</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">interpolator</span><span class="o">=</span><span class="n">interpolator</span><span class="p">)</span>
         <span class="n">mdot_cgs</span> <span class="o">=</span> <span class="n">mdot</span><span class="o">.</span><span class="n">value</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mdot</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">)</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">mdot</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">G</span> <span class="o">*</span> <span class="n">M_BH</span> <span class="o">*</span> <span class="n">mdot_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">R_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg/s&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">G</span> <span class="o">*</span> <span class="n">M_BH</span> <span class="o">*</span> <span class="n">mdot_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">R_in</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg/s&quot;</span><span class="p">)</span></div>
+
 
     <span class="c1"># ==================================================== #</span>
     <span class="c1"># Data Management</span>
     <span class="c1"># ==================================================== #</span>
+<div class="viewcode-block" id="OneZoneAccretionResult.to_dataframe">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_dataframe.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_dataframe">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
 <span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert the result data to a Pandas DataFrame.</span>
 
@@ -2804,8 +2845,11 @@
                 <span class="s2">&quot;pandas is required for to_dataframe() but is not installed. Install it with: pip install pandas&quot;</span>
             <span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
 
-        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
 
+
+<div class="viewcode-block" id="OneZoneAccretionResult.to_table">
+<a class="viewcode-back" href="../../../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_table.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.to_table">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="nf">to_table</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">QTable</span><span class="p">:</span>
 <span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return :attr:`data` as an Astropy :class:`~astropy.table.QTable`.</span>
 
@@ -2815,6 +2859,7 @@
 <span class="sd">            Table with one column per field and one row per time step.</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="k">return</span> <span class="n">QTable</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span></div>
+</div>
 
 
 

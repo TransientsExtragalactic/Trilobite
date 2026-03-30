@@ -354,7 +354,7 @@ smoothing = 1
 # - Forward-shock velocity,
 # - Post-shock temperature,
 # - Downstream magnetic field strength.
-from triceratops.dynamics.rankine_hugoniot import (
+from triceratops.dynamics.shocks.rankine_hugoniot import (
     compute_strong_cold_shock_magnetic_field,
     compute_strong_cold_shock_temperature,
 )

@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from triceratops.dynamics.supernovae.shock_dynamics import NumericalThinShellShockEngine
+from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
 from triceratops.dynamics.supernovae.profiles import get_broken_power_law_ejecta_kernel_func
 from triceratops.utils.plot_utils import set_plot_style
 from astropy import units as u

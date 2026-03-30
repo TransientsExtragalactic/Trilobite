@@ -50,6 +50,7 @@ Resources
         +++
 
         .. button-ref:: getting_started
+            :ref-type: doc
             :expand:
             :color: secondary
             :click-parent:
@@ -103,6 +104,7 @@ Resources
         +++
 
         .. button-ref:: api
+            :ref-type: doc
             :expand:
             :color: secondary
             :click-parent:
