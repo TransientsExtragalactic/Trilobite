@@ -1092,8 +1092,8 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
             bar_format=triceratops_config["system.appearance.progress_bar_format"],
             disable=triceratops_config["system.appearance.disable_progress_bars"],
         ):
-            ic_combo = dict(zip(ic_keys, combo[:n_ic], strict=False))
-            rp_combo = dict(zip(rp_keys, combo[n_ic:], strict=False))
+            ic_combo = dict(zip(ic_keys, combo[:n_ic]))
+            rp_combo = dict(zip(rp_keys, combo[n_ic:]))
 
             # Canonical key: sorted (name, value) pairs spanning both dicts.
             combo_key = tuple(sorted({**ic_combo, **rp_combo}.items()))
@@ -2008,7 +2008,7 @@ class OneZoneAccretionResult:
         axes_flat = np.asarray(axes).ravel()
         data = self.data
 
-        for ax, field_name in zip(axes_flat, fields, strict=False):
+        for ax, field_name in zip(axes_flat, fields):
             val = data[field_name]
             y = val.value if isinstance(val, u.Quantity) else np.asarray(val)
             units_str = str(val.unit) if isinstance(val, u.Quantity) else ""
