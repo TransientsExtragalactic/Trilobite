@@ -63,7 +63,11 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install -e .[docs]
+          pip install "numpy>=1.22,<2.0.0" "Cython>=0.29"
+      - name: Build Cython extensions
+        run: python setup.py build_ext --inplace
+      - name: Install documentation dependencies
+        run: pip install -e .[docs] --no-build-isolation
 
       # Actually build the documentation. We use the `-j auto` flag to
       # allow Sphinx to use all available CPU cores for faster builds.

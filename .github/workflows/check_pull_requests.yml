@@ -89,9 +89,12 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
+      - name: Install build dependencies
+        run: pip install "numpy>=1.22,<2.0.0" "Cython>=0.29"
+      - name: Build Cython extensions
+        run: python setup.py build_ext --inplace
       - name: Install test dependencies
-        run: |
-          pip install -e .[dev,test]
+        run: pip install -e .[dev,test] --no-build-isolation
       - name: Run pytest
         run: |
           pytest -ra -q --strict-markers
