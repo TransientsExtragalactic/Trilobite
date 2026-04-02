@@ -68,7 +68,7 @@ Resources
 
         +++
 
-        .. button-ref:: auto_examples/index
+        .. button-ref:: examples
             :expand:
             :color: secondary
             :click-parent:
@@ -122,7 +122,7 @@ Contents
 
    api
    reference/user_guide
-   auto_examples/index
+   examples
    getting_started
 
 Indices and tables

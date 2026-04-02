@@ -357,9 +357,51 @@ class DataContainer(ABC):
     # ====================================================================== #
     # Utility Methods
     # ====================================================================== #
+    def _copy_kwargs(self) -> dict:
+        """Return extra keyword arguments needed to reconstruct this container.
+
+        Subclasses that store metadata outside the table (e.g. an observing
+        frequency) should override this method and return those arguments as a
+        dict.  The returned value is unpacked into :meth:`from_table` by both
+        :meth:`copy` and :meth:`apply_mask`.
+        """
+        return {}
+
     def copy(self):
         """Create a copy of this container."""
-        return self.__class__(self.__table__.copy())
+        return self.__class__.from_table(self.__table__.copy(), **self._copy_kwargs())
+
+    def apply_mask(self, mask) -> "DataContainer":
+        """Return a new container containing only the rows selected by *mask*.
+
+        Parameters
+        ----------
+        mask : array-like of bool or int
+            Boolean array of the same length as this container, or an integer
+            index array.  Passed directly to the underlying Astropy table for
+            row selection.
+
+        Returns
+        -------
+        DataContainer
+            A new instance of the same class containing only the selected rows,
+            with full schema validation re-applied.
+
+        Examples
+        --------
+        Select only detections::
+
+            det_container = container.apply_mask(
+                container.detection_mask
+            )
+
+        Select rows at frequencies above 5 GHz::
+
+            mask = container.freq > 5 * u.GHz
+            hi_freq = container.apply_mask(mask)
+        """
+        sliced = self.table[mask]
+        return self.__class__.from_table(sliced, **self._copy_kwargs())
 
     def to_cgs_array(self):
         """

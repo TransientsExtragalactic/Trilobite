@@ -25,7 +25,7 @@ This example demonstrates the complete pipeline:
     This workflow is particularly powerful when applied to a time series of
     epochs: the evolution of :math:`R(t)` directly measures the shock
     expansion velocity. For multi-epoch usage see the
-    :ref:`sphx_glr_auto_examples_b_inference_plot_multi_epoch_sed_evolution.py`
+    :ref:`sphx_glr_auto_examples_inference_plot_multi_epoch_sed_evolution.py`
     example.
 
 Relevant API

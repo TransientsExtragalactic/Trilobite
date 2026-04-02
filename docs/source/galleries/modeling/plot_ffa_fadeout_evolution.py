@@ -73,7 +73,7 @@ set_plot_style()
 E_ej = 1.0e51 * u.erg
 M_ej = 3.0 * u.Msun
 n = 10
-M_dot = 3.0e-3 * u.Msun / u.yr  # Moderate mass-loss rate
+M_dot = 3.0e-5 * u.Msun / u.yr  # Moderate mass-loss rate
 v_wind = 50.0 * u.km / u.s
 
 # Microphysics
@@ -245,16 +245,11 @@ fig, ax = plt.subplots(figsize=(10, 6))
 
 for t_day, color in zip(epoch_list, colors):
     data = epoch_data[t_day]
-    ax.loglog(freqs_ghz, np.maximum(data["F_obs"], 1e-4), lw=2, color=color, label=f"t = {t_day:.0f} d")
+    ax.loglog(freqs_ghz, data["F_obs"], lw=2, color=color, label=f"t = {t_day:.0f} d")
+    ax.loglog(freqs_ghz, data["F_synch"], lw=1.5, ls="--", color=color, alpha=0.7)
 
-# Reference slopes
-nu_ref = np.array([0.3, 3.0])
-F_ref = 0.5
-# SSA slope: nu^(5/2)
-ax.loglog(nu_ref, F_ref * (nu_ref / 0.8) ** 2.5, "k--", lw=1.5, alpha=0.6, label=r"$\nu^{5/2}$ (SSA)")
-# FFA slope: nu^2
-ax.loglog(nu_ref, F_ref * (nu_ref / 0.8) ** 2.0, "k:", lw=1.5, alpha=0.6, label=r"$\nu^{2}$ (FFA)")
 
+ax.set_ylim([1e-4, 2])
 ax.set_xlabel("Frequency [GHz]")
 ax.set_ylabel("Flux Density [mJy]")
 ax.set_xlim(0.3, 100)
@@ -266,31 +261,6 @@ ax.grid(True, which="both", ls="--", alpha=0.3)
 sm = plt.cm.ScalarMappable(cmap=cmap, norm=plt.Normalize(epoch_list[0], epoch_list[-1]))
 cbar = plt.colorbar(sm, ax=ax)
 cbar.set_label("Time post-explosion [days]")
-
-plt.tight_layout()
-plt.show()
-
-# %%
-# Separate: Intrinsic vs. Observed SED at Key Epochs
-# ---------------------------------------------------
-#
-# Compare the intrinsic SSA synchrotron spectrum with the FFA-absorbed
-# observed spectrum at three representative epochs.
-
-fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=False)
-
-key_epochs = [epoch_list[0], epoch_list[2], epoch_list[4]]  # early, mid, late
-
-for ax, t_day in zip(axes, key_epochs):
-    data = epoch_data[t_day]
-    ax.loglog(freqs_ghz, data["F_synch"], color="C0", lw=2, ls="--", label="Intrinsic (SSA)")
-    ax.loglog(freqs_ghz, np.maximum(data["F_obs"], 1e-4), color="C1", lw=2.5, label="Observed (SSA + FFA)")
-    ax.set_xlabel("Frequency [GHz]")
-    ax.set_ylabel("Flux Density [mJy]")
-    ax.set_title(rf"t = {t_day:.0f} days" + "\n" + rf"$\tau_{{\rm ff}}(1\,{{\rm GHz}}) = {data['tau_1GHz']:.2f}$")
-    ax.legend(fontsize=9)
-    ax.grid(True, which="both", ls="--", alpha=0.3)
-    ax.set_xlim(0.3, 100)
 
 plt.tight_layout()
 plt.show()

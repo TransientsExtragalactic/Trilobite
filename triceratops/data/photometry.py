@@ -728,6 +728,33 @@ class RadioPhotometryContainer(DataContainer):
             observables=observables,
         )
 
+    # ========================= Masking ========================= #
+    def apply_mask(self, mask) -> "RadioPhotometryContainer":
+        """Return a new container containing only the rows selected by *mask*.
+
+        Parameters
+        ----------
+        mask : array-like of bool or int
+            Boolean array of the same length as this container, or an integer
+            index array.
+
+        Returns
+        -------
+        RadioPhotometryContainer
+            A new container with the selected rows and schema validation
+            re-applied.  If epoch IDs were defined on this container (whether
+            via an ``epoch_id`` column or via :meth:`set_epochs_from_indices`),
+            they are propagated to the returned container.
+        """
+        sliced = self.table[mask]
+
+        # If epoch IDs are defined but not yet stored as a table column, inject
+        # them so the reconstructed container retains the epoch structure.
+        if self.has_epochs and "epoch_id" not in sliced.colnames:
+            sliced["epoch_id"] = self.__epoch_ids__[mask]
+
+        return self.__class__.from_table(sliced)
+
     # ========================= IO Methods ========================= #
     @classmethod
     def from_table(

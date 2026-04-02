@@ -218,4 +218,4 @@ plt.show()
 # is paid once, after which each evaluation is essentially free.
 #
 # For population-level spectra, see the companion example
-# :ref:`sphx_glr_auto_examples_e_physics_synchro_plot_PL_sed.py`.
+# :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_PL_sed.py`.

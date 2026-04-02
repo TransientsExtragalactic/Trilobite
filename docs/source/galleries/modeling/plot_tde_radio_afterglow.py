@@ -35,7 +35,7 @@ the standard forward-closure machinery.
     :math:`\epsilon_e` and :math:`\epsilon_B`. This example shows how to
     predict the radio light curves given these parameters. For the inverse
     problem (inferring parameters from observations) see
-    :ref:`sphx_glr_auto_examples_b_inference_plot_shock_parameter_inference.py`.
+    :ref:`sphx_glr_auto_examples_inference_plot_shock_parameter_inference.py`.
 
 Relevant API
 ------------

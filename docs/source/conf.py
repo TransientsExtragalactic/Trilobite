@@ -272,11 +272,21 @@ nitpick_ignore_regex = [
 # /examples gallery.
 sphinx_gallery_conf = {
     "examples_dirs": [
-        "./galleries/examples",
-    ],  # path to your example scripts
+        "./galleries/data",
+        "./galleries/inference",
+        "./galleries/modeling",
+        "./galleries/dynamics",
+        "./galleries/synchrotron",
+        "./galleries/accretion",
+    ],
     "gallery_dirs": [
-        "auto_examples",
-    ],  # path to where to save gallery generated output
+        "auto_examples/data",
+        "auto_examples/inference",
+        "auto_examples/modeling",
+        "auto_examples/dynamics",
+        "auto_examples/synchrotron",
+        "auto_examples/accretion",
+    ],
     # Do not abort the build if an individual gallery example fails.
     # Computationally intensive examples (MCMC, long integrations) may
     # fail in CI or constrained doc-build environments without invalidating

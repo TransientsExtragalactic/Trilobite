@@ -29,7 +29,7 @@ from triceratops.utils.plot_utils import set_plot_style
 
 # Resolve the path to the dataset. In this case, we seek out the data in the
 # documentation.
-data_file = "../../../../../docs/source/_data/example_photometry.fits"
+data_file = "../../../../docs/source/_data/example_photometry.fits"
 
 # Load the dataset as a RadioPhotometryContainer. We specify that the ``time`` column
 # should be taken from the ``time_midobs`` column in the dataset.

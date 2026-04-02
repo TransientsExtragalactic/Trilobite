@@ -60,7 +60,7 @@ np.random.seed(42)
 #     in the documentation for :class:`~data.photometry.RadioPhotometryContainer`.
 
 # Set the data file.
-data_file = "../../../../../docs/source/_data/example_photometry.fits"
+data_file = "../../../../docs/source/_data/example_photometry.fits"
 
 # Set the peak time from the literature.
 optical_peak_time = Time(58284.3, format="mjd", scale="utc")

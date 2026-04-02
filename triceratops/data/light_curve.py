@@ -75,6 +75,10 @@ class RadioLightCurveContainer(XYDataContainer):
             self.__frequency__ = frequency * u.GHz
 
     # ========================= METADATA ========================= #
+    def _copy_kwargs(self) -> dict:
+        """Return the frequency metadata required to reconstruct this container."""
+        return {"frequency": self.frequency}
+
     @property
     def frequency(self) -> u.Quantity:
         """Observing frequency of the light curve."""
