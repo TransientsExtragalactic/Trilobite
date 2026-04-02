@@ -116,6 +116,19 @@ that provides an overview of the available modules and links to detailed user, t
     physics/disks/index
 
 
+Parallel Computing
+------------------
+
+Triceratops supports parallel execution across multiple backends — from single-process
+serial execution to shared-memory multiprocessing and distributed MPI clusters. The parallel
+module provides a unified pool abstraction that works transparently with MCMC samplers,
+parameter grid sweeps, and other compute-intensive workflows.
+
+.. toctree::
+   :maxdepth: 1
+
+   parallel/index
+
 Extensions and 3rd Party Libraries
 ----------------------------------
 

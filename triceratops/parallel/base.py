@@ -43,7 +43,10 @@ class Pool(ABC, Generic[T, R]):
         return self
 
     def __exit__(self, exc_type, exc, tb) -> None:
-        self.close()
+        if exc_type is not None:
+            self.terminate()
+        else:
+            self.close()
 
     # ------------------------------------------------------------------
     # Abstract interface
@@ -56,8 +59,8 @@ class Pool(ABC, Generic[T, R]):
 
         For:
             - SerialPool → 1
-            - MPPool → number of processes
-            - MPIPool → communicator size
+            - LikelihoodMPPool → number of worker processes
+            - LikelihoodMPIPool → communicator size minus 1 (worker ranks)
         """
         ...
 
@@ -79,6 +82,15 @@ class Pool(ABC, Generic[T, R]):
     def close(self) -> None:
         """Clean up pool resources."""
         ...
+
+    def terminate(self) -> None:
+        """
+        Force-terminate pool workers.
+
+        Defaults to calling :meth:`close`. Subclasses with hard-kill
+        semantics (e.g. MPI ``comm.Abort()``) should override this.
+        """
+        self.close()
 
     # ------------------------------------------------------------------
     # Shared utilities

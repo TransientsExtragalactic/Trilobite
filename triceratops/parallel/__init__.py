@@ -13,8 +13,20 @@ includes both MPI parallelism (via the ``mpi4py`` library) and multiprocessing
     provided in the Triceratops repository.
 """
 
-__all__ = ["utils", "mpi", "mp", "base", "LikelihoodMPPool", "SerialPool"]
+__all__ = [
+    "utils",
+    "mpi",
+    "mp",
+    "base",
+    "factory",
+    "LikelihoodMPPool",
+    "LikelihoodMPIPool",
+    "SerialPool",
+    "make_pool",
+]
 
-from . import base, mp, mpi, utils
+from . import base, factory, mp, mpi, utils
 from .base import SerialPool
+from .factory import make_pool
 from .mp import LikelihoodMPPool
+from .mpi import LikelihoodMPIPool

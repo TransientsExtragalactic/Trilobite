@@ -39,10 +39,10 @@ This backend is designed for:
 
 import multiprocessing as mp
 import signal
-from collections.abc import Iterable
-from typing import Any, Optional
+from collections.abc import Callable, Iterable
+from typing import Any, Optional, Union
 
-_worker_problem = None
+from .base import Pool
 
 # =====================================================================
 # Worker Global States
@@ -121,7 +121,7 @@ def _worker_log_prob(theta: Any) -> float:
 # =====================================================================
 # LikelihoodMPPool
 # =====================================================================
-class LikelihoodMPPool:
+class LikelihoodMPPool(Pool[Any, float]):
     """
     Multiprocessing pool specialized for evaluating a single InferenceProblem.
 
@@ -189,7 +189,12 @@ class LikelihoodMPPool:
     # Required emcee interface
     # ------------------------------------------------------------------
 
-    def map(self, func: Any, iterable: Iterable[Any]) -> list[Any]:
+    def map(
+        self,
+        func: Any,
+        iterable: Iterable[Any],
+        callback: Union[Callable[[float], Any], None] = None,
+    ) -> list[float]:
         """
         Map parameter vectors to log posterior values.
 
@@ -199,10 +204,13 @@ class LikelihoodMPPool:
             Ignored. Present only for compatibility with `emcee`.
         iterable
             Iterable of parameter vectors (`theta`).
+        callback : callable, optional
+            Called with each result after collection. Fired once per element
+            in iteration order.
 
         Returns
         -------
-        list
+        list of float
             Log posterior values corresponding to each element.
         """
         async_result = self._pool.map_async(_worker_log_prob, iterable)
@@ -210,7 +218,8 @@ class LikelihoodMPPool:
         # Poll with timeout to avoid swallowing Ctrl+C
         while True:
             try:
-                return async_result.get(self._wait_timeout)
+                results: list[float] = async_result.get(self._wait_timeout)
+                break
 
             except mp.TimeoutError:
                 continue
@@ -220,6 +229,12 @@ class LikelihoodMPPool:
                 self.terminate()
                 self.join()
                 raise
+
+        if callback is not None:
+            for r in results:
+                callback(r)
+
+        return results
 
     # ------------------------------------------------------------------
     # Lifecycle Management
