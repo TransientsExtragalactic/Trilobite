@@ -254,7 +254,7 @@ class BaseTestOneZoneDisk:
 
         .. math::
 
-            J_{D,0} = \\frac{B}{A}\\,M_{D,0}\\,\\sqrt{G M_{\\rm BH} R_{D,0}}
+            J_{D,0} = frac{B}{A},M_{D,0},sqrt{G M_{rm BH} R_{D,0}}
 
         Override for models without ``disk._A`` / ``disk._B`` attributes.
         """

@@ -308,7 +308,7 @@ class NumericalThinShellShockEngine(ShockEngine):
 
             .. math::
 
-                \rho_{\rm ej}(r,t) = t^{-3} G\\left(\frac{r}{t}\right).
+                \rho_{\rm ej}(r,t) = t^{-3} Gleft(\frac{r}{t}\right).
 
         R_0: float
             The initial shock radius at time ``t_0`` in cm.

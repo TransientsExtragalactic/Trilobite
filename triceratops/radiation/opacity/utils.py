@@ -25,7 +25,7 @@ def get_opacity(opacity: Union[str, float, GreyOpacityLaw]) -> GreyOpacityLaw:
     ----------
     opacity : str, float, or GreyOpacityLaw
         - **str**: a registered name (see below).
-        - **float**: a constant opacity value in :math:`\\mathrm{cm^2\\,g^{-1}}`,
+        - **float**: a constant opacity value in :math:`mathrm{cm^2,g^{-1}}`,
           wrapped in :class:`~.models.core.ConstantOpacity`.
         - **GreyOpacityLaw**: returned unchanged.
 
@@ -47,7 +47,7 @@ def get_opacity(opacity: Union[str, float, GreyOpacityLaw]) -> GreyOpacityLaw:
 
     =====================  ======================================================
     ``"electron_scattering"``  Constant Thomson opacity (default: 0.34 cm² g⁻¹)
-    ``"kramers_ff"``           Free-free Kramers :math:`\\kappa \\propto \\rho T^{-3.5}`
+    ``"kramers_ff"``           Free-free Kramers :math:`kappa propto rho T^{-3.5}`
     ``"kramers_bf"``           Bound-free Kramers
     ``"kramers"``              Combined FF + BF Kramers
     ``"kramers_ff_es"``        Free-free Kramers + electron scattering

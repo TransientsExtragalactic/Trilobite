@@ -17,10 +17,10 @@ notebook. Browse a section below to get started.
 Observational Workflow
 ======================
 
-These galleries cover the data-to-results pipeline: loading and inspecting radio photometry,
+These galleries cover the data-to-results pipeline: loading and inspecting photometry,
 then fitting physical models to it with Bayesian inference.
 
-.. grid:: 2
+.. grid:: 3
    :gutter: 3
 
    .. grid-item-card:: Data
@@ -31,6 +31,16 @@ then fitting physical models to it with Bayesian inference.
 
       Load radio photometry from FITS files, inspect tables, group observations into
       temporal epochs, and plot light curves using the :mod:`~triceratops.data` subpackage.
+
+   .. grid-item-card:: Optical Filters and Photometry
+      :link: auto_examples/photometry/index
+      :link-type: doc
+
+      **Filter construction, batched convolution, and magnitude systems.**
+
+      Build photometric filters, assemble them into a
+      :class:`~triceratops.utils.phot_utils.FilterBundle` for MCMC-optimised matrix-multiply
+      convolution, and convert between flux density and AB/ST magnitudes.
 
    .. grid-item-card:: Inference
       :link: auto_examples/inference/index
@@ -128,6 +138,7 @@ planned as example coverage expands.
    :hidden:
 
    auto_examples/data/index
+   auto_examples/photometry/index
    auto_examples/inference/index
    auto_examples/modeling/index
    auto_examples/dynamics/index

@@ -19,6 +19,6 @@ _viscous
 _fallback
     Power-law debris-stream source term
     (:func:`~_fallback.fallback_source_func`).  Models TDE fallback as
-    :math:`\\dot{M}_{\\rm fb} \\propto t^{-\\beta}` and deposits the
+    :math:`dot{M}_{rm fb} propto t^{-beta}` and deposits the
     corresponding angular momentum at the disk outer radius.
 """

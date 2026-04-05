@@ -336,9 +336,11 @@ def compute_ISCO(
 
     .. math::
 
+        \begin{aligned}
         Z_1 &= 1 + (1 - a_\star^2)^{1/3}
-              \left[ (1 + a_\star)^{1/3} + (1 - a_\star)^{1/3} \right] \\
+              \left[ (1 + a_\star)^{1/3} + (1 - a_\star)^{1/3} \right]
         Z_2 &= \sqrt{3 a_\star^2 + Z_1^2}.
+        \end{aligned}
 
     The minus (plus) sign is for prograde (retrograde) orbits.
 
@@ -380,11 +382,17 @@ def compute_ISCO(
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.physics_utils.general_relativity import compute_ISCO
+        from triceratops.physics_utils.general_relativity import (
+            compute_ISCO,
+        )
 
-        compute_ISCO(10 * u.Msun)                    # Schwarzschild
-        compute_ISCO(10 * u.Msun, spin=0.9)          # prograde Kerr
-        compute_ISCO(10 * u.Msun, spin=0.9, prograde=False)  # retrograde
+        compute_ISCO(10 * u.Msun)  # Schwarzschild
+        compute_ISCO(
+            10 * u.Msun, spin=0.9
+        )  # prograde Kerr
+        compute_ISCO(
+            10 * u.Msun, spin=0.9, prograde=False
+        )  # retrograde
     """
     if spin is not None and J is not None:
         raise ValueError("Provide either 'spin' or 'J', not both.")

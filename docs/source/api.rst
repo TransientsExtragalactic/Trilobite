@@ -107,5 +107,6 @@ These include data I/O, configuration management, and common mathematical operat
     triceratops.utils.log
     triceratops.utils.config
     triceratops.utils.misc_utils
+    triceratops.utils.phot_utils
     triceratops.physics_utils
     triceratops.math_utils

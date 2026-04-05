@@ -39,9 +39,11 @@ Heating/cooling balance:
 
 .. math::
 
+    \begin{aligned}
     q^+ &= \tfrac{9}{8}\,\alpha\,\Sigma\,\Omega\,c_s^2(T) \\
     q^- &= \frac{4\,\sigma_{\rm SB}\,T^4}{3\,\kappa\,\Sigma} \\
     q_{\rm adv} &= \frac{3}{2}\,\xi\,\alpha\,\Sigma\,\frac{c_s^4}{\Omega\,R^2}
+    \end{aligned}
 
 See Also
 --------

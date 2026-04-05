@@ -489,7 +489,7 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
 
     .. math::
 
-        \rho_{\rm CSM}(r) = \frac{\\dot{M}}{4\pi r^2 v_{\rm wind}}.
+        \rho_{\rm CSM}(r) = \frac{dot{M}}{4\pi r^2 v_{\rm wind}}.
 
     This corresponds to a conventional :class:`ChevalierSelfSimilarShockEngine` with CSM density power-law index
     :math:`s = 2` and normalization constant

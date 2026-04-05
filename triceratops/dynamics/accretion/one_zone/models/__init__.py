@@ -19,8 +19,8 @@ _igP
 _igP_adv
     Defines :class:`~._igP_adv.AdvectiveClosure` — full pressure plus an
     advective cooling term controlled by an entropy-gradient parameter
-    :math:`\\xi` (stored in ``params.advection.xi``).
-    Setting :math:`\\xi \\to 0` recovers the non-advective ``igP`` limit.
+    :math:`xi` (stored in ``params.advection.xi``).
+    Setting :math:`xi to 0` recovers the non-advective ``igP`` limit.
 
 All closures default to electron-scattering opacity and accept any
 :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` via the

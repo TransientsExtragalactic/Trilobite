@@ -17,7 +17,7 @@ In this example, we consider:
 - Supernova ejecta with a broken power-law density profile in velocity space
 - A circumstellar medium consisting of:
 
-  - a wind-like :math:`\\rho \propto r^{-2}` profile close to the progenitor
+  - a wind-like :math:`rho \propto r^{-2}` profile close to the progenitor
   - a transition to a uniform-density interstellar medium (ISM) at larger radii
 
 We then compute and visualize the evolution of the shock radius, velocity,

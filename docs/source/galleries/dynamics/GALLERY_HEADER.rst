@@ -20,5 +20,5 @@ interface in :mod:`~triceratops.models`.
 
 .. rubric:: API reference
 
-:mod:`triceratops.dynamics` — :class:`~triceratops.dynamics.ShockEngine`,
-:func:`~triceratops.dynamics.rankine_hugoniot`
+:mod:`triceratops.dynamics` — :class:`~triceratops.dynamics.shocks.ShockEngine`,
+:mod:`~triceratops.dynamics.shocks.rankine_hugoniot`

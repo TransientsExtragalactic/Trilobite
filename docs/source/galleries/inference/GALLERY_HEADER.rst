@@ -23,5 +23,5 @@ corner plots.
 .. rubric:: API reference
 
 :mod:`triceratops.inference` — :class:`~triceratops.inference.InferenceProblem`,
-:class:`~triceratops.inference.InferenceData`,
+:class:`~triceratops.data.InferenceData`,
 :class:`~triceratops.inference.GaussianCensoredLikelihood`

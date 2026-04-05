@@ -6,7 +6,7 @@ canonical empirical spectral model for GRB prompt emission. It describes
 a smoothly broken power law with a low-energy exponential cut-off,
 defined entirely by four physically interpretable parameters: the
 low-energy photon index, the high-energy photon index, the peak energy
-of the :math:`\\nu F_\\nu` spectrum, and a normalisation amplitude.
+of the :math:`nu F_nu` spectrum, and a normalisation amplitude.
 
 References
 ----------
@@ -263,7 +263,7 @@ class BandFunctionModel(Model):
         -------
         BandOutputs
             Named tuple with field ``photon_flux`` in
-            :math:`\\rm ph\\,cm^{-2}\\,s^{-1}\\,keV^{-1}`.
+            :math:`rm ph,cm^{-2},s^{-1},keV^{-1}`.
         """
         E = np.asarray(variables["energy"], dtype=float)
         alpha = parameters["alpha"]
