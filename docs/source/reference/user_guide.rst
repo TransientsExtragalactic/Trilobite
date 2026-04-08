@@ -42,6 +42,7 @@ inference pipelines. The following guides cover the relevant functionality:
 
    data/overview
    data/photometry
+   data/optical_photometry
    data/filter_photometry
    data/light_curve
    data/inference_data

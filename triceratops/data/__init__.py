@@ -1,9 +1,10 @@
 """
-Data management infrastructure for observational radio datasets in Triceratops.
+Data management infrastructure for observational datasets in Triceratops.
 
 The :mod:`triceratops.data` package provides structured, unit-aware containers
-for working with radio observations. These containers form the boundary between
-raw observational data and the modeling and inference layers of the library.
+for working with multi-wavelength observations — from radio photometry to optical
+survey data. These containers form the boundary between raw observational data
+and the modeling and inference layers of the library.
 
 Overview
 --------
@@ -21,13 +22,15 @@ The data layer is responsible for:
     For detailed documentation, see :ref:`data_overview`.
 """
 
-__all__ = ["light_curve", "spectra", "photometry", "core"]
-from . import core, light_curve, photometry, spectra
+__all__ = ["light_curve", "spectra", "photometry", "optical_photometry", "core"]
+from . import core, light_curve, optical_photometry, photometry, spectra
 from .core import *
 from .light_curve import *
+from .optical_photometry import *
 from .photometry import *
 from .spectra import *
 
 __all__.extend(light_curve.__all__)
 __all__.extend(photometry.__all__)
+__all__.extend(optical_photometry.__all__)
 __all__.extend(core.__all__)
