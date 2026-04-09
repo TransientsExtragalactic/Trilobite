@@ -1,296 +1,385 @@
-.. _light_curves:
+.. _radio_photometry:
 
 ============================
-Photometry
+Radio Photometry
 ============================
 
-Photometry data in Triceratops is handled through the :class:`~triceratops.data.photometry.RadioPhotometryContainer` class, which
-is effectively a wrapper around a standard :class:`astropy.table.Table` object with an enforced schema dictating the
-required columns and their meanings. This structure allows for easy loading, manipulation, and access to photometric
-data. The photometry container includes methods for common operations such as filtering data by time or frequency,
-interpolating missing values, and exporting data to various formats. It is also immediately compatible with
-the inference pipelines in Triceratops, allowing users to seamlessly integrate their observational data into
-model fitting and analysis workflows.
+Triceratops provides two containers for radio photometric data:
+
+- :class:`~triceratops.data.photometry.RadioPhotometryContainer` — multi-epoch,
+  multi-frequency radio photometry (the most common case).
+- :class:`~triceratops.data.photometry.RadioPhotometryEpoch` — single-epoch radio
+  SED, where frequency is the independent variable. See :ref:`radio_photometry_epoch`.
+
+Both containers wrap an :class:`astropy.table.Table` with an enforced schema,
+provide unit-aware accessors, and expose a
+:meth:`~triceratops.data.photometry.RadioPhotometryContainer.to_inference_data`
+method for direct integration with the inference pipeline.
 
 
-The Photometry Table
-^^^^^^^^^^^^^^^^^^^^
+.. _radio_photometry_container:
 
-Underlying the photometry container is an :class:`astropy.table.Table` object with a specific schema. This schema breaks
-columns into 3 categories:
+RadioPhotometryContainer
+-------------------------
 
-1. **Required Columns**: These columns must be present in the table for it to be considered valid photometry data.
-   They include essential information such as time, frequency, flux density, and measurement uncertainties.
-2. **Optional Columns**: These columns provide additional information that can enhance the analysis but are not strictly
-   necessary. Examples include upper limits, measurement methods, and observational metadata.
-3. **Auxiliary Columns**: These are columns that you, as the user, may wish to include for your own purposes. They are not
-   interpreted by Triceratops in any way, but are preserved when saving and loading photometry data.
+:class:`~triceratops.data.photometry.RadioPhotometryContainer` stores
+heterogeneous multi-frequency, multi-epoch radio observations:
 
-The set of **required** and **optional** columns are as follows:
+.. math::
+
+    F_\nu(t,\, \nu)
+
+where each row represents one measurement at a given time and frequency.
+
+
+Schema
+^^^^^^
+
+The container enforces the following column schema. Columns marked Required must
+be present; the rest are optional but are recognised and unit-validated when
+present.
 
 .. list-table::
-    :header-rows: 1
-    :widths: 20 50 15 15
+   :header-rows: 1
+   :widths: 22 10 12 10 46
 
-    * - Column Name
-      - Description
-      - CGS-Equivalent Unit
-      - Data Type
-    * - ``time``
-      - Canonical time of the observation used in analysis.
-      - ``s``
-      - float
-    * - ``freq``
-      - Central observing frequency.
-      - ``Hz``
-      - float
-    * - ``flux_density``
-      - Measured flux density for detections. Should be ``np.nan`` for non-detections.
-      - ``erg s^-1 cm^-2 Hz^-1``
-      - float
-    * - ``flux_density_error``
-      - 1σ uncertainty on ``flux_density``.
-      - ``erg s^-1 cm^-2 Hz^-1``
-      - float
-    * - ``flux_upper_limit``
-      - Upper limit on flux density for non-detections. Should be ``np.nan`` for detections.
-      - ``erg s^-1 cm^-2 Hz^-1``
-      - float
-    * - ``obs_time``
-      - Total integration time of the observation.
-      - ``s``
-      - float
-    * - ``obs_name``
-      - Observation identifier (e.g. telescope + epoch).
-      - ``None``
-      - str
-    * - ``band``
-      - Integer band identifier (instrument-specific).
-      - ``None``
-      - int
-    * - ``epoch_id``
-      - Integer epoch identifier (user-defined).
-      - ``None``
-      - int
-    * - ``comments``
-      - Free-form comments or metadata.
-      - ``None``
-      - str
+   * - Column
+     - Type
+     - Unit
+     - Required
+     - Description
+   * - ``time``
+     - float
+     - ``day``
+     - Yes
+     - Relative time of the observation (with respect to a user-defined reference).
+   * - ``freq``
+     - float
+     - ``GHz``
+     - Yes
+     - Central observing frequency.
+   * - ``flux_density``
+     - float
+     - ``Jy``
+     - Yes
+     - Measured flux density. Set to ``np.nan`` for non-detections.
+   * - ``flux_density_error``
+     - float
+     - ``Jy``
+     - Yes
+     - 1σ uncertainty on ``flux_density``. Set to ``np.nan`` for non-detections.
+   * - ``flux_upper_limit``
+     - float
+     - ``Jy``
+     - Yes
+     - Upper limit for non-detections. Set to ``np.nan`` for detections.
+   * - ``obs_time``
+     - float
+     - ``day``
+     - No
+     - Total integration time of the observation.
+   * - ``obs_name``
+     - str
+     - —
+     - No
+     - Free-form observation identifier (e.g. telescope + epoch label).
+   * - ``band``
+     - int
+     - —
+     - No
+     - Instrument-specific integer band identifier.
+   * - ``epoch_id``
+     - int
+     - —
+     - No
+     - Integer epoch grouping label (see :ref:`Epoch Support <radio_photometry_epochs>`).
+   * - ``comments``
+     - str
+     - —
+     - No
+     - Free-form comments or metadata.
 
-.. hint::
+.. note::
 
-    There are a couple of important notes regarding the photometry table schema:
+    Time is always **relative** — it is measured with respect to some reference
+    event (explosion time, trigger time, etc.) chosen by the user. The absolute
+    reference time is not stored in the container.
 
-    - **Time** is always a relative measurement with respect to some reference time (e.g., explosion time, trigger time).
-      The actual reference time is not stored in the photometry table itself, but should be tracked separately by the user.
-    - **Units**: Columns must be *compatible* with the specified CGS-equivalent units, but do not need to be in those exact units.
-      For example, frequency can be provided in GHz as long as it can be converted to Hz.
-    - **Non-detections**: For non-detections, the ``flux_density`` and ``flux_density_error`` columns should be set to ``np.nan``,
-      and the ``flux_upper_limit`` column should contain the upper limit value.
+    Units must be *compatible* with the declared units but do not need to match
+    exactly. For example, ``freq`` can be supplied in MHz or Hz and will be
+    converted automatically.
 
-Once the photometry table has been created, it is **immutable**; that is, you cannot add or remove rows or columns directly.
-You can, of course, modify the progenitor :class:`astropy.table.Table` before creating the photometry container, or create a new
-photometry container from modified data. The reason for the immutability is to ensure data integrity and consistency when using
-the photometry container in analysis and modeling.
+    For non-detections: set ``flux_density`` and ``flux_density_error`` to
+    ``np.nan``, and provide the upper limit in ``flux_upper_limit``.
 
-Creating a Photometry Container
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To create a :class:`~triceratops.data.photometry.RadioPhotometryContainer`, you can either load data from a file or create it
-directly from an :class:`astropy.table.Table` object.
+Construction
+^^^^^^^^^^^^
 
-From a Table
-~~~~~~~~~~~~
-
-To create a photometry container from an existing :class:`astropy.table.Table`, ensure that the table contains
-the required columns as per the schema described above. Then, you can instantiate the container as follows:
+From an Astropy Table
+~~~~~~~~~~~~~~~~~~~~~
 
 .. code-block:: python
 
+    import numpy as np
     from astropy.table import Table
-    from triceratops.data.photometry import RadioPhotometryContainer
+    from astropy import units as u
+    from triceratops.data import RadioPhotometryContainer
 
-    # Create an Astropy Table with the required columns
-    data = Table({
-        'time': [0.0, 1.0, 2.0],
-        'freq': [1e9, 1e9, 1e9],
-        'flux_density': [1e-26, 2e-26, 1.5e-26],
-        'flux_density_error': [1e-27, 1e-27, 1e-27],
-        'flux_upper_limit': [np.nan, np.nan, np.nan],
-        'obs_time': [100.0, 100.0, 100.0],
-        'obs_name': ['obs1', 'obs2', 'obs3'],
-        'band': [1, 1, 1],
-        'comments': ['', '', '']
+    t = Table({
+        "time":                np.array([1., 5., 10., 20., 50.]) * u.day,
+        "freq":                np.array([5.5, 8.5, 5.5, 8.5, 5.5]) * u.GHz,
+        "flux_density":        np.array([1.2, 1.5, 1.1, 0.9, np.nan]) * u.Jy,
+        "flux_density_error":  np.array([0.1, 0.1, 0.1, 0.1, np.nan]) * u.Jy,
+        "flux_upper_limit":    np.array([np.nan, np.nan, np.nan, np.nan, 0.3]) * u.Jy,
     })
 
-    # Create the RadioPhotometryContainer
-    photometry_container = RadioPhotometryContainer(data)
+    c = RadioPhotometryContainer(t)
+    print(c.n_obs, c.n_detections, c.n_non_detections)
+    # → 5  4  1
 
-Alternatively, there is the :meth:`~data.photometry.RadioPhotometryContainer.from_table` class method:
+If your table uses different column names, supply a ``column_map``:
 
 .. code-block:: python
 
-    photometry_container = RadioPhotometryContainer.from_table(data)
+    c = RadioPhotometryContainer.from_table(t, column_map={
+        "t_day":    "time",
+        "nu_GHz":   "freq",
+        "flux_Jy":  "flux_density",
+    })
 
-This method has 2 additional features beyond the standard constructor:
+To convert from absolute times (MJD, Unix, etc.) to relative days at load time:
 
-1. It can accept a parameter ``column_map``, which is a dictionary mapping the required column names to
-   alternative names in the provided table. This allows you to create a photometry container from a table
-   that uses different column names.
-2. It can accept a ``time_starts`` parameter, which allows the ``time`` column to be specified in absolute terms
-   (e.g., MJD, JD, or Unix time). If provided, the values in the ``time`` column will be converted to relative
-   times with respect to the specified reference time.
+.. code-block:: python
+
+    from astropy.time import Time
+
+    c = RadioPhotometryContainer.from_table(
+        t,
+        internal_time_format="mjd",
+        time_start=Time(59000.0, format="mjd"),
+    )
 
 From a File
 ~~~~~~~~~~~
 
-To create a photometry container from a file, you can use the :meth:`~data.photometry.RadioPhotometryContainer.from_file`
-class method. This method supports loading data from common file formats such as CSV and FITS.
-Here is an example of how to load photometry data from a CSV file:
+Any format supported by :meth:`astropy.table.Table.read` works:
 
 .. code-block:: python
 
-    from triceratops.data.photometry import RadioPhotometryContainer
+    c = RadioPhotometryContainer.from_file("photometry.fits")
+    c = RadioPhotometryContainer.from_file("photometry.csv", format="ascii.csv")
 
-    # Load photometry data from a CSV file
-    photometry_container = RadioPhotometryContainer.from_file('photometry_data.csv')
 
-This is a thin wrapper around the :meth:`astropy.table.Table.read` method, so any file format supported by Astropy
-can be used. Similar to the ``from_table`` method, you can also provide a ``column_map`` and ``time_starts`` parameter
-to customize the loading process.
+Data Access
+^^^^^^^^^^^
 
-Accessing Photometry Data
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Once the photometry container has been created, you can access the underlying data and perform various operations.
-Accessing the data behaves much like the underlying :class:`astropy.table.Table`, with some additional convenience
-methods provided by the photometry container.
-
-Indexing and Slicing
-~~~~~~~~~~~~~~~~~~~~~~
-
-The indexing and slicing behavior of the photometry container is identical to that of an :class:`astropy.table.Table`.
-You can use standard indexing and slicing techniques to access rows and columns of the data. For example:
+All column accessors return :class:`astropy.units.Quantity` objects in the
+units declared in the schema.
 
 .. code-block:: python
 
-    # Access the first row
-    first_row = photometry_container[0]
+    c.time                  # Quantity, units: day
+    c.freq                  # Quantity, units: GHz
+    c.flux_density          # Quantity, units: Jy
+    c.flux_density_error    # Quantity, units: Jy
+    c.flux_upper_limit      # Quantity, units: Jy
 
-    # Access the 'flux_density' column
-    flux_densities = photometry_container['flux_density']
+    c.n_obs                 # int: total row count
+    c.n_detections          # int: rows where flux_upper_limit is NaN
+    c.n_non_detections      # int: rows where flux_upper_limit is finite
 
-    # Slice the first three rows
-    first_three_rows = photometry_container[:3]
-
-Special Column Access
-~~~~~~~~~~~~~~~~~~~~~~
-
-In addition to the standard indexing methods, the photometry container provides convenience properties for accessing
-the required columns directly. For example:
+Standard table indexing is also supported:
 
 .. code-block:: python
 
-    # Access the time column
-    times = photometry_container.time
+    c[0]                    # first row as a Table row
+    c[:5]                   # first five rows (returns a new container)
+    c["flux_density"]       # raw column access
 
-    # Access the frequency column
-    frequencies = photometry_container.freq
 
-    # Access the flux density column
-    flux_densities = photometry_container.flux_density
+Detection and Non-Detection Masks
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-These are returned as :class:`astropy.units.Quantity` objects with the appropriate units.
-
-Detections and Non-Detections
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-The photometry container provides methods to easily separate detections from non-detections. A non-detection is defined
-as an observation where the ``flux_density`` is ``np.nan`` and the ``flux_upper_limit`` is a valid number. Likewise,
-a detection is an observation where the ``flux_density`` is a valid number. On initialization, the
-:attr:`~data.photometry.RadioPhotometryContainer.detection_mask` and
-:attr:`~data.photometry.RadioPhotometryContainer.non_detection_mask` boolean masks are created to
-to allow rapid filtering of detections and non-detections. You can use these masks to filter the data as follows:
+A row is a **detection** when its ``flux_upper_limit`` is ``NaN``.
+A row is a **non-detection** (upper limit) when ``flux_upper_limit`` is finite.
 
 .. code-block:: python
 
-    # Get all detections
-    detections = photometry_container[photometry_container.detection_mask]
+    c.detection_mask        # bool array: True = detection
+    c.non_detection_mask    # bool array: True = upper limit
+    c.detection_table       # sub-table of detections only
+    c.non_detection_table   # sub-table of upper limits only
 
-    # Get all non-detections
-    non_detections = photometry_container[photometry_container.non_detection_mask]
-
-Likewise, convenience properties are provided to directly access the detections and non-detections:
-
-.. code-block:: python
-
-    # Access detections
-    detections = photometry_container.detection_table
-
-    # Access non-detections
-    non_detections = photometry_container.non_detection_table
-
-and to access the counts of each:
+To extract a subset:
 
 .. code-block:: python
 
-    # Count of detections
-    num_detections = photometry_container.n_detections
-
-    # Count of non-detections
-    num_non_detections = photometry_container.n_non_detections
+    detections     = c.apply_mask(c.detection_mask)
+    non_detections = c.apply_mask(c.non_detection_mask)
+    first_ten      = c.apply_mask(np.arrange(10))
 
 
-Epochs
-^^^^^^
+.. _radio_photometry_epochs:
 
-Another very useful feature of the photometry container is the ability to group observations into epochs.
-An epoch is defined as a set of observations that are considered to be simultaneous or nearly simultaneous.
-This is particularly useful for multi-frequency observations taken at the same time.
+Epoch Support
+^^^^^^^^^^^^^
 
-In some situations, models may require data to contain epochs. The photometry container provides methods
-to automatically generate epochs based on time proximity, as well as to manually specify epochs.
+Observations may be grouped into **epochs** — sets of measurements that are
+simultaneous or near-simultaneous (e.g. a multi-frequency observing block).
 
-Manually Specifying Epochs
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-To directly specify epochs, simply specify the ``epoch_id`` column in the underlying table before creating
-the photometry container. Observations with the same ``epoch_id`` will be grouped into the same epoch. These should
-be integers with no particular meaning beyond grouping. The mapping of each epoch to a specific time is determined
-by taking the weighted mean of the observation times within that epoch.
-
-Generating Epochs
-~~~~~~~~~~~~~~~~~
-
-If your data does not already contain an ``epoch_id`` column, you can use the
-:meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_indices`,
-:meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps`,
-or :meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_bins` methods to automatically generate epochs.
-
-The :meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_indices` method allows you
-to directly specify the ``epoch_id`` values for each observation
-by providing a list or array of integers.
+Assign epochs manually via the ``epoch_id`` column before construction:
 
 .. code-block:: python
 
-    # Set epochs using specified indices
-    photometry_container.set_epochs_from_indices([0, 0, 1, 1, 2])
+    t["epoch_id"] = [0, 0, 1, 1, 2]   # rows 0–1 in epoch 0, rows 2–3 in epoch 1, etc.
+    c = RadioPhotometryContainer(t)
 
-The :meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_time_gaps` method generates epochs based
-on gaps in observation times. You can specify
-a time gap threshold, and observations separated by a gap larger than this threshold will be assigned to different epochs.
+Or generate epochs automatically from the data:
 
 .. code-block:: python
 
-    # Set epochs based on time gaps of 1 day
-    photometry_container.set_epochs_from_time_gaps(86400 * u.day)
+    # Group observations separated by less than 2 days into the same epoch
+    c.set_epochs_from_time_gaps(2.0 * u.day)
 
-The :meth:`~data.photometry.RadioPhotometryContainer.set_epochs_from_bins` method allows you to bin observations
-into epochs based on fixed time intervals.
-You can specify the bin size, and observations falling within the same time bin will be grouped into the same epoch.
+    # Assign explicit epoch IDs by index
+    c.set_epochs_from_indices([0, 0, 0, 1, 1, 1, 2, 2])
+
+    # Bin into fixed-width time windows
+    bins = np.arrange(0, 200, 10) * u.day
+    c.set_epochs_from_bins(bins)
+
+Once epochs are set:
 
 .. code-block:: python
 
-    # Set epochs using time bins of 2 days
-    bins = np.arrange(0, 10, 2) * u.day
-    photometry_container.set_epochs_from_bins(bins)
+    c.has_epochs            # True
+    c.n_epochs              # number of unique epochs
+    c.epoch_ids             # integer epoch ID per observation
+
+    epoch_0 = c.get_epoch(0)          # all rows in epoch 0
+    mask    = c.get_epoch_mask(0)     # boolean mask for epoch 0
+    table   = c.get_epoch_table(0)    # as a Table
+
+Plotting
+^^^^^^^^
+
+.. code-block:: python
+
+    fig, axes = c.plot_photometry()
+
+.. plot::
+
+    import numpy as np
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from astropy.table import Table
+    from astropy import units as u
+    from triceratops.data import RadioPhotometryContainer
+
+    rng = np.random.default_rng(0)
+    n = 24
+    time = np.sort(rng.uniform(1, 500, n))
+    freqs = np.tile([5.5, 8.5, 15.0], 8)
+    flux = 5e-26 * (time / 10.0) ** -0.8 * rng.lognormal(0, 0.08, n)
+    err = flux * 0.1
+
+    flux_arr = np.where(time > 400, np.nan, flux)
+    err_arr = np.where(time > 400, np.nan, err)
+    ul = np.where(time > 400, 5e-28, np.nan)
+
+    t = Table({
+        "time": time * u.day,
+        "freq": freqs * u.GHz,
+        "flux_density": flux_arr * u.Jy,
+        "flux_density_error": err_arr * u.Jy,
+        "flux_upper_limit": ul * u.Jy,
+    })
+    c = RadioPhotometryContainer(t)
+
+    colors = {5.5: "steelblue", 8.5: "tomato", 15.0: "seagreen"}
+    fig, ax = plt.subplots(figsize=(7, 4))
+    for nu in [5.5, 8.5, 15.0]:
+        mask = (c.freq.value == nu) & c.detection_mask
+        ax.errorbar(c.time[mask].value, c.flux_density[mask].value,
+                    yerr=c.flux_density_error[mask].value,
+                    fmt="o", label=f"{nu} GHz", color=colors[nu])
+        ul_mask = (c.freq.value == nu) & c.non_detection_mask
+        if ul_mask.any():
+            ax.errorbar(c.time[ul_mask].value, c.flux_upper_limit[ul_mask].value,
+                        fmt="v", color=colors[nu], alpha=0.5)
+    ax.set_xscale("log"); ax.set_yscale("log")
+    ax.set_xlabel("Time (days)"); ax.set_ylabel("Flux density (Jy)")
+    ax.set_title("Synthetic multi-frequency radio photometry")
+    ax.legend()
+    plt.tight_layout()
+
+
+Inference Integration
+^^^^^^^^^^^^^^^^^^^^^
+
+:meth:`~triceratops.data.photometry.RadioPhotometryContainer.to_inference_data`
+converts the container into an :class:`~triceratops.data.core.InferenceData`
+object ready for likelihood evaluation.
+
+.. code-block:: python
+
+    inference_data = c.to_inference_data(model)
+    print(inference_data.describe())
+
+Optional parameters:
+
+.. code-block:: python
+
+    inference_data = c.to_inference_data(
+        model,
+        infer_errors=True,         # infer 1σ errors from upper limits
+        detection_threshold=3.0,   # N-sigma assumed for upper limits
+        mask=c.detection_mask,     # restrict to detections only
+    )
+
+If the model's variable names don't match the container's default column names
+(``time`` and ``freq``), supply an explicit mapping:
+
+.. code-block:: python
+
+    inference_data = c.to_inference_data(
+        model,
+        variables={"frequency": "freq"},          # model name → container column
+        observables={
+            "flux_density": (
+                "flux_density",
+                "flux_density_error",
+                "flux_upper_limit",
+                None,                             # no lower limits
+            )
+        },
+    )
+
+See :ref:`data_to_inference` for the full step-by-step pipeline guide.
+
+
+API Reference
+^^^^^^^^^^^^^
+
+.. autoclass:: triceratops.data.photometry.RadioPhotometryContainer
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+
+----
+
+
+RadioPhotometryEpoch
+---------------------
+
+See :ref:`radio_photometry_epoch` for the full reference.
+
+.. autoclass:: triceratops.data.photometry.RadioPhotometryEpoch
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:

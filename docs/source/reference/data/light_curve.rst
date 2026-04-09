@@ -4,52 +4,36 @@
 Light Curves
 ============================
 
-Light curve data in Triceratops is represented by the
-:class:`~triceratops.data.light_curve.RadioLightCurveContainer`
-class. This container is designed for **single-band radio time-series data**,
-where all measurements correspond to a fixed observing frequency.
+Triceratops provides two light curve container types:
 
-Unlike the photometry container, which may store heterogeneous
-multi-frequency observations, the light curve container assumes that
-all data belong to a single band and are intended to be modeled as
-a single temporal sequence.
+- :class:`~triceratops.data.light_curve.RadioLightCurveContainer` — single-frequency radio time-series (:math:`F_\nu(t)`)
+- :class:`~triceratops.data.light_curve.OpticalLightCurveContainer` — single-band optical time-series (:math:`F_\nu(t)` or :math:`m_\mathrm{AB}(t)`)
 
-The container wraps an :class:`astropy.table.Table` with an enforced
-schema, providing a validated, unit-aware, and immutable interface
-for downstream modeling and inference.
+Both containers wrap an :class:`astropy.table.Table` with an enforced schema,
+providing a validated, unit-aware, and immutable interface for downstream
+modeling and inference. Both expose a :meth:`to_inference_data` method for
+seamless integration with the Triceratops inference pipeline.
 
 
-Conceptual Overview
--------------------
+.. _radio_light_curve:
 
-A radio light curve represents flux density measurements taken
-at a fixed observing frequency as a function of time:
+RadioLightCurveContainer
+-------------------------
+
+The radio light curve container is designed for **single-frequency radio
+time-series data**, where all measurements correspond to a fixed observing
+frequency:
 
 .. math::
 
     F_\nu(t)
 
-where the observing frequency :math:`\nu` is constant across all rows.
-
-In this container:
-
-- Time is stored explicitly as a table column.
-- Flux densities and uncertainties are stored as table columns.
-- The observing frequency is stored as metadata, not as a column.
-- Detection status is inferred from the ``flux_upper_limit`` column.
-
-This structure allows clean integration with inference pipelines
-while preserving the clarity and simplicity of a time-series dataset.
+The observing frequency is stored as **metadata** (not a column) — it is a
+fixed property of the dataset, not a per-observation variable.
 
 
-The Light Curve Schema
-----------------------
-
-The underlying :class:`astropy.table.Table` must satisfy a strict schema.
-The required and optional columns are defined in the class-level
-``COLUMNS`` attribute :contentReference[oaicite:1]{index=1}.
-
-The required columns are:
+Schema
+^^^^^^
 
 .. list-table::
     :header-rows: 1
@@ -60,11 +44,11 @@ The required columns are:
       - Default Unit
       - Required
     * - ``time``
-      - Observation time (relative)
+      - Observation time (relative to some reference)
       - ``day``
       - Yes
     * - ``flux_density``
-      - Measured flux density (detections)
+      - Measured flux density (detections only; NaN for upper limits)
       - ``Jy``
       - Yes
     * - ``flux_density_error``
@@ -72,7 +56,7 @@ The required columns are:
       - ``Jy``
       - Yes
     * - ``flux_upper_limit``
-      - Upper limit for non-detections
+      - Upper limit on flux density (non-detections only; NaN for detections)
       - ``Jy``
       - Yes
     * - ``obs_name``
@@ -84,93 +68,40 @@ The required columns are:
       - None
       - No
 
-A few important details follow directly from the implementation:
-
-- The container always expects ``flux_upper_limit`` to be present.
-- Detection status is inferred from whether the upper-limit entry is finite.
-- Units must be convertible to the declared units (e.g., days → seconds, Jy → CGS).
+**Detection convention**: An observation is a detection if ``flux_upper_limit``
+is NaN. It is a non-detection (upper limit) if ``flux_upper_limit`` is finite.
 
 
-Detection Semantics
--------------------
+Construction
+^^^^^^^^^^^^
 
-Detection and non-detection status is derived automatically.
-
-An observation is considered:
-
-- A **detection** if the upper limit is NaN.
-- A **non-detection** (upper limit) if the upper-limit value is finite.
-
-The following properties are provided:
+From an Astropy Table:
 
 .. code-block:: python
 
-    light_curve.detection_mask
-    light_curve.non_detection_mask
-    light_curve.n_detections
-    light_curve.n_non_detections
-
-Tables containing only detections or only upper limits can be
-accessed via:
-
-.. code-block:: python
-
-    light_curve.detection_table
-    light_curve.non_detection_table
-
-
-Observing Frequency
--------------------
-
-The observing frequency is not stored as a table column.
-Instead, it is stored as metadata on the container instance.
-
-It is provided during construction:
-
-.. code-block:: python
-
-    from triceratops.data.light_curve import RadioLightCurveContainer
+    import numpy as np
     from astropy.table import Table
-    import astropy.units as u
+    from astropy import units as u
+    from triceratops.data import RadioLightCurveContainer
 
     table = Table({
-        "time": [0, 1, 2],
-        "flux_density": [1.2, 1.5, 1.1],
-        "flux_density_error": [0.1, 0.1, 0.1],
-        "flux_upper_limit": [np.nan, np.nan, np.nan],
+        "time": [0, 10, 30, 100] * u.day,
+        "flux_density": [1.2, 1.5, 1.1, np.nan] * u.Jy,
+        "flux_density_error": [0.1, 0.1, 0.1, np.nan] * u.Jy,
+        "flux_upper_limit": [np.nan, np.nan, np.nan, 0.3] * u.Jy,
     })
 
-    lc = RadioLightCurveContainer(
-        table,
-        frequency=8.5 * u.GHz,
-    )
+    lc = RadioLightCurveContainer(table, frequency=8.5 * u.GHz)
 
-The frequency is internally stored in GHz and exposed as:
+From a file (any format supported by :meth:`astropy.table.Table.read`):
 
 .. code-block:: python
 
-    lc.frequency
+    lc = RadioLightCurveContainer.from_file("lightcurve.csv", frequency=8.5)
 
-If a unitless float is provided, GHz is assumed.
+If the frequency is passed as a plain float, GHz is assumed.
 
-
-Creating a Light Curve Container
---------------------------------
-
-From an Astropy Table
-^^^^^^^^^^^^^^^^^^^^^
-
-The simplest construction path is directly from an
-:class:`astropy.table.Table`:
-
-.. code-block:: python
-
-    lc = RadioLightCurveContainer(
-        table,
-        frequency=8.5 * u.GHz,
-    )
-
-A convenience constructor allows column renaming:
+To rename columns on loading:
 
 .. code-block:: python
 
@@ -180,99 +111,241 @@ A convenience constructor allows column renaming:
         column_map={
             "t": "time",
             "flux": "flux_density",
-            "flux_err": "flux_density_error",
-            "flux_ul": "flux_upper_limit",
         },
     )
 
-From a File
+
+Data Access
 ^^^^^^^^^^^
 
-Files readable by :meth:`astropy.table.Table.read` may be loaded directly:
+Unit-aware accessors:
 
 .. code-block:: python
 
-    lc = RadioLightCurveContainer.from_file(
-        "lightcurve.csv",
-        frequency=8.5,
+    lc.time                  # astropy.Quantity in day
+    lc.flux_density          # astropy.Quantity in Jy
+    lc.flux_density_error    # astropy.Quantity in Jy
+    lc.flux_upper_limit      # astropy.Quantity in Jy
+    lc.frequency             # astropy.Quantity in GHz
+
+Detection utilities:
+
+.. code-block:: python
+
+    lc.detection_mask        # boolean array, True = detection
+    lc.non_detection_mask    # boolean array, True = upper limit
+    lc.n_detections
+    lc.n_non_detections
+    lc.detection_table       # sub-table of detections only
+    lc.non_detection_table   # sub-table of upper limits only
+
+
+Inference Integration
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    inference_data = lc.to_inference_data(model)
+
+The container maps ``time`` to the model variable automatically. The observing
+frequency is **not** included in the independent variable array — it is fixed
+metadata and is not passed to the model as a variable.
+
+Optional parameters:
+
+.. code-block:: python
+
+    inference_data = lc.to_inference_data(
+        model,
+        infer_errors=True,          # infer 1σ from upper limits
+        detection_threshold=3.0,    # N-sigma assumed for upper limits
+        mask=some_boolean_array,    # select a subset of rows
     )
 
-If the frequency is passed as a float, GHz is assumed.
+See :ref:`data_to_inference` for the full pipeline walkthrough.
 
 
-Accessing Data
---------------
+.. _optical_light_curve:
 
-The container provides unit-aware accessors:
+OpticalLightCurveContainer
+---------------------------
+
+The optical light curve container handles **single-band optical time-series**
+data. Unlike the radio container, observations may be supplied as flux
+densities, AB magnitudes, or both. The band name is stored as metadata and
+resolved to a model band index at inference time.
+
+.. math::
+
+    F_\nu(t) \quad \text{or} \quad m_\mathrm{AB}(t)
+
+
+Schema
+^^^^^^
+
+.. list-table::
+    :header-rows: 1
+    :widths: 25 45 15 15
+
+    * - Column Name
+      - Description
+      - Default Unit
+      - Required
+    * - ``time``
+      - Observation time (relative to some reference)
+      - ``day``
+      - Yes
+    * - ``flux_density``
+      - Measured flux density (detections; NaN for upper limits)
+      - ``erg s⁻¹ cm⁻² Hz⁻¹``
+      - No *
+    * - ``flux_density_error``
+      - 1σ uncertainty on flux density
+      - ``erg s⁻¹ cm⁻² Hz⁻¹``
+      - No *
+    * - ``flux_upper_limit``
+      - Upper limit on flux density (non-detections; NaN for detections)
+      - ``erg s⁻¹ cm⁻² Hz⁻¹``
+      - No *
+    * - ``mag_ab``
+      - AB magnitude (detections; NaN for upper limits)
+      - dimensionless
+      - No *
+    * - ``mag_ab_error``
+      - 1σ uncertainty on AB magnitude
+      - dimensionless
+      - No *
+    * - ``mag_ab_upper_limit``
+      - Upper limit on AB magnitude (non-detections; NaN for detections)
+      - dimensionless
+      - No *
+    * - ``obs_name``
+      - Optional observation identifier
+      - None
+      - No
+    * - ``comments``
+      - Optional free-form metadata
+      - None
+      - No
+
+.. note::
+
+    At least one of the flux or magnitude column groups must be present.
+    If only magnitudes are provided, flux is computed on-the-fly via
+    the AB magnitude conversion formula.
+
+
+Construction
+^^^^^^^^^^^^
+
+The ``band`` keyword argument is required:
 
 .. code-block:: python
 
-    lc.time
-    lc.flux_density
-    lc.flux_density_error
+    from triceratops.data import OpticalLightCurveContainer
+
+    # From flux density columns
+    lc = OpticalLightCurveContainer(table, band="g")
+
+    # From a file
+    lc = OpticalLightCurveContainer.from_file("optical_g.fits", band="g")
+
+    # From a table with column renaming
+    lc = OpticalLightCurveContainer.from_table(table, band="g", column_map={
+        "t_day": "time",
+        "f_nu":  "flux_density",
+    })
+
+
+Dual Flux/Magnitude Representation
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All four representations are always accessible regardless of the input format:
+
+.. code-block:: python
+
+    # Flux density (erg/s/cm^2/Hz)
+    lc.flux           # flux density, with magnitude→flux conversion if needed
+    lc.flux_error
     lc.flux_upper_limit
 
-Each of these returns an :class:`astropy.units.Quantity`.
+    # AB magnitudes
+    lc.mag            # AB magnitude, with flux→magnitude conversion if needed
+    lc.mag_error
+    lc.mag_upper_limit
 
-Standard table indexing also works:
+If only flux columns were supplied, magnitude properties are computed on the fly.
+If only magnitude columns were supplied, flux properties are computed on the fly.
 
-.. code-block:: python
-
-    lc[0]
-    lc[:5]
-    lc["flux_density"]
-
-
-Numerical Backend Representation
---------------------------------
-
-For low-level numerical workflows, the container provides
-:meth:`to_cgs_array` :contentReference[oaicite:2]{index=2}.
-
-This returns a dense NumPy array of shape:
-
-.. math::
-
-    (N, 4)
-
-containing:
-
-.. math::
-
-    [t, F_\nu, \sigma, F_{\nu,\mathrm{ul}}]
-
-all converted to CGS units:
-
-- Time → seconds
-- Flux → erg s⁻¹ cm⁻² Hz⁻¹
-- Error → erg s⁻¹ cm⁻² Hz⁻¹
-- Upper limit → erg s⁻¹ cm⁻² Hz⁻¹
-
-Example:
+The band name is accessible as:
 
 .. code-block:: python
 
-    array = lc.to_cgs_array()
-
-This method is particularly useful when interfacing with
-external numerical solvers or compiled backends.
+    lc.band   # e.g., "g"
 
 
-Immutability and Design Philosophy
------------------------------------
+Detection Semantics
+^^^^^^^^^^^^^^^^^^^^
 
-The light curve container is immutable after construction.
-The underlying table cannot be modified in-place.
+Detection status is derived from the ``flux_upper_limit`` column:
 
-This design ensures:
+.. code-block:: python
 
-- Reproducibility during inference
-- Stable behavior when passed to likelihood objects
-- Clear separation between raw data preparation and modeling
+    lc.detection_mask        # True = detection
+    lc.non_detection_mask    # True = upper limit (non-detection)
+    lc.n_detections
+    lc.n_non_detections
+    lc.detection_table
+    lc.non_detection_table
 
-If modifications are required, users should modify the original
-:class:`astropy.table.Table` and construct a new container.
 
-The result is a compact, well-defined abstraction for single-band
-radio time-series data that integrates seamlessly with the
-Triceratops inference framework.
+Inference Integration
+^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: python
+
+    inference_data = lc.to_inference_data(model)
+
+This call:
+
+1. Resolves ``lc.band`` → an integer band index via ``model.bundle.filter_names``.
+2. Passes ``time`` as the temporal independent variable.
+3. Broadcasts the band index as a constant array (same value for every row).
+4. Returns a validated :class:`~triceratops.data.core.InferenceData` object.
+
+.. code-block:: python
+
+    # Inspect the model's registered filter names before converting:
+    print(model.bundle.filter_names)   # e.g., ['g', 'r', 'i', 'z']
+
+    inference_data = lc.to_inference_data(
+        model,
+        infer_errors=True,
+        mask=some_boolean_array,
+    )
+
+If the band name stored in the container is not found in
+``model.bundle.filter_names``, a :exc:`KeyError` is raised with a clear
+diagnostic message.
+
+See :ref:`data_to_inference` for the full pipeline walkthrough.
+
+
+----
+
+API Reference
+-------------
+
+.. autoclass:: triceratops.data.light_curve.RadioLightCurveContainer
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+----
+
+.. autoclass:: triceratops.data.light_curve.OpticalLightCurveContainer
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:

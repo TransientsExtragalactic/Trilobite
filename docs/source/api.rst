@@ -41,8 +41,8 @@ and visualizing data sets.
 
     triceratops.data.core
     triceratops.data.light_curve
-    triceratops.data.spectra
     triceratops.data.photometry
+    triceratops.data.optical_photometry
 
 Inference Modules
 -----------------

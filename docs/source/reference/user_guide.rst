@@ -32,10 +32,10 @@ Python in general. You can also explore the :ref:`examples` section for more in-
 Data Loading, Handling, and Visualization
 -----------------------------------------
 
-The first step in any radio analysis is to load and visualize your data. The data modules in triceratops provide
-tools for loading, processing, and visualizing observational data. Most importantly, these structures are the entry
-point to the library, providing a consistent interface for working with different types of data in our model and
-inference pipelines. The following guides cover the relevant functionality:
+In most workflows, the first step is to load and inspect data. Triceratops supports photometric data from
+**radio to X-ray** frequencies, and provides tools for handling and visualizing these data. Below are guides
+that cover how to load and manipulate data, how to get data ready for analysis, how to inspect data, and
+how to visualize data:
 
 .. toctree::
    :maxdepth: 1

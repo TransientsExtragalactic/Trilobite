@@ -20,7 +20,7 @@ Observational Workflow
 These galleries cover the data-to-results pipeline: loading and inspecting photometry,
 then fitting physical models to it with Bayesian inference.
 
-.. grid:: 3
+.. grid:: 2
    :gutter: 3
 
    .. grid-item-card:: Data
@@ -60,7 +60,7 @@ Physical Models
 These galleries demonstrate the high-level model objects in Triceratops — from self-similar
 shock models for radio supernovae to TDE afterglows and accretion disk dynamics.
 
-.. grid:: 3
+.. grid:: 2
    :gutter: 3
 
    .. grid-item-card:: Forward Modeling
@@ -101,7 +101,7 @@ These galleries cover the low-level radiative physics machinery in Triceratops. 
 gallery is organized into four progressive sub-sections. Opacity and free-free galleries are
 planned as example coverage expands.
 
-.. grid:: 3
+.. grid:: 2
    :gutter: 3
 
    .. grid-item-card:: Synchrotron Emission

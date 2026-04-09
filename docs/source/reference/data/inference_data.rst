@@ -155,6 +155,108 @@ Missing upper or lower limits are represented by ``np.nan``.
 If uncertainties are required but absent, the corresponding accessor
 raises an exception rather than silently returning incomplete data.
 
+Inspecting InferenceData
+------------------------
+
+After calling ``to_inference_data()``, always verify the result before
+proceeding to the likelihood step.
+
+repr
+^^^^
+
+The :func:`repr` of an :class:`InferenceData` object gives a compact,
+readable summary:
+
+.. code-block:: python
+
+    >>> print(repr(inference_data))
+    InferenceData(
+      n_obs=32,
+      x=['time', 'freq'],
+      observables=['flux_density'],
+      censored=True,
+      x_error=[]
+    )
+
+This is safe to print in a notebook or interactive session — it does not
+dump raw array contents.
+
+describe()
+^^^^^^^^^^
+
+For a fuller diagnostic, use :meth:`~triceratops.data.core.InferenceData.describe`:
+
+.. code-block:: python
+
+    print(inference_data.describe())
+
+Example output:
+
+.. code-block:: text
+
+    InferenceData — 32 observations
+    ──────────────────────────────────────────────────
+    Independent Variables
+      time        : min=0.10  max=1200.00  (shape=(32,))
+      freq        : min=1.40  max=22.00    (shape=(32,))
+    ──────────────────────────────────────────────────
+    Observables
+      flux_density
+        detections    : 28
+        upper limits  : 4
+        lower limits  : 0
+        value range   : 1.23e-28 … 8.45e-26
+        error present : True
+
+Use this to confirm:
+
+- The number of detections and upper limits matches your expectation.
+- Independent variable ranges look physically reasonable.
+- Errors are present (if ``infer_errors=True`` was passed).
+
+If any of these look wrong, check the ``mask`` argument or the column
+mapping passed to ``to_inference_data()``.
+
+
+Worked Example
+--------------
+
+The complete data → inference pipeline in one block:
+
+.. code-block:: python
+
+    import numpy as np
+    from astropy import units as u
+    from triceratops.data import RadioPhotometryContainer
+    from triceratops.inference.likelihood import GaussianLikelihood
+    from triceratops.inference.problem import InferenceProblem
+
+    # Step 1 — Load data into a container
+    container = RadioPhotometryContainer.from_file("photometry.fits")
+
+    # Step 2 — Convert to InferenceData (all unit coercion happens here)
+    inference_data = container.to_inference_data(
+        model,
+        infer_errors=True,
+        detection_threshold=3.0,
+    )
+
+    # Step 3 — Inspect before proceeding
+    print(inference_data.describe())
+
+    # Step 4 — Wire into the likelihood and inference problem
+    likelihood = GaussianLikelihood(model=model, data=inference_data)
+    problem = InferenceProblem(likelihood)
+
+    problem.set_prior("B",  "log_uniform", lower=0.01 * u.G, upper=100 * u.G)
+    problem.set_prior("n0", "log_uniform", lower=1e-3 / u.cm**3, upper=100 / u.cm**3)
+
+    print(problem.initial_log_posterior)   # should be finite
+
+See :ref:`data_to_inference` for a step-by-step walkthrough covering all
+container types.
+
+
 Design Philosophy
 -----------------
 
@@ -169,3 +271,23 @@ data entering the statistical layer are already numerically valid.
 This separation ensures that likelihood evaluation is a pure numerical
 operation with no hidden unit coercion, no column resolution logic,
 and no ambiguity in array shape or ordering.
+
+
+----
+
+API Reference
+-------------
+
+.. autoclass:: triceratops.data.core.InferenceData
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+----
+
+.. autoclass:: triceratops.data.core.Observable
+   :no-index:
+   :members:
+   :undoc-members:
+   :show-inheritance:

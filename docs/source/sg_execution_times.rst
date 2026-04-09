@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.515** total execution time for 37 files **from all galleries**:
+**00:00.292** total execution time for 39 files **from all galleries**:
 
 .. container::
 
@@ -32,20 +32,11 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
-     - 00:00.533
+   * - :ref:`sphx_glr_auto_examples_data_plot_optical_light_curve.py` (``galleries/data/plot_optical_light_curve.py``)
+     - 00:00.182
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_photometry_plot_filter_basics.py` (``galleries/photometry/plot_filter_basics.py``)
-     - 00:00.310
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_photometry_plot_magnitude_conversions.py` (``galleries/photometry/plot_magnitude_conversions.py``)
-     - 00:00.278
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_opacity_plot_opal_rosseland_opacity.py` (``galleries/opacity/plot_opal_rosseland_opacity.py``)
-     - 00:00.202
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_photometry_plot_filter_bundle.py` (``galleries/photometry/plot_filter_bundle.py``)
-     - 00:00.192
+   * - :ref:`sphx_glr_auto_examples_data_plot_inference_workflow.py` (``galleries/data/plot_inference_workflow.py``)
+     - 00:00.110
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -72,6 +63,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_specific_epochs.py` (``galleries/data/plot_specific_epochs.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_SED_fit.py` (``galleries/inference/plot_SED_fit.py``)
@@ -105,6 +99,18 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_type_IIn_SN_dense_CSM.py` (``galleries/modeling/plot_type_IIn_SN_dense_CSM.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_opacity_plot_opal_rosseland_opacity.py` (``galleries/opacity/plot_opal_rosseland_opacity.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_photometry_plot_filter_basics.py` (``galleries/photometry/plot_filter_basics.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_photometry_plot_filter_bundle.py` (``galleries/photometry/plot_filter_bundle.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_photometry_plot_magnitude_conversions.py` (``galleries/photometry/plot_magnitude_conversions.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_PL_sed.py` (``galleries/synchrotron/a_fundamentals/plot_PL_sed.py``)
