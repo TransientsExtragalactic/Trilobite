@@ -8,6 +8,7 @@ and provides unit-aware accessors for time-, frequency-, and flux-related quanti
 """
 
 import warnings
+import warnings as _warnings
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
 
@@ -27,7 +28,8 @@ if TYPE_CHECKING:
 
 __all__ = [
     "RadioPhotometryContainer",
-    "RadioPhotometryEpochContainer",
+    "RadioPhotometryEpoch",
+    "RadioPhotometryEpochContainer",  # deprecated alias
 ]
 
 
@@ -1239,7 +1241,7 @@ class RadioPhotometryContainer(DataContainer):
         return fig, axes
 
 
-class RadioPhotometryEpochContainer(XYDataContainer):
+class RadioPhotometryEpoch(XYDataContainer):
     """
     Container for single-epoch, multi-frequency radio photometry.
 
@@ -1434,7 +1436,7 @@ class RadioPhotometryEpochContainer(XYDataContainer):
         *,
         column_map: Optional[dict] = None,
     ):
-        """Construct a :class:`RadioPhotometryEpochContainer` from an Astropy table."""
+        """Construct a :class:`RadioPhotometryEpoch` from an Astropy table."""
         if column_map is not None:
             table = table.copy()
             table.rename_columns(list(column_map.keys()), list(column_map.values()))
@@ -1447,10 +1449,123 @@ class RadioPhotometryEpochContainer(XYDataContainer):
         path: Union[str, Path],
         **kwargs,
     ):
-        """Construct a :class:`RadioPhotometryEpochContainer` from a file on disk."""
+        """Construct a :class:`RadioPhotometryEpoch` from a file on disk."""
         table = Table.read(path, **kwargs)
         return cls(
             table,
+        )
+
+    # ========================= Inference Data Conversion ========================= #
+    def to_inference_data(
+        self,
+        model: "Model",
+        variables: Optional[dict] = None,
+        observables: Optional[dict] = None,
+        infer_errors: bool = True,
+        detection_threshold: float = 3.0,
+        mask: Optional[np.ndarray] = None,
+    ) -> "InferenceData":
+        r"""
+        Convert this :class:`RadioPhotometryEpoch` into an :class:`~triceratops.data.core.InferenceData` object.
+
+        For a single-epoch SED container, frequency is the independent variable
+        and flux density is the observable. The default mapping is:
+
+        - ``variables``: ``{"freq": "freq"}`` (or the model's declared frequency variable)
+        - ``observables``: the single model output mapped to the radio flux tuple
+
+        Parameters
+        ----------
+        model : Model
+            The model instance. Its ``variable_names`` and ``output_names`` are
+            used to determine default mappings.
+        variables : dict, optional
+            Override the default variable mapping.
+        observables : dict, optional
+            Override the default observable mapping.
+        infer_errors : bool, default True
+            If True, infer 1-sigma uncertainties for non-detections from their
+            upper limits: :math:`\sigma = F_\mathrm{upper} / N_\sigma`.
+        detection_threshold : float, default 3.0
+            :math:`N_\sigma` used in error inference.
+        mask : np.ndarray of bool, optional
+            Optional row mask applied before building the InferenceData.
+
+        Returns
+        -------
+        InferenceData
+        """
+        # ------------------------------------------------------------
+        # Default variable mapping
+        # ------------------------------------------------------------
+        if variables is None:
+            variables = {}
+            for var_name in model.variable_names:
+                if var_name in {"freq", "frequency"}:
+                    variables[var_name] = "freq"
+                else:
+                    raise ValueError(
+                        f"Cannot infer mapping for model variable '{var_name}'. "
+                        "RadioPhotometryEpoch only maps 'freq'/'frequency'. "
+                        "Please specify `variables=` explicitly."
+                    )
+
+        # ------------------------------------------------------------
+        # Default observable mapping
+        # ------------------------------------------------------------
+        if observables is None:
+            if len(model.output_names) != 1:
+                raise ValueError(
+                    "RadioPhotometryEpoch can only infer defaults for "
+                    "single-observable models. Please specify `observables=`."
+                )
+            observables = {
+                model.output_names[0]: (
+                    "flux_density",
+                    "flux_density_error",
+                    "flux_upper_limit",
+                    None,
+                )
+            }
+
+        # ------------------------------------------------------------
+        # Infer errors for non-detections if requested
+        # ------------------------------------------------------------
+        table = self.__table__.copy()
+
+        if infer_errors:
+            nan_errors_mask = np.isnan(self.flux_density_error)
+            upper_limits_mask = self.non_detection_mask
+            _mask = upper_limits_mask & nan_errors_mask
+            _masked_upper_limits = self.flux_upper_limit[_mask]
+            inferred_error = infer_err_from_non_detection(
+                flux_limit=_masked_upper_limits.value,
+                sigma=detection_threshold,
+            )
+            table["flux_density_error"][_mask] = inferred_error * self.flux_upper_limit.unit
+
+        if np.any(np.isnan(table["flux_density_error"])):
+            warnings.warn(
+                "Flux density error contains NaN values! "
+                "This will likely cause errors in likelihood evaluation.\n"
+                "Use the `infer_errors` option to automatically infer errors "
+                "for non-detections based on their upper limits.",
+                stacklevel=2,
+            )
+
+        # ------------------------------------------------------------
+        # Construct inference data
+        # ------------------------------------------------------------
+        if mask is not None:
+            if mask.shape != (len(table),):
+                raise ValueError("Mask must have the same length as the number of observations.")
+            table = table[mask]
+
+        return InferenceData.from_table(
+            model=model,
+            table=table,
+            variables=variables,
+            observables=observables,
         )
 
     # ======================== PLOTTING METHODS ======================== #
@@ -1530,3 +1645,21 @@ class RadioPhotometryEpochContainer(XYDataContainer):
                 )
 
         return fig, axes
+
+
+# ---------------------------------------------------------------------------
+# Deprecated alias — will be removed in a future release
+# ---------------------------------------------------------------------------
+
+
+class RadioPhotometryEpochContainer(RadioPhotometryEpoch):
+    """Deprecated alias for :class:`RadioPhotometryEpoch`. Use that name instead."""
+
+    def __init__(self, *args, **kwargs):
+        _warnings.warn(
+            "RadioPhotometryEpochContainer is deprecated and will be removed in a future release. "
+            "Use RadioPhotometryEpoch instead.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+        super().__init__(*args, **kwargs)

@@ -93,13 +93,15 @@ class TestGetOpacityStringInput:
         )
 
     @pytest.mark.parametrize("name", list(_OPACITY_REGISTRY.keys()))
-    def test_all_registered_names_return_grey_opacity_law(self, name):
-        """Every string in the registry returns a GreyOpacityLaw subclass."""
+    def test_all_registered_names_return_opacity_law(self, name):
+        """Every string in the registry returns an OpacityLaw instance."""
+        from triceratops.radiation.opacity.base import OpacityLaw
+
         result = get_opacity(name)
-        assert isinstance(result, GreyOpacityLaw)
+        assert isinstance(result, OpacityLaw)
 
     def test_registry_is_complete(self):
-        """The registry contains all seven expected opacity names."""
+        """The registry contains all expected opacity names (analytic + table-based)."""
         expected_names = {
             "electron_scattering",
             "kramers_ff",
@@ -108,6 +110,7 @@ class TestGetOpacityStringInput:
             "kramers_ff_es",
             "kramers_bf_es",
             "kramers_es",
+            "opal",
         }
         assert set(_OPACITY_REGISTRY.keys()) == expected_names
 

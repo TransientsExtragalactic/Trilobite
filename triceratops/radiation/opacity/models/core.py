@@ -1,8 +1,13 @@
 """Standard opacity law implementations for Triceratops."""
 
+from pathlib import Path
+
 import numpy as np
 
-from triceratops.radiation.opacity.base import GreyOpacityLaw
+from triceratops.radiation.opacity.base import GreyOpacityLaw, OpacityLaw
+
+#: Path to the bundled OPAL Rosseland opacity table (Asplund & Grevesse 2005).
+_BUNDLED_OPAL_TABLE = Path(__file__).parent.parent / "tables" / "asplund_grevesse_05.h5"
 
 # ------------------------------------------------------------------ #
 #  Standard Kramers normalisation constants                           #
@@ -284,3 +289,200 @@ class KramersESOpacity(GreyOpacityLaw):
         from triceratops.radiation.opacity.models._kramers_es import C_KramersESOpacity
 
         return C_KramersESOpacity(kappa0=kappa0, kappa_es=kappa_es)
+
+
+# ================================================================ #
+#  OPAL Rosseland mean opacity                                     #
+# ================================================================ #
+
+#: Out-of-bounds mode codes passed to C_OPALTableOpacity.
+_OOB_MODES = {"raise": 0, "clamp": 1, "nan": 2}
+#: Coordinate-system codes passed to C_OPALTableOpacity.
+_COORD_MODES = {"T_R": 0, "T_rho": 1}
+
+
+class OPALOpacity(OpacityLaw):
+    r"""Rosseland mean opacity evaluated by bilinear interpolation on a 2-D OPAL table.
+
+    The table must represent a *single composition*; pass a single-table
+    :class:`~triceratops.radiation.opacity.tables.opacity_table.OpacityTable`
+    (i.e. one with ``n_tables == 1``).  Use
+    :meth:`~triceratops.radiation.opacity.tables.opacity_table.OPALOpacityTable.select`
+    or
+    :func:`load_opal_opacity` to extract a single table from a multi-table file.
+
+    Parameters
+    ----------
+    table : OpacityTable
+        A single-table opacity table (``n_tables == 1``).  Both
+        ``'T_R'`` and ``'T_rho'`` coordinate systems are supported.
+    out_of_bounds : {'raise', 'clamp', 'nan'}
+        Behaviour when a query ``(T, rho)`` falls outside the table's valid
+        domain (including NaN-flagged cells):
+
+        * ``'raise'`` — :exc:`ValueError` with the out-of-range coordinates.
+        * ``'clamp'`` — return the nearest boundary value silently.
+        * ``'nan'``   — return ``NaN`` silently.
+
+    Examples
+    --------
+    Load solar composition from the bundled Asplund & Grevesse (2005) table:
+
+    >>> from triceratops.radiation.opacity.models.core import (
+    ...     load_opal_opacity,
+    ... )
+    >>> op = load_opal_opacity(
+    ...     index=72
+    ... )  # solar: X=0.70, Z=0.02
+    >>> import astropy.units as u
+    >>> op.opacity(1e-5 * u.g / u.cm**3, 1e7 * u.K)
+    """
+
+    IS_C_BACKED = True
+
+    def __init__(self, table, *, out_of_bounds: str = "raise"):
+        if out_of_bounds not in _OOB_MODES:
+            raise ValueError(f"out_of_bounds must be one of {list(_OOB_MODES)}, got {out_of_bounds!r}.")
+        if table.n_tables != 1:
+            raise ValueError(
+                f"OPALOpacity requires a single-table OpacityTable "
+                f"(n_tables == 1), got {table.n_tables}.  "
+                f"Use table.select(index) first."
+            )
+        if table.coord_system not in _COORD_MODES:
+            raise ValueError(f"Unsupported coord_system {table.coord_system!r}; expected one of {list(_COORD_MODES)}.")
+        self.table = table
+        self.out_of_bounds = out_of_bounds
+        super().__init__(table=table, out_of_bounds=out_of_bounds)
+
+    def _initialize_C_object(self, *, table, out_of_bounds):
+        from triceratops.radiation.opacity.models._opal_table import C_OPALTableOpacity
+
+        # np.array always copies, giving the writable C-contiguous buffer Cython requires.
+        # (table.grid_1 / table.opacity are read-only views; we need writable copies here.)
+        lk = np.array(table.opacity[0], dtype=np.float64, order="C")
+        return C_OPALTableOpacity(
+            np.array(table.grid_1, dtype=np.float64),
+            np.array(table.grid_2, dtype=np.float64),
+            lk,
+            _COORD_MODES[table.coord_system],
+            _OOB_MODES[out_of_bounds],
+        )
+
+    def _log_opacity(self, log_T, log_rho):
+        if np.ndim(log_T) > 0:
+            log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+            log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+            return self._c_object.log_opacity_array(log_T_c, log_rho_c)
+        return self._c_object.log_opacity(log_T, log_rho)
+
+    def _dlogkappa_dlogrho(self, log_T, log_rho):
+        if np.ndim(log_T) > 0:
+            log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+            log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+            return self._c_object.dlogkappa_dlogrho_array(log_T_c, log_rho_c)
+        return self._c_object.dlogkappa_dlogrho(log_T, log_rho)
+
+    def _dlogkappa_dlogT(self, log_T, log_rho):
+        if np.ndim(log_T) > 0:
+            log_T_c = np.ascontiguousarray(log_T, dtype=np.float64)
+            log_rho_c = np.ascontiguousarray(log_rho, dtype=np.float64)
+            return self._c_object.dlogkappa_dlogT_array(log_T_c, log_rho_c)
+        return self._c_object.dlogkappa_dlogT(log_T, log_rho)
+
+    def __repr__(self) -> str:
+        tbl = self.table
+        meta = tbl.metadata
+        comp_parts = [f"{k}={meta[k][0]:.4g}" for k in ("X", "Y", "Z") if k in meta]
+        comp_str = ", ".join(comp_parts) if comp_parts else "unknown composition"
+        return (
+            f"OPALOpacity({comp_str}, "
+            f"n_T={tbl.grid_1.size}, n_R={tbl.grid_2.size}, "
+            f"out_of_bounds={self.out_of_bounds!r})"
+        )
+
+
+def _load_solar_opal_opacity(
+    *,
+    table_path=None,
+    out_of_bounds: str = "raise",
+    X: float = 0.70,
+    Z: float = 0.02,
+) -> "OPALOpacity":
+    """Load solar-composition OPAL opacity by searching the bundled table.
+
+    Uses :meth:`~triceratops.radiation.opacity.tables.opacity_table.OPALOpacityTable.where`
+    to locate the composition dynamically rather than relying on a hardcoded index,
+    so the result is stable even if the bundled HDF5 file is rebuilt.
+
+    Parameters
+    ----------
+    table_path : str or Path, optional
+        Override the default bundled table path.
+    out_of_bounds : {'raise', 'clamp', 'nan'}, optional
+    X : float
+        Hydrogen mass fraction to search for (default 0.70).
+    Z : float
+        Metal mass fraction to search for (default 0.02).
+
+    Returns
+    -------
+    OPALOpacity
+    """
+    from triceratops.radiation.opacity.tables.opacity_table import OPALOpacityTable
+
+    path = table_path if table_path is not None else _BUNDLED_OPAL_TABLE
+    tbl = OPALOpacityTable.read(path)
+    matches = tbl.where(X=X, Z=Z)
+    if not matches:
+        raise RuntimeError(f"Solar composition (X={X}, Z={Z}) not found in bundled OPAL table {path}.")
+    return OPALOpacity(tbl.select(matches[0]), out_of_bounds=out_of_bounds)
+
+
+def load_opal_opacity(
+    index: int,
+    *,
+    table_path=None,
+    out_of_bounds: str = "raise",
+) -> OPALOpacity:
+    """Load a single-composition :class:`OPALOpacity` from an HDF5 table file.
+
+    Parameters
+    ----------
+    index : int
+        Zero-based index of the table to load.
+    table_path : str or Path, optional
+        Path to an HDF5 OPAL table file.  Defaults to the bundled
+        Asplund & Grevesse (2005) table.
+    out_of_bounds : {'raise', 'clamp', 'nan'}, optional
+        Out-of-bounds behaviour forwarded to :class:`OPALOpacity`.
+
+    Returns
+    -------
+    OPALOpacity
+
+    Notes
+    -----
+    In the bundled Asplund & Grevesse (2005) table, index 72 corresponds to
+    solar composition (X = 0.70, Z = 0.02).  You can verify this with::
+
+        tbl = OPALOpacityTable.read(path)
+        print(tbl.where(X=0.70, Z=0.02))  # → [72]
+
+    To load solar composition without hardcoding the index, use
+    :func:`_load_solar_opal_opacity` (or ``get_opacity("opal")``).
+
+    Examples
+    --------
+    >>> from triceratops.radiation.opacity.models.core import (
+    ...     load_opal_opacity,
+    ... )
+    >>> op = load_opal_opacity(
+    ...     72
+    ... )  # solar composition (X=0.70, Z=0.02)
+    """
+    from triceratops.radiation.opacity.tables.opacity_table import OPALOpacityTable
+
+    path = table_path if table_path is not None else _BUNDLED_OPAL_TABLE
+    tbl = OPALOpacityTable.read(path)
+    return OPALOpacity(tbl.select(index), out_of_bounds=out_of_bounds)

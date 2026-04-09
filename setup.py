@@ -31,6 +31,7 @@ _PYX_SOURCES = [
     "triceratops/radiation/opacity/models/_electron_scattering.pyx",
     "triceratops/radiation/opacity/models/_kramers.pyx",
     "triceratops/radiation/opacity/models/_kramers_es.pyx",
+    "triceratops/radiation/opacity/models/_opal_table.pyx",
 ]
 
 setup(

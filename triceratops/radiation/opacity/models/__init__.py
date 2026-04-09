@@ -16,6 +16,8 @@ from .core import (
     KramersFFESOpacity,
     KramersFFOpacity,
     KramersOpacity,
+    OPALOpacity,
+    load_opal_opacity,
 )
 
 __all__ = [
@@ -23,7 +25,7 @@ __all__ = [
     "KAPPA_FF_0",
     "KAPPA_BF_0",
     "KAPPA_KR_0",
-    # Classes
+    # Analytic opacity laws
     "ConstantOpacity",
     "ElectronScatteringOpacity",
     "KramersFFOpacity",
@@ -32,4 +34,7 @@ __all__ = [
     "KramersFFESOpacity",
     "KramersBFESOpacity",
     "KramersESOpacity",
+    # Table-based opacity
+    "OPALOpacity",
+    "load_opal_opacity",
 ]

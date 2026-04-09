@@ -22,13 +22,12 @@ The data layer is responsible for:
     For detailed documentation, see :ref:`data_overview`.
 """
 
-__all__ = ["light_curve", "spectra", "photometry", "optical_photometry", "core"]
-from . import core, light_curve, optical_photometry, photometry, spectra
+__all__ = ["light_curve", "photometry", "optical_photometry", "core"]
+from . import core, light_curve, optical_photometry, photometry
 from .core import *
 from .light_curve import *
 from .optical_photometry import *
 from .photometry import *
-from .spectra import *
 
 __all__.extend(light_curve.__all__)
 __all__.extend(photometry.__all__)

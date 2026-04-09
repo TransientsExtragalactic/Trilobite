@@ -382,15 +382,21 @@ A minimal example looks like:
 
     # Construct model and data
     model = MyModel(...)
-    data = RadioLightCurveContainer.from_file(
+    container = RadioLightCurveContainer.from_file(
         "lightcurve.fits",
         frequency=6.0,  # GHz if unitless
     )
 
+    # Convert to InferenceData — this validates units and column mapping
+    inference_data = container.to_inference_data(model)
+
+    # Inspect the result before wiring into inference
+    print(inference_data.describe())
+
     # Build likelihood
     likelihood = GaussianLikelihood(
         model=model,
-        data=data,
+        data=inference_data,
     )
 
     # Create inference problem

@@ -279,6 +279,7 @@ sphinx_gallery_conf = {
         "./galleries/synchrotron",
         "./galleries/accretion",
         "./galleries/photometry",
+        "./galleries/opacity",
     ],
     "gallery_dirs": [
         "auto_examples/data",
@@ -288,6 +289,7 @@ sphinx_gallery_conf = {
         "auto_examples/synchrotron",
         "auto_examples/accretion",
         "auto_examples/photometry",
+        "auto_examples/opacity",
     ],
     # Do not abort the build if an individual gallery example fails.
     # Computationally intensive examples (MCMC, long integrations) may

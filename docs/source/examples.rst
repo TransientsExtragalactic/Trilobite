@@ -115,14 +115,14 @@ planned as example coverage expands.
       relations and equipartition analysis.
 
    .. grid-item-card:: Opacity Laws
-      :class-card: sd-border-1
+      :link: auto_examples/opacity/index
+      :link-type: doc
 
-      **Kramers, electron scattering, and combined opacity.**
+      **Kramers, electron scattering, OPAL table opacity.**
 
-      Demonstrations of the :mod:`~triceratops.radiation.opacity` module — opacity scaling
-      relations, regime transitions, and their effect on emergent spectra.
-
-      *Examples coming soon.*
+      Demonstrations of the :mod:`~triceratops.radiation.opacity` module — the canonical
+      :math:`\kappa_R(T,\rho)` plot for solar composition from the bundled OPAL table,
+      showing the electron-scattering plateau, Kramers rise, and iron-group peak.
 
    .. grid-item-card:: Free-Free Emission
       :class-card: sd-border-1
@@ -144,3 +144,4 @@ planned as example coverage expands.
    auto_examples/dynamics/index
    auto_examples/synchrotron/index
    auto_examples/accretion/index
+   auto_examples/opacity/index

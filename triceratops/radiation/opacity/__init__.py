@@ -1,4 +1,4 @@
-"""Grey opacity laws for Triceratops radiative physics."""
+"""Opacity laws for Triceratops radiative physics."""
 
 from .base import GreyOpacityLaw, OpacityLaw
 from .models import (
@@ -10,7 +10,10 @@ from .models import (
     KramersFFESOpacity,
     KramersFFOpacity,
     KramersOpacity,
+    OPALOpacity,
+    load_opal_opacity,
 )
+from .tables import OpacityTable, OPALOpacityTable
 from .utils import get_opacity
 
 __all__ = [
@@ -19,7 +22,7 @@ __all__ = [
     # Abstract / base
     "OpacityLaw",
     "GreyOpacityLaw",
-    # Concrete implementations
+    # Analytic opacity laws
     "ConstantOpacity",
     "ElectronScatteringOpacity",
     "KramersFFOpacity",
@@ -28,4 +31,10 @@ __all__ = [
     "KramersFFESOpacity",
     "KramersBFESOpacity",
     "KramersESOpacity",
+    # Table-based opacity
+    "OPALOpacity",
+    "load_opal_opacity",
+    # Table containers
+    "OpacityTable",
+    "OPALOpacityTable",
 ]

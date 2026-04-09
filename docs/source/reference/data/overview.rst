@@ -25,11 +25,19 @@ sole data representation recognized by likelihood classes.
 Architecture of the Data Layer
 ------------------------------
 
-There are three principal observational container types in Triceratops:
+Triceratops provides the following observational container types:
 
-- :class:`~triceratops.data.light_curve.RadioLightCurveContainer`
-- :class:`~triceratops.data.photometry.RadioPhotometryContainer`
-- :class:`~triceratops.data.spectra` (spectral containers)
+**Radio containers**
+
+- :class:`~triceratops.data.photometry.RadioPhotometryContainer` — multi-epoch, multi-frequency radio photometry
+- :class:`~triceratops.data.photometry.RadioPhotometryEpoch` — single-epoch radio SED (frequency as independent variable)
+- :class:`~triceratops.data.light_curve.RadioLightCurveContainer` — single-frequency radio time-series
+
+**Optical containers**
+
+- :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer` — multi-epoch, multi-band optical photometry
+- :class:`~triceratops.data.optical_photometry.OpticalPhotometryEpoch` — single-epoch optical SED (band as independent variable)
+- :class:`~triceratops.data.light_curve.OpticalLightCurveContainer` — single-band optical time-series
 
 Each container enforces a schema, ensures unit compatibility,
 and provides convenience accessors tailored to the structure of
@@ -45,7 +53,9 @@ The flow is therefore:
 
     Astropy Table
           ↓
-    DataContainer (LightCurve / Photometry / Spectra)
+    DataContainer (RadioPhotometry / OpticalPhotometry / LightCurve / ...)
+          ↓
+    container.to_inference_data(model)
           ↓
     InferenceData
           ↓
@@ -53,94 +63,80 @@ The flow is therefore:
           ↓
     Inference Problem
 
-Light Curves
-------------
+.. tip::
 
-Light curves represent single-frequency time-series data:
+    See :ref:`data_to_inference` for a complete step-by-step guide on
+    moving from raw data to an inference-ready problem.
+
+
+Radio Light Curves
+------------------
+
+:class:`~triceratops.data.light_curve.RadioLightCurveContainer` represents single-frequency time-series radio data:
 
 .. math::
 
     F_\nu(t)
 
-They are implemented in the
-:mod:`triceratops.data.light_curve` module via
-:class:`~triceratops.data.light_curve.RadioLightCurveContainer`.
-
-A light curve container wraps a validated
-:class:`astropy.table.Table`, enforces required columns
-(e.g. time, flux density, uncertainty, upper limits),
-and stores the observing frequency as metadata.
-
-Light curves are ideal for modeling temporal evolution
-at a fixed observing frequency. They expose convenience
-properties such as:
-
-- Detection and non-detection masks
-- Unit-aware column access
-- Conversion to dense CGS arrays
-
-.. note::
-
-    For full details, see:
-
-    .. toctree::
-       :maxdepth: 1
-
-       light_curve
+The observing frequency is stored as metadata (not a column) and is
+not treated as a variable in inference — it is a fixed property of
+the container. Detection status is inferred from the ``flux_upper_limit``
+column (NaN = detection, finite = non-detection).
 
 
-Photometry Tables
------------------
+Optical Light Curves
+--------------------
 
-Photometry containers generalize light curves to heterogeneous
-multi-frequency observations. They are implemented in
-:mod:`triceratops.data.photometry` via
-:class:`~triceratops.data.photometry.RadioPhotometryContainer`.
+:class:`~triceratops.data.light_curve.OpticalLightCurveContainer` is the optical analog:
+a single-band time-series in AB magnitudes or flux density units.
+The band name is stored as metadata and resolved to a model band index
+at inference time via the model's
+:class:`~triceratops.utils.phot_utils.FilterBundle`.
 
-Unlike light curves, photometry tables may contain multiple
-observing frequencies and may group measurements into epochs.
+Observations may be supplied as flux densities, AB magnitudes, or both.
+All representations are always accessible via properties regardless of
+the input format.
 
-These containers:
+.. toctree::
+   :maxdepth: 1
 
-- Enforce a strict schema for time, frequency, flux density,
-  uncertainty, and upper limits.
-- Support detection and non-detection separation.
-- Provide utilities for grouping observations into epochs.
-- Preserve auxiliary metadata columns without interpretation.
-
-Photometry containers are the most flexible observational format
-and are typically used when fitting broadband spectral energy
-distributions or multi-frequency datasets.
+   light_curve
 
 
-.. note::
+Radio Photometry
+----------------
 
-    For full details, see:
+:class:`~triceratops.data.photometry.RadioPhotometryContainer` generalizes
+light curves to heterogeneous multi-frequency, multi-epoch radio photometry.
+Observations may contain multiple frequencies and can be grouped into epochs.
 
-    .. toctree::
-       :maxdepth: 1
+:class:`~triceratops.data.photometry.RadioPhotometryEpoch` represents a
+single-epoch radio SED where frequency is the independent variable — designed
+for broadband spectral fitting.
 
-       photometry
+.. toctree::
+   :maxdepth: 1
+
+   photometry
+   radio_photometry_epoch
 
 
-Spectra
--------
+Optical Photometry
+------------------
 
-Spectral containers represent flux density as a function of
-frequency at a fixed time:
+:class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer`
+handles multi-epoch, multi-band optical photometry with dual flux/magnitude
+representation.
 
-.. math::
+:class:`~triceratops.data.optical_photometry.OpticalPhotometryEpoch` is the
+optical SED analog of :class:`~triceratops.data.photometry.RadioPhotometryEpoch`:
+a snapshot across multiple bands for broadband SED fitting.
 
-    F_\nu(\nu)
+.. toctree::
+   :maxdepth: 1
 
-They are implemented in :mod:`triceratops.data.spectra`.
-
-While conceptually similar to photometry tables, spectral
-containers assume that all rows correspond to a single epoch.
-They are optimized for modeling instantaneous broadband spectra
-rather than time evolution.
-
-(Full documentation forthcoming.)
+   optical_photometry
+   optical_photometry_epoch
 
 
 Inference Data
@@ -150,72 +146,23 @@ The :class:`~triceratops.data.InferenceData` object is the
 numerical representation of observational data used by the
 inference layer.
 
-Unlike light curve or photometry containers, `InferenceData`
+Unlike observational containers, :class:`~triceratops.data.core.InferenceData`
 contains **only validated NumPy arrays**. It performs no unit
 conversion, no column resolution, and no schema enforcement.
-Those responsibilities belong to the observational containers.
+Those responsibilities belong to the containers.
 
-`InferenceData` provides:
-
-- Deterministic stacking of independent variables
-- Deterministic stacking of observables
-- Symmetric uncertainty arrays
-- Upper and lower limit arrays (with NaN fill where appropriate)
-
-Likelihood classes operate exclusively on this structure.
-
-An `InferenceData` object can be generated in three ways:
-
-From a Data Container
-^^^^^^^^^^^^^^^^^^^^^
-
-Every observational container provides a
-:meth:`to_inference_data` method:
+Every observational container provides a :meth:`to_inference_data` method:
 
 .. code-block:: python
 
-    inference_data = photometry_container.to_inference_data(model)
-
-This is the most common pathway and ensures correct
-column mapping and unit coercion.
-
-From an Astropy Table
-^^^^^^^^^^^^^^^^^^^^^
-
-If working directly with tables:
-
-.. code-block:: python
-
-    inference_data = InferenceData.from_table(
-        model,
-        table,
-        variables={...},
-        observables={...},
-    )
-
-From Raw Arrays
-^^^^^^^^^^^^^^^
-
-For programmatic workflows:
-
-.. code-block:: python
-
-    inference_data = InferenceData.from_arrays(
-        model,
-        x={...},
-        y={...},
-        y_err={...},
-    )
-
-This pathway assumes that arrays are already in the model’s
-expected base units.
-
-For complete documentation, see:
+    inference_data = container.to_inference_data(model)
+    print(inference_data.describe())  # inspect the result
 
 .. toctree::
    :maxdepth: 1
 
    inference_data
+   data_to_inference
 
 
 Design Philosophy
@@ -234,7 +181,7 @@ This separation provides several benefits:
 - Unit safety at ingestion time
 - Minimal overhead during likelihood evaluation
 
-Once data have been converted to `InferenceData`,
+Once data have been converted to ``InferenceData``,
 likelihood evaluation becomes purely numerical and free
 of schema or unit concerns.
 
@@ -273,7 +220,7 @@ the inference system.
 In typical workflows:
 
 1. Load or construct a light curve or photometry container.
-2. Convert it to :class:`~triceratops.data.core.InferenceData`.
+2. Call :meth:`to_inference_data(model)` to produce an :class:`~triceratops.data.core.InferenceData`.
 3. Pass the inference data to a likelihood object.
 4. Evaluate models against the data.
 

@@ -1094,14 +1094,85 @@ class InferenceData:
     # Dunder Methods
     # ------------------------------------------------------------------
     def __repr__(self) -> str:
-        return f"<InferenceData shape={self.shape} n_observables={self.n_observables}>"
+        has_x_err = self.x_error is not None
+        any_censored = any(obs.upper is not None or obs.lower is not None for obs in self.observables.values())
+        parts = [
+            f"  n_obs        = {self.size}",
+            f"  x            = {list(self.x.keys())}",
+            f"  observables  = {list(self.observables.keys())}",
+            f"  censored     = {any_censored}",
+            f"  x_error      = {list(self.x_error.keys()) if has_x_err else None}",
+        ]
+        return "InferenceData(\n" + "\n".join(parts) + "\n)"
 
     def __str__(self) -> str:
-        return (
-            f"InferenceData(n={self.size}, "
-            f"variables={list(self.x.keys())}, "
-            f"observables={list(self.observables.keys())})"
-        )
+        return self.__repr__()
+
+    def describe(self) -> str:
+        """
+        Return a human-readable summary of this :class:`InferenceData` object.
+
+        The summary includes per-variable value ranges and per-observable
+        detection/censoring statistics. Use this after calling
+        :meth:`DataContainer.to_inference_data` to verify the conversion
+        produced the expected result before wiring into a likelihood.
+
+        Returns
+        -------
+        str
+            Multi-line summary string (also printed via ``print()``).
+
+        Examples
+        --------
+        >>> print(inference_data.describe())
+        InferenceData — 32 observations
+        ────────────────────────────────────────────────
+        Independent Variables
+          time   : min=0.10  max=1200.00  (shape=(32,))
+          freq   : min=1.40  max=22.00    (shape=(32,))
+        ────────────────────────────────────────────────
+        Observables
+          flux_density
+            detections    : 28
+            upper limits  : 4
+            lower limits  : 0
+            value range   : 1.23e-28 … 8.45e-26
+            error present : True
+        """
+        lines = [
+            f"InferenceData — {self.size} observations",
+            "─" * 50,
+            "Independent Variables",
+        ]
+        for name, arr in self.x.items():
+            finite = arr[np.isfinite(arr)]
+            if len(finite) > 0:
+                lines.append(f"  {name:<12}: min={finite.min():.4g}  max={finite.max():.4g}  (shape={arr.shape})")
+            else:
+                lines.append(f"  {name:<12}: all NaN  (shape={arr.shape})")
+
+        if self.x_error is not None:
+            lines.append("  [x_error present for: " + ", ".join(self.x_error.keys()) + "]")
+
+        lines += ["─" * 50, "Observables"]
+        for name, obs in self.observables.items():
+            n_upper = int(np.sum(np.isfinite(obs.upper))) if obs.upper is not None else 0
+            n_lower = int(np.sum(np.isfinite(obs.lower))) if obs.lower is not None else 0
+            n_det = self.size - n_upper
+            val_finite = obs.value[np.isfinite(obs.value)]
+            val_range = f"{val_finite.min():.3e} … {val_finite.max():.3e}" if len(val_finite) > 0 else "all NaN"
+            lines += [
+                f"  {name}",
+                f"    detections    : {n_det}",
+                f"    upper limits  : {n_upper}",
+                f"    lower limits  : {n_lower}",
+                f"    value range   : {val_range}",
+                f"    error present : {obs.error is not None}",
+            ]
+
+        result = "\n".join(lines)
+        print(result)
+        return result
 
     def __len__(self) -> int:
         return self.size
@@ -1605,6 +1676,51 @@ class InferenceData:
 
         variable_units = {v.name: v.base_units for v in model.VARIABLES}
         observable_units = {o: getattr(model.UNITS, o) for o in observable_names}
+
+        # -------------------------------------------------
+        # Pre-flight: helpful key-mismatch errors
+        # -------------------------------------------------
+        if x is not None:
+            missing_vars = [n for n in variable_names if n not in x]
+            if missing_vars:
+                import difflib
+
+                suggestions = {}
+                for mv in missing_vars:
+                    close = difflib.get_close_matches(mv, list(x.keys()), n=1, cutoff=0.6)
+                    suggestions[mv] = close[0] if close else None
+                hint_lines = []
+                for mv, sug in suggestions.items():
+                    line = f"  missing '{mv}'"
+                    if sug:
+                        line += f" (did you mean '{sug}'?)"
+                    hint_lines.append(line)
+                raise ValueError(
+                    f"Model declares variables {variable_names} but x has keys {list(x.keys())}.\n"
+                    + "\n".join(hint_lines)
+                    + f"\n  Model VARIABLES: {variable_names}"
+                )
+
+        if y is not None:
+            missing_obs = [n for n in observable_names if n not in y]
+            if missing_obs:
+                import difflib
+
+                suggestions = {}
+                for mo in missing_obs:
+                    close = difflib.get_close_matches(mo, list(y.keys()), n=1, cutoff=0.6)
+                    suggestions[mo] = close[0] if close else None
+                hint_lines = []
+                for mo, sug in suggestions.items():
+                    line = f"  missing '{mo}'"
+                    if sug:
+                        line += f" (did you mean '{sug}'?)"
+                    hint_lines.append(line)
+                raise ValueError(
+                    f"Model declares observables {observable_names} but y has keys {list(y.keys())}.\n"
+                    + "\n".join(hint_lines)
+                    + f"\n  Model OBSERVABLES: {observable_names}"
+                )
 
         # -------------------------------------------------
         # Helper: validate dictionary of arrays
@@ -2816,6 +2932,7 @@ class XYDataContainer(DataContainer, ABC):
         col = self.__table__[self.Y_UPPER_LIMIT_COLUMN]
         return col.quantity.copy()
 
+    @property
     def y_lower_limit(self) -> Union[u.Quantity, None]:
         """astropy.units.Quantity or None: The y-axis lower limit data, if provided."""
         if self.Y_LOWER_LIMIT_COLUMN is None:
