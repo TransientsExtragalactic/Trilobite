@@ -1,36 +1,91 @@
-.. image:: ./images/logo.png
-   :width: 200px
-   :align: center
+.. raw:: html
 
-
-Triceratops
-============
+   <div class="hero">
+       <img src="_images/logo.png" class="hero-logo">
+       <div class="hero-text">
+           <h1>TRICERATOPS</h1>
+           <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
+           <div class="badges">
 
 |RUFF| |PRE-COMMIT| |NUMPYDOC| |COMMITIZEN| |CONVENTIONAL-COMMITS| |LAST-COMMIT| |CONTRIBUTORS| |DOCS| |ASTROPY|
+
+.. raw:: html
+
+           </div>
+               <p style="font-size:10px"> Developed and maintained by Eliza Diggins and the Extragalactic
+               Transients Group (TREX) at UC Berkeley.</p>
+                <p style="font-size:10px"> Available under a GNU AGPLv3 license.</p>
+       </div>
+   </div>
+
+Overview
+=========
 
 The **TR**\ ansient **I**\ nteraction **C**\ ode for **E**\ jecta, **R**\ emnants, **A**\ and
 **T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRICERATOPS**) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
-TRICERATOPS is designed to simulate the coupled dynamics, radiation processes, and observational signatures that arise
-when ejecta-driven shocks propagate through ambient media. It enables researchers to model plasma shocks, ejecta
-dynamics, and broadband time-domain observables in a physically self-consistent way, with particular emphasis on radio
-and millimeter transients.
+.. grid:: 2
+   :gutter: 3
 
-The library supports both **forward modeling** and **parameter inference**, allowing users to connect physically
-motivated shock models directly to observational data from modern radio telescopes. By combining shock dynamics,
-microphysical prescriptions, and radiative transfer into a unified framework, TRICERATOPS helps bridge the gap between
-theory and observation in time-domain astrophysics.
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
 
-Built with flexibility and extensibility in mind, TRICERATOPS is suitable for a wide range of users; from newcomers
-exploring transient shock physics to experienced researchers developing custom models or extending the codebase.
-Its modular architecture makes it straightforward to swap in alternative physical prescriptions, add new radiation
-processes, or integrate with external inference and analysis tools.
+      **What does it do?**
 
+      - Provides **customizable models** of astrophysical transients (GRBs, TDEs, SNe, etc.)
+      - **Modular physics** components (dynamics, radiation, opacity, etc.) for generating new transient models.
+      - **Flexible inference tools** for fitting models to observational data and constraining physical parameters.
+      - Seamless **integration with external analysis tools** and libraries.
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Core capabilities**
+
+      - Fast, Efficient, and Detailed **radiative processes** and **dynamics engines** for modeling emission from shocks,
+        disks, ejecta, and more.
+      - Flexible model construction tools for building **custom transient models** from modular physics components.
+      - Comprehensive inference pipelines for fitting models to data and **performing parameter estimation**.
+      - **Extensive documentation**, examples, and user guides to help you get started and make the most of the library.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Why use Triceratops?**
+
+      TRICERATOPS bridges the gap between theory and observation by combining shock dynamics,
+      microphysical prescriptions, and radiative transfer into a unified framework.
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Who is it for?**
+
+      - Researchers modeling transient shock physics
+      - Users building custom astrophysical models
+      - Developers extending simulation frameworks
+
+.. container:: install-block
+
+    .. card::
+       :class-card: sd-shadow-md sd-border-primary sd-p-3 install-card
+
+       **Get started in seconds!**
+
+       .. code-block:: bash
+
+          >>> pip install triceratops-lib
 
 .. raw:: html
 
    <hr style="color:black">
+
+
+
 
 Resources
 =========
