@@ -47,6 +47,12 @@ from .general_relativity import (
     compute_precession_per_orbit,
     compute_schwarzschild_radius,
 )
+from .gravity import (
+    compute_bondi_radius,
+    compute_hill_radius,
+    compute_roche_lobe_radius,
+    compute_tidal_radius,
+)
 from .special_relativity import (
     compute_beta_from_gamma,
     compute_doppler_factor,
@@ -68,6 +74,11 @@ __all__ = [
     "ideal_gas_sound_speed",
     "radiative_ideal_gas_sound_speed",
     "radiative_ideal_gas_disk_sound_speed",
+    # Newtonian gravity
+    "compute_tidal_radius",
+    "compute_hill_radius",
+    "compute_roche_lobe_radius",
+    "compute_bondi_radius",
     # General relativity
     "compute_gravitational_radius",
     "compute_schwarzschild_radius",

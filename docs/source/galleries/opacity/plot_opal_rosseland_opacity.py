@@ -55,7 +55,7 @@ op = load_opal_opacity(72, out_of_bounds="nan")
 # %%
 # Temperature and Density Grids
 # -----------------------------
-#
+# ax_flux.set_xlabel("Time since reference [days]")
 # We sweep temperature from 10³ K to 5×10⁸ K — intentionally a wider range than the
 # table domain (:math:`10^{3.75} \approx 5600\;\mathrm{K}` to :math:`5\times10^8\;\mathrm{K}`)
 # so the plot shows where the curves begin and end.  Points outside the tabulated range

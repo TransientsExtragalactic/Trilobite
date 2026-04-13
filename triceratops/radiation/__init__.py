@@ -12,8 +12,8 @@ modeling synchrotron emission from supernova shocks and similar phenomena.
 """
 
 __all__ = [
+    "blackbody",
     "constants",
-    "free_free",
     "synchrotron",
 ]
-from . import constants, free_free, synchrotron
+from . import blackbody, constants, synchrotron

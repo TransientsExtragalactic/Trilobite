@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.292** total execution time for 39 files **from all galleries**:
+**00:06.985** total execution time for 41 files **from all galleries**:
 
 .. container::
 
@@ -32,11 +32,17 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
+     - 00:06.212
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_optical_light_curve.py` (``galleries/data/plot_optical_light_curve.py``)
-     - 00:00.182
+     - 00:00.419
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
+     - 00:00.246
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_inference_workflow.py` (``galleries/data/plot_inference_workflow.py``)
-     - 00:00.110
+     - 00:00.109
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000

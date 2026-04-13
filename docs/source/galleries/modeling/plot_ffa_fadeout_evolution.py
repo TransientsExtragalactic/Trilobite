@@ -59,8 +59,8 @@ from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSE
 from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 from triceratops.utils.plot_utils import set_plot_style
 
-set_plot_style()
-
+# set_plot_style()
+# plt.rcParams['text.usetex'] = True
 # %%
 # Physical Parameters
 # -------------------
