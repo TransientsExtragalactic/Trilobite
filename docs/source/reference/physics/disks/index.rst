@@ -30,11 +30,50 @@ models that are nonetheless physically self-consistent.  The design priorities a
     Triceratops does not aim to replace global MHD simulations or full
     radiation-hydrodynamics codes.  The models here are effective descriptions
     designed to match the accuracy requirements of transient light-curve and
-    spectral fitting.
+    spectral fitting. Depending on context, models provided by Triceratops may range
+    from simple toy models to 1-D hydrodynamics; however, the underlying philosophy is to capture
+    the essential physics with minimal free parameters and computational overhead.
+
+To this end, a number of different types of disk models are provided for different applications, each
+with its own benefits and limitations.  The following sections provide an overview of the available
+models and link to more detailed documentation on the theory, implementation, and usage of each.
+
+.. seealso::
+
+     Link this to the gallery, and to the API documentation for the disk module.
 
 .. contents::
     :local:
     :depth: 1
+
+Steady-State Analytical Models
+-------------------------------
+
+There are relatively few accretion scenarios which may be solved analytically; however,
+when applicable, such models are generally the **most efficient** option for coupling to
+other physical processes / modeling. They are appropriate for spectral fitting, checking structural
+scalings against analytic theory, and computing multi-colour blackbody SEDs.
+
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: User Guide
+        :link: thin_disk
+        :link-type: ref
+
+        How to evaluate the Shakura-Sunyaev disk structure, compute the effective
+        temperature profile, generate multi-colour blackbody SEDs, and obtain the
+        analytic bolometric luminosity.
+
+.. toctree::
+    :maxdepth: 1
+    :hidden:
+
+    one_zone_disk
+    one_zone_disk_theory
+    one_zone_disk_dev
+    thin_disk
+
 
 One-Zone Accretion Disk Models
 -------------------------------
@@ -46,6 +85,14 @@ system, and captures the global viscous spreading behaviour with minimal free
 parameters.  The ODE system is integrated by a compiled Cython explicit-Euler kernel
 that evaluates all thermodynamic and structural quantities at each step inside a
 GIL-free hot loop.
+
+.. note::
+
+    One-zone models are ideal for coupling to other physical processes (e.g. shock
+    cooling, wind-driven outflows) and for performing large parameter sweeps; however,
+    they do not capture the radial structure of the disk and are not suitable for
+    spectral fitting. We base our formalism for one-zone modeling on
+    :footcite:t:`piroLatetimeEvolutionInstabilities2025`.
 
 .. grid:: 3
     :gutter: 2
@@ -73,37 +120,6 @@ GIL-free hot loop.
         declaring the Python model class, passing parameters through the integration
         layer, and registering tests.
 
-Steady-State Thin Disk Models
-------------------------------
-
-Steady-state models evaluate the **instantaneous** radial disk structure at a fixed
-accretion rate, following the Shakura-Sunyaev (SS73) alpha-disk prescription.  They
-are appropriate for spectral fitting, checking structural scalings against analytic
-theory, and computing multi-colour blackbody SEDs.
-
-.. grid:: 2
-    :gutter: 2
-
-    .. grid-item-card:: User Guide
-        :link: thin_disk
-        :link-type: ref
-
-        How to evaluate the Shakura-Sunyaev disk structure, compute the effective
-        temperature profile, generate multi-colour blackbody SEDs, and obtain the
-        analytic bolometric luminosity.
-
-    .. grid-item-card:: Gallery
-        :link: accretion_gallery
-        :link-type: ref
-
-        Worked examples: radial disk structure, sensitivity to α and Ṁ, and
-        multi-colour SED for stellar-mass black holes.
-
-.. toctree::
-    :maxdepth: 1
-    :hidden:
-
-    one_zone_disk
-    one_zone_disk_theory
-    one_zone_disk_dev
-    thin_disk
+References
+----------
+.. footbibliography::

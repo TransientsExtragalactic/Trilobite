@@ -30,7 +30,15 @@ from .one_zone import (
     # Utilities
     igP_esDisk,
 )
-from .thin_disk import AlphaDisk, ThinDiskBase
+from .thin_disk import (
+    AlphaDisk,
+    ThinDiskBase,
+    disk_bolometric_luminosity,
+    disk_effective_temperature,
+    disk_flux_density,
+    disk_spectral_luminosity,
+    disk_spectral_luminosity_iso,
+)
 
 __all__ = [
     "one_zone",
@@ -51,4 +59,10 @@ __all__ = [
     # Thin-disk (Shakura-Sunyaev) models
     "ThinDiskBase",
     "AlphaDisk",
+    # SS73 steady-state emission utilities
+    "disk_effective_temperature",
+    "disk_bolometric_luminosity",
+    "disk_spectral_luminosity",
+    "disk_spectral_luminosity_iso",
+    "disk_flux_density",
 ]

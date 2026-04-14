@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.351** total execution time for 43 files **from all galleries**:
+**00:02.368** total execution time for 43 files **from all galleries**:
 
 .. container::
 
@@ -33,7 +33,7 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_accretion_plot_disk_broadband_sed.py` (``galleries/accretion/plot_disk_broadband_sed.py``)
-     - 00:02.351
+     - 00:02.368
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
