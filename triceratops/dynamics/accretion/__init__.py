@@ -30,6 +30,7 @@ from .one_zone import (
     # Utilities
     igP_esDisk,
 )
+from .thin_disk import AlphaDisk, ThinDiskBase
 
 __all__ = [
     "one_zone",
@@ -47,4 +48,7 @@ __all__ = [
     "compute_advection_s_curve",
     "compute_ISCO",
     "compute_schwarzschild_radius",
+    # Thin-disk (Shakura-Sunyaev) models
+    "ThinDiskBase",
+    "AlphaDisk",
 ]

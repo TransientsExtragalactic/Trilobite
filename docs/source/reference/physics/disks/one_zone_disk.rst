@@ -31,10 +31,10 @@ and read the result.
 
     from astropy import constants as const
     from astropy import units as u
-    from triceratops.dynamics.accretion.one_zone import gP_esDisk
+    from triceratops.dynamics.accretion.one_zone import GasPressureDisk
 
     # 1. Create the disk model.
-    disk = gP_esDisk(mu=0.62)
+    disk = GasPressureDisk(mu=0.62)
 
     # 2. Solve the evolution.
     result = disk.solve(
@@ -76,27 +76,27 @@ Available Models
       - Pressure
       - Opacity
       - Temperature solve
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.gP_esDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
       - Gas only
       - Electron scattering
       - Analytic (:math:`T_c \propto Q_0^{1/3}`)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.igP_esDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
       - Gas + Radiation
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.gP_es_fbDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` (``fallback=True``)
       - Gas only + fallback supply
       - Electron scattering
       - Analytic (:math:`T_c \propto Q_0^{1/3}`)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.igP_es_fbDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` (``fallback=True``)
       - Gas + Radiation + fallback supply
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.igP_es_advDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
       - Gas + Radiation + advection
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.igP_es_adv_fbDisk`
+    * - :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` (``fallback=True``)
       - Gas + Radiation + advection + fallback
       - Electron scattering
       - Implicit (Brent's method)
@@ -106,13 +106,16 @@ All models are importable from the package top-level:
 .. code-block:: python
 
     from triceratops.dynamics.accretion.one_zone import (
-        gP_esDisk,
-        igP_esDisk,
-        gP_es_fbDisk,
-        igP_es_fbDisk,
-        igP_es_advDisk,
-        igP_es_adv_fbDisk,
+        GasPressureDisk,
+        FullPressureDisk,
+        AdvectiveDisk,
     )
+
+.. note::
+
+    The legacy aliases ``gP_esDisk``, ``igP_esDisk``, ``igP_es_advDisk``,
+    ``gP_es_fbDisk``, ``igP_es_fbDisk``, and ``igP_es_adv_fbDisk`` remain
+    importable for backward compatibility but refer to the same classes.
 
 ----
 
@@ -125,7 +128,7 @@ solves.
 
 .. tab-set::
 
-    .. tab-item:: gP_esDisk
+    .. tab-item:: GasPressureDisk
 
         .. list-table::
             :header-rows: 1
@@ -141,9 +144,9 @@ solves.
 
         .. code-block:: python
 
-            disk = gP_esDisk(mu=0.62)
+            disk = GasPressureDisk(mu=0.62)
 
-    .. tab-item:: igP_esDisk
+    .. tab-item:: FullPressureDisk
 
         .. list-table::
             :header-rows: 1
@@ -157,9 +160,9 @@ solves.
 
         .. code-block:: python
 
-            disk = igP_esDisk(mu=0.62)
+            disk = FullPressureDisk(mu=0.62)
 
-    .. tab-item:: igP_es_advDisk
+    .. tab-item:: AdvectiveDisk
 
         .. list-table::
             :header-rows: 1
@@ -174,14 +177,14 @@ solves.
               - Entropy gradient parameter (dimensionless, :math:`>0`).  Controls
                 the advective fraction :math:`q_{\rm adv}/q_{\rm visc} \propto
                 \xi\,\alpha\,(H/R)^2`.  Setting :math:`\xi \to 0` recovers
-                :class:`~triceratops.dynamics.accretion.one_zone.core.igP_esDisk`.
+                :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`.
               - ``0.5``
 
         .. code-block:: python
 
-            disk = igP_es_advDisk(mu=0.62, xi=0.5)
+            disk = AdvectiveDisk(mu=0.62, xi=0.5)
 
-    .. tab-item:: igP_es_adv_fbDisk
+    .. tab-item:: AdvectiveDisk (fallback)
 
         .. list-table::
             :header-rows: 1
@@ -201,7 +204,7 @@ solves.
 
         .. code-block:: python
 
-            disk = igP_es_adv_fbDisk(mu=0.62, xi=0.5)
+            disk = AdvectiveDisk(mu=0.62, xi=0.5, fallback=True)
 
 The Metzger+08 geometry constants :math:`A = 1.62`, :math:`B = 1.33`, and
 :math:`F_0 = 1.6` are compiled into the Cython layer and are accessible as
@@ -754,12 +757,9 @@ Disk Models
 .. autosummary::
     :toctree: generated/
 
-    gP_esDisk
-    igP_esDisk
-    gP_es_fbDisk
-    igP_es_fbDisk
-    igP_es_advDisk
-    igP_es_adv_fbDisk
+    GasPressureDisk
+    FullPressureDisk
+    AdvectiveDisk
     OneZoneAccretionDiskBase
 
 Result Container

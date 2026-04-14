@@ -141,7 +141,7 @@ disk = GasPressureDisk(mu=mu, fallback=True, opacity="kramers_es")
 
 ic = disk.generate_initial_conditions(
     M_BH=M_BH,
-    M_D_0=0.07 * M_star,
+    M_D_0=0.5 * M_star,
     R_D_0=R_D_0,
 )
 
@@ -163,10 +163,10 @@ result = disk.solve(
         "M_BH": M_BH,
         "R_in": R_in,
         "alpha": alpha,
-        M_fb_0: M_fb_0,
-        t_fb: t_fb,
+        "M_fb_0": M_fb_0,
+        "t_fb": t_fb,
     },
-    t_span=(0.01 * u.day, 10.0 * u.yr),
+    t_span=(30 * u.day, 10.0 * u.yr),
     max_steps=2_000_000,
 )
 
@@ -185,7 +185,7 @@ t_yr = data["t"].to(u.yr).value
 # left to right in the legend.  Each epoch records the disk radius and
 # effective temperature at the nearest integration step.
 
-epoch_years = [0.01, 0.1, 1, 2, 3, 5, 7, 10]
+epoch_years = [1, 2, 3, 5, 7, 10]
 
 cmap = plt.cm.plasma
 norm = Normalize(vmin=epoch_years[0], vmax=epoch_years[-1])
@@ -282,8 +282,8 @@ ax.set_title(
 )
 ax.legend(fontsize=8, loc="lower left")
 ax.grid(True, which="both", ls="--", alpha=0.4)
-ax.set_ylim([1e-4, 1e-1])
-ax.set_xlim([1e14, 5e16])
+ax.set_ylim([1e-4, 1e1])
+ax.set_xlim([1e14, 5e17])
 plt.tight_layout()
 plt.show()
 

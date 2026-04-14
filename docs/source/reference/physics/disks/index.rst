@@ -73,6 +73,32 @@ GIL-free hot loop.
         declaring the Python model class, passing parameters through the integration
         layer, and registering tests.
 
+Steady-State Thin Disk Models
+------------------------------
+
+Steady-state models evaluate the **instantaneous** radial disk structure at a fixed
+accretion rate, following the Shakura-Sunyaev (SS73) alpha-disk prescription.  They
+are appropriate for spectral fitting, checking structural scalings against analytic
+theory, and computing multi-colour blackbody SEDs.
+
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: User Guide
+        :link: thin_disk
+        :link-type: ref
+
+        How to evaluate the Shakura-Sunyaev disk structure, compute the effective
+        temperature profile, generate multi-colour blackbody SEDs, and obtain the
+        analytic bolometric luminosity.
+
+    .. grid-item-card:: Gallery
+        :link: accretion_gallery
+        :link-type: ref
+
+        Worked examples: radial disk structure, sensitivity to α and Ṁ, and
+        multi-colour SED for stellar-mass black holes.
+
 .. toctree::
     :maxdepth: 1
     :hidden:
@@ -80,3 +106,4 @@ GIL-free hot loop.
     one_zone_disk
     one_zone_disk_theory
     one_zone_disk_dev
+    thin_disk

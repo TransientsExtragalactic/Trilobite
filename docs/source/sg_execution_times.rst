@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:06.985** total execution time for 41 files **from all galleries**:
+**00:02.351** total execution time for 43 files **from all galleries**:
 
 .. container::
 
@@ -32,17 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
-     - 00:06.212
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_optical_light_curve.py` (``galleries/data/plot_optical_light_curve.py``)
-     - 00:00.419
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
-     - 00:00.246
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_data_plot_inference_workflow.py` (``galleries/data/plot_inference_workflow.py``)
-     - 00:00.109
+   * - :ref:`sphx_glr_auto_examples_accretion_plot_disk_broadband_sed.py` (``galleries/accretion/plot_disk_broadband_sed.py``)
+     - 00:02.351
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -59,10 +50,19 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_accretion_plot_one_zone_disk_quickstart.py` (``galleries/accretion/plot_one_zone_disk_quickstart.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_accretion_plot_ss_disk.py` (``galleries/accretion/plot_ss_disk.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_tde_disk_observables.py` (``galleries/accretion/plot_tde_disk_observables.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_epoch_photometry.py` (``galleries/data/plot_epoch_photometry.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_data_plot_inference_workflow.py` (``galleries/data/plot_inference_workflow.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_data_plot_optical_light_curve.py` (``galleries/data/plot_optical_light_curve.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_photometry_data.py` (``galleries/data/plot_photometry_data.py``)
@@ -86,6 +86,9 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_inference_plot_multi_epoch_sed_evolution.py` (``galleries/inference/plot_multi_epoch_sed_evolution.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_shock_parameter_inference.py` (``galleries/inference/plot_shock_parameter_inference.py``)
      - 00:00.000
      - 0.0
@@ -96,6 +99,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_ffa_fadeout_evolution.py` (``galleries/modeling/plot_ffa_fadeout_evolution.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_phenomenological_lc_fit.py` (``galleries/modeling/plot_phenomenological_lc_fit.py``)
