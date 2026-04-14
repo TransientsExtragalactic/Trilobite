@@ -3,13 +3,9 @@ One-zone accretion disk evolution models.
 
 This module implements time-dependent **one-zone** (vertically-integrated,
 radially-averaged) accretion disk models following the framework of
-:footcite:t:`metzgerTimeDependentModelsAccretion2008`.  The disk is described
-by two global state variables
-
-— disk mass :math:`M_D` and
-- angular momentum :math:`J_D`
-
-which are evolved by a compiled Cython explicit-Euler integrator.
+:footcite:t:`metzgerTimeDependentModelsAccretion2008`. The implementation
+included here provides access to a number of models which are evolved by a compiled
+Cython explicit-Euler integrator.
 
 All structural, thermodynamic, and viscous quantities (disk radius, surface
 density, temperature, kinematic viscosity, etc.) are computed inside the
@@ -37,9 +33,15 @@ from pathlib import Path
 from typing import Any, ClassVar, Optional
 
 import numpy as np
+from astropy import constants as const
 from astropy import units as u
 from astropy.table import QTable
 
+from triceratops.dynamics.accretion.utils import (
+    uniform_disk_bolometric_luminosity,
+    uniform_disk_flux_density,
+    uniform_disk_spectral_luminosity,
+)
 from triceratops.utils.misc_utils import ensure_in_units
 
 from ._typing import (
@@ -444,6 +446,9 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
     # These mirror the C-level DISK_A / DISK_B / DISK_F0 constants defined in
     # closure.pyx and are exposed here so Python-side helpers (e.g. computing
     # a self-consistent J_D_0) can reference them without importing Cython.
+    # These come directly from Metzger+08 and are not expected to vary between models,
+    # but we expose them as class attributes in case a future model wants to override them.
+    # They must also be modified at the C-level if changed here, and vice versa.
     _A: ClassVar[float] = 1.62  # Metzger+08 disk correction factor A
     _B: ClassVar[float] = 1.33  # Metzger+08 disk correction factor B
     _F: ClassVar[float] = 1.6  # Metzger+08 disk correction factor F0
@@ -1065,6 +1070,8 @@ class OneZoneAccretionDiskBase(ABC, metaclass=_OneZoneMeta):
                     result.n_steps,
                 )
         """
+        # TODO: This should allow a pool of workers to perform the sweep in parallel,
+        # but that can be done in a future PR.
         import itertools
 
         from tqdm.auto import tqdm
@@ -1562,6 +1569,7 @@ class OneZoneAccretionResult:
                 out[name] = arr * unit
 
         # Python-side derived fields (CYTHON_FIELD_MAP value is None)
+        # noinspection PyProtectedMember
         derived = self.model._compute_derived_result_fields(self.result_array, self.run_params)
         for name, spec in self.model.RESULT_FIELDS.items():
             if self.model.CYTHON_FIELD_MAP.get(name) is None and name in derived:
@@ -2131,10 +2139,16 @@ class OneZoneAccretionResult:
         r"""Return a cubic spline interpolator for a result field as a function of time.
 
         Builds an :class:`~scipy.interpolate.InterpolatedUnivariateSpline`
-        (default ``k=3``) on the stored time grid.  The returned callable
-        accepts time in seconds and returns raw float values (units must be
-        looked up separately from :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`
-        or the known built-in fields).
+        (default ``k=3``, ``ext=2``) on the stored time grid.  The returned
+        callable accepts time in seconds and returns raw float values (units
+        must be looked up separately from
+        :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS` or the known built-in
+        fields).
+
+        By default the interpolator raises :exc:`ValueError` if evaluated
+        outside the simulation time range (``ext=2``).  Pass ``ext=0`` to
+        extrapolate, ``ext=1`` to return zero, or ``ext=3`` to clamp to the
+        boundary value.
 
         Parameters
         ----------
@@ -2143,7 +2157,8 @@ class OneZoneAccretionResult:
             or any :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS` key).
         **kwargs
             Forwarded to :class:`~scipy.interpolate.InterpolatedUnivariateSpline`
-            (e.g. ``k=1`` for linear, ``ext=3`` to clamp extrapolation).
+            (e.g. ``k=1`` for linear interpolation, ``ext=0`` to allow
+            extrapolation beyond the simulation time range).
 
         Returns
         -------
@@ -2159,16 +2174,23 @@ class OneZoneAccretionResult:
         --------
         .. code-block:: python
 
+            # Default: raises ValueError outside simulation range
             spl = result.get_field_interpolator("T_c")
-            T_c_at_1e8 = spl(
-                1e8
-            )  # raw float in the field's CGS units
+
+            # Allow extrapolation beyond the simulation time range
+            spl_extrap = result.get_field_interpolator(
+                "T_c", ext=0
+            )
         """
         from scipy.interpolate import InterpolatedUnivariateSpline
 
+        # Extract the array and strip the units from the interpolator.
         arr = self.data[field_name]
         y = arr.value if isinstance(arr, u.Quantity) else np.asarray(arr, dtype=float)
+
+        # Default to cubic spline; default ext=2 raises ValueError on out-of-bounds.
         kwargs.setdefault("k", 3)
+        kwargs.setdefault("ext", 2)
         return InterpolatedUnivariateSpline(self.t, y, **kwargs)
 
     def interpolate_field(
@@ -2179,6 +2201,14 @@ class OneZoneAccretionResult:
         **kwargs,
     ) -> _FieldValue:
         r"""Evaluate a result field at arbitrary time(s) via spline interpolation.
+
+        By default a :exc:`ValueError` is raised when *t_new* falls outside
+        the simulation time range.  Pass ``ext=0`` to extrapolate, ``ext=1``
+        to return zero, or ``ext=3`` to clamp to the boundary value instead.
+        These are forwarded to :meth:`get_field_interpolator` only when no
+        pre-built *interpolator* is supplied; if a pre-built interpolator is
+        provided, ``**kwargs`` are ignored and the interpolator's own ``ext``
+        setting applies.
 
         Parameters
         ----------
@@ -2192,7 +2222,8 @@ class OneZoneAccretionResult:
             ``None``, one is built on-the-fly.
         **kwargs
             Forwarded to :meth:`get_field_interpolator` when *interpolator*
-            is ``None``.
+            is ``None`` (e.g. ``ext=0`` to allow extrapolation, ``k=1`` for
+            linear interpolation).
 
         Returns
         -------
@@ -2200,128 +2231,450 @@ class OneZoneAccretionResult:
             Interpolated value(s) with units attached when the field declares
             them in :attr:`~OneZoneAccretionDiskBase.RESULT_FIELDS`.
 
+        Raises
+        ------
+        ValueError
+            If *t_new* is outside the simulation time range and ``ext=2``
+            (the default).
+
         Examples
         --------
         .. code-block:: python
 
+            # Raises ValueError if 5e8 s is outside the simulation range
             T_c = result.interpolate_field("T_c", 5e8 * u.s)
-        """
-        if interpolator is None:
-            interpolator = self.get_field_interpolator(field_name, **kwargs)
 
-        if isinstance(t_new, u.Quantity):
-            t_s = np.asarray(ensure_in_units(t_new, "s"), dtype=float)
-        else:
-            t_s = np.asarray(t_new, dtype=float)
-
-        values = interpolator(t_s)
-
-        # Reattach units when declared in RESULT_FIELDS.
-        spec = self.model.RESULT_FIELDS.get(field_name, {})
-        units_str = spec.get("units", "")
-        if units_str:
-            return values * u.Unit(units_str)
-
-        # Built-in state fields with known units.
-        _builtin_units = {"M_D": u.g, "J_D": u.g * u.cm**2 / u.s, "t": u.s}
-        if field_name in _builtin_units:
-            return values * _builtin_units[field_name]
-
-        return values
-
-    def compute_thin_disk_effective_temperature(
-        self,
-        radius: Any,
-        time: Any,
-        interpolator=None,
-    ) -> u.Quantity:
-        r"""Compute the local effective temperature at *radius* and *time*.
-
-        Uses the standard thin-disk temperature profile:
-
-        .. math::
-
-            T_{\rm eff}(R) = T_{\rm eff}(R_D)\,\left(\frac{R_D}{R}\right)^{3/4}
-
-        where :math:`T_{\rm eff}(R_D)` is the one-zone effective temperature
-        (the outer-edge temperature stored in the result) evaluated at the
-        requested time via spline interpolation.
-
-        Parameters
-        ----------
-        radius : float or Quantity
-            Radial location at which to evaluate :math:`T_{\rm eff}`.
-            Quantities are converted to centimetres.
-        time : float or Quantity
-            Time at which to evaluate :math:`T_{\rm eff}(R_D)`.
-            Quantities are converted to seconds.
-        interpolator : callable, optional
-            Pre-built spline for the ``"T_eff"`` field from
-            :meth:`get_field_interpolator`.  Built on-the-fly if ``None``.
-
-        Returns
-        -------
-        `~astropy.units.Quantity`
-            Effective temperature at *radius* in Kelvin.
-
-        Examples
-        --------
-        .. code-block:: python
-
-            T = result.compute_thin_disk_effective_temperature(
-                radius=1e10 * u.cm, time=1e7 * u.s
+            # Allow extrapolation beyond the simulation range
+            T_c = result.interpolate_field(
+                "T_c", 5e8 * u.s, ext=0
             )
         """
-        T_eff_RD = self.interpolate_field("T_eff", time, interpolator=interpolator)
-        R_D = self.interpolate_field("R_D", time)
+        # Ensure that t_s is a plain float array in seconds for the interpolator, which always
+        # returns raw floats in the field's native CGS units.  Units are re-attached at the end.
+        t_new = ensure_in_units(t_new, u.s)
 
-        T_eff_RD_K = T_eff_RD.value if isinstance(T_eff_RD, u.Quantity) else float(T_eff_RD)
-        R_D_cm = R_D.value if isinstance(R_D, u.Quantity) else float(R_D)
-        radius_cm = float(ensure_in_units(radius, "cm"))
+        # If the field name is provided, we can look up the units from RESULT_FIELDS and re-attach them after.
+        if field_name in self.model.RESULT_FIELDS:
+            field_units = self.model.RESULT_FIELDS[field_name].get("units", "")
+        elif field_name in {"t", "M_D", "J_D"}:
+            # Built-in state fields have known units.
+            field_units = {"t": "s", "M_D": "g", "J_D": "g cm**2 / s"}[field_name]
+        else:
+            raise KeyError(f"Field '{field_name}' not found in data. Available fields: {sorted(self.data.keys())}")
 
-        return T_eff_RD_K * (R_D_cm / radius_cm) ** 0.75 * u.K
+        # perform the interpolation step.
+        if interpolator is None:
+            interpolator = self.get_field_interpolator(field_name, **kwargs)
+        values = interpolator(t_new)
 
-    def compute_luminosity(self, time: Any, interpolator=None) -> u.Quantity:
-        r"""Compute the disk bolometric luminosity at *time*.
+        return values * u.Unit(field_units) if field_units else values
 
-        Uses the thin-disk viscous-dissipation estimate:
+    def compute_accretion_luminosity(self, time: Any, interpolator=None, **interp_kwargs) -> u.Quantity:
+        r"""Compute the accretion luminosity as a function of time.
+
+        This is the rate at which gravitational energy is released as mass
+        spirals in from the outer disk to the inner truncation radius:
 
         .. math::
 
-            L = \frac{G\,M_{\rm BH}\,\dot{M}}{R_{\rm in}}
+            L_{\rm acc}(t) = \frac{G\,M_{\rm BH}\,\dot{M}(t)}{2\,R_{\rm in}}
 
-        where :math:`\dot{M}` is interpolated from the result at *time* and
-        :math:`R_{\rm in}` is read from the stored runtime parameters.
+        :math:`\dot{M}` is interpolated from the result at *time* and
+        :math:`R_{\rm in}` is read from the stored runtime parameters :footcite:p:`frank2002accretion`.
+
+        .. note::
+
+            :math:`L_{\rm acc}` represents the total power *released* by
+            viscous dissipation.  In radiatively efficient models (no
+            advection) essentially all of this power escapes as radiation, so
+            :math:`L_{\rm acc} \approx L_{\rm rad}`.  In advection-dominated
+            models (e.g. :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`)
+            a fraction of the dissipated energy is advected inward rather than
+            radiated, giving :math:`L_{\rm rad} < L_{\rm acc}`.  Use
+            :meth:`compute_radiative_luminosity` to obtain the
+            Stefan-Boltzmann luminosity directly from :math:`T_{\rm eff}`.
 
         Parameters
         ----------
         time : float or Quantity
-            Time at which to evaluate the luminosity.
+            Time at which to evaluate the luminosity.  Scalar or array.
         interpolator : callable, optional
             Pre-built spline for the ``"mdot"`` field.  Built on-the-fly if
-            ``None``.
+            ``None``.  When provided, ``**interp_kwargs`` are ignored.
+        **interp_kwargs
+            Passed to :meth:`get_field_interpolator` when building the spline
+            on-the-fly.  Use ``ext=0`` to extrapolate beyond the simulation
+            time range instead of raising :exc:`ValueError` (the default).
 
         Returns
         -------
         `~astropy.units.Quantity`
-            Luminosity in erg s⁻¹.
+            Accretion luminosity in erg s⁻¹, same shape as *time*.
+
+        Raises
+        ------
+        ValueError
+            If *time* is outside the simulation range and ``ext=2`` (default).
+
+        See Also
+        --------
+        compute_radiative_luminosity :
+            Stefan-Boltzmann luminosity from :math:`T_{\rm eff}` — the power
+            actually radiated from the disk surface.
 
         Examples
         --------
         .. code-block:: python
 
-            L = result.compute_luminosity(1e8 * u.s)
-            print(L.to(u.Lsun))
-        """
-        from astropy.constants import G
+            L_acc = result.compute_accretion_luminosity(
+                1e8 * u.s
+            )
+            print(L_acc.to(u.Lsun))
 
+            # Allow extrapolation beyond the simulation time range
+            L_acc = result.compute_accretion_luminosity(
+                1e10 * u.s, ext=0
+            )
+        """
+        G_cgs = const.G.cgs.value  # cm^3 g^{-1} s^{-2}
         M_BH = np.exp(self.run_params["log_M_BH"])  # g
         R_in = np.exp(self.run_params["log_R_in"])  # cm
 
-        mdot = self.interpolate_field("mdot", time, interpolator=interpolator)
-        mdot_cgs = mdot.value if isinstance(mdot, u.Quantity) else float(mdot)
+        mdot = self.interpolate_field("mdot", time, interpolator=interpolator, **interp_kwargs)
+        mdot = ensure_in_units(mdot, "g / s")
 
-        return G * M_BH * mdot_cgs / (2 * R_in) * u.Unit("erg/s")
+        return G_cgs * M_BH * mdot / (2.0 * R_in) * u.erg / u.s
+
+    def compute_radiative_luminosity(
+        self, time: Any, T_interpolator=None, R_interpolator=None, **interp_kwargs
+    ) -> u.Quantity:
+        r"""Compute the Stefan-Boltzmann bolometric luminosity at *time*.
+
+        Treats the disk as an annular blackbody of uniform effective
+        temperature :math:`T_{\rm eff}` radiating from both faces:
+
+        .. math::
+
+            L_{\rm rad}(t) = 2\pi\,\sigma_{\rm SB}\,T_{\rm eff}^4(t)\,
+                              \bigl(R_D^2(t) - R_{\rm in}^2\bigr)
+
+        Because the one-zone model sets :math:`T_{\rm eff}` by the local
+        energy balance, :math:`L_{\rm rad}` equals the power that actually
+        escapes the disk surface as thermal radiation.  In advection-dominated
+        models this is less than :meth:`compute_accretion_luminosity`.
+
+        Parameters
+        ----------
+        time : float or Quantity
+            Time at which to evaluate the luminosity.  Scalar or array.
+        T_interpolator : callable, optional
+            Pre-built spline for the ``"T_eff"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        R_interpolator : callable, optional
+            Pre-built spline for the ``"R_D"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        **interp_kwargs
+            Passed to :meth:`get_field_interpolator` for any field whose
+            interpolator is built on-the-fly.  Use ``ext=0`` to extrapolate
+            beyond the simulation time range instead of raising
+            :exc:`ValueError` (the default).
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Radiative luminosity in erg s⁻¹, same shape as *time*.
+
+        Raises
+        ------
+        ValueError
+            If *time* is outside the simulation range and ``ext=2`` (default).
+
+        See Also
+        --------
+        compute_accretion_luminosity :
+            Gravitational power released — differs from this quantity when
+            advective cooling is significant.
+        compute_spectral_luminosity :
+            Monochromatic version; integrates to :math:`L_{\rm rad}`.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            L_rad = result.compute_radiative_luminosity(
+                1e8 * u.s
+            )
+            print(L_rad.to(u.Lsun))
+
+            # compare to accretion luminosity (equal for non-advective models)
+            L_acc = result.compute_accretion_luminosity(
+                1e8 * u.s
+            )
+            print(L_rad / L_acc)  # < 1 for AdvectiveDisk
+        """
+        T_eff = self.interpolate_field("T_eff", time, interpolator=T_interpolator, **interp_kwargs)
+        R_D = self.interpolate_field("R_D", time, interpolator=R_interpolator, **interp_kwargs)
+        R_in = np.exp(self.run_params["log_R_in"]) * u.cm
+
+        return uniform_disk_bolometric_luminosity(T_eff, R_D, R_in)
+
+    def compute_spectral_luminosity(
+        self,
+        nu: Any,
+        time: Any,
+        T_interpolator=None,
+        R_interpolator=None,
+        **interp_kwargs,
+    ) -> u.Quantity:
+        r"""Compute the blackbody spectral luminosity of the disk at *time*.
+
+        Treats the disk as a single-temperature Lambertian emitter at
+        :math:`T_{\rm eff}(t)` and evaluates the Planck function over both
+        faces:
+
+        .. math::
+
+            L_\nu(t) = 2\pi^2\,B_\nu\!\bigl(T_{\rm eff}(t)\bigr)\,
+                       \bigl(R_D^2(t) - R_{\rm in}^2\bigr)
+
+        Integrating over all frequencies recovers
+        :meth:`compute_radiative_luminosity`.
+
+        .. seealso::
+
+            :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_sed`
+            provides a more accurate multi-colour SED using the full SS73
+            radial temperature profile.
+
+        Parameters
+        ----------
+        nu : float or array-like or `~astropy.units.Quantity`
+            Frequency or frequency array [Hz].
+        time : float or `~astropy.units.Quantity`
+            Time at which to evaluate the disk state.  Scalar or array.
+        T_interpolator : callable, optional
+            Pre-built spline for the ``"T_eff"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        R_interpolator : callable, optional
+            Pre-built spline for the ``"R_D"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        **interp_kwargs
+            Passed to :meth:`get_field_interpolator` for any field whose
+            interpolator is built on-the-fly.  Use ``ext=0`` to extrapolate
+            beyond the simulation time range instead of raising
+            :exc:`ValueError` (the default).
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Spectral luminosity :math:`L_\nu` in erg s⁻¹ Hz⁻¹, same shape as
+            *nu*.
+
+        Raises
+        ------
+        ValueError
+            If *time* is outside the simulation range and ``ext=2`` (default).
+
+        See Also
+        --------
+        compute_flux_density :
+            Observed flux density at a given luminosity distance.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            import numpy as np
+            import astropy.units as u
+
+            nu = np.geomspace(1e12, 1e17, 300) * u.Hz
+            L_nu = result.compute_spectral_luminosity(
+                nu, time=1e8 * u.s
+            )
+        """
+        T_eff = self.interpolate_field("T_eff", time, interpolator=T_interpolator, **interp_kwargs)
+        R_D = self.interpolate_field("R_D", time, interpolator=R_interpolator, **interp_kwargs)
+        R_in = np.exp(self.run_params["log_R_in"]) * u.cm
+
+        return uniform_disk_spectral_luminosity(nu, T_eff, R_D, R_in)
+
+    def compute_flux_density(
+        self,
+        nu: Any,
+        time: Any,
+        D_L: Any,
+        cos_theta: float = 1.0,
+        T_interpolator=None,
+        R_interpolator=None,
+        **interp_kwargs,
+    ) -> u.Quantity:
+        r"""Compute the observed flux density of the disk at *time*.
+
+        Treats the disk as a single-temperature Lambertian emitter.  The flux
+        from one optically-thick face at inclination :math:`\theta` and
+        luminosity distance :math:`D_L` is :footcite:p:`frank2002accretion`
+        Eq. 5.45:
+
+        .. math::
+
+            F_\nu(t) = \frac{\pi\,\cos\theta\;B_\nu\!\bigl(T_{\rm eff}(t)\bigr)\,
+                             \bigl(R_D^2(t) - R_{\rm in}^2\bigr)}{D_L^2}
+
+        Parameters
+        ----------
+        nu : float or array-like or `~astropy.units.Quantity`
+            Observed frequency or frequency array [Hz].
+        time : float or `~astropy.units.Quantity`
+            Time at which to evaluate the disk state.  Scalar or array.
+        D_L : float or `~astropy.units.Quantity`
+            Luminosity distance.  Bare floats assumed to be in cm.
+        cos_theta : float, optional
+            Cosine of the inclination angle (:math:`\cos\theta = 1` for
+            face-on).  Default ``1.0``.
+        T_interpolator : callable, optional
+            Pre-built spline for the ``"T_eff"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        R_interpolator : callable, optional
+            Pre-built spline for the ``"R_D"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        **interp_kwargs
+            Passed to :meth:`get_field_interpolator` for any field whose
+            interpolator is built on-the-fly.  Use ``ext=0`` to extrapolate
+            beyond the simulation time range instead of raising
+            :exc:`ValueError` (the default).
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Flux density :math:`F_\nu` in erg s⁻¹ Hz⁻¹ cm⁻², same shape as
+            *nu*.
+
+        Raises
+        ------
+        ValueError
+            If *time* is outside the simulation range and ``ext=2`` (default).
+
+        See Also
+        --------
+        compute_spectral_luminosity :
+            Distance-independent spectral luminosity.
+        compute_bolometric_flux :
+            Bolometric (frequency-integrated) observed flux.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            import numpy as np
+            import astropy.units as u
+
+            nu = np.geomspace(1e12, 1e17, 300) * u.Hz
+            F_nu = result.compute_flux_density(
+                nu,
+                time=1e8 * u.s,
+                D_L=100 * u.Mpc,
+                cos_theta=0.866,  # ~30-degree inclination
+            )
+            print(F_nu.to(u.mJy))
+        """
+        T_eff = self.interpolate_field("T_eff", time, interpolator=T_interpolator, **interp_kwargs)
+        R_D = self.interpolate_field("R_D", time, interpolator=R_interpolator, **interp_kwargs)
+        R_in = np.exp(self.run_params["log_R_in"]) * u.cm
+
+        return uniform_disk_flux_density(nu, T_eff, R_D, R_in, D_L, cos_theta)
+
+    def compute_bolometric_flux(
+        self,
+        time: Any,
+        D_L: Any,
+        cos_theta: float = 1.0,
+        T_interpolator=None,
+        R_interpolator=None,
+        **interp_kwargs,
+    ) -> u.Quantity:
+        r"""Compute the bolometric observed flux from the disk at *time*.
+
+        Treats the disk as a uniform-temperature blackbody annulus.  The
+        frequency-integrated flux received at inclination :math:`\theta` and
+        luminosity distance :math:`D_L` is:
+
+        .. math::
+
+            F_{\rm bol}(t) = \frac{\pi\,\sigma_{\rm SB}\,T_{\rm eff}^4(t)\,
+                              \cos\theta\,\bigl(R_D^2(t) - R_{\rm in}^2\bigr)}
+                             {D_L^2}
+
+        Parameters
+        ----------
+        time : float or `~astropy.units.Quantity`
+            Time at which to evaluate the disk state.  Scalar or array.
+        D_L : float or `~astropy.units.Quantity`
+            Luminosity distance.  Bare floats assumed to be in cm.
+        cos_theta : float, optional
+            Cosine of the inclination angle (:math:`\cos\theta = 1` for
+            face-on).  Default ``1.0``.
+        T_interpolator : callable, optional
+            Pre-built spline for the ``"T_eff"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        R_interpolator : callable, optional
+            Pre-built spline for the ``"R_D"`` field.  Built on-the-fly if
+            ``None``.  When provided, ``**interp_kwargs`` are ignored for this
+            field.
+        **interp_kwargs
+            Passed to :meth:`get_field_interpolator` for any field whose
+            interpolator is built on-the-fly.  Use ``ext=0`` to extrapolate
+            beyond the simulation time range instead of raising
+            :exc:`ValueError` (the default).
+
+        Returns
+        -------
+        `~astropy.units.Quantity`
+            Bolometric flux :math:`F_{\rm bol}` in erg s⁻¹ cm⁻², same shape
+            as *time*.
+
+        Raises
+        ------
+        ValueError
+            If *time* is outside the simulation range and ``ext=2`` (default).
+
+        See Also
+        --------
+        compute_flux_density :
+            Monochromatic flux density at a specific frequency.
+        compute_radiative_luminosity :
+            Distance-independent bolometric luminosity.
+
+        Examples
+        --------
+        .. code-block:: python
+
+            import astropy.units as u
+
+            F_bol = result.compute_bolometric_flux(
+                1e8 * u.s,
+                D_L=100 * u.Mpc,
+            )
+            print(F_bol.to(u.erg / u.s / u.cm**2))
+        """
+        sigma_cgs = const.sigma_sb.cgs.value  # erg cm^{-2} s^{-1} K^{-4}
+
+        T_eff = ensure_in_units(
+            self.interpolate_field("T_eff", time, interpolator=T_interpolator, **interp_kwargs), u.K
+        )
+        R_D = ensure_in_units(self.interpolate_field("R_D", time, interpolator=R_interpolator, **interp_kwargs), u.cm)
+        R_in = np.exp(self.run_params["log_R_in"])  # cm
+        D_L_cm = ensure_in_units(D_L, u.cm)
+
+        area_diff = R_D**2 - R_in**2  # cm^2
+        F_bol = np.pi * sigma_cgs * T_eff**4 * cos_theta * area_diff / D_L_cm**2
+        return F_bol * u.erg / u.s / u.cm**2
 
     # ==================================================== #
     # Data Management

@@ -793,7 +793,10 @@ def _planck_fnu_cgs(nu: "_ArrayLike", T: float) -> "_ArrayLike":
     """
     nu = np.asarray(nu, dtype=float)
     x = _h_cgs * nu / (_k_B_cgs * T)
-    return (2.0 * _h_cgs / _c_cgs**2) * nu**3 / (np.expm1(x))
+    # At high frequencies (x >> 1) expm1 overflows; B_nu → 0 there, which is
+    # physically correct (Wien exponential cutoff).  Suppress the benign warning.
+    with np.errstate(over="ignore"):
+        return (2.0 * _h_cgs / _c_cgs**2) * nu**3 / np.expm1(x)
 
 
 def _log_uniform_disk_bolometric_luminosity(
@@ -830,7 +833,8 @@ def _log_uniform_disk_bolometric_luminosity(
     R_D2 = np.exp(2.0 * log_R_D)
     R_in2 = np.exp(2.0 * log_R_in)
     area_diff = R_D2 - R_in2
-    log_area = np.log(area_diff) if area_diff > 0.0 else -np.inf
+    with np.errstate(divide="ignore", invalid="ignore"):
+        log_area = np.where(area_diff > 0.0, np.log(np.maximum(area_diff, 0.0)), -np.inf)
     return np.log(2.0 * np.pi) + _log_sigma_sb_cgs_em + 4.0 * log_T_eff + log_area
 
 
@@ -870,7 +874,9 @@ def _log_uniform_disk_spectral_luminosity(
     R_in2 = np.exp(2.0 * log_R_in)
     B_nu = _planck_fnu_cgs(nu, T_eff)
     L_nu = 2.0 * np.pi**2 * B_nu * (R_D2 - R_in2)
-    return np.log(L_nu)
+    # B_nu → 0 in the Wien tail; log(0) = -inf is expected and benign.
+    with np.errstate(divide="ignore"):
+        return np.log(L_nu)
 
 
 def _log_uniform_disk_flux_density(
@@ -918,7 +924,8 @@ def _log_uniform_disk_flux_density(
     D_L2 = np.exp(2.0 * log_D_L)
     B_nu = _planck_fnu_cgs(nu, T_eff)
     F_nu = np.pi * cos_theta * B_nu * (R_D2 - R_in2) / D_L2
-    return np.log(F_nu)
+    with np.errstate(divide="ignore"):
+        return np.log(F_nu)
 
 
 def uniform_disk_bolometric_luminosity(

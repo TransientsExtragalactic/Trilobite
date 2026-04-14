@@ -24,6 +24,11 @@ and accretion onto the central object.
 This document describes the theoretical framework underlying the one-zone disk models
 implemented in Triceratops.  For usage instructions see :ref:`one_zone_disk`.
 
+.. hint::
+
+    Throughout our implementation, we follow the conventions of :footcite:t:`metzgerTimeDependentModelsAccretion2008`
+    and :footcite:t:`piroLatetimeEvolutionInstabilities2025`.
+
 .. contents::
     :local:
     :depth: 2
@@ -112,8 +117,8 @@ where :math:`\nu` is the kinematic viscosity and
     f_D = \frac{F_0}{1 - \sqrt{R_{\rm in}/R_D}},
     \qquad F_0 = 1.6,
 
-enforces a zero-torque inner boundary condition (:math:`F_0 = 1.6` is the
-Metzger+08 calibration value).  Matter draining through the inner edge at
+enforces a zero-torque inner boundary condition (:math:`F_0 = 1.6` in :footcite:p:`metzgerTimeDependentModelsAccretion2008`
+).  Matter draining through the inner edge at
 :math:`R_{\rm in}` carries the local Keplerian specific angular momentum
 :math:`\ell_{\rm in} = \sqrt{G M_{\rm BH} R_{\rm in}}`, so
 
@@ -134,14 +139,16 @@ too greatly between timesteps:
 
 .. math::
 
-    \Delta t = \epsilon \min\left(\frac{M_D}{|\dot{M}_D|}, \frac{J_D}{|\dot{J}_D|}\right).
+    \Delta t = \epsilon \min\left(\frac{M_D}{|\dot{M}_D|}, \frac{J_D}{|\dot{J}_D|}, t_{\rm visc}\right).
+
+----
 
 Thermodynamics
 --------------
 
 The above equations would be entirely sufficient to specify the state of the disk were it not for the
 dependence on :math:`t_{\rm visc}`, which depends on the viscosity :math:`\nu` and therefore on the thermodynamic
-state of the disk. Because of this, it becomes necessary to treat (in some detail) the microphysics of the disk. Many
+state of the disk. Because of this, it becomes **necessary to treat (in some detail) the microphysics of the disk**. Many
 options exist in the literature for how to do this in different scenarios and regimes; however, Triceratops
 aims to be as flexible as possible in this regard, and so the thermodynamic closure is implemented as a modular
 component that can be swapped out for different physics choices.  The following sections describe
@@ -375,6 +382,220 @@ Once all of these specifications have been made, the energy balance condition ca
 temperature :math:`T_c` at each timestep, which then allows for the evaluation of the sound speed, scale height,
 viscosity, and therefore the viscous timescale.  This closes the system of equations and allows for the integration
 of the disk evolution over time.
+
+Additional Physics
+------------------
+
+As we have described in the preceding section, there are many modifications which may be made to the canonical
+disk scenarios to implement new physics. In this section, we'll describe the theory behind a few of the common
+modifications that are implemented in Triceratops.
+Fallback
+^^^^^^^^
+
+In many astrophysical systems, the accretion disk is continuously supplied with mass
+from an external reservoir. In the context of tidal disruption events (TDEs), this
+corresponds to the fallback of stellar debris onto the disk. This process modifies the
+standard viscous evolution by introducing source terms in both the mass and angular
+momentum equations.
+
+For a parabolic TDE, the late-time fallback rate follows a characteristic power-law decay,
+set by the orbital period of the most bound debris:
+
+.. math::
+
+    \dot{M}_{\rm FB}
+    =
+    \frac{M_\star}{5 t_{\rm fb}}
+    \left(\frac{t}{t_{\rm fb}}\right)^{-5/3},
+
+where the fallback timescale is
+
+.. math::
+
+    t_{\rm fb}
+    =
+    \frac{\pi R_t^3}{\sqrt{2 G M_\bullet} R_\star^{3/2}}
+    \approx
+    3.5\times 10^6\;{\rm s}\;
+    M_6^{1/2} m_\star^{-1} r_\star^{3/2}.
+
+The fallback material carries angular momentum corresponding to the circularization
+radius, which we approximate as
+
+.. math::
+
+    \ell_{\rm FB} = \sqrt{G M_\bullet R_{\rm circ}}.
+
+To allow for greater flexibility, Triceratops adopts a generalized parameterization of
+the fallback rate:
+
+.. math::
+
+    \begin{aligned}
+    \dot{M}_{\rm FB} &= \dot{M}_0
+    \left(\frac{t}{t_0}\right)^{-\alpha_{\rm FB}}, \\
+    \dot{J}_{\rm FB} &= \sqrt{G M_\bullet R_{\rm circ}}\;\dot{M}_{\rm FB},
+    \end{aligned}
+
+where :math:`\dot{M}_0`, :math:`t_0`, :math:`\alpha_{\rm FB}`, and :math:`R_{\rm circ}`
+are free parameters that can be tuned to represent a range of fallback scenarios.
+
+.. note::
+
+    The current implementation does not include heating associated with fallback
+    dissipation. This contribution can, in principle, be incorporated as an additional
+    term in the energy balance condition. See :footcite:t:`2025ApJ...985...77P` for
+    a discussion of the potential importance of fallback heating in TDE disks.
+
+
+Wind Launching
+^^^^^^^^^^^^^^
+
+In many accretion disks, the accretion rate can exceed the Eddington limit, leading to
+the launching of powerful radiatively driven winds. These winds remove both mass and
+angular momentum from the disk, modifying the standard viscous evolution through
+additional sink terms.
+
+A common parameterization assumes that the accretion rate decreases with radius due
+to cumulative mass loss (e.g. :footcite:t:`begelmanCanSphericallyAccreting1979`):
+
+.. math::
+
+    \dot{M}(r)
+    =
+    \dot{M}_{\rm sph}
+    \left(\frac{r}{R_{\rm sph}}\right)^p,
+
+where :math:`\dot{M}_{\rm sph}` is the accretion rate at the spherization radius
+:math:`R_{\rm sph}`, and :math:`p` controls the strength of the wind.
+
+The spherization radius marks the transition where radiation pressure becomes dynamically
+important and can be approximated as
+
+.. math::
+
+    R_{\rm sph}
+    =
+    \min\left(
+        R_D,
+        \frac{\kappa \dot{M}}{4\pi c}
+    \right).
+
+Integrating the radial mass loss profile yields the total mass outflow rate:
+
+.. math::
+
+    \dot{M}_{\rm out}
+    =
+    \left[
+        1 - \left(\frac{R_{\rm in}}{R_{\rm sph}}\right)^p
+    \right]
+    \dot{M}_{\rm sph}.
+
+The associated angular momentum loss is obtained by weighting the outflow by the
+local Keplerian specific angular momentum, giving
+
+.. math::
+
+    \frac{dJ_D}{dt}
+    =
+    -\frac{2p}{2p+1}
+    \sqrt{G M_{\rm BH} R_{\rm sph}}\;
+    \dot{M}_{\rm sph}.
+
+Irradiation
+^^^^^^^^^^^
+
+In many accretion flows, radiation produced near the central object can illuminate
+the outer disk and modify its thermal structure. This scenario is referred to as an
+**irradiated disk**, and is particularly relevant in systems with persistent high-energy
+emission (e.g. X-ray binaries, active galactic nuclei, and disks surrounding neutron stars).
+In such cases, irradiation can contribute significantly to the local heating budget.
+
+We model the central radiation field as a point source of luminosity :math:`L`. At the
+characteristic disk radius :math:`R_D`, the incident flux is
+
+.. math::
+
+    F_{\rm irr} = \frac{L}{4\pi R_D^2} \cos\psi,
+
+where :math:`\psi` is the angle between the disk surface normal and the direction to the
+central source. Only a fraction of this flux is absorbed by the disk, with the remainder
+reflected. The corresponding heating rate per unit area is therefore
+
+.. math::
+
+    Q^+_{\rm irr} = (1 - \beta)\, F_{\rm irr},
+
+where :math:`\beta` is the disk albedo :footcite:p:`frank2002accretion`.
+
+The geometric factor :math:`\cos\psi` determines how efficiently the disk intercepts
+the central radiation. In general, this depends on the global disk structure, including
+its scale height and radial flaring. For a disk surface described by a height profile
+:math:`H(R)`, the relevant angles can be written as
+
+.. math::
+
+    \psi = \frac{\pi}{2} - \theta + \phi,
+
+where
+
+.. math::
+
+    \tan \theta = \frac{dH}{dR}, \qquad \tan \phi = \frac{H}{R}.
+
+In the thin-disk limit (:math:`H \ll R`), these angles are small, and we may approximate
+
+.. math::
+
+    \cos\psi \approx \frac{dH}{dR} - \frac{H}{R}.
+
+This expression highlights an important physical point: irradiation requires disk
+flaring. A purely flat disk (:math:`H \propto R`) intercepts no central radiation,
+while a flared disk (:math:`dH/dR > H/R`) presents a non-zero projected area to the
+source and can therefore be efficiently heated.
+
+Because the one-zone model does not resolve the radial structure of the disk, we
+parametrize this geometric factor. Motivated by analytic thin-disk solutions, we assume
+a power-law scaling of the form
+
+.. math::
+
+    H \propto R^{n_{\rm irr}},
+
+which implies
+
+.. math::
+
+    \frac{dH}{dR} = n_{\rm irr} \frac{H}{R}.
+
+Substituting into the expression for :math:`\cos\psi`, we obtain
+
+.. math::
+
+    \cos\psi \approx (n_{\rm irr} - 1)\,\frac{H}{R}.
+
+The irradiating flux can therefore be written as
+
+.. math::
+
+    F_{\rm irr}
+    =
+    \frac{L}{4\pi R_D^2}\,(n_{\rm irr} - 1)\,\frac{H}{R}.
+
+Including the albedo, the final expression for the irradiative heating term becomes
+
+.. math::
+
+    Q^+_{\rm irr}
+    =
+    (1 - \beta_{\rm irr})\,
+    \frac{L}{4\pi R_D^2}\,(n_{\rm irr} - 1)\,\frac{H}{R}.
+
+Typical values are :math:`n_{\rm irr} \approx 9/8` for viscously heated thin disks and
+:math:`n_{\rm irr} \approx 9/7` for irradiation-dominated disks
+:footcite:p:`frank2002accretion`. In practice, we treat :math:`n_{\rm irr}` as a free
+parameter that encapsulates the uncertain large-scale geometry of the disk.
 
 Specific Disk Models
 --------------------

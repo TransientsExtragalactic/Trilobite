@@ -566,77 +566,236 @@ interpolator to avoid redundant spline construction:
 Derived Physical Observables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-In addition to the standard output fields, several additional quantities may be derived as needed directly
-from the results object. These are useful for computing observable features or
-coupling to other physical processes without having to re-run the disk evolution.
+In addition to the standard output fields, several physical observables can be
+derived directly from the result object.  All four methods below treat the
+one-zone disk as a **uniform-temperature blackbody annulus** at the stored
+effective temperature :math:`T_{\rm eff}(t)`.  While this is an approximation
+(the SS73 radial temperature profile is not flat), it is self-consistent with
+the one-zone model's single-zone energy balance.
+
+.. note::
+
+    For accurate multi-colour SEDs and radial temperature profiles, use
+    :class:`~triceratops.dynamics.accretion.AlphaDisk`, which solves the full
+    Shakura-Sunyaev structure.  See :ref:`thin_disk` for details.
+
+.. note::
+
+    For a discussion of the theory of accretion disks, see :ref:`one_zone_disk_theory`.
+
+.. warning::
+
+    All ``compute_*`` methods raise :exc:`ValueError` by default if the
+    requested *time* falls outside the simulation time range.  To change this
+    behaviour, pass ``ext`` as a keyword argument:
+
+    .. list-table::
+        :header-rows: 1
+
+        * - ``ext``
+          - Out-of-bounds behaviour
+        * - ``2`` *(default)*
+          - Raise :exc:`ValueError`
+        * - ``0``
+          - Extrapolate the spline beyond the boundary
+        * - ``1``
+          - Return zero
+        * - ``3``
+          - Clamp to the boundary value
+
+    This keyword is forwarded to :class:`~scipy.interpolate.InterpolatedUnivariateSpline`
+    only when no pre-built interpolator is supplied.  If a pre-built interpolator is passed,
+    its own ``ext`` setting applies.
 
 Accretion Luminosity
 *********************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_luminosity`
-evaluates the gravitational accretion luminosity
-:math:`L = G M_{\rm BH} \dot{M} / R_{\rm in}` at a specified time, using spline
-interpolation on the stored :math:`\dot{M}` trace:
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_accretion_luminosity`
+evaluates the gravitational power released by viscous dissipation
+(:footcite:t:`frank2002accretion` Eq. 5.22):
+
+.. math::
+
+    L_{\rm acc}(t) = \frac{G M_{\rm BH}\,\dot{M}(t)}{2\,R_{\rm in}}
 
 .. code-block:: python
 
-    L = result.compute_luminosity(1.0e8 * u.s)
-    print(L.to(u.Lsun))
+    L_acc = result.compute_accretion_luminosity(1.0e8 * u.s)
+    print(L_acc.to(u.Lsun))
 
     # Reuse an existing interpolator for speed in loops:
     interp = result.get_field_interpolator("mdot")
-    L_arr = [result.compute_luminosity(t, interpolator=interp) for t in t_grid]
+    L_arr = result.compute_accretion_luminosity(t_grid, interpolator=interp)
 
-Spectral (Specific) Luminosity
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+.. hint::
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_specific_luminosity`
-approximates the disk as a multi-colour blackbody and integrates the Planck
-function over the disk face using a power-law temperature profile anchored to the
-one-zone effective temperature:
+    In **radiatively efficient** models (``GasPressureDisk``, ``FullPressureDisk``)
+    virtually all of this power escapes as radiation, so
+    :math:`L_{\rm acc} \approx L_{\rm rad}`.  In **advection-dominated** models
+    (``AdvectiveDisk``) a fraction is advected inward, giving
+    :math:`L_{\rm rad} < L_{\rm acc}`.
 
-.. math::
+Radiative (Bolometric) Luminosity
+***********************************
 
-    L_\nu = 4\pi^2 \int_{R_{\rm in}}^{R_D} B_\nu\!\left(T(R)\right)\, R\, dR,
-    \qquad
-    T(R) = T_{\rm eff}(R_D) \left(\frac{R_D}{R}\right)^{3/4}.
-
-.. code-block:: python
-
-    L_nu = result.compute_specific_luminosity(
-        time=1.0e8 * u.s,
-        frequency=3.0e14 * u.Hz,   # optical V-band
-        n_radii=500,
-    )
-    print(L_nu.to(u.erg / (u.s * u.Hz)))
-
-.. seealso::
-
-    :class:`~triceratops.dynamics.accretion.AlphaDisk` provides a full radial
-    structure and multi-colour SED using the Shakura-Sunyaev scalings, which is
-    more accurate for spectral fitting than the single-zone approximation above.
-    See :ref:`thin_disk` for details.
-
-Disk Effective Temperature Profile
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_thin_disk_effective_temperature`
-evaluates the radial temperature profile at a given time, using the same
-power-law approximation:
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_radiative_luminosity`
+gives the Stefan-Boltzmann power actually emitted from the disk surface:
 
 .. math::
 
-    T_{\rm eff}(R, t) = T_{\rm eff}(R_D, t)\,\left(\frac{R_D}{R}\right)^{3/4}.
+    L_{\rm rad}(t) = 2\pi\,\sigma_{\rm SB}\,T_{\rm eff}^4(t)\,
+                     \bigl(R_D^2(t) - R_{\rm in}^2\bigr)
+
+Because :math:`T_{\rm eff}` is set by the one-zone energy balance, this is the
+power that truly escapes as thermal radiation.
 
 .. code-block:: python
 
-    radii = np.geomspace(3e6, 3e13, 200) * u.cm
-    T_profile = result.compute_thin_disk_effective_temperature(
-        radius=radii,
+    L_rad = result.compute_radiative_luminosity(1.0e8 * u.s)
+    print(L_rad.to(u.Lsun))
+
+    # For AdvectiveDisk, compare to accretion luminosity:
+    print(L_rad / L_acc)     # < 1 when advection is significant
+
+Spectral Luminosity
+********************
+
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_spectral_luminosity`
+evaluates the monochromatic blackbody luminosity from both disk faces:
+
+.. math::
+
+    L_\nu(t) = 2\pi^2\,B_\nu\!\bigl(T_{\rm eff}(t)\bigr)\,
+               \bigl(R_D^2(t) - R_{\rm in}^2\bigr)
+
+Integrating over all frequencies recovers :math:`L_{\rm rad}`.
+
+.. code-block:: python
+
+    nu   = np.geomspace(1e12, 1e17, 300) * u.Hz
+    L_nu = result.compute_spectral_luminosity(nu, time=1.0e8 * u.s)
+    print(L_nu.to(u.erg / u.s / u.Hz))
+
+.. dropdown:: Example
+
+    .. plot::
+        :include-source:
+
+        import numpy as np
+        import matplotlib.pyplot as plt
+        from astropy import constants as const
+        from astropy import units as u
+
+        from triceratops.dynamics.accretion.one_zone import GasPressureDisk
+        from triceratops.utils.plot_utils import set_plot_style
+
+        # ---------------------------------------------------------------------------
+        # Plot styling
+        # ---------------------------------------------------------------------------
+        set_plot_style()
+
+        # ---------------------------------------------------------------------------
+        # Disk and black hole parameters
+        # ---------------------------------------------------------------------------
+        M_BH = 1e6 * const.M_sun   # Black hole mass
+        M_D_0 = 30 * const.M_sun   # Initial disk mass
+        R_D_0 = 3.0e13 * u.cm      # Initial disk radius
+
+        ALPHA = 0.1                 # Shakura-Sunyaev viscosity parameter
+        R_IN = 3.0e6 * u.cm         # Inner truncation radius (≈ 3 R_S for 10 M_sun BH)
+        T_END = 1e3 * u.yr          # Total integration time
+        T_SNAP = 1e2 * u.yr         # Snapshot time for the second SED
+
+        # ---------------------------------------------------------------------------
+        # Build and evolve the disk
+        # ---------------------------------------------------------------------------
+        disk = GasPressureDisk(mu=0.62)  # mu: mean molecular weight (fully ionised H/He mix)
+
+        initial_conditions = disk.generate_initial_conditions(
+            M_BH=M_BH,
+            M_D_0=M_D_0,
+            R_D_0=R_D_0,
+        )
+
+        result = disk.solve(
+            initial_conditions=initial_conditions,
+            runtime_parameters={
+                "M_BH": M_BH,
+                "R_in": R_IN,
+                "alpha": ALPHA,
+            },
+            t_span=(0, T_END),
+            max_steps=1_000_000,
+        )
+
+        # ---------------------------------------------------------------------------
+        # Compute spectral energy distributions
+        # ---------------------------------------------------------------------------
+        nu = np.geomspace(1e9, 1e18, 400) * u.Hz   # Frequency grid: radio → hard X-ray
+
+        L_nu_initial = result.compute_spectral_luminosity(nu, 0 * u.yr).to_value("erg / (s Hz)")
+        L_nu_snap    = result.compute_spectral_luminosity(nu, T_SNAP).to_value("erg / (s Hz)")
+
+        # ---------------------------------------------------------------------------
+        # Plot
+        # ---------------------------------------------------------------------------
+        fig, ax = plt.subplots()
+
+        ax.loglog(nu, L_nu_initial, label=r"$t = 0$ yr")
+        ax.loglog(nu, L_nu_snap,    label=rf"$t = {T_SNAP.value:.0f}$ yr")
+
+        ax.set_xlim(nu[[0, -1]].value)
+        ax.set_ylim(1e10, 1e30)
+        ax.set_xlabel(r"Frequency $\nu$ (Hz)")
+        ax.set_ylabel(r"Spectral luminosity $L_\nu$ (erg s$^{-1}$ Hz$^{-1}$)")
+        ax.set_title("Gas Pressure Disk — SED Evolution")
+        ax.legend()
+
+        fig.tight_layout()
+        plt.show()
+
+Flux Density
+*************
+
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_flux_density`
+gives the monochromatic flux received by a distant observer
+(:footcite:t:`frank2002accretion` Eq. 5.45):
+
+.. math::
+
+    F_\nu(t) = \frac{\pi\,\cos\theta\;B_\nu\!\bigl(T_{\rm eff}(t)\bigr)\,
+                     \bigl(R_D^2(t) - R_{\rm in}^2\bigr)}{D_L^2}
+
+.. code-block:: python
+
+    nu   = np.geomspace(1e12, 1e17, 300) * u.Hz
+    F_nu = result.compute_flux_density(
+        nu,
         time=1.0e8 * u.s,
+        D_L=100 * u.Mpc,
+        cos_theta=0.866,   # ~30-degree inclination
     )
+    print(F_nu.to(u.mJy))
 
+Bolometric Flux
+****************
 
+:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_bolometric_flux`
+gives the frequency-integrated observed flux:
+
+.. math::
+
+    F_{\rm bol}(t) = \frac{\pi\,\sigma_{\rm SB}\,T_{\rm eff}^4(t)\,
+                     \cos\theta\,\bigl(R_D^2(t) - R_{\rm in}^2\bigr)}
+                    {D_L^2}
+
+.. code-block:: python
+
+    F_bol = result.compute_bolometric_flux(
+        1.0e8 * u.s,
+        D_L=100 * u.Mpc,
+    )
+    print(F_bol.to(u.erg / u.s / u.cm**2))
 
 ----
 
