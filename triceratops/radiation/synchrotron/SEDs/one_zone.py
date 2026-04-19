@@ -4383,10 +4383,9 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
             log_F_norm,
             log_omega,
             log_nu_m,
-            p,
             log_gamma_m,
+            p,
         )
-
         # Select the physically consistent SSA regime
         return select_ssa_sed_regime_from_candidates_without_cooling(
             log_nu_ssa,
@@ -4929,7 +4928,7 @@ class PowerLaw_SSA_SynchrotronSED(MultiSpectrumSynchrotronSED):
         )
         D_L = distances["luminosity_distance"]
         D_A = distances["angular_diameter_distance"]
-        redshift = distances["redshift"]
+        redshift = float(distances["redshift"])
 
         # ------------------------------------------------------------------ #
         # Unit enforcement.

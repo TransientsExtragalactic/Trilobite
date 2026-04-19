@@ -513,10 +513,10 @@ def compute_ssa_frequencies_without_cooling(
     determination routine.
     """
     return {
-        "optically_thin": _log_nu_a_powerlaw_sbpl_sed_ssa_cool_1(
+        "optically_thin": _log_nu_a_powerlaw_sbpl_sed_ssa_1(
             log_F_norm, log_omega, log_nu_m, p=p, log_gamma_m=log_gamma_m
         ),
-        "optically_thick": _log_nu_a_powerlaw_sbpl_sed_ssa_cool_2(
+        "optically_thick": _log_nu_a_powerlaw_sbpl_sed_ssa_2(
             log_F_norm, log_omega, log_nu_m, p=p, log_gamma_m=log_gamma_m
         ),
     }
