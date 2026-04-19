@@ -15,5 +15,18 @@ __all__ = [
     "blackbody",
     "constants",
     "synchrotron",
+    # blackbody public API
+    "planck_fnu",
+    "planck_flambda",
+    "wien_peak_frequency",
+    "wien_peak_wavelength",
+    "stefan_boltzmann_flux",
 ]
 from . import blackbody, constants, synchrotron
+from .blackbody import (
+    planck_flambda,
+    planck_fnu,
+    stefan_boltzmann_flux,
+    wien_peak_frequency,
+    wien_peak_wavelength,
+)

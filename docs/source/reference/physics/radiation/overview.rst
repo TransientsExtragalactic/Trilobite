@@ -109,6 +109,43 @@ Triceratops.
 
 ----
 
+Blackbody Radiation
+--------------------
+
+Thermal emission from a blackbody in local thermodynamic equilibrium.
+The :mod:`triceratops.radiation.blackbody` module provides the Planck
+function (per unit frequency and per unit wavelength), the Wien displacement
+laws, and the Stefan-Boltzmann bolometric flux, all following the standard
+Triceratops two-level API so the same functions work in interactive analysis
+and in MCMC hot loops.
+
+.. grid:: 1 1 2 2
+    :gutter: 3
+
+    .. grid-item-card:: Usage Guide
+        :link: blackbody_user_guide
+        :link-type: ref
+
+        Evaluate :math:`B_\nu`, :math:`B_\lambda`, Wien peak frequency and
+        wavelength, and bolometric flux.  Includes notes on using the fast
+        CGS kernels directly in performance-critical code.
+
+    .. grid-item-card:: Theory
+        :link: blackbody_theory
+        :link-type: ref
+
+        Derivations of the Planck function, the Wien displacement law, and
+        the Stefan-Boltzmann relation, with notes on numerical stability.
+
+.. toctree::
+    :hidden:
+    :maxdepth: 1
+    :caption: Blackbody Radiation
+
+    blackbody/blackbody
+
+----
+
 Grey Opacity Laws
 -----------------
 

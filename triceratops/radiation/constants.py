@@ -26,3 +26,10 @@ kB_cgs: float = const.k_B.cgs.value
 """float: Boltzmann constant :math:`k_B` in CGS units."""
 Ry_cgs: float = (const.Ryd * const.h * const.c).cgs.value
 """float: Rydberg energy :math:`R_y = h c R_{\\infty}` in CGS units (erg)."""
+
+# ========================================= #
+# Blackbody / Thermal Radiation Constants   #
+# ========================================= #
+sigma_sb_cgs: float = const.sigma_sb.cgs.value
+r"""float: Stefan-Boltzmann constant :math:`\sigma_{\rm SB}` in CGS
+units [erg cm\ :sup:`-2` s\ :sup:`-1` K\ :sup:`-4`]."""

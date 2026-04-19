@@ -19,6 +19,7 @@ from astropy import constants as const
 from astropy import units as u
 
 from triceratops.physics_utils.constants import _log_G_cgs, _log_sigma_sb_cgs
+from triceratops.radiation.blackbody import _planck_fnu_cgs
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
@@ -40,9 +41,6 @@ __all__ = [
 # ============================================================= #
 #: Solar mass in grams  (M ≡ M / M_sun)
 _M_SUN_CGS: float = const.M_sun.cgs.value
-_h_cgs: float = const.h.cgs.value  # erg s
-_k_B_cgs: float = const.k_B.cgs.value  # erg K-1
-_c_cgs: float = const.c.cgs.value  # cm s-1
 _MDOT_NORM_CGS: float = 1.0e16
 _R_NORM_CGS: float = 1.0e10
 
@@ -158,9 +156,7 @@ def _disk_planck_ring_integral(
 
     # At r = R_in, T → 0 → x → ∞ → B_ν → 0.  Suppress benign boundary warnings.
     with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
-        x = (_h_cgs * nu) / (_k_B_cgs * T_grid)
-        B_nu = (2.0 * _h_cgs * nu**3 / _c_cgs**2) / np.expm1(x)
-        B_nu = np.where(np.isfinite(B_nu), B_nu, 0.0)
+        B_nu = _planck_fnu_cgs(nu, T_grid)
 
     return np.trapz(r2_grid * B_nu, x=log_r, axis=1)  # (N_nu,)
 
