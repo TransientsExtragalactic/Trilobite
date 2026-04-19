@@ -1,22 +1,9 @@
 r"""
 Thin-disk analytical accretion disk models.
 
-This module implements the standard Shakura-Sunyaev (1973) steady-state alpha-disk
-model, providing both a low-level CGS API and a unit-aware public API following the
-two-level convention used throughout Triceratops.
-
-The central class is :class:`AlphaDisk`, which evaluates the canonical SS73 scalings
-for surface density, midplane temperature, scale height, midplane density, optical
-depth, kinematic viscosity, and radial drift velocity at an arbitrary radius (or radius
-array).  In addition, the class inherits methods from :class:`ThinDiskBase` for
-computing the multi-colour blackbody SED by integrating the Planck function over the
-disk annuli, and the analytic bolometric luminosity.
-
-Two-Level API
--------------
-- ``_compute_cgs(radius_cm, M_BH_g, mdot_gs, R_in_cm)`` — pure-NumPy CGS evaluation.
-- ``compute(radius, M_BH, mdot, R_in)`` — strips :class:`~astropy.units.Quantity` units,
-  delegates to ``_compute_cgs``, and returns a ``dict`` of unit-bearing results.
+This module implements the canonical **geometrically-thin, optically-thick** accretion disk model
+of :footcite:t:`1973A&A....24..337S`, which is one of the few analytically tractable disk models
+and serves as a useful reference point for more complex models.
 
 See Also
 --------
@@ -48,17 +35,20 @@ __all__ = [
     "disk_flux_density",
 ]
 
-# ---------------------------------------------------------------------------
-# CGS normalisation constants (SS73 dimensionless ratios)
-# ---------------------------------------------------------------------------
+# ============================================================= #
+# Constants
+# ============================================================= #
 #: Solar mass in grams  (M ≡ M / M_sun)
 _M_SUN_CGS: float = const.M_sun.cgs.value
+_h_cgs: float = const.h.cgs.value  # erg s
+_k_B_cgs: float = const.k_B.cgs.value  # erg K-1
+_c_cgs: float = const.c.cgs.value  # cm s-1
 _MDOT_NORM_CGS: float = 1.0e16
 _R_NORM_CGS: float = 1.0e10
 
-# ---------------------------------------------------------------------------
-# Log-space constants (precomputed once; used in AlphaDisk._compute_cgs)
-# ---------------------------------------------------------------------------
+# Frank, King, and Raine (2002) scaling constants for the alpha-disk solution. These
+# are used to avoid recomputing the relevant constants in
+# the log-space computations of the disk structure.
 _LOG_M_SUN: float = np.log(_M_SUN_CGS)
 _LOG_MDOT_NORM: float = np.log(_MDOT_NORM_CGS)
 _LOG_R_NORM: float = np.log(_R_NORM_CGS)
@@ -70,22 +60,16 @@ _LOG_C_TAU: float = np.log(190.0)
 _LOG_C_NU: float = np.log(1.8e14)
 _LOG_C_VR: float = np.log(2.7e4)
 
-# ---------------------------------------------------------------------------
-# SS73 steady-state emission constants
-# ---------------------------------------------------------------------------
-# Planck-function constants in CGS (module-level for performance)
-_h_cgs: float = const.h.cgs.value  # erg s
-_k_B_cgs: float = const.k_B.cgs.value  # erg K-1
-_c_cgs: float = const.c.cgs.value  # cm s-1
-
 # Pre-computed log combination for the steady-state T_eff(r) profile.
 # Combines the coefficient from FKR so that:
 _log_T_disk_coef: float = np.log(3.0) + _log_G_cgs - np.log(8.0 * np.pi) - _log_sigma_sb_cgs
 
 
-# =============================================================================
-# SS73 steady-state emission — private (log-space CGS)
-# =============================================================================
+# ============================================================================= #
+# Low-Level API
+# ============================================================================= #
+# This is the low-level interface for these disk models, which operate on raw
+# cgs arrays without any checks.
 def _log_disk_effective_temperature(
     log_r: "_ArrayLike",
     log_M_BH: float,
@@ -159,12 +143,16 @@ def _disk_planck_ring_integral(
     ndarray, shape (Nν,)
         :math:`I(\nu)` in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}\,sr^{-1}}`.
     """
+    # Obtain the log_r and log_T grids on the fly.
     log_r = np.linspace(log_R_in, log_R_out, N_r)
     log_T = np.asarray(_log_disk_effective_temperature(log_r, log_M_BH, log_M_dot, log_R_in))
     T = np.exp(log_T)
     r_sq = np.exp(2.0 * log_r)
 
-    nu = np.exp(log_nu_arr)[:, None]  # (Nν, 1)
+    # Broadcast to (Nν, Nr) for vectorized Planck evaluation.  The Planck function is evaluated
+    # on the fly here to avoid storing large intermediate arrays.  This is the main bottleneck in
+    # the SED computation, so we want to avoid unnecessary overhead from storing large arrays of T.
+    nu = np.exp(log_nu_arr)[:, None]  # (N_nu, 1)
     T_grid = T[None, :]  # (1, Nr)
     r2_grid = r_sq[None, :]  # (1, Nr)
 
@@ -174,7 +162,7 @@ def _disk_planck_ring_integral(
         B_nu = (2.0 * _h_cgs * nu**3 / _c_cgs**2) / np.expm1(x)
         B_nu = np.where(np.isfinite(B_nu), B_nu, 0.0)
 
-    return np.trapz(r2_grid * B_nu, x=log_r, axis=1)  # (Nν,)
+    return np.trapz(r2_grid * B_nu, x=log_r, axis=1)  # (N_nu,)
 
 
 def _log_disk_bolometric_luminosity(
@@ -288,9 +276,9 @@ def _log_disk_spectral_luminosity_iso(
     return np.log(8.0 * np.pi**2 * cos_theta * integral)
 
 
-# =============================================================================
-# SS73 steady-state emission — public (unit-aware)
-# =============================================================================
+# ============================================================================= #
+# Public API
+# ============================================================================= #
 def disk_effective_temperature(
     R: u.Quantity,
     M_BH: u.Quantity,
@@ -904,7 +892,7 @@ class ThinDiskBase(ABC):
 # =============================================================================
 class AlphaDisk(ThinDiskBase):
     r"""
-    Sunyaev-Shakura alpha-disk model (SS73 zone-B scalings).
+    Shakura-Sunyaev alpha-disk model (SS73 / FKR zone-C scalings).
 
     This model assumes a geometrically thin, optically thick accretion disk in
     which viscosity is parameterised by the dimensionless Shakura-Sunyaev
