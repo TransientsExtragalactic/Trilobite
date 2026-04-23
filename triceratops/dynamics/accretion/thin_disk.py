@@ -19,7 +19,7 @@ from astropy import constants as const
 from astropy import units as u
 
 from triceratops.physics_utils.constants import _log_G_cgs, _log_sigma_sb_cgs
-from triceratops.radiation.blackbody import _planck_fnu_cgs
+from triceratops.radiation.blackbody import _log_planck_fnu_cgs
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
@@ -144,19 +144,18 @@ def _disk_planck_ring_integral(
     # Obtain the log_r and log_T grids on the fly.
     log_r = np.linspace(log_R_in, log_R_out, N_r)
     log_T = np.asarray(_log_disk_effective_temperature(log_r, log_M_BH, log_M_dot, log_R_in))
-    T = np.exp(log_T)
     r_sq = np.exp(2.0 * log_r)
 
     # Broadcast to (Nν, Nr) for vectorized Planck evaluation.  The Planck function is evaluated
     # on the fly here to avoid storing large intermediate arrays.  This is the main bottleneck in
     # the SED computation, so we want to avoid unnecessary overhead from storing large arrays of T.
-    nu = np.exp(log_nu_arr)[:, None]  # (N_nu, 1)
-    T_grid = T[None, :]  # (1, Nr)
+    log_nu_2d = log_nu_arr[:, None]  # (N_nu, 1)
+    log_T_grid = log_T[None, :]  # (1, Nr)
     r2_grid = r_sq[None, :]  # (1, Nr)
 
     # At r = R_in, T → 0 → x → ∞ → B_ν → 0.  Suppress benign boundary warnings.
     with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
-        B_nu = _planck_fnu_cgs(nu, T_grid)
+        B_nu = np.exp(_log_planck_fnu_cgs(log_nu_2d, log_T_grid))
 
     return np.trapz(r2_grid * B_nu, x=log_r, axis=1)  # (N_nu,)
 
