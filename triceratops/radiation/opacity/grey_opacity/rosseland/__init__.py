@@ -1,14 +1,15 @@
-"""Concrete opacity law implementations.
+r"""
+Rosseland mean opacity laws.
 
-Classes are defined in :mod:`.core`; this module re-exports them for
-convenience.  See :mod:`.core` for full docstrings and examples.
+This subpackage provides opacity models based on the Rosseland mean,
+a frequency-averaged opacity appropriate for optically thick,
+diffusion-dominated radiative transport.
 """
 
-from .core import (
+from .models import (
     KAPPA_BF_0,
     KAPPA_FF_0,
     KAPPA_KR_0,
-    ConstantOpacity,
     ElectronScatteringOpacity,
     KramersBFESOpacity,
     KramersBFOpacity,
@@ -17,7 +18,6 @@ from .core import (
     KramersFFOpacity,
     KramersOpacity,
     OPALOpacity,
-    load_opal_opacity,
 )
 
 __all__ = [
@@ -25,8 +25,7 @@ __all__ = [
     "KAPPA_FF_0",
     "KAPPA_BF_0",
     "KAPPA_KR_0",
-    # Analytic opacity laws
-    "ConstantOpacity",
+    # Analytic Rosseland mean opacity laws
     "ElectronScatteringOpacity",
     "KramersFFOpacity",
     "KramersBFOpacity",
@@ -34,7 +33,6 @@ __all__ = [
     "KramersFFESOpacity",
     "KramersBFESOpacity",
     "KramersESOpacity",
-    # Table-based opacity
+    # Table-based Rosseland mean opacity
     "OPALOpacity",
-    "load_opal_opacity",
 ]
