@@ -345,7 +345,7 @@ cdef class AdvectiveClosure(OneZoneClosure):
         double mu=0.6,
         double xi=0.5,
     ):
-        from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+        from triceratops.radiation.opacity import ElectronScatteringOpacity
 
         self._closure_fn     = igP_adv_closure_func
         self._derivative_fn  = viscous_derivative_func

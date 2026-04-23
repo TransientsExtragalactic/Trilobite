@@ -61,7 +61,7 @@ from scipy.optimize import brentq
 from tqdm.auto import tqdm
 
 from triceratops.physics_utils.eos import _log_radiative_ideal_gas_disk_sound_speed
-from triceratops.radiation.opacity.base import GreyOpacityLaw
+from triceratops.radiation.opacity.grey_opacity.base import GreyOpacityLaw
 from triceratops.radiation.opacity.utils import get_opacity
 from triceratops.utils.misc_utils import ensure_in_units
 

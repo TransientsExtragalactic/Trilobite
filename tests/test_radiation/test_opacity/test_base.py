@@ -10,7 +10,8 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.radiation.opacity.base import GreyOpacityLaw, OpacityLaw
+from triceratops.radiation.opacity.base import OpacityLaw
+from triceratops.radiation.opacity.grey_opacity.base import GreyOpacityLaw
 
 # ------------------------------------------------------------------ #
 # Shared reference conditions                                         #
@@ -29,7 +30,10 @@ _T = 1.0e7 * u.K
 class _PureGreyLaw(GreyOpacityLaw):
     """Minimal pure-Python GreyOpacityLaw for interface testing."""
 
-    _LOG_KAPPA = np.log(0.5)  # κ = 0.5 cm² g⁻¹
+    _log_kappa = np.log(0.5)  # κ = 0.5 cm² g⁻¹
+
+    def _log_opacity(self, log_T, log_rho):
+        return self._log_kappa
 
 
 class _UnimplementedLaw(OpacityLaw):
@@ -55,19 +59,19 @@ class TestOpacityLawInterface:
         """_log_opacity raises NotImplementedError when IS_C_BACKED is False and not overridden."""
         law = _UnimplementedLaw()
         with pytest.raises(NotImplementedError, match="_log_opacity"):
-            law._log_opacity(np.log(1e4), np.log(1e-5))
+            law._log_opacity(np.log(1e14), np.log(1e7), np.log(1e-5))
 
     def test_dlogkappa_dlogrho_not_implemented_raises(self):
         """_dlogkappa_dlogrho raises NotImplementedError when IS_C_BACKED is False and not overridden."""
         law = _UnimplementedLaw()
         with pytest.raises(NotImplementedError, match="_dlogkappa_dlogrho"):
-            law._dlogkappa_dlogrho(np.log(1e4), np.log(1e-5))
+            law._dlogkappa_dlogrho(np.log(1e14), np.log(1e7), np.log(1e-5))
 
     def test_dlogkappa_dlogT_not_implemented_raises(self):
         """_dlogkappa_dlogT raises NotImplementedError when IS_C_BACKED is False and not overridden."""
         law = _UnimplementedLaw()
         with pytest.raises(NotImplementedError, match="_dlogkappa_dlogT"):
-            law._dlogkappa_dlogT(np.log(1e4), np.log(1e-5))
+            law._dlogkappa_dlogT(np.log(1e14), np.log(1e7), np.log(1e-5))
 
     def test_c_backed_initialise_raises_if_not_overridden(self):
         """_initialize_C_object raises NotImplementedError if IS_C_BACKED=True without override."""
@@ -107,9 +111,9 @@ class TestGreyOpacityLawInterface:
         assert result.unit.is_equivalent(u.cm**2 / u.g)
 
     def test_opacity_value_matches_log_kappa(self):
-        """opacity() value equals exp(_LOG_KAPPA) regardless of (rho, T)."""
+        """opacity() value equals exp(_log_kappa) regardless of (rho, T)."""
         law = _PureGreyLaw()
-        expected = np.exp(_PureGreyLaw._LOG_KAPPA)
+        expected = np.exp(_PureGreyLaw._log_kappa)
         result = law.opacity(_RHO, _T)
         assert result.value == pytest.approx(expected, rel=1e-12)
 

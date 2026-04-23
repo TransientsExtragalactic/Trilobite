@@ -28,10 +28,11 @@ _PYX_SOURCES = [
     "triceratops/math_utils/_bracket_root_finder.pyx",
     # opacity infrastructure (radiation/opacity/)
     "triceratops/radiation/opacity/opacity_base.pyx",
-    "triceratops/radiation/opacity/models/_electron_scattering.pyx",
-    "triceratops/radiation/opacity/models/_kramers.pyx",
-    "triceratops/radiation/opacity/models/_kramers_es.pyx",
-    "triceratops/radiation/opacity/models/_opal_table.pyx",
+    "triceratops/radiation/opacity/grey_opacity/rosseland/_electron_scattering.pyx",
+    "triceratops/radiation/opacity/grey_opacity/rosseland/_kramers.pyx",
+    "triceratops/radiation/opacity/grey_opacity/rosseland/_kramers_es.pyx",
+    "triceratops/radiation/opacity/grey_opacity/rosseland/_opal_table.pyx",
+    "triceratops/radiation/opacity/grey_opacity/_tops_table.pyx",
 ]
 
 setup(

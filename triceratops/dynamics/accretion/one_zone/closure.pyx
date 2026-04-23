@@ -139,7 +139,7 @@ cdef class OneZoneClosure:
 
         cdef class MyClosure(OneZoneClosure):
             def __cinit__(self):
-                from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+                from triceratops.radiation.opacity import ElectronScatteringOpacity
                 self._closure_fn     = my_closure_func
                 self._derivative_fn  = viscous_derivative_func
                 self._writer_fn      = standard_writer_func
@@ -174,7 +174,7 @@ cdef class OneZoneClosure:
 
     @opacity.setter
     def opacity(self, obj):
-        from triceratops.radiation.opacity.base import GreyOpacityLaw
+        from triceratops.radiation.opacity.grey_opacity.base import GreyOpacityLaw
 
         # Check the typing and extract the relevant pieces.
         if isinstance(obj, GreyOpacityLaw):

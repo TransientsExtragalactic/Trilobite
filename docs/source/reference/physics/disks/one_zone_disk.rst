@@ -970,7 +970,7 @@ Disk Models
 .. currentmodule:: triceratops.dynamics.accretion.one_zone
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: ../../../_as_gen
 
     GasPressureDisk
     FullPressureDisk
@@ -981,7 +981,7 @@ Result Container
 ^^^^^^^^^^^^^^^^
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: ../../../_as_gen
 
     OneZoneAccretionResult
 

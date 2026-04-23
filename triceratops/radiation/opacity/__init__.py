@@ -1,9 +1,26 @@
-"""Opacity laws for Triceratops radiative physics."""
+"""Opacity laws for Triceratops radiative physics.
 
-from .base import GreyOpacityLaw, OpacityLaw
-from .models import (
-    ConstantOpacity,
+This subpackage provides various utilities for computing opacities in the various
+modeling contexts supported by Triceratops. This module provides access to a number of different types
+of opacities, including
+
+- **grey opacities** (frequency-averaged, e.g. Rosseland or Planck mean) implemented as pure-Python classes
+  or Cython extensions;
+- **frequency-dependent opacities** (e.g. multigroup) implemented as pure-Python classes or Cython extensions
+  (not yet implemented);
+- **analytic opacity laws** (e.g. Kramers power laws) implemented as pure-Python classes or Cython extensions;
+- **table-based opacities** (e.g. OPAL) implemented as Cython extensions that perform bilinear
+  interpolation on preloaded tables.
+
+These are designed to be quick to evaluate and easy to use in the various contexts where they arise
+in Triceratops.
+"""
+
+from .base import OpacityLaw
+from .grey_opacity import (
+    ConstantGreyOpacity,
     ElectronScatteringOpacity,
+    GreyOpacityLaw,
     KramersBFESOpacity,
     KramersBFOpacity,
     KramersESOpacity,
@@ -11,10 +28,9 @@ from .models import (
     KramersFFOpacity,
     KramersOpacity,
     OPALOpacity,
-    load_opal_opacity,
+    TOPSOpacity,
 )
-from .tables import OpacityTable, OPALOpacityTable
-from .utils import get_opacity
+from .utils import get_opacity, load_opal_opacity, load_tops_opacity
 
 __all__ = [
     # Resolver
@@ -23,7 +39,6 @@ __all__ = [
     "OpacityLaw",
     "GreyOpacityLaw",
     # Analytic opacity laws
-    "ConstantOpacity",
     "ElectronScatteringOpacity",
     "KramersFFOpacity",
     "KramersBFOpacity",
@@ -31,10 +46,10 @@ __all__ = [
     "KramersFFESOpacity",
     "KramersBFESOpacity",
     "KramersESOpacity",
+    "ConstantGreyOpacity",
     # Table-based opacity
     "OPALOpacity",
+    "TOPSOpacity",
     "load_opal_opacity",
-    # Table containers
-    "OpacityTable",
-    "OPALOpacityTable",
+    "load_tops_opacity",
 ]

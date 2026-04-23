@@ -146,21 +146,23 @@ and in MCMC hot loops.
 
 ----
 
-Grey Opacity Laws
------------------
+Opacity Laws
+------------
 
-The :mod:`triceratops.radiation.opacity` module provides a set of grey
-(frequency-independent) opacity laws for use across Triceratops: as the Rosseland
-mean opacity driving radiative diffusion in accretion disks, as an effective
-photon-absorption cross-section in CSM optical-depth calculations, and as a building
-block in any custom thermal solver.  The module exposes a uniform interface for
-evaluating :math:`\kappa(\rho, T)` and its logarithmic derivatives, and is designed
-to be context-agnostic so the same opacity object can be dropped into any part of the
-codebase that needs it.
+The :mod:`triceratops.radiation.opacity` module provides opacity laws for use across
+Triceratops. This includes common analytic forms for the Rosseland and Planck mean opacities as
+well as numerical tables for various purposes. In many cases, these are implemented at the C-level to
+ensure seamless performance in hot loops.
 
-Implemented laws include constant (grey), electron-scattering (Thomson), free-free
-and bound-free Kramers power laws, combined Kramers + electron-scattering forms, and
-OPAL numerical opacity tables.
+.. note::
+
+    Currently, all of the available opacity laws are gray (frequency-independent), Rosseland means
+    or Planck means.  Future work will expand this to include frequency-dependent opacities and
+    potentially more specialized forms (e.g. line opacities for specific ions); however, current
+    implementations are sufficient for the majority of applications in Triceratops.
+
+    Triceratops is **not** a spectral synthesis code, so we do not implement detailed
+    frequency-dependent opacities.
 
 .. grid:: 1 1 3 3
     :gutter: 3
@@ -189,7 +191,7 @@ OPAL numerical opacity tables.
 .. toctree::
     :hidden:
     :maxdepth: 1
-    :caption: Grey Opacity Laws
+    :caption: Opacity Laws
 
     opacity/opacity_user_guide
     opacity/opacity_theory

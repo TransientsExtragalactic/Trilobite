@@ -417,7 +417,7 @@ API Reference
 .. currentmodule:: triceratops.dynamics.accretion
 
 .. autosummary::
-    :toctree: generated/
+    :toctree: ../../../_as_gen
 
     ThinDiskBase
     AlphaDisk

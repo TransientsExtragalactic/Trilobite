@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:02.368** total execution time for 43 files **from all galleries**:
+**00:00.337** total execution time for 43 files **from all galleries**:
 
 .. container::
 
@@ -32,10 +32,13 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_accretion_plot_disk_broadband_sed.py` (``galleries/accretion/plot_disk_broadband_sed.py``)
-     - 00:02.368
+   * - :ref:`sphx_glr_auto_examples_opacity_plot_opal_rosseland_opacity.py` (``galleries/opacity/plot_opal_rosseland_opacity.py``)
+     - 00:00.337
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_accretion_plot_disk_broadband_sed.py` (``galleries/accretion/plot_disk_broadband_sed.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_disk_eos_comparison.py` (``galleries/accretion/plot_disk_eos_comparison.py``)
@@ -111,9 +114,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_type_IIn_SN_dense_CSM.py` (``galleries/modeling/plot_type_IIn_SN_dense_CSM.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_opacity_plot_opal_rosseland_opacity.py` (``galleries/opacity/plot_opal_rosseland_opacity.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_photometry_plot_filter_basics.py` (``galleries/photometry/plot_filter_basics.py``)

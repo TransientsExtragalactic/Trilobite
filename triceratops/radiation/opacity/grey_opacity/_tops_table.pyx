@@ -1,19 +1,11 @@
 #cython: language_level=3, boundscheck=False
 r"""
-C-level bilinear-interpolation opacity from a pre-tabulated 2-D OPAL grid.
+C-level bilinear-interpolation opacity from a pre-tabulated 2-D TOPS grid.
 
-:class:`C_OPALTableOpacity` stores a single ``(n1 × n2)`` table of
-:math:`\log_{10}\kappa` on a ``(\log_{10}T,\,\log_{10}R)`` or
-``(\log_{10}T,\,\log_{10}\rho)`` grid and evaluates opacity and its
-log-space partial derivatives at arbitrary ``(T, \rho)`` via bilinear
-interpolation.
-
-Coordinate systems
-------------------
-* **T_R** (``_coord == 0``) — second axis is :math:`\log_{10}(R)` where
-  :math:`R = \rho / T_6^3`, :math:`T_6 = 10^{-6}\,T[\mathrm{K}]`.
-  Chain-rule derivatives differ from T_rho by a :math:`-3` cross-term.
-* **T_rho** (``_coord == 1``) — second axis is :math:`\log_{10}(\rho)`.
+:class:`C_TOPSTableOpacity` stores a single ``(n1 × n2)`` table of
+:math:`\log_{10}\kappa` on a ``(\log_{10}T,\,\log_{10}\rho)`` grid and
+evaluates opacity and its log-space partial derivatives at arbitrary
+``(T, \rho)`` via bilinear interpolation.
 
 All public log-space methods accept **(log_T, log_rho)** in *natural* log
 (convention shared with every other Cython opacity class).
@@ -28,20 +20,18 @@ Out-of-bounds modes
 import numpy as np
 from libc.math cimport log, exp, isnan, NAN
 
-cdef class C_OPALTableOpacity(C_GreyOpacityBase):
-    r"""Bilinear-interpolation Rosseland opacity from a 2-D log-space table.
+cdef class C_TOPSTableOpacity(C_GreyOpacityBase):
+    r"""Bilinear-interpolation opacity from a 2-D TOPS log-space table.
 
     Parameters
     ----------
     g1 : ndarray, float64, C-contiguous, shape (n1,)
         :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).
     g2 : ndarray, float64, C-contiguous, shape (n2,)
-        :math:`\log_{10}(R)` or :math:`\log_{10}(\rho)` grid values.
+        :math:`\log_{10}(\rho\,[\mathrm{g\,cm^{-3}}])` grid values (strictly increasing).
     lk : ndarray, float64, C-contiguous, shape (n1, n2)
         :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`.
         ``NaN`` marks out-of-range cells.
-    coord : int
-        ``0`` = T_R coordinate system; ``1`` = T_rho.
     oob : int
         Out-of-bounds mode: ``0`` raise, ``1`` clamp, ``2`` nan.
     """
@@ -51,7 +41,6 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         double[::1] g1,
         double[::1] g2,
         double[:, ::1] lk,
-        int coord,
         int oob,
     ):
         self._g1   = g1
@@ -59,7 +48,6 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         self._lk   = lk
         self._n1   = g1.shape[0]
         self._n2   = g2.shape[0]
-        self._coord = coord
         self._oob  = oob
         self._LN10 = log(10.0)
 
@@ -109,18 +97,9 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         double *x1_out,
         double *x2_out,
     ) nogil:
-        """Convert (ln T, ln rho) → (log10 T, log10 R/rho)."""
-        cdef double LN10 = self._LN10
-        cdef double log10_T = log_T / LN10
-        cdef double log10_g2
-        if self._coord == 0:
-            # T_R: log10(R) = log10(rho) - 3*(log10(T) - 6)
-            log10_g2 = log_rho / LN10 - 3.0*(log10_T - 6.0)
-        else:
-            # T_rho
-            log10_g2 = log_rho / LN10
-        x1_out[0] = log10_T
-        x2_out[0] = log10_g2
+        """Convert (ln T, ln rho) → (log10 T, log10 rho)."""
+        x1_out[0] = log_T   / self._LN10
+        x2_out[0] = log_rho / self._LN10
 
     cdef int _find_cell(
         self,
@@ -135,7 +114,6 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         Sets *i_out and *j_out to the lower-left corner.
         """
         cdef int i, j
-        # Small tolerance to absorb floating-point rounding at the grid edges.
         cdef double eps = 1e-9
         if x1 < self._g1[0] - eps or x1 > self._g1[self._n1-1] + eps:
             i_out[0] = 0
@@ -147,7 +125,6 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
             return 1
         i = self._bisect(self._g1, self._n1, x1)
         j = self._bisect(self._g2, self._n2, x2)
-        # Clamp to valid interpolation range
         if i > self._n1 - 2:
             i = self._n1 - 2
         if j > self._n2 - 2:
@@ -156,25 +133,42 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         j_out[0] = j
         return 0
 
+    cdef double _nearest_finite(self, int ci, int cj) nogil:
+        """Return the nearest non-NaN cell value to (ci, cj) by Chebyshev distance."""
+        cdef int k, i, j, i0, i1, j0, j1, max_k
+        cdef double v
+        max_k = self._n1 + self._n2
+        for k in range(max_k):
+            i0 = ci - k if ci - k > 0 else 0
+            i1 = ci + k if ci + k < self._n1 - 1 else self._n1 - 1
+            j0 = cj - k if cj - k > 0 else 0
+            j1 = cj + k if cj + k < self._n2 - 1 else self._n2 - 1
+            for i in range(i0, i1 + 1):
+                for j in range(j0, j1 + 1):
+                    if (ci - i == k or i - ci == k or
+                            cj - j == k or j - cj == k):
+                        v = self._lk[i, j]
+                        if not isnan(v):
+                            return v
+        return NAN
+
     cdef double _handle_oob(self, double x1, double x2) nogil:
         """Apply out-of-bounds strategy and return log10(kappa) or NAN."""
         cdef int ci, cj
         if self._oob == 1:
-            # Clamp: find the nearest valid boundary cell.
             ci = self._bisect(self._g1, self._n1, x1)
             cj = self._bisect(self._g2, self._n2, x2)
             if ci > self._n1 - 2:
                 ci = self._n1 - 2
             if cj > self._n2 - 2:
                 cj = self._n2 - 2
-            return self._lk[ci, cj]
+            return self._nearest_finite(ci, cj)
         elif self._oob == 2:
             return NAN
         else:
-            # _oob == 0: raise ValueError (needs GIL)
             with gil:
                 raise ValueError(
-                    f"(log10_T={x1:.3f}, log10_g2={x2:.3f}) is outside the "
+                    f"(log10_T={x1:.3f}, log10_rho={x2:.3f}) is outside the "
                     f"table domain "
                     f"[{self._g1[0]:.2f}, {self._g1[self._n1-1]:.2f}] x "
                     f"[{self._g2[0]:.2f}, {self._g2[self._n2-1]:.2f}]."
@@ -194,8 +188,8 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
             log10_kappa = self._handle_oob(x1, x2)
         else:
             log10_kappa = self._interp(x1, x2, i, j)
-            if isnan(log10_kappa):
-                log10_kappa = self._handle_oob(x1, x2)
+            if isnan(log10_kappa) and self._oob == 1:
+                log10_kappa = self._nearest_finite(i, j)
         return log10_kappa * self._LN10
 
     cdef double _opacity(self, double rho, double T) nogil:
@@ -205,15 +199,13 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
     cdef double _dlogkappa_dlogrho(self, double log_T, double log_rho) nogil:
         r"""Return :math:`\partial\ln\kappa/\partial\ln\rho` (dimensionless).
 
-        Derived analytically from the bilinear cell:
+        In the TOPS coordinate system the second axis is :math:`\log_{10}\rho`
+        directly, so the chain rule gives the same result as OPAL:
 
         .. math::
 
             \frac{\partial\ln\kappa}{\partial\ln\rho}
-              = \ln(10)\,\frac{\partial\log_{10}\kappa}{\partial\log_{10}g_2}
-
-        (valid for both coordinate systems because :math:`\partial g_2/\partial\ln\rho = 1/\ln 10`
-        in both cases.)
+              = \frac{\partial\log_{10}\kappa}{\partial\log_{10}\rho}
         """
         cdef double x1, x2, tx, k0j, k0j1, dkg2
         cdef int i, j, oob
@@ -228,58 +220,32 @@ cdef class C_OPALTableOpacity(C_GreyOpacityBase):
         if isnan(k0j) or isnan(k0j1):
             return NAN if self._oob == 2 else 0.0
 
-        # d(log10 kappa)/d(log10 g2)
         dkg2 = (k0j1 - k0j) / (self._g2[j+1] - self._g2[j])
-        # d(ln kappa)/d(ln rho):
-        #   = LN10 * d(log10 kappa)/d(log10 g2) * d(log10 g2)/d(ln rho)
-        #   = LN10 * dkg2 * (1/LN10) = dkg2
         return dkg2
 
     cdef double _dlogkappa_dlogT(self, double log_T, double log_rho) nogil:
         r"""Return :math:`\partial\ln\kappa/\partial\ln T` (dimensionless).
 
-        **T_R** system (:math:`g_2 = \log_{10} R`, :math:`R = \rho/T_6^3`):
+        In the TOPS coordinate system :math:`\rho` and :math:`T` are independent
+        axes, so there is no cross-term:
 
         .. math::
 
             \frac{\partial\ln\kappa}{\partial\ln T}\bigg|_\rho
-              = \ln(10)\!\left[
-                  \frac{\partial\log_{10}\kappa}{\partial\log_{10}T}\bigg|_R
-                  - 3\,\frac{\partial\log_{10}\kappa}{\partial\log_{10}R}\bigg|_T
-                \right]
-
-        because :math:`\partial\log_{10}R/\partial\log_{10}T|_\rho = -3`.
-
-        **T_rho** system: no cross-term.
+              = \frac{\partial\log_{10}\kappa}{\partial\log_{10}T}\bigg|_\rho
         """
-        cdef double x1, x2, ty, tx, ki0, ki1, k0j, k0j1, dkg1, dkg2
+        cdef double x1, x2, ty, ki0, ki1, dkg1
         cdef int i, j, oob
         self._coords(log_T, log_rho, &x1, &x2)
         oob = self._find_cell(x1, x2, &i, &j)
         if oob:
             return NAN if self._oob == 2 else 0.0
 
-        ty = (x2 - self._g2[j]) / (self._g2[j+1] - self._g2[j])
-
-        # d(log10 kappa)/d(log10 T) — interpolated along g2 direction
+        ty  = (x2 - self._g2[j]) / (self._g2[j+1] - self._g2[j])
         ki0 = self._lk[i,   j]*(1.0-ty) + self._lk[i,   j+1]*ty
         ki1 = self._lk[i+1, j]*(1.0-ty) + self._lk[i+1, j+1]*ty
         if isnan(ki0) or isnan(ki1):
             return NAN if self._oob == 2 else 0.0
-
         dkg1 = (ki1 - ki0) / (self._g1[i+1] - self._g1[i])
 
-        if self._coord == 0:
-            # T_R: also need d(log10 kappa)/d(log10 R)
-            tx   = (x1 - self._g1[i]) / (self._g1[i+1] - self._g1[i])
-            k0j  = self._lk[i,   j]*(1.0-tx) + self._lk[i+1, j  ]*tx
-            k0j1 = self._lk[i,   j+1]*(1.0-tx) + self._lk[i+1, j+1]*tx
-            if isnan(k0j) or isnan(k0j1):
-                return NAN if self._oob == 2 else 0.0
-            dkg2 = (k0j1 - k0j) / (self._g2[j+1] - self._g2[j])
-            # d(ln kappa)/d(ln T)|_rho:
-            #   = LN10*(dkg1*(1/LN10) + dkg2*(-3/LN10)) = dkg1 - 3*dkg2
-            return dkg1 - 3.0*dkg2
-        else:
-            # T_rho: d(ln kappa)/d(ln T)|_rho = LN10*dkg1*(1/LN10) = dkg1
-            return dkg1
+        return dkg1

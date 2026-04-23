@@ -241,7 +241,7 @@ cdef class FullPressureClosure(OneZoneClosure):
         bint with_fallback=False,
         double mu=0.6,
     ):
-        from triceratops.radiation.opacity.models.core import ElectronScatteringOpacity
+        from triceratops.radiation.opacity import ElectronScatteringOpacity
 
         if gas_pressure_only:
             self._closure_fn = gP_closure_func
