@@ -23,8 +23,9 @@ from triceratops.utils.misc_utils import ensure_in_units
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
 
-# NumPy compatibility: np.trapezoid added in 2.0, np.trapz deprecated in 2.0.
-_trapz = getattr(np, "trapezoid", np.trapz)
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
+# The default arg to getattr is evaluated eagerly, so nest the fallback.
+_trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
 
 # ============================================ #
 # Frequency Calculations for Synchrotron       #
