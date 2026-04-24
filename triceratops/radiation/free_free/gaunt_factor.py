@@ -24,17 +24,11 @@ depends on three physical parameters:
 This module provides a number of convenient methods ranging from analytical approximations to
 tabulated interpolators for accurate Gaunt factor evaluation.
 
-Relevant API
-------------
-- :class:`~triceratops.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
-- :class:`~triceratops.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
-- :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator`
-- :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator`
 """
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import h5py
 import numpy as np
@@ -46,7 +40,20 @@ from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
-    pass  # Reserved for future type-only imports.
+    from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
+
+__all__ = [
+    # Interpolator classes
+    "GauntFactorInterpolatorBase",
+    "NonRelativisticGauntFactorInterpolator",
+    "RelativisticGauntFactorInterpolator",
+    # Interpolator factories
+    "get_default_gaunt_interpolator",
+    "get_default_relativistic_gaunt_interpolator",
+    # Public compute functions
+    "compute_ff_gaunt_factor",
+    "compute_ff_gaunt_factor_comp",
+]
 
 # ============================================ #
 # PATHS                                        #
@@ -598,6 +605,687 @@ class RelativisticGauntFactorInterpolator(GauntFactorInterpolatorBase):
         return view
 
 
+# =============================================== #
+# Analytic Approximations                         #
+# =============================================== #
+# These gaunt factors are taken broadly from the literature to provide
+# analytic defaults for the relevant gaunt factors.
+
+
+# ----------- Private Functions ------------------- #
+def _gaunt_ff_lu(log_nu, log_T, Z):
+    r"""
+    Free–free Gaunt factor using the W. Lu textbook approximation.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Z : array_like
+        Ionic charge (atomic number) of the species. Must be positive.
+
+    Returns
+    -------
+    gff : float or ~numpy.ndarray
+        Free–free Gaunt factor :math:`g_{\rm ff}`. Shape is the broadcasted
+        shape of the inputs.
+
+    Notes
+    -----
+    Expressed in terms of :math:`\nu_9 = \nu / 10^9\,\mathrm{Hz}` and
+    :math:`T_4 = T / 10^4\,\mathrm{K}`:
+
+    .. math::
+
+        g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right),\quad
+        Q = 6 - \frac{\sqrt{3}}{\pi}\ln A,
+
+    where
+
+    .. math::
+
+        A = \frac{\nu_9}{T_4} \cdot
+            \max\!\left(0.25,\;\frac{Z}{T_4^{1/2}}\right)^{-1}.
+
+    Note that :math:`\ln(e + \exp(Q))` is the Gaunt factor itself, not its
+    logarithm; ``np.logaddexp`` is used purely for numerical stability.
+
+    References
+    ----------
+    See :footcite:t:`lu_2026_18603474`, equation 6.79.
+    """
+    # Ensure everything is correctly case as logarithmic and in CGS-compatible units.
+    log_nu = np.asarray(log_nu, dtype=float)
+    log_T = np.asarray(log_T, dtype=float)
+    Z = np.asarray(Z, dtype=float)
+
+    # Convert the quantities to the log_10 space and correct them to
+    # that they are in 10^4 K and 10^9 Hz, as per the original formula.
+    log10 = np.log(10.0)
+    log_nu9 = log_nu - 9.0 * log10
+    log_T4 = log_T - 4.0 * log10
+    log_Z = np.log(Z)
+
+    # Compute the first term inside the logarithm.
+    log_A = log_nu9 - log_T4 + np.maximum(np.log(0.25), log_Z - 0.5 * log_T4)
+
+    # Q term
+    Q = 6.0 - (np.sqrt(3.0) / np.pi) * log_A
+
+    # Final stable log(e + exp(Q))
+    res = np.logaddexp(1.0, Q)
+
+    return res if res.ndim > 0 else float(res)
+
+
+def _gaunt_ff_lu_comp(log_nu, log_T, Zs, Xs):
+    r"""
+    Composition-weighted effective free–free Gaunt factor (W. Lu textbook approximation).
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Zs : (N,) array_like
+        Ionic charges of each species.
+    Xs : (N,) array_like
+        Number fractions of each species. Must sum to unity.
+
+    Returns
+    -------
+    gff_eff : float or ~numpy.ndarray
+        Effective Gaunt factor
+        :math:`g_{\rm ff,eff} = \sum_i Z_i^2\,x_i\,g_{{\rm ff},i}`.
+        Shape matches broadcasted ``log_nu`` and ``log_T``.
+
+    Raises
+    ------
+    ValueError
+        If ``Zs`` and ``Xs`` do not have matching shapes or are not 1-D.
+
+    Notes
+    -----
+    Assumes a fully ionised plasma where free–free emission scales as
+    :math:`Z_i^2`.  Weighting uses **number fractions**, not mass fractions.
+
+    References
+    ----------
+    See :footcite:t:`lu_2026_18603474`, equation 6.79.
+    """
+    log_nu = np.asarray(log_nu, dtype=float)
+    log_T = np.asarray(log_T, dtype=float)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if Zs.shape != Xs.shape:
+        raise ValueError(f"Zs and Xs must have the same shape; got {Zs.shape} and {Xs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs and Xs must be 1-D arrays; got shape {Zs.shape}.")
+
+    gaunt_factors = _gaunt_ff_lu(log_nu[..., np.newaxis], log_T[..., np.newaxis], Zs[np.newaxis, :])
+    weights = Zs**2 * Xs * gaunt_factors
+    return np.sum(weights, axis=-1)
+
+
+def _gaunt_ff_draine(log_nu, log_T, Z):
+    r"""
+    Free–free Gaunt factor using the Draine (2011) approximation.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Z : array_like
+        Ionic charge of the species. Must be positive.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Free–free Gaunt factor :math:`g_{\rm ff}`.
+
+    Notes
+    -----
+    Expressed in terms of :math:`\nu_9 = \nu / 10^9\,\mathrm{Hz}` and
+    :math:`T_4 = T / 10^4\,\mathrm{K}`:
+
+    .. math::
+
+        g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right), \quad
+        Q = 5.960 - \frac{\sqrt{3}}{\pi}
+            \ln\!\left(\nu_9\,T_4^{-3/2}\,Z\right).
+
+    References
+    ----------
+    See :footcite:t:`draine2011physics`, Chapter 10, and
+    :footcite:t:`2023MNRAS.519.3432T`.
+    """
+    log_nu = np.asarray(log_nu, dtype=float)
+    log_T = np.asarray(log_T, dtype=float)
+    Z = np.asarray(Z, dtype=float)
+
+    log10 = np.log(10.0)
+    log_nu9 = log_nu - 9.0 * log10
+    log_T4 = log_T - 4.0 * log10
+    log_Z = np.log(Z)
+
+    log_A = log_nu9 - 1.5 * log_T4 + log_Z
+    Q = 5.960 - (np.sqrt(3.0) / np.pi) * log_A
+    res = np.logaddexp(1.0, Q)
+
+    return res if res.ndim > 0 else float(res)
+
+
+def _gaunt_ff_draine_comp(log_nu, log_T, Zs, Xs):
+    r"""
+    Composition-weighted effective free–free Gaunt factor (Draine 2011 approximation).
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Zs : (N,) array_like
+        Ionic charges of each species.
+    Xs : (N,) array_like
+        Number fractions of each species.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Effective Gaunt factor
+        :math:`g_{\rm ff,eff} = \sum_i Z_i^2\,x_i\,g_{{\rm ff},i}`.
+
+    Raises
+    ------
+    ValueError
+        If ``Zs`` and ``Xs`` do not have matching 1-D shapes.
+
+    References
+    ----------
+    See :footcite:t:`draine2011physics`, Chapter 10, and
+    :footcite:t:`2023MNRAS.519.3432T`.
+    """
+    log_nu = np.asarray(log_nu, dtype=float)
+    log_T = np.asarray(log_T, dtype=float)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if Zs.shape != Xs.shape:
+        raise ValueError(f"Zs and Xs must have the same shape; got {Zs.shape} and {Xs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs and Xs must be 1-D arrays; got shape {Zs.shape}.")
+
+    gaunt_factors = _gaunt_ff_draine(log_nu[..., np.newaxis], log_T[..., np.newaxis], Zs[np.newaxis, :])
+    weights = Zs**2 * Xs * gaunt_factors
+    return np.sum(weights, axis=-1)
+
+
+# =============================================== #
+# Tabulated Wrappers (Van Hoof 2014)              #
+# =============================================== #
+# Lazily-loaded module-level interpolator instances.  These are created on the
+# first call to a 'vanhoof' or 'vanhoof_rel' approximation and then reused.
+# bounds_error=False / fill_value=NaN means out-of-domain queries return NaN
+# rather than raising, consistent with the opacity module convention.
+
+_DEFAULT_NON_REL_INTERP: "Optional[NonRelativisticGauntFactorInterpolator]" = None
+_DEFAULT_REL_INTERP: "Optional[RelativisticGauntFactorInterpolator]" = None
+
+
+def _get_non_rel_interp() -> "NonRelativisticGauntFactorInterpolator":
+    global _DEFAULT_NON_REL_INTERP
+    if _DEFAULT_NON_REL_INTERP is None:
+        _DEFAULT_NON_REL_INTERP = NonRelativisticGauntFactorInterpolator(bounds_error=False, fill_value=np.nan)
+    return _DEFAULT_NON_REL_INTERP
+
+
+def _get_rel_interp() -> "RelativisticGauntFactorInterpolator":
+    global _DEFAULT_REL_INTERP
+    if _DEFAULT_REL_INTERP is None:
+        _DEFAULT_REL_INTERP = RelativisticGauntFactorInterpolator(bounds_error=False, fill_value=np.nan)
+    return _DEFAULT_REL_INTERP
+
+
+def _gaunt_ff_vanhoof(log_nu, log_T, Z):
+    r"""
+    Free–free Gaunt factor via bilinear interpolation on the van Hoof et al. (2014) non-relativistic table.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Z : array_like
+        Ionic charge. Enters only through the coordinate transform
+        :math:`\log_{10}\gamma^2 = \log_{10}(Z^2 R_y / k_B T)`.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Free–free Gaunt factor :math:`g_{\rm ff}`.  Points outside the table
+        domain are returned as ``NaN``.
+
+    Notes
+    -----
+    The table covers :math:`-16 \le \log_{10} u \le +13` and
+    :math:`-6 \le \log_{10}\gamma^2 \le +10`.  The interpolator is
+    lazy-loaded and cached on the first call.
+
+    References
+    ----------
+    See :footcite:t:`2014MNRAS.444..420V`.
+    """
+    nu = np.exp(np.asarray(log_nu, dtype=float))
+    T = np.exp(np.asarray(log_T, dtype=float))
+    return _get_non_rel_interp()(Z=Z, T=T, nu=nu)
+
+
+def _gaunt_ff_vanhoof_comp(log_nu, log_T, Zs, Xs):
+    r"""
+    Composition-weighted effective free–free Gaunt factor using the van Hoof et al. (2014) non-relativistic table.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Zs : (N,) array_like
+        Ionic charges of each species.
+    Xs : (N,) array_like
+        Number fractions of each species. Must sum to unity.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Effective Gaunt factor
+        :math:`g_{\rm ff,eff} = \sum_i Z_i^2\,x_i\,g_{{\rm ff},i}`.
+        Points where any species falls outside the table return ``NaN``.
+
+    Raises
+    ------
+    ValueError
+        If ``Zs`` and ``Xs`` do not have matching 1-D shapes.
+
+    Notes
+    -----
+    Each per-species Gaunt factor is evaluated independently via
+    :func:`_gaunt_ff_vanhoof`; the results are then combined as a
+    number-fraction-weighted sum.  The interpolator is lazy-loaded and cached.
+
+    References
+    ----------
+    See :footcite:t:`2014MNRAS.444..420V`.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    if Zs.shape != Xs.shape:
+        raise ValueError(f"Zs and Xs must have the same shape; got {Zs.shape} and {Xs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs and Xs must be 1-D arrays; got shape {Zs.shape}.")
+
+    nu = np.exp(np.asarray(log_nu, dtype=float))
+    T = np.exp(np.asarray(log_T, dtype=float))
+    interp = _get_non_rel_interp()
+
+    effective_gff = sum(Zi**2 * Xi * interp(Z=float(Zi), T=T, nu=nu) for Zi, Xi in zip(Zs, Xs))
+    result = np.asarray(effective_gff)
+    return float(result) if result.ndim == 0 else result
+
+
+def _gaunt_ff_vanhoof_rel(log_nu, log_T, Z):
+    r"""
+    Free–free Gaunt factor via trilinear interpolation on the van Hoof et al. (2014) relativistic table.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Z : array_like
+        Ionic charge.  Used both through the coordinate transform and as an
+        explicit interpolation axis (:math:`Z = 1, 2, \ldots, 36`).
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Free–free Gaunt factor :math:`g_{\rm ff}`.  Points outside the table
+        domain are returned as ``NaN``.
+
+    Notes
+    -----
+    The table covers :math:`Z = 1\text{–}36`,
+    :math:`-16 \le \log_{10} u \le +13`, and
+    :math:`-6 \le \log_{10}\gamma^2 \le +10`.  The interpolator is
+    lazy-loaded and cached on the first call.  Use this approximation when
+    relativistic corrections to the Gaunt factor are significant
+    (:math:`T \gtrsim 10^8\,\mathrm{K}`).
+
+    References
+    ----------
+    See :footcite:t:`2014MNRAS.444..420V`.
+    """
+    nu = np.exp(np.asarray(log_nu, dtype=float))
+    T = np.exp(np.asarray(log_T, dtype=float))
+    return _get_rel_interp()(Z=Z, T=T, nu=nu)
+
+
+def _gaunt_ff_vanhoof_rel_comp(log_nu, log_T, Zs, Xs):
+    r"""
+    Composition-weighted effective free–free Gaunt factor using the van Hoof et al. (2014) relativistic table.
+
+    Parameters
+    ----------
+    log_nu : array_like
+        Natural logarithm of the frequency in Hz.
+    log_T : array_like
+        Natural logarithm of the temperature in Kelvin.
+    Zs : (N,) array_like
+        Ionic charges of each species.  Each must lie within
+        :math:`Z = 1, 2, \ldots, 36`.
+    Xs : (N,) array_like
+        Number fractions of each species. Must sum to unity.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Effective Gaunt factor
+        :math:`g_{\rm ff,eff} = \sum_i Z_i^2\,x_i\,g_{{\rm ff},i}`.
+        Points outside the table (including :math:`Z > 36`) return ``NaN``.
+
+    Raises
+    ------
+    ValueError
+        If ``Zs`` and ``Xs`` do not have matching 1-D shapes.
+
+    Notes
+    -----
+    Each per-species Gaunt factor is evaluated independently via
+    :func:`_gaunt_ff_vanhoof_rel`; the results are combined as a
+    number-fraction-weighted sum.  The interpolator is lazy-loaded and cached.
+
+    References
+    ----------
+    See :footcite:t:`2014MNRAS.444..420V`.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    if Zs.shape != Xs.shape:
+        raise ValueError(f"Zs and Xs must have the same shape; got {Zs.shape} and {Xs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs and Xs must be 1-D arrays; got shape {Zs.shape}.")
+
+    nu = np.exp(np.asarray(log_nu, dtype=float))
+    T = np.exp(np.asarray(log_T, dtype=float))
+    interp = _get_rel_interp()
+
+    effective_gff = sum(Zi**2 * Xi * interp(Z=float(Zi), T=T, nu=nu) for Zi, Xi in zip(Zs, Xs))
+    result = np.asarray(effective_gff)
+    return float(result) if result.ndim == 0 else result
+
+
+# ----------- Public Functions ------------------- #
+
+_APPROX_REGISTRY = {
+    "lu": (_gaunt_ff_lu, _gaunt_ff_lu_comp),
+    "draine": (_gaunt_ff_draine, _gaunt_ff_draine_comp),
+    "vanhoof": (_gaunt_ff_vanhoof, _gaunt_ff_vanhoof_comp),
+    "vanhoof_rel": (_gaunt_ff_vanhoof_rel, _gaunt_ff_vanhoof_rel_comp),
+}
+
+
+def compute_ff_gaunt_factor(
+    nu: "_UnitBearingArrayLike",
+    T: "_UnitBearingArrayLike",
+    Z: "_ArrayLike",
+    approx: str = "lu",
+) -> "Union[float, np.ndarray]":
+    r"""Evaluate the free–free Gaunt factor :math:`g_{\rm ff}(\nu, T, Z)` for a single ion species.
+
+    Parameters
+    ----------
+    nu : ~astropy.units.Quantity or array-like
+        Photon frequency.  Plain floats are assumed to be in Hz;
+        unit-bearing Quantities are converted automatically.
+    T : ~astropy.units.Quantity or array-like
+        Electron temperature.  Plain floats are assumed to be in K;
+        unit-bearing Quantities are converted automatically.
+    Z : int, float, or array-like
+        Ionic charge number (:math:`Z \geq 1`).  Dimensionless.
+    approx : {'lu', 'draine', 'vanhoof', 'vanhoof_rel'}, optional
+        Approximation method.  Default is ``'lu'``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Dimensionless free–free Gaunt factor :math:`g_{\rm ff}`.  Shape is
+        the broadcasted shape of *nu*, *T*, and *Z*.  Tabulated methods
+        return ``NaN`` for queries outside the table domain.
+
+    Raises
+    ------
+    ValueError
+        If *approx* is not one of the recognised keys.
+
+    Notes
+    -----
+    Four methods are available:
+
+    ``'lu'`` (default)
+        Analytic extension of the Draine (2011) formula by
+        :footcite:t:`lu_2026_18603474` (equation 6.79), expressed in terms of
+        :math:`\nu_9 \equiv \nu / (10^9\,\mathrm{Hz})` and
+        :math:`T_4 \equiv T / (10^4\,\mathrm{K})`:
+
+        .. math::
+
+            g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right),\quad
+            Q = 6 - \frac{\sqrt{3}}{\pi}\ln A,\quad
+            A = \frac{\nu_9}{T_4}
+                \max\!\left(0.25,\;\frac{Z}{T_4^{1/2}}\right)^{-1}.
+
+        Covers both the classical and semi-quantum non-relativistic regimes.
+        Valid for arbitrary :math:`Z`.
+
+    ``'draine'``
+        Classical analytic approximation from
+        :footcite:t:`draine2011physics` (Chapter 10) and
+        :footcite:t:`2023MNRAS.519.3432T`:
+
+        .. math::
+
+            g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right),\quad
+            Q = 5.960 - \frac{\sqrt{3}}{\pi}
+                \ln\!\left(\nu_9\,T_4^{-3/2}\,Z\right).
+
+        Suitable when only the classical non-relativistic regime is needed.
+
+    ``'vanhoof'``
+        Bilinear interpolation on the 2-D non-relativistic table of
+        :footcite:t:`2014MNRAS.444..420V`.  Covers
+        :math:`-16 \le \log_{10} u \le +13` and
+        :math:`-6 \le \log_{10}\gamma^2 \le +10`.
+        The interpolator is lazy-loaded from disk and cached on the first
+        call; subsequent calls are fast.  Recommended when accuracy matters
+        and relativistic corrections are negligible.
+
+    ``'vanhoof_rel'``
+        Trilinear interpolation on the 3-D relativistic table of
+        :footcite:t:`2014MNRAS.444..420V` with :math:`Z = 1\text{–}36`.
+        Covers the same :math:`(u, \gamma^2)` domain as ``'vanhoof'``.
+        Appropriate for high-temperature plasmas
+        (:math:`T \gtrsim 10^8\,\mathrm{K}`) where relativistic corrections
+        are significant.
+
+    See Also
+    --------
+    compute_ff_gaunt_factor_comp :
+        Composition-weighted effective Gaunt factor for a multi-species plasma.
+    get_default_gaunt_interpolator :
+        Direct access to the non-relativistic van Hoof interpolator.
+    get_default_relativistic_gaunt_interpolator :
+        Direct access to the relativistic van Hoof interpolator.
+
+    References
+    ----------
+    .. footbibliography::
+
+    Examples
+    --------
+    .. code-block:: python
+
+        from astropy import units as u
+        from triceratops.radiation.free_free.gaunt_factor import (
+            compute_ff_gaunt_factor,
+        )
+
+        # Analytic (default)
+        gff = compute_ff_gaunt_factor(
+            nu=1e10 * u.Hz, T=1e4 * u.K, Z=1
+        )
+        print(f"g_ff (lu)      = {gff:.4f}")
+
+        # Tabulated non-relativistic
+        gff_tab = compute_ff_gaunt_factor(
+            nu=1e10 * u.Hz,
+            T=1e4 * u.K,
+            Z=1,
+            approx="vanhoof",
+        )
+        print(f"g_ff (vanhoof) = {gff_tab:.4f}")
+    """
+    if approx not in _APPROX_REGISTRY:
+        raise ValueError(f"approx must be one of {list(_APPROX_REGISTRY)}; got {approx!r}.")
+
+    nu_cgs = ensure_in_units(nu, u.Hz)
+    T_cgs = ensure_in_units(T, u.K)
+
+    _single, _ = _APPROX_REGISTRY[approx]
+    return _single(np.log(nu_cgs), np.log(T_cgs), Z)
+
+
+def compute_ff_gaunt_factor_comp(
+    nu: "_UnitBearingArrayLike",
+    T: "_UnitBearingArrayLike",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    approx: str = "lu",
+) -> "Union[float, np.ndarray]":
+    r"""Evaluate the composition-weighted effective free–free Gaunt factor.
+
+    Parameters
+    ----------
+    nu : ~astropy.units.Quantity or array-like
+        Photon frequency.  Plain floats are assumed to be in Hz;
+        unit-bearing Quantities are converted automatically.
+    T : ~astropy.units.Quantity or array-like
+        Electron temperature.  Plain floats are assumed to be in K;
+        unit-bearing Quantities are converted automatically.
+    Zs : (N,) array-like
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+        Dimensionless.
+    Xs : (N,) array-like
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+        Must match the shape of *Zs*.
+    approx : {'lu', 'draine', 'vanhoof', 'vanhoof_rel'}, optional
+        Method used to evaluate the per-species Gaunt factor.
+        Default is ``'lu'``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Dimensionless effective Gaunt factor :math:`g_{\rm ff,eff}`.  Shape
+        matches the broadcasted shape of *nu* and *T*.  Tabulated methods
+        return ``NaN`` for species or frequencies outside the table domain.
+
+    Raises
+    ------
+    ValueError
+        If *approx* is not recognised, or if *Zs* and *Xs* have incompatible
+        shapes or are not 1-D.
+
+    Notes
+    -----
+    For a fully ionised multi-species plasma the free–free volume emissivity
+    scales as :math:`j_\nu \propto n_e \sum_i n_i Z_i^2 g_{{\rm ff},i}`.
+    Expressing ion densities as number fractions :math:`x_i = n_i / n_{\rm ion}`
+    yields the effective Gaunt factor
+
+    .. math::
+
+        g_{\rm ff,eff}(\nu, T) = \sum_i Z_i^2\,x_i\,g_{{\rm ff},i}(\nu, T, Z_i),
+
+    where :math:`g_{{\rm ff},i}` is evaluated by the method selected through
+    *approx*.  See :func:`compute_ff_gaunt_factor` for a description of each
+    available method; all four (``'lu'``, ``'draine'``, ``'vanhoof'``,
+    ``'vanhoof_rel'``) are supported here.
+
+    For the tabulated methods (``'vanhoof'``, ``'vanhoof_rel'``), the
+    per-species evaluations iterate over species in a Python loop; the
+    interpolator is lazy-loaded and cached on the first call.
+
+    See Also
+    --------
+    compute_ff_gaunt_factor :
+        Single-species Gaunt factor; documents all available *approx* methods.
+    get_default_gaunt_interpolator :
+        Direct access to the non-relativistic van Hoof interpolator.
+
+    References
+    ----------
+    .. footbibliography::
+
+    Examples
+    --------
+    .. code-block:: python
+
+        import numpy as np
+        from astropy import units as u
+        from triceratops.radiation.free_free.gaunt_factor import (
+            compute_ff_gaunt_factor_comp,
+        )
+
+        # Cosmic number fractions: ~90% H, ~10% He
+        Zs = np.array([1, 2])
+        Xs = np.array([0.90, 0.10])
+        nu_arr = np.logspace(8, 15, 200) * u.Hz
+
+        # Analytic (default)
+        gff_eff = compute_ff_gaunt_factor_comp(
+            nu=nu_arr,
+            T=1e4 * u.K,
+            Zs=Zs,
+            Xs=Xs,
+        )
+
+        # Tabulated non-relativistic
+        gff_eff_tab = compute_ff_gaunt_factor_comp(
+            nu=nu_arr,
+            T=1e4 * u.K,
+            Zs=Zs,
+            Xs=Xs,
+            approx="vanhoof",
+        )
+    """
+    if approx not in _APPROX_REGISTRY:
+        raise ValueError(f"approx must be one of {list(_APPROX_REGISTRY)}; got {approx!r}.")
+
+    nu_cgs = ensure_in_units(nu, u.Hz)
+    T_cgs = ensure_in_units(T, u.K)
+
+    _, _comp = _APPROX_REGISTRY[approx]
+    return _comp(np.log(nu_cgs), np.log(T_cgs), Zs, Xs)
+
+
 # ================================================ #
 # Convenience Factories                            #
 # ================================================ #
@@ -694,142 +1382,3 @@ def get_default_relativistic_gaunt_interpolator(**kwargs) -> RelativisticGauntFa
     .. footbibliography::
     """
     return RelativisticGauntFactorInterpolator(**kwargs)
-
-
-# =============================================== #
-# Analytic Approximations                         #
-# =============================================== #
-def _log_gaunt_ff_draine(log_Z, log_T, log_nu):
-    r"""
-    Evaluate the Draine analytic approximation to the free–free Gaunt factor.
-
-    This is the low-level implementation of the Draine approximation for the
-    thermal free–free Gaunt factor. It operates entirely on **
-    logarithmic inputs in CGS-compatible units** and returns the Gaunt factor
-    in **linear space**.
-
-    The approximation is
-
-    .. math::
-
-        g_{\rm ff} \approx
-        \frac{\sqrt{3}}{\pi}
-        \ln\!\left[
-            \exp\!\left(
-                5.960 - \frac{\sqrt{3}}{\pi}\ln Z
-            \right)
-            +
-            e \frac{T^{3/2}}{\nu}
-        \right].
-
-    Parameters
-    ----------
-    log_Z : float or array-like
-        logarithm of the ion charge :math:`Z`.
-    log_T : float or array-like
-        logarithm of the electron temperature :math:`T` in Kelvin.
-    log_nu : float or array-like
-        logarithm of the photon frequency :math:`\nu` in Hz.
-
-    Returns
-    -------
-    float or ndarray
-        Approximate free–free Gaunt factor :math:`g_{\rm ff}` in linear space.
-
-    Notes
-    -----
-    This function assumes that the inputs are already valid and expressed in the
-    expected logarithmic form. It performs no unit handling or physical
-    validation beyond the requirements of the numerical expression itself.
-
-    See Also
-    --------
-    gaunt_ff_draine
-        Public, unit-aware wrapper around this low-level implementation.
-    """
-    log_Z = np.asarray(log_Z, dtype=float)
-    log_T = np.asarray(log_T, dtype=float)
-    log_nu = np.asarray(log_nu, dtype=float)
-
-    pref = np.sqrt(3.0) / np.pi
-
-    term1 = np.exp(5.960 - pref * log_Z)
-    term2 = np.exp(1.0) * np.exp(1.5 * log_T - log_nu)
-
-    return pref * np.log(term1 + term2)
-
-
-def gaunt_ff_draine(Z, T, nu):
-    r"""
-    Analytic approximation to the thermal free–free Gaunt factor.
-
-    This function evaluates the Draine free–free Gaunt factor approximation
-    using unit-aware inputs. Inputs are coerced to the expected units using
-    :func:`~triceratops.utils.misc_utils.ensure_in_units`, converted to
-    base-10 logarithmic form, and passed to
-    :func:`_log_gaunt_ff_draine`.
-
-    Parameters
-    ----------
-    Z : float or array-like
-        Ion charge :math:`Z`. This quantity is dimensionless.
-    T : float, array-like, or `~astropy.units.Quantity`
-        Electron temperature. If unitless, interpreted as Kelvin.
-    nu : float, array-like, or `~astropy.units.Quantity`
-        Photon frequency. If unitless, interpreted as Hz.
-
-    Returns
-    -------
-    float or ndarray
-        Approximate free–free Gaunt factor :math:`g_{\rm ff}` in linear space.
-
-    Notes
-    -----
-    The approximation used is
-
-    .. math::
-
-        g_{\rm ff} \approx
-        \frac{\sqrt{3}}{\pi}
-        \ln\!\left[
-            \exp\!\left(
-                5.960 - \frac{\sqrt{3}}{\pi}\ln Z
-            \right)
-            +
-            e \frac{T^{3/2}}{\nu}
-        \right].
-
-    This approximation is fast and useful for quick estimates, especially in
-    radio and infrared regimes, but it is generally less accurate than a
-    dedicated tabulated interpolator.
-
-    Examples
-    --------
-    .. code-block:: python
-
-        gff = gaunt_ff_draine(Z=1, T=1e4, nu=1e10)
-
-    .. code-block:: python
-
-        from astropy import units as u
-
-        gff = gaunt_ff_draine(
-            Z=1, T=1e6 * u.K, nu=5.0 * u.GHz
-        )
-
-    See Also
-    --------
-    _log_gaunt_ff_draine
-        Low-level log-space implementation.
-    NonRelativisticGauntFactorInterpolator
-        Table-based, higher-accuracy interpolator for free–free Gaunt factors.
-    """
-    Z = np.asarray(Z, dtype=float)
-    T = np.asarray(ensure_in_units(T, u.K), dtype=float)
-    nu = np.asarray(ensure_in_units(nu, u.Hz), dtype=float)
-
-    return _log_gaunt_ff_draine(
-        np.log(Z),
-        np.log(T),
-        np.log(nu),
-    )

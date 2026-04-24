@@ -58,8 +58,8 @@ from .core import _log_ff_absorption, _log_ff_RJ_absorption
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
 
-# NumPy compatibility: np.trapezoid added in 2.0, np.trapz deprecated in 2.0.
-_trapz = getattr(np, "trapezoid", np.trapz)
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
+_trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
 
 # ============================================== #
 # Module-level CGS constants                     #

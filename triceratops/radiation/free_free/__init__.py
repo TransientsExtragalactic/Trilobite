@@ -1,7 +1,13 @@
 """
-Module supporting free-free radiation calculations for Triceratops.
+Free–free (bremsstrahlung) radiation utilities.
 
-In dev.
+This module provides tools for thermal bremsstrahlung (free-free) emission in
+Triceratops transient models. This includes functions for computing emissivities and
+absorption coefficients, emission measures, and optical depths for a variety of geometries and assumptions.
+
+Additionally, this module includes several utilities for prescribing the
+Gaunt factor corrections to the classical free–free formulae, including both
+interpolators based on tabulated data and analytic approximations.
 """
 
 __all__ = [
@@ -16,7 +22,8 @@ __all__ = [
     "RelativisticGauntFactorInterpolator",
     "get_default_gaunt_interpolator",
     "get_default_relativistic_gaunt_interpolator",
-    "gaunt_ff_draine",
+    "compute_ff_gaunt_factor",
+    "compute_ff_gaunt_factor_comp",
     "compute_ff_optical_depth_from_arrays",
     "compute_ff_RJ_optical_depth_from_arrays",
     "compute_ff_RJ_optical_depth_from_quadrature",
@@ -52,7 +59,8 @@ from .gaunt_factor import (
     GauntFactorInterpolatorBase,
     NonRelativisticGauntFactorInterpolator,
     RelativisticGauntFactorInterpolator,
-    gaunt_ff_draine,
+    compute_ff_gaunt_factor,
+    compute_ff_gaunt_factor_comp,
     get_default_gaunt_interpolator,
     get_default_relativistic_gaunt_interpolator,
 )
