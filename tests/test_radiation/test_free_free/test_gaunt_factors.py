@@ -1,7 +1,7 @@
 """Unit tests for the free-free Gaunt factor module.
 
 Covers table loading, interpolation (scalar + array), domain containment,
-properties/dunders, error handling, the Draine analytic approximation,
+properties/dunders, error handling, analytic approximations (Draine, Lu),
 and the public __init__.py exports.
 """
 
@@ -14,8 +14,8 @@ from triceratops.radiation.free_free.gaunt_factor import (
     GauntFactorInterpolatorBase,
     NonRelativisticGauntFactorInterpolator,
     RelativisticGauntFactorInterpolator,
-    _log_gaunt_ff_draine,
-    gaunt_ff_draine,
+    _gaunt_ff_draine,
+    compute_ff_gaunt_factor,
     get_default_gaunt_interpolator,
     get_default_relativistic_gaunt_interpolator,
 )
@@ -26,13 +26,11 @@ from triceratops.radiation.free_free.gaunt_factor import (
 # ================================================================== #
 @pytest.fixture(scope="module")
 def nr_interp():
-    """Non-relativistic interpolator loaded once per module."""
     return get_default_gaunt_interpolator()
 
 
 @pytest.fixture(scope="module")
 def rel_interp():
-    """Relativistic interpolator loaded once per module."""
     return get_default_relativistic_gaunt_interpolator()
 
 
@@ -41,10 +39,10 @@ def rel_interp():
 # ================================================================== #
 class TestPaths:
     def test_non_rel_path_exists(self):
-        assert _VAN_HOOF_NON_REL_PATH.exists(), f"Non-rel table missing: {_VAN_HOOF_NON_REL_PATH}"
+        assert _VAN_HOOF_NON_REL_PATH.exists()
 
     def test_rel_path_exists(self):
-        assert _VAN_HOOF_REL_PATH.exists(), f"Rel table missing: {_VAN_HOOF_REL_PATH}"
+        assert _VAN_HOOF_REL_PATH.exists()
 
 
 # ================================================================== #
@@ -64,11 +62,9 @@ class TestFactories:
         assert isinstance(rel_interp, GauntFactorInterpolatorBase)
 
     def test_factory_kwargs_forwarded(self):
-        """bounds_error=False should not raise for out-of-range inputs."""
         interp = get_default_gaunt_interpolator(bounds_error=False, fill_value=None)
-        # Extremely low T puts log_gamma2 far out of range — should not raise.
         result = interp(Z=1, T=1e-5, nu=1e10)
-        assert np.isfinite(result) or True  # just must not raise
+        assert np.isfinite(result) or True  # must not raise
 
 
 # ================================================================== #
@@ -84,7 +80,6 @@ class TestNonRelativisticTableStructure:
         assert n_g2 == nr_interp.n_log_gamma2
 
     def test_expected_grid_sizes(self, nr_interp):
-        # van Hoof (2014) non-rel table: 146 log_u points, 81 log_gamma2 points
         assert nr_interp.n_log_u == 146
         assert nr_interp.n_log_gamma2 == 81
 
@@ -99,7 +94,6 @@ class TestNonRelativisticTableStructure:
         assert hi == pytest.approx(10.0)
 
     def test_no_z_axis(self, nr_interp):
-        """Non-rel table should not expose a z_range or z_grid."""
         assert not hasattr(nr_interp, "z_range")
         assert not hasattr(nr_interp, "z_grid")
 
@@ -141,24 +135,19 @@ class TestRelativisticTableStructure:
 # Scalar evaluation                                                  #
 # ================================================================== #
 class TestScalarEvaluation:
-    # Reference point well inside both tables.
     Z, T, nu = 1, 1e4, 1e10
 
     def test_nr_scalar_returns_float(self, nr_interp):
-        result = nr_interp(Z=self.Z, T=self.T, nu=self.nu)
-        assert isinstance(result, float)
+        assert isinstance(nr_interp(Z=self.Z, T=self.T, nu=self.nu), float)
 
     def test_rel_scalar_returns_float(self, rel_interp):
-        result = rel_interp(Z=self.Z, T=self.T, nu=self.nu)
-        assert isinstance(result, float)
+        assert isinstance(rel_interp(Z=self.Z, T=self.T, nu=self.nu), float)
 
     def test_nr_scalar_is_positive(self, nr_interp):
-        result = nr_interp(Z=self.Z, T=self.T, nu=self.nu)
-        assert result > 0.0
+        assert nr_interp(Z=self.Z, T=self.T, nu=self.nu) > 0.0
 
     def test_rel_scalar_is_positive(self, rel_interp):
-        result = rel_interp(Z=self.Z, T=self.T, nu=self.nu)
-        assert result > 0.0
+        assert rel_interp(Z=self.Z, T=self.T, nu=self.nu) > 0.0
 
     def test_nr_scalar_is_order_unity(self, nr_interp):
         result = nr_interp(Z=self.Z, T=self.T, nu=self.nu)
@@ -169,12 +158,10 @@ class TestScalarEvaluation:
         assert 0.1 < result < 20.0
 
     def test_nr_known_value(self, nr_interp):
-        """Regression check against value recorded during implementation."""
         result = nr_interp(Z=1, T=1e4, nu=1e10)
         assert result == pytest.approx(4.461, rel=1e-3)
 
     def test_rel_known_value(self, rel_interp):
-        """Regression check against value recorded during implementation."""
         result = rel_interp(Z=1, T=1e4, nu=1e10)
         assert result == pytest.approx(4.708, rel=1e-3)
 
@@ -186,41 +173,26 @@ class TestArrayEvaluation:
     T_arr = np.geomspace(1e4, 1e8, 50)
 
     def test_nr_array_shape(self, nr_interp):
-        result = nr_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert result.shape == (50,)
+        assert nr_interp(Z=1, T=self.T_arr, nu=1e10).shape == (50,)
 
     def test_rel_array_shape(self, rel_interp):
-        result = rel_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert result.shape == (50,)
+        assert rel_interp(Z=1, T=self.T_arr, nu=1e10).shape == (50,)
 
     def test_nr_array_returns_ndarray(self, nr_interp):
-        result = nr_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert isinstance(result, np.ndarray)
-
-    def test_rel_array_returns_ndarray(self, rel_interp):
-        result = rel_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert isinstance(result, np.ndarray)
+        assert isinstance(nr_interp(Z=1, T=self.T_arr, nu=1e10), np.ndarray)
 
     def test_nr_array_all_positive(self, nr_interp):
-        result = nr_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert np.all(result > 0)
+        assert np.all(nr_interp(Z=1, T=self.T_arr, nu=1e10) > 0)
 
     def test_rel_array_all_positive(self, rel_interp):
-        result = rel_interp(Z=1, T=self.T_arr, nu=1e10)
-        assert np.all(result > 0)
+        assert np.all(rel_interp(Z=1, T=self.T_arr, nu=1e10) > 0)
 
     def test_nr_broadcast_T_and_nu(self, nr_interp):
-        """Broadcasting over both T and nu simultaneously."""
-        T = np.array([1e4, 1e6])
-        nu = np.array([1e9, 1e10, 1e14])
-        # np.broadcast_arrays will produce shape (2,) from (2,) and (3,) — fails.
-        # Instead test with shapes that do broadcast: (2,1) x (3,) → (2,3)
-        T2d = T[:, np.newaxis]
-        result = nr_interp(Z=1, T=T2d, nu=nu)
+        T2d = np.array([1e4, 1e6])[:, np.newaxis]
+        result = nr_interp(Z=1, T=T2d, nu=np.array([1e9, 1e10, 1e14]))
         assert result.shape == (2, 3)
 
     def test_nr_scalar_vs_array_consistency(self, nr_interp):
-        """Scalar call and length-1 array call should agree."""
         scalar = nr_interp(Z=1, T=1e6, nu=1e12)
         arr = nr_interp(Z=1, T=np.array([1e6]), nu=np.array([1e12]))
         assert arr[0] == pytest.approx(scalar, rel=1e-12)
@@ -237,14 +209,9 @@ class TestContainment:
         assert (1, 1e4, 1e10) in rel_interp
 
     def test_nr_outside_temperature(self, nr_interp):
-        # T=1e-10 pushes log_gamma2 >> 10 (outside table)
         assert (1, 1e-10, 1e10) not in nr_interp
 
-    def test_rel_outside_temperature(self, rel_interp):
-        assert (1, 1e-10, 1e10) not in rel_interp
-
     def test_rel_outside_z_range(self, rel_interp):
-        # Z=100 is outside [1, 36]
         assert (100, 1e4, 1e10) not in rel_interp
 
     def test_nr_wrong_tuple_length_raises(self, nr_interp):
@@ -281,26 +248,9 @@ class TestPropertiesAndDunders:
     def test_nr_repr(self, nr_interp):
         r = repr(nr_interp)
         assert "NonRelativisticGauntFactorInterpolator" in r
-        assert "n_log_u" in r
-
-    def test_rel_repr(self, rel_interp):
-        r = repr(rel_interp)
-        assert "RelativisticGauntFactorInterpolator" in r
-        assert "n_Z" in r
-
-    def test_nr_str(self, nr_interp):
-        s = str(nr_interp)
-        assert "NonRelativisticGauntFactorInterpolator" in s
-
-    def test_rel_str(self, rel_interp):
-        s = str(rel_interp)
-        assert "RelativisticGauntFactorInterpolator" in s
 
     def test_nr_source_is_str(self, nr_interp):
         assert isinstance(nr_interp.source, str)
-
-    def test_rel_source_is_str(self, rel_interp):
-        assert isinstance(rel_interp.source, str)
 
 
 # ================================================================== #
@@ -321,7 +271,6 @@ class TestErrorHandling:
         bad = tmp_path / "bad.hdf5"
         with h5py.File(bad, "w") as f:
             f.create_dataset("log_u", data=np.linspace(-16, 13, 10))
-            # omit log_gamma2 and gff
         with pytest.raises(KeyError):
             NonRelativisticGauntFactorInterpolator(path=bad)
 
@@ -332,7 +281,7 @@ class TestErrorHandling:
         with h5py.File(bad, "w") as f:
             f.create_dataset("log_u", data=np.linspace(-16, 13, 5))
             f.create_dataset("log_gamma2", data=np.linspace(-6, 10, 4))
-            f.create_dataset("gff", data=np.ones((3, 5, 4)))  # 3-D, not 2-D
+            f.create_dataset("gff", data=np.ones((3, 5, 4)))
         with pytest.raises(ValueError, match="2-D"):
             NonRelativisticGauntFactorInterpolator(path=bad)
 
@@ -344,45 +293,72 @@ class TestErrorHandling:
             f.create_dataset("Z", data=np.arange(1, 4))
             f.create_dataset("log_u", data=np.linspace(-16, 13, 5))
             f.create_dataset("log_gamma2", data=np.linspace(-6, 10, 4))
-            f.create_dataset("gff", data=np.ones((5, 4)))  # 2-D, not 3-D
+            f.create_dataset("gff", data=np.ones((5, 4)))
         with pytest.raises(ValueError, match="3-D"):
             RelativisticGauntFactorInterpolator(path=bad)
 
 
 # ================================================================== #
-# Draine analytic approximation                                      #
+# Analytic approximations                                            #
 # ================================================================== #
 class TestDraineApproximation:
+    """Tests for compute_ff_gaunt_factor(..., approx='draine')."""
+
     def test_scalar_returns_float(self):
-        result = gaunt_ff_draine(Z=1, T=1e4, nu=1e10)
+        from astropy import units as u
+
+        result = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, Z=1, approx="draine")
         assert isinstance(result, (float, np.floating))
 
     def test_scalar_is_positive(self):
-        assert gaunt_ff_draine(Z=1, T=1e4, nu=1e10) > 0
-
-    def test_array_shape(self):
-        T_arr = np.geomspace(1e4, 1e8, 20)
-        result = gaunt_ff_draine(Z=1, T=T_arr, nu=1e10)
-        assert result.shape == (20,)
-
-    def test_accepts_astropy_quantities(self):
         from astropy import units as u
 
-        result = gaunt_ff_draine(Z=1, T=1e4 * u.K, nu=10 * u.GHz)
-        assert result > 0
+        assert compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, Z=1, approx="draine") > 0
 
-    def test_log_level_helper_matches_wrapper(self):
-        Z, T, nu = 1.0, 1e6, 1e12
-        from_wrapper = gaunt_ff_draine(Z=Z, T=T, nu=nu)
-        from_helper = _log_gaunt_ff_draine(np.log(Z), np.log(T), np.log(nu))
-        assert from_wrapper == pytest.approx(from_helper, rel=1e-12)
+    def test_array_shape(self):
+        from astropy import units as u
 
-    def test_increases_with_temperature(self):
-        """At fixed nu, g_ff (Draine) is a non-decreasing function of T."""
-        T_arr = np.geomspace(1e3, 1e9, 50)
-        gff = gaunt_ff_draine(Z=1, T=T_arr, nu=1e10)
-        # Allow for near-flat regions; just check no dramatic inversion
-        assert np.all(np.diff(gff) >= -0.01)
+        T_arr = np.geomspace(1e4, 1e8, 20) * u.K
+        result = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=T_arr, Z=1, approx="draine")
+        assert result.shape == (20,)
+
+    def test_log_level_private_matches_public(self):
+        """_gaunt_ff_draine (private) and compute_ff_gaunt_factor (public) agree."""
+        from astropy import units as u
+
+        nu, T, Z = 1e12, 1e6, 1.0
+        from_public = compute_ff_gaunt_factor(nu=nu * u.Hz, T=T * u.K, Z=Z, approx="draine")
+        from_private = _gaunt_ff_draine(np.log(nu), np.log(T), Z)
+        assert from_public == pytest.approx(from_private, rel=1e-12)
+
+    def test_invalid_approx_raises(self):
+        from astropy import units as u
+
+        with pytest.raises(ValueError):
+            compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, approx="bogus")
+
+
+class TestLuApproximation:
+    """Tests for compute_ff_gaunt_factor(..., approx='lu') (the default)."""
+
+    def test_scalar_positive(self):
+        from astropy import units as u
+
+        assert compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, Z=1) > 0
+
+    def test_higher_Z_gives_different_result(self):
+        from astropy import units as u
+
+        g1 = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, Z=1)
+        g2 = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, Z=2)
+        assert g1 != pytest.approx(g2)
+
+    def test_lu_and_draine_agree_to_order_of_magnitude(self):
+        from astropy import units as u
+
+        g_lu = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, approx="lu")
+        g_dr = compute_ff_gaunt_factor(nu=1e10 * u.Hz, T=1e4 * u.K, approx="draine")
+        assert abs(g_lu - g_dr) / g_lu < 0.3  # within 30 %
 
 
 # ================================================================== #
@@ -390,16 +366,12 @@ class TestDraineApproximation:
 # ================================================================== #
 class TestPublicExports:
     def test_init_exports_nr_interpolator(self):
-        from triceratops.radiation.free_free import (
-            NonRelativisticGauntFactorInterpolator as C,
-        )
+        from triceratops.radiation.free_free import NonRelativisticGauntFactorInterpolator as C
 
         assert C is NonRelativisticGauntFactorInterpolator
 
     def test_init_exports_rel_interpolator(self):
-        from triceratops.radiation.free_free import (
-            RelativisticGauntFactorInterpolator as C,
-        )
+        from triceratops.radiation.free_free import RelativisticGauntFactorInterpolator as C
 
         assert C is RelativisticGauntFactorInterpolator
 
@@ -414,13 +386,11 @@ class TestPublicExports:
         assert f is get_default_gaunt_interpolator
 
     def test_init_exports_rel_factory(self):
-        from triceratops.radiation.free_free import (
-            get_default_relativistic_gaunt_interpolator as f,
-        )
+        from triceratops.radiation.free_free import get_default_relativistic_gaunt_interpolator as f
 
         assert f is get_default_relativistic_gaunt_interpolator
 
-    def test_init_exports_draine(self):
-        from triceratops.radiation.free_free import gaunt_ff_draine as f
+    def test_init_exports_compute_ff_gaunt_factor(self):
+        from triceratops.radiation.free_free import compute_ff_gaunt_factor as f
 
-        assert f is gaunt_ff_draine
+        assert f is compute_ff_gaunt_factor

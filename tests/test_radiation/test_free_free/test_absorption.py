@@ -2,18 +2,18 @@
 
 Organisation
 ------------
-TestOutputContract       — shape, dtype, scalar-frequency handling
-TestPositivity           — tau > 0 for all profile types
-TestUnitCoercion         — bare float == astropy.Quantity for all wrappers
-TestShellAnalytic        — tau = alpha_nu * L  (cross-check against core.py)
+TestOutputContract       — shape, dtype, positivity for all five profile backends
+TestUnitCoercion         — bare-float == astropy.Quantity inputs
+TestShellAnalytic        — tau = alpha_ff * (r_max - r_min) cross-check
 TestQuadratureVsShell    — constant-profile quadrature matches analytic shell
-TestArraysVsShell        — uniform-rho trapezoidal matches analytic shell
-TestWindRadialScaling    — tau ∝ r^-3 for r_max → ∞
-TestPowerlawSpecialCases — p=0 matches shell; k=0 is finite; k<0 converges at infinity
-TestPowerlawSign         — both k>0 and k<0 return positive tau
-TestRmaxEffect           — larger r_max always increases tau
-TestMonotonicity         — tau is decreasing with nu at radio frequencies
-TestRJVariants           — RJ variants return positive arrays of the right shape
+TestArraysVsShell        — uniform-density arrays match analytic shell
+TestWindVsPowerlaw       — wind matches powerlaw(p=2)
+TestPowerlawSpecialCases — p=0 matches shell; k=0 finite; k<0 converges
+TestEMFunction           — EM backend matches shell when EM = n_e*n_i*L
+TestFrequencyScaling     — tau ∝ nu^{-2} in RJ limit
+TestRmaxEffect           — larger r_max increases tau
+TestComposition          — Xs=None single-species vs Xs composition
+TestThomson              — thomson=True returns eff >= tau_ff
 """
 
 import numpy as np
@@ -21,825 +21,470 @@ import pytest
 from astropy import units as u
 
 from triceratops.radiation.free_free.absorption import (
-    _proton_mass_cgs,
-    compute_ff_optical_depth_from_arrays,
-    compute_ff_optical_depth_from_quadrature,
-    compute_ff_optical_depth_powerlaw,
-    compute_ff_optical_depth_shell,
-    compute_ff_optical_depth_wind,
+    compute_ff_RJ_optical_depth_EM,
     compute_ff_RJ_optical_depth_from_arrays,
     compute_ff_RJ_optical_depth_from_quadrature,
     compute_ff_RJ_optical_depth_powerlaw,
     compute_ff_RJ_optical_depth_shell,
     compute_ff_RJ_optical_depth_wind,
 )
-from triceratops.radiation.free_free.core import compute_ff_absorption
 
 # ------------------------------------------------------------------ #
-# Shared test fixtures / constants                                    #
+# Shared fixtures                                                    #
 # ------------------------------------------------------------------ #
-# Standard physical parameters used across most tests.
-_R_CM = 1.0e15  # inner radius [cm]
-_R_MAX_CM = 2.0e15  # outer radius [cm]
-_T_K = 1.0e4  # electron temperature [K]
-_RHO_GCM3 = 1.0e-19  # uniform mass density [g cm^-3]
-_MDOT_GS = 1.0e20  # mass-loss rate [g s^-1]
-_V_CMS = 1.0e8  # wind velocity [cm s^-1]
-_MU_E = 1.2  # mean molecular weight per electron
-_MU_I = 1.3  # mean molecular weight per ion
-_Z = 1.0  # mean ionic charge
-_G_FF = 5.0  # Gaunt factor
-
-# Frequency arrays used for shape / monotonicity tests.
-_NU_2 = np.array([1.0e9, 1.0e10])  # 2 radio frequencies [Hz]
-_NU_5 = np.geomspace(1.0e8, 1.0e11, 5)  # wider sweep
-
-
-@pytest.fixture(scope="module")
-def nu_arr():
-    return _NU_2
-
-
-# Density profiles for quadrature tests — constant n_e, n_i, T.
-_NE_CONST = _RHO_GCM3 / (_MU_E * _proton_mass_cgs)  # cm^-3
-_NI_CONST = _RHO_GCM3 / (_MU_I * _proton_mass_cgs)  # cm^-3
-_NE_FN = lambda r: _NE_CONST  # noqa: E731
-_NI_FN = lambda r: _NI_CONST  # noqa: E731
-_T_FN = lambda r: _T_K  # noqa: E731
-
-# Dense radial grid for array-integration tests.
-_R_GRID = np.linspace(_R_CM, _R_MAX_CM, 5000)
-_RHO_GRID = np.full_like(_R_GRID, _RHO_GCM3)
+_NU = np.array([1e9, 5e9, 1e10]) * u.Hz
+_R_MIN = 1.0e15 * u.cm
+_R_0 = 1.0e16 * u.cm
+_R_MAX = 2.0e15 * u.cm
+_T = 1.0e4 * u.K
+_NE = 1.0e4 / u.cm**3
+_NI = 1.0e4 / u.cm**3
 
 
 # ================================================================== #
-# TestOutputContract                                                  #
+# Output contract                                                    #
 # ================================================================== #
 class TestOutputContract:
-    """All public wrappers must return a plain ndarray of shape (n_nu,)."""
-
-    def test_shell_returns_ndarray(self):
-        result = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert isinstance(result, np.ndarray)
+    """Every backend returns a finite, positive ndarray of the right shape."""
 
     def test_shell_shape(self):
-        result = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert result.shape == (2,)
+        tau = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T)
+        assert tau.shape == (3,)
 
     def test_wind_shape(self):
-        result = compute_ff_optical_depth_wind(
-            _NU_2 * u.Hz, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        assert result.shape == (2,)
+        tau = compute_ff_RJ_optical_depth_wind(_NU, _R_MIN, _R_0, _NE, _NI, temperature=_T)
+        assert tau.shape == (3,)
 
     def test_powerlaw_shape(self):
-        result = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=2.0, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert result.shape == (2,)
+        tau = compute_ff_RJ_optical_depth_powerlaw(_NU, _R_MIN, _R_0, _NE, _NI, 2.0, temperature=_T)
+        assert tau.shape == (3,)
 
     def test_arrays_shape(self):
-        result = compute_ff_optical_depth_from_arrays(
-            _NU_2 * u.Hz, _R_GRID * u.cm, _RHO_GRID * u.g / u.cm**3, temperature=_T_K * u.K
-        )
-        assert result.shape == (2,)
+        r_arr = np.geomspace(1e15, 2e15, 50) * u.cm
+        ne_arr = _NE * np.ones(50)
+        tau = compute_ff_RJ_optical_depth_from_arrays(_NU, r_arr, ne_arr, ne_arr, temperature=_T)
+        assert tau.shape == (3,)
 
     def test_quadrature_shape(self):
-        result = compute_ff_optical_depth_from_quadrature(
-            _NU_2 * u.Hz, _R_CM * u.cm, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=_R_MAX_CM * u.cm
+        tau = compute_ff_RJ_optical_depth_from_quadrature(
+            _NU,
+            _R_MIN,
+            n_e=lambda r: 1e4,
+            n_i=lambda r: 1e4,
+            temperature=lambda r: 1e4,
+            r_max=_R_MAX,
         )
-        assert result.shape == (2,)
+        assert tau.shape == (3,)
 
-    def test_scalar_frequency_gives_length_one_array(self):
-        """A scalar frequency should be wrapped into a length-1 array."""
-        result = compute_ff_optical_depth_shell(
-            1e9 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert result.shape == (1,)
+    def test_em_shape(self):
+        EM = (_NE * _NI * (_R_MAX - _R_MIN)).to(u.cm**-5)
+        tau = compute_ff_RJ_optical_depth_EM(_NU, EM, temperature=_T)
+        assert tau.shape == (3,)
 
-    def test_bare_float_frequency(self):
-        """Bare float frequency (no Quantity) should work."""
-        result = compute_ff_optical_depth_shell(1e9, _R_CM, _RHO_GCM3, r_max=_R_MAX_CM, temperature=_T_K)
-        assert result.shape == (1,)
+    @pytest.mark.parametrize(
+        "backend,kwargs",
+        [
+            ("shell", dict(r_min=_R_MIN, n_e_0=_NE, n_i_0=_NI, r_max=_R_MAX, temperature=_T)),
+            ("wind", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, temperature=_T)),
+            ("powerlaw", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, p=2.0, temperature=_T)),
+        ],
+    )
+    def test_all_positive(self, backend, kwargs):
+        fn = {
+            "shell": compute_ff_RJ_optical_depth_shell,
+            "wind": compute_ff_RJ_optical_depth_wind,
+            "powerlaw": compute_ff_RJ_optical_depth_powerlaw,
+        }[backend]
+        tau = fn(_NU, **kwargs)
+        assert np.all(tau > 0)
+
+    @pytest.mark.parametrize(
+        "backend,kwargs",
+        [
+            ("shell", dict(r_min=_R_MIN, n_e_0=_NE, n_i_0=_NI, r_max=_R_MAX, temperature=_T)),
+            ("wind", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, temperature=_T)),
+            ("powerlaw", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, p=2.0, temperature=_T)),
+        ],
+    )
+    def test_all_finite(self, backend, kwargs):
+        fn = {
+            "shell": compute_ff_RJ_optical_depth_shell,
+            "wind": compute_ff_RJ_optical_depth_wind,
+            "powerlaw": compute_ff_RJ_optical_depth_powerlaw,
+        }[backend]
+        tau = fn(_NU, **kwargs)
+        assert np.all(np.isfinite(tau))
 
 
 # ================================================================== #
-# TestPositivity                                                      #
-# ================================================================== #
-class TestPositivity:
-    """Optical depths must be strictly positive for all profile types."""
-
-    def test_shell_positive(self):
-        tau = compute_ff_optical_depth_shell(
-            _NU_5 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert np.all(tau > 0)
-
-    def test_wind_positive(self):
-        tau = compute_ff_optical_depth_wind(
-            _NU_5 * u.Hz, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        assert np.all(tau > 0)
-
-    def test_powerlaw_p2_positive(self):
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_5 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=2.0, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert np.all(tau > 0)
-
-    def test_powerlaw_k_negative_positive(self):
-        """p = 1.0 → k = -1 (converging integral); should still be positive."""
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_5 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=1.0, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert np.all(tau > 0)
-
-    def test_arrays_positive(self):
-        tau = compute_ff_optical_depth_from_arrays(
-            _NU_5 * u.Hz, _R_GRID * u.cm, _RHO_GRID * u.g / u.cm**3, temperature=_T_K * u.K
-        )
-        assert np.all(tau > 0)
-
-    def test_quadrature_positive(self):
-        tau = compute_ff_optical_depth_from_quadrature(
-            _NU_2 * u.Hz, _R_CM * u.cm, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=_R_MAX_CM * u.cm
-        )
-        assert np.all(tau > 0)
-
-
-# ================================================================== #
-# TestUnitCoercion                                                    #
+# Unit coercion                                                      #
 # ================================================================== #
 class TestUnitCoercion:
-    """Bare-float and Quantity inputs must give bitwise-identical results."""
+    """Bare floats (in CGS) and astropy Quantities give identical results."""
 
-    def test_shell_float_vs_quantity(self):
-        tau_q = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
+    def test_shell_bare_vs_quantity(self):
+        tau_qty = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T)
+        tau_bare = compute_ff_RJ_optical_depth_shell(
+            _NU.to_value(u.Hz),
+            _R_MIN.to_value(u.cm),
+            _NE.to_value(u.cm**-3),
+            _NI.to_value(u.cm**-3),
+            r_max=_R_MAX.to_value(u.cm),
+            temperature=_T.to_value(u.K),
         )
-        tau_f = compute_ff_optical_depth_shell(_NU_2, _R_CM, _RHO_GCM3, r_max=_R_MAX_CM, temperature=_T_K)
-        np.testing.assert_array_equal(tau_q, tau_f)
+        assert np.allclose(tau_qty, tau_bare, rtol=1e-10)
 
-    def test_wind_float_vs_quantity(self):
-        tau_q = compute_ff_optical_depth_wind(
-            _NU_2 * u.Hz, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
+    def test_wind_bare_vs_quantity(self):
+        tau_qty = compute_ff_RJ_optical_depth_wind(_NU, _R_MIN, _R_0, _NE, _NI, temperature=_T)
+        tau_bare = compute_ff_RJ_optical_depth_wind(
+            _NU.to_value(u.Hz),
+            _R_MIN.to_value(u.cm),
+            _R_0.to_value(u.cm),
+            _NE.to_value(u.cm**-3),
+            _NI.to_value(u.cm**-3),
+            temperature=_T.to_value(u.K),
         )
-        tau_f = compute_ff_optical_depth_wind(_NU_2, _R_CM, _MDOT_GS, _V_CMS, temperature=_T_K)
-        np.testing.assert_array_equal(tau_q, tau_f)
+        assert np.allclose(tau_qty, tau_bare, rtol=1e-10)
 
-    def test_powerlaw_float_vs_quantity(self):
-        tau_q = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=2.0, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
+    def test_em_bare_vs_quantity(self):
+        EM = (_NE * _NI * (_R_MAX - _R_MIN)).to(u.cm**-5)
+        tau_qty = compute_ff_RJ_optical_depth_EM(_NU, EM, temperature=_T)
+        tau_bare = compute_ff_RJ_optical_depth_EM(
+            _NU.to_value(u.Hz),
+            EM.to_value(u.cm**-5),
+            temperature=_T.to_value(u.K),
         )
-        tau_f = compute_ff_optical_depth_powerlaw(_NU_2, _R_CM, _RHO_GCM3, p=2.0, r_max=_R_MAX_CM, temperature=_T_K)
-        np.testing.assert_array_equal(tau_q, tau_f)
-
-    def test_arrays_float_vs_quantity(self):
-        tau_q = compute_ff_optical_depth_from_arrays(
-            _NU_2 * u.Hz, _R_GRID * u.cm, _RHO_GRID * u.g / u.cm**3, temperature=_T_K * u.K
-        )
-        tau_f = compute_ff_optical_depth_from_arrays(_NU_2, _R_GRID, _RHO_GRID, temperature=_T_K)
-        np.testing.assert_array_equal(tau_q, tau_f)
-
-    def test_quadrature_float_vs_quantity(self):
-        tau_q = compute_ff_optical_depth_from_quadrature(
-            _NU_2 * u.Hz, _R_CM * u.cm, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=_R_MAX_CM * u.cm
-        )
-        tau_f = compute_ff_optical_depth_from_quadrature(
-            _NU_2, _R_CM, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=_R_MAX_CM
-        )
-        np.testing.assert_array_equal(tau_q, tau_f)
-
-    def test_unit_conversion_applied(self):
-        """Frequency in GHz and radius in pc should give the same result as CGS."""
-        tau_cgs = compute_ff_optical_depth_shell(
-            np.array([1.0]) * u.GHz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        tau_alt = compute_ff_optical_depth_shell(
-            np.array([1.0e9]) * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        np.testing.assert_allclose(tau_cgs, tau_alt, rtol=1e-12)
+        assert np.allclose(tau_qty, tau_bare, rtol=1e-10)
 
 
 # ================================================================== #
-# TestShellAnalytic                                                   #
+# Shell analytic cross-check                                         #
 # ================================================================== #
 class TestShellAnalytic:
-    """tau_shell = alpha_nu * (r_max - r).
+    """tau_shell = alpha_ff * L, where alpha_ff comes from core.py."""
 
-    Cross-checks compute_ff_optical_depth_shell against
-    compute_ff_absorption from core.py, for which the physics is
-    independently tested.
-    """
-
-    def _expected_tau(self, nu_hz):
-        """Compute expected tau = alpha_nu * L from core.py."""
-        n_e = _RHO_GCM3 / (_MU_E * _proton_mass_cgs)
-        n_i = _RHO_GCM3 / (_MU_I * _proton_mass_cgs)
-        alpha = compute_ff_absorption(nu_hz, n_e, n_i, _Z, _T_K, _G_FF)  # cm^-1
-        L = _R_MAX_CM - _R_CM
-        return alpha.value * L
-
-    def test_single_frequency(self):
-        nu = 1.0e9  # Hz
-        tau_actual = compute_ff_optical_depth_shell(
-            np.array([nu]) * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        assert tau_actual[0] == pytest.approx(self._expected_tau(nu), rel=1e-10)
-
-    def test_multiple_frequencies(self):
-        tau_actual = compute_ff_optical_depth_shell(
-            _NU_5 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        expected = np.array([self._expected_tau(nu) for nu in _NU_5])
-        np.testing.assert_allclose(tau_actual, expected, rtol=1e-10)
-
-    def test_scales_linearly_with_depth(self):
-        """Doubling the shell depth must double tau."""
-        L = _R_MAX_CM - _R_CM
-        tau1 = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=(_R_CM + L) * u.cm,
-            temperature=_T_K * u.K,
-        )
-        tau2 = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=(_R_CM + 2 * L) * u.cm,
-            temperature=_T_K * u.K,
-        )
-        np.testing.assert_allclose(tau2, 2.0 * tau1, rtol=1e-12)
-
-    def test_scales_with_density_squared(self):
-        """Doubling rho must quadruple tau (alpha ∝ n_e * n_i ∝ rho^2)."""
-        tau1 = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        tau2 = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            (2 * _RHO_GCM3) * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        np.testing.assert_allclose(tau2, 4.0 * tau1, rtol=1e-10)
-
-
-# ================================================================== #
-# TestQuadratureVsShell                                              #
-# ================================================================== #
-class TestQuadratureVsShell:
-    """Quadrature with constant n_e, n_i, T equals the analytic shell result."""
-
-    def test_matches_shell_single_frequency(self):
-        nu = np.array([1.0e9])
-        tau_shell = compute_ff_optical_depth_shell(
-            nu * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        tau_quad = compute_ff_optical_depth_from_quadrature(
-            nu * u.Hz,
-            _R_CM * u.cm,
-            n_e=_NE_FN,
-            n_i=_NI_FN,
-            temperature=_T_FN,
-            r_max=_R_MAX_CM * u.cm,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_quad, tau_shell, rtol=1e-6)
-
-    def test_matches_shell_multiple_frequencies(self):
-        tau_shell = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        tau_quad = compute_ff_optical_depth_from_quadrature(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            n_e=_NE_FN,
-            n_i=_NI_FN,
-            temperature=_T_FN,
-            r_max=_R_MAX_CM * u.cm,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_quad, tau_shell, rtol=1e-6)
-
-
-# ================================================================== #
-# TestArraysVsShell                                                  #
-# ================================================================== #
-class TestArraysVsShell:
-    """Trapezoidal integration over uniform rho equals the analytic shell.
-
-    For a constant integrand the trapezoidal rule is exact, so agreement
-    should be near machine precision regardless of grid spacing.
-    """
-
-    def test_matches_shell_single_frequency(self):
-        nu = np.array([1.0e9])
-        tau_shell = compute_ff_optical_depth_shell(
-            nu * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        tau_arr = compute_ff_optical_depth_from_arrays(
-            nu * u.Hz,
-            _R_GRID * u.cm,
-            _RHO_GRID * u.g / u.cm**3,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_arr, tau_shell, rtol=1e-6)
-
-    def test_matches_shell_multiple_frequencies(self):
-        tau_shell = compute_ff_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        tau_arr = compute_ff_optical_depth_from_arrays(
-            _NU_2 * u.Hz,
-            _R_GRID * u.cm,
-            _RHO_GRID * u.g / u.cm**3,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_arr, tau_shell, rtol=1e-6)
-
-
-# ================================================================== #
-# TestWindRadialScaling                                              #
-# ================================================================== #
-class TestWindRadialScaling:
-    """For r_max → ∞, tau_wind ∝ r^{-3}."""
-
-    def test_r_cubed_scaling(self):
-        r1, r2 = 1.0e15, 2.0e15
-        nu = np.array([1.0e9]) * u.Hz
-        tau1 = compute_ff_optical_depth_wind(
-            nu, r1 * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_wind(
-            nu, r2 * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        # tau1 / tau2 should equal (r2/r1)^3 = 8 for r_max = inf.
-        np.testing.assert_allclose(tau1 / tau2, (r2 / r1) ** 3, rtol=1e-10)
-
-    def test_r_max_infinity_larger_than_finite(self):
-        nu = np.array([1.0e9]) * u.Hz
-        tau_inf = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )  # r_max = ∞
-        tau_fin = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        assert tau_inf[0] > tau_fin[0]
-
-    def test_higher_mdot_increases_tau(self):
-        nu = np.array([1.0e9]) * u.Hz
-        tau1 = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, (10 * _MDOT_GS) * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        assert tau2[0] > tau1[0]
-
-    def test_mdot_squared_scaling(self):
-        """tau ∝ mdot^2 (alpha ∝ n_e n_i ∝ rho^2 ∝ mdot^2)."""
-        nu = np.array([1.0e9]) * u.Hz
-        tau1 = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, (2 * _MDOT_GS) * u.g / u.s, _V_CMS * u.cm / u.s, temperature=_T_K * u.K
-        )
-        np.testing.assert_allclose(tau2 / tau1, 4.0, rtol=1e-10)
-
-
-# ================================================================== #
-# TestPowerlawSpecialCases                                           #
-# ================================================================== #
-class TestPowerlawSpecialCases:
-    """Edge cases and special values of the power-law index."""
-
-    def test_p0_matches_shell(self):
-        """p = 0 is a uniform density profile — must equal the shell result."""
-        nu = _NU_2 * u.Hz
-        tau_shell = compute_ff_optical_depth_shell(
-            nu,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        tau_pl = compute_ff_optical_depth_powerlaw(
-            nu,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=0.0,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_pl, tau_shell, rtol=1e-10)
-
-    def test_k_zero_p_half_positive(self):
-        """p = 0.5 → k = 0 → logarithmic integral.  Result must be positive and finite."""
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=0.5,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau > 0)
-        assert np.all(np.isfinite(tau))
-
-    def test_k_negative_converges_at_infinity(self):
-        """p = 2.0 → k = -3 (convergent) — r_max = ∞ must give finite tau."""
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=2.0,
-            r_max=np.inf,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau > 0)
-        assert np.all(np.isfinite(tau))
-
-    def test_k_positive_finite_rmax_positive(self):
-        """p = 0.1 → k = 0.8 (divergent at ∞).  With finite r_max, tau is finite."""
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=0.1,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau > 0)
-        assert np.all(np.isfinite(tau))
-
-    def test_larger_p_gives_smaller_tau_same_rmax(self):
-        """Steeper profile puts less material in the line of sight beyond r."""
-        nu = _NU_2 * u.Hz
-        tau_shallow = compute_ff_optical_depth_powerlaw(
-            nu,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=0.5,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        tau_steep = compute_ff_optical_depth_powerlaw(
-            nu,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=2.0,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau_shallow > tau_steep)
-
-
-# ================================================================== #
-# TestPowerlawSign                                                    #
-# ================================================================== #
-class TestPowerlawSign:
-    """k > 0 and k < 0 branches must both return positive tau."""
-
-    @pytest.mark.parametrize("p", [0.0, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0])
-    def test_positive_for_various_p(self, p):
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=p,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau > 0), f"p={p} gave non-positive tau: {tau}"
-
-    @pytest.mark.parametrize("p", [0.0, 0.3, 0.5, 0.75, 1.0, 1.5, 2.0, 3.0])
-    def test_finite_for_various_p(self, p):
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=p,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(np.isfinite(tau)), f"p={p} gave non-finite tau: {tau}"
-
-    @pytest.mark.parametrize("p", [0.6, 0.75, 1.0, 1.5, 2.0, 3.0])
-    def test_k_negative_with_inf_rmax(self, p):
-        """For p > 0.5 the integral to infinity converges; result must be finite."""
-        tau = compute_ff_optical_depth_powerlaw(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=p,
-            r_max=np.inf,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau > 0)
-        assert np.all(np.isfinite(tau))
-
-
-# ================================================================== #
-# TestRmaxEffect                                                     #
-# ================================================================== #
-class TestRmaxEffect:
-    """A larger outer boundary always increases the optical depth."""
-
-    def test_shell_larger_rmax(self):
-        nu = _NU_2 * u.Hz
-        tau1 = compute_ff_optical_depth_shell(
-            nu, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_shell(
-            nu, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, r_max=(2 * _R_MAX_CM) * u.cm, temperature=_T_K * u.K
-        )
-        assert np.all(tau2 > tau1)
-
-    def test_wind_larger_rmax(self):
-        nu = _NU_2 * u.Hz
-        tau1 = compute_ff_optical_depth_wind(
-            nu, _R_CM * u.cm, _MDOT_GS * u.g / u.s, _V_CMS * u.cm / u.s, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_wind(
-            nu,
-            _R_CM * u.cm,
-            _MDOT_GS * u.g / u.s,
-            _V_CMS * u.cm / u.s,
-            r_max=(2 * _R_MAX_CM) * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(tau2 > tau1)
-
-    def test_powerlaw_larger_rmax(self):
-        nu = _NU_2 * u.Hz
-        tau1 = compute_ff_optical_depth_powerlaw(
-            nu, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=2.0, r_max=_R_MAX_CM * u.cm, temperature=_T_K * u.K
-        )
-        tau2 = compute_ff_optical_depth_powerlaw(
-            nu, _R_CM * u.cm, _RHO_GCM3 * u.g / u.cm**3, p=2.0, r_max=(2 * _R_MAX_CM) * u.cm, temperature=_T_K * u.K
-        )
-        assert np.all(tau2 > tau1)
-
-    def test_quadrature_larger_rmax(self):
-        nu = _NU_2 * u.Hz
-        tau1 = compute_ff_optical_depth_from_quadrature(
-            nu, _R_CM * u.cm, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=_R_MAX_CM * u.cm
-        )
-        tau2 = compute_ff_optical_depth_from_quadrature(
-            nu, _R_CM * u.cm, n_e=_NE_FN, n_i=_NI_FN, temperature=_T_FN, r_max=(2 * _R_MAX_CM) * u.cm
-        )
-        assert np.all(tau2 > tau1)
-
-
-# ================================================================== #
-# TestMonotonicity                                                   #
-# ================================================================== #
-class TestMonotonicity:
-    """tau must be monotonically decreasing with nu at radio frequencies.
-
-    At radio/microwave wavelengths (nu ~ 10^8-10^11 Hz, T ~ 10^4 K) the
-    free-free opacity decreases with increasing frequency in all limits.
-    """
-
-    _NU_MONO = np.geomspace(1e8, 1e11, 20)  # 20 radio frequencies
-
-    def test_shell_decreasing_with_nu(self):
-        tau = compute_ff_optical_depth_shell(
-            self._NU_MONO * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(np.diff(tau) < 0)
-
-    def test_wind_decreasing_with_nu(self):
-        tau = compute_ff_optical_depth_wind(
-            self._NU_MONO * u.Hz,
-            _R_CM * u.cm,
-            _MDOT_GS * u.g / u.s,
-            _V_CMS * u.cm / u.s,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(np.diff(tau) < 0)
-
-    def test_powerlaw_decreasing_with_nu(self):
-        tau = compute_ff_optical_depth_powerlaw(
-            self._NU_MONO * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=2.0,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(np.diff(tau) < 0)
-
-    def test_arrays_decreasing_with_nu(self):
-        tau = compute_ff_optical_depth_from_arrays(
-            self._NU_MONO * u.Hz,
-            _R_GRID * u.cm,
-            _RHO_GRID * u.g / u.cm**3,
-            temperature=_T_K * u.K,
-        )
-        assert np.all(np.diff(tau) < 0)
-
-    def test_quadrature_decreasing_with_nu(self):
-        tau = compute_ff_optical_depth_from_quadrature(
-            self._NU_MONO * u.Hz,
-            _R_CM * u.cm,
-            n_e=_NE_FN,
-            n_i=_NI_FN,
-            temperature=_T_FN,
-            r_max=_R_MAX_CM * u.cm,
-        )
-        assert np.all(np.diff(tau) < 0)
-
-
-# ================================================================== #
-# TestRJVariants                                                     #
-# ================================================================== #
-class TestRJVariants:
-    """All RJ public functions must return positive arrays of the right shape."""
-
-    def test_rj_shell_shape_and_sign(self):
-        tau = compute_ff_RJ_optical_depth_shell(
-            _NU_5 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert tau.shape == (5,)
-        assert np.all(tau > 0)
-
-    def test_rj_wind_shape_and_sign(self):
-        tau = compute_ff_RJ_optical_depth_wind(
-            _NU_5 * u.Hz,
-            _R_CM * u.cm,
-            _MDOT_GS * u.g / u.s,
-            _V_CMS * u.cm / u.s,
-            temperature=_T_K * u.K,
-        )
-        assert tau.shape == (5,)
-        assert np.all(tau > 0)
-
-    def test_rj_powerlaw_shape_and_sign(self):
-        tau = compute_ff_RJ_optical_depth_powerlaw(
-            _NU_5 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            p=2.0,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-        )
-        assert tau.shape == (5,)
-        assert np.all(tau > 0)
-
-    def test_rj_arrays_shape_and_sign(self):
-        tau = compute_ff_RJ_optical_depth_from_arrays(
-            _NU_5 * u.Hz,
-            _R_GRID * u.cm,
-            _RHO_GRID * u.g / u.cm**3,
-            temperature=_T_K * u.K,
-        )
-        assert tau.shape == (5,)
-        assert np.all(tau > 0)
-
-    def test_rj_quadrature_shape_and_sign(self):
-        tau = compute_ff_RJ_optical_depth_from_quadrature(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            n_e=_NE_FN,
-            n_i=_NI_FN,
-            temperature=_T_FN,
-            r_max=_R_MAX_CM * u.cm,
-        )
-        assert tau.shape == (2,)
-        assert np.all(tau > 0)
-
-    def test_rj_shell_analytic(self):
-        """tau_RJ_shell = alpha_RJ * L. Cross-check against compute_ff_RJ_absorption."""
+    def test_shell_matches_core_absorption(self):
         from triceratops.radiation.free_free.core import compute_ff_RJ_absorption
 
-        nu = np.array([1.0e9])
-        n_e = _RHO_GCM3 / (_MU_E * _proton_mass_cgs)
-        n_i = _RHO_GCM3 / (_MU_I * _proton_mass_cgs)
-        alpha_rj = compute_ff_RJ_absorption(nu * u.Hz, n_e, n_i, _Z, _T_K, _G_FF)
-        L = _R_MAX_CM - _R_CM
-        tau_expected = alpha_rj.value * L
-        tau_actual = compute_ff_RJ_optical_depth_shell(
-            nu * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
-            mu_e=_MU_E,
-            mu_i=_MU_I,
-            Z=_Z,
-            g_ff=_G_FF,
-        )
-        np.testing.assert_allclose(tau_actual, tau_expected, rtol=1e-10)
+        # Fix g_ff=1.0 in both so the Gaunt-factor defaults don't differ.
+        G_FF = 1.0
+        L = (_R_MAX - _R_MIN).to(u.cm)
+        alpha = compute_ff_RJ_absorption(_NU, _NE, _NI, Z=1, T=_T, g_ff=G_FF)
+        tau_expected = (alpha * L).decompose().value
 
-    def test_rj_unit_coercion(self):
-        tau_q = compute_ff_RJ_optical_depth_shell(
-            _NU_2 * u.Hz,
-            _R_CM * u.cm,
-            _RHO_GCM3 * u.g / u.cm**3,
-            r_max=_R_MAX_CM * u.cm,
-            temperature=_T_K * u.K,
+        tau_shell = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T, g_ff=G_FF)
+        assert np.allclose(tau_shell, tau_expected, rtol=1e-6)
+
+
+# ================================================================== #
+# Quadrature vs shell                                                #
+# ================================================================== #
+class TestQuadratureVsShell:
+    """Constant-profile quadrature must agree with analytic shell."""
+
+    def test_quadrature_matches_shell(self):
+        r_min, r_max = 1e15, 2e15  # cm
+        ne = ni = 1e4  # cm^{-3}
+        T = 1e4  # K
+        G_FF = 1.0  # fix g_ff so both backends use the same value
+
+        tau_quad = compute_ff_RJ_optical_depth_from_quadrature(
+            _NU,
+            r_min * u.cm,
+            n_e=lambda r: ne,
+            n_i=lambda r: ni,
+            temperature=lambda r: T,
+            r_max=r_max * u.cm,
+            g_ff=G_FF,
         )
-        tau_f = compute_ff_RJ_optical_depth_shell(
-            _NU_2,
-            _R_CM,
-            _RHO_GCM3,
-            r_max=_R_MAX_CM,
-            temperature=_T_K,
+        tau_shell = compute_ff_RJ_optical_depth_shell(
+            _NU,
+            r_min * u.cm,
+            ne / u.cm**3,
+            ni / u.cm**3,
+            r_max=r_max * u.cm,
+            temperature=T * u.K,
+            g_ff=G_FF,
         )
-        np.testing.assert_array_equal(tau_q, tau_f)
+        assert np.allclose(tau_quad, tau_shell, rtol=1e-4)
+
+
+# ================================================================== #
+# Arrays vs shell                                                    #
+# ================================================================== #
+class TestArraysVsShell:
+    """Uniform trapezoidal grid must converge to the analytic shell result."""
+
+    def test_arrays_match_shell(self):
+        r_min, r_max = 1e15, 2e15
+        ne = ni = 1e4
+        T = 1e4
+
+        r_arr = np.linspace(r_min, r_max, 500) * u.cm
+        ne_arr = np.full(500, ne) / u.cm**3
+
+        tau_arr = compute_ff_RJ_optical_depth_from_arrays(_NU, r_arr, ne_arr, ne_arr, temperature=T * u.K)
+        tau_shell = compute_ff_RJ_optical_depth_shell(
+            _NU,
+            r_min * u.cm,
+            ne / u.cm**3,
+            ni / u.cm**3,
+            r_max=r_max * u.cm,
+            temperature=T * u.K,
+        )
+        assert np.allclose(tau_arr, tau_shell, rtol=1e-3)
+
+
+# ================================================================== #
+# Wind vs powerlaw(p=2)                                              #
+# ================================================================== #
+class TestWindVsPowerlaw:
+    def test_wind_equals_powerlaw_p2(self):
+        tau_wind = compute_ff_RJ_optical_depth_wind(_NU, _R_MIN, _R_0, _NE, _NI, temperature=_T)
+        tau_pl = compute_ff_RJ_optical_depth_powerlaw(_NU, _R_MIN, _R_0, _NE, _NI, 2.0, temperature=_T)
+        assert np.allclose(tau_wind, tau_pl, rtol=1e-10)
+
+
+# ================================================================== #
+# Powerlaw special cases                                             #
+# ================================================================== #
+class TestPowerlawSpecialCases:
+    def test_p0_matches_shell(self):
+        """p=0 is a uniform-density slab; must agree with shell."""
+        tau_pl = compute_ff_RJ_optical_depth_powerlaw(
+            _NU,
+            _R_MIN,
+            _R_0,
+            _NE,
+            _NI,
+            p=0.0,
+            r_max=_R_MAX,
+            temperature=_T,
+        )
+        # With p=0: n(r) = n_0*(r_0/r)^0 = n_0; use n_0 as uniform density
+        tau_sh = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T)
+        assert np.allclose(tau_pl, tau_sh, rtol=1e-10)
+
+    def test_k_zero_is_finite(self):
+        """k = 1-2p = 0 at p=0.5; result must be finite and positive."""
+        tau = compute_ff_RJ_optical_depth_powerlaw(
+            _NU,
+            _R_MIN,
+            _R_0,
+            _NE,
+            _NI,
+            p=0.5,
+            r_max=_R_MAX,
+            temperature=_T,
+        )
+        assert np.all(np.isfinite(tau))
+        assert np.all(tau > 0)
+
+    def test_k_negative_converges_at_infinity(self):
+        """p > 0.5 (k < 0): integral converges as r_max → ∞."""
+        tau_finite = compute_ff_RJ_optical_depth_powerlaw(
+            _NU,
+            _R_MIN,
+            _R_0,
+            _NE,
+            _NI,
+            p=2.0,
+            r_max=1e20 * u.cm,
+            temperature=_T,
+        )
+        tau_inf = compute_ff_RJ_optical_depth_powerlaw(
+            _NU,
+            _R_MIN,
+            _R_0,
+            _NE,
+            _NI,
+            p=2.0,
+            r_max=np.inf * u.cm,
+            temperature=_T,
+        )
+        assert np.allclose(tau_finite, tau_inf, rtol=1e-3)
+
+
+# ================================================================== #
+# EM function                                                        #
+# ================================================================== #
+class TestEMFunction:
+    def test_em_matches_shell(self):
+        """EM = n_e * n_i * L should reproduce the shell result."""
+        L = (_R_MAX - _R_MIN).to(u.cm)
+        EM = (_NE * _NI * L).to(u.cm**-5)
+
+        tau_em = compute_ff_RJ_optical_depth_EM(_NU, EM, temperature=_T)
+        tau_sh = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T)
+        assert np.allclose(tau_em, tau_sh, rtol=1e-6)
+
+    def test_em_scales_linearly(self):
+        EM = 1e24 * u.cm**-5
+        tau1 = compute_ff_RJ_optical_depth_EM(_NU, EM, temperature=_T)
+        tau2 = compute_ff_RJ_optical_depth_EM(_NU, 2 * EM, temperature=_T)
+        assert np.allclose(tau2 / tau1, 2.0, rtol=1e-10)
+
+    def test_em_positive(self):
+        tau = compute_ff_RJ_optical_depth_EM(_NU, 1e24 * u.cm**-5, temperature=_T)
+        assert np.all(tau > 0)
+
+
+# ================================================================== #
+# Frequency scaling                                                  #
+# ================================================================== #
+class TestFrequencyScaling:
+    """In the RJ limit tau ∝ nu^{-2}."""
+
+    @pytest.mark.parametrize(
+        "backend,kwargs",
+        [
+            ("shell", dict(r_min=_R_MIN, n_e_0=_NE, n_i_0=_NI, r_max=_R_MAX, temperature=_T, g_ff=1.0)),
+            ("wind", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, temperature=_T, g_ff=1.0)),
+            ("powerlaw", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, p=2.0, temperature=_T, g_ff=1.0)),
+        ],
+    )
+    def test_nu_minus_2_scaling(self, backend, kwargs):
+        """tau ∝ nu^{-2} exactly when g_ff is held fixed."""
+        fn = {
+            "shell": compute_ff_RJ_optical_depth_shell,
+            "wind": compute_ff_RJ_optical_depth_wind,
+            "powerlaw": compute_ff_RJ_optical_depth_powerlaw,
+        }[backend]
+        nu1, nu2 = np.array([1e9]) * u.Hz, np.array([2e9]) * u.Hz
+        tau1 = fn(nu1, **kwargs)
+        tau2 = fn(nu2, **kwargs)
+        assert tau1[0] / tau2[0] == pytest.approx(4.0, rel=1e-6)
+
+    def test_em_nu_minus_2_scaling(self):
+        """tau ∝ nu^{-2} exactly when g_ff is held fixed."""
+        EM = 1e24 * u.cm**-5
+        tau1 = compute_ff_RJ_optical_depth_EM(np.array([1e9]) * u.Hz, EM, temperature=_T, g_ff=1.0)
+        tau2 = compute_ff_RJ_optical_depth_EM(np.array([2e9]) * u.Hz, EM, temperature=_T, g_ff=1.0)
+        assert tau1[0] / tau2[0] == pytest.approx(4.0, rel=1e-6)
+
+
+# ================================================================== #
+# r_max effect                                                       #
+# ================================================================== #
+class TestRmaxEffect:
+    def test_larger_rmax_increases_tau_shell(self):
+        nu = np.array([1e9]) * u.Hz
+        tau_small = compute_ff_RJ_optical_depth_shell(nu, _R_MIN, _NE, _NI, r_max=2e15 * u.cm, temperature=_T)
+        tau_large = compute_ff_RJ_optical_depth_shell(nu, _R_MIN, _NE, _NI, r_max=5e15 * u.cm, temperature=_T)
+        assert tau_large[0] > tau_small[0]
+
+    def test_larger_rmax_increases_tau_wind(self):
+        nu = np.array([1e9]) * u.Hz
+        tau_small = compute_ff_RJ_optical_depth_wind(nu, _R_MIN, _R_0, _NE, _NI, r_max=2e15 * u.cm, temperature=_T)
+        tau_large = compute_ff_RJ_optical_depth_wind(nu, _R_MIN, _R_0, _NE, _NI, r_max=5e15 * u.cm, temperature=_T)
+        assert tau_large[0] > tau_small[0]
+
+
+# ================================================================== #
+# Composition                                                        #
+# ================================================================== #
+class TestComposition:
+    """Xs=None (single-species) and Xs-specified (composition) are consistent."""
+
+    Zs = np.array([1.0])
+    Xs = np.array([1.0])
+
+    def test_single_species_array_matches_scalar_Z(self):
+        tau_scalar = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T, Z=1.0)
+        tau_comp = compute_ff_RJ_optical_depth_shell(
+            _NU,
+            _R_MIN,
+            _NE,
+            _NI,
+            r_max=_R_MAX,
+            temperature=_T,
+            Z=self.Zs,
+            X=self.Xs,
+        )
+        assert np.allclose(tau_scalar, tau_comp, rtol=1e-6)
+
+    def test_helium_mix_increases_tau(self):
+        """He contributes Z^2=4 so mixed plasma has larger tau than pure H."""
+        tau_pure_H = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T, Z=1.0)
+        tau_mixed = compute_ff_RJ_optical_depth_shell(
+            _NU,
+            _R_MIN,
+            _NE,
+            _NI,
+            r_max=_R_MAX,
+            temperature=_T,
+            Z=np.array([1.0, 2.0]),
+            X=np.array([0.9, 0.1]),
+        )
+        assert np.all(tau_mixed > tau_pure_H)
+
+    def test_composition_wind_positive(self):
+        tau = compute_ff_RJ_optical_depth_wind(
+            _NU,
+            _R_MIN,
+            _R_0,
+            _NE,
+            _NI,
+            temperature=_T,
+            Z=np.array([1.0, 2.0]),
+            X=np.array([0.9, 0.1]),
+        )
+        assert np.all(tau > 0)
+
+
+# ================================================================== #
+# Thomson flag                                                       #
+# ================================================================== #
+class TestThomson:
+    """With thomson=True, tau_eff >= tau_ff always."""
+
+    @pytest.mark.parametrize(
+        "backend,kwargs",
+        [
+            ("shell", dict(r_min=_R_MIN, n_e_0=_NE, n_i_0=_NI, r_max=_R_MAX, temperature=_T)),
+            ("wind", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, temperature=_T)),
+            ("powerlaw", dict(r_min=_R_MIN, r_0=_R_0, n_e_0=_NE, n_i_0=_NI, p=2.0, temperature=_T)),
+        ],
+    )
+    def test_eff_ge_ff(self, backend, kwargs):
+        fn = {
+            "shell": compute_ff_RJ_optical_depth_shell,
+            "wind": compute_ff_RJ_optical_depth_wind,
+            "powerlaw": compute_ff_RJ_optical_depth_powerlaw,
+        }[backend]
+        tau_ff = fn(_NU, **kwargs, thomson=False)
+        tau_eff = fn(_NU, **kwargs, thomson=True)
+        assert np.all(tau_eff >= tau_ff)
+
+    def test_quadrature_eff_ge_ff(self):
+        r_min, r_max, ne, T = 1e15, 2e15, 1e4, 1e4
+        tau_ff = compute_ff_RJ_optical_depth_from_quadrature(
+            _NU,
+            r_min * u.cm,
+            n_e=lambda r: ne,
+            n_i=lambda r: ne,
+            temperature=lambda r: T,
+            r_max=r_max * u.cm,
+            thomson=False,
+        )
+        tau_eff = compute_ff_RJ_optical_depth_from_quadrature(
+            _NU,
+            r_min * u.cm,
+            n_e=lambda r: ne,
+            n_i=lambda r: ne,
+            temperature=lambda r: T,
+            r_max=r_max * u.cm,
+            thomson=True,
+        )
+        assert np.all(tau_eff >= tau_ff)
+
+    def test_arrays_eff_ge_ff(self):
+        r_arr = np.linspace(1e15, 2e15, 100) * u.cm
+        ne_arr = np.full(100, 1e4) / u.cm**3
+        tau_ff = compute_ff_RJ_optical_depth_from_arrays(_NU, r_arr, ne_arr, ne_arr, temperature=_T, thomson=False)
+        tau_eff = compute_ff_RJ_optical_depth_from_arrays(_NU, r_arr, ne_arr, ne_arr, temperature=_T, thomson=True)
+        assert np.all(tau_eff >= tau_ff)
+
+    def test_thomson_positive(self):
+        tau = compute_ff_RJ_optical_depth_shell(_NU, _R_MIN, _NE, _NI, r_max=_R_MAX, temperature=_T, thomson=True)
+        assert np.all(tau > 0)

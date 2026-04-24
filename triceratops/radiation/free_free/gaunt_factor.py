@@ -24,6 +24,44 @@ depends on three physical parameters:
 This module provides a number of convenient methods ranging from analytical approximations to
 tabulated interpolators for accurate Gaunt factor evaluation.
 
+.. rubric:: Available Gaunt Factor Methods
+
+
+.. list-table::
+   :header-rows: 1
+   :widths: 15 20 20 45
+
+   * - Key
+     - Type
+     - Regime
+     - Notes
+
+   * - ``"lu"``
+     - Analytic
+     - Non-relativistic (general)
+     - Default. Smooth, fast, and accurate across a wide parameter range.
+       Based on :footcite:t:`lu_2026_18603474`.
+
+   * - ``"draine"``
+     - Analytic
+     - Classical non-relativistic
+     - Simpler classical approximation from
+       :footcite:t:`draine2011physics`. Slightly less accurate than ``"lu"``.
+
+   * - ``"vanhoof"``
+     - Tabulated (2D)
+     - Non-relativistic
+     - Bilinear interpolation on the van Hoof et al. (2014) table.
+       More accurate than analytic forms; slower due to interpolation.
+
+   * - ``"vanhoof_rel"``
+     - Tabulated (3D)
+     - Relativistic (high :math:`T`)
+     - Trilinear interpolation including explicit :math:`Z` dependence.
+       Use for :math:`T \gtrsim 10^8\,\mathrm{K}` where relativistic
+       corrections are important.
+
+
 """
 
 from abc import ABC, abstractmethod
@@ -53,6 +91,8 @@ __all__ = [
     # Public compute functions
     "compute_ff_gaunt_factor",
     "compute_ff_gaunt_factor_comp",
+    "compute_mean_ff_gaunt_factor",
+    "compute_mean_ff_gaunt_factor_comp",
 ]
 
 # ============================================ #
@@ -827,6 +867,148 @@ def _gaunt_ff_draine_comp(log_nu, log_T, Zs, Xs):
     return np.sum(weights, axis=-1)
 
 
+def _average_gaunt_ff_draine(log_T, Z):
+    r"""
+    Frequency-averaged free–free Gaunt factor (Draine 2011 approximation).
+
+    Computes the thermally averaged (frequency-integrated) Gaunt factor
+    :math:`\bar{g}_{\rm ff}(T, Z)` using the analytic fit from
+    :footcite:t:`draine2011physics`.  This quantity appears in **bolometric**
+    free–free emissivity expressions where the spectrum has been integrated
+    over frequency.
+
+    The approximation is expressed as a function of temperature and ionic
+    charge:
+
+    .. math::
+
+        \bar{g}_{\rm ff} \approx
+        1 + \frac{0.44}{1 + 0.058\,Q^2},
+
+    where
+
+    .. math::
+
+        Q = \ln\!\left(\frac{T}{10^{5.4}\,Z^2}\right).
+
+    Parameters
+    ----------
+    log_T : float or array-like
+        Natural logarithm of the electron temperature :math:`T` [K].
+    Z : float or array-like
+        Ionic charge number (:math:`Z \geq 1`).
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Frequency-averaged Gaunt factor :math:`\bar{g}_{\rm ff}`.
+        Shape follows broadcasting of *log_T* and *Z*.
+
+    Notes
+    -----
+    This quantity differs from the frequency-dependent Gaunt factor
+    :math:`g_{\rm ff}(\nu, T)` in that it is **integrated over frequency**
+    with the appropriate thermal weighting.  It is therefore suitable for
+    computing total (bolometric) bremsstrahlung emission:
+
+    .. math::
+
+        \epsilon_{\rm ff} \propto n_e n_i Z^2 T^{1/2} \bar{g}_{\rm ff}.
+
+    The approximation is accurate to within a few percent over a wide
+    temperature range relevant for astrophysical plasmas.
+
+    See Also
+    --------
+    _gaunt_ff_draine :
+        Frequency-dependent Gaunt factor.
+    _average_gaunt_ff_draine_comp :
+        Composition-weighted averaged Gaunt factor.
+    """
+    # Compute the Q factor ln(T/K/(10^5.4 Z^2))
+    log_Q = log_T - 5.4 * np.log(10) - 2 * np.log(Z)
+
+    res = 1 + (0.44 / (1 + (0.058 * log_Q**2)))
+
+    return res if res.ndim > 0 else float(res)
+
+
+def _average_gaunt_ff_draine_comp(log_T, Zs, Xs):
+    r"""
+    Composition-weighted frequency-averaged free–free Gaunt factor.
+
+    Computes the effective averaged Gaunt factor for a multi-species plasma:
+
+    .. math::
+
+        \bar{g}_{\rm ff,eff}(T) =
+        \sum_i Z_i^2\,x_i\,\bar{g}_{{\rm ff},i}(T, Z_i),
+
+    where:
+
+    * :math:`Z_i` is the ionic charge of species *i*,
+    * :math:`x_i` is the number fraction of species *i*,
+    * :math:`\bar{g}_{{\rm ff},i}` is the single-species averaged Gaunt factor
+      from :func:`_average_gaunt_ff_draine`.
+
+    Parameters
+    ----------
+    log_T : float or array-like
+        Natural logarithm of the electron temperature :math:`T` [K].
+    Zs : (N,) array-like
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+    Xs : (N,) array-like
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Effective frequency-averaged Gaunt factor
+        :math:`\bar{g}_{\rm ff,eff}`.
+        Shape follows broadcasting of *log_T*.
+
+    Raises
+    ------
+    ValueError
+        If *Zs* and *Xs* do not have matching shapes or are not 1-D.
+
+    Notes
+    -----
+    In a fully ionised plasma, the total free–free emissivity scales as
+
+    .. math::
+
+        \epsilon_{\rm ff} \propto
+        n_e \sum_i n_i Z_i^2 \bar{g}_{{\rm ff},i},
+
+    so the natural weighting is :math:`Z_i^2 x_i`, not simply :math:`x_i`.
+
+    This function assumes:
+
+    * fully ionised plasma,
+    * number fractions (not mass fractions),
+    * independent evaluation of each species' Gaunt factor.
+
+    See Also
+    --------
+    _average_gaunt_ff_draine :
+        Single-species averaged Gaunt factor.
+    _gaunt_ff_draine_comp :
+        Frequency-dependent composition-weighted Gaunt factor.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if Zs.shape != Xs.shape:
+        raise ValueError(f"Zs and Xs must have the same shape; got {Zs.shape} and {Xs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs and Xs must be 1-D arrays; got shape {Zs.shape}.")
+
+    gaunt_factors = _average_gaunt_ff_draine(log_T[..., np.newaxis], Zs[np.newaxis, :])
+    weights = Zs**2 * Xs * gaunt_factors
+    return np.sum(weights, axis=-1)
+
+
 # =============================================== #
 # Tabulated Wrappers (Van Hoof 2014)              #
 # =============================================== #
@@ -1042,27 +1224,32 @@ _APPROX_REGISTRY = {
     "vanhoof_rel": (_gaunt_ff_vanhoof_rel, _gaunt_ff_vanhoof_rel_comp),
 }
 
+_AVERAGE_APPROX_REGISTRY = {
+    "draine": (_average_gaunt_ff_draine, _average_gaunt_ff_draine_comp),
+}
+
 
 def compute_ff_gaunt_factor(
     nu: "_UnitBearingArrayLike",
     T: "_UnitBearingArrayLike",
-    Z: "_ArrayLike",
+    Z: "_ArrayLike" = 1,
     approx: str = "lu",
 ) -> "Union[float, np.ndarray]":
     r"""Evaluate the free–free Gaunt factor :math:`g_{\rm ff}(\nu, T, Z)` for a single ion species.
 
     Parameters
     ----------
-    nu : ~astropy.units.Quantity or array-like
+    nu : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency.  Plain floats are assumed to be in Hz;
         unit-bearing Quantities are converted automatically.
-    T : ~astropy.units.Quantity or array-like
+    T : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature.  Plain floats are assumed to be in K;
         unit-bearing Quantities are converted automatically.
-    Z : int, float, or array-like
-        Ionic charge number (:math:`Z \geq 1`).  Dimensionless.
+    Z : int, float, or ~numpy.ndarray, optional
+        Ionic charge number (:math:`Z \geq 1`).  Dimensionless. Default is 1 (proton).
     approx : {'lu', 'draine', 'vanhoof', 'vanhoof_rel'}, optional
-        Approximation method.  Default is ``'lu'``.
+        Approximation method.  Default is ``'lu'``. See notes regarding the available
+        approximation methods.
 
     Returns
     -------
@@ -1184,16 +1371,16 @@ def compute_ff_gaunt_factor_comp(
 
     Parameters
     ----------
-    nu : ~astropy.units.Quantity or array-like
+    nu : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency.  Plain floats are assumed to be in Hz;
         unit-bearing Quantities are converted automatically.
-    T : ~astropy.units.Quantity or array-like
+    T : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature.  Plain floats are assumed to be in K;
         unit-bearing Quantities are converted automatically.
-    Zs : (N,) array-like
+    Zs : ~numpy.ndarray
         Ionic charge numbers of each species (:math:`Z_i \geq 1`).
         Dimensionless.
-    Xs : (N,) array-like
+    Xs : ~numpy.ndarray
         Number fractions of each species (:math:`\sum_i x_i = 1`).
         Must match the shape of *Zs*.
     approx : {'lu', 'draine', 'vanhoof', 'vanhoof_rel'}, optional
@@ -1284,6 +1471,109 @@ def compute_ff_gaunt_factor_comp(
 
     _, _comp = _APPROX_REGISTRY[approx]
     return _comp(np.log(nu_cgs), np.log(T_cgs), Zs, Xs)
+
+
+def compute_mean_ff_gaunt_factor(
+    T: "_UnitBearingArrayLike",
+    Z: "_ArrayLike" = 1,
+    approx: str = "draine",
+) -> "Union[float, np.ndarray]":
+    r"""Evaluate the frequency-averaged free–free Gaunt factor for a single ion species.
+
+    Returns the thermally averaged (frequency-integrated) Gaunt factor
+    :math:`\bar{g}_{\rm ff}(T, Z)` used in bolometric free–free luminosity
+    calculations.  Unlike :func:`compute_ff_gaunt_factor`, this quantity has no
+    frequency dependence.
+
+    Parameters
+    ----------
+    T : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Plain floats are assumed to be in K;
+        unit-bearing Quantities are converted automatically.
+    Z : int, float, or ~numpy.ndarray, optional
+        Ionic charge number (:math:`Z \geq 1`).  Dimensionless. Default is 1.
+    approx : {'draine'}, optional
+        Approximation method.  Currently only ``'draine'`` is available.
+        Default is ``'draine'``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Dimensionless frequency-averaged Gaunt factor :math:`\bar{g}_{\rm ff}`.
+        Shape is the broadcasted shape of *T* and *Z*.
+
+    Raises
+    ------
+    ValueError
+        If *approx* is not one of the recognised keys.
+
+    See Also
+    --------
+    compute_ff_gaunt_factor : Frequency-specific Gaunt factor.
+    compute_mean_ff_gaunt_factor_comp : Composition-weighted variant.
+    """
+    if approx not in _AVERAGE_APPROX_REGISTRY:
+        raise ValueError(f"approx must be one of {list(_AVERAGE_APPROX_REGISTRY)}; got {approx!r}.")
+
+    T_cgs = ensure_in_units(T, u.K)
+
+    _single, _ = _AVERAGE_APPROX_REGISTRY[approx]
+    return _single(np.log(T_cgs), Z)
+
+
+def compute_mean_ff_gaunt_factor_comp(
+    T: "_UnitBearingArrayLike",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    approx: str = "draine",
+) -> "Union[float, np.ndarray]":
+    r"""Evaluate the composition-weighted frequency-averaged free–free Gaunt factor.
+
+    Returns :math:`\sum_i Z_i^2\, x_i\, \bar{g}_{{\rm ff},i}(T, Z_i)` where
+    :math:`\bar{g}_{{\rm ff},i}` is the frequency-averaged Gaunt factor for
+    species *i*.  Used in bolometric free–free luminosity calculations for
+    multi-species plasmas.
+
+    Parameters
+    ----------
+    T : float, int, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Plain floats are assumed to be in K;
+        unit-bearing Quantities are converted automatically.
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+        Dimensionless.
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+        Must match the shape of *Zs*.
+    approx : {'draine'}, optional
+        Method used to evaluate the per-species averaged Gaunt factor.
+        Currently only ``'draine'`` is available.  Default is ``'draine'``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Dimensionless effective frequency-averaged Gaunt factor
+        :math:`\sum_i Z_i^2\, x_i\, \bar{g}_{{\rm ff},i}`.
+        Shape matches the broadcasted shape of *T*.
+
+    Raises
+    ------
+    ValueError
+        If *approx* is not recognised, or if *Zs* and *Xs* have incompatible
+        shapes or are not 1-D.
+
+    See Also
+    --------
+    compute_ff_gaunt_factor_comp : Frequency-specific composition-weighted variant.
+    compute_mean_ff_gaunt_factor : Single-species variant.
+    """
+    if approx not in _AVERAGE_APPROX_REGISTRY:
+        raise ValueError(f"approx must be one of {list(_AVERAGE_APPROX_REGISTRY)}; got {approx!r}.")
+
+    T_cgs = ensure_in_units(T, u.K)
+
+    _, _comp = _AVERAGE_APPROX_REGISTRY[approx]
+    return _comp(np.log(T_cgs), Zs, Xs)
 
 
 # ================================================ #
@@ -1382,3 +1672,64 @@ def get_default_relativistic_gaunt_interpolator(**kwargs) -> RelativisticGauntFa
     .. footbibliography::
     """
     return RelativisticGauntFactorInterpolator(**kwargs)
+
+
+def _resolve_gff(
+    log_nu: float,
+    log_T: float,
+    Z: "Union[float, _ArrayLike]",
+    X: "Optional[_ArrayLike]",
+    g_ff: "Optional[Union[float, _ArrayLike]]",
+) -> "tuple[float, float]":
+    r"""Resolve ``(Z_eff, g_ff_eff)`` for free-free emission calculations.
+
+    Parameters
+    ----------
+    log_nu : float
+        Natural logarithm of the photon frequency [Hz].
+    log_T : float
+        Natural logarithm of the electron temperature [K].
+    Z : float or array-like
+        Ionic charge number(s).  Scalar for single-species; 1-D array when
+        *X* is provided.
+    X : array-like or None
+        Number fractions of each species (:math:`\sum_i x_i = 1`).  When
+        ``None``, the single-species path is taken.  Must have the same shape
+        as *Z* when provided.
+    g_ff : float, array-like, or None
+        Free–free Gaunt factor(s).  When ``None``, computed automatically via
+        the Lu+ prescription (:func:`_gaunt_ff_lu`).  Must match the shape of
+        *Z* when *X* is provided.
+
+    Returns
+    -------
+    Z_eff : float
+        Effective ionic charge: the input *Z* (single-species) or ``1.0``
+        (composition, since :math:`Z^2` is folded into *g_ff_eff*).
+    g_ff_eff : float
+        Effective Gaunt factor: the input *g_ff* (single-species) or the
+        composition-weighted sum
+
+        .. math::
+
+            g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    Notes
+    -----
+    When *X* is provided and *g_ff* is ``None``, the per-species Gaunt factors
+    are evaluated at the given ``(log_nu, log_T)`` using :func:`_gaunt_ff_lu`.
+    When *X* is ``None`` and *g_ff* is ``None``, the single-species Gaunt
+    factor is similarly computed via :func:`_gaunt_ff_lu`.
+    """
+    if X is not None:
+        Z = np.asarray(Z, dtype=float)
+        X = np.asarray(X, dtype=float)
+        if g_ff is None:
+            g_ff = np.array([float(_gaunt_ff_lu(log_nu, log_T, Zi)) for Zi in Z])
+        else:
+            g_ff = np.asarray(g_ff, dtype=float)
+        return 1.0, float(np.sum(Z**2 * X * g_ff))
+    else:
+        if g_ff is None:
+            g_ff = float(_gaunt_ff_lu(log_nu, log_T, float(Z)))
+        return float(Z), float(g_ff)

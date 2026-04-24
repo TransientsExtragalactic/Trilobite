@@ -62,59 +62,65 @@ class TestPrivateEmissivity:
     """_log_ff_emissivity implements log j_ν = log C_ff + 2 log Z
     + log n_e + log n_i - 0.5 log T - hν/(k_B T) + log g_ff."""
 
-    def _reference(self, log_nu=_LOG_NU, log_ne=_LOG_NE, log_ni=_LOG_NI, log_Z=_LOG_Z, log_T=_LOG_T, g_ff=_GFF):
+    def _reference(self, log_nu=_LOG_NU, log_ne=_LOG_NE, log_ni=_LOG_NI, Z=_Z, log_T=_LOG_T, g_ff=_GFF):
         """Direct evaluation of the R&L formula in log-space."""
         nu = np.exp(log_nu)
         T = np.exp(log_T)
         exp_term = -h_cgs * nu / (kB_cgs * T)
         return (
-            np.log(_ff_emissivity_coefficient_cgs) + 2 * log_Z + log_ne + log_ni - 0.5 * log_T + exp_term + np.log(g_ff)
+            np.log(_ff_emissivity_coefficient_cgs)
+            + 2 * np.log(Z)
+            + log_ne
+            + log_ni
+            - 0.5 * log_T
+            + exp_term
+            + np.log(g_ff)
         )
 
     def test_scalar_matches_formula(self):
-        result = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result == pytest.approx(self._reference(), rel=1e-12)
 
     def test_array_nu_matches_formula(self):
         log_nu_arr = np.log(np.geomspace(1e8, 1e12, 5))
-        result = _log_ff_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         expected = self._reference(log_nu=log_nu_arr)
         np.testing.assert_allclose(result, expected, rtol=1e-12)
 
     def test_z_squared_scaling(self):
         """Doubling Z must increase log j by 2 log 2."""
-        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, np.log(2 * _Z), _LOG_T, _GFF)
+        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, 2 * _Z, _LOG_T, _GFF)
         assert j2 - j1 == pytest.approx(2 * np.log(2), rel=1e-12)
 
     def test_ne_linear_scaling(self):
         """Doubling n_e must increase log j by log 2."""
-        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_emissivity(_LOG_NU, np.log(2 * _NE), _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_emissivity(_LOG_NU, np.log(2 * _NE), _LOG_NI, _Z, _LOG_T, _GFF)
         assert j2 - j1 == pytest.approx(np.log(2), rel=1e-12)
 
     def test_ni_linear_scaling(self):
         """Doubling n_i must increase log j by log 2."""
-        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, np.log(2 * _NI), _LOG_Z, _LOG_T, _GFF)
+        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, np.log(2 * _NI), _Z, _LOG_T, _GFF)
         assert j2 - j1 == pytest.approx(np.log(2), rel=1e-12)
 
     def test_temperature_minus_half_scaling(self):
         """Quadrupling T must decrease log j by log 2  (T^{-1/2} factor)."""
-        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, np.log(4 * _T), _GFF)
+        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, np.log(4 * _T), _GFF)
         # Δlog j from T factor alone: -0.5 * log(4) = -log(2)
         # The exp_term also changes, but for deep-RJ conditions the change is negligible.
         assert j2 - j1 == pytest.approx(-np.log(2), rel=1e-3)
 
     def test_gff_linear_scaling(self):
         """Doubling g_ff must increase log j by log 2."""
-        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, 2 * _GFF)
+        j1 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, 2 * _GFF)
         assert j2 - j1 == pytest.approx(np.log(2), rel=1e-12)
 
     def test_output_is_finite(self):
-        result = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert np.isfinite(result)
 
 
@@ -126,13 +132,13 @@ class TestPrivateAbsorption:
     + log n_e + log n_i - 0.5 log T - 3 log ν
     + log(1 − exp(−hν/k_B T)) + log g_ff."""
 
-    def _reference(self, log_nu=_LOG_NU, log_ne=_LOG_NE, log_ni=_LOG_NI, log_Z=_LOG_Z, log_T=_LOG_T, g_ff=_GFF):
+    def _reference(self, log_nu=_LOG_NU, log_ne=_LOG_NE, log_ni=_LOG_NI, Z=_Z, log_T=_LOG_T, g_ff=_GFF):
         nu = np.exp(log_nu)
         T = np.exp(log_T)
         exp_term = -h_cgs * nu / (kB_cgs * T)
         return (
             np.log(_ff_absorption_coefficient_cgs)
-            + 2 * log_Z
+            + 2 * np.log(Z)
             + log_ne
             + log_ni
             - 0.5 * log_T
@@ -142,23 +148,23 @@ class TestPrivateAbsorption:
         )
 
     def test_scalar_matches_formula(self):
-        result = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result == pytest.approx(self._reference(), rel=1e-12)
 
     def test_array_nu_matches_formula(self):
         log_nu_arr = np.log(np.geomspace(1e8, 1e12, 5))
-        result = _log_ff_absorption(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_absorption(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         expected = self._reference(log_nu=log_nu_arr)
         np.testing.assert_allclose(result, expected, rtol=1e-12)
 
     def test_z_squared_scaling(self):
-        a1 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, np.log(2 * _Z), _LOG_T, _GFF)
+        a1 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, 2 * _Z, _LOG_T, _GFF)
         assert a2 - a1 == pytest.approx(2 * np.log(2), rel=1e-12)
 
     def test_ne_linear_scaling(self):
-        a1 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_absorption(_LOG_NU, np.log(2 * _NE), _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        a1 = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_absorption(_LOG_NU, np.log(2 * _NE), _LOG_NI, _Z, _LOG_T, _GFF)
         assert a2 - a1 == pytest.approx(np.log(2), rel=1e-12)
 
     def test_nu_minus_three_scaling_in_wien_limit(self):
@@ -167,19 +173,19 @@ class TestPrivateAbsorption:
         log_T_cold = np.log(1.0)  # T = 1 K (extreme Wien)
         log_nu_hi = np.log(1e12)
         log_nu_hi2 = np.log(2e12)
-        a1 = _log_ff_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _LOG_Z, log_T_cold, 1.0)
-        a2 = _log_ff_absorption(log_nu_hi2, _LOG_NE, _LOG_NI, _LOG_Z, log_T_cold, 1.0)
+        a1 = _log_ff_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _Z, log_T_cold, 1.0)
+        a2 = _log_ff_absorption(log_nu_hi2, _LOG_NE, _LOG_NI, _Z, log_T_cold, 1.0)
         # Δlog α = -3 log 2 (pure ν^{-3} scaling when stimulated emission ≈ 0)
         assert a2 - a1 == pytest.approx(-3 * np.log(2), rel=1e-4)
 
     def test_log1p_stability_at_small_x(self):
         """At very low ν the argument of log1p(-exp(-x)) is tiny; result must be finite."""
         log_nu_very_low = np.log(1.0)  # 1 Hz, hν/kT ~ 4.8e-23
-        result = _log_ff_absorption(log_nu_very_low, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_absorption(log_nu_very_low, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert np.isfinite(result)
 
     def test_output_is_finite_at_reference(self):
-        result = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert np.isfinite(result)
 
 
@@ -191,37 +197,37 @@ class TestPrivateRJEmissivity:
 
     def test_frequency_independent(self):
         """The RJ emissivity must not change when nu changes."""
-        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_RJ_emissivity(np.log(1e15), _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_RJ_emissivity(np.log(1e15), _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert j1 == j2
 
     def test_array_frequency_all_equal(self):
         """Passing an array of frequencies must yield identical values."""
         log_nu_arr = np.log(np.geomspace(1e6, 1e18, 10))
-        result = _log_ff_RJ_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_RJ_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert np.all(result == result[0])
 
     def test_temperature_minus_half_scaling(self):
         """Quadrupling T must decrease log j_RJ by log 2."""
-        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, np.log(4 * _T), _GFF)
+        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, np.log(4 * _T), _GFF)
         assert j2 - j1 == pytest.approx(-np.log(2), rel=1e-12)
 
     def test_z_squared_scaling(self):
-        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j2 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, np.log(2 * _Z), _LOG_T, _GFF)
+        j1 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j2 = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, 2 * _Z, _LOG_T, _GFF)
         assert j2 - j1 == pytest.approx(2 * np.log(2), rel=1e-12)
 
     def test_deep_rj_limit_matches_exact(self):
         """In the deep RJ regime (hν/kT ≈ 0), the exact and RJ backends agree."""
         log_nu_rj = np.log(1.0)  # 1 Hz — hν/kT ~ 4.8e-23
-        j_exact = _log_ff_emissivity(log_nu_rj, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j_rj = _log_ff_RJ_emissivity(log_nu_rj, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        j_exact = _log_ff_emissivity(log_nu_rj, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j_rj = _log_ff_RJ_emissivity(log_nu_rj, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert j_exact == pytest.approx(j_rj, rel=1e-6)
 
     def test_matches_formula(self):
         expected = np.log(_ff_emissivity_coefficient_cgs) + 2 * _LOG_Z + _LOG_NE + _LOG_NI - 0.5 * _LOG_T + np.log(_GFF)
-        result = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result == pytest.approx(expected, rel=1e-12)
 
 
@@ -233,19 +239,19 @@ class TestPrivateRJAbsorption:
 
     def test_nu_minus_two_scaling(self):
         """Doubling ν must decrease log α_RJ by 2 log 2."""
-        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_RJ_absorption(np.log(2 * _NU), _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_RJ_absorption(np.log(2 * _NU), _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert a2 - a1 == pytest.approx(-2 * np.log(2), rel=1e-12)
 
     def test_temperature_minus_three_half_scaling(self):
         """Raising T by 4× must decrease log α_RJ by 3/2 log 4 = 3 log 2."""
-        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, np.log(4 * _T), _GFF)
+        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, np.log(4 * _T), _GFF)
         assert a2 - a1 == pytest.approx(-1.5 * np.log(4), rel=1e-12)
 
     def test_z_squared_scaling(self):
-        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, np.log(2 * _Z), _LOG_T, _GFF)
+        a1 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, 2 * _Z, _LOG_T, _GFF)
         assert a2 - a1 == pytest.approx(2 * np.log(2), rel=1e-12)
 
     def test_matches_formula(self):
@@ -258,12 +264,12 @@ class TestPrivateRJAbsorption:
             - 2 * _LOG_NU
             + np.log(_GFF)
         )
-        result = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result == pytest.approx(expected, rel=1e-12)
 
     def test_array_input_produces_array(self):
         log_nu_arr = np.log(np.geomspace(1e8, 1e11, 4))
-        result = _log_ff_RJ_absorption(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_RJ_absorption(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result.shape == (4,)
 
 
@@ -274,14 +280,14 @@ class TestPrivateWienEmissivity:
     """_log_ff_Wien_emissivity is mathematically identical to _log_ff_emissivity."""
 
     def test_identical_to_exact_at_reference(self):
-        j_exact = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j_wien = _log_ff_Wien_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        j_exact = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j_wien = _log_ff_Wien_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert j_exact == pytest.approx(j_wien, rel=1e-12)
 
     def test_identical_across_frequency_range(self):
         log_nu_arr = np.log(np.geomspace(1e8, 1e18, 10))
-        j_exact = _log_ff_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        j_wien = _log_ff_Wien_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        j_exact = _log_ff_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        j_wien = _log_ff_Wien_emissivity(log_nu_arr, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         np.testing.assert_array_equal(j_exact, j_wien)
 
 
@@ -294,8 +300,8 @@ class TestPrivateWienAbsorption:
 
     def test_nu_minus_three_scaling(self):
         """Wien absorption has exact ν^{−3} dependence at all ν."""
-        a1 = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a2 = _log_ff_Wien_absorption(np.log(2 * _NU), _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        a1 = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a2 = _log_ff_Wien_absorption(np.log(2 * _NU), _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert a2 - a1 == pytest.approx(-3 * np.log(2), rel=1e-12)
 
     def test_matches_formula(self):
@@ -308,20 +314,20 @@ class TestPrivateWienAbsorption:
             - 3 * _LOG_NU
             + np.log(_GFF)
         )
-        result = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        result = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert result == pytest.approx(expected, rel=1e-12)
 
     def test_converges_to_exact_in_wien_limit(self):
         """At hν/kT >> 1, (1 − e^{−hν/kT}) ≈ 1, so exact ≈ Wien."""
         log_nu_hi = np.log(1e17)  # hν/kT ≈ 480 for T = 1e4 K
-        a_exact = _log_ff_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a_wien = _log_ff_Wien_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        a_exact = _log_ff_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a_wien = _log_ff_Wien_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert a_exact == pytest.approx(a_wien, rel=1e-6)
 
     def test_larger_than_exact_at_low_nu(self):
         """Without the (1 − e^{−x}) correction, Wien over-estimates α at low ν."""
-        a_exact = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
-        a_wien = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        a_exact = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
+        a_wien = _log_ff_Wien_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         assert a_wien > a_exact  # Wien omits the < 1 factor so it's larger
 
 
@@ -391,7 +397,7 @@ class TestPublicEmissivity:
 
     def test_matches_private_backend(self):
         """Public function must agree with exp(private backend)."""
-        log_j = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        log_j = _log_ff_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         j_pub = compute_ff_emissivity(_NU, _NE, _NI, _Z, _T, _GFF)
         assert j_pub.value == pytest.approx(np.exp(log_j), rel=1e-12)
 
@@ -452,11 +458,11 @@ class TestPublicAbsorption:
         """At high ν, the public exact function must agree with the Wien backend."""
         log_nu_hi = np.log(1e17)
         a_pub = compute_ff_absorption(1e17, _NE, _NI, _Z, _T, _GFF)
-        a_wien = np.exp(_log_ff_Wien_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF))
+        a_wien = np.exp(_log_ff_Wien_absorption(log_nu_hi, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF))
         assert a_pub.value == pytest.approx(a_wien, rel=1e-6)
 
     def test_matches_private_backend(self):
-        log_a = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        log_a = _log_ff_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         a_pub = compute_ff_absorption(_NU, _NE, _NI, _Z, _T, _GFF)
         assert a_pub.value == pytest.approx(np.exp(log_a), rel=1e-12)
 
@@ -491,7 +497,7 @@ class TestPublicRJEmissivity:
         assert (j2 / j1).decompose().value == pytest.approx(0.5, rel=1e-12)
 
     def test_matches_private_backend(self):
-        log_j = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        log_j = _log_ff_RJ_emissivity(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         j_pub = compute_ff_RJ_emissivity(_NU, _NE, _NI, _Z, _T, _GFF)
         assert j_pub.value == pytest.approx(np.exp(log_j), rel=1e-12)
 
@@ -544,7 +550,7 @@ class TestPublicRJAbsorption:
         assert a_q.value == pytest.approx(a_f.value, rel=1e-12)
 
     def test_matches_private_backend(self):
-        log_a = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _LOG_Z, _LOG_T, _GFF)
+        log_a = _log_ff_RJ_absorption(_LOG_NU, _LOG_NE, _LOG_NI, _Z, _LOG_T, _GFF)
         a_pub = compute_ff_RJ_absorption(_NU, _NE, _NI, _Z, _T, _GFF)
         assert a_pub.value == pytest.approx(np.exp(log_a), rel=1e-12)
 

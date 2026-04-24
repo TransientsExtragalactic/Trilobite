@@ -33,6 +33,13 @@ from astropy import units as u
 from triceratops.radiation.constants import h_cgs, kB_cgs
 from triceratops.utils.misc_utils import ensure_in_units
 
+from .gaunt_factor import (
+    compute_ff_gaunt_factor,
+    compute_ff_gaunt_factor_comp,
+    compute_mean_ff_gaunt_factor,
+    compute_mean_ff_gaunt_factor_comp,
+)
+
 if TYPE_CHECKING:
     from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
 
@@ -49,17 +56,18 @@ _log_ff_emissivity_coefficient_cgs = np.log(_ff_emissivity_coefficient_cgs)
 _ff_absorption_coefficient_cgs = 3.7e8
 _log_ff_absorption_coefficient_cgs = np.log(_ff_absorption_coefficient_cgs)
 
+_ff_cooling_time_coefficient_cgs = (4.6e5 * u.yr).to_value(u.s)
+_log_ff_cooling_time_coefficient_cgs = np.log(_ff_cooling_time_coefficient_cgs)
+
 
 # =============================================== #
 # Low-Level Backend for Free-Free Core
 # =============================================== #
-
-
 def _log_ff_emissivity(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -72,11 +80,11 @@ def _log_ff_emissivity(
     .. math::
 
         j_\nu =
-        C_{ff}\,
+        C_{\rm ff}\,
         Z^2\, n_e\, n_i\,
         T^{-1/2}\,
         e^{-h\nu / k_B T}\,
-        g_{ff}
+        g_{\rm ff}
 
     where :math:`C_{ff} = 6.8 \times 10^{-38}` CGS and :math:`g_{ff}` is the
     velocity-averaged free–free Gaunt factor.  All inputs are expected in
@@ -85,19 +93,19 @@ def _log_ff_emissivity(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -122,7 +130,7 @@ def _log_ff_emissivity(
 
     return (
         _log_ff_emissivity_coefficient_cgs
-        + 2 * log_Z
+        + 2 * np.log(Z)
         + log_n_e
         + log_n_i
         - 0.5 * log_T
@@ -135,7 +143,7 @@ def _log_ff_absorption(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -162,19 +170,19 @@ def _log_ff_absorption(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -203,7 +211,7 @@ def _log_ff_absorption(
 
     return (
         _log_ff_absorption_coefficient_cgs
-        + 2 * log_Z
+        + 2 * np.log(Z)
         + log_n_e
         + log_n_i
         - 0.5 * log_T
@@ -217,7 +225,7 @@ def _log_ff_RJ_emissivity(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -231,10 +239,10 @@ def _log_ff_RJ_emissivity(
     .. math::
 
         j_\nu^{\rm RJ} =
-        C_{ff}\,
+        C_{\rm ff}\,
         Z^2\, n_e\, n_i\,
         T^{-1/2}\,
-        g_{ff}
+        g_{\rm ff}
 
     i.e.\ it is **independent of frequency** and has a shallower temperature
     dependence than the full expression.  This approximation is appropriate for
@@ -242,20 +250,20 @@ def _log_ff_RJ_emissivity(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
         Accepted for API consistency but not used in the computation.
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -280,7 +288,7 @@ def _log_ff_RJ_emissivity(
     # but we broadcast against it so the output shape matches the input shape of nu.
     return (
         _log_ff_emissivity_coefficient_cgs
-        + 2 * log_Z
+        + 2 * np.log(Z)
         + log_n_e
         + log_n_i
         - 0.5 * log_T
@@ -293,7 +301,7 @@ def _log_ff_RJ_absorption(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -322,19 +330,19 @@ def _log_ff_RJ_absorption(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -356,14 +364,301 @@ def _log_ff_RJ_absorption(
     _log_ff_absorption : Exact form of the absorption coefficient.
     _log_ff_RJ_emissivity : Matching RJ emissivity.
     """
-    return _log_ff_absorption_coefficient_cgs + 2 * log_Z + log_n_e + log_n_i - 1.5 * log_T - 2 * log_nu + np.log(g_ff)
+    return (
+        _log_ff_absorption_coefficient_cgs + 2 * np.log(Z) + log_n_e + log_n_i - 1.5 * log_T - 2 * log_nu + np.log(g_ff)
+    )
+
+
+def _log_ff_emissivity_comp(
+    log_nu: "Union[float, _ArrayLike]",
+    log_n_e: "Union[float, _ArrayLike]",
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    gffs: "_ArrayLike",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the exact free–free emissivity for a multi-species plasma.
+
+    Computes the composition-weighted effective Gaunt factor
+
+    .. math::
+
+        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    and evaluates the log-emissivity as if :math:`Z = 1` with
+    :math:`g_{\rm ff} = g_{\rm ff,eff}`, reproducing the full multi-species sum
+
+    .. math::
+
+        j_\nu = C_{\rm ff}\, n_e\, n_i\, T^{-1/2}\, e^{-h\nu/k_B T}\,
+                \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}.
+
+    Parameters
+    ----------
+    log_nu : float or ~numpy.ndarray
+        Natural logarithm of the photon frequency :math:`\nu` [Hz].
+    log_n_e : float or ~numpy.ndarray
+        Natural logarithm of the electron number density [cm\ :sup:`-3`].
+    log_n_i : float or ~numpy.ndarray
+        Natural logarithm of the total ion number density [cm\ :sup:`-3`].
+    log_T : float or ~numpy.ndarray
+        Natural logarithm of the electron temperature [K].
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    gffs : ~numpy.ndarray
+        Pre-computed free–free Gaunt factor for each species (dimensionless).
+
+    Returns
+    -------
+    log_jnu : float or ~numpy.ndarray
+        Natural logarithm of the emissivity
+        :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    Raises
+    ------
+    ValueError
+        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.
+
+    See Also
+    --------
+    _log_ff_emissivity : Single-species exact emissivity.
+    _log_ff_absorption_comp : Composition-weighted exact absorption coefficient.
+    _log_ff_RJ_emissivity_comp : Composition-weighted Rayleigh–Jeans emissivity.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    gffs = np.asarray(gffs, dtype=float)
+
+    if not (Zs.shape == Xs.shape == gffs.shape):
+        raise ValueError(f"Zs, Xs, and gffs must have the same shape; got {Zs.shape}, {Xs.shape}, {gffs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs, Xs, and gffs must be 1-D arrays; got shape {Zs.shape}.")
+
+    g_ff_eff = np.sum(Zs**2 * Xs * gffs)
+    return _log_ff_emissivity(log_nu, log_n_e, log_n_i, 1.0, log_T, g_ff_eff)
+
+
+def _log_ff_absorption_comp(
+    log_nu: "Union[float, _ArrayLike]",
+    log_n_e: "Union[float, _ArrayLike]",
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    gffs: "_ArrayLike",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the exact free–free absorption coefficient for a multi-species plasma.
+
+    Computes the composition-weighted effective Gaunt factor
+
+    .. math::
+
+        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    and evaluates the log-absorption coefficient as if :math:`Z = 1` with
+    :math:`g_{\rm ff} = g_{\rm ff,eff}`, reproducing
+
+    .. math::
+
+        \alpha_\nu = C_\alpha\, n_e\, n_i\, T^{-1/2}\, \nu^{-3}\,
+                     (1 - e^{-h\nu/k_B T})\,
+                     \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}.
+
+    Parameters
+    ----------
+    log_nu : float or ~numpy.ndarray
+        Natural logarithm of the photon frequency :math:`\nu` [Hz].
+    log_n_e : float or ~numpy.ndarray
+        Natural logarithm of the electron number density [cm\ :sup:`-3`].
+    log_n_i : float or ~numpy.ndarray
+        Natural logarithm of the total ion number density [cm\ :sup:`-3`].
+    log_T : float or ~numpy.ndarray
+        Natural logarithm of the electron temperature [K].
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    gffs : ~numpy.ndarray
+        Pre-computed free–free Gaunt factor for each species (dimensionless).
+
+    Returns
+    -------
+    log_alpha : float or ~numpy.ndarray
+        Natural logarithm of the absorption coefficient
+        :math:`\alpha_\nu` [cm\ :sup:`-1`].
+
+    Raises
+    ------
+    ValueError
+        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.
+
+    See Also
+    --------
+    _log_ff_absorption : Single-species exact absorption coefficient.
+    _log_ff_emissivity_comp : Composition-weighted exact emissivity.
+    _log_ff_RJ_absorption_comp : Composition-weighted Rayleigh–Jeans absorption.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    gffs = np.asarray(gffs, dtype=float)
+
+    if not (Zs.shape == Xs.shape == gffs.shape):
+        raise ValueError(f"Zs, Xs, and gffs must have the same shape; got {Zs.shape}, {Xs.shape}, {gffs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs, Xs, and gffs must be 1-D arrays; got shape {Zs.shape}.")
+
+    g_ff_eff = np.sum(Zs**2 * Xs * gffs)
+    return _log_ff_absorption(log_nu, log_n_e, log_n_i, 1.0, log_T, g_ff_eff)
+
+
+def _log_ff_RJ_emissivity_comp(
+    log_nu: "Union[float, _ArrayLike]",
+    log_n_e: "Union[float, _ArrayLike]",
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    gffs: "_ArrayLike",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the Rayleigh–Jeans free–free emissivity for a multi-species plasma.
+
+    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
+    :func:`_log_ff_emissivity_comp`.  Computes
+
+    .. math::
+
+        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    and evaluates :func:`_log_ff_RJ_emissivity` with :math:`Z = 1` and
+    :math:`g_{\rm ff} = g_{\rm ff,eff}`.
+
+    Parameters
+    ----------
+    log_nu : float or ~numpy.ndarray
+        Natural logarithm of the photon frequency :math:`\nu` [Hz].
+    log_n_e : float or ~numpy.ndarray
+        Natural logarithm of the electron number density [cm\ :sup:`-3`].
+    log_n_i : float or ~numpy.ndarray
+        Natural logarithm of the total ion number density [cm\ :sup:`-3`].
+    log_T : float or ~numpy.ndarray
+        Natural logarithm of the electron temperature [K].
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    gffs : ~numpy.ndarray
+        Pre-computed free–free Gaunt factor for each species (dimensionless).
+
+    Returns
+    -------
+    log_jnu : float or ~numpy.ndarray
+        Natural logarithm of the RJ emissivity
+        :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    Raises
+    ------
+    ValueError
+        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.
+
+    See Also
+    --------
+    _log_ff_RJ_emissivity : Single-species RJ emissivity.
+    _log_ff_emissivity_comp : Composition-weighted exact emissivity.
+    _log_ff_RJ_absorption_comp : Composition-weighted RJ absorption coefficient.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    gffs = np.asarray(gffs, dtype=float)
+
+    if not (Zs.shape == Xs.shape == gffs.shape):
+        raise ValueError(f"Zs, Xs, and gffs must have the same shape; got {Zs.shape}, {Xs.shape}, {gffs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs, Xs, and gffs must be 1-D arrays; got shape {Zs.shape}.")
+
+    g_ff_eff = np.sum(Zs**2 * Xs * gffs)
+    return _log_ff_RJ_emissivity(log_nu, log_n_e, log_n_i, 1.0, log_T, g_ff_eff)
+
+
+def _log_ff_RJ_absorption_comp(
+    log_nu: "Union[float, _ArrayLike]",
+    log_n_e: "Union[float, _ArrayLike]",
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    gffs: "_ArrayLike",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.
+
+    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
+    :func:`_log_ff_absorption_comp`.  Computes
+
+    .. math::
+
+        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    and evaluates :func:`_log_ff_RJ_absorption` with :math:`Z = 1` and
+    :math:`g_{\rm ff} = g_{\rm ff,eff}`.
+
+    Parameters
+    ----------
+    log_nu : float or ~numpy.ndarray
+        Natural logarithm of the photon frequency :math:`\nu` [Hz].
+    log_n_e : float or ~numpy.ndarray
+        Natural logarithm of the electron number density [cm\ :sup:`-3`].
+    log_n_i : float or ~numpy.ndarray
+        Natural logarithm of the total ion number density [cm\ :sup:`-3`].
+    log_T : float or ~numpy.ndarray
+        Natural logarithm of the electron temperature [K].
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species (:math:`Z_i \geq 1`).
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    gffs : ~numpy.ndarray
+        Pre-computed free–free Gaunt factor for each species (dimensionless).
+
+    Returns
+    -------
+    log_alpha : float or ~numpy.ndarray
+        Natural logarithm of the RJ absorption coefficient
+        :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].
+
+    Raises
+    ------
+    ValueError
+        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.
+
+    See Also
+    --------
+    _log_ff_RJ_absorption : Single-species RJ absorption coefficient.
+    _log_ff_absorption_comp : Composition-weighted exact absorption coefficient.
+    _log_ff_RJ_emissivity_comp : Composition-weighted RJ emissivity.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    gffs = np.asarray(gffs, dtype=float)
+
+    if not (Zs.shape == Xs.shape == gffs.shape):
+        raise ValueError(f"Zs, Xs, and gffs must have the same shape; got {Zs.shape}, {Xs.shape}, {gffs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs, Xs, and gffs must be 1-D arrays; got shape {Zs.shape}.")
+
+    g_ff_eff = np.sum(Zs**2 * Xs * gffs)
+    return _log_ff_RJ_absorption(log_nu, log_n_e, log_n_i, 1.0, log_T, g_ff_eff)
 
 
 def _log_ff_Wien_emissivity(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -391,19 +686,19 @@ def _log_ff_Wien_emissivity(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -423,14 +718,16 @@ def _log_ff_Wien_emissivity(
 
     exp_term = -h_cgs * nu / (kB_cgs * T)
 
-    return _log_ff_emissivity_coefficient_cgs + 2 * log_Z + log_n_e + log_n_i - 0.5 * log_T + exp_term + np.log(g_ff)
+    return (
+        _log_ff_emissivity_coefficient_cgs + 2 * np.log(Z) + log_n_e + log_n_i - 0.5 * log_T + exp_term + np.log(g_ff)
+    )
 
 
 def _log_ff_Wien_absorption(
     log_nu: "Union[float, _ArrayLike]",
     log_n_e: "Union[float, _ArrayLike]",
     log_n_i: "Union[float, _ArrayLike]",
-    log_Z: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
     log_T: "Union[float, _ArrayLike]",
     g_ff: "Union[float, _ArrayLike]",
 ) -> "Union[float, np.ndarray]":
@@ -460,19 +757,19 @@ def _log_ff_Wien_absorption(
 
     Parameters
     ----------
-    log_nu : float or array-like
+    log_nu : float or ~numpy.ndarray
         Natural logarithm of the photon frequency :math:`\nu` [Hz].
-    log_n_e : float or array-like
+    log_n_e : float or ~numpy.ndarray
         Natural logarithm of the electron number density :math:`n_e`
         [cm\ :sup:`-3`].
-    log_n_i : float or array-like
+    log_n_i : float or ~numpy.ndarray
         Natural logarithm of the ion number density :math:`n_i`
         [cm\ :sup:`-3`].
-    log_Z : float or array-like
-        Natural logarithm of the mean ionic charge :math:`Z`.
-    log_T : float or array-like
+    Z : float or ~numpy.ndarray
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    log_T : float or ~numpy.ndarray
         Natural logarithm of the electron temperature :math:`T` [K].
-    g_ff : float or array-like
+    g_ff : float or ~numpy.ndarray
         Free–free Gaunt factor (dimensionless, must be positive).
 
     Returns
@@ -494,21 +791,122 @@ def _log_ff_Wien_absorption(
     _log_ff_Wien_emissivity : Matching Wien emissivity.
     _log_ff_RJ_absorption : Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`).
     """
-    return _log_ff_absorption_coefficient_cgs + 2 * log_Z + log_n_e + log_n_i - 0.5 * log_T - 3 * log_nu + np.log(g_ff)
+    return (
+        _log_ff_absorption_coefficient_cgs + 2 * np.log(Z) + log_n_e + log_n_i - 0.5 * log_T - 3 * log_nu + np.log(g_ff)
+    )
+
+
+# ---------------------------------------------- #
+# Miscellaneous Functions
+# ---------------------------------------------- #
+def _log_ff_cooling_time(
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Z: "Union[float, _ArrayLike]",
+    g_ff: "Union[float, _ArrayLike]",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the thermal free–free cooling time.
+
+    Evaluates
+
+    .. math::
+
+        t_{\rm cool} = C_{\rm cool}\,
+        \left(\frac{T}{10^4\,\mathrm{K}}\right)^{1/2}
+        \frac{1}{n_i\, Z^2\, \bar{g}_{\rm ff}}
+
+    where :math:`C_{\rm cool} = 4.6 \times 10^5\,\mathrm{yr}`.
+
+    Parameters
+    ----------
+    log_n_i : float or array_like
+        Natural logarithm of the ion number density :math:`n_i` [cm\ :sup:`-3`].
+    log_T : float or array_like
+        Natural logarithm of the electron temperature :math:`T` [K].
+    Z : float or array_like
+        Mean ionic charge :math:`Z` (dimensionless, must be positive).
+    g_ff : float or array_like
+        Frequency-averaged free–free Gaunt factor (dimensionless, must be positive).
+
+    Returns
+    -------
+    log_t : float or ~numpy.ndarray
+        Natural logarithm of the cooling time :math:`t_{\rm cool}` [s].
+
+    See Also
+    --------
+    _log_ff_cooling_time_comp : Composition-weighted variant.
+    """
+    result = _log_ff_cooling_time_coefficient_cgs + 0.5 * (log_T - np.log(1e4)) - log_n_i - 2 * np.log(Z) - np.log(g_ff)
+    return result if np.isfinite(result) else -np.inf
+
+
+def _log_ff_cooling_time_comp(
+    log_n_i: "Union[float, _ArrayLike]",
+    log_T: "Union[float, _ArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    gffs: "_ArrayLike",
+) -> "Union[float, np.ndarray]":
+    r"""
+    Natural logarithm of the thermal free–free cooling time for a multi-species plasma.
+
+    Computes the composition-weighted effective Gaunt factor
+    :math:`g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, \bar{g}_{{\rm ff},i}` and
+    delegates to :func:`_log_ff_cooling_time` with :math:`Z = 1`.
+
+    Parameters
+    ----------
+    log_n_i : float or array_like
+        Natural logarithm of the total ion number density :math:`n_i` [cm\ :sup:`-3`].
+    log_T : float or array_like
+        Natural logarithm of the electron temperature :math:`T` [K].
+    Zs : (N,) array_like
+        Ionic charge numbers of each species.
+    Xs : (N,) array_like
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    gffs : (N,) array_like
+        Frequency-averaged Gaunt factor for each species (dimensionless).
+
+    Returns
+    -------
+    log_t : float or ~numpy.ndarray
+        Natural logarithm of the cooling time :math:`t_{\rm cool}` [s].
+
+    Raises
+    ------
+    ValueError
+        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.
+
+    See Also
+    --------
+    _log_ff_cooling_time : Single-species variant.
+    """
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+    gffs = np.asarray(gffs, dtype=float)
+
+    if not (Zs.shape == Xs.shape == gffs.shape):
+        raise ValueError(f"Zs, Xs, and gffs must have the same shape; got {Zs.shape}, {Xs.shape}, {gffs.shape}.")
+    if Zs.ndim != 1:
+        raise ValueError(f"Zs, Xs, and gffs must be 1-D arrays; got shape {Zs.shape}.")
+
+    g_ff_eff = np.sum(Zs**2 * Xs * gffs)
+    return _log_ff_cooling_time(log_n_i, log_T, 1.0, g_ff_eff)
 
 
 # =============================================== #
 # Public Functions for Free-Free
 # =============================================== #
-
-
 def compute_ff_emissivity(
     nu: "Union[float, _UnitBearingArrayLike]",
     n_e: "Union[float, _UnitBearingArrayLike]",
     n_i: "Union[float, _UnitBearingArrayLike]",
     Z: "Union[float, np.ndarray]",
     T: "Union[float, _UnitBearingArrayLike]",
-    g_ff: "Union[float, np.ndarray]" = 5.0,
+    g_ff: "Union[float, np.ndarray, None]" = None,
+    approx: str = "lu",
 ) -> u.Quantity:
     r"""
     Thermal free–free (bremsstrahlung) spectral emissivity.
@@ -531,25 +929,30 @@ def compute_ff_emissivity(
 
     Parameters
     ----------
-    nu : float or `~astropy.units.Quantity`
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.
-    n_e : float or `~astropy.units.Quantity`
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron number density :math:`n_e`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    n_i : float or `~astropy.units.Quantity`
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Ion number density :math:`n_i`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    Z : float or array-like
+    Z : float or ~numpy.ndarray
         Mean ionic charge (dimensionless).  For hydrogen plasma, ``Z = 1``.
-    T : float or `~astropy.units.Quantity`
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.
-    g_ff : float or array-like, optional
-        Free–free Gaunt factor (dimensionless).  Default is ``5.0``, a
-        reasonable approximation for radio through optical frequencies.
+    g_ff : float, ~numpy.ndarray, or None, optional
+        Free–free Gaunt factor (dimensionless).  If ``None`` (default), the
+        Gaunt factor is computed automatically via ``approx``.  Pass a scalar
+        or array to override.
+    approx : str, optional
+        Approximation method forwarded to
+        :func:`~.gaunt_factor.compute_ff_gaunt_factor` when ``g_ff`` is
+        ``None``.  Default is ``'lu'``.
 
     Returns
     -------
-    j_nu : `~astropy.units.Quantity`
+    j_nu : ~astropy.units.Quantity
         Monochromatic emissivity
         :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
 
@@ -607,11 +1010,14 @@ def compute_ff_emissivity(
     n_i = ensure_in_units(n_i, u.cm**-3)
     T = ensure_in_units(T, u.K)
 
+    if g_ff is None:
+        g_ff = compute_ff_gaunt_factor(nu, T, Z, approx=approx)
+
     log_j = _log_ff_emissivity(
         np.log(nu),
         np.log(n_e),
         np.log(n_i),
-        np.log(Z),
+        Z,
         np.log(T),
         g_ff,
     )
@@ -625,7 +1031,8 @@ def compute_ff_absorption(
     n_i: "Union[float, _UnitBearingArrayLike]",
     Z: "Union[float, np.ndarray]",
     T: "Union[float, _UnitBearingArrayLike]",
-    g_ff: "Union[float, np.ndarray]" = 5.0,
+    g_ff: "Union[float, np.ndarray, None]" = None,
+    approx: str = "lu",
 ) -> u.Quantity:
     r"""
     Thermal free–free (bremsstrahlung) absorption coefficient.
@@ -658,24 +1065,29 @@ def compute_ff_absorption(
 
     Parameters
     ----------
-    nu : float or `~astropy.units.Quantity`
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.
-    n_e : float or `~astropy.units.Quantity`
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron number density :math:`n_e`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    n_i : float or `~astropy.units.Quantity`
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Ion number density :math:`n_i`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    Z : float or array-like
+    Z : float or ~numpy.ndarray
         Mean ionic charge (dimensionless).
-    T : float or `~astropy.units.Quantity`
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.
-    g_ff : float or array-like, optional
-        Free–free Gaunt factor (dimensionless).  Default is ``5.0``.
+    g_ff : float, ~numpy.ndarray, or None, optional
+        Free–free Gaunt factor (dimensionless).  If ``None`` (default),
+        computed automatically via ``approx``.
+    approx : str, optional
+        Approximation method forwarded to
+        :func:`~.gaunt_factor.compute_ff_gaunt_factor` when ``g_ff`` is
+        ``None``.  Default is ``'lu'``.
 
     Returns
     -------
-    alpha_nu : `~astropy.units.Quantity`
+    alpha_nu : ~astropy.units.Quantity
         Absorption coefficient :math:`\alpha_\nu` [cm\ :sup:`-1`].
 
     Notes
@@ -739,11 +1151,14 @@ def compute_ff_absorption(
     n_i = ensure_in_units(n_i, u.cm**-3)
     T = ensure_in_units(T, u.K)
 
+    if g_ff is None:
+        g_ff = compute_ff_gaunt_factor(nu, T, Z, approx=approx)
+
     log_alpha = _log_ff_absorption(
         np.log(nu),
         np.log(n_e),
         np.log(n_i),
-        np.log(Z),
+        Z,
         np.log(T),
         g_ff,
     )
@@ -757,7 +1172,8 @@ def compute_ff_RJ_emissivity(
     n_i: "Union[float, _UnitBearingArrayLike]",
     Z: "Union[float, np.ndarray]",
     T: "Union[float, _UnitBearingArrayLike]",
-    g_ff: "Union[float, np.ndarray]" = 5.0,
+    g_ff: "Union[float, np.ndarray, None]" = None,
+    approx: str = "draine",
 ) -> u.Quantity:
     r"""
     Rayleigh–Jeans limit free–free spectral emissivity.
@@ -781,26 +1197,32 @@ def compute_ff_RJ_emissivity(
 
     Parameters
     ----------
-    nu : float or `~astropy.units.Quantity`
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency :math:`\nu`.  Accepted for interface consistency with
         :func:`compute_ff_emissivity` but **not used** in the computation.
         Bare floats are assumed to be in **Hz**.
-    n_e : float or `~astropy.units.Quantity`
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron number density :math:`n_e`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    n_i : float or `~astropy.units.Quantity`
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Ion number density :math:`n_i`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    Z : float or array-like
+    Z : float or ~numpy.ndarray
         Mean ionic charge (dimensionless).
-    T : float or `~astropy.units.Quantity`
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.
-    g_ff : float or array-like, optional
-        Free–free Gaunt factor (dimensionless).  Default is ``5.0``.
+    g_ff : float, ~numpy.ndarray, or None, optional
+        Free–free Gaunt factor (dimensionless).  If ``None`` (default),
+        computed automatically using the frequency-averaged approximation
+        selected by ``approx``.
+    approx : str, optional
+        Approximation method forwarded to
+        :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor` when ``g_ff`` is
+        ``None``.  Default is ``'draine'``.
 
     Returns
     -------
-    j_nu : `~astropy.units.Quantity`
+    j_nu : ~astropy.units.Quantity
         Emissivity
         :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
 
@@ -860,11 +1282,14 @@ def compute_ff_RJ_emissivity(
     n_i = ensure_in_units(n_i, u.cm**-3)
     T = ensure_in_units(T, u.K)
 
+    if g_ff is None:
+        g_ff = compute_mean_ff_gaunt_factor(T, Z, approx=approx)
+
     log_j = _log_ff_RJ_emissivity(
         np.log(nu),
         np.log(n_e),
         np.log(n_i),
-        np.log(Z),
+        Z,
         np.log(T),
         g_ff,
     )
@@ -878,7 +1303,8 @@ def compute_ff_RJ_absorption(
     n_i: "Union[float, _UnitBearingArrayLike]",
     Z: "Union[float, np.ndarray]",
     T: "Union[float, _UnitBearingArrayLike]",
-    g_ff: "Union[float, np.ndarray]" = 5.0,
+    g_ff: "Union[float, np.ndarray, None]" = None,
+    approx: str = "draine",
 ) -> u.Quantity:
     r"""
     Rayleigh–Jeans limit free–free absorption coefficient.
@@ -903,24 +1329,30 @@ def compute_ff_RJ_absorption(
 
     Parameters
     ----------
-    nu : float or `~astropy.units.Quantity`
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.
-    n_e : float or `~astropy.units.Quantity`
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron number density :math:`n_e`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    n_i : float or `~astropy.units.Quantity`
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Ion number density :math:`n_i`.
         Bare floats are assumed to be in **cm**\ :sup:`-3`.
-    Z : float or array-like
+    Z : float or ~numpy.ndarray
         Mean ionic charge (dimensionless).
-    T : float or `~astropy.units.Quantity`
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
         Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.
-    g_ff : float or array-like, optional
-        Free–free Gaunt factor (dimensionless).  Default is ``5.0``.
+    g_ff : float, ~numpy.ndarray, or None, optional
+        Free–free Gaunt factor (dimensionless).  If ``None`` (default),
+        computed automatically using the frequency-averaged approximation
+        selected by ``approx``.
+    approx : str, optional
+        Approximation method forwarded to
+        :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor` when ``g_ff`` is
+        ``None``.  Default is ``'draine'``.
 
     Returns
     -------
-    alpha_nu : `~astropy.units.Quantity`
+    alpha_nu : ~astropy.units.Quantity
         Absorption coefficient
         :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].
 
@@ -988,13 +1420,286 @@ def compute_ff_RJ_absorption(
     n_i = ensure_in_units(n_i, u.cm**-3)
     T = ensure_in_units(T, u.K)
 
+    if g_ff is None:
+        g_ff = compute_mean_ff_gaunt_factor(T, Z, approx=approx)
+
     log_alpha = _log_ff_RJ_absorption(
         np.log(nu),
         np.log(n_e),
         np.log(n_i),
-        np.log(Z),
+        Z,
         np.log(T),
         g_ff,
     )
 
+    return np.exp(log_alpha) / u.cm
+
+
+# =============================================== #
+# Composition-weighted public wrappers            #
+# =============================================== #
+def compute_ff_emissivity_comp(
+    nu: "Union[float, _UnitBearingArrayLike]",
+    n_e: "Union[float, _UnitBearingArrayLike]",
+    n_i: "Union[float, _UnitBearingArrayLike]",
+    T: "Union[float, _UnitBearingArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    g_ffs: "Union[_ArrayLike, None]" = None,
+    approx: str = "lu",
+) -> u.Quantity:
+    r"""Thermal free–free emissivity for a multi-species plasma.
+
+    Computes
+
+    .. math::
+
+        j_\nu = C_{\rm ff}\, n_e\, n_i\, T^{-1/2}\, e^{-h\nu/k_B T}\,
+                \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    Parameters
+    ----------
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Bare floats assumed to be in **K**.
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species.
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    g_ffs : ~numpy.ndarray or None, optional
+        Pre-computed per-species Gaunt factors.  If ``None`` (default),
+        computed via ``approx``.
+    approx : str, optional
+        Forwarded to :func:`~.gaunt_factor.compute_ff_gaunt_factor_comp`
+        when ``g_ffs`` is ``None``.  Default is ``'lu'``.
+
+    Returns
+    -------
+    j_nu : ~astropy.units.Quantity
+        Emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_emissivity : Single-species variant.
+    compute_ff_absorption_comp : Composition-weighted absorption coefficient.
+    compute_ff_RJ_emissivity_comp : Rayleigh–Jeans variant.
+    """
+    nu = ensure_in_units(nu, u.Hz)
+    n_e = ensure_in_units(n_e, u.cm**-3)
+    n_i = ensure_in_units(n_i, u.cm**-3)
+    T = ensure_in_units(T, u.K)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if g_ffs is None:
+        g_ff_eff = compute_ff_gaunt_factor_comp(nu, T, Zs, Xs, approx=approx)
+    else:
+        g_ffs = np.asarray(g_ffs, dtype=float)
+        g_ff_eff = np.sum(Zs**2 * Xs * g_ffs)
+
+    log_j = _log_ff_emissivity(np.log(nu), np.log(n_e), np.log(n_i), 1.0, np.log(T), g_ff_eff)
+    return np.exp(log_j) * u.erg / (u.s * u.cm**3 * u.Hz * u.sr)
+
+
+def compute_ff_absorption_comp(
+    nu: "Union[float, _UnitBearingArrayLike]",
+    n_e: "Union[float, _UnitBearingArrayLike]",
+    n_i: "Union[float, _UnitBearingArrayLike]",
+    T: "Union[float, _UnitBearingArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    g_ffs: "Union[_ArrayLike, None]" = None,
+    approx: str = "lu",
+) -> u.Quantity:
+    r"""Thermal free–free absorption coefficient for a multi-species plasma.
+
+    Computes
+
+    .. math::
+
+        \alpha_\nu = C_\alpha\, n_e\, n_i\, T^{-1/2}\, \nu^{-3}\,
+                     (1 - e^{-h\nu/k_B T})\,
+                     \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}
+
+    Parameters
+    ----------
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Bare floats assumed to be in **K**.
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species.
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    g_ffs : ~numpy.ndarray or None, optional
+        Pre-computed per-species Gaunt factors.  If ``None`` (default),
+        computed via ``approx``.
+    approx : str, optional
+        Forwarded to :func:`~.gaunt_factor.compute_ff_gaunt_factor_comp`
+        when ``g_ffs`` is ``None``.  Default is ``'lu'``.
+
+    Returns
+    -------
+    alpha_nu : ~astropy.units.Quantity
+        Absorption coefficient [cm\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_absorption : Single-species variant.
+    compute_ff_emissivity_comp : Composition-weighted emissivity.
+    compute_ff_RJ_absorption_comp : Rayleigh–Jeans variant.
+    """
+    nu = ensure_in_units(nu, u.Hz)
+    n_e = ensure_in_units(n_e, u.cm**-3)
+    n_i = ensure_in_units(n_i, u.cm**-3)
+    T = ensure_in_units(T, u.K)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if g_ffs is None:
+        g_ff_eff = compute_ff_gaunt_factor_comp(nu, T, Zs, Xs, approx=approx)
+    else:
+        g_ffs = np.asarray(g_ffs, dtype=float)
+        g_ff_eff = np.sum(Zs**2 * Xs * g_ffs)
+
+    log_alpha = _log_ff_absorption(np.log(nu), np.log(n_e), np.log(n_i), 1.0, np.log(T), g_ff_eff)
+    return np.exp(log_alpha) / u.cm
+
+
+def compute_ff_RJ_emissivity_comp(
+    nu: "Union[float, _UnitBearingArrayLike]",
+    n_e: "Union[float, _UnitBearingArrayLike]",
+    n_i: "Union[float, _UnitBearingArrayLike]",
+    T: "Union[float, _UnitBearingArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    g_ffs: "Union[_ArrayLike, None]" = None,
+    approx: str = "draine",
+) -> u.Quantity:
+    r"""Rayleigh–Jeans free–free emissivity for a multi-species plasma.
+
+    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
+    :func:`compute_ff_emissivity_comp`.  Uses the frequency-averaged Gaunt
+    factor :math:`\bar{g}_{\rm ff}` by default.
+
+    Parameters
+    ----------
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Bare floats assumed to be in **K**.
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species.
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    g_ffs : ~numpy.ndarray or None, optional
+        Pre-computed per-species Gaunt factors.  If ``None`` (default),
+        computed via the frequency-averaged ``approx``.
+    approx : str, optional
+        Forwarded to :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor_comp`
+        when ``g_ffs`` is ``None``.  Default is ``'draine'``.
+
+    Returns
+    -------
+    j_nu : ~astropy.units.Quantity
+        RJ emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_RJ_emissivity : Single-species RJ emissivity.
+    compute_ff_emissivity_comp : Exact composition-weighted emissivity.
+    compute_ff_RJ_absorption_comp : Composition-weighted RJ absorption.
+    """
+    nu = ensure_in_units(nu, u.Hz)
+    n_e = ensure_in_units(n_e, u.cm**-3)
+    n_i = ensure_in_units(n_i, u.cm**-3)
+    T = ensure_in_units(T, u.K)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if g_ffs is None:
+        g_ff_eff = compute_mean_ff_gaunt_factor_comp(T, Zs, Xs, approx=approx)
+    else:
+        g_ffs = np.asarray(g_ffs, dtype=float)
+        g_ff_eff = np.sum(Zs**2 * Xs * g_ffs)
+
+    log_j = _log_ff_RJ_emissivity(np.log(nu), np.log(n_e), np.log(n_i), 1.0, np.log(T), g_ff_eff)
+    return np.exp(log_j) * u.erg / (u.s * u.cm**3 * u.Hz * u.sr)
+
+
+def compute_ff_RJ_absorption_comp(
+    nu: "Union[float, _UnitBearingArrayLike]",
+    n_e: "Union[float, _UnitBearingArrayLike]",
+    n_i: "Union[float, _UnitBearingArrayLike]",
+    T: "Union[float, _UnitBearingArrayLike]",
+    Zs: "_ArrayLike",
+    Xs: "_ArrayLike",
+    g_ffs: "Union[_ArrayLike, None]" = None,
+    approx: str = "draine",
+) -> u.Quantity:
+    r"""Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.
+
+    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of
+    :func:`compute_ff_absorption_comp`.  Uses the frequency-averaged Gaunt
+    factor :math:`\bar{g}_{\rm ff}` by default.
+
+    Parameters
+    ----------
+    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.
+    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.
+    T : float, ~numpy.ndarray, or ~astropy.units.Quantity
+        Electron temperature.  Bare floats assumed to be in **K**.
+    Zs : ~numpy.ndarray
+        Ionic charge numbers of each species.
+    Xs : ~numpy.ndarray
+        Number fractions of each species (:math:`\sum_i x_i = 1`).
+    g_ffs : ~numpy.ndarray or None, optional
+        Pre-computed per-species Gaunt factors.  If ``None`` (default),
+        computed via the frequency-averaged ``approx``.
+    approx : str, optional
+        Forwarded to :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor_comp`
+        when ``g_ffs`` is ``None``.  Default is ``'draine'``.
+
+    Returns
+    -------
+    alpha_nu : ~astropy.units.Quantity
+        RJ absorption coefficient [cm\ :sup:`-1`].
+
+    See Also
+    --------
+    compute_ff_RJ_absorption : Single-species RJ absorption.
+    compute_ff_absorption_comp : Exact composition-weighted absorption.
+    compute_ff_RJ_emissivity_comp : Composition-weighted RJ emissivity.
+    """
+    nu = ensure_in_units(nu, u.Hz)
+    n_e = ensure_in_units(n_e, u.cm**-3)
+    n_i = ensure_in_units(n_i, u.cm**-3)
+    T = ensure_in_units(T, u.K)
+    Zs = np.asarray(Zs, dtype=float)
+    Xs = np.asarray(Xs, dtype=float)
+
+    if g_ffs is None:
+        g_ff_eff = compute_mean_ff_gaunt_factor_comp(T, Zs, Xs, approx=approx)
+    else:
+        g_ffs = np.asarray(g_ffs, dtype=float)
+        g_ff_eff = np.sum(Zs**2 * Xs * g_ffs)
+
+    log_alpha = _log_ff_RJ_absorption(np.log(nu), np.log(n_e), np.log(n_i), 1.0, np.log(T), g_ff_eff)
     return np.exp(log_alpha) / u.cm
