@@ -83,6 +83,7 @@ __all__ = [
     "invert_powerlaw_implicit_cooling_sed",
     "invert_powerlaw_ssa_sed_demarchi",
     "invert_powerlaw_implicit_cooling_ssa_sed",
+    "invert_barniol_duran_coasting",
     "_invert_powerlaw_sed",
     "_invert_powerlaw_cooling_sed",
     "_invert_powerlaw_cooling_ssa_sed",
@@ -90,6 +91,7 @@ __all__ = [
     "_invert_powerlaw_implicit_cooling_sed",
     "_invert_powerlaw_ssa_sed_demarchi",
     "_invert_powerlaw_implicit_cooling_ssa_sed",
+    "_invert_barniol_duran_coasting",
 ]
 
 
@@ -1613,6 +1615,189 @@ def _invert_powerlaw_ssa_sed_demarchi(
     return np.exp(_log_B), np.exp(_log_R)
 
 
+def _invert_barniol_duran_coasting(
+    log_F_p: "_ArrayLike",
+    log_nu_p: "_ArrayLike",
+    log_D_L: "_ArrayLike",
+    log_t: "_ArrayLike",
+    z: Union[float, np.ndarray] = 0.0,
+    eta: Union[float, np.ndarray] = 1.0,
+    f_A: Union[float, np.ndarray] = 1.0,
+    f_V: Union[float, np.ndarray] = 1.0,
+) -> dict:
+    r"""
+    Invert a synchrotron peak using the Barniol-Duran coasting-phase equipartition closure.
+
+    This low-level helper implements the :footcite:t:`duran2013radius` inversion
+    for a relativistic source in its coasting phase. Given the observed peak flux
+    density, peak frequency, luminosity distance, and observer time, it infers the
+    equipartition radius :math:`R`, bulk Lorentz factor :math:`\Gamma`, total
+    equipartition energy :math:`E`, electron Lorentz factor :math:`\gamma_e`,
+    number of radiating electrons :math:`N_e`, and magnetic field strength
+    :math:`B`.
+
+    All inputs are natural-logarithm CGS quantities. The paper normalisation
+    units (mJy, :math:`10^{28}` cm, 10 GHz, days) are applied internally via
+    log-space offsets. No unit validation or cosmological resolution is
+    performed here.
+
+    Parameters
+    ----------
+    log_F_p : array-like
+        Natural logarithm of the observed peak flux density in
+        ``erg cm^-2 s^-1 Hz^-1``.
+    log_nu_p : array-like
+        Natural logarithm of the observed peak frequency in Hz.
+    log_D_L : array-like
+        Natural logarithm of the luminosity distance in cm.
+    log_t : array-like
+        Natural logarithm of the observer time in s.
+    z : float or array-like, optional
+        Source redshift.
+    eta : float or array-like, optional
+        SSA correction factor. Equal to :math:`\nu_p / \nu_a` when
+        :math:`\nu_a < \nu_p`, and 1 otherwise.
+    f_A : float or array-like, optional
+        Effective area filling factor of the emitting region.
+    f_V : float or array-like, optional
+        Effective volume filling factor of the emitting region.
+
+    Returns
+    -------
+    dict
+        Dictionary of inferred physical parameters in linear CGS units with
+        the keys
+
+        - ``"R"`` : equipartition radius in cm
+        - ``"Gamma"`` : bulk Lorentz factor (dimensionless)
+        - ``"E"`` : total equipartition energy in erg
+        - ``"gamma_e"`` : characteristic electron Lorentz factor (dimensionless)
+        - ``"N_e"`` : number of radiating electrons (dimensionless)
+        - ``"B"`` : magnetic field strength in G
+
+    Notes
+    -----
+    The derived quantities :math:`\gamma_e`, :math:`N_e`, and :math:`B` assume
+    exact equipartition and depend on the computed :math:`R` and
+    :math:`\Gamma`. The formalism is only valid for sources in the coasting
+    phase (i.e., non-decelerating) and for relativistic outflows.
+
+    .. dropdown:: Applicability
+       :icon: chevron-down
+
+       The closure is only valid for relativistic outflows in the coasting
+       phase. For decelerating sources, the more general fixed-:math:`\Gamma`
+       formulae should be used instead. For non-relativistic sources, a
+       Newtonian correction is required.
+
+    See Also
+    --------
+    invert_barniol_duran_coasting
+        Public, unit-aware wrapper.
+    :ref:`barnoil_duran`
+        Theory note describing the Barniol-Duran formalism.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    # Normalise inputs to paper units in log space.
+    log_F_mJy = log_F_p - np.log(1e-26)  # 1 mJy = 1e-26 erg cm^-2 s^-1 Hz^-1
+    log_d28 = log_D_L - np.log(1e28)  # normalise to 10^28 cm
+    log_nu10 = log_nu_p - np.log(1e10)  # normalise to 10 GHz
+    log_t_d = log_t - np.log(86400.0)  # normalise to days
+    log_eta = np.log(eta)
+    log_1pz = np.log1p(z)
+    log_fA = np.log(f_A)
+    log_fV = np.log(f_V)
+
+    # Equipartition radius (eq. A1 of Barniol-Duran 2013).
+    log_R = (
+        np.log(7.5e17)
+        + (2 / 3) * log_F_mJy
+        + (4 / 3) * log_d28
+        + (-17 / 12) * log_nu10
+        + (35 / 36) * log_eta
+        + (-5 / 3) * log_1pz
+        + (-5 / 12) * log_t_d
+        + (-7 / 12) * log_fA
+        + (-1 / 12) * log_fV
+    )
+
+    # Bulk Lorentz factor (eq. A2 of Barniol-Duran 2013).
+    log_Gamma = (
+        np.log(12.0)
+        + (1 / 3) * log_F_mJy
+        + (2 / 3) * log_d28
+        + (-17 / 24) * log_nu10
+        + (35 / 72) * log_eta
+        + (-1 / 3) * log_1pz
+        + (-17 / 24) * log_t_d
+        + (-7 / 24) * log_fA
+        + (-1 / 24) * log_fV
+    )
+
+    # Equipartition energy (eq. A3 of Barniol-Duran 2013).
+    log_E = (
+        np.log(5.7e47)
+        + (2 / 3) * log_F_mJy
+        + (4 / 3) * log_d28
+        + (1 / 12) * log_nu10
+        + (5 / 36) * log_eta
+        + (-5 / 3) * log_1pz
+        + (13 / 12) * log_t_d
+        + (-1 / 12) * log_fA
+        + (5 / 12) * log_fV
+    )
+
+    # Derived quantities assuming exact equipartition (eqs. A4-A6 of Barniol-Duran 2013).
+    log_R17 = log_R - np.log(1e17)
+
+    log_gamma_e = (
+        np.log(525.0)
+        + log_F_mJy
+        + 2 * log_d28
+        + (-2) * log_nu10
+        + (5 / 3) * log_eta
+        + (-3) * log_1pz
+        + log_Gamma
+        + (-1) * log_fA
+        + 2 * log_R17
+    )
+
+    log_N_e = (
+        np.log(1e54)
+        + 3 * log_F_mJy
+        + 6 * log_d28
+        + (-5) * log_nu10
+        + (10 / 3) * log_eta
+        + (-8) * log_1pz
+        + (-2) * log_fA
+        + (-4) * log_R17
+    )
+
+    log_B = (
+        np.log(1.3e-2)
+        + (-2) * log_F_mJy
+        + (-4) * log_d28
+        + 5 * log_nu10
+        + (-10 / 3) * log_eta
+        + 7 * log_1pz
+        + 2 * log_fA
+        + 4 * log_R17
+        + (-3) * log_Gamma
+    )
+
+    return {
+        "R": np.exp(log_R),
+        "Gamma": np.exp(log_Gamma),
+        "E": np.exp(log_E),
+        "gamma_e": np.exp(log_gamma_e),
+        "N_e": np.exp(log_N_e),
+        "B": np.exp(log_B),
+    }
+
+
 # ================================================ #
 # PUBLIC METHODS
 # ================================================ #
@@ -2776,3 +2961,149 @@ def invert_powerlaw_ssa_sed_demarchi(
         gamma_max=gamma_max,
     )
     return B * u.Gauss, R * u.cm
+
+
+def invert_barniol_duran_coasting(
+    F_p: "_UnitBearingScalarLike",
+    nu_p: "_UnitBearingScalarLike",
+    t: "_UnitBearingScalarLike",
+    *,
+    eta: Union[float, np.ndarray] = 1.0,
+    f_A: Union[float, np.ndarray] = 1.0,
+    f_V: Union[float, np.ndarray] = 1.0,
+    redshift: float = None,
+    luminosity_distance: "_UnitBearingScalarLike" = None,
+    angular_diameter_distance: "_UnitBearingScalarLike" = None,
+    proper_distance: "_UnitBearingScalarLike" = None,
+    cosmology: "cosmo.Cosmology" = None,
+) -> dict:
+    r"""
+    Invert a synchrotron peak using the Barniol-Duran coasting-phase equipartition closure.
+
+    This is the public, unit-aware wrapper for the :footcite:t:`duran2013radius`
+    coasting-phase inversion. It maps an observed peak flux density, peak
+    frequency, and observer time to the inferred equipartition radius
+    :math:`R`, bulk Lorentz factor :math:`\Gamma`, total energy :math:`E`,
+    characteristic electron Lorentz factor :math:`\gamma_e`, number of
+    radiating electrons :math:`N_e`, and magnetic field strength :math:`B`.
+
+    Parameters
+    ----------
+    F_p : float, array-like, or ~astropy.units.Quantity
+        Observed peak flux density. Must be convertible to
+        ``erg cm^-2 s^-1 Hz^-1``. Unitless values are interpreted in Jy.
+    nu_p : float, array-like, or ~astropy.units.Quantity
+        Observed peak frequency. Must be convertible to Hz.
+        Unitless values are interpreted in Hz.
+    t : float, array-like, or ~astropy.units.Quantity
+        Observer time since the explosion. Must be convertible to s.
+        Unitless values are interpreted in s.
+    eta : float or array-like, optional
+        SSA correction factor :math:`\eta`. Equal to :math:`\nu_p / \nu_a`
+        when :math:`\nu_a < \nu_p`, and 1 when :math:`\nu_a \geq \nu_p`.
+    f_A : float or array-like, optional
+        Effective area filling factor of the emitting region.
+    f_V : float or array-like, optional
+        Effective volume filling factor of the emitting region.
+    redshift : float, optional
+        Source redshift.
+    luminosity_distance : float, array-like, or ~astropy.units.Quantity, optional
+        Luminosity distance to the source.
+    angular_diameter_distance : float, array-like, or ~astropy.units.Quantity, optional
+        Angular-diameter distance to the source.
+    proper_distance : float, array-like, or ~astropy.units.Quantity, optional
+        Proper distance to the source.
+    cosmology : ~astropy.cosmology.Cosmology, optional
+        Cosmology used to resolve missing distance information.
+
+    Returns
+    -------
+    dict
+        Dictionary containing
+
+        - ``"R"`` : equipartition radius as a Quantity in cm
+        - ``"Gamma"`` : bulk Lorentz factor (dimensionless float or ndarray)
+        - ``"E"`` : total equipartition energy as a Quantity in erg
+        - ``"gamma_e"`` : characteristic electron Lorentz factor (dimensionless)
+        - ``"N_e"`` : number of radiating electrons (dimensionless)
+        - ``"B"`` : magnetic field strength as a Quantity in G
+
+    Notes
+    -----
+    The derived quantities :math:`\gamma_e`, :math:`N_e`, and :math:`B` assume
+    exact equipartition and depend on the computed :math:`R` and
+    :math:`\Gamma`. The formalism is only valid for sources in the coasting
+    phase (non-decelerating) and for relativistic outflows. For
+    non-relativistic sources or decelerating sources, different treatments
+    are required.
+
+    .. dropdown:: Applicability
+       :icon: chevron-down
+
+       Use this function when you have a relativistic source in its coasting
+       phase (constant :math:`\Gamma`) and wish to infer all physical
+       parameters directly from the observed synchrotron peak. The observer
+       time is used to eliminate :math:`\Gamma` as an independent variable.
+
+    .. dropdown:: Important caveat
+       :icon: alert
+
+       This closure assumes the source is relativistic and non-decelerating.
+       Applying it to decelerating or sub-relativistic sources will yield
+       incorrect results.
+
+    See Also
+    --------
+    _invert_barniol_duran_coasting
+        Low-level log-space backend.
+    :ref:`barnoil_duran`
+        Theory note describing the Barniol-Duran formalism.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    # ------------------------------------------------------------------ #
+    # Resolve cosmological information.
+    # ------------------------------------------------------------------ #
+    cosmology = get_cosmology(cosmology=cosmology)
+    distances = resolve_cosmological_distances(
+        redshift=redshift,
+        luminosity_distance=luminosity_distance,
+        angular_diameter_distance=angular_diameter_distance,
+        proper_distance=proper_distance,
+        cosmology=cosmology,
+    )
+    D_L = distances["luminosity_distance"]
+    redshift = distances["redshift"]
+
+    # ------------------------------------------------------------------ #
+    # Unit enforcement and conversion to internal log-space representation.
+    # ------------------------------------------------------------------ #
+    log_F_p = np.log(ensure_in_units(F_p, "erg cm^-2 s^-1 Hz^-1"))
+    log_nu_p = np.log(ensure_in_units(nu_p, "Hz"))
+    log_D_L = np.log(ensure_in_units(D_L, "cm"))
+    log_t = np.log(ensure_in_units(t, "s"))
+
+    # ------------------------------------------------------------------ #
+    # Dispatch to the low-level inverse closure.
+    # ------------------------------------------------------------------ #
+    results = _invert_barniol_duran_coasting(
+        log_F_p=log_F_p,
+        log_nu_p=log_nu_p,
+        log_D_L=log_D_L,
+        log_t=log_t,
+        z=redshift,
+        eta=eta,
+        f_A=f_A,
+        f_V=f_V,
+    )
+
+    return {
+        "R": results["R"] * u.cm,
+        "Gamma": results["Gamma"],
+        "E": results["E"] * u.erg,
+        "gamma_e": results["gamma_e"],
+        "N_e": results["N_e"],
+        "B": results["B"] * u.G,
+    }

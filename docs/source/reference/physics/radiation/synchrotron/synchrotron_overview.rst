@@ -430,5 +430,7 @@ The table below maps common modeling tasks to the relevant documentation:
       - :ref:`synchrotron_cooling`
     * - Learn about stratified synchrotron self-absorption
       - :ref:`stratified_absorption`
+    * - Invert a relativistic synchrotron peak using equipartition (Barniol-Duran)
+      - :ref:`barnoil_duran`
 
 .. footbibliography::
