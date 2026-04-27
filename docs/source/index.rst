@@ -12,9 +12,6 @@
 .. raw:: html
 
            </div>
-               <p style="font-size:10px"> Developed and maintained by Eliza Diggins and the Extragalactic
-               Transients Group (TREX) at UC Berkeley.</p>
-                <p style="font-size:10px"> Available under a GNU AGPLv3 license.</p>
        </div>
    </div>
 
@@ -191,6 +188,28 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
+.. raw:: html
+
+   <div class="affiliation-footer">
+     <p class="affiliation-label">Developed at</p>
+     <div class="affiliation-logos">
+       <a href="https://www.berkeley.edu" target="_blank" rel="noopener noreferrer">
+         <img src="_static/berkeley_logo.svg"
+              alt="University of California, Berkeley"
+              class="affiliation-logo">
+       </a>
+       <img src="_static/trex_logo.png"
+            alt="Extragalactic Transients Group (TREX)"
+            class="affiliation-logo affiliation-logo-trex">
+     </div>
+     <p class="affiliation-text">
+       TRICERATOPS is developed and maintained by Eliza Diggins and the
+       <strong>Extragalactic Transients Group (TREX)</strong> in the Department
+       of Astronomy at the <strong>University of California, Berkeley</strong>.
+       Available under the GNU AGPLv3 license.
+     </p>
+   </div>
 
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg

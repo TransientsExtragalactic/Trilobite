@@ -281,6 +281,7 @@ sphinx_gallery_conf = {
         "./galleries/accretion",
         "./galleries/photometry",
         "./galleries/opacity",
+        "./galleries/free_free",
     ],
     "gallery_dirs": [
         "auto_examples/data",
@@ -291,6 +292,7 @@ sphinx_gallery_conf = {
         "auto_examples/accretion",
         "auto_examples/photometry",
         "auto_examples/opacity",
+        "auto_examples/free_free",
     ],
     # Do not abort the build if an individual gallery example fails.
     # Computationally intensive examples (MCMC, long integrations) may

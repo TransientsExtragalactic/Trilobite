@@ -52,9 +52,20 @@ _ff_emissivity_coefficient_cgs = 6.8e-38
 _log_ff_emissivity_coefficient_cgs = np.log(_ff_emissivity_coefficient_cgs)
 
 #: Pre-computed free–free absorption coefficient :math:`C_\alpha` in CGS
-#: (cm⁻¹), from Rybicki & Lightman Eq. 5.19.
+#: (cm⁵ K^{1/2} Hz^3), from Rybicki & Lightman Eq. 5.19.  Used by the
+#: *exact* (non-RJ) absorption backend which carries T^{-1/2} and ν^{-3}.
 _ff_absorption_coefficient_cgs = 3.7e8
 _log_ff_absorption_coefficient_cgs = np.log(_ff_absorption_coefficient_cgs)
+
+#: Rayleigh–Jeans absorption coefficient :math:`C_\alpha^{\rm RJ}` in CGS
+#: (cm⁵ K^{3/2} Hz^2).  Derived from the exact coefficient via the RJ
+#: substitution :math:`(1 - e^{-h\nu/k_BT}) \approx h\nu/k_BT`:
+#:
+#:   :math:`C_\alpha^{\rm RJ} = C_\alpha \cdot h / k_B \approx 0.01776`.
+#:
+#: This is the constant that multiplies T^{-3/2} and ν^{-2} in the RJ form.
+_ff_RJ_absorption_coefficient_cgs = _ff_absorption_coefficient_cgs * h_cgs / kB_cgs
+_log_ff_RJ_absorption_coefficient_cgs = np.log(_ff_RJ_absorption_coefficient_cgs)
 
 _ff_cooling_time_coefficient_cgs = (4.6e5 * u.yr).to_value(u.s)
 _log_ff_cooling_time_coefficient_cgs = np.log(_ff_cooling_time_coefficient_cgs)
