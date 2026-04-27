@@ -67,7 +67,7 @@ except PackageNotFoundError:
 # Base Class                                                         #
 # ================================================================== #
 class _OneZoneMeta(ABCMeta):
-    """Metaclass for all one-zone accretion disk models.
+    r"""Metaclass for all one-zone accretion disk models.
 
     One-zone disk models are highly **declarative**: subclasses specify their
     physics entirely through four class-level dicts
@@ -2038,7 +2038,7 @@ class OneZoneAccretionResult:
     # ---------------------------------------------- #
 
     def get_field(self, name: str) -> _FieldValue:
-        """Return a single field by name from :attr:`data` with an informative error.
+        r"""Return a single field by name from :attr:`data` with an informative error.
 
         Similar to ``result[name]`` but raises a :exc:`KeyError` that lists
         all available field names when *name* is not found, making interactive
@@ -2066,9 +2066,9 @@ class OneZoneAccretionResult:
 
         .. code-block:: python
 
-            $ result.get_field("T_c")
+            > result.get_field("T_c")
             <Quantity [...] K>
-            $ result.get_field("typo")
+            > result.get_field("typo")
             KeyError: "Field 'typo' not found. Available fields: ['J_D', 'M_D', ...]"
         """
         d = self.data

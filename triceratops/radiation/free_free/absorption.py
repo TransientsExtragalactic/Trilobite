@@ -83,6 +83,9 @@ _trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
 _sigma_T_cgs: float = 6.6524e-25
 r"""float: Thomson cross-section :math:`\sigma_T` [cm\ :sup:`2`]."""
 
+_m_p_cgs: float = 1.67262192e-24
+r"""float: Proton mass :math:`m_p` [g]."""
+
 
 # ============================================== #
 # Private helpers                                #
@@ -773,6 +776,125 @@ def compute_ff_RJ_optical_depth_wind(
     n_i_0_cgs = float(ensure_in_units(n_i_0, u.cm**-3))
     r_max_cgs = float(ensure_in_units(r_max, u.cm))
     T_cgs = float(ensure_in_units(temperature, u.K))
+
+    return _compute_RJ_ff_optical_depth_wind(
+        log_nu=np.log(nu_cgs),
+        log_r_min=np.log(r_min_cgs),
+        log_r_0=np.log(r_0_cgs),
+        log_n_e_0=np.log(n_e_0_cgs),
+        log_n_i_0=np.log(n_i_0_cgs),
+        log_r_max=np.log(r_max_cgs),
+        log_T=np.log(T_cgs),
+        Z=Z,
+        X=X,
+        g_ff=g_ff,
+        thomson=thomson,
+    )
+
+
+def compute_ff_RJ_optical_depth_wind_Mdot(
+    frequency: "_UnitBearingArrayLike",
+    Mdot: "Union[float, u.Quantity]",
+    v_w: "Union[float, u.Quantity]",
+    r_min: "Union[float, u.Quantity]",
+    *,
+    mu_e: float = 1.0,
+    mu_i: float = 1.0,
+    r_max: "Union[float, u.Quantity]" = np.inf,
+    temperature: "Union[float, u.Quantity]" = 1.0e4,
+    Z: "Union[float, _ArrayLike]" = 1.0,
+    X: "Optional[_ArrayLike]" = None,
+    g_ff: "Optional[Union[float, _ArrayLike]]" = None,
+    thomson: bool = False,
+) -> np.ndarray:
+    r"""Free-free optical depth through a steady wind, parameterised by mass-loss rate (RJ limit).
+
+    Converts the mass-loss rate :math:`\dot{M}` and wind velocity :math:`v_w` into
+    electron and ion number densities at the reference radius :math:`r_0` via
+
+    .. math::
+
+        n_{e,0} = \frac{\dot{M}}{4\pi\,m_p\,\mu_e\,v_w\,r_0^2},
+        \qquad
+        n_{i,0} = \frac{\dot{M}}{4\pi\,m_p\,\mu_i\,v_w\,r_0^2},
+
+    then evaluates the same analytic wind integral as
+    :func:`compute_ff_RJ_optical_depth_wind`.
+
+    Parameters
+    ----------
+    frequency : float or `~astropy.units.Quantity` or array-like
+        Photon frequencies.  Bare floats assumed to be in **Hz**.
+    Mdot : float or `~astropy.units.Quantity`
+        Mass-loss rate :math:`\dot{M}`.  Bare floats assumed to be in **g/s**.
+        Typical usage: ``1e-5 * u.Msun / u.yr``.
+    v_w : float or `~astropy.units.Quantity`
+        Wind terminal velocity :math:`v_w`.  Bare floats assumed to be in **cm/s**.
+        Typical usage: ``1e3 * u.km / u.s``.
+    r_min : float or `~astropy.units.Quantity`
+        Inner integration radius.  Bare floats assumed to be in **cm**.
+    mu_e : float, optional
+        Mean molecular weight per electron :math:`\mu_e`.  Default ``1.0``
+        (fully ionized hydrogen).  For a solar-composition H/He plasma use
+        ``mu_e = 1.14``.
+    mu_i : float, optional
+        Mean molecular weight per ion :math:`\mu_i`.  Default ``1.0``
+        (fully ionized hydrogen).  For a solar-composition H/He plasma use
+        ``mu_i = 1.27``.
+    r_max : float or `~astropy.units.Quantity`, optional
+        Outer integration radius.  Default ``numpy.inf``.
+    temperature : float or `~astropy.units.Quantity`, optional
+        Uniform electron temperature.  Bare floats assumed to be in **K**.
+        Default ``1e4``.
+    Z : float or array-like, optional
+        Ionic charge(s).  Default ``1.0``.
+    X : array-like or None, optional
+        Number fractions.  ``None`` → single-species mode.
+    g_ff : float, array-like, or None, optional
+        Gaunt factor(s).  Auto-computed if ``None``.
+    thomson : bool, optional
+        Return :math:`\tau_{\rm eff}` if ``True``.  Default ``False``.
+
+    Returns
+    -------
+    tau : ~numpy.ndarray
+        Optical depths, one entry per frequency.
+
+    Examples
+    --------
+    .. code-block:: python
+
+        import numpy as np
+        from astropy import units as u
+        from triceratops.radiation.free_free import (
+            compute_ff_RJ_optical_depth_wind_Mdot,
+        )
+
+        nu = np.geomspace(1e8, 1e10, 50) * u.Hz
+        tau = compute_ff_RJ_optical_depth_wind_Mdot(
+            frequency=nu,
+            Mdot=1e-5 * u.Msun / u.yr,
+            v_w=1e3 * u.km / u.s,
+            r_min=1e15 * u.cm,
+        )
+
+    See Also
+    --------
+    compute_ff_RJ_optical_depth_wind : Same geometry parameterised by :math:`n_{e,0}`, :math:`n_{i,0}`.
+    compute_ff_RJ_optical_depth_powerlaw : General power-law density profile.
+    """
+    nu_cgs = np.atleast_1d(np.asarray(ensure_in_units(frequency, u.Hz), dtype=float))
+    Mdot_cgs = float(ensure_in_units(Mdot, u.g / u.s))
+    v_w_cgs = float(ensure_in_units(v_w, u.cm / u.s))
+    r_min_cgs = float(ensure_in_units(r_min, u.cm))
+    r_max_cgs = float(ensure_in_units(r_max, u.cm))
+    T_cgs = float(ensure_in_units(temperature, u.K))
+
+    r_0_cgs = r_min_cgs
+
+    prefactor = 4.0 * np.pi * _m_p_cgs * v_w_cgs * r_0_cgs**2
+    n_e_0_cgs = Mdot_cgs / (mu_e * prefactor)
+    n_i_0_cgs = Mdot_cgs / (mu_i * prefactor)
 
     return _compute_RJ_ff_optical_depth_wind(
         log_nu=np.log(nu_cgs),

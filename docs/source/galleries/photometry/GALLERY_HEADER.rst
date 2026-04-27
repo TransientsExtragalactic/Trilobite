@@ -11,13 +11,14 @@ converting between flux density and standard magnitude systems (AB, ST).
 
 These tools are the bridge between a physical model that predicts a spectral energy
 distribution and the broadband multi-filter light curves delivered by surveys such as ZTF,
-LSST/Rubin, and DECam.
+LSST/Rubin, DECam, and space-based observatories like HST and Kepler.
 
 .. rubric:: What you'll find here
 
 - Creating, inspecting, and visualising photometric filters
 - Assembling filters into a bundle and exploiting matrix-multiply convolution during MCMC
 - AB and ST magnitude conversions and filter-convolved synthetic light curves
+- Loading filters from the `SVO Filter Profile Service <https://svo2.cab.inta-csic.es/svo/theory/fps/>`_
 
 .. rubric:: API reference
 
@@ -25,4 +26,7 @@ LSST/Rubin, and DECam.
 :class:`~triceratops.utils.phot_utils.FilterBundle` —
 :func:`~triceratops.utils.phot_utils.flux_to_ab_mag` —
 :func:`~triceratops.utils.phot_utils.filter_to_ab_mag` —
-:func:`~triceratops.utils.phot_utils.load_filter_from_speclite`
+:func:`~triceratops.utils.phot_utils.load_filter_from_speclite` —
+:func:`~triceratops.utils.phot_utils.load_filter_from_svo` —
+:func:`~triceratops.utils.phot_utils.list_svo_filters` —
+:func:`~triceratops.utils.phot_utils.load_filters_from_svo`

@@ -98,8 +98,7 @@ Radiative Physics
 =================
 
 These galleries cover the low-level radiative physics machinery in Triceratops. The synchrotron
-gallery is organized into four progressive sub-sections. Opacity and free-free galleries are
-planned as example coverage expands.
+gallery is organized into four progressive sub-sections.
 
 .. grid:: 2
    :gutter: 3
@@ -125,14 +124,14 @@ planned as example coverage expands.
       showing the electron-scattering plateau, Kramers rise, and iron-group peak.
 
    .. grid-item-card:: Free-Free Emission
-      :class-card: sd-border-1
+      :link: auto_examples/free_free/index
+      :link-type: doc
 
       **Thermal bremsstrahlung from ionized gas.**
 
-      Free-free emissivity, absorption coefficients, and the interplay between synchrotron
-      and free-free components in radio transient spectra.
-
-      *Examples coming soon.*
+      Free-free emissivity and flux density in the X-ray regime, optical depth
+      profiles for wind and shell CSM geometries, and FFA attenuation of
+      synchrotron SEDs using the :mod:`~triceratops.radiation.free_free` module.
 
 .. toctree::
    :hidden:
@@ -145,3 +144,4 @@ planned as example coverage expands.
    auto_examples/synchrotron/index
    auto_examples/accretion/index
    auto_examples/opacity/index
+   auto_examples/free_free/index

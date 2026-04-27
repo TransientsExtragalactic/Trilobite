@@ -29,6 +29,7 @@ __all__ = [
     "compute_ff_RJ_optical_depth_powerlaw",
     "compute_ff_RJ_optical_depth_shell",
     "compute_ff_RJ_optical_depth_wind",
+    "compute_ff_RJ_optical_depth_wind_Mdot",
     "compute_ff_RJ_optical_depth_EM",
 ]
 
@@ -40,6 +41,7 @@ from .absorption import (
     compute_ff_RJ_optical_depth_powerlaw,
     compute_ff_RJ_optical_depth_shell,
     compute_ff_RJ_optical_depth_wind,
+    compute_ff_RJ_optical_depth_wind_Mdot,
 )
 from .core import (
     compute_ff_absorption,
