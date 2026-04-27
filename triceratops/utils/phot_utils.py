@@ -6,8 +6,6 @@ response curves, batched filter bundles optimised for MCMC hot loops, and conver
 between flux density and standard magnitude systems (AB, ST).
 """
 
-from __future__ import annotations
-
 import json
 from pathlib import Path
 from typing import TYPE_CHECKING, Optional, Union
@@ -17,6 +15,12 @@ import h5py
 import numpy as np
 from astropy import constants as const
 from astropy.table import Table
+
+# numpy <2.0 uses np.trapz; numpy >=2.0 renamed it to np.trapezoid
+try:
+    _trapz = np.trapezoid  # type: ignore[attr-defined]
+except AttributeError:
+    _trapz = np.trapz  # type: ignore[attr-defined]
 
 from triceratops.utils.misc_utils import ensure_in_units
 
@@ -114,7 +118,7 @@ class PhotometryFilter:
 
     def __init__(
         self,
-        wavelength: _UnitBearingArrayLike,
+        wavelength: "_UnitBearingArrayLike",
         transmission: np.ndarray,
         name: Optional[str] = None,
         weighting: str = "photon",
@@ -229,8 +233,8 @@ class PhotometryFilter:
                 frac{int T(lambda),dlambda}{int T(lambda)/lambda^2,dlambda}
             }
         """
-        numerator = np.trapz(self._transmission, self._wavelength)
-        denominator = np.trapz(self._transmission / self._wavelength**2, self._wavelength)
+        numerator = _trapz(self._transmission, self._wavelength)
+        denominator = _trapz(self._transmission / self._wavelength**2, self._wavelength)
         if denominator == 0.0:
             return float(np.average(self._wavelength, weights=self._transmission))
         return float(np.sqrt(abs(numerator / denominator)))
@@ -243,12 +247,12 @@ class PhotometryFilter:
     @property
     def filter_width_lambda(self) -> float:
         """Equivalent width of the filter in wavelength space (cm)."""
-        return float(np.trapz(self._transmission, self._wavelength))
+        return float(_trapz(self._transmission, self._wavelength))
 
     @property
     def filter_width_nu(self) -> float:
         """Equivalent width of the filter in frequency space (Hz)."""
-        return float(abs(np.trapz(self._transmission, self._frequency)))
+        return float(abs(_trapz(self._transmission, self._frequency)))
 
     # ====================================================================== #
     # Dunders                                                                #
@@ -417,8 +421,8 @@ class PhotometryFilter:
 
     def plot(
         self,
-        fig: Optional[matplotlib.figure.Figure] = None,
-        axes: Optional[matplotlib.axes.Axes] = None,
+        fig: "Optional[matplotlib.figure.Figure]" = None,
+        axes: "Optional[matplotlib.axes.Axes]" = None,
         wavelength_unit: str = "AA",
         **kwargs,
     ) -> tuple:
@@ -479,7 +483,7 @@ class PhotometryFilter:
         }
 
     @classmethod
-    def from_dict(cls, d: dict) -> PhotometryFilter:
+    def from_dict(cls, d: dict) -> "PhotometryFilter":
         """
         Reconstruct a :class:`PhotometryFilter` from a dictionary.
 
@@ -512,7 +516,7 @@ class PhotometryFilter:
             json.dump(self.to_dict(), fh, indent=2)
 
     @classmethod
-    def from_json(cls, path: Union[str, Path]) -> PhotometryFilter:
+    def from_json(cls, path: Union[str, Path]) -> "PhotometryFilter":
         """
         Load a :class:`PhotometryFilter` from a JSON file.
 
@@ -551,7 +555,7 @@ class PhotometryFilter:
             grp.attrs["weighting"] = self._weighting
 
     @classmethod
-    def from_hdf5(cls, path: Union[str, Path], key: str = "filter") -> PhotometryFilter:
+    def from_hdf5(cls, path: Union[str, Path], key: str = "filter") -> "PhotometryFilter":
         """
         Load a :class:`PhotometryFilter` from an HDF5 file.
 
@@ -600,7 +604,7 @@ class PhotometryFilter:
         table: Table,
         name: Optional[str] = None,
         weighting: Optional[str] = None,
-    ) -> PhotometryFilter:
+    ) -> "PhotometryFilter":
         """
         Reconstruct a :class:`PhotometryFilter` from an :class:`astropy.table.Table`.
 
@@ -645,7 +649,7 @@ class PhotometryFilter:
         arr: np.ndarray,
         name: Optional[str] = None,
         weighting: str = "photon",
-    ) -> PhotometryFilter:
+    ) -> "PhotometryFilter":
         """
         Reconstruct a :class:`PhotometryFilter` from a 2-D NumPy array.
 
@@ -1052,8 +1056,8 @@ class FilterBundle:
 
     def plot(
         self,
-        fig: Optional[matplotlib.figure.Figure] = None,
-        axes: Optional[matplotlib.axes.Axes] = None,
+        fig: "Optional[matplotlib.figure.Figure]" = None,
+        axes: "Optional[matplotlib.axes.Axes]" = None,
         wavelength_unit: str = "AA",
         legend: bool = True,
         **kwargs,
@@ -1124,7 +1128,7 @@ class FilterBundle:
         return {"filters": {name: filt.to_dict() for name, filt in self._filters.items()}}
 
     @classmethod
-    def from_dict(cls, d: dict) -> FilterBundle:
+    def from_dict(cls, d: dict) -> "FilterBundle":
         """
         Reconstruct a :class:`FilterBundle` from a dictionary.
 
@@ -1152,7 +1156,7 @@ class FilterBundle:
             json.dump(self.to_dict(), fh, indent=2)
 
     @classmethod
-    def from_json(cls, path: Union[str, Path]) -> FilterBundle:
+    def from_json(cls, path: Union[str, Path]) -> "FilterBundle":
         """
         Load a :class:`FilterBundle` from a JSON file.
 
@@ -1191,7 +1195,7 @@ class FilterBundle:
                 grp.attrs["weighting"] = filt.weighting
 
     @classmethod
-    def from_hdf5(cls, path: Union[str, Path]) -> FilterBundle:
+    def from_hdf5(cls, path: Union[str, Path]) -> "FilterBundle":
         """
         Load a :class:`FilterBundle` from an HDF5 file.
 
@@ -1515,3 +1519,194 @@ def list_speclite_filters(group: Optional[str] = None) -> list:
     if group is not None:
         names = [n for n in names if n.startswith(group)]
     return sorted(names)
+
+
+def load_filter_from_svo(
+    filter_id: str,
+    weighting: str = "photon",
+    cache: bool = True,
+    timeout: int = 60,
+) -> PhotometryFilter:
+    """
+    Load a photometric filter from the SVO Filter Profile Service.
+
+    Fetches the transmission curve for *filter_id* from the Spanish Virtual
+    Observatory (SVO) Filter Profile Service via ``astroquery.svo_fps``.
+    Results are cached locally by astroquery for one week, so repeated calls
+    for the same filter do not require a network round-trip.
+
+    Requires the optional ``astroquery`` package::
+
+        pip install triceratops[optical]
+
+    Parameters
+    ----------
+    filter_id : str
+        SVO filter identifier in ``facility/instrument.band`` notation, e.g.
+        ``"Kepler/Kepler.K"``, ``"2MASS/2MASS.H"``, ``"Generic/Johnson.R"``.
+        Browse available IDs at
+        https://svo2.cab.inta-csic.es/svo/theory/fps/.
+    weighting : str, optional
+        ``"photon"`` (default, appropriate for CCDs) or ``"energy"``.
+    cache : bool, optional
+        Whether to use astroquery's on-disk cache (default ``True``).
+    timeout : int, optional
+        HTTP request timeout in seconds (default 60).
+
+    Returns
+    -------
+    PhotometryFilter
+
+    Raises
+    ------
+    ImportError
+        If ``astroquery`` is not installed.
+    ValueError
+        If *filter_id* is not found in the SVO catalogue.
+    """
+    try:
+        from astroquery.svo_fps import SvoFps
+    except ImportError:
+        raise ImportError(
+            "astroquery is required to load SVO filters. Install it with: pip install triceratops[optical]"
+        ) from None
+
+    table = SvoFps.get_transmission_data(filter_id, cache=cache, timeout=timeout)
+    if len(table) == 0:
+        raise ValueError(
+            f"Filter '{filter_id}' was not found in the SVO Filter Profile Service. "
+            "Check the filter ID at https://svo2.cab.inta-csic.es/svo/theory/fps/."
+        )
+
+    wavelength = np.asarray(table["Wavelength"], dtype=float) * u.Angstrom
+    transmission = np.asarray(table["Transmission"], dtype=float)
+    transmission = np.where(np.isfinite(transmission) & (transmission >= 0.0), transmission, 0.0)
+    return PhotometryFilter(wavelength, transmission, name=filter_id, weighting=weighting)
+
+
+def list_svo_filters(
+    facility: str,
+    instrument: Optional[str] = None,
+    cache: bool = True,
+    timeout: int = 60,
+) -> Table:
+    """
+    List filters available in the SVO Filter Profile Service for a given facility.
+
+    Returns the full metadata table so callers can inspect effective
+    wavelengths, zero-points, and FWHM values before deciding which filters
+    to load.
+
+    Requires the optional ``astroquery`` package::
+
+        pip install triceratops[optical]
+
+    Parameters
+    ----------
+    facility : str
+        Telescope or observatory name as registered in SVO, e.g. ``"Kepler"``,
+        ``"HST"``, ``"SDSS"``, ``"2MASS"``.
+    instrument : str, optional
+        Restrict results to a specific instrument (e.g. ``"WFC3_IR"``).
+        If ``None`` (default) all instruments for the facility are returned.
+    cache : bool, optional
+        Whether to use astroquery's on-disk cache (default ``True``).
+    timeout : int, optional
+        HTTP request timeout in seconds (default 60).
+
+    Returns
+    -------
+    astropy.table.Table
+        Table with columns including ``filterID``, ``WavelengthEff``,
+        ``WavelengthMin``, ``WavelengthMax``, ``FWHM``, ``ZeroPoint``,
+        ``MagSys``, and others. Pass ``table["filterID"]`` to
+        :func:`load_filter_from_svo` to fetch individual transmission curves.
+
+    Raises
+    ------
+    ImportError
+        If ``astroquery`` is not installed.
+    """
+    try:
+        from astroquery.svo_fps import SvoFps
+    except ImportError:
+        raise ImportError(
+            "astroquery is required to query the SVO. Install it with: pip install triceratops[optical]"
+        ) from None
+
+    table = SvoFps.get_filter_list(facility, cache=cache, timeout=timeout)
+
+    if instrument is not None:
+        # The SVO server does not reliably filter by instrument via URL params,
+        # so we filter client-side on the filterID column ("facility/instrument.band").
+        mask = np.array([f"/{instrument}." in str(fid) for fid in table["filterID"]])
+        table = table[mask]
+
+    return table
+
+
+def load_filters_from_svo(
+    facility: str,
+    instrument: Optional[str] = None,
+    weighting: str = "photon",
+    cache: bool = True,
+    timeout: int = 60,
+) -> dict:
+    """
+    Load all SVO filters for a facility as a dict ready for :class:`FilterBundle`.
+
+    Convenience wrapper around :func:`list_svo_filters` and
+    :func:`load_filter_from_svo`. Each filter's transmission curve is fetched
+    in a separate astroquery call; results are cached locally after the first
+    request.
+
+    Requires the optional ``astroquery`` package::
+
+        pip install triceratops[optical]
+
+    Parameters
+    ----------
+    facility : str
+        Telescope or observatory name (e.g. ``"Kepler"``, ``"2MASS"``).
+    instrument : str, optional
+        Restrict to a specific instrument. If ``None`` all instruments are
+        included.
+    weighting : str, optional
+        ``"photon"`` (default) or ``"energy"``.
+    cache : bool, optional
+        Whether to use astroquery's on-disk cache (default ``True``).
+    timeout : int, optional
+        HTTP request timeout in seconds per request (default 60).
+
+    Returns
+    -------
+    dict[str, PhotometryFilter]
+        Mapping of SVO ``filterID`` strings to :class:`PhotometryFilter`
+        objects. Pass directly to ``FilterBundle(filters)`` to build a bundle.
+
+    Raises
+    ------
+    ImportError
+        If ``astroquery`` is not installed.
+
+    Examples
+    --------
+    >>> filters = load_filters_from_svo("Kepler")
+    >>> from triceratops.utils.phot_utils import (
+    ...     FilterBundle,
+    ... )
+    >>> bundle = FilterBundle(filters)
+    """
+    from triceratops.utils.log import triceratops_logger
+
+    index = list_svo_filters(facility, instrument=instrument, cache=cache, timeout=timeout)
+    filter_ids = list(index["filterID"])
+    triceratops_logger.debug("Loading %d SVO filters for facility '%s'", len(filter_ids), facility)
+
+    result: dict = {}
+    for fid in filter_ids:
+        try:
+            result[fid] = load_filter_from_svo(fid, weighting=weighting, cache=cache, timeout=timeout)
+        except ValueError:
+            triceratops_logger.warning("SVO filter '%s' has no transmission data; skipping.", fid)
+    return result
