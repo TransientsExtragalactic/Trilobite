@@ -36,9 +36,11 @@ For physically coupled shock and radiation models,
 see the shock and synchrotron modules.
 """
 
-__all__ = ["synchrotron"]
+__all__ = ["synchrotron", "blackbody_optical"]
 
-from . import synchrotron
+from . import blackbody_optical, synchrotron
+from .blackbody_optical import *
 from .synchrotron import *
 
 __all__.extend(synchrotron.__all__)
+__all__.extend(blackbody_optical.__all__)

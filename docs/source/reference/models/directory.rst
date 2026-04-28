@@ -74,6 +74,13 @@ Quick Navigation
 
       Empirical and physical models for gamma-ray burst emission.
 
+   .. card:: 🔭 Optical Models
+      :link: optical_models
+      :link-type: ref
+      :class-card: sd-shadow-sm
+
+      Filter-convolved optical photometry models for multi-band inference.
+
 ---------------------------------------------------------------------
 
 .. _generic_models:
@@ -213,6 +220,42 @@ jet and afterglow models.
    :nosignatures:
 
    band.BandFunctionModel
+
+---------------------------------------------------------------------
+
+.. _optical_models:
+
+Optical Models
+--------------
+
+Optical models predict filter-convolved flux densities for multi-band photometric
+observations. They are built on the
+:class:`~triceratops.models.core.optical.OpticalModel` and
+:class:`~triceratops.models.core.optical.OpticalEpochModel` abstract base classes,
+which handle :class:`~triceratops.utils.phot_utils.FilterBundle` convolution,
+time deduplication, and band-index resolution automatically.
+
+See :ref:`optical_model_pattern` for a guide to implementing custom optical models.
+
+.. rubric:: Abstract Base Classes
+
+.. currentmodule:: triceratops.models.core.optical
+
+.. autosummary::
+   :nosignatures:
+
+   OpticalModel
+   OpticalEpochModel
+
+.. rubric:: Blackbody Models
+
+.. currentmodule:: triceratops.models.SEDs.blackbody_optical
+
+.. autosummary::
+   :nosignatures:
+
+   BlackbodyOpticalModel
+   BlackbodyOpticalEpochModel
 
 ---------------------------------------------------------------------
 

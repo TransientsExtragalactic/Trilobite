@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.135** total execution time for 48 files **from all galleries**:
+**00:01.178** total execution time for 48 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,17 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
+   * - :ref:`sphx_glr_auto_examples_free_free_a_gaunt_factors_plot_gaunt_factor_comparison.py` (``galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py``)
+     - 00:00.404
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_free_free_c_ffa_sed_plot_ffa_synchrotron_sed.py` (``galleries/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.py``)
+     - 00:00.401
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_photometry_plot_svo_filters.py` (``galleries/photometry/plot_svo_filters.py``)
+     - 00:00.292
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_free_free_b_emission_plot_ff_flux_prediction.py` (``galleries/free_free/b_emission/plot_ff_flux_prediction.py``)
-     - 00:00.135
+     - 00:00.081
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -75,12 +84,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_free_free_a_gaunt_factors_plot_gaunt_factor_comparison.py` (``galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_free_free_c_ffa_sed_plot_ffa_synchrotron_sed.py` (``galleries/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_inference_plot_SED_fit.py` (``galleries/inference/plot_SED_fit.py``)
@@ -135,9 +138,6 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_photometry_plot_magnitude_conversions.py` (``galleries/photometry/plot_magnitude_conversions.py``)
-     - 00:00.000
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_photometry_plot_svo_filters.py` (``galleries/photometry/plot_svo_filters.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_PL_sed.py` (``galleries/synchrotron/a_fundamentals/plot_PL_sed.py``)
