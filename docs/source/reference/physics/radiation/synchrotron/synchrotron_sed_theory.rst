@@ -44,6 +44,8 @@ the literature (see e.g. :footcite:t:`2025ApJ...992L..18S`).
     correctly computed in the observer frame. However, the theory is more straightforwardly described in the comoving
     frame and so we adopt this convention here.
 
+
+.. _single_zone_foundational_assumptions:
 Foundational Assumptions
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -56,7 +58,6 @@ the model and should not, under any circumstances, be violated. These include:
 - The **injected electron distribution** is a power law in Lorentz factor, with a minimum Lorentz factor
   :math:`\gamma_m`, a power-law index :math:`p`, and (optionally) a maximum Lorentz factor :math:`\gamma_M`.
 
-.. todo:: Are there any other foundational assumptions to be made.
 
 Parameters, Hyperparameters, and Physical Quantities
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
