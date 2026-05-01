@@ -53,10 +53,12 @@ population-averaged spectra to broadband multi-component SED fitting.
 
         - :ref:`synchrotron_theory`
         - :ref:`synch_sed_theory`
+        - :ref:`synch_numerical_sed_theory`
         - :ref:`synchrotron_cooling_theory`
         - :ref:`synchrotron_cooling_closure`
         - :ref:`stratified_absorption`
         - :ref:`barnoil_duran`
+        - :ref:`synch_numerical`
 
 .. toctree::
     :hidden:
@@ -70,6 +72,7 @@ population-averaged spectra to broadband multi-component SED fitting.
     synchrotron/synchrotron_cooling
     synchrotron/synchrotron_theory
     synchrotron/synchrotron_sed_theory
+    synchrotron/synchrotron_numerical_methods
     synchrotron/synchrotron_cooling_theory
     synchrotron/synchrotron_cooling_closure
     synchrotron/synchrotron_stratified_absorption

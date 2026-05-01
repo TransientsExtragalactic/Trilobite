@@ -14,9 +14,6 @@ __all__ = [
     "compute_nu_critical",
     "compute_synchrotron_frequency",
     "compute_synchrotron_gamma",
-    "compute_single_electron_power",
-    "compute_ME_spectrum_from_dist_function",
-    "compute_ME_spectrum_from_dist_grid",
     "compute_electron_gamma_BPL_moment",
     "compute_electron_gamma_PL_moment",
     "compute_electron_energy_BPL_moment",
@@ -76,10 +73,7 @@ from triceratops.radiation.synchrotron.SEDs import (
 from .cooling import InverseComptonCoolingEngine, SynchrotronCoolingEngine
 from .core import (
     compute_gyrofrequency,
-    compute_ME_spectrum_from_dist_function,
-    compute_ME_spectrum_from_dist_grid,
     compute_nu_critical,
-    compute_single_electron_power,
     compute_synchrotron_frequency,
     compute_synchrotron_gamma,
 )

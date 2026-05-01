@@ -1205,6 +1205,38 @@ In terms of the magnetic field, we also have
     :math:`(1-\delta) \epsilon_e U_{\rm thermal}` goes to a non-thermal population of electrons. In this case,
     the normalization of the thermal electron distribution is modified by a factor of :math:`\delta`.
 
+Mixed Distributions
+~~~~~~~~~~~~~~~~~~~
+
+In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
+made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
+a free parameter. We therefore introduce the :math:`\delta` parameter to represent the fraction of the electron
+energy in the **thermal** population. In this case,
+
+.. math::
+
+    U_{\rm e,\;thermal} = \delta \epsilon_e U_{\rm thermal}, \;\; U_{\rm e,\;non-thermal} = (1-\delta) \epsilon_e U_{\rm thermal}.
+
+In this case, the normalization of the thermal and non-thermal electron distributions are given by
+
+.. math::
+
+    \begin{aligned}
+    N_{0,\;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+    N_{0,\;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    \end{aligned}
+
+and, in terms of the :math:`B` field,
+
+.. math::
+
+    \begin{aligned}
+    N_{0,\;thermal} &= \frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+    N_{0,\;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
+    \end{aligned}
+
+----
+
 .. _electron_cooling:
 
 Cooling of Electrons

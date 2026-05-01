@@ -36,6 +36,8 @@ __all__ = [
     "disk_flux_density",
 ]
 
+_trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
+
 # ============================================================= #
 # Constants
 # ============================================================= #
@@ -157,7 +159,7 @@ def _disk_planck_ring_integral(
     with np.errstate(divide="ignore", over="ignore", invalid="ignore"):
         B_nu = np.exp(_log_planck_fnu_cgs(log_nu_2d, log_T_grid))
 
-    return np.trapz(r2_grid * B_nu, x=log_r, axis=1)  # (N_nu,)
+    return _trapz(r2_grid * B_nu, x=log_r, axis=1)  # (N_nu,)
 
 
 def _log_disk_bolometric_luminosity(

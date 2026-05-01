@@ -98,6 +98,11 @@ float
 """
 
 _log_chi_cgs = np.log(chi_cgs)
+
+_chi_abs_cgs = chi_cgs / constants.m_e.cgs.value
+r"""float: SSA prefactor :math:`\chi/m_e = \sqrt{3}e^3/(4\pi m_e^2 c^2)` in CGS."""
+_log_chi_abs_cgs = np.log(_chi_abs_cgs)
+r"""float: Natural log of the SSA prefactor :math:`\chi/m_e`."""
 r"""
 float
     Natural logarithm of the synchrotron normalization coefficient

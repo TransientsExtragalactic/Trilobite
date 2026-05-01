@@ -1169,6 +1169,160 @@ def _opt_normalize_BPL_from_magnetic_field(
     return N0.reshape(()) if N0.ndim == 0 else N0
 
 
+def _opt_normalize_MJD_from_magnetic_field(
+    B: "_ArrayLike",
+    Theta: "_ArrayLike",
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> np.ndarray:
+    r"""
+    Compute the total number density of a Maxwell-Jüttner electron distribution from the magnetic field.
+
+    The ultra-relativistic Maxwell-Jüttner distribution is parameterized as
+
+    .. math::
+
+        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+
+    where :math:`\Theta = kT/(m_e c^2)` is the dimensionless temperature and the prefactor ensures
+    :math:`\int_0^\infty N(\gamma)\,d\gamma = N_{\rm therm}`.
+
+    The mean energy density of this distribution is approximated by :footcite:p:`1998ApJ...498..313G`
+
+    .. math::
+
+        U_e \approx N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta},
+
+    which interpolates between the non-relativistic limit (:math:`U_e \approx \tfrac{3}{2}N_{\rm therm}kT`)
+    and the ultra-relativistic limit (:math:`U_e \approx 3N_{\rm therm}kT`).
+
+    Equipartition between the magnetic and electron energy densities then gives
+
+    .. math::
+
+        \varepsilon_E\,\frac{B^2}{8\pi\varepsilon_B}
+        = N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta},
+
+    which is solved for :math:`N_{\rm therm}`.
+
+    Parameters
+    ----------
+    B : array-like
+        Magnetic field strength in Gauss (CGS).
+    Theta : array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    epsilon_B : array-like
+        Fraction of post-shock energy in the magnetic field.
+    epsilon_E : array-like
+        Fraction of post-shock energy in relativistic electrons.
+
+    Returns
+    -------
+    numpy.ndarray
+        Total number density :math:`N_{\rm therm}` of the Maxwell-Jüttner distribution in
+        :math:`\mathrm{cm^{-3}}`. Scalar inputs return a scalar.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    log_B = np.log(np.asarray(B, dtype="f8"))
+    Theta = np.asarray(Theta, dtype="f8")
+    log_Theta = np.log(Theta)
+    epsilon_B = np.asarray(epsilon_B, dtype="f8")
+    epsilon_E = np.asarray(epsilon_E, dtype="f8")
+
+    a_Theta = (4 + 5 * Theta) / (6 + 15 * Theta)
+    log_N = (
+        np.log(epsilon_E / (8 * np.pi * epsilon_B))
+        + np.log(a_Theta)
+        + 2 * log_B
+        - log_Theta
+        - np.log(electron_rest_energy_cgs)
+    )
+    N = np.exp(log_N)
+
+    return N.reshape(()) if N.ndim == 0 else N
+
+
+def _opt_normalize_MJD_and_PL_from_magnetic_field(
+    B: "_ArrayLike",
+    Theta: "_ArrayLike",
+    p: "_ArrayLike",
+    delta: "_ArrayLike",
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+    gamma_min: "_ArrayLike" = 1.0,
+    gamma_max: "_ArrayLike" = np.inf,
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""
+    Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution from the magnetic field.
+
+    The total electron energy density is split between a thermal (Maxwell-Jüttner) component and a
+    non-thermal (power-law) component according to the thermal energy fraction :math:`\delta`:
+
+    .. math::
+
+        \varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+        \qquad
+        \varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.
+
+    Each component's normalization is then computed independently via equipartition:
+
+    - :math:`N_{\rm therm}` from :func:`_opt_normalize_MJD_from_magnetic_field` with
+      :math:`\varepsilon_E \to \delta\,\varepsilon_E`.
+    - :math:`N_0` from :func:`_opt_normalize_PL_from_magnetic_field` with
+      :math:`\varepsilon_E \to (1-\delta)\,\varepsilon_E`.
+
+    Parameters
+    ----------
+    B : array-like
+        Magnetic field strength in Gauss (CGS).
+    Theta : array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)` for the thermal component.
+    p : array-like
+        Power-law index of the non-thermal electron distribution.
+    delta : array-like
+        Fraction of the total electron energy density in the thermal component. Must satisfy
+        :math:`0 \le \delta \le 1`.
+    epsilon_B : array-like
+        Fraction of post-shock energy in the magnetic field.
+    epsilon_E : array-like
+        Total fraction of post-shock energy in relativistic electrons.
+    gamma_min : array-like, optional
+        Minimum Lorentz factor of the power-law component. Default is ``1``.
+    gamma_max : array-like, optional
+        Maximum Lorentz factor of the power-law component. Default is ``inf``.
+
+    Returns
+    -------
+    N_therm : numpy.ndarray
+        Total number density of the Maxwell-Jüttner component in :math:`\mathrm{cm^{-3}}`.
+    N0_pl : numpy.ndarray
+        Normalization constant of the power-law component :math:`N_0` in
+        :math:`N(\gamma) = N_0\,\gamma^{-p}`, in :math:`\mathrm{cm^{-3}}`.
+    """
+    delta = np.asarray(delta, dtype="f8")
+
+    N_therm = _opt_normalize_MJD_from_magnetic_field(
+        B=B,
+        Theta=Theta,
+        epsilon_B=epsilon_B,
+        epsilon_E=delta * epsilon_E,
+    )
+
+    N0_pl = _opt_normalize_PL_from_magnetic_field(
+        B=B,
+        p=p,
+        epsilon_B=epsilon_B,
+        epsilon_E=(1.0 - delta) * epsilon_E,
+        gamma_min=gamma_min,
+        gamma_max=gamma_max,
+    )
+
+    return N_therm, N0_pl
+
+
 def _opt_normalize_PL_from_thermal_energy_density(
     u_therm: "_ArrayLike",
     p: "_ArrayLike",
@@ -1229,6 +1383,123 @@ def _opt_normalize_BPL_from_thermal_energy_density(
 
     N0 = (epsilon_E * u_therm) / (electron_rest_energy_cgs * moment)
     return N0.reshape(()) if N0.ndim == 0 else N0
+
+
+def _opt_normalize_MJD_from_thermal_energy_density(
+    u_therm: "_ArrayLike",
+    Theta: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> np.ndarray:
+    r"""
+    Compute the total number density of a Maxwell-Jüttner electron distribution from the thermal energy density.
+
+    Identical in physics to :func:`_opt_normalize_MJD_from_magnetic_field`, but takes the thermal energy
+    density :math:`u_{\rm therm}` directly rather than inferring it from the magnetic field via
+    :math:`\varepsilon_B`. The equipartition condition becomes
+
+    .. math::
+
+        \varepsilon_E\,u_{\rm therm}
+        = N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta},
+
+    which is solved for :math:`N_{\rm therm}`.
+
+    Parameters
+    ----------
+    u_therm : array-like
+        Thermal energy density in :math:`\mathrm{erg\,cm^{-3}}` (CGS).
+    Theta : array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    epsilon_E : array-like
+        Fraction of post-shock energy in relativistic electrons.
+
+    Returns
+    -------
+    numpy.ndarray
+        Total number density :math:`N_{\rm therm}` of the Maxwell-Jüttner distribution in
+        :math:`\mathrm{cm^{-3}}`. Scalar inputs return a scalar.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    log_u = np.log(np.asarray(u_therm, dtype="f8"))
+    Theta = np.asarray(Theta, dtype="f8")
+    log_Theta = np.log(Theta)
+    epsilon_E = np.asarray(epsilon_E, dtype="f8")
+
+    a_Theta = (4 + 5 * Theta) / (6 + 15 * Theta)
+    log_N = np.log(epsilon_E) + np.log(a_Theta) + log_u - log_Theta - np.log(electron_rest_energy_cgs)
+    N = np.exp(log_N)
+
+    return N.reshape(()) if N.ndim == 0 else N
+
+
+def _opt_normalize_MJD_and_PL_from_thermal_energy_density(
+    u_therm: "_ArrayLike",
+    Theta: "_ArrayLike",
+    p: "_ArrayLike",
+    delta: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+    gamma_min: "_ArrayLike" = 1.0,
+    gamma_max: "_ArrayLike" = np.inf,
+) -> tuple[np.ndarray, np.ndarray]:
+    r"""
+    Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution.
+
+    Identical in physics to :func:`_opt_normalize_MJD_and_PL_from_magnetic_field`, but takes the thermal
+    energy density :math:`u_{\rm therm}` directly rather than inferring it from the magnetic field. The total
+    electron energy density is partitioned as
+
+    .. math::
+
+        \varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+        \qquad
+        \varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.
+
+    Parameters
+    ----------
+    u_therm : array-like
+        Thermal energy density in :math:`\mathrm{erg\,cm^{-3}}` (CGS).
+    Theta : array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)` for the thermal component.
+    p : array-like
+        Power-law index of the non-thermal electron distribution.
+    delta : array-like
+        Fraction of the total electron energy density in the thermal component. Must satisfy
+        :math:`0 \le \delta \le 1`.
+    epsilon_E : array-like
+        Total fraction of post-shock energy in relativistic electrons.
+    gamma_min : array-like, optional
+        Minimum Lorentz factor of the power-law component. Default is ``1``.
+    gamma_max : array-like, optional
+        Maximum Lorentz factor of the power-law component. Default is ``inf``.
+
+    Returns
+    -------
+    N_therm : numpy.ndarray
+        Total number density of the Maxwell-Jüttner component in :math:`\mathrm{cm^{-3}}`.
+    N0_pl : numpy.ndarray
+        Normalization constant of the power-law component :math:`N_0` in
+        :math:`N(\gamma) = N_0\,\gamma^{-p}`, in :math:`\mathrm{cm^{-3}}`.
+    """
+    delta = np.asarray(delta, dtype="f8")
+
+    N_therm = _opt_normalize_MJD_from_thermal_energy_density(
+        u_therm=u_therm,
+        Theta=Theta,
+        epsilon_E=delta * epsilon_E,
+    )
+
+    N0_pl = _opt_normalize_PL_from_thermal_energy_density(
+        u_therm=u_therm,
+        p=p,
+        epsilon_E=(1.0 - delta) * epsilon_E,
+        gamma_min=gamma_min,
+        gamma_max=gamma_max,
+    )
+
+    return N_therm, N0_pl
 
 
 def _opt_normalize_energy_PL_from_magnetic_field(
@@ -2112,3 +2383,240 @@ def compute_bol_emissivity_BPL_from_thermal_energy_density(
     )
 
     return emiss * (u.erg / u.s / u.cm**3)
+
+
+# ============================================================= #
+# Public MJD Normalization Wrappers                             #
+# ============================================================= #
+
+
+def compute_MJD_norm_from_magnetic_field(
+    B: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the total number density of a Maxwell-Jüttner electron distribution from the magnetic field.
+
+    Uses the equipartition condition :math:`\varepsilon_E\,B^2/(8\pi\varepsilon_B) = U_e` with the
+    mean energy density approximation :footcite:p:`1998ApJ...498..313G`
+
+    .. math::
+
+        U_e \approx N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta}
+
+    to solve for the total number density :math:`N_{\rm therm}`.
+
+    Parameters
+    ----------
+    B : float, array-like, or ~astropy.units.Quantity
+        Magnetic field strength. Bare values are interpreted as Gauss.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    epsilon_B : float or array-like
+        Fraction of post-shock energy in the magnetic field.
+    epsilon_E : float or array-like
+        Fraction of post-shock energy in relativistic electrons.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Total number density :math:`N_{\rm therm}` in :math:`\mathrm{cm^{-3}}`.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    B = ensure_in_units(B, u.G)
+    N = _opt_normalize_MJD_from_magnetic_field(
+        B=B,
+        Theta=Theta,
+        epsilon_B=epsilon_B,
+        epsilon_E=epsilon_E,
+    )
+    return N * u.cm**-3
+
+
+def compute_MJD_and_PL_norm_from_magnetic_field(
+    B: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+    p: "_ArrayLike",
+    delta: "_ArrayLike",
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+    *,
+    gamma_min: "_ArrayLike" = 1.0,
+    gamma_max: "_ArrayLike" = np.inf,
+) -> tuple[u.Quantity, u.Quantity]:
+    r"""
+    Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution from the magnetic field.
+
+    The total electron energy budget is split by the thermal fraction :math:`\delta`:
+
+    .. math::
+
+        \varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+        \qquad
+        \varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.
+
+    Each component's normalization is computed independently via equipartition. See
+    :func:`compute_MJD_norm_from_magnetic_field` and :func:`compute_PL_norm_from_magnetic_field`
+    for the individual closures.
+
+    Parameters
+    ----------
+    B : float, array-like, or ~astropy.units.Quantity
+        Magnetic field strength. Bare values are interpreted as Gauss.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)` for the thermal component.
+    p : float or array-like
+        Power-law index of the non-thermal electron distribution.
+    delta : float or array-like
+        Fraction of the total electron energy density in the thermal component
+        (:math:`0 \le \delta \le 1`).
+    epsilon_B : float or array-like
+        Fraction of post-shock energy in the magnetic field.
+    epsilon_E : float or array-like
+        Total fraction of post-shock energy in relativistic electrons.
+    gamma_min : float or array-like, optional
+        Minimum Lorentz factor of the power-law component. Default is ``1``.
+    gamma_max : float or array-like, optional
+        Maximum Lorentz factor of the power-law component. Default is ``inf``.
+
+    Returns
+    -------
+    N_therm : ~astropy.units.Quantity
+        Total number density of the Maxwell-Jüttner component in :math:`\mathrm{cm^{-3}}`.
+    N0_pl : ~astropy.units.Quantity
+        Power-law normalization constant :math:`N_0` in :math:`N(\gamma) = N_0\,\gamma^{-p}`,
+        in :math:`\mathrm{cm^{-3}}`.
+    """
+    B = ensure_in_units(B, u.G)
+    delta = np.asarray(delta, dtype="f8")
+
+    if np.any((delta < 0) | (delta > 1)):
+        raise ValueError("delta must be in [0, 1].")
+
+    N_therm, N0_pl = _opt_normalize_MJD_and_PL_from_magnetic_field(
+        B=B,
+        Theta=Theta,
+        p=p,
+        delta=delta,
+        epsilon_B=epsilon_B,
+        epsilon_E=epsilon_E,
+        gamma_min=gamma_min,
+        gamma_max=gamma_max,
+    )
+    return N_therm * u.cm**-3, N0_pl * u.cm**-3
+
+
+def compute_MJD_norm_from_thermal_energy_density(
+    u_therm: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the total number density of a Maxwell-Jüttner electron distribution from the thermal energy density.
+
+    Uses the equipartition condition :math:`\varepsilon_E\,u_{\rm therm} = U_e` with the mean energy
+    density approximation :footcite:p:`1998ApJ...498..313G`
+
+    .. math::
+
+        U_e \approx N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta}
+
+    to solve for :math:`N_{\rm therm}`.
+
+    Parameters
+    ----------
+    u_therm : float, array-like, or ~astropy.units.Quantity
+        Thermal energy density. Bare values are interpreted as :math:`\mathrm{erg\,cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    epsilon_E : float or array-like
+        Fraction of post-shock energy in relativistic electrons.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Total number density :math:`N_{\rm therm}` in :math:`\mathrm{cm^{-3}}`.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+    u_therm = ensure_in_units(u_therm, u.erg / u.cm**3)
+    N = _opt_normalize_MJD_from_thermal_energy_density(
+        u_therm=u_therm,
+        Theta=Theta,
+        epsilon_E=epsilon_E,
+    )
+    return N * u.cm**-3
+
+
+def compute_MJD_and_PL_norm_from_thermal_energy_density(
+    u_therm: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+    p: "_ArrayLike",
+    delta: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+    *,
+    gamma_min: "_ArrayLike" = 1.0,
+    gamma_max: "_ArrayLike" = np.inf,
+) -> tuple[u.Quantity, u.Quantity]:
+    r"""
+    Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution.
+
+    Identical in physics to :func:`compute_MJD_and_PL_norm_from_magnetic_field` but takes the thermal
+    energy density directly. The total electron energy budget is split by the thermal fraction
+    :math:`\delta`:
+
+    .. math::
+
+        \varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+        \qquad
+        \varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.
+
+    Parameters
+    ----------
+    u_therm : float, array-like, or ~astropy.units.Quantity
+        Thermal energy density. Bare values are interpreted as :math:`\mathrm{erg\,cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)` for the thermal component.
+    p : float or array-like
+        Power-law index of the non-thermal electron distribution.
+    delta : float or array-like
+        Fraction of the total electron energy density in the thermal component
+        (:math:`0 \le \delta \le 1`).
+    epsilon_E : float or array-like
+        Total fraction of post-shock energy in relativistic electrons.
+    gamma_min : float or array-like, optional
+        Minimum Lorentz factor of the power-law component. Default is ``1``.
+    gamma_max : float or array-like, optional
+        Maximum Lorentz factor of the power-law component. Default is ``inf``.
+
+    Returns
+    -------
+    N_therm : ~astropy.units.Quantity
+        Total number density of the Maxwell-Jüttner component in :math:`\mathrm{cm^{-3}}`.
+    N0_pl : ~astropy.units.Quantity
+        Power-law normalization constant :math:`N_0` in :math:`N(\gamma) = N_0\,\gamma^{-p}`,
+        in :math:`\mathrm{cm^{-3}}`.
+    """
+    u_therm = ensure_in_units(u_therm, u.erg / u.cm**3)
+    delta = np.asarray(delta, dtype="f8")
+
+    if np.any((delta < 0) | (delta > 1)):
+        raise ValueError("delta must be in [0, 1].")
+
+    N_therm, N0_pl = _opt_normalize_MJD_and_PL_from_thermal_energy_density(
+        u_therm=u_therm,
+        Theta=Theta,
+        p=p,
+        delta=delta,
+        epsilon_E=epsilon_E,
+        gamma_min=gamma_min,
+        gamma_max=gamma_max,
+    )
+    return N_therm * u.cm**-3, N0_pl * u.cm**-3

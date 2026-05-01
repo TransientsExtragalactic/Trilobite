@@ -6,22 +6,18 @@ or to specific distribution functions. This includes the single-electron synchro
 and related calculations.
 """
 
-from collections.abc import Callable
-from typing import TYPE_CHECKING, Any, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import numpy as np
 from astropy import constants
 from astropy import units as u
 from scipy.integrate import quad
-from scipy.interpolate import interp1d
 from scipy.special import kv
-from tqdm.auto import tqdm
 
-from triceratops.utils.config import triceratops_config
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
-    from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
+    pass
 
 # NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
 # The default arg to getattr is evaluated eagerly, so nest the fallback.
@@ -526,709 +522,209 @@ def compute_synchrotron_gamma(
 # ============================================ #
 # These functions implement the synchrotron kernel functions F(x) and G(x) in
 # various ways, including direct integration and interpolation-based approximations.
-def first_synchrotron_kernel(x: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
+def _log_first_synchrotron_kernel(
+    log_x: Union[np.ndarray, float],
+    log_x_asymptotic_min: float = -8.0,
+    log_x_asymptotic_max: float = 2.0,
+    method: str = "exact",
+    derivative: bool = True,
+) -> tuple[Union[np.ndarray, float], Optional[Union[np.ndarray, float]]]:
     r"""
-    Compute the first synchrotron kernel function :math:`F(x)`.
+    Compute :math:`\ln F(x)` for the first synchrotron kernel, numerically stable across all :math:`x`.
 
-    The function :math:`F(x)` describes the spectral shape of synchrotron
-    radiation emitted by a single relativistic electron. It is defined as:
+    The synchrotron kernel is defined as
 
     .. math::
 
-        F(x) = x \int_x^\infty K_{5/3}(z) \, dz
+        F(x) = x \int_x^\infty K_{5/3}(z)\,dz.
 
-    .. warning::
-
-        This is NOT an efficient option for large-scale synchrotron calculation. It uses
-        the :func:`scipy.integrate.quad` function to compute the integral over calls to
-        ``scipy.special.kv``, which can be slow for large arrays.
+    Working in log-space prevents underflow for :math:`x \gg 1` where :math:`F(x) \to 0`.
 
     Parameters
     ----------
-    x : float or array-like
-        Dimensionless frequency parameter, defined as the ratio of the observing
-        frequency to the critical frequency, :math:`x = \nu / \nu_{critical}`.
-    """
-    # Coerce everything to numpy arrays for vectorized operations.
-    x = np.atleast_1d(x).astype(float)
-    F_x = np.empty_like(x)
+    log_x : float or array-like
+        Natural log of the dimensionless frequency ratio :math:`x = \nu/\nu_c`.
+    log_x_asymptotic_min : float, optional
+        :math:`\ln x` below which the low-:math:`x` power-law asymptotic
+        :math:`F(x) \approx C\,x^{1/3}` replaces the integral. Only used when
+        ``method="exact"``. Default is ``-5.0``.
+    log_x_asymptotic_max : float, optional
+        :math:`\ln x` above which the high-:math:`x` exponential asymptotic
+        :math:`F(x) \approx \sqrt{\pi x/2}\,e^{-x}` replaces the integral. Only used
+        when ``method="exact"``. Default is ``2.0``.
+    method : {"exact", "lu"}, optional
+        Algorithm used to evaluate the interior region.
 
-    for i, xi in tqdm(
-        enumerate(x),
-        total=len(x),
-        bar_format=triceratops_config["system.appearance.progress_bar_format"],
-        desc="Integrating Synchrotron Kernel",
-    ):
-        integral = quad(
-            lambda z: kv(5 / 3, z),
-            xi,
-            np.inf,
-            epsrel=1e-10,
-        )[0]
-        F_x[i] = xi * integral
-
-    return F_x if F_x.size == 1 else F_x
-
-
-def second_synchrotron_kernel(x: Union[float, np.ndarray]) -> Union[float, np.ndarray]:
-    r"""
-    Compute the second synchrotron kernel function :math:`G(x)`.
-
-    The function :math:`G(x)` describes another spectral shape of synchrotron
-    radiation emitted by a single relativistic electron. It is defined as:
-
-    .. math::
-
-        G(x) = x K_{2/3}(x)
-
-    Parameters
-    ----------
-    x : float or array-like
-        Dimensionless frequency parameter, defined as the ratio of the observing
-        frequency to the critical frequency, :math:`x = \nu / \nu_{critical}`.
-    """
-    x = np.atleast_1d(x).astype(float)
-    G_x = x * kv(2 / 3, x)
-    return G_x[0] if G_x.size == 1 else G_x
-
-
-def _build_first_kernel_table(
-    x_min: float = 1e-5,
-    x_max: float = 1e2,
-    num_points: int = 1000,
-) -> tuple[np.ndarray, np.ndarray]:
-    r"""
-    Build a lookup table for the first synchrotron kernel :math:`F(x)`.
-
-    This function precomputes the values of the first synchrotron kernel
-    :math:`F(x)` over a specified range of :math:`x` values. This can be used
-    to speed up calculations that require repeated evaluations of the kernel.
-
-    Parameters
-    ----------
-    x_min : float, optional
-        Minimum value of :math:`x` to compute. Default is ``1e-5``.
-
-    x_max : float, optional
-        Maximum value of :math:`x` to compute. Default is ``1e2``.
-
-    num_points : int, optional
-        Number of points to compute between ``x_min`` and ``x_max``.
-        Default is ``1000``.
+        ``"exact"``
+            Splits the domain into three regions: power-law asymptotic for
+            :math:`x \ll 1`, exponential asymptotic for :math:`x \gg 1`, and
+            :func:`scipy.integrate.quad` over :math:`K_{5/3}` in the interior.
+            Accurate to ``epsrel=1e-10`` but slow for large arrays.
+        ``"lu"``
+            Liu--Uhm (Wenbin) closed-form approximation applied to all :math:`x`
+            without domain splitting. Fast and accurate to a few percent everywhere.
 
     Returns
     -------
-    x_values : numpy.ndarray
-        Array of :math:`x` values.
-
-    F_values : numpy.ndarray
-        Corresponding array of :math:`F(x)` values.
-    """
-    x_values = np.geomspace(x_min, x_max, num_points)
-    F_values = first_synchrotron_kernel(x_values)
-
-    return x_values, F_values
-
-
-def _build_second_kernel_table(
-    x_min: float = 1e-5,
-    x_max: float = 1e2,
-    num_points: int = 1000,
-) -> tuple[np.ndarray, np.ndarray]:
-    r"""
-    Build a lookup table for the second synchrotron kernel :math:`G(x)`.
-
-    This function precomputes the values of the second synchrotron kernel
-    :math:`G(x)` over a specified range of :math:`x` values. This can be used
-    to speed up calculations that require repeated evaluations of the kernel.
-
-    Parameters
-    ----------
-    x_min : float, optional
-        Minimum value of :math:`x` to compute. Default is ``1e-5``.
-
-    x_max : float, optional
-        Maximum value of :math:`x` to compute. Default is ``1e2``.
-
-    num_points : int, optional
-        Number of points to compute between ``x_min`` and ``x_max``.
-        Default is ``1000``.
-
-    Returns
-    -------
-    x_values : numpy.ndarray
-        Array of :math:`x` values.
-
-    G_values : numpy.ndarray
-        Corresponding array of :math:`G(x)` values.
-    """
-    x_values = np.geomspace(x_min, x_max, num_points)
-    G_values = second_synchrotron_kernel(x_values)
-
-    return x_values, G_values
-
-
-def compute_first_kernel_interp(x_values: np.ndarray, F_values: np.ndarray, **kwargs):
-    r"""
-    Get an interpolation function for the first synchrotron kernel :math:`F(x)`.
-
-    This function creates an interpolation function based on precomputed
-    :math:`x` and :math:`F(x)` values. The resulting function can be used to
-    efficiently evaluate :math:`F(x)` at arbitrary :math:`x` values within
-    the range of the provided data.
-
-    Parameters
-    ----------
-    x_values : numpy.ndarray
-        Array of :math:`x` values.
-
-    F_values : numpy.ndarray
-        Corresponding array of :math:`F(x)` values.
-
-    Returns
-    -------
-    interp_func : callable
-        Interpolation function that takes :math:`x` as input and returns
-        the interpolated :math:`F(x)`.
-    """
-    # Extract the bounds
-    x_min = x_values[0]
-    x_max = x_values[-1]
-
-    # Generate the interpolation function.
-    interp_func = interp1d(x_values, F_values, **kwargs)
-
-    # Write the guarded interpolator function using the asymptotic limits.
-    def _interpolator(_x):
-        # Coerce _x to a numpy array so we can mask.
-        _x = np.atleast_1d(_x).astype(float)
-        _y = np.empty_like(_x)
-
-        # Handle the lower bound
-        _lmsk = _x < x_min
-        _y[_lmsk] = 2.14952824153447863671029 * _x[_lmsk] ** (1 / 3)
-
-        # Handle the upper bound
-        _rmsk = _x > x_max
-        _y[_rmsk] = np.sqrt(np.pi * _x[_rmsk] / 2) * np.exp(-_x[_rmsk])
-
-        # Handle the interpolation region
-        _imsk = ~_lmsk & ~_rmsk
-        _y[_imsk] = np.exp(interp_func(_x[_imsk]))
-
-        return _y[0] if _y.size == 1 else _y
-
-    return _interpolator
-
-
-def compute_second_kernel_interp(x_values: np.ndarray, G_values: np.ndarray, **kwargs):
-    r"""
-    Get an interpolation function for the second synchrotron kernel :math:`G(x)`.
-
-    This function creates an interpolation function based on precomputed
-    :math:`x` and :math:`G(x)` values. The resulting function can be used to
-    efficiently evaluate :math:`G(x)` at arbitrary :math:`x` values within
-    the range of the provided data.
-
-    Parameters
-    ----------
-    x_values : numpy.ndarray
-        Array of :math:`x` values.
-
-    G_values : numpy.ndarray
-        Corresponding array of :math:`G(x)` values.
-
-    Returns
-    -------
-    interp_func : callable
-        Interpolation function that takes :math:`x` as input and returns
-        the interpolated :math:`G(x)`.
-    """
-    # Extract the bounds
-    x_min = x_values[0]
-    x_max = x_values[-1]
-
-    # Generate the interpolation function.
-    interp_func = interp1d(x_values, G_values, **kwargs)
-
-    # Write the guarded interpolator function using the asymptotic limits.
-    def _interpolator(_x):
-        # Coerce _x to a numpy array so we can mask.
-        _x = np.atleast_1d(_x).astype(float)
-        _y = np.empty_like(_x)
-
-        # Handle the lower bound
-        _lmsk = _x < x_min
-        _y[_lmsk] = 1.808 * _x[_lmsk] ** (1 / 3)
-
-        # Handle the upper bound
-        _rmsk = _x > x_max
-        _y[_rmsk] = np.sqrt(np.pi * _x[_rmsk] / 2) * np.exp(-_x[_rmsk])
-
-        # Handle the interpolation region
-        _imsk = ~_lmsk & ~_rmsk
-        _y[_imsk] = np.exp(interp_func(_x[_imsk]))
-
-        return _y[0] if _y.size == 1 else _y
-
-    return _interpolator
-
-
-def get_first_kernel_interpolator(x_min: float = 1e-5, x_max: float = 1e2, num_points: int = 1000, **kwargs):
-    r"""
-    Get a pre-built interpolation function for the first synchrotron kernel :math:`F(x)`.
-
-    This function builds a lookup table for :math:`F(x)` and returns an
-    interpolation function that can be used to efficiently evaluate
-    :math:`F(x)` at arbitrary :math:`x` values within the specified range.
-
-    Parameters
-    ----------
-    x_min : float, optional
-        Minimum value of :math:`x` to compute. Default is ``1e-5``.
-
-    x_max : float, optional
-        Maximum value of :math:`x` to compute. Default is ``1e2``.
-
-    num_points : int, optional
-        Number of points to compute between ``x_min`` and ``x_max``.
-        Default is ``1000``.
-
-    Returns
-    -------
-    interp_func : callable
-        Interpolation function that takes :math:`x` as input and returns
-        the interpolated :math:`F(x)`.
-    """
-    x_values, F_values = _build_first_kernel_table(
-        x_min=x_min,
-        x_max=x_max,
-        num_points=num_points,
-    )
-
-    return compute_first_kernel_interp(x_values, np.log(F_values), **kwargs)
-
-
-def get_second_kernel_interpolator(x_min: float = 1e-5, x_max: float = 1e2, num_points: int = 1000, **kwargs):
-    r"""
-    Get a pre-built interpolation function for the second synchrotron kernel :math:`G(x)`.
-
-    This function builds a lookup table for :math:`G(x)` and returns an
-    interpolation function that can be used to efficiently evaluate
-    :math:`G(x)` at arbitrary :math:`x` values within the specified range.
-
-    Parameters
-    ----------
-    x_min : float, optional
-        Minimum value of :math:`x` to compute. Default is ``1e-5``.
-
-    x_max : float, optional
-        Maximum value of :math:`x` to compute. Default is ``1e2``.
-
-    num_points : int, optional
-        Number of points to compute between ``x_min`` and ``x_max``.
-        Default is ``1000``.
-
-    Returns
-    -------
-    interp_func : callable
-        Interpolation function that takes :math:`x` as input and returns
-        the interpolated :math:`G(x)`.
-    """
-    x_values, G_values = _build_second_kernel_table(
-        x_min=x_min,
-        x_max=x_max,
-        num_points=num_points,
-    )
-
-    return compute_second_kernel_interp(x_values, np.log(G_values), **kwargs)
-
-
-# ================================================== #
-# Single Electron Spectra                            #
-# ================================================== #
-_single_electron_power_coef_CGS = np.sqrt(3) * (constants.e.esu**3 / (constants.m_e * constants.c**2)).cgs.value
-
-
-def _opt_compute_single_electron_power(
-    nu: "_ArrayLike", gamma: float, B: float, alpha: float, kernel_function: Callable
-):
-    r"""
-    Compute the spectral power of a single electron undergoing synchrotron radiation.
-
-    Given a magnetic field strength, electron Lorentz factor, pitch angle, and observing frequency,
-    compute the synchrotron power per unit frequency emitted by a single electron. Documentation can
-    be found in the high-level API function :func:`compute_single_electron_power`.
-
-    Parameters
-    ----------
-    nu : array-like
-        Observing frequency in Hz.
-    gamma : float
-        Electron Lorentz factor.
-    B : float
-        Magnetic field strength in Gauss.
-    alpha : float
-        Pitch angle in radians.
-    kernel_function : callable
-        Synchrotron kernel function to use. For heavy use cases, it is recommended that a kernel approximation
-        be used here instead of the :func:`first_synchrotron_kernel` function. Interpolations can be generated
-        using :func:`get_first_kernel_interpolator`. There are also power-series implementations which
-        may be faster for some applications.
-
-    Returns
-    -------
-    P_nu : array-like
-        Synchrotron power per unit frequency in erg/s/Hz.
-    """
-    # Enforce nu as a numpy array.
-    nu = np.atleast_1d(nu).astype(float)
-
-    # Compute the critical frequency nu_c using the optimized pathway. This is
-    # the form in RL CH 6.
-    nu_c = _optimized_compute_nu_critical(gamma, B)
-
-    # Compute the dimensionless frequency parameter x.
-    x = nu / nu_c
-
-    # Compute the kernel values.
-    F_x = kernel_function(x)
-
-    # Compute the prefactor.
-    prefactor = _single_electron_power_coef_CGS * B * np.sin(alpha)
-
-    # Compute the power spectrum.
-    P_nu = prefactor * F_x
-
-    return P_nu if P_nu.size > 1 else P_nu[0]
-
-
-def compute_single_electron_power(
-    nu: "_UnitBearingArrayLike",
-    gamma: float,
-    B: "_UnitBearingArrayLike",
-    alpha: float = np.pi / 2,
-    kernel_function: Callable = None,
-):
-    r"""
-    Compute the spectral power of a single electron undergoing synchrotron radiation.
-
-    Given a magnetic field strength, electron Lorentz factor, pitch angle, and observing frequency,
-    compute the synchrotron power per unit frequency emitted by a single electron. From :footcite:t:`RybickiLightman`,
-
-    .. math::
-
-        P(\nu) = \frac{\sqrt{3} e^3 B}{m_e c^2} \sin\alpha\, F\!\left(\frac{\nu}{\nu_c}\right),
-
-    where :math:`F(x)` is the first synchrotron kernel function and :math:`\nu_c` is the critical frequency.
-
-    Parameters
-    ----------
-    nu : array-like or astropy.units.Quantity
-        Observing frequency. Default units are Hz. If a Quantity is provided, units will be validated. ``nu``
-        may be vector or scalar.
-    gamma : float
-        Electron Lorentz factor.
-    B : array-like or astropy.units.Quantity
-        Magnetic field strength. Default units are Gauss.
-    alpha : float
-        Pitch angle in radians. By default, this is assumed to ``pi/2``.
-    kernel_function : callable, optional
-        Synchrotron kernel function to use. For heavy use cases, it is recommended that a kernel approximation
-        be used here instead of the :func:`first_synchrotron_kernel` function. Interpolations can be generated
-        using :func:`get_first_kernel_interpolator`. There are also power-series implementations which
-        may be faster for some applications. If ``None``, the default :func:`first_synchrotron_kernel` function
-        will be used.
-
-    Returns
-    -------
-    P_nu : array-like or astropy.units.Quantity
-        Synchrotron power per unit frequency. Default units are erg/s/Hz.
+    log_F : float or ~numpy.ndarray
+        :math:`\ln F(x)`. Returns a scalar when ``log_x`` is scalar.
+
+    See Also
+    --------
+    second_synchrotron_kernel : The companion kernel :math:`G(x) = x K_{2/3}(x)`.
 
     Notes
     -----
-    For heavy use cases, the low-level API function :func:`_opt_compute_single_electron_power` is recommended.
+    The low-:math:`x` prefactor :math:`C \approx 2.1495` follows from the small-argument
+    expansion of :math:`K_{5/3}` (see e.g. :footcite:p:`RybickiLightman`).
 
-    For details on the relevant theory, see :ref:`synchrotron_theory`.
-    """
-    # Validate units and coerce to CGS values.
-    nu = ensure_in_units(nu, u.Hz)
-    B = ensure_in_units(B, u.Gauss)
-
-    # Set the kernel function if not provided.
-    if kernel_function is None:
-        kernel_function = first_synchrotron_kernel
-
-    # Call the optimized computation function.
-    P_nu_cgs = _opt_compute_single_electron_power(nu=nu, gamma=gamma, B=B, alpha=alpha, kernel_function=kernel_function)
-    return P_nu_cgs * u.erg / u.s / u.Hz
-
-
-# ================================================= #
-# Multi-Electron Spectra                            #
-# ================================================= #
-def _opt_compute_ME_spectrum_from_dist_grid(
-    nu: np.ndarray,
-    gamma: np.ndarray,
-    N_gamma: np.ndarray,
-    B: float,
-    alpha: float,
-    kernel_function: Callable,
-):
-    r"""
-    Compute the synchrotron spectrum from a multi-electron distribution using a finite stencil of the dist. func.
-
-    This function computes the synchrotron spectral power density emitted by a population of electrons
-    with a given Lorentz factor distribution. The calculation integrates over the electron distribution
-    using a finite grid of Lorentz factor values and corresponding number densities.
-
-    For more detailed documentation, see the public API function :func:`compute_ME_spectrum_from_dist_grid`.
-
-    Parameters
+    References
     ----------
-    nu: array-like
-        Observing frequency in Hz.
-    gamma: array-like
-        Electron Lorentz factor grid. This should be a 1D monotonic array of shape ``(N,)``. Each element should
-        match the tabulated values in ``N_gamma``.
-    N_gamma: array-like
-        The electron number density distribution evaluated at each Lorentz factor in ``gamma``.
-        This should be a 1D array of shape ``(N,)``.
-
-        The implementation of this function computes :math:`\Delta \gamma` on the fly, so the values in
-        ``N_gamma`` should represent the number density per unit Lorentz factor, i.e., :math:`N(\gamma) = dN/d\gamma`.
-    B: float
-        Magnetic field strength in Gauss.
-    alpha: float
-        The pitch angle in radians. By default, this is :math:`\pi/2`.
-    kernel_function: callable
-        Synchrotron kernel function to use. For heavy use cases, it is recommended that
-        a kernel approximation be used here instead of the :func:`first_synchrotron_kernel` function.
-        Interpolations can be generated using :func:`get_first_kernel_interpolator`. There are also power-series
-        implementations which may be faster for some applications.
-
-    Returns
-    -------
-    P_nu : array-like
-        Synchrotron power per unit frequency per unit volume.
+    .. footbibliography::
     """
-    # Ensure inputs are numpy arrays.
-    nu = np.atleast_1d(nu)
-    gamma = np.asarray(gamma)
-    N_gamma = np.asarray(N_gamma)
+    scalar = np.ndim(log_x) == 0
+    log_x = np.atleast_1d(np.asarray(log_x, dtype=float))
+    log_F = np.empty_like(log_x)
+    dlog_F_dlog_x = np.empty_like(log_x) if derivative else None
 
-    # Compute the critical frequency nu_c and the corresponding dimensionless
-    # parameter x. For (N,) shaped gamma and (M,) shaped nu, this results in
-    # (M, N) shaped x.
-    nu_c = _optimized_compute_nu_critical(gamma[None, :], B)
-    x = nu[:, None] / nu_c
+    if method == "exact":
+        lmsk = log_x < log_x_asymptotic_min
+        rmsk = log_x > log_x_asymptotic_max
+        imsk = ~(lmsk | rmsk)
 
-    # Compute the kernel values F(x).
-    F_x = kernel_function(x)
+        # Perform the asymptotic calculation at the lower edge to avoid any heavy
+        # computation in the regime where the kernel is well approximated by a power law.
+        # We precompute the logarithmic prefactor at super-precision to avoid
+        # any loss of accuracy.
+        if np.any(lmsk):
+            log_F[lmsk] = 0.7652483955208204416206842 + (1.0 / 3.0) * log_x[lmsk]
+            if derivative:
+                dlog_F_dlog_x[lmsk] = 1.0 / 3.0
 
-    # Compute the prefactor.
-    prefactor = _single_electron_power_coef_CGS * B * np.sin(alpha)
+        # Now the high-x mask for the exponential cutoff.
+        if np.any(rmsk):
+            x_r = np.exp(log_x[rmsk])
+            log_F[rmsk] = 0.5 * (np.log(np.pi) - np.log(2.0)) + 0.5 * log_x[rmsk] - x_r
 
-    # Prepare the integration. We use the trapezoidal rule. The integrand has
-    # shape (M, N) where M is the number of nu values and N is the number of
-    # gamma values.
-    integrand = N_gamma[None, :] * F_x
-    P_nu = prefactor * _trapz(integrand, gamma, axis=1)
+            if derivative:
+                dlog_F_dlog_x[rmsk] = 0.5 - x_r
 
-    return P_nu
+        # Now perform the quadrature part of the tabulation. Here we start by computing the
+        # raw integral int_x^inf K_5/3(z) dz and then we spin it into both F and d log F/d log x.
+        if np.any(imsk):
+            # Perform the quadrature.
+            x = np.exp(log_x[imsk])
+            Integral = np.empty_like(x)
+            for i, xi in enumerate(x):
+                Integral[i] = quad(lambda z: kv(5 / 3, z), xi, np.inf, epsrel=1e-10)[0]
 
+            # Now generate log_F = log(x) + log(I).
+            log_F[imsk] = log_x[imsk] + np.log(Integral)
 
-def _opt_compute_ME_spectrum_from_dist_function(
-    nu: np.ndarray,
-    N_gamma_func: Callable[[float], float],
-    gamma_min: float,
-    gamma_max: float,
-    B: float,
-    alpha: float,
-    kernel_function: Callable,
-    **kwargs: object,
-) -> Any:
-    r"""
-    Compute the synchrotron spectrum from a multi-electron distribution defined as a continuous function N(gamma).
+            # Now the derivative if we are asked for it.
+            if derivative:
+                dlog_F_dlog_x[imsk] = 1 - (x / Integral) * kv(5 / 3, x)
 
-    Parameters
-    ----------
-    nu : array-like
-        Observing frequencies in Hz.
-    N_gamma_func : callable
-        Function returning dN/dgamma at gamma.
-    gamma_min, gamma_max : float
-        Integration bounds in Lorentz factor.
-    B : float
-        Magnetic field strength in Gauss.
-    alpha : float
-        Pitch angle in radians.
-    kernel_function : callable
-        Synchrotron kernel function.
-    **kwargs:
-        Additional keyword arguments passed to :func:`scipy.integrate.quad`.
+    elif method == "lu":
+        x = np.exp(log_x)
 
-    Returns
-    -------
-    P_nu : ndarray
-        Synchrotron power per unit frequency per unit volume.
-    """
-    nu = np.atleast_1d(nu).astype(float)
+        A = (np.pi * x / 2.0) ** (1.430 / 2.0)
+        B = (2.150 * x ** (1.0 / 3.0)) ** (-2.627)
 
-    prefactor = _single_electron_power_coef_CGS * B * np.sin(alpha)
+        log_A = np.log1p(A)
+        log_B = np.log1p(B)
 
-    P_nu = np.empty_like(nu)
+        log_F = (1.0 / 1.430) * log_A - (1.0 / 2.627) * log_B - x
 
-    for i, nui in enumerate(nu):
+        if derivative:
+            dlog_F_dlog_x = 0.5 * (A / (1.0 + A)) + (1.0 / 3.0) * (B / (1.0 + B)) - x
 
-        def _integrand(gamma, _nui=nui):
-            nu_c = _optimized_compute_nu_critical(gamma, B)
-            x = _nui / nu_c
-            return N_gamma_func(gamma) * kernel_function(x)
+    else:
+        raise ValueError(f"Invalid method '{method}'. Must be 'exact' or 'lu'.")
 
-        integral = quad(_integrand, gamma_min, gamma_max, **kwargs)[0]
-
-        P_nu[i] = prefactor * integral
-
-    return P_nu
+    return log_F.item() if scalar else log_F, dlog_F_dlog_x.item() if derivative and scalar else dlog_F_dlog_x
 
 
-def compute_ME_spectrum_from_dist_function(
-    nu: "_UnitBearingArrayLike",
-    N_gamma_func: Callable[[float], float],
-    gamma_min: float,
-    gamma_max: float,
-    B: "_UnitBearingArrayLike",
-    alpha: float = np.pi / 2,
-    kernel_function: Callable = None,
-    **kwargs,
-):
-    r"""
-    Compute the synchrotron spectrum from a multi-electron distribution defined as a function.
+def _log_averaged_first_synchrotron_kernel(
+    log_x: Union[np.ndarray, float],
+    log_x_asymptotic_min: float = -8.0,
+    log_x_asymptotic_max: float = 2.0,
+    method: str = "exact",
+    derivative: bool = True,
+) -> tuple[Union[np.ndarray, float], Optional[Union[np.ndarray, float]]]:
+    scalar = np.ndim(log_x) == 0
+    log_x = np.atleast_1d(np.asarray(log_x, dtype=float))
+    log_F = np.empty_like(log_x)
+    dlog_F_dlog_x = np.empty_like(log_x) if derivative else None
 
-    This function computes the synchrotron power per unit frequency per unit volume emitted
-    by a population of relativistic electrons whose distribution is specified as a continuous
-    function :math:`dN/d\gamma`.
+    if method == "exact":
+        lmsk = log_x < log_x_asymptotic_min
+        rmsk = log_x > log_x_asymptotic_max
+        imsk = ~(lmsk | rmsk)
 
-    Parameters
-    ----------
-    nu : array-like or astropy.units.Quantity
-        Observing frequencies. Default units are Hz.
-    N_gamma_func : callable
-        Function returning :math:`dN/d\gamma` at a given Lorentz factor.
-        The function must return values in units of ``cm⁻³``.
-    gamma_min, gamma_max : float
-        Integration bounds in Lorentz factor.
-    B : array-like or astropy.units.Quantity
-        Magnetic field strength. Default units are Gauss.
-    alpha : float, optional
-        Pitch angle in radians. Default is :math:`\pi/2`.
-    kernel_function : callable, optional
-        Synchrotron kernel function. If ``None``, the exact
-        :func:`first_synchrotron_kernel` is used. For inference or repeated
-        evaluations, an interpolated kernel is strongly recommended.
-    **kwargs
-        Additional keyword arguments forwarded to
-        :func:`scipy.integrate.quad` (e.g., ``epsrel``, ``limit``).
+        # Perform the asymptotic calculation at the lower edge to avoid any heavy
+        # computation in the regime where the kernel is well approximated by a power law.
+        # We precompute the logarithmic prefactor at super-precision to avoid
+        # any loss of accuracy.
+        if np.any(lmsk):
+            log_F[lmsk] = 0.59245244160808220024599944 + (1.0 / 3.0) * log_x[lmsk]
+            if derivative:
+                dlog_F_dlog_x[lmsk] = 1.0 / 3.0
 
-    Returns
-    -------
-    P_nu : astropy.units.Quantity
-        Synchrotron power per unit frequency per unit volume
-        in units of ``erg s⁻¹ Hz⁻¹ cm⁻³``.
+        # Now the high-x mask for the exponential cutoff.
+        if np.any(rmsk):
+            x_r = np.exp(log_x[rmsk])
+            eps = 99 / (162 * x_r)
+            log_F[rmsk] = (np.log(np.pi) - np.log(2.0)) + np.log1p(-eps) - x_r
 
-    Notes
-    -----
-    This function performs adaptive quadrature over the electron Lorentz
-    factor. It is best suited for analytic or injection distributions.
-    For evolved or tabulated distributions, use
-    :func:`compute_ME_spectrum_from_dist_grid` instead.
-    """
-    # --- Unit handling ---
-    nu = ensure_in_units(nu, u.Hz)
-    B = ensure_in_units(B, u.Gauss)
+            if derivative:
+                dlog_F_dlog_x[rmsk] = 0.5 - x_r
 
-    if kernel_function is None:
-        kernel_function = first_synchrotron_kernel
+        # Now we perform the exact computation using the Bessel functions. This is taken from
+        # Wenbin Lu's book equation 8.79.
+        if np.any(imsk):
+            # Declare the relevant u parameter that gets fed into everything.
+            u = np.exp(log_x[imsk]) / 2.0
 
-    # --- Low-level computation ---
-    P_nu_cgs = _opt_compute_ME_spectrum_from_dist_function(
-        nu=nu,
-        N_gamma_func=N_gamma_func,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        B=B,
-        alpha=alpha,
-        kernel_function=kernel_function,
-        **kwargs,
-    )
+            # Compute the relevant Bessel function constituents.
+            K_1_3 = kv(1 / 3, u)
+            K_4_3 = kv(4 / 3, u)
+            A = K_1_3 * K_4_3
+            B = K_4_3**2 - K_1_3**2
+            Q = A - (3 * u / 5) * B
 
-    return P_nu_cgs * u.erg / u.s / u.Hz / u.cm**3
+            # Compute R directly.
+            R = (2 * u**2) * Q
+            log_F[imsk] = np.log(R)
 
+            # If requested, we can now produce dlog_R dlog_x from this.
+            if derivative:
+                DK_1_3 = -0.5 * (kv(-2 / 3, u) + kv(4 / 3, u))
+                DK_4_3 = -0.5 * (kv(1 / 3, u) + kv(7 / 3, u))
+                DADU = DK_1_3 * K_4_3 + K_1_3 * DK_4_3
+                DBDU = 2 * (K_4_3 * DK_4_3 - K_1_3 * DK_1_3)
 
-def compute_ME_spectrum_from_dist_grid(
-    nu: "_UnitBearingArrayLike",
-    gamma: np.ndarray,
-    N_gamma: "_UnitBearingArrayLike",
-    B: "_UnitBearingArrayLike",
-    alpha: float = np.pi / 2,
-    kernel_function: Callable = None,
-):
-    r"""
-    Compute the synchrotron spectrum from a multi-electron distribution defined on a grid.
+                dlog_F_dlog_x[imsk] = 2 + (u / Q) * (DADU - (3 / 5) * B - (3 * u / 5) * DBDU)
 
-    This function computes the synchrotron power per unit frequency per unit volume emitted
-    by a population of relativistic electrons whose Lorentz factor distribution is provided
-    as a finite grid.
+    elif method == "lu":
+        x = np.exp(log_x)
 
-    Parameters
-    ----------
-    nu : array-like or astropy.units.Quantity
-        Observing frequencies. Default units are Hz.
-    gamma : array-like
-        Electron Lorentz factor grid. Must be 1D, monotonic, and match ``N_gamma``.
-    N_gamma : array-like or astropy.units.Quantity
-        Electron distribution evaluated on ``gamma``, interpreted as
-        :math:`dN/d\gamma`. Default units are ``cm⁻³``.
-    B : array-like or astropy.units.Quantity
-        Magnetic field strength. Default units are Gauss.
-    alpha : float, optional
-        Pitch angle in radians. Default is :math:`\pi/2`.
-    kernel_function : callable, optional
-        Synchrotron kernel function. If ``None``, the exact
-        :func:`first_synchrotron_kernel` is used. For performance-critical
-        applications, an interpolated kernel is strongly recommended.
+        A = np.log((np.pi * x**0.9 / 2.0) + 1)
+        B = np.log(x**0.9 + 1)
+        C = -2.443 * np.log(1.808 * x ** (1 / 3))
+        D = -0.0263440
 
-    Returns
-    -------
-    P_nu : astropy.units.Quantity
-        Synchrotron power per unit frequency per unit volume
-        in units of ``erg s⁻¹ Hz⁻¹ cm⁻³``.
+        log_F = A - B - (1 / 2.443) * np.logaddexp(C, D) - x
 
-    Notes
-    -----
-    This function performs a trapezoidal integration over the electron
-    Lorentz factor grid. For logarithmically spaced grids, this approach
-    is numerically stable and converges reliably.
-    """
-    # --- Unit handling ---
-    nu = ensure_in_units(nu, u.Hz)
-    B = ensure_in_units(B, u.Gauss)
-    N_gamma = ensure_in_units(N_gamma, 1 / u.cm**3)
+        if derivative:
+            dlog_F_dlog_x = (
+                ((0.9 * np.pi * x**0.9 / 2.0) / (1 + (np.pi * x**0.9 / 2.0)))  # term 1
+                - (0.9 * x**0.9 / (1 + x**0.9))  # term 2
+                + (1 / 3.0) * ((1.808 * x ** (1 / 3)) ** (-2.443) / ((1.808 * x ** (1 / 3)) ** (-2.443) + 0.974))
+                - x
+            )
 
-    gamma = np.asarray(gamma, dtype=float)
+    else:
+        raise ValueError(f"Invalid method '{method}'. Must be 'exact' or 'lu'.")
 
-    if kernel_function is None:
-        kernel_function = first_synchrotron_kernel
-
-    # --- Low-level computation ---
-    P_nu_cgs = _opt_compute_ME_spectrum_from_dist_grid(
-        nu=nu,
-        gamma=gamma,
-        N_gamma=N_gamma,
-        B=B,
-        alpha=alpha,
-        kernel_function=kernel_function,
-    )
-
-    return P_nu_cgs * u.erg / u.s / u.Hz / u.cm**3
+    return log_F.item() if scalar else log_F, dlog_F_dlog_x.item() if derivative and scalar else dlog_F_dlog_x
