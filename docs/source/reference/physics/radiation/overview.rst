@@ -25,9 +25,11 @@ the jets of active galactic nuclei.  Most importantly for Triceratops, synchrotr
 emission is the dominant radiation mechanism in a variety of astrophysical transients
 such as gamma-ray bursts (GRBs) and radio outflows in TDEs.
 
-Triceratops provides a comprehensive suite of tools for modeling synchrotron
-radiation, covering the full hierarchy from single-electron physics through
-population-averaged spectra to broadband multi-component SED fitting.
+**Triceratops provides a comprehensive suite of tools for modeling synchrotron radiation**, covering
+the full hierarchy of physical processes from the single-electron emission to the integrated SEDs of
+complex sources. The guides below will introduce the core modules and their structure. Theory notes and
+methods documents are provided for domain experts and developers interested in the inner workings of
+the various algorithms.
 
 .. grid:: 1
     :gutter: 3
@@ -58,7 +60,6 @@ population-averaged spectra to broadband multi-component SED fitting.
         - :ref:`synchrotron_cooling_closure`
         - :ref:`stratified_absorption`
         - :ref:`barnoil_duran`
-        - :ref:`synch_numerical`
 
 .. toctree::
     :hidden:
@@ -71,8 +72,8 @@ population-averaged spectra to broadband multi-component SED fitting.
     synchrotron/synchrotron_seds
     synchrotron/synchrotron_cooling
     synchrotron/synchrotron_theory
-    synchrotron/synchrotron_sed_theory
-    synchrotron/synchrotron_numerical_methods
+    synchrotron/synchrotron_pl_sed_theory
+    synchrotron/synchrotron_numerical_seds
     synchrotron/synchrotron_cooling_theory
     synchrotron/synchrotron_cooling_closure
     synchrotron/synchrotron_stratified_absorption

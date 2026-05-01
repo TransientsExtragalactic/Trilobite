@@ -10,6 +10,7 @@ underlying theory, see :ref:`synchrotron_theory`. For a guide to the usage of th
 :ref:`synchrotron_microphysics`.
 """
 
+from math import factorial
 from typing import TYPE_CHECKING, Union
 
 import numpy as np
@@ -19,7 +20,7 @@ from triceratops.radiation.constants import c_cgs, electron_rest_energy_cgs, sig
 from triceratops.utils.misc_utils import ensure_in_units
 
 if TYPE_CHECKING:
-    from triceratops._typing import _ArrayLike, _UnitBearingArrayLike
+    from triceratops._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
 
 
 # ============================================================= #
@@ -308,6 +309,69 @@ def _opt_compute_BPL_n_eff(
     )
 
     n_eff = N0 * moment_2
+    return n_eff.reshape(()) if n_eff.ndim == 0 else n_eff
+
+
+def _opt_compute_MJD_moment(
+    Theta: "_ArrayLike",
+    order: int = 1,
+) -> np.ndarray:
+    r"""
+    Compute the shape factor for the ``order``-th moment of the ultra-relativistic Maxwell-Jüttner distribution.
+
+    For the distribution :math:`N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\gamma^2 e^{-\gamma/\Theta}`,
+    the physical moment is :math:`M^{(\ell)} = N_{\rm therm} \times S^{(\ell)}(\Theta)` where the
+    shape factor is
+
+    .. math::
+
+        S^{(\ell)}(\Theta) = \frac{(\ell+2)!}{2}\,\Theta^\ell.
+
+    Parameters
+    ----------
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    order : int, optional
+        Moment order :math:`\ell \ge 0`. Default is ``1``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Shape factor :math:`S^{(\ell)}(\Theta)`. Multiply by :math:`N_{\rm therm}` to obtain
+        the physical moment in :math:`\mathrm{cm^{-3}}`.
+    """
+    Theta = np.asarray(Theta, dtype="f8")
+    shape = (factorial(order + 2) / 2.0) * Theta**order
+    return shape.reshape(()) if shape.ndim == 0 else shape
+
+
+def _opt_compute_MJD_n_eff(
+    N_therm: "_ArrayLike",
+    Theta: "_ArrayLike",
+) -> np.ndarray:
+    r"""
+    Compute the effective radiating electron number density for a Maxwell-Jüttner distribution.
+
+    Weights electrons by :math:`\gamma^2` reflecting synchrotron power scaling:
+
+    .. math::
+
+        n_{\rm eff} = \int_0^\infty \gamma^2\,N(\gamma)\,d\gamma = 12\,N_{\rm therm}\,\Theta^2.
+
+    Parameters
+    ----------
+    N_therm : float or array-like
+        Total number density in :math:`\mathrm{cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Effective number density in :math:`\mathrm{cm^{-3}}`.
+    """
+    N_therm = np.asarray(N_therm, dtype="f8")
+    n_eff = N_therm * _opt_compute_MJD_moment(Theta, order=2)
     return n_eff.reshape(()) if n_eff.ndim == 0 else n_eff
 
 
@@ -1083,6 +1147,140 @@ def compute_BPL_effective_number_density(
     return n_eff * u.cm**-3
 
 
+def compute_electron_gamma_MJD_moment(
+    Theta: "_ArrayLike",
+    *,
+    order: int = 1,
+) -> "_ArrayLike":
+    r"""
+    Compute the shape factor for the ``order``-th moment of the ultra-relativistic Maxwell-Jüttner distribution.
+
+    This evaluates
+
+    .. math::
+
+        S^{(\ell)}(\Theta) = \frac{(\ell+2)!}{2}\,\Theta^\ell,
+
+    so that the physical moment :math:`M^{(\ell)} = N_{\rm therm}\,S^{(\ell)}(\Theta)`.
+
+    Parameters
+    ----------
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    order : int, optional
+        Moment order :math:`\ell \ge 0`. Default is ``1``.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Shape factor :math:`S^{(\ell)}(\Theta)`.
+    """
+    return _opt_compute_MJD_moment(Theta, order=order)
+
+
+def compute_MJD_total_number_density(
+    N_therm: Union[float, np.ndarray, u.Quantity],
+) -> u.Quantity:
+    r"""
+    Return the total number density of a Maxwell-Jüttner electron distribution.
+
+    By the normalization convention used throughout this module,
+    :math:`\int_0^\infty N(\gamma)\,d\gamma = N_{\rm therm}`, so this function
+    simply attaches units and returns :math:`N_{\rm therm}`.
+
+    Parameters
+    ----------
+    N_therm : float, array-like, or ~astropy.units.Quantity
+        Total number density. Bare values are interpreted as :math:`\mathrm{cm^{-3}}`.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Total electron number density in :math:`\mathrm{cm^{-3}}`.
+    """
+    return ensure_in_units(N_therm, u.cm**-3) * u.cm**-3
+
+
+def compute_MJD_effective_number_density(
+    N_therm: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the effective radiating electron number density for a Maxwell-Jüttner distribution.
+
+    Because the single-electron synchrotron power scales as :math:`P_{\rm syn} \propto \gamma^2`,
+    the effective number density is
+
+    .. math::
+
+        n_{\rm eff} = \int_0^\infty \gamma^2\,N(\gamma)\,d\gamma = 12\,N_{\rm therm}\,\Theta^2.
+
+    Parameters
+    ----------
+    N_therm : float, array-like, or ~astropy.units.Quantity
+        Total number density. Bare values are interpreted as :math:`\mathrm{cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Effective radiating electron number density in :math:`\mathrm{cm^{-3}}`.
+    """
+    N_therm_cgs = ensure_in_units(N_therm, u.cm**-3)
+    return _opt_compute_MJD_n_eff(N_therm_cgs, Theta) * u.cm**-3
+
+
+def compute_mean_gamma_MJD(
+    Theta: "_ArrayLike",
+) -> "_ArrayLike":
+    r"""
+    Compute the mean Lorentz factor of a Maxwell-Jüttner electron distribution.
+
+    For the ultra-relativistic Maxwell-Jüttner distribution,
+
+    .. math::
+
+        \langle\gamma\rangle = \frac{M^{(1)}}{M^{(0)}} = 3\,\Theta.
+
+    Parameters
+    ----------
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+
+    Returns
+    -------
+    float or ~numpy.ndarray
+        Mean Lorentz factor.
+    """
+    return 3.0 * np.asarray(Theta, dtype="f8")
+
+
+def compute_mean_energy_MJD(
+    Theta: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the mean electron energy of a Maxwell-Jüttner distribution.
+
+    For the ultra-relativistic Maxwell-Jüttner distribution,
+
+    .. math::
+
+        \langle E \rangle = m_e c^2\,\langle\gamma\rangle = 3\,m_e c^2\,\Theta.
+
+    Parameters
+    ----------
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Mean electron energy in :math:`\mathrm{erg}`.
+    """
+    return 3.0 * np.asarray(Theta, dtype="f8") * electron_rest_energy_cgs * u.erg
+
+
 # ============================================================= #
 # Equipartition Closure Functions                               #
 # ============================================================= #
@@ -1694,6 +1892,42 @@ def _opt_compute_bol_emiss_BPL_from_magnetic_field(
     emiss = (4.0 / 3.0) * sigma_T_cgs * c_cgs * U_B * N0 * moment_2
 
     return emiss.reshape(()) if emiss.ndim == 0 else emiss
+
+
+def _opt_compute_bol_emiss_MJD_from_magnetic_field(
+    B: "_ArrayLike",
+    N_therm: "_ArrayLike",
+    Theta: "_ArrayLike",
+) -> np.ndarray:
+    """
+    Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner electron distribution.
+
+    Assumes CGS units throughout and returns emissivity in erg s^-1 cm^-3.
+    """
+    B = np.asarray(B, dtype="f8")
+    N_therm = np.asarray(N_therm, dtype="f8")
+
+    U_B = B**2 / (8.0 * np.pi)
+    n_eff = _opt_compute_MJD_n_eff(N_therm, Theta)
+    emiss = (4.0 / 3.0) * sigma_T_cgs * c_cgs * U_B * n_eff
+
+    return emiss.reshape(()) if emiss.ndim == 0 else emiss
+
+
+def _opt_compute_bol_emiss_MJD_from_thermal_energy_density_full(
+    u_therm: "_ArrayLike",
+    Theta: "_ArrayLike",
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> np.ndarray:
+    """
+    Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner distribution.
+
+    Assumes CGS units throughout and returns emissivity in erg s^-1 cm^-3.
+    """
+    B = _opt_compute_equipart_magnetic_field(u_therm=u_therm, epsilon_B=epsilon_B)
+    N_therm = _opt_normalize_MJD_from_thermal_energy_density(u_therm=u_therm, Theta=Theta, epsilon_E=epsilon_E)
+    return _opt_compute_bol_emiss_MJD_from_magnetic_field(B=B, N_therm=N_therm, Theta=Theta)
 
 
 def _opt_compute_bol_emiss_from_thermal_energy_density(
@@ -2385,6 +2619,81 @@ def compute_bol_emissivity_BPL_from_thermal_energy_density(
     return emiss * (u.erg / u.s / u.cm**3)
 
 
+def compute_bol_emissivity_MJD(
+    B: Union[float, np.ndarray, u.Quantity],
+    N_therm: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner electron distribution.
+
+    Parameters
+    ----------
+    B : float, array-like, or ~astropy.units.Quantity
+        Magnetic field strength. Bare values are interpreted as Gauss.
+    N_therm : float, array-like, or ~astropy.units.Quantity
+        Total number density of the Maxwell-Jüttner component. Bare values are
+        interpreted as :math:`\mathrm{cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
+
+    Notes
+    -----
+    Uses the single-electron power scaling :math:`P_{\rm syn} \propto \gamma^2` and the
+    closed-form effective number density :math:`n_{\rm eff} = 12\,N_{\rm therm}\,\Theta^2`:
+
+    .. math::
+
+        j_{\rm bol} = \tfrac{4}{3}\,\sigma_T\,c\,\frac{B^2}{8\pi}\,n_{\rm eff}.
+    """
+    B_cgs = ensure_in_units(B, u.G)
+    N_therm_cgs = ensure_in_units(N_therm, u.cm**-3)
+    emiss = _opt_compute_bol_emiss_MJD_from_magnetic_field(B=B_cgs, N_therm=N_therm_cgs, Theta=Theta)
+    return emiss * (u.erg / u.s / u.cm**3)
+
+
+def compute_bol_emissivity_MJD_from_thermal_energy_density(
+    u_therm: Union[float, np.ndarray, u.Quantity],
+    Theta: "_ArrayLike",
+    *,
+    epsilon_B: "_ArrayLike",
+    epsilon_E: "_ArrayLike",
+) -> u.Quantity:
+    r"""
+    Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner electron distribution assuming equipartition.
+
+    Both the magnetic field strength and the electron normalization are inferred from
+    the thermal energy density via ``epsilon_B`` and ``epsilon_E``.
+
+    Parameters
+    ----------
+    u_therm : float, array-like, or ~astropy.units.Quantity
+        Thermal energy density. Bare values are interpreted as
+        :math:`\mathrm{erg\,cm^{-3}}`.
+    Theta : float or array-like
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    epsilon_B : float or array-like
+        Fraction of post-shock energy in magnetic fields.
+    epsilon_E : float or array-like
+        Fraction of post-shock energy in relativistic electrons.
+
+    Returns
+    -------
+    ~astropy.units.Quantity
+        Bolometric synchrotron emissivity in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}}`.
+    """
+    u_therm_cgs = ensure_in_units(u_therm, u.erg / u.cm**3)
+    emiss = _opt_compute_bol_emiss_MJD_from_thermal_energy_density_full(
+        u_therm=u_therm_cgs, Theta=Theta, epsilon_B=epsilon_B, epsilon_E=epsilon_E
+    )
+    return emiss * (u.erg / u.s / u.cm**3)
+
+
 # ============================================================= #
 # Public MJD Normalization Wrappers                             #
 # ============================================================= #
@@ -2620,3 +2929,175 @@ def compute_MJD_and_PL_norm_from_thermal_energy_density(
         gamma_max=gamma_max,
     )
     return N_therm * u.cm**-3, N0_pl * u.cm**-3
+
+
+# ============================================================ #
+# Public Distribution Function Wrappers                        #
+# ============================================================ #
+def get_maxwell_juttner_distribution(Theta: float, norm: "_UnitBearingScalarLike" = 1, *, with_units: bool = True):
+    r"""
+    Return a callable ultra-relativistic Maxwell-Jüttner electron distribution.
+
+    The distribution is
+
+    .. math::
+
+        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+
+    which satisfies :math:`\int_0^\infty N(\gamma)\,d\gamma = N_{\rm therm}`.
+
+    Parameters
+    ----------
+    Theta : float
+        Dimensionless electron temperature :math:`\Theta = kT / (m_e c^2)`.
+    norm : float or ~astropy.units.Quantity, optional
+        Total number density :math:`N_{\rm therm}`. Bare values are interpreted as
+        :math:`\mathrm{cm^{-3}}`. Default is ``1``.
+    with_units : bool, optional
+        If ``True`` (default), ``norm`` is coerced to :math:`\mathrm{cm^{-3}}` via
+        :func:`~triceratops.utils.misc_utils.ensure_in_units` and the returned callable
+        returns an :class:`~astropy.units.Quantity` in :math:`\mathrm{cm^{-3}}`.
+        If ``False``, ``norm`` is treated as a plain CGS float and the returned callable
+        returns a plain :class:`numpy.ndarray`.
+
+    Returns
+    -------
+    callable
+        Function ``N(gamma)`` returning the distribution at Lorentz factor ``gamma``.
+        Accepts floats or array-like inputs.
+    """
+    norm_cgs = ensure_in_units(norm, u.cm**-3) if with_units else float(norm)
+    prefactor = norm_cgs / (2.0 * Theta**3)
+
+    def _N(gamma):
+        gamma = np.asarray(gamma, dtype="f8")
+        result = prefactor * gamma**2 * np.exp(-gamma / Theta)
+        return result * u.cm**-3 if with_units else result
+
+    return _N
+
+
+def get_power_law_distribution(
+    p: float,
+    norm: "_UnitBearingScalarLike" = 1,
+    gamma_min: float = 1.0,
+    gamma_max: float = np.inf,
+    *,
+    with_units: bool = True,
+):
+    r"""
+    Return a callable power-law electron distribution.
+
+    The distribution is
+
+    .. math::
+
+        N(\gamma) = N_0\,\gamma^{-p}, \quad \gamma_{\min} \le \gamma \le \gamma_{\max},
+
+    and zero outside that range.
+
+    Parameters
+    ----------
+    p : float
+        Power-law spectral index.
+    norm : float or ~astropy.units.Quantity, optional
+        Amplitude :math:`N_0`. Bare values are interpreted as :math:`\mathrm{cm^{-3}}`.
+        Default is ``1``.
+    gamma_min : float, optional
+        Minimum Lorentz factor. Default is ``1.0``.
+    gamma_max : float, optional
+        Maximum Lorentz factor. Default is ``np.inf``.
+    with_units : bool, optional
+        If ``True`` (default), ``norm`` is coerced to :math:`\mathrm{cm^{-3}}` via
+        :func:`~triceratops.utils.misc_utils.ensure_in_units` and the returned callable
+        returns an :class:`~astropy.units.Quantity` in :math:`\mathrm{cm^{-3}}`.
+        If ``False``, ``norm`` is treated as a plain CGS float and the returned callable
+        returns a plain :class:`numpy.ndarray`.
+
+    Returns
+    -------
+    callable
+        Function ``N(gamma)`` returning the distribution at Lorentz factor ``gamma``.
+        Accepts floats or array-like inputs.
+    """
+    norm_cgs = ensure_in_units(norm, u.cm**-3) if with_units else float(norm)
+
+    def _N(gamma):
+        gamma = np.asarray(gamma, dtype="f8")
+        result = np.where((gamma >= gamma_min) & (gamma <= gamma_max), norm_cgs * gamma ** (-p), 0.0)
+        return result * u.cm**-3 if with_units else result
+
+    return _N
+
+
+def get_broken_power_law_distribution(
+    a1: float,
+    a2: float,
+    gamma_b: float,
+    norm: "_UnitBearingScalarLike" = 1,
+    gamma_min: float = 1.0,
+    gamma_max: float = np.inf,
+    *,
+    with_units: bool = True,
+):
+    r"""
+    Return a callable broken power-law electron distribution.
+
+    The distribution is
+
+    .. math::
+
+        N(\gamma) = N_0\,\begin{cases}
+            \left(\gamma/\gamma_b\right)^{a_1}, & \gamma_{\min} \le \gamma < \gamma_b \\
+            \left(\gamma/\gamma_b\right)^{a_2}, & \gamma_b \le \gamma \le \gamma_{\max},
+        \end{cases}
+
+    which is continuous at :math:`\gamma_b` with :math:`N(\gamma_b) = N_0`, and zero outside
+    :math:`[\gamma_{\min}, \gamma_{\max}]`. The indices :math:`a_1` and :math:`a_2` are the full
+    exponents in the :math:`(\gamma/\gamma_b)^a` form and are typically negative for physical
+    distributions (e.g. :math:`a_1 = -p`, :math:`a_2 = -(p+1)` after cooling). This convention
+    matches the rest of the microphysics module (see :func:`compute_BPL_norm_from_magnetic_field`).
+
+    Parameters
+    ----------
+    a1 : float
+        Power-law exponent below the break (typically negative).
+    a2 : float
+        Power-law exponent above the break (typically negative).
+    gamma_b : float
+        Break Lorentz factor.
+    norm : float or ~astropy.units.Quantity, optional
+        Amplitude :math:`N_0 = N(\gamma_b)`. Bare values are interpreted as
+        :math:`\mathrm{cm^{-3}}`. Default is ``1``.
+    gamma_min : float, optional
+        Minimum Lorentz factor. Default is ``1.0``.
+    gamma_max : float, optional
+        Maximum Lorentz factor. Default is ``np.inf``.
+    with_units : bool, optional
+        If ``True`` (default), ``norm`` is coerced to :math:`\mathrm{cm^{-3}}` via
+        :func:`~triceratops.utils.misc_utils.ensure_in_units` and the returned callable
+        returns an :class:`~astropy.units.Quantity` in :math:`\mathrm{cm^{-3}}`.
+        If ``False``, ``norm`` is treated as a plain CGS float and the returned callable
+        returns a plain :class:`numpy.ndarray`.
+
+    Returns
+    -------
+    callable
+        Function ``N(gamma)`` returning the distribution at Lorentz factor ``gamma``.
+        Accepts floats or array-like inputs.
+    """
+    norm_cgs = ensure_in_units(norm, u.cm**-3) if with_units else float(norm)
+
+    def _N(gamma):
+        gamma = np.asarray(gamma, dtype="f8")
+        x = gamma / gamma_b
+        in_range = (gamma >= gamma_min) & (gamma <= gamma_max)
+        below_break = gamma < gamma_b
+        result = np.where(
+            in_range,
+            np.where(below_break, norm_cgs * x**a1, norm_cgs * x**a2),
+            0.0,
+        )
+        return result * u.cm**-3 if with_units else result
+
+    return _N

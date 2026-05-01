@@ -87,11 +87,11 @@ engine.load_avg_first_kernel()
 # :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{-p}\,d\gamma`, ensuring that
 # :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} N_{\rm PL}(\gamma)\,d\gamma = n_{\rm PL}`.
 
-delta = 0.999  # thermal fraction of the total electron population
+delta = 0.99  # thermal fraction of the total electron population
 n_e = 1.0 * u.cm**-3  # total electron number density
 p = 2.5  # non-thermal power-law index
-theta = 10  # dimensionless temperature kT / m_e c^2
-gamma_min, gamma_max = 50, 1e8  # power-law Lorentz factor bounds
+theta = 1  # dimensionless temperature kT / m_e c^2
+gamma_min, gamma_max = 1, 1e8  # power-law Lorentz factor bounds
 
 n_therm = delta * n_e
 n_pl = (1 - delta) * n_e

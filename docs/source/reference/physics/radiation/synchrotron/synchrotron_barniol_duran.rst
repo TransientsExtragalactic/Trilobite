@@ -1,6 +1,6 @@
 .. _barnoil_duran:
 ===============================================
-The Barniol-Duran Formalism for Synchrotron
+Theory Note: The Barniol-Duran Formalism
 ===============================================
 
 A common motif in Newtonian treatments of synchrotron radiation from a generic emission region is the approach

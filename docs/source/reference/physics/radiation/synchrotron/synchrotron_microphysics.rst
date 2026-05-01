@@ -30,9 +30,9 @@ Electron Distributions
     See :ref:`synch_theory_populations` for the corresponding documentation on synchrotron theory.
 
 While it is possible to compute synchrotron emission from an arbitrary population of electrons, in practice, one
-often selects a specific distribution function for their electron population. At current, Triceratops only provides
-explicit support for **power-law electron distributions**; however, the modular nature of the mode makes it a
-straightforward exercise to implement additional distributions in the future.
+often selects a specific distribution function for their electron population. Triceratops provides explicit support
+for three electron distributions: **power-law**, **broken power-law**, and **Maxwell-Jüttner** (thermal). Mixed
+thermal-plus-nonthermal (Maxwell-Jüttner + power-law) populations are also supported.
 
 Power-Law Electron Distributions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -315,6 +315,178 @@ power-law distribution with normalization :math:`N_0 = 10^5 \, \rm cm^{-3}`, one
 
     print(f"Effective radiating density: {n_eff:.2e}")
 
+Maxwell-Jüttner Distributions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A **Maxwell-Jüttner distribution** is the relativistic thermal equilibrium distribution.
+In the ultra-relativistic limit it takes the form
+
+.. math::
+
+    N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+
+where:
+
+- :math:`\Theta = kT / (m_e c^2)` is the dimensionless electron temperature,
+- :math:`N_{\rm therm}` is the normalization (total number density of thermal electrons).
+
+This distribution is appropriate for modeling thermalized electron populations, such as
+shock-heated plasmas or dense radiative environments where electrons equilibrate to a
+well-defined temperature.
+
+.. note::
+
+    As with the power-law and broken power-law cases, Triceratops consistently treats the
+    Lorentz factor :math:`\gamma` as the independent variable. The Maxwell-Jüttner
+    distribution is fully specified by :math:`\Theta` and its normalization
+    :math:`N_{\rm therm}`.
+
+.. hint::
+
+    From a modeling perspective, the Maxwell-Jüttner distribution is fundamentally different
+    from power-law distributions in that its shape is fixed by the temperature. As a result,
+    synchrotron observables depend only on the normalization and temperature, rather than on
+    higher-order moments of a free functional form.
+
+The mean energy density of the Maxwell-Jüttner population is approximated by
+:footcite:p:`1998ApJ...498..313G`
+
+.. math::
+
+    U_e \approx N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta},
+
+which smoothly interpolates between the non-relativistic and ultra-relativistic limits.
+
+Mixed Thermal + Non-thermal Populations
+"""""""""""""""""""""""""""""""""""""""""
+
+Many astrophysical sources are best described by a **mixed** population containing both
+a thermalized component and a non-thermal power-law tail. Triceratops parameterizes this
+split with a single parameter :math:`\delta \in [0,1]`:
+
+.. math::
+
+    \varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+    \qquad
+    \varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.
+
+Each component's normalization is then computed independently via equipartition.
+Setting :math:`\delta = 1` recovers a pure thermal population; :math:`\delta = 0`
+recovers the standard power-law-only case.
+.. rubric:: API Reference
+
+*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
+
+.. tab-set::
+
+    .. tab-item:: High-Level API
+
+        The following high-level helper functions are provided for working with
+        Maxwell-Jüttner and mixed thermal + non-thermal electron populations:
+
+        .. autosummary::
+           :nosignatures:
+
+           compute_electron_gamma_MJD_moment
+           compute_mean_gamma_MJD
+           compute_mean_energy_MJD
+           compute_MJD_total_number_density
+           compute_MJD_effective_number_density
+           compute_MJD_norm_from_magnetic_field
+           compute_MJD_norm_from_thermal_energy_density
+           compute_MJD_and_PL_norm_from_magnetic_field
+           compute_MJD_and_PL_norm_from_thermal_energy_density
+           compute_bol_emissivity_MJD
+           compute_bol_emissivity_MJD_from_thermal_energy_density
+           get_maxwell_juttner_distribution
+
+    .. tab-item:: Low-Level API
+
+        Mirroring the high-level interface, the following low-level functions are provided
+        for Maxwell-Jüttner distributions and mixed populations:
+
+        - ``_opt_compute_MJD_moment``, which computes the closed-form Maxwell-Jüttner
+          moment shape factor :math:`S^{(\ell)}(\Theta)`.
+
+        - ``_opt_compute_MJD_n_eff``, which computes the effective radiating number
+          density :math:`n_{\rm eff} = \int \gamma^2 N(\gamma)\,d\gamma`.
+
+        - ``_opt_normalize_MJD_from_magnetic_field``, which computes the normalization
+          :math:`N_{\rm therm}` given a magnetic field strength and equipartition parameters.
+
+        - ``_opt_normalize_MJD_from_thermal_energy_density``, which computes
+          :math:`N_{\rm therm}` directly from a thermal energy density.
+
+        - ``_opt_normalize_MJD_and_PL_from_magnetic_field``, which computes both
+          :math:`N_{\rm therm}` and the power-law normalization for mixed populations.
+
+        - ``_opt_normalize_MJD_and_PL_from_thermal_energy_density``, which performs the
+          same calculation using the thermal energy density as input.
+
+        - ``_opt_compute_bol_emiss_MJD_from_magnetic_field``, which computes the
+          bolometric synchrotron emissivity for a Maxwell-Jüttner population from
+          an explicit magnetic field and thermal normalization.
+
+        - ``_opt_compute_bol_emiss_MJD_from_thermal_energy_density_full``, which computes
+          the bolometric synchrotron emissivity for a Maxwell-Jüttner population using
+          the full equipartition closure.
+
+.. rubric:: Examples
+
+As with the power-law and broken power-law cases, these functions are primarily intended
+for use by higher-level modeling routines, but can also be used directly.
+
+For example, to compute the normalization of a Maxwell-Jüttner distribution from a magnetic
+field strength:
+
+.. code-block:: python
+
+    import astropy.units as u
+    from triceratops.radiation.synchrotron.microphysics import (
+        compute_MJD_norm_from_magnetic_field,
+    )
+
+    B = 0.5 * u.G
+    Theta = 10.0
+    epsilon_B = 0.01
+    epsilon_E = 0.1
+
+    N_therm = compute_MJD_norm_from_magnetic_field(
+        B=B,
+        Theta=Theta,
+        epsilon_B=epsilon_B,
+        epsilon_E=epsilon_E,
+    )
+
+    print(f"Thermal number density: {N_therm:.3e}")
+
+Similarly, to compute the normalization of a mixed thermal + power-law population:
+
+.. code-block:: python
+
+    import astropy.units as u
+    from triceratops.radiation.synchrotron.microphysics import (
+        compute_MJD_and_PL_norm_from_thermal_energy_density,
+    )
+
+    u_therm = 1e-2 * u.erg / u.cm**3
+    Theta = 10.0
+    p = 3.0
+    delta = 0.3
+    epsilon_E = 0.1
+
+    N_therm, N0_pl = compute_MJD_and_PL_norm_from_thermal_energy_density(
+        u_therm=u_therm,
+        Theta=Theta,
+        p=p,
+        delta=delta,
+        epsilon_E=epsilon_E,
+        gamma_min=1.0,
+        gamma_max=1e8,
+    )
+
+    print(f"Thermal density: {N_therm:.3e}")
+    print(f"PL normalization: {N0_pl:.3e}")
 
 ----
 
@@ -353,15 +525,19 @@ the API in the tab-set below:
         .. autosummary::
            :nosignatures:
 
+           compute_equipartition_magnetic_field
            compute_PL_norm_from_magnetic_field
            compute_PL_norm_from_thermal_energy_density
-           compute_equipartition_magnetic_field
+           compute_BPL_norm_from_magnetic_field
+           compute_BPL_norm_from_thermal_energy_density
+           compute_MJD_norm_from_magnetic_field
+           compute_MJD_norm_from_thermal_energy_density
+           compute_MJD_and_PL_norm_from_magnetic_field
+           compute_MJD_and_PL_norm_from_thermal_energy_density
            compute_bol_emissivity
            compute_bol_emissivity_from_thermal_energy_density
-           compute_bol_emissivity_BPL_from_thermal_energy_density
-           compute_BPL_norm_from_thermal_energy_density
            compute_bol_emissivity_BPL
-           compute_BPL_norm_from_magnetic_field
+           compute_bol_emissivity_BPL_from_thermal_energy_density
 
 
     .. tab-item:: Low-Level API
