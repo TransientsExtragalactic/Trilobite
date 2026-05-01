@@ -77,6 +77,11 @@ from triceratops.radiation.synchrotron.utils import (
 from triceratops.utils.log import triceratops_logger
 from triceratops.utils.misc_utils import ensure_in_units
 
+from ..microphysics import (
+    _opt_normalize_MJD_and_PL_from_magnetic_field,
+    _opt_normalize_MJD_from_magnetic_field,
+    _opt_normalize_PL_from_magnetic_field,
+)
 from ._one_zone_closure import SSA_INV_FUNCTION_REGISTRY
 from ._one_zone_functions import (
     COOLING_SED_FUNCTION_REGISTRY,
@@ -97,6 +102,7 @@ from ._one_zone_ssa import (
     select_ssa_sed_regime_from_candidates_with_cooling,
     select_ssa_sed_regime_from_candidates_without_cooling,
 )
+from .numerical import NumericalSynchrotronEngine
 from .one_zone_closure import (
     _invert_powerlaw_cooling_sed,
     _invert_powerlaw_cooling_ssa_sed,
@@ -125,6 +131,9 @@ __all__ = [
     "PowerLaw_SSA_SynchrotronSED",
     "PowerLaw_Cooling_SynchrotronSED",
     "SSA_SED_PowerLaw",
+    "Numerical_PL_SSA_SED",
+    "Numerical_Thermal_SSA_SED",
+    "Numerical_Thermal_PL_SSA_SED",
 ]
 
 
@@ -6173,3 +6182,944 @@ class SSA_SED_PowerLaw(SynchrotronSED):
             gamma_max=gamma_max,
         )
         return nu * u.Hz, F_nu * u.erg / (u.s * u.cm**2 * u.Hz)
+
+
+# ================================================= #
+# Numerical Standard Library SEDs                   #
+# ================================================= #
+class Numerical_PL_SSA_SED(SynchrotronSED):
+    r"""
+    Numerical one-zone power-law synchrotron SED with self-absorption.
+
+    Evaluates the synchrotron flux density by numerically integrating the
+    synchrotron kernel over a power-law electron distribution with full
+    radiative transfer (SSA included). Unlike the analytic
+    :class:`PowerLaw_SSA_SynchrotronSED`, no assumption is made about the
+    spectral regime.
+
+    The electron number density is normalized via equipartition:
+
+    .. math::
+
+        N(\gamma) = N_0\,\gamma^{-p}, \quad \gamma_{\min} \le \gamma \le \gamma_{\max}
+
+    where :math:`N_0` is fixed by :math:`\epsilon_E / \epsilon_B` and the
+    magnetic energy density
+    (see :func:`~triceratops.radiation.synchrotron.microphysics._opt_normalize_PL_from_magnetic_field`).
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
+        built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``.
+    n_gamma : int, optional
+        Number of quadrature points on the Lorentz factor grid. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Kernel grid spacing. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. Default ``"exact"``.
+    """
+
+    def __init__(
+        self,
+        gamma: Union[np.ndarray, None] = None,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e8,
+        n_gamma: int = 200,
+        x_min: float = 1e-5,
+        x_max: float = 1e2,
+        num_points: int = 1000,
+        spacing: str = "log",
+        method: str = "exact",
+    ):
+        self._engine = NumericalSynchrotronEngine()
+
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
+            gamma=gamma,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            n_gamma=n_gamma,
+        )
+
+        kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
+        self._engine.load_avg_first_kernel(**kernel_kwargs)
+        self._engine.load_first_kernel(**kernel_kwargs)
+
+    def _log_opt_sed(
+        self,
+        nu: "_ArrayLike",
+        B: float,
+        R: float,
+        D_A: float,
+        *,
+        p: float = 3.0,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        sin_alpha: Union[float, None] = None,
+        z: float = 0.0,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e6,
+    ) -> "_ArrayLike":
+        r"""
+        Low-level numerical synchrotron SED evaluation.
+
+        All inputs are plain CGS scalars; no unit handling is performed.
+
+        Parameters
+        ----------
+        nu : array-like
+            Observed frequency in Hz.
+        B : float
+            Magnetic field strength in Gauss.
+        R : float
+            Outer radius of the emitting region in cm.
+        D_A : float
+            Angular diameter distance in cm.
+        p : float, optional
+            Electron power-law index. Default ``3.0``.
+        f_V : float, optional
+            Volume filling factor. The effective LOS path length passed to
+            the radiative transfer is :math:`f_V R`. Default ``1.0``.
+        f_A : float, optional
+            Area filling factor. The effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight (relativistic correction). Default ``1.0``.
+        sin_alpha : float or None, optional
+            Sine of the electron pitch angle. ``None`` selects the
+            pitch-angle-averaged kernel. Default ``None``.
+        z : float, optional
+            Source redshift. Default ``0.0``.
+        epsilon_B : float, optional
+            Magnetic equipartition fraction. Default ``0.1``.
+        epsilon_E : float, optional
+            Electron equipartition fraction. Default ``0.1``.
+        gamma_min : float, optional
+            Minimum electron Lorentz factor active in the power law.
+            Default ``1.0``.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor active in the power law.
+            Default ``1e6``.
+
+        Returns
+        -------
+        log_flux : array-like
+            :math:`\ln F_\nu` in CGS
+            (:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`).
+        """
+        # Electron distribution normalization via equipartition.
+        N0 = np.asarray(
+            _opt_normalize_PL_from_magnetic_field(
+                B=B,
+                p=p,
+                epsilon_B=epsilon_B,
+                epsilon_E=epsilon_E,
+                gamma_min=gamma_min,
+                gamma_max=gamma_max,
+            ),
+            dtype="f8",
+        )
+
+        # Build log_N on the pre-built gamma grid, zeroing outside [gamma_min, gamma_max].
+        # Leading batch dims come from N0's shape (scalar → ()).
+        gamma_arr = np.exp(self._log_gamma)
+        mask = (gamma_arr >= gamma_min) & (gamma_arr <= gamma_max)
+        log_N = np.full(N0.shape + (len(self._log_gamma),), -np.inf)
+        log_N[..., mask] = np.log(N0)[..., np.newaxis] - p * self._log_gamma[mask]
+
+        log_nu = np.log(np.asarray(nu, dtype="f8"))
+        log_B = np.log(float(B))
+        log_R_eff = np.log(float(f_V) * float(R))
+        log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
+        log_D_A = np.log(float(D_A))
+
+        if sin_alpha is not None:
+            return self._engine._compute_log_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+                sin_alpha=float(sin_alpha),
+            )
+        else:
+            return self._engine._compute_log_pa_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+            )
+
+    def sed(
+        self,
+        nu: "_UnitBearingArrayLike",
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        *,
+        p: float = 3.0,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        alpha: "_UnitBearingScalarLike" = None,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e6,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+    ) -> "_UnitBearingArrayLike":
+        r"""
+        Evaluate the numerical power-law synchrotron SED with self-absorption.
+
+        Parameters
+        ----------
+        nu : array-like or ~astropy.units.Quantity
+            Observed frequency. Bare values are treated as Hz.
+        B : float or ~astropy.units.Quantity
+            Magnetic field strength. Bare values are treated as Gauss.
+        R : float or ~astropy.units.Quantity
+            Outer radius of the emitting region. Bare values are treated as cm.
+        p : float, optional
+            Electron power-law index. Default ``3.0``.
+        f_V : float, optional
+            Volume filling factor; the effective LOS path length is
+            :math:`f_V R`. Default ``1.0``.
+        f_A : float, optional
+            Area filling factor; the effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight. Default ``1.0``.
+        alpha : float, ~astropy.units.Quantity, or None, optional
+            Electron pitch angle. Bare values are treated as radians.
+            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
+        epsilon_B : float, optional
+            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+        epsilon_E : float, optional
+            Fraction of post-shock energy in relativistic electrons.
+            Default ``0.1``.
+        gamma_min : float, optional
+            Minimum electron Lorentz factor active in the power law.
+            Default ``1.0``.
+        gamma_max : float, optional
+            Maximum electron Lorentz factor active in the power law.
+            Default ``1e6``.
+        redshift : float, optional
+            Source redshift.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Luminosity distance. Bare values are treated as cm.
+        angular_diameter_distance : float or ~astropy.units.Quantity, optional
+            Angular diameter distance. Bare values are treated as cm.
+        proper_distance : float or ~astropy.units.Quantity, optional
+            Proper (comoving) distance. Bare values are treated as cm.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to derive missing distance measures. Defaults to
+            the package-configured cosmology.
+
+        Returns
+        -------
+        F_nu : ~astropy.units.Quantity
+            Flux density in
+            :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+        """
+        # Resolve cosmological distances → angular diameter distance + redshift.
+        _cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=_cosmology,
+        )
+        D_A = ensure_in_units(distances["angular_diameter_distance"], "cm")
+        z = float(distances["redshift"])
+
+        # Convert physical inputs to raw CGS.
+        nu_cgs = ensure_in_units(nu, "Hz")
+        B_cgs = float(ensure_in_units(B, "G"))
+        R_cgs = float(ensure_in_units(R, "cm"))
+        D_A_cgs = float(D_A)
+
+        # Resolve pitch angle: None → pitch-averaged.
+        sin_alpha = float(np.sin(ensure_in_units(alpha, "rad"))) if alpha is not None else None
+
+        log_flux = self._log_opt_sed(
+            nu=nu_cgs,
+            B=B_cgs,
+            R=R_cgs,
+            D_A=D_A_cgs,
+            p=p,
+            f_V=f_V,
+            f_A=f_A,
+            beta=beta,
+            cos_theta=cos_theta,
+            sin_alpha=sin_alpha,
+            z=z,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+        )
+
+        return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
+
+
+class Numerical_Thermal_SSA_SED(SynchrotronSED):
+    r"""
+    Numerical one-zone thermal (Maxwell-Jüttner) synchrotron SED with self-absorption.
+
+    Evaluates the synchrotron flux density by numerically integrating the
+    synchrotron kernel over a Maxwell-Jüttner electron distribution with
+    full radiative transfer (SSA included).
+
+    The electron distribution is
+
+    .. math::
+
+        N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},
+
+    where :math:`\Theta = kT/(m_e c^2)` is the dimensionless electron
+    temperature and :math:`N_{\rm therm}` is fixed by equipartition (see
+    :func:`~triceratops.radiation.synchrotron.microphysics._opt_normalize_MJD_from_magnetic_field`).
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
+        built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``.
+    n_gamma : int, optional
+        Number of quadrature points. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Kernel grid spacing. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. Default ``"exact"``.
+    """
+
+    def __init__(
+        self,
+        gamma: Union[np.ndarray, None] = None,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e8,
+        n_gamma: int = 200,
+        x_min: float = 1e-5,
+        x_max: float = 1e2,
+        num_points: int = 1000,
+        spacing: str = "log",
+        method: str = "exact",
+    ):
+        self._engine = NumericalSynchrotronEngine()
+
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
+            gamma=gamma,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            n_gamma=n_gamma,
+        )
+
+        kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
+        self._engine.load_avg_first_kernel(**kernel_kwargs)
+        self._engine.load_first_kernel(**kernel_kwargs)
+
+    def _log_opt_sed(
+        self,
+        nu: "_ArrayLike",
+        B: float,
+        R: float,
+        D_A: float,
+        Theta: float,
+        *,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        sin_alpha: Union[float, None] = None,
+        z: float = 0.0,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+    ) -> "_ArrayLike":
+        r"""
+        Low-level numerical thermal synchrotron SED evaluation.
+
+        All inputs are plain CGS scalars; no unit handling is performed.
+
+        Parameters
+        ----------
+        nu : array-like
+            Observed frequency in Hz.
+        B : float
+            Magnetic field strength in Gauss.
+        R : float
+            Outer radius of the emitting region in cm.
+        D_A : float
+            Angular diameter distance in cm.
+        Theta : float
+            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
+        f_V : float, optional
+            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Default ``1.0``.
+        f_A : float, optional
+            Area filling factor. Effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight (relativistic correction). Default ``1.0``.
+        sin_alpha : float or None, optional
+            Sine of the electron pitch angle. ``None`` selects the
+            pitch-angle-averaged kernel. Default ``None``.
+        z : float, optional
+            Source redshift. Default ``0.0``.
+        epsilon_B : float, optional
+            Magnetic equipartition fraction. Default ``0.1``.
+        epsilon_E : float, optional
+            Electron equipartition fraction. Default ``0.1``.
+
+        Returns
+        -------
+        log_flux : array-like
+            :math:`\ln F_\nu` in CGS
+            (:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`).
+        """
+        N_therm = np.asarray(
+            _opt_normalize_MJD_from_magnetic_field(
+                B=B,
+                Theta=Theta,
+                epsilon_B=epsilon_B,
+                epsilon_E=epsilon_E,
+            ),
+            dtype="f8",
+        )
+
+        # Maxwell-Jüttner: N(gamma) = N_therm/(2 Theta^3) * gamma^2 * exp(-gamma/Theta)
+        log_N = (
+            np.log(N_therm)[..., np.newaxis]
+            - np.log(2.0)
+            - 3.0 * np.log(float(Theta))
+            + 2.0 * self._log_gamma
+            - np.exp(self._log_gamma) / float(Theta)
+        )
+
+        log_nu = np.log(np.asarray(nu, dtype="f8"))
+        log_B = np.log(float(B))
+        log_R_eff = np.log(float(f_V) * float(R))
+        log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
+        log_D_A = np.log(float(D_A))
+
+        if sin_alpha is not None:
+            return self._engine._compute_log_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+                sin_alpha=float(sin_alpha),
+            )
+        else:
+            return self._engine._compute_log_pa_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+            )
+
+    def sed(
+        self,
+        nu: "_UnitBearingArrayLike",
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        Theta: float,
+        *,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        alpha: "_UnitBearingScalarLike" = None,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+    ) -> "_UnitBearingArrayLike":
+        r"""
+        Evaluate the numerical thermal synchrotron SED with self-absorption.
+
+        Parameters
+        ----------
+        nu : array-like or ~astropy.units.Quantity
+            Observed frequency. Bare values are treated as Hz.
+        B : float or ~astropy.units.Quantity
+            Magnetic field strength. Bare values are treated as Gauss.
+        R : float or ~astropy.units.Quantity
+            Outer radius of the emitting region. Bare values are treated as cm.
+        Theta : float
+            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
+        f_V : float, optional
+            Volume filling factor; the effective LOS path length is
+            :math:`f_V R`. Default ``1.0``.
+        f_A : float, optional
+            Area filling factor; the effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight. Default ``1.0``.
+        alpha : float, ~astropy.units.Quantity, or None, optional
+            Electron pitch angle. Bare values are treated as radians.
+            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
+        epsilon_B : float, optional
+            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+        epsilon_E : float, optional
+            Fraction of post-shock energy in relativistic electrons.
+            Default ``0.1``.
+        redshift : float, optional
+            Source redshift.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Luminosity distance. Bare values are treated as cm.
+        angular_diameter_distance : float or ~astropy.units.Quantity, optional
+            Angular diameter distance. Bare values are treated as cm.
+        proper_distance : float or ~astropy.units.Quantity, optional
+            Proper (comoving) distance. Bare values are treated as cm.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to derive missing distance measures.
+
+        Returns
+        -------
+        F_nu : ~astropy.units.Quantity
+            Flux density in
+            :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+        """
+        _cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=_cosmology,
+        )
+        D_A = ensure_in_units(distances["angular_diameter_distance"], "cm")
+        z = float(distances["redshift"])
+
+        nu_cgs = ensure_in_units(nu, "Hz")
+        B_cgs = float(ensure_in_units(B, "G"))
+        R_cgs = float(ensure_in_units(R, "cm"))
+        D_A_cgs = float(D_A)
+
+        sin_alpha = float(np.sin(ensure_in_units(alpha, "rad"))) if alpha is not None else None
+
+        log_flux = self._log_opt_sed(
+            nu=nu_cgs,
+            B=B_cgs,
+            R=R_cgs,
+            D_A=D_A_cgs,
+            Theta=float(Theta),
+            f_V=f_V,
+            f_A=f_A,
+            beta=beta,
+            cos_theta=cos_theta,
+            sin_alpha=sin_alpha,
+            z=z,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+        )
+
+        return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
+
+
+class Numerical_Thermal_PL_SSA_SED(SynchrotronSED):
+    r"""
+    Numerical one-zone mixed thermal + power-law synchrotron SED with self-absorption.
+
+    Evaluates the synchrotron flux density for a **composite electron
+    distribution** consisting of a Maxwell-Jüttner thermal component and a
+    non-thermal power-law component, with full radiative transfer (SSA included).
+
+    The total distribution is
+
+    .. math::
+
+        N(\gamma) =
+            \underbrace{\frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta}}_{\text{thermal}}
+            +
+            \underbrace{N_0\,\gamma^{-p}\,\mathbf{1}_{[\gamma_{\min},\gamma_{\max}]}(\gamma)}_{\text{non-thermal}},
+
+    where the thermal fraction :math:`\delta` splits the total electron energy
+    budget: :math:`\epsilon_{E,\rm therm} = \delta\,\epsilon_E` and
+    :math:`\epsilon_{E,\rm PL} = (1-\delta)\,\epsilon_E` (see
+    :func:`~triceratops.radiation.synchrotron.microphysics._opt_normalize_MJD_and_PL_from_magnetic_field`).
+
+    Parameters
+    ----------
+    gamma : ~numpy.ndarray or None, optional
+        Explicit Lorentz factor grid. If ``None``, a log-uniform grid is
+        built from ``gamma_min``, ``gamma_max``, and ``n_gamma``.
+    gamma_min : float, optional
+        Lower bound of the Lorentz factor grid. Default ``1.0``.
+    gamma_max : float, optional
+        Upper bound of the Lorentz factor grid. Default ``1e8``.
+    n_gamma : int, optional
+        Number of quadrature points. Default ``200``.
+    x_min : float, optional
+        Lower bound of the synchrotron kernel :math:`x` grid. Default ``1e-5``.
+    x_max : float, optional
+        Upper bound of the synchrotron kernel :math:`x` grid. Default ``1e2``.
+    num_points : int, optional
+        Number of points on the kernel grid. Default ``1000``.
+    spacing : {"log", "linear"}, optional
+        Kernel grid spacing. Default ``"log"``.
+    method : {"exact", "lu"}, optional
+        Kernel evaluation method. Default ``"exact"``.
+    """
+
+    def __init__(
+        self,
+        gamma: Union[np.ndarray, None] = None,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e8,
+        n_gamma: int = 200,
+        x_min: float = 1e-5,
+        x_max: float = 1e2,
+        num_points: int = 1000,
+        spacing: str = "log",
+        method: str = "exact",
+    ):
+        self._engine = NumericalSynchrotronEngine()
+
+        self._log_gamma, self._log_weights = self._engine._build_gamma_grid(
+            gamma=gamma,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+            n_gamma=n_gamma,
+        )
+
+        kernel_kwargs = {"x_min": x_min, "x_max": x_max, "num_points": num_points, "spacing": spacing, "method": method}
+        self._engine.load_avg_first_kernel(**kernel_kwargs)
+        self._engine.load_first_kernel(**kernel_kwargs)
+
+    def _log_opt_sed(
+        self,
+        nu: "_ArrayLike",
+        B: float,
+        R: float,
+        D_A: float,
+        Theta: float,
+        *,
+        p: float = 3.0,
+        delta: float = 0.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        sin_alpha: Union[float, None] = None,
+        z: float = 0.0,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e6,
+    ) -> "_ArrayLike":
+        r"""
+        Low-level numerical mixed thermal + power-law synchrotron SED evaluation.
+
+        All inputs are plain CGS scalars; no unit handling is performed.
+
+        Parameters
+        ----------
+        nu : array-like
+            Observed frequency in Hz.
+        B : float
+            Magnetic field strength in Gauss.
+        R : float
+            Outer radius of the emitting region in cm.
+        D_A : float
+            Angular diameter distance in cm.
+        Theta : float
+            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
+        p : float, optional
+            Power-law index of the non-thermal component. Default ``3.0``.
+        delta : float, optional
+            Fraction of total electron energy in the thermal component.
+            Must satisfy :math:`0 \le \delta \le 1`. Default ``0.5``.
+        f_V : float, optional
+            Volume filling factor. Effective LOS path length is :math:`f_V R`.
+            Default ``1.0``.
+        f_A : float, optional
+            Area filling factor. Effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight (relativistic correction). Default ``1.0``.
+        sin_alpha : float or None, optional
+            Sine of the electron pitch angle. ``None`` selects the
+            pitch-angle-averaged kernel. Default ``None``.
+        z : float, optional
+            Source redshift. Default ``0.0``.
+        epsilon_B : float, optional
+            Magnetic equipartition fraction. Default ``0.1``.
+        epsilon_E : float, optional
+            Total electron equipartition fraction. Default ``0.1``.
+        gamma_min : float, optional
+            Minimum Lorentz factor of the non-thermal power-law component.
+            Default ``1.0``.
+        gamma_max : float, optional
+            Maximum Lorentz factor of the non-thermal power-law component.
+            Default ``1e6``.
+
+        Returns
+        -------
+        log_flux : array-like
+            :math:`\ln F_\nu` in CGS
+            (:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`).
+        """
+        N_therm, N0_pl = _opt_normalize_MJD_and_PL_from_magnetic_field(
+            B=B,
+            Theta=Theta,
+            p=p,
+            delta=delta,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+        )
+        N_therm = np.asarray(N_therm, dtype="f8")
+        N0_pl = np.asarray(N0_pl, dtype="f8")
+
+        # Thermal component: Maxwell-Jüttner evaluated over the full grid.
+        log_N_mjd = (
+            np.log(N_therm)[..., np.newaxis]
+            - np.log(2.0)
+            - 3.0 * np.log(float(Theta))
+            + 2.0 * self._log_gamma
+            - np.exp(self._log_gamma) / float(Theta)
+        )
+
+        # Non-thermal component: power law gated to [gamma_min, gamma_max].
+        gamma_arr = np.exp(self._log_gamma)
+        mask = (gamma_arr >= gamma_min) & (gamma_arr <= gamma_max)
+        log_N_pl = np.full(N0_pl.shape + (len(self._log_gamma),), -np.inf)
+        log_N_pl[..., mask] = np.log(N0_pl)[..., np.newaxis] - p * self._log_gamma[mask]
+
+        log_N = np.logaddexp(log_N_mjd, log_N_pl)
+
+        log_nu = np.log(np.asarray(nu, dtype="f8"))
+        log_B = np.log(float(B))
+        log_R_eff = np.log(float(f_V) * float(R))
+        log_A_eff = np.log(float(f_A) * np.pi * float(R) ** 2)
+        log_D_A = np.log(float(D_A))
+
+        if sin_alpha is not None:
+            return self._engine._compute_log_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+                sin_alpha=float(sin_alpha),
+            )
+        else:
+            return self._engine._compute_log_pa_flux_density(
+                log_nu=log_nu,
+                log_R=log_R_eff,
+                log_B=log_B,
+                log_N=log_N,
+                log_gamma=self._log_gamma,
+                log_weights=self._log_weights,
+                log_A_eff=log_A_eff,
+                log_D_A=log_D_A,
+                z=float(z),
+                beta=float(beta),
+                cos_theta=float(cos_theta),
+            )
+
+    def sed(
+        self,
+        nu: "_UnitBearingArrayLike",
+        B: "_UnitBearingScalarLike",
+        R: "_UnitBearingScalarLike",
+        Theta: float,
+        *,
+        p: float = 3.0,
+        delta: float = 0.5,
+        f_V: float = 1.0,
+        f_A: float = 1.0,
+        beta: float = 0.0,
+        cos_theta: float = 1.0,
+        alpha: "_UnitBearingScalarLike" = None,
+        epsilon_B: float = 0.1,
+        epsilon_E: float = 0.1,
+        gamma_min: float = 1.0,
+        gamma_max: float = 1e6,
+        redshift: float = None,
+        luminosity_distance: "_UnitBearingScalarLike" = None,
+        angular_diameter_distance: "_UnitBearingScalarLike" = None,
+        proper_distance: "_UnitBearingScalarLike" = None,
+        cosmology: cosmo.Cosmology = None,
+    ) -> "_UnitBearingArrayLike":
+        r"""
+        Evaluate the numerical mixed thermal + power-law synchrotron SED with self-absorption.
+
+        Parameters
+        ----------
+        nu : array-like or ~astropy.units.Quantity
+            Observed frequency. Bare values are treated as Hz.
+        B : float or ~astropy.units.Quantity
+            Magnetic field strength. Bare values are treated as Gauss.
+        R : float or ~astropy.units.Quantity
+            Outer radius of the emitting region. Bare values are treated as cm.
+        Theta : float
+            Dimensionless electron temperature :math:`\Theta = kT/(m_e c^2)`.
+        p : float, optional
+            Power-law index of the non-thermal electron component. Default ``3.0``.
+        delta : float, optional
+            Fraction of total electron energy in the thermal component
+            (:math:`0 \le \delta \le 1`). Default ``0.5``.
+        f_V : float, optional
+            Volume filling factor; the effective LOS path length is
+            :math:`f_V R`. Default ``1.0``.
+        f_A : float, optional
+            Area filling factor; the effective projected area is
+            :math:`f_A \pi R^2`. Default ``1.0``.
+        beta : float, optional
+            Bulk velocity :math:`v/c`. Default ``0.0``.
+        cos_theta : float, optional
+            Cosine of the angle between the bulk velocity and the line of
+            sight. Default ``1.0``.
+        alpha : float, ~astropy.units.Quantity, or None, optional
+            Electron pitch angle. Bare values are treated as radians.
+            ``None`` selects the pitch-angle-averaged kernel. Default ``None``.
+        epsilon_B : float, optional
+            Fraction of post-shock energy in magnetic fields. Default ``0.1``.
+        epsilon_E : float, optional
+            Total fraction of post-shock energy in relativistic electrons.
+            Default ``0.1``.
+        gamma_min : float, optional
+            Minimum Lorentz factor of the non-thermal power-law component.
+            Default ``1.0``.
+        gamma_max : float, optional
+            Maximum Lorentz factor of the non-thermal power-law component.
+            Default ``1e6``.
+        redshift : float, optional
+            Source redshift.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Luminosity distance. Bare values are treated as cm.
+        angular_diameter_distance : float or ~astropy.units.Quantity, optional
+            Angular diameter distance. Bare values are treated as cm.
+        proper_distance : float or ~astropy.units.Quantity, optional
+            Proper (comoving) distance. Bare values are treated as cm.
+        cosmology : ~astropy.cosmology.Cosmology, optional
+            Cosmology used to derive missing distance measures.
+
+        Returns
+        -------
+        F_nu : ~astropy.units.Quantity
+            Flux density in
+            :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+        """
+        _cosmology = get_cosmology(cosmology=cosmology)
+        distances = resolve_cosmological_distances(
+            redshift=redshift,
+            luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
+            proper_distance=proper_distance,
+            cosmology=_cosmology,
+        )
+        D_A = ensure_in_units(distances["angular_diameter_distance"], "cm")
+        z = float(distances["redshift"])
+
+        nu_cgs = ensure_in_units(nu, "Hz")
+        B_cgs = float(ensure_in_units(B, "G"))
+        R_cgs = float(ensure_in_units(R, "cm"))
+        D_A_cgs = float(D_A)
+
+        sin_alpha = float(np.sin(ensure_in_units(alpha, "rad"))) if alpha is not None else None
+
+        log_flux = self._log_opt_sed(
+            nu=nu_cgs,
+            B=B_cgs,
+            R=R_cgs,
+            D_A=D_A_cgs,
+            Theta=float(Theta),
+            p=p,
+            delta=delta,
+            f_V=f_V,
+            f_A=f_A,
+            beta=beta,
+            cos_theta=cos_theta,
+            sin_alpha=sin_alpha,
+            z=z,
+            epsilon_B=epsilon_B,
+            epsilon_E=epsilon_E,
+            gamma_min=gamma_min,
+            gamma_max=gamma_max,
+        )
+
+        return np.exp(log_flux) * u.erg / (u.cm**2 * u.s * u.Hz)
