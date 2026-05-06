@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:00.382** total execution time for 47 files **from all galleries**:
+**00:00.479** total execution time for 49 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
-     - 00:00.382
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_conditions.py` (``galleries/dynamics/plot_rh_jump_conditions.py``)
+     - 00:00.479
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -75,6 +75,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_weak_conditions.py` (``galleries/dynamics/plot_rh_jump_weak_conditions.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_free_free_a_gaunt_factors_plot_gaunt_factor_comparison.py` (``galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py``)
@@ -147,6 +150,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_SSA_cooling_SED.py` (``galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_sed_model_comparison.py` (``galleries/synchrotron/b_seds/plot_sed_model_comparison.py``)

@@ -14,7 +14,6 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.shocks.rankine_hugoniot import _compute_s_c_shock_magnetic_field_cgs
 from triceratops.dynamics.supernovae.shock_dynamics import (
     ChevalierSelfSimilarShockEngine,
 )
@@ -227,12 +226,10 @@ class ChevalierShockModel(Model):
 
         # Now use the shock radius and velocity to compute the
         # corresponding magnetic field strength.
-        _shock_B = _compute_s_c_shock_magnetic_field_cgs(
-            _shock_velocity,
-            parameters["rho_0"] * (_shock_radius / 1e14) ** -parameters["s"],
-            gamma=5 / 3,
-            epsilon_B=parameters["epsilon_B"],
-        )
+        _rho_up = parameters["rho_0"] * (_shock_radius / 1e14) ** -parameters["s"]
+        _R = 4.0  # = (gamma+1)/(gamma-1) for gamma=5/3
+        _U = 1.5 * (_R - 1) / _R**2 * _rho_up * _shock_velocity**2
+        _shock_B = np.sqrt(8 * np.pi * parameters["epsilon_B"] * _U)
 
         # First use the parameters to compute the BPL parameters from the
         # core physics parameters.

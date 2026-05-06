@@ -41,8 +41,7 @@ Relevant API
 ------------
 - :class:`~dynamics.shocks.numerical.NumericalThinShellShockEngine`
 - :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
-- :func:`~dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_magnetic_field`
-- :func:`~dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_temperature`
+- :class:`~dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
 """
 
 # %%
@@ -54,10 +53,7 @@ from astropy import constants as const
 from astropy import units as u
 
 from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
-from triceratops.dynamics.shocks.rankine_hugoniot import (
-    compute_strong_cold_shock_magnetic_field,
-    compute_strong_cold_shock_temperature,
-)
+from triceratops.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
 from triceratops.dynamics.supernovae.profiles import get_broken_power_law_ejecta_kernel_func
 from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
@@ -212,12 +208,10 @@ plt.show()
 rho_up = rho_ISM.to(u.g / u.cm**3) * np.ones(len(times))
 
 # Post-shock temperature and B-field
-T_sh = compute_strong_cold_shock_temperature(shock_velocity=v_sh, mu=mu)
-B = compute_strong_cold_shock_magnetic_field(
-    shock_velocity=v_sh,
-    upstream_density=rho_up,
-    epsilon_B=epsilon_B,
-).to(u.G)
+T_sh = StrongColdShockConditions.compute_post_shock_temperature(shock_velocity=v_sh, mu=mu)
+_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
 
 # Synchrotron cooling Lorentz factor
 cooling_engine = SynchrotronRadiativeCoolingEngine()
@@ -318,7 +312,8 @@ for E, label, color in zip(E_ej_values, E_labels, e_colors):
     r_E = sh_E["radius"].to(u.cm)
     v_E = sh_E["velocity"].to(u.cm / u.s)
     rho_up_E = rho_ISM * np.ones(len(times))
-    B_E = compute_strong_cold_shock_magnetic_field(v_E, rho_up_E, epsilon_B=epsilon_B).to(u.G)
+    _U_E = 1.5 * (_R - 1) / _R**2 * rho_up_E.to_value(u.g / u.cm**3) * v_E.to_value(u.cm / u.s) ** 2
+    B_E = np.sqrt(8 * np.pi * epsilon_B * _U_E) * u.G
     gc_E = cooling_engine.compute_cooling_gamma(B=B_E, t=times)
 
     lc_5ghz = np.zeros(len(times))

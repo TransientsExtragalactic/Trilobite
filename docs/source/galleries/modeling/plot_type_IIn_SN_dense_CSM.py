@@ -34,13 +34,13 @@ We use:
    shock radius and the outer wind boundary.
 
 The FFA optical depth through the unshocked wind is computed using
-:func:`~radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature`,
+:func:`~radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`,
 which integrates the absorption coefficient from the shock radius outward.
 
 Relevant API
 ------------
 - :class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`
-- :func:`~radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature`
+- :func:`~radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
 - :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
 
@@ -52,12 +52,9 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.shocks.rankine_hugoniot import (
-    compute_strong_cold_shock_magnetic_field,
-)
 from triceratops.dynamics.supernovae import ChevalierSelfSimilarWindShockEngine
 from triceratops.radiation.free_free.absorption import (
-    compute_ff_optical_depth_from_quadrature,
+    compute_ff_RJ_optical_depth_from_quadrature,
 )
 from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
@@ -131,7 +128,9 @@ v_sh = shock_outputs["velocity"].to(u.cm / u.s)
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
 
 # Post-shock magnetic field
-B = compute_strong_cold_shock_magnetic_field(v_sh, rho_up, epsilon_B=epsilon_B).to(u.G)
+_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
 
 # Synchrotron cooling Lorentz factor
 cooling_engine = SynchrotronRadiativeCoolingEngine()
@@ -187,7 +186,7 @@ tau_ff = np.zeros((len(times), len(obs_frequencies)))
 r_max = 1e19  # cm
 
 for i, r_inner in enumerate(r_sh.to(u.cm).value):
-    tau_ff[i] = compute_ff_optical_depth_from_quadrature(
+    tau_ff[i] = compute_ff_RJ_optical_depth_from_quadrature(
         frequency=freq_arr,
         r=r_inner * u.cm,
         n_e=n_e_wind,
@@ -377,7 +376,8 @@ for Mdot, label, color in zip(Mdot_values, Mdot_labels, Mdot_colors):
     r_i = so["radius"].to(u.cm)
     v_i = so["velocity"].to(u.cm / u.s)
     rho_i = (Mdot / (4 * np.pi * r_i**2 * v_wind)).to(u.g / u.cm**3)
-    B_i = compute_strong_cold_shock_magnetic_field(v_i, rho_i, epsilon_B=epsilon_B).to(u.G)
+    _U_i = 1.5 * (_R - 1) / _R**2 * rho_i.to_value(u.g / u.cm**3) * v_i.to_value(u.cm / u.s) ** 2
+    B_i = np.sqrt(8 * np.pi * epsilon_B * _U_i) * u.G
     gc_i = cooling_engine.compute_cooling_gamma(B=B_i, t=times)
 
     M_dot_cgs_i = Mdot.to(u.g / u.s).value
@@ -419,7 +419,7 @@ for Mdot, label, color in zip(Mdot_values, Mdot_labels, Mdot_colors):
             .to(u.mJy)
             .value
         )
-        tau_k = compute_ff_optical_depth_from_quadrature(
+        tau_k = compute_ff_RJ_optical_depth_from_quadrature(
             frequency=freq_eval.to(u.Hz),
             r=r_k,
             n_e=n_e_i,

@@ -83,8 +83,7 @@ radiative calculations.
 
 Given the shock velocity and upstream density, we compute the downstream
 magnetic field strength assuming a strong, cold shock and a fixed magnetic
-energy fraction :math:`\epsilon_B`, using
-:func:`~dynamics.rankine_hugoniot.compute_strong_cold_shock_magnetic_field`.
+energy fraction :math:`\epsilon_B`.
 
 .. hint::
 
@@ -354,10 +353,7 @@ smoothing = 1
 # - Forward-shock velocity,
 # - Post-shock temperature,
 # - Downstream magnetic field strength.
-from triceratops.dynamics.shocks.rankine_hugoniot import (
-    compute_strong_cold_shock_magnetic_field,
-    compute_strong_cold_shock_temperature,
-)
+from triceratops.dynamics.shocks.core import StrongColdShockConditions
 
 # --- Compute the shock evolution ---
 shock_outputs = shock_engine.compute_shock_properties(
@@ -372,17 +368,15 @@ v_sh = shock_outputs["velocity"].to(u.cm / u.s)
 rho_up = (shock_params["M_dot"] / (4 * np.pi * r_sh**2 * shock_params["v_wind"])).to(u.g / u.cm**3)
 
 # Calculate the temperature.
-T_sh = compute_strong_cold_shock_temperature(
+T_sh = StrongColdShockConditions.compute_post_shock_temperature(
     shock_velocity=v_sh,
     mu=mu,
 )
 
 # Calculate the magnetic field.
-B = compute_strong_cold_shock_magnetic_field(
-    shock_velocity=v_sh,
-    upstream_density=rho_up,
-    epsilon_B=epsilon_B,
-).to(u.G)
+_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+B = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
 
 # --------------------------------------------------
 # Diagnostic plots

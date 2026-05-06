@@ -1,104 +1,93 @@
 .. _gallery_examples:
 
-###########################
-Triceratops Example Gallery
-###########################
+.. raw:: html
 
-The example gallery contains runnable, self-contained scripts that demonstrate the key
-capabilities of Triceratops. Examples are organized by topic so you can jump directly to what
-you need — from loading data and running inference, to exploring synchrotron physics and
-accretion disk dynamics.
+.. raw:: html
 
-Each script is fully executable, produces annotated output, and can be downloaded as a Jupyter
-notebook. Browse a section below to get started.
+   <style>
+     .bd-article h1 {
+         font-size: 2.6rem;
+         color: #1f7a8c;
+         margin-bottom: 0.5rem;
+     }
+   </style>
 
-----
+   <div style="
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2.5rem 0 2.4rem 0;   /* increase bottom padding */
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1.8rem;        /* ← THIS is key */
+    ">
 
-Observational Workflow
-======================
+       <img src="_images/logo.png" style="width: 25%; height: auto;">
 
-These galleries cover the data-to-results pipeline: loading and inspecting photometry,
-then fitting physical models to it with Bayesian inference.
+       <div style="max-width: 620px;">
+
+================================
+Example Gallery
+================================
+
+.. raw:: html
+
+           <p style="
+               margin: 0.4rem 0 0 0;
+               font-size: 1rem;
+               color: #666;
+           ">
+               Practical examples to get started with Triceratops.
+           </p>
+
+           <p style="
+               margin: 1rem 0 0 0;
+               font-size: 1.1rem;
+               line-height: 1.6;
+               color: #3a4a52;
+           ">
+               Explore <strong>runnable, self-contained examples</strong> —
+               from <strong>loading observational data</strong> and
+               <strong>running inference</strong> to modeling
+               <strong>synchrotron emission</strong> and
+               <strong>accretion disk dynamics</strong>.
+           </p>
+
+       </div>
+   </div>
+
+Working with Data
+=================
+
+Load and inspect your observations before fitting anything.
 
 .. grid:: 2
    :gutter: 3
 
-   .. grid-item-card:: Data
+   .. grid-item-card:: Observational Data
       :link: auto_examples/data/index
       :link-type: doc
 
-      **Loading and handling observational data.**
+      **Load, group, and visualize photometric observations.**
 
-      Load radio photometry from FITS files, inspect tables, group observations into
-      temporal epochs, and plot light curves using the :mod:`~triceratops.data` subpackage.
+      Load radio photometry from FITS files, group observations into temporal epochs,
+      and plot light curves using the :mod:`~triceratops.data` subpackage.
 
    .. grid-item-card:: Optical Filters and Photometry
       :link: auto_examples/photometry/index
       :link-type: doc
 
-      **Filter construction, batched convolution, and magnitude systems.**
+      **Build and convolve optical filters for broadband photometry.**
 
-      Build photometric filters, assemble them into a
-      :class:`~triceratops.utils.phot_utils.FilterBundle` for MCMC-optimised matrix-multiply
-      convolution, and convert between flux density and AB/ST magnitudes.
-
-   .. grid-item-card:: Inference
-      :link: auto_examples/inference/index
-      :link-type: doc
-
-      **Bayesian parameter estimation.**
-
-      End-to-end MCMC workflows — single- and multi-epoch SED fitting, upper-limit handling,
-      shock-parameter recovery, and posterior propagation through closure relations.
-      Built on the :mod:`~triceratops.inference` subpackage.
+      Construct filters, assemble a :class:`~triceratops.utils.phot_utils.FilterBundle`
+      for MCMC-optimised matrix-multiply convolution, and convert between flux density
+      and AB/ST magnitudes.
 
 ----
 
-Physical Models
-===============
+Understanding the Physics
+==========================
 
-These galleries demonstrate the high-level model objects in Triceratops — from self-similar
-shock models for radio supernovae to TDE afterglows and accretion disk dynamics.
-
-.. grid:: 2
-   :gutter: 3
-
-   .. grid-item-card:: Forward Modeling
-      :link: auto_examples/modeling/index
-      :link-type: doc
-
-      **Using Triceratops physical models.**
-
-      Evaluate models directly to generate synthetic light curves and SEDs. Covers
-      Chevalier shock models, FFA fadeout, phenomenological light curves, TDE afterglows,
-      and Type IIn supernovae in dense CSM.
-
-   .. grid-item-card:: Shock Dynamics
-      :link: auto_examples/dynamics/index
-      :link-type: doc
-
-      **Shock propagation and the numerical engine.**
-
-      Low-level examples from :mod:`~triceratops.dynamics`: Rankine–Hugoniot jump conditions,
-      blast-wave evolution in power-law density profiles, and the time-stepping shock engine.
-
-   .. grid-item-card:: Accretion Disk Models
-      :link: auto_examples/accretion/index
-      :link-type: doc
-
-      **One-zone accretion disk dynamics.**
-
-      Time-dependent disk evolution — thermal S-curves, limit cycles, fallback disks, and
-      advective solutions — using the :mod:`~triceratops.dynamics.accretion.one_zone` Cython
-      integrator.
-
-----
-
-Radiative Physics
-=================
-
-These galleries cover the low-level radiative physics machinery in Triceratops. The synchrotron
-gallery is organized into four progressive sub-sections.
+Learn the radiative and dynamical building blocks that every Triceratops model is built from.
 
 .. grid:: 2
    :gutter: 3
@@ -107,41 +96,97 @@ gallery is organized into four progressive sub-sections.
       :link: auto_examples/synchrotron/index
       :link-type: doc
 
-      **Synchrotron radiation from fundamentals to closures.**
+      **Understand the synchrotron emission that drives radio transients.**
 
-      Four sub-sections: kernel functions and the ν–γ–B relation; SED model hierarchy and
-      spectral regimes; electron cooling (synchrotron and IC); forward/inverse closure
+      Four sub-sections: kernel functions and the :math:`\nu`--:math:`\gamma`--:math:`B`
+      relation; SED spectral regimes; electron cooling (synchrotron and IC); closure
       relations and equipartition analysis.
-
-   .. grid-item-card:: Opacity Laws
-      :link: auto_examples/opacity/index
-      :link-type: doc
-
-      **Kramers, electron scattering, OPAL table opacity.**
-
-      Demonstrations of the :mod:`~triceratops.radiation.opacity` module — the canonical
-      :math:`\kappa_R(T,\rho)` plot for solar composition from the bundled OPAL table,
-      showing the electron-scattering plateau, Kramers rise, and iron-group peak.
 
    .. grid-item-card:: Free-Free Emission
       :link: auto_examples/free_free/index
       :link-type: doc
 
-      **Thermal bremsstrahlung from ionized gas.**
+      **Compute free-free emission and absorption in ionized gas.**
 
-      Free-free emissivity and flux density in the X-ray regime, optical depth
-      profiles for wind and shell CSM geometries, and FFA attenuation of
-      synchrotron SEDs using the :mod:`~triceratops.radiation.free_free` module.
+      Thermal bremsstrahlung emissivity, flux density, optical depth profiles for wind
+      and shell CSM geometries, and FFA attenuation of synchrotron SEDs using
+      :mod:`~triceratops.radiation.free_free`.
+
+   .. grid-item-card:: Opacity Laws
+      :link: auto_examples/opacity/index
+      :link-type: doc
+
+      **Evaluate grey and frequency-dependent opacity laws.**
+
+      Kramers, electron scattering, and OPAL/TOPS Rosseland mean opacity from the
+      bundled tables using :mod:`~triceratops.radiation.opacity`.
+
+   .. grid-item-card:: Shock Dynamics
+      :link: auto_examples/dynamics/index
+      :link-type: doc
+
+      **Step through shock propagation at the integrator level.**
+
+      The numerical shock engine, blast-wave evolution in power-law density profiles,
+      and the time-stepping integrator from :mod:`~triceratops.dynamics`.
+
+----
+
+Building Forward Models
+=======================
+
+Assemble physical components into models that generate synthetic observables.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card:: Physical Models
+      :link: auto_examples/modeling/index
+      :link-type: doc
+
+      **Generate synthetic light curves and SEDs with high-level model objects.**
+
+      Chevalier shock models, FFA fadeout, TDE afterglows, Type IIn supernovae in
+      dense CSM, and phenomenological light curves.
+
+   .. grid-item-card:: Accretion Disk Models
+      :link: auto_examples/accretion/index
+      :link-type: doc
+
+      **Evolve accretion disks through their thermodynamic phases.**
+
+      Thermal S-curves, limit cycles, fallback disks, and advective solutions using
+      the :mod:`~triceratops.dynamics.accretion.one_zone` Cython integrator.
+
+----
+
+Running Inference
+=================
+
+Fit models to data and recover physical parameters from your observations.
+
+.. grid:: 1
+   :gutter: 3
+
+   .. grid-item-card:: Inference and Parameter Estimation
+      :link: auto_examples/inference/index
+      :link-type: doc
+
+      **Fit a physical model to data and recover posterior distributions over its parameters.**
+
+      End-to-end MCMC workflows — single- and multi-epoch SED fitting, upper-limit
+      handling, shock-parameter recovery, and posterior propagation through closure
+      relations. Built on the :mod:`~triceratops.inference` subpackage.
 
 .. toctree::
    :hidden:
 
    auto_examples/data/index
    auto_examples/photometry/index
-   auto_examples/inference/index
-   auto_examples/modeling/index
-   auto_examples/dynamics/index
    auto_examples/synchrotron/index
-   auto_examples/accretion/index
-   auto_examples/opacity/index
    auto_examples/free_free/index
+   auto_examples/opacity/index
+   auto_examples/dynamics/index
+   auto_examples/modeling/index
+   auto_examples/accretion/index
+   auto_examples/inference/index

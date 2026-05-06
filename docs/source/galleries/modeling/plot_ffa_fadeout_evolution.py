@@ -40,7 +40,7 @@ evolution from the FFA-dominated to the optically thin regime.
 Relevant API
 ------------
 - :class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`
-- :func:`~radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature`
+- :func:`~radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
 - :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
 
@@ -52,9 +52,8 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.shocks.rankine_hugoniot import compute_strong_cold_shock_magnetic_field
 from triceratops.dynamics.supernovae import ChevalierSelfSimilarWindShockEngine
-from triceratops.radiation.free_free.absorption import compute_ff_optical_depth_from_quadrature
+from triceratops.radiation.free_free.absorption import compute_ff_RJ_optical_depth_from_quadrature
 from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 from triceratops.utils.plot_utils import set_plot_style
@@ -153,7 +152,9 @@ shock_outputs = shock_engine.compute_shock_properties(epochs, **shock_params)
 r_sh = shock_outputs["radius"].to(u.cm)
 v_sh = shock_outputs["velocity"].to(u.cm / u.s)
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
-B_arr = compute_strong_cold_shock_magnetic_field(v_sh, rho_up, epsilon_B=epsilon_B).to(u.G)
+_R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
+_U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
+B_arr = np.sqrt(8 * np.pi * epsilon_B * _U) * u.G
 gamma_c_arr = cooling_engine.compute_cooling_gamma(B=B_arr, t=epochs)
 
 # Store results
@@ -193,7 +194,7 @@ for i, (t, r, B_i, gc) in enumerate(zip(epochs, r_sh, B_arr, gamma_c_arr)):
     )
 
     # FFA optical depth at each SED frequency
-    tau_ff = compute_ff_optical_depth_from_quadrature(
+    tau_ff = compute_ff_RJ_optical_depth_from_quadrature(
         frequency=freqs_sed.to(u.Hz),
         r=r,
         n_e=n_e_wind,
@@ -206,7 +207,7 @@ for i, (t, r, B_i, gc) in enumerate(zip(epochs, r_sh, B_arr, gamma_c_arr)):
     F_obs = F_synch * np.exp(-tau_ff)
 
     # Peak tau_ff
-    tau_1GHz = compute_ff_optical_depth_from_quadrature(
+    tau_1GHz = compute_ff_RJ_optical_depth_from_quadrature(
         frequency=u.Quantity([1.0], u.GHz).to(u.Hz),
         r=r,
         n_e=n_e_wind,

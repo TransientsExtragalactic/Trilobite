@@ -14,11 +14,13 @@ interface in :mod:`~triceratops.models`.
 
 .. rubric:: What you'll find here
 
+- Rankine--Hugoniot jump conditions from the Newtonian to the ultra-relativistic regime
 - Configuring and running the numerical shock engine
 - Shock evolution in power-law circumstellar density profiles
 - Visualizing shock radius, velocity, and column density over time
 
 .. rubric:: API reference
 
-:mod:`triceratops.dynamics` — :class:`~triceratops.dynamics.shocks.ShockEngine`,
-:mod:`~triceratops.dynamics.shocks.rankine_hugoniot`
+:mod:`triceratops.dynamics` - :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine`,
+:mod:`~triceratops.dynamics.shocks.core.rankine_hugoniot`,
+:mod:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions`
