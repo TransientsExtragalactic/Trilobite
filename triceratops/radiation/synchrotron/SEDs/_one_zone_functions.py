@@ -599,7 +599,7 @@ def _log_powerlaw_sbpl_sed_ssa_cool_3(
     x_max = log_nu - log_nu_max
 
     # Normalize at ν_m
-    log_sed = 2.0 * x_a  # +(1.0 / 3.0) * (log_nu_a - log_nu_m)
+    log_sed = 2.0 * x_a + (1.0 / 3.0) * (log_nu_a - log_nu_m)
 
     # SSA break
     log_sed += log_smoothed_SFBPL(x_a, 2.0, 1.0 / 3.0, s)

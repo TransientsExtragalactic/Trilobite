@@ -11,7 +11,7 @@ accelerated to high Lorentz factors.
 Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-:class:`~radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
+:class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth :math:`R`, without any piecewise approximation.
@@ -41,10 +41,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+from triceratops.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
 from triceratops.utils.plot_utils import set_plot_style
 
-engine = NumericalSynchrotronEngine()
+engine = NonRelativisticSphericalSynchrotronEngine()
 engine.load_avg_first_kernel()
 
 # %%
@@ -87,11 +87,11 @@ engine.load_avg_first_kernel()
 # :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{-p}\,d\gamma`, ensuring that
 # :math:`\int_{\gamma_{\min}}^{\gamma_{\max}} N_{\rm PL}(\gamma)\,d\gamma = n_{\rm PL}`.
 
-delta = 0.99  # thermal fraction of the total electron population
+delta = 0.999  # thermal fraction of the total electron population
 n_e = 1.0 * u.cm**-3  # total electron number density
 p = 2.5  # non-thermal power-law index
 theta = 1  # dimensionless temperature kT / m_e c^2
-gamma_min, gamma_max = 1, 1e8  # power-law Lorentz factor bounds
+gamma_min, gamma_max = 6, 1e8  # power-law Lorentz factor bounds
 
 n_therm = delta * n_e
 n_pl = (1 - delta) * n_e
@@ -118,7 +118,7 @@ def N_pl(gamma):
 # We evaluate both components on a logarithmically-spaced :math:`\gamma` grid that
 # spans from non-relativistic through ultra-relativistic energies.
 
-gamma_array = np.geomspace(1, 1e6, 2000)
+gamma_array = np.geomspace(1, 1e6, 200)
 
 N_therm_array = N_therm(gamma_array)
 N_pl_array = N_pl(gamma_array)
@@ -162,7 +162,7 @@ plt.show()
 # ------------------
 #
 # We now pass the sampled distributions to
-# :meth:`~radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
+# :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
 # The engine numerically integrates the synchrotron emissivity
 #
 # .. math::
@@ -176,18 +176,18 @@ plt.show()
 # :math:`I_\nu`.  The ``z`` keyword applies a cosmological redshift to the frequency
 # grid before evaluating the emissivity.
 
-nu = np.geomspace(1e-3, 1e4, 500) * u.GHz
+nu = np.geomspace(1e-2, 1e2, 100) * u.GHz
 
 source_kwargs = dict(
     R=1e17 * u.cm,
     B=1 * u.G,
     gamma=gamma_array,
-    z=0.01,
+    luminosity_distance=60 * u.Mpc,
 )
 
-I_total = engine.compute_specific_intensity(nu, N=N_total_array, **source_kwargs)
-I_therm = engine.compute_specific_intensity(nu, N=N_therm_array, **source_kwargs)
-I_pl = engine.compute_specific_intensity(nu, N=N_pl_array, **source_kwargs)
+F_total = engine.compute_flux_density(nu, N=N_total_array, **source_kwargs)
+F_therm = engine.compute_flux_density(nu, N=N_therm_array, **source_kwargs)
+F_pl = engine.compute_flux_density(nu, N=N_pl_array, **source_kwargs)
 
 # %%
 # With the three intensity curves in hand, we overlay them to compare the spectral
@@ -196,18 +196,18 @@ I_pl = engine.compute_specific_intensity(nu, N=N_pl_array, **source_kwargs)
 set_plot_style()
 fig, ax = plt.subplots(figsize=(9, 5.5))
 
-I_unit = u.erg / (u.s * u.cm**2 * u.Hz * u.sr)
+F_unit = "mJy"
 
 ax.loglog(
     nu.to_value(u.GHz),
-    I_total.to_value(I_unit),
+    F_total.to_value(F_unit),
     color="k",
     lw=2,
     label="Total",
 )
 ax.loglog(
     nu.to_value(u.GHz),
-    I_therm.to_value(I_unit),
+    F_therm.to_value(F_unit),
     color="C3",
     lw=1.5,
     ls="--",
@@ -215,15 +215,16 @@ ax.loglog(
 )
 ax.loglog(
     nu.to_value(u.GHz),
-    I_pl.to_value(I_unit),
+    F_pl.to_value(F_unit),
     color="C0",
     lw=1.5,
     ls="--",
     label="Power-law",
 )
-ax.set_ylim([1e-10, 1e-5])
+ax.set_ylim([1e-3, 1e0])
+ax.set_xlim([1e-1, 1e2])
 ax.set_xlabel(r"$\nu\ [\mathrm{GHz}]$")
-ax.set_ylabel(r"$I_\nu\ [\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}]$")
+ax.set_ylabel(r"$F_\nu\ [\mathrm{mJy}]$")
 ax.set_title("Numerical Synchrotron SED: Thermal + Power-Law Distribution")
 ax.legend()
 ax.grid(True, which="both", ls="--", alpha=0.3)

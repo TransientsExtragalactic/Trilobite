@@ -5,17 +5,17 @@ Comparing Synchrotron SED Models
 Triceratops provides four one-zone phenomenological synchrotron SED classes
 that cover progressively more complex physical regimes:
 
-1. :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+1. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
    — optically thin, uncooled (:math:`\nu_m` break only)
-2. :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+2. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
    — optically thin with radiative cooling (:math:`\nu_m`, :math:`\nu_c`)
-3. :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+3. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
    — with synchrotron self-absorption, no cooling (:math:`\nu_a`, :math:`\nu_m`)
-4. :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+4. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
    — full model: cooling + SSA (:math:`\nu_a`, :math:`\nu_m`, :math:`\nu_c`)
 
 All four are evaluated with the same underlying physical parameters using
-:meth:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
+:meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
 to derive consistent break frequencies and normalizations from :math:`B`, :math:`R`,
 and microphysical fractions.  This makes it easy to see what each successive
 physical ingredient adds to the spectral shape.
@@ -28,10 +28,10 @@ physical ingredient adds to the spectral shape.
 
 Relevant API References
 -----------------------
-- :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
-- :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
-- :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
-- :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
 
 import matplotlib.pyplot as plt
@@ -77,8 +77,8 @@ nu = np.geomspace(1e7, 1e18, 1000) * u.Hz
 #
 # .. note::
 #
-#     :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED` and
-#     :class:`~radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED` do not
+#     :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED` and
+#     :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED` do not
 #     include radiative cooling and therefore do not require :math:`\gamma_c`.
 #     The other two classes do require it.
 
@@ -89,7 +89,14 @@ sed_cool_ssa = PowerLaw_Cooling_SSA_SynchrotronSED()
 
 # Forward closures (returns CGS floats for frequencies and flux)
 params_pl = sed_pl.from_physics_to_params(
-    B=B, R=R, gamma_min=gamma_min, p=p, epsilon_E=epsilon_E, epsilon_B=epsilon_B, luminosity_distance=D_L
+    B=B,
+    R=R,
+    gamma_min=gamma_min,
+    p=p,
+    epsilon_E=epsilon_E,
+    epsilon_B=epsilon_B,
+    luminosity_distance=D_L,
+    gamma_max=1e18,
 )
 params_cool = sed_cool.from_physics_to_params(
     B=B,
@@ -100,9 +107,17 @@ params_cool = sed_cool.from_physics_to_params(
     epsilon_E=epsilon_E,
     epsilon_B=epsilon_B,
     luminosity_distance=D_L,
+    gamma_max=1e18,
 )
 params_ssa = sed_ssa.from_physics_to_params(
-    B=B, R=R, gamma_min=gamma_min, p=p, epsilon_E=epsilon_E, epsilon_B=epsilon_B, luminosity_distance=D_L
+    B=B,
+    R=R,
+    gamma_min=gamma_min,
+    p=p,
+    epsilon_E=epsilon_E,
+    epsilon_B=epsilon_B,
+    luminosity_distance=D_L,
+    gamma_max=1e18,
 )
 params_cool_ssa = sed_cool_ssa.from_physics_to_params(
     B=B,
@@ -113,7 +128,11 @@ params_cool_ssa = sed_cool_ssa.from_physics_to_params(
     epsilon_E=epsilon_E,
     epsilon_B=epsilon_B,
     luminosity_distance=D_L,
+    gamma_max=1e18,
 )
+print(params_cool_ssa)
+print(params_cool)
+
 
 print("--- Break frequencies ---")
 print(f"PL        : nu_m = {params_pl['nu_m']:.2e} ")
