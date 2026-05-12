@@ -1,7 +1,7 @@
-.. _numeric_thin_shell_shocks:
+.. _numeric_shocks_theory:
 
 ==========================================
-Numeric Thin-Shell Shock Models
+Theory: Numerical Thin-Shell Shock Engines
 ==========================================
 
 One downside of the self-similar approach is that it relies on a number of assumptions about the ejecta and CSM density
@@ -18,6 +18,8 @@ the shock velocity, :math:`v_{\rm sh} = \dot{R}_{\rm sh}`, where :math:`R_{\rm s
 
     In these models, we assume that the forward and reverse shocks are very close together such that
     :math:`R_{\rm sh} \approx R_{\rm fs} \approx R_{\rm rs}`.
+
+.. _numeric_thin_shell_shocks:
 
 The Equations of Motion
 ------------------------

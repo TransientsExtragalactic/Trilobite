@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.795** total execution time for 50 files **from all galleries**:
+**00:01.506** total execution time for 50 files **from all galleries**:
 
 .. container::
 
@@ -33,13 +33,13 @@ Computation times
      - Time
      - Mem (MB)
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_on_axis_numerical.py` (``galleries/synchrotron/b_seds/plot_on_axis_numerical.py``)
-     - 00:01.201
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_SSA_cooling_SED.py` (``galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py``)
-     - 00:00.354
+     - 00:01.191
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
-     - 00:00.240
+     - 00:00.247
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_sed_model_comparison.py` (``galleries/synchrotron/b_seds/plot_sed_model_comparison.py``)
+     - 00:00.068
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -158,7 +158,7 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_synchrotron_a_fundamentals_plot_frequency_gamma_relation.py` (``galleries/synchrotron/a_fundamentals/plot_frequency_gamma_relation.py``)
      - 00:00.000
      - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_sed_model_comparison.py` (``galleries/synchrotron/b_seds/plot_sed_model_comparison.py``)
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_SSA_cooling_SED.py` (``galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_c_cooling_plot_ic_vs_synchrotron_cooling.py` (``galleries/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.py``)

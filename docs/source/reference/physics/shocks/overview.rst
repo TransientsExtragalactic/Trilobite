@@ -61,6 +61,44 @@ computing the dynamical evolution of shocks in a variety of well-described physi
 range from numerical calculations to fully analytical self-similar solutions, and are designed to be modular
 and extensible so that users can easily implement new shock models or extend existing ones to fit their specific needs.
 
+.. grid:: 1
+    :gutter: 3
+
+    .. grid-item-card:: Overview
+        :link: shock_engines
+        :link-type: ref
+
+        **Start here.** Introduces the module structure, provides physical context,
+        and includes minimal worked examples for each layer of the shock engine stack.
+
+.. grid:: 1 1 2 2
+    :gutter: 3
+
+    .. grid-item-card:: Usage Reference
+
+        - :ref:`self_similar_shocks_overview`
+        - :ref:`numerical_shocks_overview`
+
+
+    .. grid-item-card:: Theory
+
+        - :ref:`blandford_mckee_theory`
+        - :ref:`chevalier_theory`
+        - :ref:`sedov_taylor_theory`
+        - :ref:`numeric_shocks_theory`
+
+.. toctree::
+    :hidden:
+    :maxdepth: 1
+    :caption: Shocks-Engines
+
+    shock_engines_overview
+    blandford_mckee_theory
+    chevalier_theory
+    sedov_taylor_theory
+    numerical_shocks_theory
+    numeric_shocks_overview
+    self_similar_overview
 
 References
 ----------

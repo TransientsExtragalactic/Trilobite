@@ -1,8 +1,8 @@
 .. _chevalier_theory:
 
-========================================
-The Chevalier Self-Similar Solution
-========================================
+============================================
+Theory: The Chevalier Self-Similar Solution
+============================================
 
 The Chevalier self-similar solution
 (:class:`~triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine`)
