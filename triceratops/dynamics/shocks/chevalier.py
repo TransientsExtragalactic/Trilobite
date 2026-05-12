@@ -403,10 +403,12 @@ def get_wind_csm_density_func(
         A function that takes a radius (with units) as input and returns the CSM density at that radius.
     """
     # Compute the normalization constant rho_0 using the provided parameters
+    # compute_wind_csm_parameters returns ṁ/(4πv_w), the "A" coefficient with
+    # units g/cm, such that ρ_csm(r) = A/r² gives g/cm³.
     rho_0 = compute_wind_csm_parameters(
         mass_loss_rate=mass_loss_rate,
         wind_velocity=wind_velocity,
-    ).to_value("g/cm**3")
+    ).to_value("g/cm")
 
     def csm_density_func(radius: float) -> float:
         """

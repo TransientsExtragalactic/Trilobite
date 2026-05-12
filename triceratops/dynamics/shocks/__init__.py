@@ -11,6 +11,7 @@ __all__ = [
     "relativistic_jump_conditions",
     "numerical",
     "NumericalThinShellShockEngine",
+    "RelativisticNumericalThinShellShockEngine",
     "RelativisticJumpConditions",
     "RelativisticShockConditions",
     "RelativisticColdShockConditions",
@@ -40,5 +41,8 @@ from triceratops.dynamics.shocks.core.relativistic_jump_conditions import (
     UltraRelativisticColdShockConditions,
     UltraRelativisticShockConditions,
 )
-from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
+from triceratops.dynamics.shocks.numerical import (
+    NumericalThinShellShockEngine,
+    RelativisticNumericalThinShellShockEngine,
+)
 from triceratops.dynamics.shocks.sedov_taylor import SedovTaylorShockEngine, sedov_taylor_beta
