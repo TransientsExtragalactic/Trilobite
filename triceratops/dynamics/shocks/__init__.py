@@ -18,6 +18,8 @@ __all__ = [
     "UltraRelativisticColdShockConditions",
     "ChevalierSelfSimilarShockEngine",
     "ChevalierSelfSimilarWindShockEngine",
+    "SedovTaylorShockEngine",
+    "sedov_taylor_beta",
     "normalize_supernova_ejecta",
     "get_broken_power_law_ejecta_kernel_func",
     "get_wind_csm_density_func",
@@ -39,3 +41,4 @@ from triceratops.dynamics.shocks.core.relativistic_jump_conditions import (
     UltraRelativisticShockConditions,
 )
 from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
+from triceratops.dynamics.shocks.sedov_taylor import SedovTaylorShockEngine, sedov_taylor_beta
