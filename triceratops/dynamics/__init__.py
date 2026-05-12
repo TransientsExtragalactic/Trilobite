@@ -9,7 +9,6 @@ the :mod:`triceratops.models` module.
 
 __all__ = [
     "shocks",
-    "supernovae",
     "accretion",
 ]
-from triceratops.dynamics import accretion, shocks, supernovae
+from triceratops.dynamics import accretion, shocks

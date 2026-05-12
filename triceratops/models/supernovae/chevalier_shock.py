@@ -14,9 +14,7 @@ from collections import namedtuple
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.supernovae.shock_dynamics import (
-    ChevalierSelfSimilarShockEngine,
-)
+from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
 from triceratops.models.core.base import Model
 from triceratops.models.core.parameters import ModelParameter, ModelVariable
 from triceratops.radiation.synchrotron.SEDs import SSA_SED_PowerLaw

@@ -13,7 +13,7 @@ import numpy as np
 from astropy import units as u
 from scipy.integrate import solve_ivp
 
-from .shock_engine import ShockEngine
+from triceratops.dynamics.shocks.core.shock_engine import ShockEngine
 
 if TYPE_CHECKING:
     from triceratops._typing import (
