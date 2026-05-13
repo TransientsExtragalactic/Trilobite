@@ -11,7 +11,10 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
+from triceratops.dynamics.shocks.numerical import (
+    NumericalThinShellShockEngine,
+    RelativisticNumericalThinShellShockEngine,
+)
 from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
 
 
@@ -344,7 +347,7 @@ class TestNumericalThinShellShockEngine:
             axes[2].legend()
 
             plt.tight_layout()
-            plt.savefig(f"{diagnostic_plots_dir}/test_homologous_expansion_in_vacuum.png")
+            plt.savefig(f"{diagnostic_plots_dir}/test_self_similar.png")
             plt.close(fig)
 
         # --- Assert Validity --- #
@@ -365,3 +368,264 @@ class TestNumericalThinShellShockEngine:
             dlogM_dlogt_expected,
             rtol=relative_tolerance,
         )
+
+
+class TestRelativisticNumericalThinShellShockEngine:
+    @pytest.fixture(scope="class")
+    def relative_tolerance(self):
+        """The relative tolerance to use for comparisons."""
+        return 1e-4
+
+    @pytest.fixture(scope="class")
+    def time_grid(self):
+        """The times at which to evaluate the shock engine."""
+        return np.geomspace(1, 1e4, 512) * u.day
+
+    @pytest.fixture(scope="class")
+    def engine(self):
+        """The instantiated engine to do the computation with."""
+        return RelativisticNumericalThinShellShockEngine()
+
+    def test_homologous_expansion_in_vacuum(
+        self, time_grid, engine, diagnostic_plots, diagnostic_plots_dir, relative_tolerance
+    ):
+        """
+        Test that the relativistic engine correctly reproduces homologous (coasting) expansion
+        into vacuum.
+
+        A shell initialised at :math:`R_0 = v_0 t_0` with :math:`v_0 \\ll c` and no CSM should
+        coast at constant :math:`\\beta`, so :math:`R(t) = v_0 t` and :math:`M(t) = M_0`.
+        The ejecta background is set to a power-law profile in homologous coordinates, but since
+        the CSM is vacuum the ejecta exerts no net force on the shell (the shell sits exactly on
+        the ejecta front, so :math:`\\Delta\\beta = 0`).
+        """
+        from triceratops.radiation.constants import c_cgs
+
+        R_0 = 1e15 * u.cm
+        t_0 = time_grid[0]
+        v_0 = R_0 / t_0
+        M_0 = 1e-5 * u.Msun
+
+        v_0_cgs = v_0.to_value(u.cm / u.s)
+        M_0_cgs = M_0.to_value(u.g)
+
+        # Cold shell initial conditions (NR limit: beta_0 << 1).
+        beta_0 = v_0_cgs / c_cgs
+        gamma_0 = 1.0 / np.sqrt(1.0 - beta_0**2)
+        E_0 = gamma_0 * M_0_cgs * c_cgs**2 * u.erg
+        p_0 = gamma_0 * beta_0 * M_0_cgs * c_cgs * (u.g * u.cm / u.s)
+
+        # Simple power-law ejecta background (homologous); CSM is vacuum.
+        def _rho_ej(r, t):
+            v = r / t
+            return (v / v_0_cgs) ** -8 / t**3
+
+        def _v_ej(r, t):
+            return r / t
+
+        def _U_int_ej(r, t):
+            return 0.0
+
+        def _rho_csm(r, t):
+            return 0.0
+
+        def _v_csm(r, t):
+            return 0.0
+
+        def _U_int_csm(r, t):
+            return 0.0
+
+        results = engine.compute_shock_properties(
+            time_grid,
+            rho_ej=_rho_ej,
+            v_ej=_v_ej,
+            U_int_ej=_U_int_ej,
+            rho_csm=_rho_csm,
+            v_csm=_v_csm,
+            U_int_csm=_U_int_csm,
+            R_0=R_0,
+            E_0=E_0,
+            p_0=p_0,
+            M_0=M_0,
+            t_0=t_0,
+        )
+
+        expected_R = v_0 * time_grid
+        expected_v = v_0 * np.ones(len(time_grid))
+        expected_M = M_0 * np.ones(len(time_grid))
+
+        if diagnostic_plots:
+            import matplotlib.pyplot as plt
+            from triceratops.utils.plot_utils import set_plot_style
+
+            set_plot_style()
+            fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+            axes[0].loglog(time_grid.to_value(u.day), results["radius"].to_value(u.cm), label="Computed")
+            axes[0].loglog(time_grid.to_value(u.day), expected_R.to_value(u.cm), ls="--", label="Expected")
+            axes[0].set_xlabel("Time [days]")
+            axes[0].set_ylabel("Radius [cm]")
+            axes[0].legend()
+            axes[1].loglog(time_grid.to_value(u.day), results["velocity"].to_value(u.cm / u.s), label="Computed")
+            axes[1].loglog(time_grid.to_value(u.day), expected_v.to_value(u.cm / u.s), ls="--", label="Expected")
+            axes[1].set_xlabel("Time [days]")
+            axes[1].set_ylabel("Velocity [cm/s]")
+            axes[1].legend()
+            axes[2].loglog(time_grid.to_value(u.day), results["mass"].to_value(u.g), label="Computed")
+            axes[2].loglog(time_grid.to_value(u.day), expected_M.to_value(u.g), ls="--", label="Expected")
+            axes[2].set_xlabel("Time [days]")
+            axes[2].set_ylabel("Mass [g]")
+            axes[2].legend()
+            plt.tight_layout()
+            plt.savefig(f"{diagnostic_plots_dir}/test_rel_homologous_expansion_in_vacuum.png")
+            plt.close(fig)
+
+        assert_allclose(results["radius"].to_value(u.cm), expected_R.to_value(u.cm), rtol=relative_tolerance)
+        assert_allclose(
+            results["velocity"].to_value(u.cm / u.s), expected_v.to_value(u.cm / u.s), rtol=relative_tolerance
+        )
+        assert_allclose(results["mass"].to_value(u.g), expected_M.to_value(u.g), rtol=relative_tolerance)
+
+    def test_self_similar_power_law_solution(
+        self, time_grid, engine, relative_tolerance, diagnostic_plots, diagnostic_plots_dir
+    ):
+        """
+        Test that the relativistic engine reproduces the Chevalier self-similar power-law
+        *indices* in the non-relativistic limit (:math:`v_0 \\ll c`).
+
+        In the NR limit the relativistic momentum equation reduces to
+
+        .. math::
+
+            M \\frac{dv}{dt} = 4\\pi R^2
+                \\bigl[\\rho_{\\rm ej}(v_{\\rm ej}-v_s)^2 - \\rho_{\\rm csm} v_s^2\\bigr],
+
+        which is the Chevalier thin-shell equation with infinite compression ratio.  The
+        self-similar power-law *indices* are independent of the compression ratio, so the
+        relativistic solver must recover
+
+        .. math::
+
+            \\frac{d\\log R}{d\\log t} = \\lambda = \\frac{n-3}{n-s},
+            \\quad
+            \\frac{d\\log v}{d\\log t} = \\lambda - 1,
+            \\quad
+            \\frac{d\\log M}{d\\log t} = (3-s)\\lambda.
+        """
+        from triceratops.radiation.constants import c_cgs
+
+        n, s = 10, 2
+        _lambda = (n - 3) / (n - s)
+        _gamma_exp = (3 - s) * _lambda
+
+        R_ref = 1e13 * u.cm
+        t_ref = 1 * u.day
+        # v_ref must be ≪ c so that O(β²) relativistic corrections are below the
+        # test tolerance.  At v_ref = 1e3 km/s the self-similar shock velocity
+        # v_0 ≈ λ·R_0/t_0 ≈ 0.0016c, giving β² ≈ 3e-6 ≪ rtol.
+        v_ref = 1e3 * (u.km / u.s)
+        rho_0_csm = 5e-16 * (u.g / u.cm**3)
+        rho_0_ej = 1e-13 * (u.g / u.cm**3)
+
+        K_csm = ChevalierSelfSimilarShockEngine.normalize_csm_density(rho_0_csm, R_ref, s)
+        K_ej = ChevalierSelfSimilarShockEngine.normalize_outer_ejecta_density(rho_0_ej, v_ref, t_ref, n)
+
+        # The NR Chevalier zeta encodes the compression factor χ = 4 (γ = 5/3) via the
+        # factor (1 − 1/χ) = 3/4 baked into the "3" coefficients.  The general formula is
+        #   zeta(χ) = [(1−1/χ)λ² + λ(λ−1)/(3−s)] / [(1−1/χ)(1−λ)² − λ(λ−1)/(n−3)]
+        # The relativistic thin-shell equations use upstream flux directly (no jump-condition
+        # compression), effectively χ → ∞, so (1−1/χ) = 1.  Using zeta_NR = 17 instead of
+        # zeta_rel = 21 would place the IC off the relativistic self-similar attractor,
+        # producing a transient with a ~0.1% slope bias.
+        zeta_rel = (_lambda**2 + _lambda * (_lambda - 1) / (3 - s)) / (
+            (1 - _lambda) ** 2 - _lambda * (_lambda - 1) / (n - 3)
+        )
+
+        t_0 = time_grid[0]
+        R_0 = (zeta_rel * (K_csm / K_ej)) ** (1 / (s - n)) * t_0**_lambda
+        v_0 = _lambda * (R_0 / t_0)
+        M_0 = 4 * np.pi * ((K_csm * R_0 ** (3 - s)) / (3 - s) + (K_ej * t_0 ** (n - 3) * R_0 ** (3 - n)) / (n - 3))
+
+        K_csm_cgs = K_csm.to_value(u.g / u.cm ** (3 - s))
+        K_ej_cgs = K_ej.to_value(u.g * u.s ** (3 - n) * u.cm ** (n - 3))
+        v_0_cgs = v_0.to_value(u.cm / u.s)
+        M_0_cgs = M_0.to_value(u.g)
+
+        # Verify we are in the NR limit (v_0 << c).
+        assert v_0_cgs / c_cgs < 0.1, f"Initial velocity {v_0_cgs / c_cgs:.3f}c is not NR."
+
+        # Cold shell initial conditions.
+        beta_0 = v_0_cgs / c_cgs
+        gamma_0 = 1.0 / np.sqrt(1.0 - beta_0**2)
+        E_0 = gamma_0 * M_0_cgs * c_cgs**2 * u.erg
+        p_0 = gamma_0 * beta_0 * M_0_cgs * c_cgs * (u.g * u.cm / u.s)
+
+        # Callables with (r, t) signatures required by the relativistic engine.
+        def _rho_csm(r, t):
+            return K_csm_cgs * r ** (-s)
+
+        def _v_csm(r, t):
+            return 0.0
+
+        def _U_int_csm(r, t):
+            return 0.0
+
+        def _rho_ej(r, t):
+            return K_ej_cgs * (r / t) ** (-n) / t**3
+
+        def _v_ej(r, t):
+            return r / t
+
+        def _U_int_ej(r, t):
+            return 0.0
+
+        results = engine.compute_shock_properties(
+            time_grid,
+            rho_ej=_rho_ej,
+            v_ej=_v_ej,
+            U_int_ej=_U_int_ej,
+            rho_csm=_rho_csm,
+            v_csm=_v_csm,
+            U_int_csm=_U_int_csm,
+            R_0=R_0,
+            E_0=E_0,
+            p_0=p_0,
+            M_0=M_0,
+            t_0=t_0,
+        )
+
+        dlogR_dlogt_expected = _lambda
+        dlogv_dlogt_expected = _lambda - 1
+        dlogM_dlogt_expected = _gamma_exp
+
+        log_t = np.log10(time_grid.to_value(u.s))
+        dlogR = np.gradient(np.log10(results["radius"].to_value(u.cm)), log_t)
+        dlogv = np.gradient(np.log10(results["velocity"].to_value(u.cm / u.s)), log_t)
+        dlogM = np.gradient(np.log10(results["mass"].to_value(u.g)), log_t)
+
+        if diagnostic_plots:
+            import matplotlib.pyplot as plt
+            from triceratops.utils.plot_utils import set_plot_style
+
+            set_plot_style()
+            fig, axes = plt.subplots(3, 1, figsize=(8, 12))
+            log_t_day = np.log10(time_grid.to_value(u.day))
+            for ax, computed, expected, ylabel in zip(
+                axes,
+                [dlogR, dlogv, dlogM],
+                [dlogR_dlogt_expected, dlogv_dlogt_expected, dlogM_dlogt_expected],
+                ["dlogR/dlogt", "dlogv/dlogt", "dlogM/dlogt"],
+            ):
+                ax.plot(log_t_day, computed, label="Computed")
+                ax.axhline(expected, ls="--", color="C1", label="Expected")
+                ax.set_xlabel("log10(Time [days])")
+                ax.set_ylabel(ylabel)
+                ax.legend()
+            plt.tight_layout()
+            plt.savefig(f"{diagnostic_plots_dir}/test_rel_self_similar_power_law.png")
+            plt.close(fig)
+
+        # Check the second half of the time grid (allow transient to decay).
+        half = len(time_grid) // 2
+        assert_allclose(dlogR[half:], dlogR_dlogt_expected, rtol=relative_tolerance)
+        assert_allclose(dlogv[half:], dlogv_dlogt_expected, rtol=relative_tolerance)
+        assert_allclose(dlogM[half:], dlogM_dlogt_expected, rtol=relative_tolerance)
