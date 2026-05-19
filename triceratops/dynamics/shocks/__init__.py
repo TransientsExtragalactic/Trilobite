@@ -10,28 +10,31 @@ __all__ = [
     "rankine_hugoniot",
     "relativistic_jump_conditions",
     "numerical",
-    "NumericalThinShellShockEngine",
-    "RelativisticNumericalThinShellShockEngine",
+    "ChevalierShockState",
+    "ChevalierSelfSimilarShockEngine",
+    "ChevalierSelfSimilarWindShockEngine",
+    "SedovTaylorShockState",
+    "SedovTaylorShockEngine",
+    "sedov_taylor_beta",
+    "ThinShellShockState",
+    "MechanicalShockState",
+    "MechanicalShockEngine",
+    "PressureDrivenThinShellShockEngine",
     "RelativisticJumpConditions",
     "RelativisticShockConditions",
     "RelativisticColdShockConditions",
     "UltraRelativisticShockConditions",
     "UltraRelativisticColdShockConditions",
-    "ChevalierSelfSimilarShockEngine",
-    "ChevalierSelfSimilarWindShockEngine",
-    "SedovTaylorShockEngine",
-    "sedov_taylor_beta",
-    "normalize_supernova_ejecta",
-    "get_broken_power_law_ejecta_kernel_func",
+    "normalize_bpl_ejecta",
+    "get_bpl_ejecta_kernel",
     "get_wind_csm_density_func",
+    "make_homologous_stationary_sources",
 ]
 from triceratops.dynamics.shocks import numerical
 from triceratops.dynamics.shocks.chevalier import (
     ChevalierSelfSimilarShockEngine,
     ChevalierSelfSimilarWindShockEngine,
-    get_broken_power_law_ejecta_kernel_func,
-    get_wind_csm_density_func,
-    normalize_supernova_ejecta,
+    ChevalierShockState,
 )
 from triceratops.dynamics.shocks.core import rankine_hugoniot, relativistic_jump_conditions
 from triceratops.dynamics.shocks.core.relativistic_jump_conditions import (
@@ -42,7 +45,15 @@ from triceratops.dynamics.shocks.core.relativistic_jump_conditions import (
     UltraRelativisticShockConditions,
 )
 from triceratops.dynamics.shocks.numerical import (
-    NumericalThinShellShockEngine,
-    RelativisticNumericalThinShellShockEngine,
+    MechanicalShockEngine,
+    MechanicalShockState,
+    PressureDrivenThinShellShockEngine,
+    ThinShellShockState,
 )
-from triceratops.dynamics.shocks.sedov_taylor import SedovTaylorShockEngine, sedov_taylor_beta
+from triceratops.dynamics.shocks.sedov_taylor import SedovTaylorShockEngine, SedovTaylorShockState, sedov_taylor_beta
+from triceratops.dynamics.shocks.utils import (
+    get_bpl_ejecta_kernel,
+    get_wind_csm_density_func,
+    make_homologous_stationary_sources,
+    normalize_bpl_ejecta,
+)

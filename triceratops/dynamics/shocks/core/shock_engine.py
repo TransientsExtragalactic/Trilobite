@@ -53,6 +53,8 @@ class ShockEngine(ABC):
         the :class:`ShockEngine` abstraction.
     """
 
+    _STATE_CLASS: "type | None" = None
+
     # =========================================== #
     # Initialization                              #
     # =========================================== #

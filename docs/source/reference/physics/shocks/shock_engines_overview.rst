@@ -3,9 +3,9 @@
 Shock Engines
 ===========================================
 
-The evolution of an astrophysical shock is the central dynamical ingredient in modeling
+The evolution of an astrophysical shock is the **central dynamical ingredient** in modeling
 radio and X-ray transients. Whether one is describing the ejecta--CSM interaction of a
-supernova :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`, the deceleration of
+supernova\ :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`, the deceleration of
 a gamma-ray burst afterglow, or the late-time blast wave of a tidal disruption event, the
 shock radius :math:`R(t)` and velocity :math:`v(t)` set the stage for everything that
 follows: they determine the post-shock conditions that feed into the synchrotron and
@@ -15,10 +15,14 @@ measure.
 Triceratops provides a unified **shock engine** interface that wraps the physics of shock
 evolution and returns time-varying shock properties in a consistent format, regardless of
 whether the underlying model is a closed-form self-similar solution, a numerical ODE
-integrator, or a bespoke prescription.  The engines are intentionally **stateless** —
-physical parameters are passed at call time rather than stored on the object — so that they
+integrator, or a bespoke prescription.  The engines are intentionally **stateless**,
+physical parameters are passed at call time rather than stored on the object, so that they
 can be freely used in parameter sweeps and Bayesian inference pipelines without hidden state
 or unexpected side effects.
+
+These configurations can also be used to train neural surrogates of shock dynamics, which are
+orders of magnitude faster to evaluate than numerical engines and can be used in inference
+workflows that would otherwise be prohibitively expensive.
 
 .. hint::
 
@@ -27,11 +31,14 @@ or unexpected side effects.
 
     - :ref:`chevalier_theory` — the Chevalier self-similar ejecta--CSM interaction
     - :ref:`sedov_taylor_theory` — the Sedov--Taylor point-explosion blast wave
-    - :ref:`numeric_shocks_theory` — the thin-shell numerical ODE formulation
+    - :ref:`numeric_shocks_theory` — the thin-shell ODE formulations, including the
+      :ref:`pressure-driven <pressure_driven_thin_shell_model>` and
+      :ref:`mechanical internal-energy <mechanical_internal_energy_model>` models
 
     :footcite:t:`ChevalierFranssonHandbook` is an excellent review of supernovae in
     circumstellar media; :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`
     is the primary reference for the self-similar solutions implemented here.
+    The mechanical shock engine follows :footcite:t:`beloborodovMechanicalModelRelativistic2006a`.
 
 .. contents::
     :local:
@@ -42,29 +49,39 @@ or unexpected side effects.
 Module Overview
 ---------------
 
-In a *typical shock dynamics problem*, the user has a physical scenario — for example, a
-supernova explosion into a stellar wind — and wants to predict how the shock evolves with
+In a *typical shock dynamics problem*, the user has a physical scenario, for example, a
+supernova explosion into a stellar wind, and wants to predict how the shock evolves with
 time.  The workflow generally proceeds in two steps:
 
-1. **Parameterize the environment**: Use the normalization utilities (e.g.,
-   :func:`~triceratops.dynamics.shocks.chevalier.normalize_supernova_ejecta` or
-   :func:`~triceratops.dynamics.shocks.chevalier.compute_wind_csm_parameters`) to convert
-   physical observables such as ejecta mass, explosion energy, or progenitor mass-loss rate
-   into the normalization constants required by the shock model.
+1. **Build Initial Conditions**: For numerical solvers, use the factory functions in
+   :mod:`~triceratops.dynamics.shocks.utils` to construct callable density and velocity
+   profiles for the ejecta and circumstellar medium. For self-similar models,
+   :mod:`~triceratops.dynamics.shocks.utils` provides various helpers to convert physical
+   parameters like explosion energy and mass-loss rate into the normalization constants that
+   the self-similar solutions require.
+   See `Profiles and Model Setup`_
+   below for a full reference table.
 
-2. **Evolve the shock**: Call the engine's
+3. **Evolve the shock**: Call the engine's
    :meth:`~triceratops.dynamics.shocks.core.shock_engine.ShockEngine.compute_shock_properties`
-   method — or simply call the engine as a function, since all engines are callable — with a
+   method, or simply call the engine as a function, since all engines are callable, with a
    time array to obtain the shock radius, velocity, and any additional post-shock
    thermodynamic quantities supported by that particular engine.
 
-The result is a dictionary of :class:`~astropy.units.Quantity` arrays that can be fed
-directly into the synchrotron or thermal emission models in :mod:`~triceratops.radiation`.
+Each engine class returns a specific set of shock properties in a custom state class (a named tuple).
 
 Module Structure
 ^^^^^^^^^^^^^^^^
 
-The shock engine infrastructure spans two layers of :mod:`~triceratops.dynamics.shocks`:
+The shock engine infrastructure spans various layers of the larger :mod:`~triceratops.dynamics.shocks` subpackage.
+The tables below summarize the key classes and functions in each layer, along with their responsibilities.
+For detailed API references and worked examples, see the linked sections.
+
+.. rubric:: Infrastructure
+
+At the core of the shock-engine architecture is the abstract base class, contained in
+the :mod:`~triceratops.dynamics.shocks.core.shock_engine` module, which defines the two-method
+contract that all engines must satisfy.
 
 .. list-table::
     :header-rows: 1
@@ -76,6 +93,19 @@ The shock engine infrastructure spans two layers of :mod:`~triceratops.dynamics.
       - Abstract base class defining the two-method contract that all engines must satisfy.
         Users encounter this class only when building custom engines; see
         `Building a Custom Shock Engine`_ below.
+
+.. rubric:: Self-Similar Engines
+
+The simplest (and most commonly used) set of shock engines are those corresponding to so-called
+`self-similar <https://en.wikipedia.org/wiki/Self-similar_solution>`__ solutions, which are computationally cheap
+analytic prescriptions valid when density profiles take special forms.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 42 58
+
+    * - Class
+      - Responsibility
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
       - Self-similar ejecta--CSM interaction for arbitrary power-law density profiles
         :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`.
@@ -89,10 +119,49 @@ The shock engine infrastructure spans two layers of :mod:`~triceratops.dynamics.
         :footcite:p:`sedov1946propagation` :footcite:p:`taylor1950formation`.
         Returns post-shock density, pressure, and temperature in addition to kinematics.
         See :ref:`sedov_taylor_theory`.
-    * - :class:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine`
-      - ODE-based thin-shell engine for *arbitrary* ejecta and CSM density profiles.
-        Suitable when the self-similar approximation breaks down.
-        See :ref:`numeric_shocks_theory`.
+
+.. rubric:: Numerical Engines
+
+In cases when self-similar solvers are insufficient, one must turn to more complex engines which rely
+on numerical methods. These engines integrate ODEs and can handle arbitrary ejecta and CSM density profiles, but are
+more computationally expensive than their self-similar counterparts. Triceratops currently provides two
+fully implemented ODE-based engines, with four relativistic and momentum-conserving
+extensions reserved as planned engines for future releases.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 42 58
+
+    * - Class
+      - Responsibility
+    * - :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+      - ODE-based thin-shell engine driven by the instantaneous Rankine--Hugoniot pressure
+        difference across the interaction region.  Supports arbitrary ejecta and CSM
+        callables.  See :ref:`pressure_driven_thin_shell_model`.
+    * - :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+      - Non-relativistic mechanical engine that self-consistently evolves separate internal
+        energies for the shocked ejecta and CSM layers, following
+        :footcite:t:`beloborodovMechanicalModelRelativistic2006a`.
+        See :ref:`mechanical_internal_energy_model`.
+
+.. rubric:: Utilities
+
+To help users with setting up various density and velocity profiles for the ejecta and CSM, the
+:mod:`~triceratops.dynamics.shocks.utils` module provides factory functions that return unit-free
+CGS callables for efficient evaluation inside ODE right-hand sides. These utilities are essential
+for preparing the initial conditions for numerical shock engines,
+and they also include normalization helpers for self-similar solutions.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 42 58
+
+    * - Module
+      - Responsibility
+    * - :mod:`~triceratops.dynamics.shocks.utils`
+      - Factory functions for velocity profiles, ejecta kernels, ejecta density profiles,
+        and CSM density profiles.  All returned callables are unit-free CGS for efficient
+        evaluation inside ODE right-hand sides.  See `Profiles and Model Setup`_ below.
 
 ----
 
@@ -136,7 +205,7 @@ mass, wind mass-loss rate, and wind velocity) and handles all normalization inte
 
     axes[0].loglog(
         t.to(u.day).value,
-        props['radius'].to(u.cm).value / 1e16,
+        props.radius.to(u.cm).value / 1e16,
         color='steelblue', lw=2,
     )
     axes[0].set_xlabel('Time [days]')
@@ -146,7 +215,7 @@ mass, wind mass-loss rate, and wind velocity) and handles all normalization inte
 
     axes[1].loglog(
         t.to(u.day).value,
-        props['velocity'].to(u.km / u.s).value,
+        props.velocity.to(u.km / u.s).value,
         color='darkorange', lw=2,
     )
     axes[1].set_xlabel('Time [days]')
@@ -166,227 +235,289 @@ mass, wind mass-loss rate, and wind velocity) and handles all normalization inte
 Types of Shock Engines
 -----------------------
 
-Triceratops provides two broad categories of shock engine, each suited to a different level
-of physical complexity and computational cost.
+Triceratops provides two broad categories of shock engine: **self-similar** solutions,
+which are computationally cheap analytic prescriptions valid when density profiles take
+simple power-law form, and **numerical** engines, which integrate ODEs and can handle
+arbitrary ejecta and CSM density profiles.
 
 Self-Similar Shock Engines
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. seealso::
 
-    :ref:`self_similar_shocks_overview` — detailed API reference.
+    :ref:`self_similar_shocks_overview` — detailed API reference and worked examples.
+
     :ref:`chevalier_theory` and :ref:`sedov_taylor_theory` — theoretical derivations.
 
 Self-similar shock solutions arise when the governing equations admit a scale-free form.
-The shock structure then evolves such that a single power-law in time describes both the
-radius and velocity, converting what is nominally a partial differential equation into an
-ordinary one and, in the most favorable cases, yielding a fully analytic result.  These
-solutions are computationally cheap and carry intuitive physical scaling relations, making
-them the preferred first choice for parameter inference.
+The shock then evolves such that a single power law in time describes both the radius and
+velocity, converting what is nominally a partial differential equation into an ordinary one
+and, in the most favorable cases, yielding a fully analytic result.  These solutions are
+computationally cheap and carry intuitive physical scaling relations, making them the
+preferred first choice for parameter inference.
 
 Three self-similar engines are currently implemented:
 
 .. list-table::
     :header-rows: 1
-    :widths: 42 16 16 26
+    :widths: 40 18 18 24
 
     * - Class
       - Geometry
       - Medium
       - Use when...
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
+        — :ref:`details <chevalier_engine>`
       - Spherical
       - Power-law (:math:`\rho \propto r^{-s}`)
       - SN ejecta--CSM interaction with a general power-law CSM
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
+        — :ref:`details <chevalier_engine>`
       - Spherical
       - Stellar wind (:math:`s = 2`)
       - SN ejecta in a steady wind; :math:`\dot{M}` and :math:`v_w` as direct inputs
     * - :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
+        — :ref:`details <sedov_taylor_engine>`
       - Spherical
       - Uniform (:math:`\rho = \rho_0`)
       - Point explosion in a uniform medium; full post-shock thermodynamics returned
 
-**Chevalier engines.**
-Both Chevalier engines model the supernova ejecta as a broken power-law density profile
-parameterized by the outer index :math:`n` and the inner index :math:`\delta`.  The helper
-function :func:`~triceratops.dynamics.shocks.chevalier.normalize_supernova_ejecta` converts
-the total kinetic energy :math:`E_{\rm ej}` and ejecta mass :math:`M_{\rm ej}` into the
-normalization constant :math:`K_{\rm ej}` and transition velocity :math:`v_t` that enter
-the self-similar solution. For wind-like CSM, the function
-:func:`~triceratops.dynamics.shocks.chevalier.compute_wind_csm_parameters` converts the
-mass-loss rate and wind velocity directly into the CSM normalization constant
-:math:`K_{\rm CSM}`.
-
-Under these assumptions, the shock radius evolves as
-
-.. math::
-
-    R(t) = \left(\frac{\zeta\, K_{\rm CSM}}{K_{\rm ej}}\right)^{\!\frac{1}{s-n}}
-             t^{\frac{3-n}{s-n}},
-
-where :math:`\zeta` is an order-unity factor computed by
-:meth:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_scale_parameter`
-that depends only on :math:`n` and :math:`s`.  The shock velocity follows directly from
-differentiation, :math:`v(t) = \dot{R}(t)`.
-
-.. dropdown:: Example: Chevalier Wind Shock — Varying Ejecta Mass
-
-    This example shows how the shock radius evolves for three different ejecta masses at
-    fixed explosion energy, illustrating the well-known result that heavier ejecta decelerates
-    the shock more slowly at early times but sweeps up more CSM mass at later times.
-
-    .. plot::
-        :include-source:
-
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-        from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
-
-        engine = ChevalierSelfSimilarWindShockEngine()
-
-        E_ej   = 1e51 * u.erg
-        M_dot  = 1e-5 * u.Msun / u.yr
-        v_wind = 1000.0 * u.km / u.s
-        n      = 10.0
-
-        t = np.logspace(1, np.log10(3650), 300) * u.day
-
-        fig, ax = plt.subplots(figsize=(7, 4))
-
-        for M_ej, color, label in [
-            (3.0  * u.Msun, 'steelblue',  r'$M_{\rm ej} = 3\,M_\odot$'),
-            (10.0 * u.Msun, 'darkorange', r'$M_{\rm ej} = 10\,M_\odot$'),
-            (30.0 * u.Msun, 'firebrick',  r'$M_{\rm ej} = 30\,M_\odot$'),
-        ]:
-            props = engine(t, E_ej=E_ej, M_ej=M_ej, M_dot=M_dot, v_wind=v_wind, n=n)
-            ax.loglog(
-                t.to(u.day).value,
-                props['radius'].to(u.cm).value / 1e16,
-                color=color, lw=2, label=label,
-            )
-
-        ax.set_xlabel('Time [days]')
-        ax.set_ylabel(r'Shock radius [$10^{16}$ cm]')
-        ax.set_title(r'Chevalier wind shock, $E_{\rm ej} = 10^{51}$ erg')
-        ax.legend()
-        ax.grid(True, which='both', ls='--', alpha=0.4)
-        plt.tight_layout()
-
-**Sedov--Taylor engine.**
-The :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine` is
-appropriate for a *point explosion* in a uniform ambient medium — the classic scenario
-first solved by :footcite:t:`sedov1946propagation` and :footcite:t:`taylor1950formation`.
-In this limit,
-
-.. math::
-
-    R_s(t) = \beta(\gamma)\left(\frac{E\,t^2}{\rho_0}\right)^{\!1/5}, \qquad
-    v_s(t) = \frac{2}{5}\,\frac{R_s(t)}{t},
-
-where the normalization coefficient :math:`\beta(\gamma)` is computed once at
-instantiation by :func:`~triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta`
-via numerical integration of the self-similar Sedov profiles.  Unlike the Chevalier
-engines, the Sedov--Taylor engine also returns the immediate post-shock density, pressure,
-temperature, and thermal energy density derived from the strong-shock Rankine--Hugoniot
-conditions.
-
-.. dropdown:: Example: Sedov--Taylor Blast — Kinematics and Post-Shock Temperature
-
-    .. plot::
-        :include-source:
-
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-        from triceratops.dynamics.shocks import SedovTaylorShockEngine
-
-        engine = SedovTaylorShockEngine(gamma=5.0 / 3.0)
-
-        E     = 1e51 * u.erg
-        rho_0 = 1.67e-24 * u.g / u.cm**3    # approximately one proton per cm^3
-        t     = np.logspace(9, 13, 300) * u.s
-
-        props = engine(t, E=E, rho_0=rho_0)
-
-        fig, axes = plt.subplots(1, 2, figsize=(10, 4))
-
-        axes[0].loglog(
-            t.to(u.yr).value,
-            props['radius'].to(u.pc).value,
-            color='steelblue', lw=2,
-        )
-        axes[0].set_xlabel('Time [yr]')
-        axes[0].set_ylabel('Shock radius [pc]')
-        axes[0].set_title('Sedov--Taylor blast radius')
-        axes[0].grid(True, which='both', ls='--', alpha=0.4)
-
-        axes[1].loglog(
-            t.to(u.yr).value,
-            props['post_shock_temperature'].to(u.K).value,
-            color='firebrick', lw=2,
-        )
-        axes[1].set_xlabel('Time [yr]')
-        axes[1].set_ylabel('Post-shock temperature [K]')
-        axes[1].set_title('Sedov--Taylor post-shock temperature')
-        axes[1].grid(True, which='both', ls='--', alpha=0.4)
-
-        plt.tight_layout()
 
 Numerical Shock Engines
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. seealso::
 
-    :ref:`numerical_shocks_overview` — API reference.
+    :ref:`numerical_shocks_overview` — detailed API reference and worked examples.
+
     :ref:`numeric_shocks_theory` — derivation of the thin-shell equations of motion.
 
-When the self-similar approximation fails — for instance, when the density profiles cannot
-be described by simple power laws, or when the shock transitions between dynamical regimes
-during its evolution — a numerical shock engine is necessary.  The
-:class:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine` integrates
-the thin-shell equations of motion using a standard ODE solver and can therefore handle
-*any* ejecta or CSM density profile that can be expressed as a Python callable.
+When the self-similar approximation fails — for instance when density profiles cannot be
+described by simple power laws, or when the shock transitions between dynamical regimes
+during its evolution — a numerical shock engine is necessary.  Triceratops provides two
+fully implemented ODE-based engines.  Both share the same callable interface and accept
+upstream density and velocity profiles built with the factory functions in
+:mod:`~triceratops.dynamics.shocks.utils` (see `Profiles and Model Setup`_ below).
+Four relativistic and momentum-conserving extensions are reserved as planned engines
+and will be added in future releases.
 
-The model represents the shocked ejecta and swept-up CSM as a single thin shell.  Given
-the shell mass :math:`M_{\rm sh}`, shell velocity :math:`v_{\rm sh}`, and shock radius
-:math:`R_{\rm sh}`, momentum conservation requires
+.. list-table::
+    :header-rows: 1
+    :widths: 44 14 42
+
+    * - Class
+      - Status
+      - Description
+    * - :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+        — :ref:`details <pressure_driven_thin_shell_engine>`
+      - Available
+      - Collapses the shocked interaction region to a single thin shell driven by the
+        net Rankine--Hugoniot pressure difference.  The simplest numerical engine;
+        suitable when a full thermal energy budget is not required.
+    * - :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+        — :ref:`details <mechanical_shock_engine>`
+      - Available
+      - Self-consistently evolves separate internal energies for the shocked ejecta and
+        CSM layers :footcite:p:`beloborodovMechanicalModelRelativistic2006a`.  Retains
+        the minimal two-shock structure while remaining inexpensive enough for parameter
+        studies and inference workflows.
+    * - :class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
+        — :ref:`details <rel_pressure_driven_thin_shell_engine>`
+      - **[planned]**
+      - Relativistic extension of the pressure-driven thin-shell engine.
+        **Not yet implemented — planned for a future release.**
+    * - :class:`~triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine`
+        — :ref:`details <rel_mechanical_shock_engine>`
+      - **[planned]**
+      - Relativistic extension of the mechanical engine following
+        :footcite:t:`beloborodovMechanicalModelRelativistic2006a`.
+        **Not yet implemented — planned for a future release.**
+    * - :class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine`
+        — :ref:`details <momentum_conserving_shock_engine>`
+      - **[planned]**
+      - Non-relativistic momentum-conserving shock engine.
+        **Not yet implemented — planned for a future release.**
+    * - :class:`~triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine`
+        — :ref:`details <rel_momentum_conserving_shock_engine>`
+      - **[planned]**
+      - Relativistic momentum-conserving shock engine.
+        **Not yet implemented — planned for a future release.**
+
+----
+
+Profiles and Model Setup
+-------------------------
+
+The :mod:`~triceratops.dynamics.shocks.utils` module provides factory functions for the
+upstream density and velocity profiles that numerical shock engines require as boundary
+conditions.  All returned callables are unit-free CGS so they can be evaluated efficiently
+inside ODE right-hand sides without unit-conversion overhead.  Unit handling is performed
+once at factory-call time.
+
+The module is organized into three groups: **velocity profiles** for the bulk upstream
+flow, **ejecta profiles** for freely expanding supernova ejecta, and **CSM profiles** for
+the ambient circumstellar medium.  A fourth helper assembles these into the four-callable
+tuple expected by numerical shock engines.
+
+Velocity Profiles
+^^^^^^^^^^^^^^^^^
+
+Simple two-argument callables ``u(r, t)`` representing the bulk velocity field of the
+upstream gas.  All three are accepted wherever a velocity-profile callable is expected.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 45 55
+
+    * - Function
+      - Description
+    * - :func:`~triceratops.dynamics.shocks.utils.stationary_velocity_profile`
+      - Returns zero velocity for all inputs.  Suitable for a stationary CSM.
+    * - :func:`~triceratops.dynamics.shocks.utils.homologous_velocity_profile`
+      - Returns :math:`u(r,t) = r/t`.  Standard model for freely expanding ejecta.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_constant_velocity_profile`
+      - Factory returning :math:`u(r,t) = u_0` for a fixed bulk-flow speed.
+
+Ejecta Profiles
+^^^^^^^^^^^^^^^
+
+The ejecta density is modeled under the homologous approximation
 
 .. math::
 
-    \frac{dR_{\rm sh}}{dt} = v_{\rm sh}, \qquad
-    \frac{dM_{\rm sh}}{dt} = 4\pi R_{\rm sh}^2
-        \Bigl[\rho_{\rm CSM}(R)\,v_{\rm sh}
-              + t^{-3} G(v_{\rm ej})\,\Delta\Bigr],
+    \rho_{\rm ej}(r,t) = t^{-3}\,G(r/t),
 
-where :math:`G(v)` is the time-independent ejecta kernel and :math:`\Delta = v_{\rm ej} - v_{\rm sh}`
-is the relative velocity between the ejecta at the shock radius and the shell.  The
-deceleration equation closes the system; see :ref:`numeric_shocks_theory` for the full
-derivation.
+where :math:`G(v)` is a time-independent velocity-space kernel.  Two profile families are
+supported: **broken power-law** (BPL, after
+:footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`) and **exponential**, each
+available with or without an outer velocity truncation.  Each family is exposed at three
+levels of abstraction:
 
-Working with the numerical engine requires three steps:
+- *Normalization helpers* — compute the scale parameters (:math:`v_t, K` or
+  :math:`v_e, K`) from :math:`E_{\rm ej}` and :math:`M_{\rm ej}` and return
+  :class:`~astropy.units.Quantity` scalars.
+- *Kernel factories* — return a CGS callable :math:`G(v)` for use in
+  :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources` or a
+  custom ODE right-hand side.
+- *Profile factories* — return a CGS callable :math:`\rho_{\rm ej}(r,t)` that wraps the
+  kernel with the :math:`t^{-3}` prefactor.
 
-1. **Construct density callables**: Build Python functions for the ejecta kernel
-   :math:`G(v)` and the CSM density :math:`\rho_{\rm CSM}(r)` in CGS units.  The helper
-   functions :func:`~triceratops.dynamics.shocks.chevalier.get_broken_power_law_ejecta_kernel_func`
-   and :func:`~triceratops.dynamics.shocks.chevalier.get_wind_csm_density_func` generate the
-   standard Chevalier-style profiles as callables, but any function with the correct signature
-   works.
-2. **Instantiate the engine**: Create a
-   :class:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine` with the
-   two density callables.
-3. **Evolve**: Call
-   :meth:`~triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine.compute_shock_properties`
-   with a time array to obtain the shock properties at each requested time.
+.. list-table::
+    :header-rows: 1
+    :widths: 50 22 28
 
-.. note::
+    * - Function
+      - Family
+      - Output
+    * - :func:`~triceratops.dynamics.shocks.utils.normalize_bpl_ejecta`
+      - BPL
+      - :math:`v_t`,\ :math:`K` (:class:`~astropy.units.Quantity`)
+    * - :func:`~triceratops.dynamics.shocks.utils.normalize_truncated_bpl_ejecta`
+      - BPL, :math:`v_{\max}` truncated
+      - :math:`v_t`,\ :math:`K` (:class:`~astropy.units.Quantity`)
+    * - :func:`~triceratops.dynamics.shocks.utils.normalize_exponential_ejecta`
+      - Exponential
+      - :math:`v_e`,\ :math:`K` (:class:`~astropy.units.Quantity`)
+    * - :func:`~triceratops.dynamics.shocks.utils.normalize_truncated_exponential_ejecta`
+      - Exponential, truncated
+      - :math:`v_e`,\ :math:`K` (:class:`~astropy.units.Quantity`)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel`
+      - BPL
+      - :math:`G(v)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel`
+      - BPL, :math:`v_{\max}` truncated
+      - :math:`G(v)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel`
+      - Exponential
+      - :math:`G(v)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_kernel`
+      - Exponential, truncated
+      - :math:`G(v)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_profile`
+      - BPL
+      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_profile`
+      - BPL, :math:`v_{\max}` truncated
+      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_exponential_ejecta_profile`
+      - Exponential
+      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
+    * - :func:`~triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_profile`
+      - Exponential, truncated
+      - :math:`\rho_{\rm ej}(r,t)` callable (CGS)
 
-    Because the numerical engine integrates an ODE from initial conditions, the solution
-    accuracy depends on the quality of the initial state provided at the first time step.
-    For typical supernova scenarios, initializing from the corresponding Chevalier
-    self-similar solution is recommended.  See :ref:`numerical_shocks_overview` for
-    details.
+CSM Profiles
+^^^^^^^^^^^^
+
+Factory functions for the circumstellar medium geometries most commonly encountered in
+transient modeling.  Each factory accepts physical parameters as
+:class:`~astropy.units.Quantity` objects, converts units once at call time, and returns a
+unit-free CGS callable ``rho_csm(r, t=None)``.  The optional ``t`` argument is accepted
+for API compatibility with shock-engine source functions and is ignored for stationary
+profiles.
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Function
+      - Profile
+    * - :func:`~triceratops.dynamics.shocks.utils.compute_wind_csm_parameters`
+      - Computes the wind normalization
+        :math:`A = \dot{M}/(4\pi v_w)` in :math:`\mathrm{g\,cm^{-1}}`.
+        Returns a :class:`~astropy.units.Quantity` scalar, not a callable.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_uniform_csm_density_func`
+      - :math:`\rho(r) = \rho_0` — uniform medium.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_wind_csm_density_func`
+      - :math:`\rho(r) = A r^{-2}` — steady spherical wind.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+      - Wind profile that transitions sharply to a constant density floor outside
+        :math:`r_{\max}`.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func`
+      - Wind profile with a smooth :math:`\tanh` cutoff near :math:`r_{\max}`.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func`
+      - :math:`\rho(r) = A r^{-2} + \rho_{\rm floor}` — wind plus a constant ambient
+        density.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_power_law_csm_density_func`
+      - :math:`\rho(r) = \rho_{\rm ref}(r/r_{\rm ref})^{-s}` — general power law.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func`
+      - Continuous broken power law with independently specified inner and outer slopes.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_shell_csm_density_func`
+      - Top-hat shell: constant density inside :math:`[r_{\rm in},r_{\rm out}]`, floor
+        density outside.
+    * - :func:`~triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func`
+      - Gaussian-shell overdensity on a background:
+        :math:`\rho(r) = \rho_{\rm bg} + \rho_{\rm shell}
+        \exp\!\left[-\tfrac{1}{2}\left((r-R_s)/\sigma\right)^2\right]`.
+
+Source Assembly
+^^^^^^^^^^^^^^^
+
+Once ejecta and CSM profile callables are in hand, the convenience factory
+:func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources` assembles
+the four two-argument source callables ``(rho_1, u_1, rho_4, u_4)`` expected by the
+numerical shock engines for the standard scenario of homologous ejecta running into a
+stationary CSM:
+
+.. math::
+
+    \rho_1(r,t) = t^{-3}G_{\rm ej}(r/t),
+    \qquad
+    u_1(r,t) = \frac{r}{t},
+    \qquad
+    \rho_4(r,t) = \rho_{\rm CSM}(r),
+    \qquad
+    u_4(r,t) = 0.
+
+The factory accepts a kernel callable :math:`G_{\rm ej}(v)` — such as one returned by
+:func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel` — and a CSM density
+callable :math:`\rho_{\rm CSM}(r)` — such as one returned by
+:func:`~triceratops.dynamics.shocks.utils.get_wind_csm_density_func` — and returns the
+four-callable tuple ready to pass to
+:meth:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
+or
+:meth:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`.
+For worked examples see :ref:`numerical_shocks_overview`.
 
 ----
 
@@ -493,12 +624,14 @@ The table below maps common modeling tasks to the relevant documentation:
       - :ref:`chevalier_theory`
     * - Understand the Sedov--Taylor blast wave
       - :ref:`sedov_taylor_theory`
-    * - Use the Chevalier or Sedov--Taylor engines (API)
+    * - Use the self-similar engines (API and examples)
       - :ref:`self_similar_shocks_overview`
-    * - Understand the thin-shell ODE formulation
+    * - Understand the thin-shell ODE formulations
       - :ref:`numeric_shocks_theory`
-    * - Use the numerical engine with custom density profiles
+    * - Use the numerical engines with custom density profiles
       - :ref:`numerical_shocks_overview`
+    * - Build ejecta or CSM profile callables
+      - `Profiles and Model Setup`_ (this page)
     * - Compute Rankine--Hugoniot jump conditions directly
       - :ref:`rankine_hugoniot_overview`
     * - Model synchrotron emission driven by a shock

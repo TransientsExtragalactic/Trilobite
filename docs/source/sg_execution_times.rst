@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.506** total execution time for 50 files **from all galleries**:
+**00:01.164** total execution time for 52 files **from all galleries**:
 
 .. container::
 
@@ -32,14 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_on_axis_numerical.py` (``galleries/synchrotron/b_seds/plot_on_axis_numerical.py``)
-     - 00:01.191
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
-     - 00:00.247
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_sed_model_comparison.py` (``galleries/synchrotron/b_seds/plot_sed_model_comparison.py``)
-     - 00:00.068
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_cooling.py` (``galleries/dynamics/plot_mechanical_shock_cooling.py``)
+     - 00:01.164
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -78,6 +72,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_specific_epochs.py` (``galleries/data/plot_specific_epochs.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_model.py` (``galleries/dynamics/plot_mechanical_shock_model.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
@@ -159,6 +156,15 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_SSA_cooling_SED.py` (``galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py` (``galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_on_axis_numerical.py` (``galleries/synchrotron/b_seds/plot_on_axis_numerical.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_synchrotron_b_seds_plot_sed_model_comparison.py` (``galleries/synchrotron/b_seds/plot_sed_model_comparison.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_synchrotron_c_cooling_plot_ic_vs_synchrotron_cooling.py` (``galleries/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.py``)

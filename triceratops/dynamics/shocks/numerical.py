@@ -1,21 +1,58 @@
-"""
-Numerical thin-shell shock engine for astrophysical transients.
+r"""
+Numerical shock-evolution engines for transient dynamics.
 
-This module provides the :class:`NumericalThinShellShockEngine` (non-relativistic) and
-:class:`RelativisticNumericalThinShellShockEngine` (relativistic), general-purpose numerical
-shock engines that integrate the thin-shell equations of motion for arbitrary ejecta and
-circumstellar medium (CSM) density profiles.
+This module provides ODE-based shock engines for modelling the interaction
+between expanding ejecta and an external circumstellar medium (CSM). The
+implementations are intended for **semi-analytic transient models** where the
+hydrodynamics are reduced to a small set of coupled ordinary differential
+equations rather than evolved on a full spatial grid.
+
+The engines in this module cover several levels of physical closure. The
+simplest closures treat the shocked material as a thin shell and evolve its
+radius, velocity, and swept-up mass using algebraic post-shock pressure or
+momentum-conservation assumptions. The more detailed mechanical closure evolves
+the shocked ejecta and shocked CSM as separate regions, tracking their masses,
+internal energies, effective widths, pressures, and forward/reverse shock
+locations. This allows the model to retain a minimal two-shock structure while
+remaining inexpensive enough for parameter studies and inference workflows.
+
+All public interfaces accept unit-bearing inputs through :mod:`astropy.units`
+and return unit-bearing quantities. Internally, the ODE systems are evaluated in
+CGS units for numerical consistency. Low-level ``*_cgs`` methods are provided
+for callers that already manage units externally or need to avoid unit overhead
+inside tight loops.
+
+See Also
+--------
+triceratops.dynamics.shocks.core.shock_engine.ShockEngine
+    Base class for shock engines.
+scipy.integrate.solve_ivp
+    ODE integrator used by the numerical engines.
+
+See Also
+--------
+:ref:`numerical_shocks_overview`: walkthrough of the available numerical engines and when to use each closure.
+
+:ref:`numeric_shocks_theory`: derivation of the governing ODE systems for the thin-shell, pressure-driven,
+    and mechanical closures.
+
+:ref:`shock_engines`: overview of the shock engine interface shared by all engines.
 """
 
+from abc import ABC
 from collections.abc import Callable
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, NamedTuple, Union
 
 import numpy as np
 from astropy import units as u
-from scipy.integrate import solve_ivp
+from scipy.integrate import quad, solve_ivp
 
+from triceratops.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
 from triceratops.dynamics.shocks.core.shock_engine import ShockEngine
-from triceratops.radiation.constants import c_cgs
+from triceratops.utils.misc_utils import ensure_in_units
+
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
+_trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
 
 if TYPE_CHECKING:
     from triceratops._typing import (
@@ -25,164 +62,230 @@ if TYPE_CHECKING:
     )
 
 
-class NumericalThinShellShockEngine(ShockEngine):
+# =========================================================== #
+# Snowplow Closure Engines                                    #
+# =========================================================== #
+# These are numerical closures for the snowplow phase of shock evolutions.
+class MomentumConservingShockEngine(ShockEngine, ABC):
+    """
+    Momentum conserving shock engine.
+
+    .. note::
+
+        This engine is not yet implemented. It will be added in a future release.
+    """
+
+    pass
+
+
+class RelMomentumConservingShockEngine(ShockEngine, ABC):
+    """
+    Relativistic momentum conserving shock engine.
+
+    .. note::
+
+        This engine is not yet implemented. It will be added in a future release.
+    """
+
+    pass
+
+
+# ========================================================== #
+# State Classes                                              #
+# ========================================================== #
+class ThinShellShockState(NamedTuple):
     r"""
-    Base class for numerically integrated thin-shell shock models with arbitrary ejecta and CSM profiles.
+    Time-dependent state returned by :class:`PressureDrivenThinShellShockEngine`.
 
-    This :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` subclass implements a general thin-shell
-    shock model
-    dependent on arbitrary ejecta and circumstellar medium (CSM) density profiles. The model assumes a thin-shell
-    shock model and utilizes conservation of momentum in the form
+    The low-level CGS interface returns plain :class:`numpy.ndarray` fields in
+    CGS units. The public unit-aware interface returns the same structure with
+    fields converted to :class:`astropy.units.Quantity`.
+    """
 
-    .. math::
+    radius: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell radius :math:`R_{\rm sh}` in cm.
+    """
 
-        M_{\rm sh} \frac{\partial}{\partial t}\left(v_{\rm sh}\right) = 4\pi R_{\rm sh}^2 (P_2-P_3)
+    velocity: Union[np.ndarray, u.Quantity]
+    r"""
+    Shell velocity :math:`v_{\rm sh}` in cm/s.
+    """
 
-    where :math:`M_{\rm sh}(t)` is the mass of the shocked shell, :math:`v_{\rm sh}(t)` is the shock velocity,
-    :math:`R_{\rm sh}(t)` is the shock radius, and :math:`P_{\rm shocked,\;CSM}` and :math:`P_{\rm shocked,\;ej}`
-    are the pressures just behind the forward and reverse shocks, respectively.
+    mass: Union[np.ndarray, u.Quantity]
+    r"""
+    Accumulated shell mass :math:`M_{\rm sh}` in g.
+    """
+
+    post_shock_density: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock density :math:`\rho_s` in :math:`\mathrm{g\,cm^{-3}}`,
+    derived from the strong cold-shock Rankine--Hugoniot relation applied at the
+    forward shock using the upstream CSM density :math:`\rho_4(R_{\rm sh},\,t)`.
+    """
+
+    post_shock_pressure: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock pressure :math:`p_s` in :math:`\mathrm{dyn\,cm^{-2}}`,
+    derived from the strong cold-shock Rankine--Hugoniot relation applied at the
+    forward shock.
+    """
+
+    post_shock_temperature: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock temperature :math:`T_s` in K, derived from the ideal-gas
+    relation applied at the forward shock.
+    """
+
+    thermal_energy_density: Union[np.ndarray, u.Quantity]
+    r"""
+    Post-shock thermal energy density
+    :math:`e_{\rm th} = p_s / (\gamma - 1)` in :math:`\mathrm{erg\,cm^{-3}}`,
+    evaluated at the forward shock.
+    """
+
+
+# ========================================================== #
+# Chevalier / Pressure Driven Shock Engines                  #
+# ========================================================== #
+class PressureDrivenThinShellShockEngine(ShockEngine):
+    r"""
+    Pressure-driven thin-shell shock engine for arbitrary ejecta and CSM profiles.
+
+    This :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` subclass
+    implements a general thin-shell shock model that collapses the shocked
+    interaction region to a single shell of mass :math:`M_{\rm sh}`, radius
+    :math:`R_{\rm sh}`, and velocity :math:`v_{\rm sh}`. The shell acceleration
+    is driven by the net post-shock pressure difference estimated from the
+    instantaneous Rankine--Hugoniot jump conditions rather than evolved
+    thermodynamic quantities.
 
     .. hint::
 
-        For a detailed description of the theory behind this engine, see :ref:`numeric_thin_shell_shocks`.
+        For a detailed description of the theory behind this engine, see
+        :ref:`pressure_driven_thin_shell_model`.
 
     Notes
     -----
-    This engine is suitable for scenarios where the supernova ejecta is **expanding homologously** into a
-    general CSM density profile :math:`\rho_{\rm CSM}(r)`. Because the ejecta is homologously expanding, it must
-    have a general density profile of the form
+    The engine integrates the 3-component state vector
 
     .. math::
 
-        \rho(r,t) = t^{-3} G\left(\frac{r}{t}\right),
+        \mathbf{y} = (R_{\rm sh},\; v_{\rm sh},\; M_{\rm sh})
 
-    where :math:`G(v)` is an arbitrary function of velocity. It can be shown that, under these assumptions,
-    conservation of momentum requires that the following set of differential equations be followed:
+    governed by
 
     .. math::
 
         \begin{aligned}
-        \frac{dR_{\rm sh}}{dt} &= v_{\rm sh}\\
-        \frac{dv_{\rm sh}}{dt} &= \frac{-4\pi R_{\rm sh}^2}{ M_{\rm sh}}\left(1-\frac{1}{\chi}\right)
-        \left(\rho_{\rm csm} v_{\rm sh}^2 - t^{-3} G[v_{\rm ej}] \Delta^2\right)\\
-        \frac{dM_{\rm sh}}{dt} &= 4\pi R_{\rm sh}^2 \left\{\rho_{\rm csm} v_{\rm sh} + t^{-3} G[v_{\rm ej}]
-        \Delta\right\}
+        \frac{dR_{\rm sh}}{dt} &= v_{\rm sh}, \\[4pt]
+        \frac{dv_{\rm sh}}{dt} &= \frac{4\pi R_{\rm sh}^2}{M_{\rm sh}}
+            \left(1-\frac{1}{\chi}\right)
+            \left[\rho_1(R_{\rm sh},t)\,\Delta^2
+                  - \rho_4(R_{\rm sh},t)
+                    \left(v_{\rm sh}-u_4(R_{\rm sh},t)\right)^2\right], \\[4pt]
+        \frac{dM_{\rm sh}}{dt} &= 4\pi R_{\rm sh}^2
+            \left[\rho_1(R_{\rm sh},t)\,\Delta
+                  + \rho_4(R_{\rm sh},t)
+                    \left(v_{\rm sh}-u_4(R_{\rm sh},t)\right)\right],
         \end{aligned}
 
-    where :math:`\Delta = v_{\rm ej} - v_{\rm sh}` is the velocity difference between the ejecta at the shock
-    radius and the shock velocity, :math:`\rho_{\rm csm} = \rho_{\rm CSM}(R)` is the CSM density at the shock radius,
-    and :math:`M` is the mass of the shocked shell.
+    where :math:`\Delta \equiv u_1(R_{\rm sh},t) - v_{\rm sh}` is the
+    ejecta--shell velocity lag and
+    :math:`\chi = (\hat{\gamma}+1)/(\hat{\gamma}-1)` is the strong-shock
+    compression ratio.
 
-    Equivalently, using :math:`\tau = \log t` and making the transformation that :math:`R_{\rm sh} = \xi t`,
-    :math:`\Delta = \xi - v_{\rm sh}`, the system can be rewritten as
-
-    .. math::
-
-        \boxed{
-        \begin{aligned}
-            \frac{d\xi}{d\tau} &= -\Delta,\\[4pt]
-            \frac{d\Delta}{d\tau} &=
-            -\Delta
-            + \frac{4\pi \xi^2}{M_{\rm sh}} \left(1-\frac{1}{\chi}\right)
-            \left(t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)^2
-                  - G(\xi)\,\Delta^2\right),\\[6pt]
-            \frac{dM_{\rm sh}}{d\tau} &=
-            4\pi \xi^2
-            \left[t^3\rho_{\rm csm}(\xi t)\,(\xi-\Delta)
-                  + G(\xi)\,\Delta\right].
-        \end{aligned}
-        }
-
+    See Also
+    --------
+    :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine` :
+        More complete closure that evolves separate internal energies for each
+        shocked layer.
+    :ref:`pressure_driven_thin_shell_model` : Theory derivation.
     """
 
-    # =========================================== #
-    # Initialization                              #
-    # =========================================== #
-    def __init__(self, **kwargs):
+    _STATE_CLASS = ThinShellShockState
+
+    def __init__(self, mu: float = 0.5, **kwargs):
         """
-        Initialize the :class:`NumericalThinShellShockEngine`.
+        Initialize the :class:`PressureDrivenThinShellShockEngine`.
 
         Parameters
         ----------
-        kwargs:
-            Additional keyword arguments passed to the base
-            :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` class.
+        mu : float, optional
+            Mean molecular weight in units of the proton mass used for the
+            post-shock temperature calculation. Default is ``0.5`` (fully
+            ionized hydrogen).
+        kwargs
+            Passed to :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine`.
         """
         super().__init__(**kwargs)
+        self._mu = float(mu)
 
-    # ============================================================= #
-    # Supplementary Numerical Methods                               #
-    # ============================================================= #
     @staticmethod
-    def generate_evaluation_kernel(rho_csm: Callable, G_ej: Callable, gamma: float = 5 / 3):
+    def generate_evaluation_kernel(
+        rho_1: Callable,
+        rho_4: Callable,
+        u_1: Callable,
+        u_4: Callable,
+        gamma: float = 5 / 3,
+    ) -> Callable:
         r"""
-        Generate the evaluation kernel for the ODE.
+        Build the ODE right-hand side for the pressure-driven thin-shell model.
 
-        This method generates a ``callable`` function which acts as the RHS of the relevant set of
-        ODE's for the thin-shell shock model. The generated function is suitable for use with
+        Returns a function ``kernel(t, y)`` suitable for
         :func:`scipy.integrate.solve_ivp`.
-
-        In this base class, the inputs ``rho_csm`` and ``G_ej`` are arbitrary functions which return the CSM density
-        and ejecta density profile function respectively in CGS units. Subclasses may provide more assistance in
-        generating these functions correctly.
 
         Parameters
         ----------
-        rho_csm: callable
-            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.
-            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns
-            the corresponding CSM density in ``g/cm^3``.
-        G_ej: callable
-            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.
-            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns
-            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is
-
-            .. math::
-
-                \rho_{\rm ej}(r,t) = t^{-3} G\left(\frac{r}{t}\right).
-        gamma: float, optional
-            The adiabatic index of the shocked gas. Default is ``5/3``.
+        rho_1 : callable
+            Upstream ejecta density :math:`\rho_1(r,\,t)` in CGS
+            (:math:`\mathrm{g\,cm^{-3}}`).
+        rho_4 : callable
+            Upstream CSM density :math:`\rho_4(r,\,t)` in CGS
+            (:math:`\mathrm{g\,cm^{-3}}`).
+        u_1 : callable
+            Upstream ejecta velocity :math:`u_1(r,\,t)` in cm/s.
+        u_4 : callable
+            Upstream CSM velocity :math:`u_4(r,\,t)` in cm/s.
+        gamma : float, optional
+            Adiabatic index of the shocked gas. Default ``5/3``.
 
         Returns
         -------
         callable
-            A function which takes as input the independent variable ``tau = log(t)`` and the state vector
-            ``y = [xi, Delta, M]``, and returns the derivatives ``dy/dtau`` as a numpy array.
+            ``kernel(t, y) -> dy/dt`` where
+            ``y = [R_sh, v_sh, M_sh]``.
         """
-        # Use gamma and the strong-shock RH conditions to compute chi, the compression
-        # factor.
         chi = (gamma + 1) / (gamma - 1)
 
-        # With the compression factor defined, we can now define the evaluation kernel:
-        def _evaluation_kernel(tau, y):
-            # Expand the y-vector into the components xi, Delta, M.
-            xi, delta, m = y
-            t = np.exp(tau)
+        def _kernel(t, y):
+            R_sh, v_sh, m = y
 
-            # Using the functions rho_csm and G_ej, we can compute the two necessary
-            # CGS density state quantities.
-            _rho_csm = rho_csm(xi * t)
-            _G_ej = G_ej(xi)
+            rho1 = rho_1(R_sh, t)
+            rho4 = rho_4(R_sh, t)
+            u1 = u_1(R_sh, t)
+            u4 = u_4(R_sh, t)
 
-            # Compute the derivatives.
-            _dxi_dtau = -delta
-            _ddelta_dtau = -delta + (4 * xi**2 * np.pi / m) * (1 - (1 / chi)) * (
-                t**3 * _rho_csm * (xi - delta) ** 2 - _G_ej * delta**2
-            )
-            _dm_dtau = 4.0 * np.pi * xi**2 * (t**3 * _rho_csm * (xi - delta) + _G_ej * delta)
+            Delta = u1 - v_sh
+            v_fwd = v_sh - u4
 
-            return np.array([_dxi_dtau, _ddelta_dtau, _dm_dtau])
+            coeff = 4.0 * np.pi * R_sh**2 / m * (1.0 - 1.0 / chi)
 
-        return _evaluation_kernel
+            dR_dt = v_sh
+            dv_dt = coeff * (rho1 * Delta**2 - rho4 * v_fwd**2)
+            dm_dt = 4.0 * np.pi * R_sh**2 * (rho1 * Delta + rho4 * v_fwd)
 
-    # ============================================================ #
-    # Core Numerical Methods                                       #
-    # ============================================================ #
+            return np.array([dR_dt, dv_dt, dm_dt])
+
+        return _kernel
+
     def compute_shock_properties(
         self,
         time: "_UnitBearingArrayLike",
-        rho_csm: Callable[["_ArrayLike"], "_ArrayLike"] = None,
-        G_ej: Callable[["_ArrayLike"], "_ArrayLike"] = None,
+        rho_1: Callable = None,
+        rho_4: Callable = None,
+        u_1: Callable = None,
+        u_4: Callable = None,
         R_0: "_UnitBearingScalarLike" = 1e11 * u.cm,
         v_0: "_UnitBearingScalarLike" = 1e7 * u.cm / u.s,
         M_0: "_UnitBearingScalarLike" = 1e28 * u.g,
@@ -191,58 +294,43 @@ class NumericalThinShellShockEngine(ShockEngine):
         **kwargs,
     ):
         r"""
-        Compute the properties of the shock at a given time.
-
-        This function computes the solution to the thin-shell shock equations at the specified time(s) using
-        the provided CSM density profile function and ejecta density profile function.
+        Compute the shock properties at the given times.
 
         Parameters
         ----------
-        time: ~astropy.units.Quantity or float or numpy.ndarray
-            The time(s) at which to evaluate the shock properties. If units are provided,
-            they will be taken into account. Otherwise, CGS units (seconds) are assumed.
-            If ``time`` is provided as an array of shape ``(N,)``, the results will all have
-            corresponding shapes ``(N,)``.
-        rho_csm: callable
-            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.
-            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns
-            the corresponding CSM density in ``g/cm^3``.
-        G_ej: callable
-            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.
-            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns
-            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is
-
-            .. math::
-
-                \rho_{\rm ej}(r,t) = t^{-3} G\left(\frac{r}{t}\right).
-
-        R_0: ~astropy.units.Quantity or float
-            The initial shock radius at time ``t_0``. If units are provided, they will be taken into account.
-            Otherwise, CGS units (cm) are assumed.
-        v_0: ~astropy.units.Quantity or float
-            The initial shock velocity at time ``t_0``. If units are provided, they will be taken into account.
-            Otherwise, CGS units (cm/s) are assumed.
-        M_0: ~astropy.units.Quantity or float
-            The initial shocked mass at time ``t_0``. If units are provided, they will be taken into account.
-            Otherwise, CGS units (g) are assumed.
-        t_0: ~astropy.units.Quantity or float
-            The initial time at which the shock properties are defined. If units are provided,
-            they will be taken into account. Otherwise, CGS units (seconds) are assumed.
-        gamma: float
-            The adiabatic index of the shocked gas. Default is ``5/3``.
-        kwargs:
-            Additional keyword arguments to pass to the ODE solver.
+        time : ~astropy.units.Quantity or array-like
+            Times at which to evaluate the solution. Unit-bearing inputs are
+            converted to seconds; bare floats are assumed to be in seconds.
+            Must be sorted and satisfy ``time >= t_0``.
+        rho_1 : callable
+            Upstream ejecta density :math:`\rho_1(r,\,t)` in CGS.
+        rho_4 : callable
+            Upstream CSM density :math:`\rho_4(r,\,t)` in CGS.
+        u_1 : callable
+            Upstream ejecta velocity :math:`u_1(r,\,t)` in cm/s.
+        u_4 : callable
+            Upstream CSM velocity :math:`u_4(r,\,t)` in cm/s.
+        R_0 : ~astropy.units.Quantity or float
+            Initial shock radius. Default ``1e11 cm``.
+        v_0 : ~astropy.units.Quantity or float
+            Initial shock velocity. Default ``1e7 cm/s``.
+        M_0 : ~astropy.units.Quantity or float
+            Initial shell mass. Default ``1e28 g``.
+        t_0 : ~astropy.units.Quantity or float
+            Initial time. Default ``1.0 s``.
+        gamma : float, optional
+            Adiabatic index of the shocked gas. Default ``5/3``.
+        **kwargs
+            Forwarded to :func:`scipy.integrate.solve_ivp`.
+            ``method`` defaults to ``'Radau'``; ``rtol`` defaults to ``1e-10``.
 
         Returns
         -------
         dict of str, ~astropy.units.Quantity
-            A dictionary containing the computed shock properties:
-
-            - ``'radius'``: The shock radius at the given time(s) with units of cm.
-            - ``'velocity'``: The shock velocity at the given time(s) with units of cm/s.
-            - ``'mass'``: The shocked mass at the given time(s) with units of g.
+            - ``'radius'``: shell radius in cm.
+            - ``'velocity'``: shell velocity in cm/s.
+            - ``'mass'``: shell mass in g.
         """
-        # Ensure that the time array has been converted to CGS units (seconds).
         if isinstance(time, u.Quantity):
             time = time.to(u.s).value
         if isinstance(R_0, u.Quantity):
@@ -254,558 +342,1120 @@ class NumericalThinShellShockEngine(ShockEngine):
         if isinstance(t_0, u.Quantity):
             t_0 = t_0.to(u.s).value
 
-        # Pass off to the low-level CGS computation method.
-        shock_properties_cgs = self._compute_shock_properties_cgs(
+        cgs = self._compute_shock_properties_cgs(
             time=time,
-            rho_csm=rho_csm,
-            G_ej=G_ej,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
             R_0=R_0,
             v_0=v_0,
             M_0=M_0,
             t_0=t_0,
+            gamma=gamma,
+            **kwargs,
         )
 
-        # Attach units to the outputs.
-        shock_properties = {
-            "radius": shock_properties_cgs["radius"] * u.cm,
-            "velocity": shock_properties_cgs["velocity"] * (u.cm / u.s),
-            "mass": shock_properties_cgs["mass"] * u.g,
-        }
+        return ThinShellShockState(
+            radius=cgs.radius * u.cm,
+            velocity=cgs.velocity * (u.cm / u.s),
+            mass=cgs.mass * u.g,
+            post_shock_density=cgs.post_shock_density * (u.g / u.cm**3),
+            post_shock_pressure=cgs.post_shock_pressure * (u.dyn / u.cm**2),
+            post_shock_temperature=cgs.post_shock_temperature * u.K,
+            thermal_energy_density=cgs.thermal_energy_density * (u.erg / u.cm**3),
+        )
 
-        return shock_properties
-
-    # noinspection PyUnresolvedReferences
     def _compute_shock_properties_cgs(
         self,
         time: "_ArrayLike",
-        rho_csm: Callable[["_ArrayLike"], "_ArrayLike"] = None,
-        G_ej: Callable[["_ArrayLike"], "_ArrayLike"] = None,
-        R_0: float = 1e8,
-        v_0: float = 1e9,
+        rho_1: Callable = None,
+        rho_4: Callable = None,
+        u_1: Callable = None,
+        u_4: Callable = None,
+        R_0: float = 1e11,
+        v_0: float = 1e7,
         M_0: float = 1e28,
         t_0: float = 1.0,
         gamma: float = 5 / 3,
         **kwargs,
     ):
         r"""
-        Compute the properties of the shock at a given time in CGS units.
-
-        This function computes the solution to the thin-shell shock equations at the specified time(s) using
-        the provided CSM density profile function and ejecta density profile function.
-
-        Parameters
-        ----------
-        time: array-like
-            The time(s) at which to evaluate the shock properties in seconds. This can be a
-            scalar or an array of times. The results will match the shape of the input time array.
-        rho_csm: callable
-            The function :math:`\rho_{\rm CSM}(r)` which returns the CSM density at radius ``r`` in CGS units.
-            This should be a function which takes as input a float or array-like of radii in ``cm`` and returns
-            the corresponding CSM density in ``g/cm^3``.
-        G_ej: callable
-            The function :math:`G(v)` which returns the ejecta density profile function at velocity ``v`` in CGS units.
-            This should be a function which takes as input a float or array-like of velocities in ``cm/s`` and returns
-            the corresponding ejecta density profile function in ``g * s^3 / cm^3``. The true density is
-
-            .. math::
-
-                \rho_{\rm ej}(r,t) = t^{-3} Gleft(\frac{r}{t}\right).
-
-        R_0: float
-            The initial shock radius at time ``t_0`` in cm.
-        v_0: float
-            The initial shock velocity at time ``t_0`` in cm/s.
-        M_0: float
-            The initial shocked mass at time ``t_0`` in g.
-        t_0:
-            The initial time at which the shock properties are defined in seconds.
-        gamma: float
-            The adiabatic index of the shocked gas. Default is ``5/3``.
-        **kwargs:
-            Additional keyword arguments to pass to the ODE solver.
-
-        Returns
-        -------
-        dict: of str, array-like
-            A dictionary containing the computed shock properties:
-
-            - 'radius': The shock radius at the given time(s) in cm.
-            - 'velocity': The shock velocity at the given time(s) in cm/s.
-            - 'mass': The shocked mass at the given time(s) in g.
-        """
-        # Quick check to ensure that the user has provided the necessary functions.
-        if rho_csm is None:
-            raise ValueError("A CSM density profile function `rho_csm` must be provided.")
-        if G_ej is None:
-            raise ValueError("An ejecta density profile function `G_ej` must be provided.")
-
-        # --- Parameter Management and Coercion --- #
-        # Coerce the parameters into the initial conditions for the ODE solver.
-        xi_0 = R_0 / t_0
-        delta_0 = xi_0 - v_0
-        m_0 = M_0
-
-        # --- Mange the Kernel and ODE Solver --- #
-        # Generate the evaluation kernel for the ODE solver.
-        evaluation_kernel = self.generate_evaluation_kernel(
-            rho_csm=rho_csm,
-            G_ej=G_ej,
-            gamma=gamma,
-        )
-
-        # Set up the ODE solver.
-        t_bound = (np.log(t_0), np.log(np.amax(time)))
-        y_0 = np.array([xi_0, delta_0, m_0])
-
-        # Perform the integration using solve_ivp.
-        sol = solve_ivp(
-            fun=evaluation_kernel,
-            t_span=t_bound,
-            y0=y_0,
-            t_eval=np.log(time),
-            rtol=kwargs.get("rtol", 1e-10),
-            method=kwargs.get("method", "Radau"),  # Implicit method for stiff problems
-            **kwargs,
-        )
-
-        # --- Extract Data and Check Validity --- #
-        if sol.status < 0:
-            raise RuntimeError(f"ODE solver failed to integrate the thin-shell shock equations: \n{sol.message}")
-
-        # Extract the shock radius and velocity from the solution.
-        xi_sol = sol.y[0]
-        delta_sol = sol.y[1]
-        m_sol = sol.y[2]
-
-        # Convert integration space variables into physical shock properties.
-        shock_radius = xi_sol * np.exp(sol.t)
-        shock_velocity = xi_sol - delta_sol
-        shock_mass = m_sol
-
-        return {
-            "radius": shock_radius,
-            "velocity": shock_velocity,
-            "mass": shock_mass,
-        }
-
-
-class RelativisticNumericalThinShellShockEngine(ShockEngine):
-    r"""
-    Numerically integrated relativistic thin-shell shock engine with arbitrary upstream profiles.
-
-    This :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` subclass integrates the
-    relativistic thin-shell equations of motion derived from the covariant conservation laws
-
-    .. math::
-
-        \nabla_\mu T^{\mu\nu} = 0,
-        \qquad
-        \nabla_\mu (\rho u^\mu) = 0.
-
-    The shell state is described by its lab-frame energy :math:`E_{\rm sh}`, radial momentum
-    :math:`p_{\rm sh}`, and baryonic rest mass :math:`M_s`. The shell velocity follows from the
-    four-momentum,
-
-    .. math::
-
-        \beta_{\rm sh} = \frac{p_{\rm sh}\,c}{E_{\rm sh}},
-        \qquad
-        v_{\rm sh} = \frac{p_{\rm sh}\,c^2}{E_{\rm sh}}.
-
-    The equations of motion are
-
-    .. math::
-
-        \begin{aligned}
-        \frac{dR_{\rm sh}}{dt} &= v_{\rm sh},\\[4pt]
-        \frac{dE_{\rm sh}}{dt} &=
-            4\pi R^2\!\left[
-                w_{\rm ej}\gamma_{\rm ej}^2(\beta_{\rm ej}-\beta_{\rm sh})
-                - w_{\rm csm}\gamma_{\rm csm}^2(\beta_{\rm csm}-\beta_{\rm sh})
-                + (P_{\rm ej}-P_{\rm csm})\beta_{\rm sh}
-            \right],\\[4pt]
-        \frac{dp_{\rm sh}}{dt} &=
-            4\pi R^2\!\left[
-                w_{\rm ej}\gamma_{\rm ej}^2\beta_{\rm ej}(\beta_{\rm ej}-\beta_{\rm sh})
-                - w_{\rm csm}\gamma_{\rm csm}^2\beta_{\rm csm}(\beta_{\rm csm}-\beta_{\rm sh})
-                + (P_{\rm ej}-P_{\rm csm})
-            \right],\\[4pt]
-        \frac{dM_s}{dt} &=
-            4\pi R^2\!\left[
-                \rho_{\rm ej}\gamma_{\rm ej}(\beta_{\rm ej}-\beta_{\rm sh})
-                - \rho_{\rm csm}\gamma_{\rm csm}(\beta_{\rm csm}-\beta_{\rm sh})
-            \right],
-        \end{aligned}
-
-    where the upstream thermodynamic quantities are computed from the prescribed fluid profiles
-    via the perfect-fluid EOS :math:`P = (\hat\gamma - 1)U_{\rm int}` and
-    :math:`w = \rho c^2 + \hat\gamma\,U_{\rm int}`.
-
-    These equations are integrated in log-time :math:`\tau = \ln t` for numerical stability across
-    large dynamic ranges.
-
-    .. hint::
-
-        For the full derivation see :ref:`relativistic_numeric_thin_shell_shocks`.
-
-    Notes
-    -----
-    The six upstream callables ``rho_ej``, ``v_ej``, ``U_int_ej``, ``rho_csm``, ``v_csm``, and
-    ``U_int_csm`` must each accept ``(r, t)`` in CGS units and return the corresponding fluid
-    quantity in CGS.  No cold-upstream or homologous-expansion approximation is imposed.
-    """
-
-    def __init__(self, **kwargs):
-        """
-        Initialize the :class:`RelativisticNumericalThinShellShockEngine`.
-
-        Parameters
-        ----------
-        kwargs
-            Additional keyword arguments passed to the base
-            :class:`~triceratops.dynamics.shocks.shock_engine.ShockEngine` class.
-        """
-        super().__init__(**kwargs)
-
-    # ============================================================= #
-    # Supplementary Numerical Methods                               #
-    # ============================================================= #
-    @staticmethod
-    def generate_evaluation_kernel(
-        rho_ej: Callable,
-        v_ej: Callable,
-        U_int_ej: Callable,
-        rho_csm: Callable,
-        v_csm: Callable,
-        U_int_csm: Callable,
-        gamma_hat_ej: float = 5 / 3,
-        gamma_hat_csm: float = 5 / 3,
-    ):
-        r"""
-        Generate the RHS kernel for the relativistic thin-shell ODE.
-
-        Returns a callable suitable for :func:`scipy.integrate.solve_ivp` that evaluates
-        :math:`d\mathbf{y}/d\tau` where :math:`\tau = \ln t` and
-        :math:`\mathbf{y} = (R_{\rm sh},\, E_{\rm sh},\, p_{\rm sh},\, M_s)`.
-
-        Parameters
-        ----------
-        rho_ej : callable
-            :math:`\rho_{\rm ej}(r,\,t)` — ejecta rest-mass density in :math:`\mathrm{g\,cm^{-3}}`.
-        v_ej : callable
-            :math:`v_{\rm ej}(r,\,t)` — ejecta lab-frame velocity in :math:`\mathrm{cm\,s^{-1}}`.
-        U_int_ej : callable
-            :math:`U_{\rm int,\,ej}(r,\,t)` — ejecta proper internal energy density in
-            :math:`\mathrm{erg\,cm^{-3}}`.
-        rho_csm : callable
-            :math:`\rho_{\rm csm}(r,\,t)` — CSM rest-mass density in :math:`\mathrm{g\,cm^{-3}}`.
-        v_csm : callable
-            :math:`v_{\rm csm}(r,\,t)` — CSM lab-frame velocity in :math:`\mathrm{cm\,s^{-1}}`.
-        U_int_csm : callable
-            :math:`U_{\rm int,\,csm}(r,\,t)` — CSM proper internal energy density in
-            :math:`\mathrm{erg\,cm^{-3}}`.
-        gamma_hat_ej : float, optional
-            Adiabatic index :math:`\hat\gamma` for the upstream ejecta EOS. Default ``5/3``.
-        gamma_hat_csm : float, optional
-            Adiabatic index :math:`\hat\gamma` for the upstream CSM EOS. Default ``5/3``.
-
-        Returns
-        -------
-        callable
-            Function ``f(tau, y)`` returning ``dy/dtau`` as a length-4 numpy array with
-            elements ``[dR/dtau, dE/dtau, dp/dtau, dM/dtau]``.
-        """
-        # Work with rescaled variables Ê = E/c² and p̂ = p/c (both in grams) so that
-        # all four state components share the same dimensional scale and scipy's
-        # numerical Jacobian does not overflow when E reaches ~10^50 erg.
-        # In these variables: β = p̂/Ê, v_sh = β·c, and the enthalpy density
-        # rescales to ŵ = w/c² = ρ + γ̂ U_int/c² (g cm⁻³).
-        c2 = c_cgs**2
-
-        def _kernel(tau, y):
-            # y = [R (cm), Ê = E/c² (g), p̂ = p/c (g), M (g)]
-            R, E_hat, p_hat, M = y
-            t = np.exp(tau)
-
-            # Shell kinematics — β and v from rescaled four-momentum.
-            beta_s = p_hat / E_hat
-            v_sh = beta_s * c_cgs
-
-            # Upstream ejecta state at (R, t).
-            _rho_ej = rho_ej(R, t)
-            _v_ej = v_ej(R, t)
-            _U_ej = U_int_ej(R, t)
-            _beta_ej = _v_ej / c_cgs
-            _gamma_ej = 1.0 / np.sqrt(1.0 - _beta_ej**2)
-            # Rescaled enthalpy and pressure (÷ c²) to stay in g cm⁻³.
-            _w_hat_ej = _rho_ej + gamma_hat_ej * _U_ej / c2
-            _P_hat_ej = (gamma_hat_ej - 1.0) * _U_ej / c2
-
-            # Upstream CSM state at (R, t).
-            _rho_csm = rho_csm(R, t)
-            _v_csm = v_csm(R, t)
-            _U_csm = U_int_csm(R, t)
-            _beta_csm = _v_csm / c_cgs
-            _gamma_csm = 1.0 / np.sqrt(1.0 - _beta_csm**2)
-            _w_hat_csm = _rho_csm + gamma_hat_csm * _U_csm / c2
-            _P_hat_csm = (gamma_hat_csm - 1.0) * _U_csm / c2
-
-            # Velocity differences.
-            d_beta_ej = _beta_ej - beta_s
-            d_beta_csm = _beta_csm - beta_s
-
-            # t · 4π R² · c prefactor (converts dX/dt → dX/dτ; the extra c
-            # restores the factor that the theory doc absorbs into c = 1 natural units).
-            area_factor = 4.0 * np.pi * R**2 * t * c_cgs
-
-            # dÊ/dτ  (energy ÷ c²).
-            dE_hat_dtau = area_factor * (
-                _w_hat_ej * _gamma_ej**2 * d_beta_ej
-                - _w_hat_csm * _gamma_csm**2 * d_beta_csm
-                + (_P_hat_ej - _P_hat_csm) * beta_s
-            )
-
-            # dp̂/dτ  (momentum ÷ c).
-            dp_hat_dtau = area_factor * (
-                _w_hat_ej * _gamma_ej**2 * _beta_ej * d_beta_ej
-                - _w_hat_csm * _gamma_csm**2 * _beta_csm * d_beta_csm
-                + (_P_hat_ej - _P_hat_csm)
-            )
-
-            # Baryonic rest-mass.
-            dM_dtau = area_factor * (_rho_ej * _gamma_ej * d_beta_ej - _rho_csm * _gamma_csm * d_beta_csm)
-
-            # Radius.
-            dR_dtau = t * v_sh
-
-            return np.array([dR_dtau, dE_hat_dtau, dp_hat_dtau, dM_dtau])
-
-        return _kernel
-
-    # ============================================================ #
-    # Core Numerical Methods                                       #
-    # ============================================================ #
-    def compute_shock_properties(
-        self,
-        time: "_UnitBearingArrayLike",
-        rho_ej: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        v_ej: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        U_int_ej: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        rho_csm: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        v_csm: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        U_int_csm: Callable[["_ArrayLike", "_ArrayLike"], "_ArrayLike"] = None,
-        R_0: "_UnitBearingScalarLike" = 1e11 * u.cm,
-        E_0: "_UnitBearingScalarLike" = 1e48 * u.erg,
-        p_0: "_UnitBearingScalarLike" = 1e38 * u.g * u.cm / u.s,
-        M_0: "_UnitBearingScalarLike" = 1e28 * u.g,
-        t_0: "_UnitBearingScalarLike" = 1.0 * u.s,
-        gamma_hat_ej: float = 5 / 3,
-        gamma_hat_csm: float = 5 / 3,
-        **kwargs,
-    ):
-        r"""
-        Compute relativistic thin-shell shock properties at the requested times.
-
-        Parameters
-        ----------
-        time : ~astropy.units.Quantity or array-like
-            Times at which to evaluate the shock. Bare floats are interpreted as seconds.
-        rho_ej : callable
-            :math:`\rho_{\rm ej}(r,\,t)` in CGS (:math:`\mathrm{g\,cm^{-3}}`).
-        v_ej : callable
-            :math:`v_{\rm ej}(r,\,t)` in CGS (:math:`\mathrm{cm\,s^{-1}}`).
-        U_int_ej : callable
-            :math:`U_{\rm int,\,ej}(r,\,t)` in CGS (:math:`\mathrm{erg\,cm^{-3}}`).
-        rho_csm : callable
-            :math:`\rho_{\rm csm}(r,\,t)` in CGS (:math:`\mathrm{g\,cm^{-3}}`).
-        v_csm : callable
-            :math:`v_{\rm csm}(r,\,t)` in CGS (:math:`\mathrm{cm\,s^{-1}}`).
-        U_int_csm : callable
-            :math:`U_{\rm int,\,csm}(r,\,t)` in CGS (:math:`\mathrm{erg\,cm^{-3}}`).
-        R_0 : ~astropy.units.Quantity or float
-            Initial shock radius. Bare float interpreted as cm.
-        E_0 : ~astropy.units.Quantity or float
-            Initial shell lab-frame energy. Bare float interpreted as erg.
-        p_0 : ~astropy.units.Quantity or float
-            Initial shell radial momentum. Bare float interpreted as g cm s⁻¹.
-        M_0 : ~astropy.units.Quantity or float
-            Initial shell baryonic rest mass. Bare float interpreted as g.
-        t_0 : ~astropy.units.Quantity or float
-            Reference time at which the initial conditions are defined. Bare float
-            interpreted as seconds.
-        gamma_hat_ej : float, optional
-            Adiabatic index for the upstream ejecta EOS. Default ``5/3``.
-        gamma_hat_csm : float, optional
-            Adiabatic index for the upstream CSM EOS. Default ``5/3``.
-        **kwargs
-            Forwarded to :func:`scipy.integrate.solve_ivp`.
-
-        Returns
-        -------
-        dict of str, ~astropy.units.Quantity
-            Keys: ``'radius'`` (cm), ``'velocity'`` (cm s⁻¹), ``'mass'`` (g),
-            ``'energy'`` (erg), ``'momentum'`` (g cm s⁻¹), ``'beta'`` (dimensionless),
-            ``'lorentz_factor'`` (dimensionless).
-        """
-        if isinstance(time, u.Quantity):
-            time = time.to(u.s).value
-        if isinstance(R_0, u.Quantity):
-            R_0 = R_0.to(u.cm).value
-        if isinstance(E_0, u.Quantity):
-            E_0 = E_0.to(u.erg).value
-        if isinstance(p_0, u.Quantity):
-            p_0 = p_0.to(u.g * u.cm / u.s).value
-        if isinstance(M_0, u.Quantity):
-            M_0 = M_0.to(u.g).value
-        if isinstance(t_0, u.Quantity):
-            t_0 = t_0.to(u.s).value
-
-        result = self._compute_shock_properties_cgs(
-            time=time,
-            rho_ej=rho_ej,
-            v_ej=v_ej,
-            U_int_ej=U_int_ej,
-            rho_csm=rho_csm,
-            v_csm=v_csm,
-            U_int_csm=U_int_csm,
-            R_0=R_0,
-            E_0=E_0,
-            p_0=p_0,
-            M_0=M_0,
-            t_0=t_0,
-            gamma_hat_ej=gamma_hat_ej,
-            gamma_hat_csm=gamma_hat_csm,
-            **kwargs,
-        )
-
-        return {
-            "radius": result["radius"] * u.cm,
-            "velocity": result["velocity"] * (u.cm / u.s),
-            "mass": result["mass"] * u.g,
-            "energy": result["energy"] * u.erg,
-            "momentum": result["momentum"] * (u.g * u.cm / u.s),
-            "beta": result["beta"] * u.dimensionless_unscaled,
-            "lorentz_factor": result["lorentz_factor"] * u.dimensionless_unscaled,
-        }
-
-    def _compute_shock_properties_cgs(
-        self,
-        time: "_ArrayLike",
-        rho_ej: Callable = None,
-        v_ej: Callable = None,
-        U_int_ej: Callable = None,
-        rho_csm: Callable = None,
-        v_csm: Callable = None,
-        U_int_csm: Callable = None,
-        R_0: float = 1e11,
-        E_0: float = 1e48,
-        p_0: float = 1e38,
-        M_0: float = 1e28,
-        t_0: float = 1.0,
-        gamma_hat_ej: float = 5 / 3,
-        gamma_hat_csm: float = 5 / 3,
-        **kwargs,
-    ):
-        r"""
-        Compute relativistic thin-shell shock properties in CGS units.
+        Integrate the pressure-driven thin-shell ODEs in CGS units.
 
         Parameters
         ----------
         time : array-like
-            Times in seconds.
-        rho_ej : callable
-            :math:`\rho_{\rm ej}(r,\,t)` in :math:`\mathrm{g\,cm^{-3}}`.
-        v_ej : callable
-            :math:`v_{\rm ej}(r,\,t)` in :math:`\mathrm{cm\,s^{-1}}`.
-        U_int_ej : callable
-            :math:`U_{\rm int,\,ej}(r,\,t)` in :math:`\mathrm{erg\,cm^{-3}}`.
-        rho_csm : callable
-            :math:`\rho_{\rm csm}(r,\,t)` in :math:`\mathrm{g\,cm^{-3}}`.
-        v_csm : callable
-            :math:`v_{\rm csm}(r,\,t)` in :math:`\mathrm{cm\,s^{-1}}`.
-        U_int_csm : callable
-            :math:`U_{\rm int,\,csm}(r,\,t)` in :math:`\mathrm{erg\,cm^{-3}}`.
-        R_0 : float
-            Initial shock radius in cm.
-        E_0 : float
-            Initial shell lab-frame energy in erg.
-        p_0 : float
-            Initial shell radial momentum in g cm s⁻¹.
-        M_0 : float
-            Initial shell baryonic rest mass in g.
+            Evaluation times in seconds. Must be sorted and satisfy
+            ``time >= t_0``.
+        rho_1, rho_4, u_1, u_4 : callable
+            Upstream density and velocity functions in CGS.
+        R_0, v_0, M_0 : float
+            Initial shock radius (cm), velocity (cm/s), and shell mass (g).
         t_0 : float
-            Reference time in seconds.
-        gamma_hat_ej : float, optional
-            Adiabatic index for the upstream ejecta EOS. Default ``5/3``.
-        gamma_hat_csm : float, optional
-            Adiabatic index for the upstream CSM EOS. Default ``5/3``.
+            Initial time (s).
+        gamma : float
+            Adiabatic index of the shocked gas.
         **kwargs
             Forwarded to :func:`scipy.integrate.solve_ivp`.
 
         Returns
         -------
-        dict of str, array-like
-            Keys: ``'radius'`` (cm), ``'velocity'`` (cm s⁻¹), ``'mass'`` (g),
-            ``'energy'`` (erg), ``'momentum'`` (g cm s⁻¹), ``'beta'``, ``'lorentz_factor'``.
+        dict of str, numpy.ndarray
+            - ``'radius'``: shell radius in cm.
+            - ``'velocity'``: shell velocity in cm/s.
+            - ``'mass'``: shell mass in g.
         """
-        for name, fn in [
-            ("rho_ej", rho_ej),
-            ("v_ej", v_ej),
-            ("U_int_ej", U_int_ej),
-            ("rho_csm", rho_csm),
-            ("v_csm", v_csm),
-            ("U_int_csm", U_int_csm),
-        ]:
-            if fn is None:
-                raise ValueError(f"Upstream callable `{name}` must be provided.")
+        if rho_1 is None:
+            raise ValueError("An upstream ejecta density function `rho_1` must be provided.")
+        if rho_4 is None:
+            raise ValueError("An upstream CSM density function `rho_4` must be provided.")
+        if u_1 is None:
+            raise ValueError("An upstream ejecta velocity function `u_1` must be provided.")
+        if u_4 is None:
+            raise ValueError("An upstream CSM velocity function `u_4` must be provided.")
+
+        time = np.atleast_1d(np.asarray(time, dtype=float))
 
         kernel = self.generate_evaluation_kernel(
-            rho_ej=rho_ej,
-            v_ej=v_ej,
-            U_int_ej=U_int_ej,
-            rho_csm=rho_csm,
-            v_csm=v_csm,
-            U_int_csm=U_int_csm,
-            gamma_hat_ej=gamma_hat_ej,
-            gamma_hat_csm=gamma_hat_csm,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            gamma=gamma,
         )
 
-        # Rescale E and p into the kernel's internal units (÷ c²/÷ c) so that
-        # all state components are in grams — see generate_evaluation_kernel.
-        y0 = np.array([R_0, E_0 / c_cgs**2, p_0 / c_cgs, M_0])
-        t_span = (np.log(t_0), np.log(np.amax(time)))
+        y0 = np.array([R_0, v_0, M_0])
+        t_span = (t_0, float(np.amax(time)))
+
+        solver_kwargs = dict(kwargs)
+        rtol = solver_kwargs.pop("rtol", 1e-10)
+        method = solver_kwargs.pop("method", "Radau")
 
         sol = solve_ivp(
             fun=kernel,
             t_span=t_span,
             y0=y0,
-            t_eval=np.log(time),
-            rtol=kwargs.pop("rtol", 1e-10),
-            method=kwargs.pop("method", "Radau"),
-            **kwargs,
+            t_eval=time,
+            rtol=rtol,
+            method=method,
+            **solver_kwargs,
         )
 
         if sol.status < 0:
-            raise RuntimeError(f"ODE solver failed to integrate the relativistic thin-shell equations:\n{sol.message}")
+            raise RuntimeError(
+                f"ODE solver failed to integrate the pressure-driven thin-shell equations:\n{sol.message}"
+            )
 
-        R_sol = sol.y[0]
-        E_hat_sol = sol.y[1]  # Ê = E/c²  (g)
-        p_hat_sol = sol.y[2]  # p̂ = p/c   (g)
-        M_sol = sol.y[3]
+        R_sh, v_sh, m = sol.y
 
-        # β from rescaled variables; convert back to physical E and p.
-        beta_sol = p_hat_sol / E_hat_sol
-        gamma_sol = 1.0 / np.sqrt(1.0 - beta_sol**2)
-        v_sol = beta_sol * c_cgs
-        E_sol = E_hat_sol * c_cgs**2
-        p_sol = p_hat_sol * c_cgs
+        # Post-shock thermodynamics at the forward shock via strong cold-shock RH conditions.
+        # Evaluated element-by-element because the upstream callables accept scalar (r, t).
+        n_steps = len(time)
+        rho_4_arr = np.array([float(rho_4(R_sh[i], time[i])) for i in range(n_steps)])
+        u_4_arr = np.array([float(u_4(R_sh[i], time[i])) for i in range(n_steps)])
+        rh = StrongColdShockConditions._solve(v_sh, rho_4_arr, u_4_arr, gamma=gamma, mu=self._mu)
 
-        return {
-            "radius": R_sol,
-            "velocity": v_sol,
-            "mass": M_sol,
-            "energy": E_sol,
-            "momentum": p_sol,
-            "beta": beta_sol,
-            "lorentz_factor": gamma_sol,
-        }
+        return ThinShellShockState(
+            radius=R_sh,
+            velocity=v_sh,
+            mass=m,
+            post_shock_density=rh["post_shock_density"],
+            post_shock_pressure=rh["post_shock_pressure"],
+            post_shock_temperature=rh["post_shock_temperature"],
+            thermal_energy_density=rh["post_shock_thermal_energy_density"],
+        )
+
+
+class RelPressureDrivenThinShellShockEngine(ShockEngine, ABC):
+    """
+    Relativistic pressure driven thin-shell shock engine.
+
+    .. note::
+
+        This engine is not yet implemented. It will be added in a future release.
+    """
+
+    pass
+
+
+# =========================================================== #
+# Mechanical Shock Engines                                    #
+# =========================================================== #
+# The mechanical shock engine classes evolve separate
+# internal energies for the shocked ejecta and shocked CSM layers, allowing them to retain
+# a minimal two-shock structure while remaining inexpensive
+# enough for parameter studies and inference workflows.
+
+
+class MechanicalShockState(NamedTuple):
+    r"""
+    Time-dependent state returned by :class:`MechanicalShockEngine`.
+
+    The low-level CGS interface returns plain :class:`numpy.ndarray` fields in
+    CGS units. The public unit-aware interface returns the same state structure
+    with dimensional fields converted to :class:`astropy.units.Quantity`.
+
+    Region 2 denotes shocked ejecta, bounded externally by the contact
+    discontinuity and internally by the reverse shock. Region 3 denotes shocked
+    CSM, bounded internally by the contact discontinuity and externally by the
+    forward shock.
+    """
+
+    radius: np.ndarray | u.Quantity
+    r"""
+    Contact-discontinuity radius :math:`R_{\rm cd}` in cm.
+
+    This is the radius of the surface separating shocked ejecta from shocked
+    CSM.
+    """
+
+    velocity: np.ndarray | u.Quantity
+    r"""
+    Contact-discontinuity velocity :math:`v_{\rm cd}` in cm/s.
+
+    This is the velocity of the contact discontinuity and therefore the bulk
+    velocity assigned to the volume-averaged shocked region.
+    """
+
+    mass_2: np.ndarray | u.Quantity
+    r"""
+    Shocked ejecta mass :math:`M_2` in g.
+
+    This is the accumulated mass swept into Region 2 by the reverse shock.
+    """
+
+    mass_3: np.ndarray | u.Quantity
+    r"""
+    Shocked CSM mass :math:`M_3` in g.
+
+    This is the accumulated mass swept into Region 3 by the forward shock.
+    """
+
+    energy_2: np.ndarray | u.Quantity
+    r"""
+    Internal energy of the shocked ejecta, :math:`U_2`, in erg.
+
+    This is the volume-integrated thermal/internal energy assigned to Region 2.
+    It includes shock heating, adiabatic work, and any configured radiative loss
+    term.
+    """
+
+    energy_3: np.ndarray | u.Quantity
+    r"""
+    Internal energy of the shocked CSM, :math:`U_3`, in erg.
+
+    This is the volume-integrated thermal/internal energy assigned to Region 3.
+    It includes shock heating, adiabatic work, and any configured radiative loss
+    term.
+    """
+
+    width_2: np.ndarray | u.Quantity
+    r"""
+    Effective shocked-ejecta width :math:`\Delta_2` in cm.
+
+    This width is defined by
+
+    .. math::
+
+        \Delta_2 = R_{\rm cd} - R_{\rm rs},
+
+    and sets the approximate Region 2 volume through
+
+    .. math::
+
+        V_2 \simeq 4\pi R_{\rm cd}^2 \Delta_2.
+    """
+
+    width_3: np.ndarray | u.Quantity
+    r"""
+    Effective shocked-CSM width :math:`\Delta_3` in cm.
+
+    This width is defined by
+
+    .. math::
+
+        \Delta_3 = R_{\rm fs} - R_{\rm cd},
+
+    and sets the approximate Region 3 volume through
+
+    .. math::
+
+        V_3 \simeq 4\pi R_{\rm cd}^2 \Delta_3.
+    """
+
+    pressure_2: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-ejecta pressure :math:`P_2` in dyn/cm².
+
+    This diagnostic is computed from the Region 2 internal energy and effective
+    volume using the adopted ideal-gas closure.
+    """
+
+    pressure_3: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-CSM pressure :math:`P_3` in dyn/cm².
+
+    This diagnostic is computed from the Region 3 internal energy and effective
+    volume using the adopted ideal-gas closure.
+    """
+
+    radius_rs: np.ndarray | u.Quantity
+    r"""
+    Reverse-shock radius :math:`R_{\rm rs}` in cm.
+
+    This derived diagnostic is computed from
+
+    .. math::
+
+        R_{\rm rs} = R_{\rm cd} - \Delta_2.
+    """
+
+    radius_fs: np.ndarray | u.Quantity
+    r"""
+    Forward-shock radius :math:`R_{\rm fs}` in cm.
+
+    This derived diagnostic is computed from
+
+    .. math::
+
+        R_{\rm fs} = R_{\rm cd} + \Delta_3.
+    """
+
+    velocity_rs: np.ndarray | u.Quantity
+    r"""
+    Reverse-shock speed :math:`D_{\rm rs}` in cm/s.
+
+    With the current sound-speed width closure, this diagnostic is computed as
+
+    .. math::
+
+        D_{\rm rs} = v_{\rm cd} - c_{s,2}.
+    """
+
+    velocity_fs: np.ndarray | u.Quantity
+    r"""
+    Forward-shock speed :math:`D_{\rm fs}` in cm/s.
+
+    With the current sound-speed width closure, this diagnostic is computed as
+
+    .. math::
+
+        D_{\rm fs} = v_{\rm cd} + c_{s,3}.
+    """
+
+    post_shock_density_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock density at the forward shock :math:`\rho_{s,3}` in
+    :math:`\mathrm{g\,cm^{-3}}`, from the strong cold-shock Rankine--Hugoniot
+    relation applied to the upstream CSM density :math:`\rho_4(R_{\rm fs},\,t)`.
+    """
+
+    post_shock_pressure_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock pressure at the forward shock :math:`p_{s,3}` in
+    :math:`\mathrm{dyn\,cm^{-2}}`, from the strong cold-shock Rankine--Hugoniot
+    relation.
+    """
+
+    post_shock_temperature_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock temperature at the forward shock :math:`T_{s,3}` in K,
+    from the ideal-gas relation.
+    """
+
+    thermal_energy_density_fs: np.ndarray | u.Quantity
+    r"""
+    Post-shock thermal energy density at the forward shock
+    :math:`e_{\rm th,3} = p_{s,3} / (\gamma_3 - 1)` in
+    :math:`\mathrm{erg\,cm^{-3}}`.
+    """
+
+    post_shock_density_rs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock density at the reverse shock :math:`\rho_{s,2}` in
+    :math:`\mathrm{g\,cm^{-3}}`, from the strong cold-shock Rankine--Hugoniot
+    relation applied to the upstream ejecta density :math:`\rho_1(R_{\rm rs},\,t)`.
+    """
+
+    post_shock_pressure_rs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock pressure at the reverse shock :math:`p_{s,2}` in
+    :math:`\mathrm{dyn\,cm^{-2}}`, from the strong cold-shock Rankine--Hugoniot
+    relation.
+    """
+
+    post_shock_temperature_rs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock temperature at the reverse shock :math:`T_{s,2}` in K,
+    from the ideal-gas relation.
+    """
+
+    thermal_energy_density_rs: np.ndarray | u.Quantity
+    r"""
+    Post-shock thermal energy density at the reverse shock
+    :math:`e_{\rm th,2} = p_{s,2} / (\gamma_2 - 1)` in
+    :math:`\mathrm{erg\,cm^{-3}}`.
+    """
+
+
+class MechanicalShockEngine(ShockEngine):
+    r"""
+    Non-relativistic mechanical shock engine.
+
+    This class implements the non-relativistic form of the dynamical shock model of
+    :footcite:t:`beloborodovMechanicalModelRelativistic2006a`, which self-consistently tracks both
+    the forward and reverse shocks and the internal energy of the shocked material. We follow the simplifications
+    described in :footcite:t:`wangVegasAfterglowHighperformanceFramework2026`.
+
+    The engine integrates the 8-component state vector
+
+    .. math::
+
+        \mathbf{y} = (R_{\rm cd},\; v_{\rm cd},\; M_2,\; M_3,\; U_2,\; U_3,\; \Delta_2,\; \Delta_3),
+
+    where subscript 2 denotes the shocked ejecta layer (between the reverse shock and the
+    contact discontinuity) and subscript 3 denotes the shocked CSM layer (between the
+    contact discontinuity and the forward shock).  The governing equations are
+
+    .. math::
+
+        \dot{R}_{\rm cd} &= v_{\rm cd}, \\
+        \dot{v}_{\rm cd} &= \frac{4\pi R_{\rm cd}^2 (P_2 - P_3)}{M_2 + M_3}, \\
+        \dot{M}_i       &= 4\pi R_{{\rm s},i}^2\,\rho_i^{\rm up}\,v_{{\rm rel},i}, \\
+        \dot{U}_i       &= \dot{U}_{{\rm sh},i} + \dot{U}_{{\rm ad},i} + \dot{U}_{{\rm rad},i}, \\
+        \dot{\Delta}_i  &= c_{s,i},
+
+    with layer-averaged pressures :math:`P_i = (\gamma_i-1)U_i/V_i`
+    (:math:`V_i = 4\pi R_{\rm cd}^2 \Delta_i`), sound-speed width closure
+    :math:`c_{s,i} = \sqrt{\gamma_i(\gamma_i-1)U_i/M_i}`, shock speeds
+    :math:`D_{\rm rs} = v_{\rm cd} - c_{s,2}` and :math:`D_{\rm fs} = v_{\rm cd} + c_{s,3}`,
+    Rankine--Hugoniot shock heating
+
+    .. math::
+
+        \dot{U}_{{\rm sh},i} = \frac{1}{\gamma_i - 1}\frac{\chi_i - 1}{\chi_i^2}
+                               v_{{\rm rel},i}^2\,\dot{M}_i
+        \qquad (\chi_i \equiv \tfrac{\gamma_i+1}{\gamma_i-1}),
+
+    and adiabatic expansion losses
+
+    .. math::
+
+        \dot{U}_{{\rm ad},i} = -(\gamma_i-1)\,U_i
+        \!\left(\frac{2\,v_{\rm cd}}{R_{\rm cd}} + \frac{c_{s,i}}{\Delta_i}\right).
+
+    .. note::
+
+        For a more detailed description of the theory behind this engine, see :ref:`mechanical_internal_energy_model`.
+
+
+    See Also
+    --------
+    :ref:`mechanical_internal_energy_model` : Theory derivation.
+    :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine` :
+        Simpler thin-shell closure with algebraic pressures.
+
+    References
+    ----------
+    .. footbibliography::
+    """
+
+    _STATE_CLASS = MechanicalShockState
+
+    # ------------------------------------------------------------------ #
+    # Instantiation and Dunder Methods                                   #
+    # ------------------------------------------------------------------ #
+    def __init__(self, mu_2: float = 0.5, mu_3: float = 0.5, **kwargs):
+        """
+        Instantiate the :class:`MechanicalShockEngine`.
+
+        Parameters
+        ----------
+        mu_2 : float, optional
+            Mean molecular weight in units of the proton mass for the shocked
+            ejecta (Region 2), used for the reverse-shock post-shock temperature.
+            Default is ``0.5`` (fully ionized hydrogen).
+        mu_3 : float, optional
+            Mean molecular weight in units of the proton mass for the shocked
+            CSM (Region 3), used for the forward-shock post-shock temperature.
+            Default is ``0.5`` (fully ionized hydrogen).
+        kwargs
+            Passed to the base :class:`~triceratops.dynamics.shocks.core.shock_engine.ShockEngine`.
+        """
+        super().__init__(**kwargs)
+        self._mu_2 = float(mu_2)
+        self._mu_3 = float(mu_3)
+
+    # ------------------------------------------------------------------ #
+    # Initial Conditions and Evaluation Kernel Generation                #
+    # ------------------------------------------------------------------ #
+    @staticmethod
+    def generate_initial_conditions(
+        R_cd_0: "_UnitBearingScalarLike",
+        v_cd_0: "_UnitBearingScalarLike",
+        t_0: "_UnitBearingScalarLike",
+        rho_1: "Callable",
+        rho_4: "Callable",
+        u_1: "Callable",
+        u_4: "Callable",
+        gamma_2: float = 5 / 3,
+        gamma_3: float = 5 / 3,
+        Delta_frac: float = 0.01,
+    ) -> "tuple[float, ...]":
+        r"""
+        Derive a self-consistent 8-component initial-condition vector.
+
+        This method is intended as a convenience for setting the initial conditions for simulation
+        runs with the :class:`MechanicalShockEngine` based on the smaller set of intuitive initial
+        conditions. This should not be considered the only way to set initial conditions for this engine,
+        and users are free to construct their own initial conditions as long as they are consistent with
+        the governing equations.
+
+        Given the contact-discontinuity position and velocity at time
+        :math:`t_0`, this method constructs
+        :math:`(R_{{\rm cd},0},\,v_{{\rm cd},0},\,M_{2,0},\,M_{3,0},\,U_{2,0},\,U_{3,0},\,\Delta_{2,0},\,\Delta_{3,0})`
+        such that the ODE kernel is free of artificial relaxation transients at
+        :math:`t = t_0`.
+
+        Both shocked layers are initialised to a small fraction of the contact
+        radius,
+
+        .. math::
+
+            \Delta_{i,0} = f_{\Delta}\,R_{{\rm cd},0},
+
+        placing the reverse-shock face at
+        :math:`R_{{\rm rs},0} = R_{{\rm cd},0} - \Delta_{2,0}` and the
+        forward-shock face at
+        :math:`R_{{\rm fs},0} = R_{{\rm cd},0} + \Delta_{3,0}`.
+
+        The swept-up masses are obtained by integrating the upstream density
+        profiles at :math:`t_0` over the appropriate radial domains.  For Region
+        2 (shocked ejecta) the integral runs outward from the reverse-shock face,
+        capturing all ejecta that would already be moving faster than the shock:
+
+        .. math::
+
+            M_{2,0} = 4\pi\int_{R_{{\rm rs},0}}^{\infty} \rho_1(r,\,t_0)\,r^2\,dr.
+
+        For Region 3 (shocked CSM) it sweeps inward from the forward-shock face:
+
+        .. math::
+
+            M_{3,0} = 4\pi\int_0^{R_{{\rm fs},0}} \rho_4(r,\,t_0)\,r^2\,dr.
+
+        :math:`M_{2,0}` is evaluated in :math:`\ln r` space: the substitution
+        :math:`r = e^s` transforms the integrand to
+        :math:`4\pi e^{3s}\rho_1(e^s, t_0)`, which for a broken-power-law outer
+        index :math:`n` scales as :math:`e^{(3-n)s}` — smooth and rapidly
+        decaying for Gauss-Kronrod quadrature.  Integrating in the original
+        linear variable instead would place the function peak at the lower bound
+        with a steep falloff, causing QUADPACK's :math:`(1-t)/t` substitution to
+        incorrectly estimate the integral through catastrophic cancellation.
+        :math:`M_{3,0}` is integrated in the original variable over the finite
+        interval :math:`[0, R_{{\rm fs},0}]`, where Gauss-Kronrod performs
+        reliably for all standard CSM profiles.
+
+        Naively setting :math:`v_{{\rm rel},i,0}` from the shock speeds and then
+        computing internal energies from those speeds produces a sound speed that
+        is inconsistent with the assumed shock speed, generating a sharp transient
+        at the first ODE step.  To avoid this, the width closure
+        :math:`D_{{\rm rs}} = v_{{\rm cd}} - c_{s,2}` (and analogously for the
+        forward shock) is substituted into the definition of the shock-frame
+        relative velocity:
+
+        .. math::
+
+            v_{{\rm rel},2,0}
+            = \frac{u_1(R_{{\rm rs},0},\,t_0) - v_{{\rm cd},0}}{1 - \beta_2},
+            \qquad
+            v_{{\rm rel},3,0}
+            = \frac{v_{{\rm cd},0} - u_4(R_{{\rm fs},0},\,t_0)}{1 - \beta_3},
+
+        where :math:`\chi_i = (\gamma_i+1)/(\gamma_i-1)` and
+        :math:`\beta_i = \sqrt{\gamma_i(\chi_i-1)/\chi_i^2}` is the ratio of
+        the post-shock sound speed to the shock-frame upstream velocity in the
+        strong-shock limit.  The resulting :math:`v_{{\rm rel},i,0}` are
+        self-consistent with the layer sound speeds implied by the initial
+        internal energies computed below.
+
+        The Rankine--Hugoniot jump conditions give the specific internal energy
+        deposited by a strong shock:
+
+        .. math::
+
+            U_{i,0}
+            = \frac{1}{\gamma_i-1}\frac{\chi_i-1}{\chi_i^2}
+            \,v_{{\rm rel},i,0}^2\,M_{i,0}.
+
+        Parameters
+        ----------
+        R_cd_0 : ~astropy.units.Quantity or float
+            Initial contact-discontinuity radius.  Unit-bearing inputs are
+            converted to cm; bare floats are interpreted as cm.
+        v_cd_0 : ~astropy.units.Quantity or float
+            Initial contact-discontinuity velocity.  Unit-bearing inputs are
+            converted to cm/s; bare floats are interpreted as cm/s.
+        t_0 : ~astropy.units.Quantity or float
+            Time at which the initial conditions are evaluated.  Unit-bearing
+            inputs are converted to s; bare floats are interpreted as s.
+        rho_1 : callable
+            Upstream ejecta density :math:`\rho_1(r,\,t)` **in CGS**
+            (:math:`\mathrm{g\,cm^{-3}}`).  Must accept array-like ``r`` (cm)
+            and scalar ``t`` (s).
+        rho_4 : callable
+            Upstream CSM density :math:`\rho_4(r,\,t)` **in CGS**
+            (:math:`\mathrm{g\,cm^{-3}}`).  Must accept array-like ``r`` and
+            scalar ``t``.
+        u_1 : callable
+            Upstream ejecta velocity :math:`u_1(r,\,t)` **in CGS** (cm/s).
+        u_4 : callable
+            Upstream CSM velocity :math:`u_4(r,\,t)` **in CGS** (cm/s).
+        gamma_2 : float, optional
+            Adiabatic index of the shocked ejecta.  Default ``5/3``.
+        gamma_3 : float, optional
+            Adiabatic index of the shocked CSM.  Default ``5/3``.
+        Delta_frac : float, optional
+            Initial layer width as a fraction of :math:`R_{{\rm cd},0}`.
+            Smaller values place the shock faces closer to the contact
+            discontinuity, reducing the initial swept-up mass but potentially
+            requiring finer ODE tolerances to resolve the early evolution.
+            Default ``0.01``.
+
+        Returns
+        -------
+        tuple of float
+            ``(R_cd_0, v_cd_0, M2_0, M3_0, U2_0, U3_0, Delta2_0, Delta3_0)``
+            — all values in CGS, ready to unpack directly as the ``y0`` argument
+            to :meth:`compute_shock_properties`.
+
+        Raises
+        ------
+        ValueError
+            If the upstream conditions imply a non-positive shock-frame relative
+            velocity for either shock, meaning no valid shock exists at the
+            chosen initial position and velocity.
+
+        Notes
+        -----
+        Both mass integrals are evaluated with :func:`scipy.integrate.quad`
+        (adaptive Gauss--Kronrod quadrature, ``limit=200`` subintervals).  The
+        :math:`M_2` upper limit is :math:`+\infty`; ``quad`` handles the tail
+        via an internal change of variable and does not require a hardcoded
+        truncation radius.  The :math:`M_3` lower limit is exactly 0; the
+        integrand :math:`4\pi r^2 \rho_4` is integrable at the origin for all
+        standard CSM profiles (wind: integrand is constant; uniform: quadratic;
+        shell: zero interior to the shell).  Because ``quad`` evaluates the
+        integrand at scalar :math:`r` values, each density callable is invoked
+        with a 1-element NumPy array rather than a bare Python float, so
+        callables that use boolean array masking internally remain compatible.
+        """
+        # --- strip units ---
+        R_cd_0 = float(ensure_in_units(R_cd_0, u.cm))
+        v_cd_0 = float(ensure_in_units(v_cd_0, u.cm / u.s))
+        t_0 = float(ensure_in_units(t_0, u.s))
+
+        chi_2 = (gamma_2 + 1) / (gamma_2 - 1)
+        chi_3 = (gamma_3 + 1) / (gamma_3 - 1)
+
+        # --- initial widths and shock face positions ---
+        Delta2_0 = Delta_frac * R_cd_0
+        Delta3_0 = Delta_frac * R_cd_0
+        R_rs_0 = R_cd_0 - Delta2_0
+        R_fs_0 = R_cd_0 + Delta3_0
+
+        # --- shocked masses from density integrals ---
+        # Callables may use boolean array masking internally, so scalars are
+        # wrapped in a 1-element array and the result is extracted with flat[0].
+        #
+        # M2: ejecta at v > R_rs_0/t_0, swept up by the reverse shock.
+        # Integrated in log-r: f(r) dr = f(e^s) e^s ds, so the log-space
+        # integrand is 4π r³ ρ. For a BPL outer index n the physical integrand
+        # scales as r^{2-n} (e.g. r^{-8} for n=10), which DQAGI's (1-t)/t
+        # substitution handles poorly when the function is steep near the lower
+        # bound — cancellation in the quadrature weights causes wrong signs and
+        # magnitudes. In log-space the same profile becomes e^{(3-n)s}, smooth
+        # for Gauss-Kronrod. The upper bound is capped at ln(R_rs_0)+100
+        # (≈ 43 orders of magnitude above R_rs_0) so exp() never overflows;
+        # no physical ejecta profile carries appreciable mass that far out.
+        def _log_M2_integrand(log_r: float) -> float:
+            r = np.exp(log_r)
+            val = 4.0 * np.pi * r**3 * np.asarray(rho_1(np.array([r]), t_0)).flat[0]
+            return val if np.isfinite(val) else 0.0
+
+        M2_0, _ = quad(
+            _log_M2_integrand,
+            np.log(R_rs_0),
+            np.log(R_rs_0) + 100.0,
+            limit=200,
+        )
+
+        # M3: CSM swept up interior to the forward-shock face.
+        # The lower limit is 0; r²ρ is integrable there for all standard CSM
+        # profiles (wind integrand is constant, uniform is quadratic, etc.).
+        # Gauss-Kronrod never evaluates at the exact endpoint so r=0 is safe.
+        M3_0, _ = quad(
+            lambda r: 4.0 * np.pi * r**2 * np.asarray(rho_4(np.array([r]), t_0)).flat[0],
+            0.0,
+            R_fs_0,
+            limit=200,
+        )
+
+        # --- self-consistent shock-frame relative velocities ---
+        # Closure: D_rs = v_cd - c_s2, c_s2 = beta * v_rel_2.
+        # Substituting into v_rel_2 = u_1(R_rs) - D_rs gives the closed form below.
+        beta_2 = np.sqrt(gamma_2 * (chi_2 - 1) / chi_2**2)
+        beta_3 = np.sqrt(gamma_3 * (chi_3 - 1) / chi_3**2)
+
+        v_rel_2_0 = (u_1(R_rs_0, t_0) - v_cd_0) / (1.0 - beta_2)
+        v_rel_3_0 = (v_cd_0 - u_4(R_fs_0, t_0)) / (1.0 - beta_3)
+
+        if v_rel_2_0 <= 0:
+            raise ValueError(
+                f"Reverse shock has non-positive upstream relative velocity "
+                f"({v_rel_2_0:.3e} cm/s). Ensure u_1(R_rs_0, t_0) > v_cd_0."
+            )
+        if v_rel_3_0 <= 0:
+            raise ValueError(
+                f"Forward shock has non-positive upstream relative velocity "
+                f"({v_rel_3_0:.3e} cm/s). Ensure v_cd_0 > u_4(R_fs_0, t_0)."
+            )
+
+        # --- Rankine-Hugoniot specific internal energies ---
+        eps_2 = (1.0 / (gamma_2 - 1)) * ((chi_2 - 1) / chi_2**2) * v_rel_2_0**2
+        eps_3 = (1.0 / (gamma_3 - 1)) * ((chi_3 - 1) / chi_3**2) * v_rel_3_0**2
+
+        U2_0 = eps_2 * M2_0
+        U3_0 = eps_3 * M3_0
+
+        return R_cd_0, v_cd_0, M2_0, M3_0, U2_0, U3_0, Delta2_0, Delta3_0
+
+    @staticmethod
+    def generate_evaluation_kernel(
+        rho_1: Callable,
+        rho_4: Callable,
+        u_1: Callable,
+        u_4: Callable,
+        gamma_2: float = 5 / 3,
+        gamma_3: float = 5 / 3,
+        cooling_2: "Callable | None" = None,
+        cooling_3: "Callable | None" = None,
+    ) -> Callable:
+        r"""
+        Build the ODE right-hand side for the mechanical shock model.
+
+        Returns a function ``kernel(t, y)`` suitable for
+        :func:`scipy.integrate.solve_ivp`.
+
+        Parameters
+        ----------
+        rho_1 : callable
+            Upstream ejecta density :math:`\rho_1(r,\,t)` in
+            :math:`\mathrm{g\,cm^{-3}}`.
+        rho_4 : callable
+            Upstream CSM density :math:`\rho_4(r,\,t)` in
+            :math:`\mathrm{g\,cm^{-3}}`.
+        u_1 : callable
+            Upstream ejecta velocity :math:`u_1(r,\,t)` in cm/s.
+        u_4 : callable
+            Upstream CSM velocity :math:`u_4(r,\,t)` in cm/s.
+        gamma_2 : float, optional
+            Adiabatic index of the shocked ejecta. Default ``5/3``.
+        gamma_3 : float, optional
+            Adiabatic index of the shocked CSM. Default ``5/3``.
+        cooling_2 : callable or None, optional
+            Radiative loss rate for Region 2,
+            ``cooling_2(R_cd, v_cd, M2, U2, Delta2, t) -> dU2/dt`` in erg/s.
+            Should return a **negative** value for energy losses. Default is
+            no cooling.
+        cooling_3 : callable or None, optional
+            Radiative loss rate for Region 3,
+            ``cooling_3(R_cd, v_cd, M3, U3, Delta3, t) -> dU3/dt`` in erg/s.
+            Should return a **negative** value for energy losses. Default is
+            no cooling.
+
+        Returns
+        -------
+        callable
+            ``kernel(t, y) -> dy/dt`` where
+            ``y = [R_cd, v_cd, M2, M3, U2, U3, Delta2, Delta3]``.
+        """
+        chi_2 = (gamma_2 + 1) / (gamma_2 - 1)
+        chi_3 = (gamma_3 + 1) / (gamma_3 - 1)
+
+        _cooling_2 = cooling_2 if cooling_2 is not None else lambda *_: 0.0
+        _cooling_3 = cooling_3 if cooling_3 is not None else lambda *_: 0.0
+
+        def _kernel(t, y):
+            R_cd, v_cd, M2, M3, U2, U3, Delta2, Delta3 = y
+
+            # --- Geometry ---
+            R_rs = R_cd - Delta2
+            R_fs = R_cd + Delta3
+            V2 = 4.0 * np.pi * R_cd**2 * Delta2
+            V3 = 4.0 * np.pi * R_cd**2 * Delta3
+
+            # --- Layer-averaged pressures ---
+            P2 = (gamma_2 - 1) * U2 / V2
+            P3 = (gamma_3 - 1) * U3 / V3
+
+            # --- Sound speeds (width closure: dDelta_i/dt = c_s_i) ---
+            c_s2 = np.sqrt(np.maximum(gamma_2 * (gamma_2 - 1) * U2 / M2, 0.0))
+            c_s3 = np.sqrt(np.maximum(gamma_3 * (gamma_3 - 1) * U3 / M3, 0.0))
+
+            # --- Shock speeds ---
+            D_rs = v_cd - c_s2
+            D_fs = v_cd + c_s3
+
+            # --- Upstream quantities at shock faces ---
+            rho1_rs = rho_1(R_rs, t)
+            rho4_fs = rho_4(R_fs, t)
+            u1_rs = u_1(R_rs, t)
+            u4_fs = u_4(R_fs, t)
+
+            # --- Shock-frame relative velocities ---
+            # Clamped to zero: swept mass is non-decreasing. A negative value
+            # means the shock has stalled (closure breaks down); no mass is
+            # un-swept in that case, and shock heating ceases naturally.
+            v_rel_2 = np.maximum(u1_rs - D_rs, 0.0)
+            v_rel_3 = np.maximum(D_fs - u4_fs, 0.0)
+
+            # --- Mass loading ---
+            dM2_dt = 4.0 * np.pi * R_rs**2 * rho1_rs * v_rel_2
+            dM3_dt = 4.0 * np.pi * R_fs**2 * rho4_fs * v_rel_3
+
+            # --- Contact-discontinuity motion ---
+            dR_cd_dt = v_cd
+            dv_cd_dt = 4.0 * np.pi * R_cd**2 * (P2 - P3) / (M2 + M3)
+
+            # --- Shock heating ---
+            dU_sh2 = (1.0 / (gamma_2 - 1)) * ((chi_2 - 1) / chi_2**2) * v_rel_2**2 * dM2_dt
+            dU_sh3 = (1.0 / (gamma_3 - 1)) * ((chi_3 - 1) / chi_3**2) * v_rel_3**2 * dM3_dt
+
+            # --- Adiabatic expansion (P dV work via V_i = 4pi R_cd^2 Delta_i) ---
+            dU_ad2 = -(gamma_2 - 1) * U2 * (2.0 * v_cd / R_cd + c_s2 / Delta2)
+            dU_ad3 = -(gamma_3 - 1) * U3 * (2.0 * v_cd / R_cd + c_s3 / Delta3)
+
+            # --- Radiative losses ---
+            dU_rad2 = _cooling_2(R_cd, v_cd, M2, U2, Delta2, t)
+            dU_rad3 = _cooling_3(R_cd, v_cd, M3, U3, Delta3, t)
+
+            dU2_dt = dU_sh2 + dU_ad2 + dU_rad2
+            dU3_dt = dU_sh3 + dU_ad3 + dU_rad3
+
+            return np.array(
+                [
+                    dR_cd_dt,
+                    dv_cd_dt,
+                    dM2_dt,
+                    dM3_dt,
+                    dU2_dt,
+                    dU3_dt,
+                    c_s2,  # dDelta2/dt
+                    c_s3,  # dDelta3/dt
+                ]
+            )
+
+        return _kernel
+
+    # ------------------------------------------------------------------ #
+    # Core interface                                                       #
+    # ------------------------------------------------------------------ #
+
+    def compute_shock_properties(
+        self,
+        time: "_UnitBearingArrayLike",
+        rho_1: Callable,
+        rho_4: Callable,
+        u_1: Callable,
+        u_4: Callable,
+        R_cd_0: "_UnitBearingScalarLike" = 1e14 * u.cm,
+        v_cd_0: "_UnitBearingScalarLike" = 1e9 * u.cm / u.s,
+        M2_0: "_UnitBearingScalarLike" = 1e26 * u.g,
+        M3_0: "_UnitBearingScalarLike" = 1e26 * u.g,
+        U2_0: "_UnitBearingScalarLike" = 1e45 * u.erg,
+        U3_0: "_UnitBearingScalarLike" = 1e45 * u.erg,
+        Delta2_0: "_UnitBearingScalarLike" = 1e12 * u.cm,
+        Delta3_0: "_UnitBearingScalarLike" = 1e12 * u.cm,
+        t_0: "_UnitBearingScalarLike" = 1.0 * u.s,
+        gamma_2: float = 5 / 3,
+        gamma_3: float = 5 / 3,
+        cooling_2: "Callable | None" = None,
+        cooling_3: "Callable | None" = None,
+        **kwargs,
+    ) -> MechanicalShockState:
+        r"""
+        Compute the mechanical shock evolution and return a unit-bearing state.
+
+        Parameters
+        ----------
+        time : ~astropy.units.Quantity or array-like
+            Times at which to evaluate the solution. If a
+            :class:`~astropy.units.Quantity`, units are converted to seconds;
+            otherwise seconds are assumed. Must be sorted and lie in
+            :math:`[t_0, \max(t)]`.
+        rho_1 : callable
+            :math:`\rho_1(r,\,t)` — upstream ejecta density in CGS.
+        rho_4 : callable
+            :math:`\rho_4(r,\,t)` — upstream CSM density in CGS.
+        u_1 : callable
+            :math:`u_1(r,\,t)` — upstream ejecta velocity in CGS.
+        u_4 : callable
+            :math:`u_4(r,\,t)` — upstream CSM velocity in CGS.
+        R_cd_0 : ~astropy.units.Quantity or float
+            Initial contact-discontinuity radius. Default ``1e14 cm``.
+        v_cd_0 : ~astropy.units.Quantity or float
+            Initial contact-discontinuity velocity. Default ``1e9 cm/s``.
+        M2_0 : ~astropy.units.Quantity or float
+            Initial shocked ejecta mass. Default ``1e26 g``.
+        M3_0 : ~astropy.units.Quantity or float
+            Initial shocked CSM mass. Default ``1e26 g``.
+        U2_0 : ~astropy.units.Quantity or float
+            Initial shocked ejecta internal energy. Default ``1e45 erg``.
+        U3_0 : ~astropy.units.Quantity or float
+            Initial shocked CSM internal energy. Default ``1e45 erg``.
+        Delta2_0 : ~astropy.units.Quantity or float
+            Initial shocked ejecta layer width. Default ``1e12 cm``.
+        Delta3_0 : ~astropy.units.Quantity or float
+            Initial shocked CSM layer width. Default ``1e12 cm``.
+        t_0 : ~astropy.units.Quantity or float
+            Initial time. Default ``1.0 s``.
+        gamma_2 : float, optional
+            Adiabatic index of the shocked ejecta. Default ``5/3``.
+        gamma_3 : float, optional
+            Adiabatic index of the shocked CSM. Default ``5/3``.
+        cooling_2 : callable or None, optional
+            Radiative loss rate for Region 2 (see
+            :meth:`generate_evaluation_kernel`). Default is no cooling.
+        cooling_3 : callable or None, optional
+            Radiative loss rate for Region 3. Default is no cooling.
+        **kwargs
+            Forwarded to :func:`scipy.integrate.solve_ivp`.
+            ``method`` defaults to ``'Radau'``; ``rtol`` defaults to ``1e-10``.
+
+        Returns
+        -------
+        ~triceratops.dynamics.shocks.numerical.MechanicalShockState
+            Named tuple of :class:`~astropy.units.Quantity` arrays.
+        """
+        if isinstance(time, u.Quantity):
+            time = time.to(u.s).value
+        if isinstance(R_cd_0, u.Quantity):
+            R_cd_0 = R_cd_0.to(u.cm).value
+        if isinstance(v_cd_0, u.Quantity):
+            v_cd_0 = v_cd_0.to(u.cm / u.s).value
+        if isinstance(M2_0, u.Quantity):
+            M2_0 = M2_0.to(u.g).value
+        if isinstance(M3_0, u.Quantity):
+            M3_0 = M3_0.to(u.g).value
+        if isinstance(U2_0, u.Quantity):
+            U2_0 = U2_0.to(u.erg).value
+        if isinstance(U3_0, u.Quantity):
+            U3_0 = U3_0.to(u.erg).value
+        if isinstance(Delta2_0, u.Quantity):
+            Delta2_0 = Delta2_0.to(u.cm).value
+        if isinstance(Delta3_0, u.Quantity):
+            Delta3_0 = Delta3_0.to(u.cm).value
+        if isinstance(t_0, u.Quantity):
+            t_0 = t_0.to(u.s).value
+
+        cgs = self._compute_shock_properties_cgs(
+            time=time,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            R_cd_0=R_cd_0,
+            v_cd_0=v_cd_0,
+            M2_0=M2_0,
+            M3_0=M3_0,
+            U2_0=U2_0,
+            U3_0=U3_0,
+            Delta2_0=Delta2_0,
+            Delta3_0=Delta3_0,
+            t_0=t_0,
+            gamma_2=gamma_2,
+            gamma_3=gamma_3,
+            cooling_2=cooling_2,
+            cooling_3=cooling_3,
+            **kwargs,
+        )
+
+        return MechanicalShockState(
+            radius=cgs.radius * u.cm,
+            velocity=cgs.velocity * (u.cm / u.s),
+            mass_2=cgs.mass_2 * u.g,
+            mass_3=cgs.mass_3 * u.g,
+            energy_2=cgs.energy_2 * u.erg,
+            energy_3=cgs.energy_3 * u.erg,
+            width_2=cgs.width_2 * u.cm,
+            width_3=cgs.width_3 * u.cm,
+            pressure_2=cgs.pressure_2 * (u.dyn / u.cm**2),
+            pressure_3=cgs.pressure_3 * (u.dyn / u.cm**2),
+            radius_rs=cgs.radius_rs * u.cm,
+            radius_fs=cgs.radius_fs * u.cm,
+            velocity_rs=cgs.velocity_rs * (u.cm / u.s),
+            velocity_fs=cgs.velocity_fs * (u.cm / u.s),
+            post_shock_density_fs=cgs.post_shock_density_fs * (u.g / u.cm**3),
+            post_shock_pressure_fs=cgs.post_shock_pressure_fs * (u.dyn / u.cm**2),
+            post_shock_temperature_fs=cgs.post_shock_temperature_fs * u.K,
+            thermal_energy_density_fs=cgs.thermal_energy_density_fs * (u.erg / u.cm**3),
+            post_shock_density_rs=cgs.post_shock_density_rs * (u.g / u.cm**3),
+            post_shock_pressure_rs=cgs.post_shock_pressure_rs * (u.dyn / u.cm**2),
+            post_shock_temperature_rs=cgs.post_shock_temperature_rs * u.K,
+            thermal_energy_density_rs=cgs.thermal_energy_density_rs * (u.erg / u.cm**3),
+        )
+
+    def _compute_shock_properties_cgs(
+        self,
+        time: "_ArrayLike",
+        rho_1: Callable,
+        rho_4: Callable,
+        u_1: Callable,
+        u_4: Callable,
+        R_cd_0: float = 1e14,
+        v_cd_0: float = 1e9,
+        M2_0: float = 1e26,
+        M3_0: float = 1e26,
+        U2_0: float = 1e45,
+        U3_0: float = 1e45,
+        Delta2_0: float = 1e12,
+        Delta3_0: float = 1e12,
+        t_0: float = 1.0,
+        gamma_2: float = 5 / 3,
+        gamma_3: float = 5 / 3,
+        cooling_2: "Callable | None" = None,
+        cooling_3: "Callable | None" = None,
+        **kwargs,
+    ) -> MechanicalShockState:
+        r"""
+        Integrate the mechanical shock ODEs in CGS units.
+
+        Parameters
+        ----------
+        time : array-like
+            Evaluation times in seconds. Must be sorted and satisfy
+            ``time >= t_0``.
+        rho_1, rho_4, u_1, u_4 : callable
+            Upstream density and velocity functions in CGS.
+        R_cd_0, v_cd_0 : float
+            Initial contact radius (cm) and velocity (cm/s).
+        M2_0, M3_0 : float
+            Initial shocked masses (g).
+        U2_0, U3_0 : float
+            Initial internal energies (erg).
+        Delta2_0, Delta3_0 : float
+            Initial layer widths (cm).
+        t_0 : float
+            Initial time (s).
+        gamma_2, gamma_3 : float
+            Adiabatic indices of Regions 2 and 3.
+        cooling_2, cooling_3 : callable or None
+            Radiative loss rates (see :meth:`generate_evaluation_kernel`).
+        **kwargs
+            Forwarded to :func:`scipy.integrate.solve_ivp`.
+
+        Returns
+        -------
+        ~triceratops.dynamics.shocks.numerical.MechanicalShockState
+            Named tuple of plain numpy arrays in CGS units.
+        """
+        time = np.atleast_1d(np.asarray(time, dtype=float))
+
+        kernel = self.generate_evaluation_kernel(
+            rho_1=rho_1,
+            rho_4=rho_4,
+            u_1=u_1,
+            u_4=u_4,
+            gamma_2=gamma_2,
+            gamma_3=gamma_3,
+            cooling_2=cooling_2,
+            cooling_3=cooling_3,
+        )
+
+        y0 = np.array([R_cd_0, v_cd_0, M2_0, M3_0, U2_0, U3_0, Delta2_0, Delta3_0])
+        t_span = (t_0, float(np.amax(time)))
+
+        solver_kwargs = dict(kwargs)
+        rtol = solver_kwargs.pop("rtol", 1e-10)
+        method = solver_kwargs.pop("method", "Radau")
+
+        sol = solve_ivp(
+            fun=kernel,
+            t_span=t_span,
+            y0=y0,
+            t_eval=time,
+            rtol=rtol,
+            method=method,
+            **solver_kwargs,
+        )
+
+        if sol.status < 0:
+            raise RuntimeError(f"ODE solver failed to integrate the mechanical shock equations:\n{sol.message}")
+
+        R_cd, v_cd, M2, M3, U2, U3, Delta2, Delta3 = sol.y
+
+        # Derived geometry
+        R_rs = R_cd - Delta2
+        R_fs = R_cd + Delta3
+
+        # Layer volumes and pressures
+        V2 = 4.0 * np.pi * R_cd**2 * Delta2
+        V3 = 4.0 * np.pi * R_cd**2 * Delta3
+        P2 = (gamma_2 - 1) * U2 / V2
+        P3 = (gamma_3 - 1) * U3 / V3
+
+        # Shock speeds from sound-speed width closure
+        c_s2 = np.sqrt(np.maximum(gamma_2 * (gamma_2 - 1) * U2 / M2, 0.0))
+        c_s3 = np.sqrt(np.maximum(gamma_3 * (gamma_3 - 1) * U3 / M3, 0.0))
+        D_rs = v_cd - c_s2
+        D_fs = v_cd + c_s3
+
+        # Post-shock thermodynamics via strong cold-shock RH conditions.
+        # Upstream callables accept scalar (r, t), so evaluate element-by-element.
+        n_steps = len(time)
+        rho_4_fs = np.array([float(rho_4(R_fs[i], time[i])) for i in range(n_steps)])
+        u_4_fs = np.array([float(u_4(R_fs[i], time[i])) for i in range(n_steps)])
+        rho_1_rs = np.array([float(rho_1(R_rs[i], time[i])) for i in range(n_steps)])
+        u_1_rs = np.array([float(u_1(R_rs[i], time[i])) for i in range(n_steps)])
+
+        rh_fs = StrongColdShockConditions._solve(D_fs, rho_4_fs, u_4_fs, gamma=gamma_3, mu=self._mu_3)
+        rh_rs = StrongColdShockConditions._solve(D_rs, rho_1_rs, u_1_rs, gamma=gamma_2, mu=self._mu_2)
+
+        return MechanicalShockState(
+            radius=R_cd,
+            velocity=v_cd,
+            mass_2=M2,
+            mass_3=M3,
+            energy_2=U2,
+            energy_3=U3,
+            width_2=Delta2,
+            width_3=Delta3,
+            pressure_2=P2,
+            pressure_3=P3,
+            radius_rs=R_rs,
+            radius_fs=R_fs,
+            velocity_rs=D_rs,
+            velocity_fs=D_fs,
+            post_shock_density_fs=rh_fs["post_shock_density"],
+            post_shock_pressure_fs=rh_fs["post_shock_pressure"],
+            post_shock_temperature_fs=rh_fs["post_shock_temperature"],
+            thermal_energy_density_fs=rh_fs["post_shock_thermal_energy_density"],
+            post_shock_density_rs=rh_rs["post_shock_density"],
+            post_shock_pressure_rs=rh_rs["post_shock_pressure"],
+            post_shock_temperature_rs=rh_rs["post_shock_temperature"],
+            thermal_energy_density_rs=rh_rs["post_shock_thermal_energy_density"],
+        )
+
+
+class RelMechanicalShockEngine(ShockEngine, ABC):
+    """
+    Relativistic mechanical shock engine.
+
+    .. note::
+
+        This engine is not yet implemented. It will be added in a future release.
+    """
+
+    pass

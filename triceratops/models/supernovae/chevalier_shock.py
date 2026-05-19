@@ -220,7 +220,7 @@ class ChevalierShockModel(Model):
             parameters["s"],
             parameters["delta"],
         )
-        _shock_radius, _shock_velocity = shock_properties["radius"], shock_properties["velocity"]
+        _shock_radius, _shock_velocity = shock_properties.radius, shock_properties.velocity
 
         # Now use the shock radius and velocity to compute the
         # corresponding magnetic field strength.

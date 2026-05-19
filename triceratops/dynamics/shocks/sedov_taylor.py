@@ -19,14 +19,15 @@ All internal calculations are performed in CGS units. Public methods accept
 """
 
 import warnings
+from typing import NamedTuple, Union
 
 import numpy as np
 from astropy import units as u
 from scipy.integrate import IntegrationWarning, quad
 
 from triceratops._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
+from triceratops.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
 from triceratops.dynamics.shocks.core.shock_engine import ShockEngine
-from triceratops.physics_utils.constants import k_B_cgs, m_p_cgs
 from triceratops.utils.misc_utils import ensure_in_units
 
 
@@ -111,10 +112,22 @@ def sedov_taylor_beta(gamma, *, eps=1e-10, epsabs=1e-12, epsrel=1e-12, limit=500
 
     Examples
     --------
-    >>> sedov_taylor_beta(5.0 / 3.0)  # doctest: +SKIP
-    1.1517...
-    >>> sedov_taylor_beta(1.4)  # doctest: +SKIP
-    1.033...
+    Evaluate the normalization coefficient for common adiabatic indices:
+
+    .. code-block:: python
+
+        beta_monoatomic = sedov_taylor_beta(5.0 / 3.0)
+        beta_diatomic = sedov_taylor_beta(1.4)
+
+        print(beta_monoatomic)
+        print(beta_diatomic)
+
+    which gives approximately:
+
+    .. code-block:: text
+
+        1.1517...
+        1.033...
     """
     g = float(gamma)
 
@@ -183,6 +196,55 @@ def sedov_taylor_beta(gamma, *, eps=1e-10, epsabs=1e-12, epsrel=1e-12, limit=500
 
 
 # ============================================================ #
+# State Classes                                                #
+# ============================================================ #
+class SedovTaylorShockState(NamedTuple):
+    r"""
+    Time-dependent state returned by :class:`SedovTaylorShockEngine`.
+
+    The low-level CGS interface returns plain :class:`numpy.ndarray` fields in
+    CGS units. The public unit-aware interface returns the same structure with
+    fields converted to :class:`astropy.units.Quantity`.
+    """
+
+    radius: Union[np.ndarray, u.Quantity]
+    r"""
+    Shock radius :math:`R_s(t)` in cm.
+    """
+
+    velocity: Union[np.ndarray, u.Quantity]
+    r"""
+    Shock velocity :math:`v_s(t) = \dot{R}_s(t)` in cm/s.
+    """
+
+    post_shock_density: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock density :math:`\rho_s` in :math:`\mathrm{g\,cm^{-3}}`,
+    derived from the strong-shock Rankine--Hugoniot relation
+    :math:`\rho_s = (\gamma+1)/(\gamma-1)\,\rho_0`.
+    """
+
+    post_shock_pressure: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock pressure :math:`p_s` in :math:`\mathrm{dyn\,cm^{-2}}`,
+    derived from the strong-shock Rankine--Hugoniot relation
+    :math:`p_s = 2\rho_0 v_s^2/(\gamma+1)`.
+    """
+
+    post_shock_temperature: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock temperature :math:`T_s` in K, derived from the ideal
+    gas relation :math:`T_s = p_s \mu m_p / (\rho_s k_B)`.
+    """
+
+    thermal_energy_density: Union[np.ndarray, u.Quantity]
+    r"""
+    Post-shock thermal energy density
+    :math:`e_{\rm th} = p_s / (\gamma - 1)` in :math:`\mathrm{erg\,cm^{-3}}`.
+    """
+
+
+# ============================================================ #
 # Sedov--Taylor Shock Engine                                   #
 # ============================================================ #
 class SedovTaylorShockEngine(ShockEngine):
@@ -245,6 +307,8 @@ class SedovTaylorShockEngine(ShockEngine):
     ChevalierSelfSimilarShockEngine
         Analogous engine for power-law ejecta interacting with a power-law CSM.
     """
+
+    _STATE_CLASS = SedovTaylorShockState
 
     def __init__(self, gamma: float = 5.0 / 3.0, mu: float = 0.5, **integration_kwargs):
         """
@@ -313,14 +377,14 @@ class SedovTaylorShockEngine(ShockEngine):
 
         props = self._compute_shock_properties_cgs(t_cgs, E_cgs, rho_0_cgs)
 
-        return {
-            "radius": props["radius"] * u.cm,
-            "velocity": props["velocity"] * (u.cm / u.s),
-            "post_shock_density": props["post_shock_density"] * (u.g / u.cm**3),
-            "post_shock_pressure": props["post_shock_pressure"] * (u.dyne / u.cm**2),
-            "post_shock_temperature": props["post_shock_temperature"] * u.K,
-            "thermal_energy_density": props["thermal_energy_density"] * (u.erg / u.cm**3),
-        }
+        return SedovTaylorShockState(
+            radius=props.radius * u.cm,
+            velocity=props.velocity * (u.cm / u.s),
+            post_shock_density=props.post_shock_density * (u.g / u.cm**3),
+            post_shock_pressure=props.post_shock_pressure * (u.dyne / u.cm**2),
+            post_shock_temperature=props.post_shock_temperature * u.K,
+            thermal_energy_density=props.thermal_energy_density * (u.erg / u.cm**3),
+        )
 
     def _compute_shock_properties_cgs(
         self,
@@ -347,24 +411,19 @@ class SedovTaylorShockEngine(ShockEngine):
             ``'post_shock_pressure'``, ``'post_shock_temperature'``, and
             ``'thermal_energy_density'`` in CGS units.
         """
-        g = self._gamma
-
         R = self._beta * (E * time**2 / rho_0) ** 0.2
         v = 0.4 * R / time
 
-        rho_s = (g + 1.0) / (g - 1.0) * rho_0
-        p_s = 2.0 / (g + 1.0) * rho_0 * v**2
-        T_s = p_s * self._mu * m_p_cgs / (rho_s * k_B_cgs)
-        e_th = p_s / (g - 1.0)
+        rh = StrongColdShockConditions._solve(v, rho_0, gamma=self._gamma, mu=self._mu)
 
-        return {
-            "radius": R,
-            "velocity": v,
-            "post_shock_density": rho_s,
-            "post_shock_pressure": p_s,
-            "post_shock_temperature": T_s,
-            "thermal_energy_density": e_th,
-        }
+        return SedovTaylorShockState(
+            radius=R,
+            velocity=v,
+            post_shock_density=rh["post_shock_density"],
+            post_shock_pressure=rh["post_shock_pressure"],
+            post_shock_temperature=rh["post_shock_temperature"],
+            thermal_energy_density=rh["post_shock_thermal_energy_density"],
+        )
 
     # =========================================== #
     # DUNDER METHODS                              #

@@ -23,7 +23,7 @@ The ejecta are modeled as a broken power law in homologous velocity
 
 where :math:`v_t` is the transition velocity, :math:`K_{\rm ej}` is the ejecta
 normalization, :math:`\delta` is the inner density index, and :math:`n` is the
-outer density index. The helper function :func:`normalize_supernova_ejecta`
+outer density index. The helper function :func:`normalize_bpl_ejecta`
 computes :math:`v_t` and :math:`K_{\rm ej}` from the total ejecta kinetic energy
 and mass.
 
@@ -67,13 +67,15 @@ References
 .. footbibliography::
 """
 
+from typing import NamedTuple, Union
+
 import numpy as np
 from astropy import units as u
 
 from triceratops._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
+from triceratops.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
 from triceratops.dynamics.shocks.core.shock_engine import ShockEngine
-from triceratops.utils.misc_utils import ensure_in_units
-
+from triceratops.dynamics.shocks.utils import _normalize_BPL_ejecta
 
 # ===================================================== #
 # Utility Functions                                     #
@@ -82,351 +84,64 @@ from triceratops.utils.misc_utils import ensure_in_units
 # with the Chevalier model, but they are not necessarily specific to the Chevalier model. They are
 # intended to be accessible to other shock engines as well, but they are not necessarily general enough to be moved
 # to a more general utilities module.
-def _normalize_supernova_ejecta(
-    E_ej: "_ArrayLike",
-    M_ej: "_ArrayLike",
-    n: "_ArrayLike" = 10,
-    delta: "_ArrayLike" = 0,
-) -> tuple["_ArrayLike", "_ArrayLike"]:
+
+
+# ==================================================== #
+# State Classes                                        #
+# ==================================================== #
+class ChevalierShockState(NamedTuple):
     r"""
-    Optimized computation of a BPL normalization parameters in CGS for performance.
+    Time-dependent state returned by Chevalier self-similar shock engines.
 
-    See the public-facing function :func:`normalize_supernova_ejecta` for details.
+    The low-level CGS interface returns plain :class:`numpy.ndarray` fields in
+    CGS units. The public unit-aware interface returns the same structure with
+    fields converted to :class:`astropy.units.Quantity`.
 
-    Parameters
-    ----------
-    E_ej: float or array-like
-        The total kinetic energy of the ejecta in CGS units (erg).
-    M_ej: float or array-like
-        The total mass of the ejecta in CGS units (g).
-    n: float or array-like
-        The outer ejecta density profile power-law index. By default, this is set to ``10``.
-    delta: float or array-like, optional
-        The inner ejecta density profile power-law index. By default, this is set to ``0``.
+    .. note::
 
-    Returns
-    -------
-    v_t : float or array-like
-        The transition velocity between the inner and outer ejecta profiles in CGS units (cm/s).
-    K: float or array-like
-        The normalization constant of the ejecta density profile in CGS units. The units are
-        ``g * cm^(2*delta-3) * s^(3-delta)``.
+        Post-shock thermodynamic quantities are evaluated using
+        :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+        with the contact-discontinuity velocity :math:`v_{\rm cd}` as the shock velocity.
+        This follows the standard convention in the supernova radio-afterglow literature
+        but is an approximation: the true forward shock outruns the contact discontinuity
+        by a factor that depends on :math:`n` and :math:`s`.  The full two-surface
+        solution will be provided in a future implementation.
     """
-    # Compute the energy per unit mass for derivation of v_t.
-    E_per_M = 2.0 * E_ej / M_ej  # factor of 2 for v^2
 
-    # Compute transition velocity v_t
-    v_t = np.sqrt(E_per_M * ((5 - delta) * (n - 5)) / ((3 - delta) * (n - 3)))
-
-    # Compute normalization constant K
-    K = M_ej * v_t ** (delta - 3) * (1 / (4.0 * np.pi)) * ((3 - delta) * (n - 3)) / (n - delta)
-
-    return v_t, K
-
-
-def normalize_supernova_ejecta(
-    E_ej: "_UnitBearingArrayLike",
-    M_ej: "_UnitBearingArrayLike",
-    n: float = 10,
-    delta: float = 0,
-) -> tuple[u.Quantity, u.Quantity]:
+    radius: Union[np.ndarray, u.Quantity]
     r"""
-    Compute the transition velocity and normalization constant for a Chevalier-style ejecta profile.
-
-    This function computes the transition velocity :math:`v_t` and normalization constant :math:`K` of a
-    broken power-law ejecta density profile as described in
-    :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`.
-    See the notes for a detailed description of the theory.
-
-    Parameters
-    ----------
-    E_ej: astropy.units.Quantity or array-like
-        The total kinetic energy of the ejecta. If units are specified, then they will be taken into
-        account. Otherwise, CGS units are assumed.
-    M_ej: astropy.units.Quantity or array-like
-        The total mass of the ejecta. If units are specified, then they will be taken into
-        account. Otherwise, CGS units are assumed.
-    n: float
-        The outer ejecta density profile power-law index. By default, this is set to ``10``.
-    delta: float, optional
-        The inner ejecta density profile power-law index. By default, this is set to ``0``.
-
-    Returns
-    -------
-    v_t : astropy.units.Quantity
-        The transition velocity between the inner and outer ejecta profiles.
-    K: astropy.units.Quantity
-        The normalization constant of the ejecta density profile.
-
-    Notes
-    -----
-    As described in :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`, the ejecta velocity profile
-    is well described by a broken power-law. During homologous expansion, :math:`r = vt` implies that the density
-    of the ejecta is likewise a broken power-law in velocity space:
-
-    .. math::
-
-        \rho(r,t) = Kt^{-3} \begin{cases}
-            v^{-\delta}, & v < v_t \\
-            v_t^{n-\delta} v^{-n}, & v \geq v_t,
-        \end{cases}
-
-    where :math:`v_t` is the transition velocity between the inner and outer ejecta profiles. The total mass of
-    the ejecta is given by :math:`M_{\rm ej}` and must be conserved:
-
-    .. math::
-
-        M_{\rm ej} = \int_0^{\infty} 4\pi r^2 \rho(r,t) dr = 4\pi K v_t^{3-\delta} \frac{n-\delta}{(3-\delta)(n-3)}.
-
-    Similarly, the total kinetic energy of the ejecta is given by :math:`E_{\rm ej}` and must also be conserved:
-
-    .. math::
-
-        E_{\rm ej} = \int_0^{\infty} \frac{1}{2} 4\pi r^2 \rho(r,t) v^2 dr =
-        2\pi K v_t^{5-\delta} \frac{n-\delta}{(5-\delta)(n-5)}.
-
-    In terms of the energy per unit mass, :math:`E_{\rm ej}/M_{\rm ej}`, these two equations can be combined to
-    solve for the transition velocity:
-
-    .. math::
-
-        v_t^2 = \frac{2(5-\delta)(n-5)}{(3-\delta)(n-3)} \frac{E_{\rm ej}}{M_{\rm ej}}.
-
-    Finally, substituting this back into the mass equation allows us to solve for the normalization constant
-    :math:`K`:
-
-    .. math::
-
-        K = \frac{1}{4\pi} \left(\frac{(3-\delta)(n-3)}{(n-\delta)}\right) \frac{M_{\rm ej}}{v_t^{3-\delta}}.
-
+    Shock contact-discontinuity radius :math:`R(t)` in cm.
     """
-    # Ensure that ``n`` and ``delta`` are valid values for convergence. This requires that delta < 3 and n > 5.
-    if delta >= 3:
-        raise ValueError("The inner ejecta density profile index `delta` must be less than 3 for convergence.")
-    if n <= 5:
-        raise ValueError("The outer ejecta density profile index `n` must be greater than 5 for convergence.")
 
-    # Convert any unit-bearing inputs to CGS for internal calculations
-    E_ej_cgs = ensure_in_units(E_ej, "erg")
-    M_ej_cgs = ensure_in_units(M_ej, "g")
-
-    # Call the optimized internal function for computation
-    v_t_cgs, K_cgs = _normalize_supernova_ejecta(
-        E_ej=E_ej_cgs,
-        M_ej=M_ej_cgs,
-        n=n,
-        delta=delta,
-    )
-
-    # Attach units to the outputs. For v_t, CGS velocity is cm/s. For K, the units are g * cm^(2*delta-3)
-    # * s^(3-delta).
-    v_t = v_t_cgs * (u.cm / u.s)
-    K_units = u.g * u.cm ** (2 * delta - 3) * u.s ** (3 - delta)
-    K = K_cgs * K_units
-
-    return v_t, K
-
-
-def _compute_wind_csm_parameters(
-    mass_loss_rate: "_ArrayLike",
-    wind_velocity: "_ArrayLike",
-) -> "_ArrayLike":
-    """
-    Optimized computation of wind CSM normalization constant in CGS for performance.
-
-    See the public-facing function :func:`compute_wind_csm_parameters` for details.
-
-    Parameters
-    ----------
-    mass_loss_rate: float or array-like
-        The mass-loss rate of the progenitor star in CGS units (g/s).
-    wind_velocity: float or array-like
-        The velocity of the stellar wind in CGS units (cm/s).
-
-    Returns
-    -------
-    rho_0: float or array-like
-        The normalization constant of the wind-like CSM density profile in CGS units (g/cm).
-    """
-    # Compute the normalization constant rho_0
-    rho_0 = mass_loss_rate / (4.0 * np.pi * wind_velocity)
-
-    return rho_0
-
-
-def compute_wind_csm_parameters(
-    mass_loss_rate: "_UnitBearingArrayLike",
-    wind_velocity: "_UnitBearingArrayLike",
-) -> u.Quantity:
+    velocity: Union[np.ndarray, u.Quantity]
     r"""
-    Compute the normalization constant for a wind-like circumstellar medium (CSM) density profile.
-
-    For a steady wind :math:`\dot{M}` with velocity :math:`v_w`, the density profile of the CSM is given by
-
-    .. math::
-
-        \rho_{\rm CSM}(r) = \frac{\dot{M}}{4\pi r^2 v_w} = \rho_0 r^{-2}.
-
-    This function computes the normalization constant :math:`\rho_0` given the mass-loss rate and wind velocity.
-
-    Parameters
-    ----------
-    mass_loss_rate: astropy.units.Quantity or array-like
-        The mass-loss rate of the progenitor star. If units are specified, they will be taken into account.
-        Otherwise, CGS units are assumed (g/s).
-    wind_velocity: astropy.units.Quantity or array-like
-        The velocity of the stellar wind. If units are specified, they will be taken into account.
-        Otherwise, CGS units are assumed (cm/s).
-
-    Returns
-    -------
-    rho_0: astropy.units.Quantity
-        The normalization constant of the wind-like CSM density profile.
+    Shock contact-discontinuity velocity :math:`v_{\rm cd}(t) = \dot{R}(t)` in cm/s.
+    Also used as the shock velocity for the Rankine--Hugoniot post-shock quantities.
     """
-    # Convert inputs to CGS units for internal calculations
-    mdot_cgs = mass_loss_rate.to(u.g / u.s).value
-    v_w_cgs = wind_velocity.to(u.cm / u.s).value
 
-    # Compute the normalization constant rho_0
-    # NOTE: we skip the call to the optimized function here since this is a simple one-liner.
-    rho_0_cgs = mdot_cgs / (4.0 * np.pi * v_w_cgs)
-
-    # Attach units to the output. The units are g/cm.
-    rho_0 = rho_0_cgs * (u.g / u.cm)
-
-    return rho_0
-
-
-def get_broken_power_law_ejecta_kernel_func(
-    E_ej: u.Quantity,
-    M_ej: u.Quantity,
-    n: float = 10,
-    delta: float = 0,
-):
+    post_shock_density: Union[np.ndarray, u.Quantity]
     r"""
-    Generate a callable broken power-law ejecta kernel function ``G(v)`` in CGS units.
-
-    The returned function satisfies
-
-    .. math::
-
-        \rho_{\rm ej}(r,t) = t^{-3} G\!\left(\frac{r}{t}\right),
-
-    with
-
-    .. math::
-
-        G(v) =
-        \begin{cases}
-            K\, v^{-\delta}, & v < v_t \\
-            K\, v_t^{n-\delta} v^{-n}, & v \ge v_t
-        \end{cases}
-
-    where ``v_t`` and ``K`` are fixed by total ejecta mass and energy.
-
-    Parameters
-    ----------
-    E_ej : astropy.units.Quantity
-        Total kinetic energy of the ejecta.
-    M_ej : astropy.units.Quantity
-        Total mass of the ejecta.
-    n : float, optional
-        Outer ejecta density power-law index (must be > 5).
-    delta : float, optional
-        Inner ejecta density power-law index (must be < 3).
-
-    Returns
-    -------
-    G_ej : callable
-        Function ``G(v)`` returning the ejecta kernel in CGS units
-        ``g * s^3 / cm^3`` for velocity ``v`` in ``cm/s``.
+    Immediate post-shock density :math:`\rho_s` in :math:`\mathrm{g\,cm^{-3}}`,
+    from the strong cold-shock Rankine--Hugoniot relation applied at :math:`R(t)`.
     """
-    # --- validation ---
-    if delta >= 3:
-        raise ValueError("Inner ejecta index delta must be < 3.")
-    if n <= 5:
-        raise ValueError("Outer ejecta index n must be > 5.")
-    if n <= delta:
-        raise ValueError("Outer index n must exceed inner index delta.")
 
-    # --- convert to CGS ---
-    E_cgs = E_ej.to(u.erg).value
-    M_cgs = M_ej.to(u.g).value
-
-    # --- compute normalization ---
-    v_t, K_inner = _normalize_supernova_ejecta(
-        E_ej=E_cgs,
-        M_ej=M_cgs,
-        n=n,
-        delta=delta,
-    )
-
-    # Precompute outer normalization factor
-    K_outer = K_inner * v_t ** (n - delta)
-
-    # --- construct kernel ---
-    def _G_ej(v):
-        v = np.asarray(v)
-        G = np.empty_like(v, dtype=float)
-
-        inner = v < v_t
-        outer = ~inner
-
-        G[inner] = K_inner * v[inner] ** (-delta)
-        G[outer] = K_outer * v[outer] ** (-n)
-
-        return G
-
-    return _G_ej
-
-
-def get_wind_csm_density_func(
-    mass_loss_rate: u.Quantity,
-    wind_velocity: u.Quantity,
-):
+    post_shock_pressure: Union[np.ndarray, u.Quantity]
     r"""
-    Generate a callable function for the wind-like CSM density profile in CGS units.
-
-    This function returns a callable that computes the density of a wind-like circumstellar medium (CSM)
-    at a given radius based on the mass-loss rate and wind velocity.
-
-    Parameters
-    ----------
-    mass_loss_rate: astropy.units.Quantity
-        The mass-loss rate of the progenitor star.
-    wind_velocity: astropy.units.Quantity
-        The velocity of the stellar wind.
-
-    Returns
-    -------
-    csm_density_func: callable
-        A function that takes a radius (with units) as input and returns the CSM density at that radius.
+    Immediate post-shock pressure :math:`p_s` in :math:`\mathrm{dyn\,cm^{-2}}`,
+    from the strong cold-shock Rankine--Hugoniot relation applied at :math:`R(t)`.
     """
-    # Compute the normalization constant rho_0 using the provided parameters
-    # compute_wind_csm_parameters returns ṁ/(4πv_w), the "A" coefficient with
-    # units g/cm, such that ρ_csm(r) = A/r² gives g/cm³.
-    rho_0 = compute_wind_csm_parameters(
-        mass_loss_rate=mass_loss_rate,
-        wind_velocity=wind_velocity,
-    ).to_value("g/cm")
 
-    def csm_density_func(radius: float) -> float:
-        """
-        Compute the CSM density at a given radius.
+    post_shock_temperature: Union[np.ndarray, u.Quantity]
+    r"""
+    Immediate post-shock temperature :math:`T_s` in K,
+    from the strong cold-shock Rankine--Hugoniot relation applied at :math:`R(t)`.
+    """
 
-        Parameters
-        ----------
-        radius: astropy.units.Quantity
-            The radius at which to evaluate the CSM density.
-
-        Returns
-        -------
-        rho_csm: astropy.units.Quantity
-            The CSM density at the specified radius.
-        """
-        return rho_0 * radius**-2
-
-    return csm_density_func
+    thermal_energy_density: Union[np.ndarray, u.Quantity]
+    r"""
+    Post-shock thermal energy density
+    :math:`e_{\rm th} = p_s / (\gamma - 1)` in :math:`\mathrm{erg\,cm^{-3}}`.
+    """
 
 
 # ==================================================== #
@@ -538,20 +253,29 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
 
     """
 
+    _STATE_CLASS = ChevalierShockState
+
     # =========================================== #
     # Initialization                              #
     # =========================================== #
-    def __init__(self, **kwargs):
+    def __init__(self, gamma: float = 5.0 / 3.0, mu: float = 0.5, **kwargs):
         """
         Instantiate the :class:`ChevalierSelfSimilarShockEngine`.
 
         Parameters
         ----------
-        kwargs:
-            Additional parameters for initializing the shock engine. Currently, no additional
-            parameters are required.
+        gamma : float, optional
+            Adiabatic index of the shocked gas. Default is :math:`5/3` (monatomic ideal gas).
+        mu : float, optional
+            Mean molecular weight in units of the proton mass used for the post-shock
+            temperature calculation. Default is ``0.5`` (fully ionized hydrogen).
+        **kwargs
+            Additional keyword arguments forwarded to the parent
+            :class:`~triceratops.dynamics.shocks.core.shock_engine.ShockEngine`.
         """
         super().__init__(**kwargs)
+        self._gamma = float(gamma)
+        self._mu = float(mu)
 
     # ============================================================= #
     # Supplementary Numerical Methods                               #
@@ -613,7 +337,7 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         n: float = 10.0,
         s: float = 2.0,
         delta: float = 0.0,
-    ) -> dict[str, u.Quantity]:
+    ) -> ChevalierShockState:
         r"""
         Compute the shock properties at a given time.
 
@@ -693,13 +417,14 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
             time=time, E_ej=E_ej, M_ej=M_ej, K_csm=K_csm, n=n, s=s, delta=delta
         )
 
-        # Attach units to the outputs.
-        shock_properties = {
-            "radius": shock_properties_cgs["radius"] * u.cm,
-            "velocity": shock_properties_cgs["velocity"] * (u.cm / u.s),
-        }
-
-        return shock_properties
+        return ChevalierShockState(
+            radius=shock_properties_cgs.radius * u.cm,
+            velocity=shock_properties_cgs.velocity * (u.cm / u.s),
+            post_shock_density=shock_properties_cgs.post_shock_density * (u.g / u.cm**3),
+            post_shock_pressure=shock_properties_cgs.post_shock_pressure * (u.dyne / u.cm**2),
+            post_shock_temperature=shock_properties_cgs.post_shock_temperature * u.K,
+            thermal_energy_density=shock_properties_cgs.thermal_energy_density * (u.erg / u.cm**3),
+        )
 
     def _compute_shock_properties_cgs(
         self,
@@ -747,7 +472,7 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         """
         # Using the ``_compute_v_t_and_K_from_energetics_cgs`` static method to get v_t and K. We can
         # discard v_t, but K is necessary.
-        v_t, K = _normalize_supernova_ejecta(
+        v_t, K = _normalize_BPL_ejecta(
             E_ej=E_ej,
             M_ej=M_ej,
             n=n,
@@ -767,10 +492,21 @@ class ChevalierSelfSimilarShockEngine(ShockEngine):
         shock_radius = R_0 * time**_lambda
         shock_velocity = _lambda * shock_radius / time
 
-        return {
-            "radius": shock_radius,
-            "velocity": shock_velocity,
-        }
+        # Upstream CSM density at the contact discontinuity.
+        rho_upstream = K_csm * shock_radius ** (-s)
+
+        # Post-shock thermodynamics via the strong cold-shock RH conditions.
+        # v_cd is used as the shock velocity following the SN literature convention.
+        rh = StrongColdShockConditions._solve(shock_velocity, rho_upstream, gamma=self._gamma, mu=self._mu)
+
+        return ChevalierShockState(
+            radius=shock_radius,
+            velocity=shock_velocity,
+            post_shock_density=rh["post_shock_density"],
+            post_shock_pressure=rh["post_shock_pressure"],
+            post_shock_temperature=rh["post_shock_temperature"],
+            thermal_energy_density=rh["post_shock_thermal_energy_density"],
+        )
 
     # =========================================== #
     # UTILITIES                                   #
@@ -913,17 +649,22 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
     # =========================================== #
     # Initialization                              #
     # =========================================== #
-    def __init__(self, **kwargs):
+    def __init__(self, gamma: float = 5.0 / 3.0, mu: float = 0.5, **kwargs):
         """
         Instantiate the :class:`ChevalierSelfSimilarWindShockEngine`.
 
         Parameters
         ----------
-        kwargs:
-            Additional parameters for initializing the shock engine. Currently, no additional
-            parameters are required.
+        gamma : float, optional
+            Adiabatic index of the shocked gas. Forwarded to
+            :class:`ChevalierSelfSimilarShockEngine`. Default is :math:`5/3`.
+        mu : float, optional
+            Mean molecular weight in units of the proton mass. Forwarded to
+            :class:`ChevalierSelfSimilarShockEngine`. Default is ``0.5``.
+        **kwargs
+            Additional keyword arguments forwarded to the parent engine.
         """
-        super().__init__(**kwargs)
+        super().__init__(gamma=gamma, mu=mu, **kwargs)
 
     def compute_shock_properties(
         self,
@@ -934,7 +675,7 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
         v_wind: "_UnitBearingScalarLike" = 1000 * u.km / u.s,
         n: float = 10.0,
         delta: float = 0.0,
-    ) -> dict[str, u.Quantity]:
+    ) -> ChevalierShockState:
         """
         Compute the shock properties at a given time.
 
@@ -1002,13 +743,14 @@ class ChevalierSelfSimilarWindShockEngine(ChevalierSelfSimilarShockEngine):
             time=time, E_ej=E_ej, M_ej=M_ej, M_dot=M_dot, v_wind=v_wind, n=n, delta=delta
         )
 
-        # Attach units to the outputs.
-        shock_properties = {
-            "radius": shock_properties_cgs["radius"] * u.cm,
-            "velocity": shock_properties_cgs["velocity"] * (u.cm / u.s),
-        }
-
-        return shock_properties
+        return ChevalierShockState(
+            radius=shock_properties_cgs.radius * u.cm,
+            velocity=shock_properties_cgs.velocity * (u.cm / u.s),
+            post_shock_density=shock_properties_cgs.post_shock_density * (u.g / u.cm**3),
+            post_shock_pressure=shock_properties_cgs.post_shock_pressure * (u.dyne / u.cm**2),
+            post_shock_temperature=shock_properties_cgs.post_shock_temperature * u.K,
+            thermal_energy_density=shock_properties_cgs.thermal_energy_density * (u.erg / u.cm**3),
+        )
 
     def _compute_shock_properties_cgs(
         self,
