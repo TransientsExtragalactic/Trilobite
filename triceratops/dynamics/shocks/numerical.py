@@ -48,11 +48,14 @@ from astropy import units as u
 from scipy.integrate import quad, solve_ivp
 
 from triceratops.dynamics.shocks.core.rankine_hugoniot import StrongColdShockConditions
+from triceratops.dynamics.shocks.core.relativistic_jump_conditions import _solve_strong_cold_shock_beta
 from triceratops.dynamics.shocks.core.shock_engine import ShockEngine
+from triceratops.physics_utils.constants import c_cgs, k_B_cgs, m_p_cgs
 from triceratops.utils.misc_utils import ensure_in_units
 
 # NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
 _trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
+
 
 if TYPE_CHECKING:
     from triceratops._typing import (
@@ -91,7 +94,7 @@ class RelMomentumConservingShockEngine(ShockEngine, ABC):
 
 
 # ========================================================== #
-# State Classes                                              #
+# Chevalier / Pressure Driven Shock Engines                  #
 # ========================================================== #
 class ThinShellShockState(NamedTuple):
     r"""
@@ -145,9 +148,103 @@ class ThinShellShockState(NamedTuple):
     """
 
 
-# ========================================================== #
-# Chevalier / Pressure Driven Shock Engines                  #
-# ========================================================== #
+class RelThinShellShockState(NamedTuple):
+    r"""
+    Time-dependent state returned by :class:`RelPressureDrivenThinShellShockEngine`.
+
+    The low-level CGS interface returns plain :class:`numpy.ndarray` fields.
+    The public unit-aware interface attaches :class:`astropy.units.Quantity`
+    units to the dimensional fields; dimensionless fields (β, Γ, η) are always
+    plain arrays.
+    """
+
+    # ------------------------------------------------------------------ #
+    # Evolved four-momentum state                                         #
+    # ------------------------------------------------------------------ #
+    radius: Union[np.ndarray, u.Quantity]
+    r"""Shell radius :math:`R_{\rm sh}` in cm."""
+
+    mass: Union[np.ndarray, u.Quantity]
+    r"""Swept baryonic rest mass :math:`M_{\rm sh}` in g."""
+
+    energy: Union[np.ndarray, u.Quantity]
+    r"""Lab-frame total energy :math:`E_{\rm sh}` in erg."""
+
+    momentum: Union[np.ndarray, u.Quantity]
+    r"""Lab-frame radial momentum :math:`\Pi_{\rm sh}` in :math:`\mathrm{g\,cm\,s^{-1}}`."""
+
+    # ------------------------------------------------------------------ #
+    # Derived shell kinematics                                            #
+    # ------------------------------------------------------------------ #
+    beta_sh: np.ndarray
+    r"""Shell velocity :math:`\beta_{\rm sh} = v_{\rm sh}/c` (dimensionless)."""
+
+    Gamma_sh: np.ndarray
+    r"""Shell Lorentz factor :math:`\Gamma_{\rm sh}` (dimensionless)."""
+
+    w_sh: np.ndarray
+    r"""Shell proper velocity :math:`w_{\rm sh} = \Gamma_{\rm sh}\beta_{\rm sh}` (dimensionless)."""
+
+    # ------------------------------------------------------------------ #
+    # Shell-frame relative velocities and Lorentz factors                 #
+    # ------------------------------------------------------------------ #
+    beta_rel_rs: np.ndarray
+    r"""
+    Upstream ejecta speed in the shell (downstream) frame,
+    :math:`\beta_{\rm rel,2}` (dimensionless).
+    """
+
+    Gamma_rel_rs: np.ndarray
+    r"""
+    Lorentz factor of the upstream ejecta in the shell frame,
+    :math:`\Gamma_{\rm rel,2} = \Gamma_{u|d}` at the reverse shock (dimensionless).
+    """
+
+    beta_rel_fs: np.ndarray
+    r"""
+    Upstream CSM speed in the shell (downstream) frame,
+    :math:`\beta_{\rm rel,3}` (dimensionless).
+    """
+
+    Gamma_rel_fs: np.ndarray
+    r"""
+    Lorentz factor of the upstream CSM in the shell frame,
+    :math:`\Gamma_{\rm rel,3} = \Gamma_{u|d}` at the forward shock (dimensionless).
+    """
+
+    # ------------------------------------------------------------------ #
+    # Post-shock pressures                                                #
+    # ------------------------------------------------------------------ #
+    pressure_2: Union[np.ndarray, u.Quantity]
+    r"""
+    Reverse-shock post-shock pressure
+    :math:`P_2 = \rho_{1,\rm sh}c^2(\Gamma_{\rm rel,2}-1)(\hat\gamma\Gamma_{\rm rel,2}+1)`
+    in :math:`\mathrm{dyn\,cm^{-2}}`.
+    """
+
+    pressure_3: Union[np.ndarray, u.Quantity]
+    r"""
+    Forward-shock post-shock pressure
+    :math:`P_3 = \rho_{4,\rm sh}c^2(\Gamma_{\rm rel,3}-1)(\hat\gamma\Gamma_{\rm rel,3}+1)`
+    in :math:`\mathrm{dyn\,cm^{-2}}`.
+    """
+
+    # ------------------------------------------------------------------ #
+    # Energy-loading factors                                              #
+    # ------------------------------------------------------------------ #
+    eta_2: np.ndarray
+    r"""
+    Shell-frame energy per downstream rest-mass at the reverse shock,
+    :math:`\eta_2 = e_2/(\rho_2 c^2) = \Gamma_{\rm rel,2}` (dimensionless).
+    """
+
+    eta_3: np.ndarray
+    r"""
+    Shell-frame energy per downstream rest-mass at the forward shock,
+    :math:`\eta_3 = e_3/(\rho_3 c^2) = \Gamma_{\rm rel,3}` (dimensionless).
+    """
+
+
 class PressureDrivenThinShellShockEngine(ShockEngine):
     r"""
     Pressure-driven thin-shell shock engine for arbitrary ejecta and CSM profiles.
@@ -467,16 +564,550 @@ class PressureDrivenThinShellShockEngine(ShockEngine):
         )
 
 
-class RelPressureDrivenThinShellShockEngine(ShockEngine, ABC):
+class RelPressureDrivenThinShellShockEngine(ShockEngine):
+    r"""
+    Relativistic pressure-driven thin-shell shock engine for arbitrary ejecta and CSM profiles.
+
+    This engine evolves the four-component lab-frame state
+
+    .. math::
+
+        \mathbf{y}(t) = \bigl(R_{\rm sh},\; M_{\rm sh},\; E_{\rm sh},\; \Pi_{\rm sh}\bigr),
+
+    where :math:`M_{\rm sh}` is the swept baryonic rest mass, :math:`E_{\rm sh}` is the
+    lab-frame total energy of the shell, and :math:`\Pi_{\rm sh}` is the lab-frame radial
+    momentum.  The shell velocity follows algebraically from the four-momentum ratio
+
+    .. math::
+
+        \beta_{\rm sh} = \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.
+
+    At each shock face the post-shock pressure and energy-loading coefficient are
+    evaluated from the cold-upstream relativistic Rankine--Hugoniot closure using the
+    Lorentz factor of the upstream fluid in the shell (downstream) frame,
+
+    .. math::
+
+        \Gamma_{\rm rel,i}
+        =
+        \left[
+            1 -
+            \left(
+                \frac{\beta_{u,i} - \beta_{\rm sh}}
+                {1 - \beta_{u,i}\,\beta_{\rm sh}}
+            \right)^{\!2}
+        \right]^{-1/2},
+
+    giving
+
+    .. math::
+
+        P_i = \rho_{u,i}\,c^2\,(\Gamma_{\rm rel,i}-1)\,(\hat\gamma\,\Gamma_{\rm rel,i}+1),
+        \qquad
+        \eta_i = \Gamma_{\rm rel,i}.
+
+    The governing equations of motion are
+
+    .. math::
+
+        \begin{aligned}
+            \frac{dR_{\rm sh}}{dt}
+            &= c\,\beta_{\rm sh},\\[4pt]
+            \frac{dM_{\rm sh}}{dt}
+            &= \dot M_2 + \dot M_3,\\[4pt]
+            \frac{dE_{\rm sh}}{dt}
+            &= \Gamma_{\rm sh}\,c^2\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right),\\[4pt]
+            \frac{d\Pi_{\rm sh}}{dt}
+            &= w_{\rm sh}\,c\!\left(\eta_2\dot M_2 + \eta_3\dot M_3\right)
+               + 4\pi R_{\rm sh}^2\!\left(P_2 - P_3\right),
+        \end{aligned}
+
+    with baryonic rest-mass fluxes
+
+    .. math::
+
+        \dot M_2 = 4\pi R_{\rm sh}^2\,\rho_{1,\rm sh}\,\Gamma_{1,\rm sh}\,c
+                   \left(\beta_{1,\rm sh}-\beta_{\rm sh}\right),
+        \qquad
+        \dot M_3 = 4\pi R_{\rm sh}^2\,\rho_{4,\rm sh}\,\Gamma_{4,\rm sh}\,c
+                   \left(\beta_{\rm sh}-\beta_{4,\rm sh}\right),
+
+    clamped to be non-negative.
+
+    Initial conditions are specified by the intuitive triple
+    :math:`(R_0,\,\beta_0,\,M_0)`.  A cold-shell initialization is assumed:
+
+    .. math::
+
+        E_0 = M_0\,c^2\,\Gamma_0,
+        \qquad
+        \Pi_0 = M_0\,c\,w_0 = M_0\,c\,\Gamma_0\,\beta_0.
+
+    .. hint::
+
+        For a detailed derivation see :ref:`relativistic_pressure_driven_shells`.
+
+    See Also
+    --------
+    :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine` :
+        Non-relativistic analogue.
+    :ref:`relativistic_pressure_driven_shells` : Theory derivation.
     """
-    Relativistic pressure driven thin-shell shock engine.
 
-    .. note::
+    _STATE_CLASS = RelThinShellShockState
 
-        This engine is not yet implemented. It will be added in a future release.
-    """
+    def __init__(
+        self,
+        gamma_1: float = 4.0 / 3.0,
+        gamma_4: float = 4.0 / 3.0,
+        beta_grid: np.ndarray = None,
+        beta_grid_min: float = 1e-10,
+        beta_grid_max: float = 1 - 1e-10,
+        beta_grid_size: int = 1000,
+        **kwargs,
+    ):
+        """
+        Initialize the :class:`RelPressureDrivenThinShellShockEngine`.
 
-    pass
+        Parameters
+        ----------
+        kwargs
+            Passed to :class:`~triceratops.dynamics.shocks.core.shock_engine.ShockEngine`.
+        """
+        # Pass off the kwargs and the adiabatic indices to the parent class. The gammas are stored as
+        # attributes on the parent class since they are needed for the kernel generation.
+        super().__init__(gamma_1=gamma_1, gamma_4=gamma_4, **kwargs)
+
+        # Assign the attributes.
+        self._gamma_ad_1 = float(gamma_1)
+        self._gamma_ad_4 = float(gamma_4)
+
+        # Generate a grid of beta values
+        if beta_grid is not None:
+            self._beta_grid = beta_grid
+        else:
+            self._beta_grid = np.linspace(beta_grid_min, beta_grid_max, beta_grid_size)
+
+        # Do some checks on the beta grid to ensure that it is valid for use generating the
+        # shock properties. The grid must be strictly between -1 and 1, and it must be sorted.
+        if np.any(self._beta_grid < 0) or np.any(self._beta_grid > 1):
+            raise ValueError("The beta grid must be strictly between 0 and 1.")
+
+        # Check that the beta grid is sorted in ascending order.
+        if not np.all(np.diff(self._beta_grid) > 0):
+            raise ValueError("The beta grid must be sorted in ascending order.")
+
+        # Pre-compute the grids.
+        self._beta_2_grid = [_solve_strong_cold_shock_beta(_beta, self._gamma_ad_1) for _beta in self._beta_grid]
+        self._beta_3_grid = [_solve_strong_cold_shock_beta(_beta, self._gamma_ad_4) for _beta in self._beta_grid]
+
+    def generate_evaluation_kernel(
+        self,
+        rho_1: Callable,
+        rho_4: Callable,
+        beta_1: Callable,
+        beta_4: Callable,
+    ) -> Callable:
+        r"""
+        Build the ODE right-hand side for the relativistic pressure-driven thin-shell model.
+
+        Returns a function ``kernel(t, y)`` suitable for
+        :func:`scipy.integrate.solve_ivp`.
+
+        Parameters
+        ----------
+        rho_1 : callable
+            Upstream ejecta comoving rest-mass density :math:`\rho_1(r,\,t)` in CGS
+            (:math:`\mathrm{g\,cm^{-3}}`).
+        rho_4 : callable
+            Upstream CSM comoving rest-mass density :math:`\rho_4(r,\,t)` in CGS.
+        beta_1 : callable
+            Lab-frame ejecta velocity :math:`\beta_1(r,\,t) = v_1/c` (dimensionless).
+        beta_4 : callable
+            Lab-frame CSM velocity :math:`\beta_4(r,\,t) = v_4/c` (dimensionless).
+
+        Returns
+        -------
+        callable
+            ``kernel(t, y) -> dy/dt`` where
+            ``y = [R_sh, M_sh, E_sh, Pi_sh]`` in CGS.
+        """
+        # Load important state variables into the local scope so that
+        # the kernel has access to them.
+        _beta_grid = self._beta_grid
+        _beta_2_grid = self._beta_2_grid
+        _beta_3_grid = self._beta_3_grid
+        _gamma_ad_4 = self._gamma_ad_4
+        _gamma_ad_1 = self._gamma_ad_1
+
+        # Set the minimum shock-frame velocity and density for a side of the
+        # shock to be considered active. Below this threshold, we do not attempt
+        # to reconstruct the downstream state because the jump conditions become
+        # numerically singular and the mass flux should vanish anyway.
+        _MIN_SHOCK_BETA = _beta_grid[0]
+        _MIN_RHO = 0.0
+
+        def _kernel(t, y):
+            # Extract the current state from the input array.
+            R_sh, M_sh, E_sh, Pi_sh = y
+
+            # Using the current shock properties, compute the observer-frame
+            # shock properties.
+            # We protect this to ensure that we do not end up in numerically
+            # ill posed scenarios.
+            SHOCK_BETA = np.clip(Pi_sh * c_cgs / E_sh, 1e-10, 1.0 - 1e-10)
+            SHOCK_GAMMA = 1.0 / np.sqrt(1.0 - SHOCK_BETA**2)
+            SHOCK_PROPER_VELOCITY = SHOCK_GAMMA * SHOCK_BETA
+
+            # Evaluate the upstream fluid properties to compute the
+            # properties for the jump conditions. The density is the **proper**
+            # density and the velocity is the **lab-frame** velocity.
+            rho_1_proper, rho_4_proper = rho_1(R_sh, t), rho_4(R_sh, t)
+            beta_1_lab, beta_4_lab = beta_1(R_sh, t), beta_4(R_sh, t)
+
+            gamma_1_lab = 1.0 / np.sqrt(1.0 - beta_1_lab**2)
+            gamma_4_lab = 1.0 / np.sqrt(1.0 - beta_4_lab**2)
+
+            # Convert the gammas and betas into the correct shock
+            # frame so that they can be used in the jump conditions.
+            beta_1_shock_frame = np.abs((beta_1_lab - SHOCK_BETA) / (1.0 - beta_1_lab * SHOCK_BETA))
+            beta_4_shock_frame = np.abs((SHOCK_BETA - beta_4_lab) / (1.0 - SHOCK_BETA * beta_4_lab))
+
+            gamma_1_shock_frame = 1.0 / np.sqrt(1.0 - beta_1_shock_frame**2)
+            gamma_4_shock_frame = 1.0 / np.sqrt(1.0 - beta_4_shock_frame**2)
+
+            # Determine whether the reverse and forward shocks are active.
+            # If a side is inactive, we do not reconstruct its downstream state;
+            # this avoids singular compression ratios and eta * dM = inf * 0
+            # failures in the energy and momentum equations.
+            reverse_shock_active = (
+                (rho_1_proper > _MIN_RHO) and (beta_1_lab > SHOCK_BETA) and (beta_1_shock_frame > _MIN_SHOCK_BETA)
+            )
+
+            forward_shock_active = (
+                (rho_4_proper > _MIN_RHO) and (SHOCK_BETA > beta_4_lab) and (beta_4_shock_frame > _MIN_SHOCK_BETA)
+            )
+
+            # Initialize the reverse-shock contribution. These neutral values are
+            # used when there is no physical reverse shock / no ejecta inflow.
+            P2 = 0.0
+            eta_2 = 1.0
+            dM2_dt = 0.0
+
+            if reverse_shock_active:
+                # Using the interpolator, compute the beta_2 value for the reverse shock.
+                beta_2_shock_frame = np.interp(
+                    beta_1_shock_frame,
+                    _beta_grid,
+                    _beta_2_grid,
+                )
+
+                # Protect the physical branch. The downstream shock-frame speed must
+                # satisfy 0 < beta_2 < beta_1 for a compressive shock.
+                beta_2_shock_frame = np.clip(
+                    beta_2_shock_frame,
+                    _beta_grid[0],
+                    np.nextafter(beta_1_shock_frame, 0.0),
+                )
+
+                gamma_2_shock_frame = 1.0 / np.sqrt(1.0 - beta_2_shock_frame**2)
+
+                # Apply the shock-frame conditions to determine the compression ratio:
+                # rho_2 / rho_1 = (Gamma_1s * beta_1s) / (Gamma_2s * beta_2s)
+                compression_ratio_2 = (gamma_1_shock_frame * beta_1_shock_frame) / (
+                    gamma_2_shock_frame * beta_2_shock_frame
+                )
+
+                rho_2_proper = compression_ratio_2 * rho_1_proper
+
+                # Compute the pressure in the post-shock ejecta region from the
+                # shock-frame momentum jump.
+                P2 = (
+                    rho_1_proper
+                    * c_cgs**2
+                    * gamma_1_shock_frame**2
+                    * beta_1_shock_frame**2
+                    * (1.0 - beta_2_shock_frame / beta_1_shock_frame)
+                )
+
+                # Compute the shell-frame energy loading coefficient. This is the
+                # downstream total energy per unit downstream rest-mass energy.
+                eta_2 = 1.0 + P2 / ((_gamma_ad_1 - 1.0) * rho_2_proper * c_cgs**2)
+
+                # Compute the baryonic rest-mass flux through the reverse shock.
+                dM2_dt = 4.0 * np.pi * R_sh**2 * rho_1_proper * gamma_1_lab * c_cgs * (beta_1_lab - SHOCK_BETA)
+
+            # Initialize the forward-shock contribution. These neutral values are
+            # used when there is no physical forward shock / no CSM inflow.
+            P3 = 0.0
+            eta_3 = 1.0
+            dM3_dt = 0.0
+
+            if forward_shock_active:
+                # Using the interpolator, compute the beta_3 value for the forward shock.
+                beta_3_shock_frame = np.interp(
+                    beta_4_shock_frame,
+                    _beta_grid,
+                    _beta_3_grid,
+                )
+
+                # Protect the physical branch. The downstream shock-frame speed must
+                # satisfy 0 < beta_3 < beta_4 for a compressive shock.
+                beta_3_shock_frame = np.clip(
+                    beta_3_shock_frame,
+                    _beta_grid[0],
+                    np.nextafter(beta_4_shock_frame, 0.0),
+                )
+
+                gamma_3_shock_frame = 1.0 / np.sqrt(1.0 - beta_3_shock_frame**2)
+
+                # Apply the shock-frame conditions to determine the compression ratio:
+                # rho_3 / rho_4 = (Gamma_4s * beta_4s) / (Gamma_3s * beta_3s)
+                compression_ratio_3 = (gamma_4_shock_frame * beta_4_shock_frame) / (
+                    gamma_3_shock_frame * beta_3_shock_frame
+                )
+
+                rho_3_proper = compression_ratio_3 * rho_4_proper
+
+                # Compute the pressure in the post-shock CSM region from the
+                # shock-frame momentum jump.
+                P3 = (
+                    rho_4_proper
+                    * c_cgs**2
+                    * gamma_4_shock_frame**2
+                    * beta_4_shock_frame**2
+                    * (1.0 - beta_3_shock_frame / beta_4_shock_frame)
+                )
+
+                # Compute the shell-frame energy loading coefficient. This is the
+                # downstream total energy per unit downstream rest-mass energy.
+                eta_3 = 1.0 + P3 / ((_gamma_ad_4 - 1.0) * rho_3_proper * c_cgs**2)
+
+                # Compute the baryonic rest-mass flux through the forward shock.
+                dM3_dt = 4.0 * np.pi * R_sh**2 * rho_4_proper * gamma_4_lab * c_cgs * (SHOCK_BETA - beta_4_lab)
+
+            # Clamp the mass-loading rates for safety. In normal operation the
+            # active-shock guards above should already enforce non-negative fluxes.
+            dM2_dt = np.maximum(dM2_dt, 0.0)
+            dM3_dt = np.maximum(dM3_dt, 0.0)
+
+            # Shell-frame energy loading rate.
+            E_prime_dot = c_cgs**2 * (eta_2 * dM2_dt + eta_3 * dM3_dt)
+
+            # Equations of motion.
+            dR_dt = c_cgs * SHOCK_BETA
+            dM_dt = dM2_dt + dM3_dt
+            dE_dt = SHOCK_GAMMA * E_prime_dot
+            dPi_dt = SHOCK_PROPER_VELOCITY * c_cgs * (eta_2 * dM2_dt + eta_3 * dM3_dt) + 4.0 * np.pi * R_sh**2 * (
+                P2 - P3
+            )
+
+            return np.array([dR_dt, dM_dt, dE_dt, dPi_dt])
+
+        return _kernel
+
+    def compute_shock_properties(
+        self,
+        time: "_UnitBearingArrayLike",
+        rho_1: Callable,
+        rho_4: Callable,
+        beta_1: Callable,
+        beta_4: Callable,
+        R_0: "_UnitBearingScalarLike" = 1e11 * u.cm,
+        beta_0: float = 0.1,
+        M_0: "_UnitBearingScalarLike" = 1e28 * u.g,
+        t_0: "_UnitBearingScalarLike" = 1.0 * u.s,
+        gamma: float = 4.0 / 3.0,
+        **kwargs,
+    ) -> RelThinShellShockState:
+        r"""
+        Compute the relativistic shock properties at the given times.
+
+        Parameters
+        ----------
+        time : ~astropy.units.Quantity or array-like
+            Times at which to evaluate the solution. Unit-bearing inputs are
+            converted to seconds; bare floats are assumed to be in seconds.
+            Must be sorted and satisfy ``time >= t_0``.
+        rho_1 : callable
+            Upstream ejecta comoving rest-mass density :math:`\rho_1(r,\,t)` in CGS.
+        rho_4 : callable
+            Upstream CSM comoving rest-mass density :math:`\rho_4(r,\,t)` in CGS.
+        beta_1 : callable
+            Lab-frame ejecta velocity :math:`\beta_1(r,\,t)` (dimensionless).
+        beta_4 : callable
+            Lab-frame CSM velocity :math:`\beta_4(r,\,t)` (dimensionless).
+        R_0 : ~astropy.units.Quantity or float
+            Initial shell radius. Default ``1e11 cm``.
+        beta_0 : float
+            Initial shell speed :math:`\beta_0 = v_0/c`. Default ``0.1``.
+        M_0 : ~astropy.units.Quantity or float
+            Initial swept baryonic rest mass. Default ``1e28 g``.
+        t_0 : ~astropy.units.Quantity or float
+            Initial time. Default ``1.0 s``.
+        gamma : float, optional
+            Adiabatic index :math:`\hat\gamma`. Default ``4/3``.
+        **kwargs
+            Forwarded to :func:`scipy.integrate.solve_ivp`.
+            ``method`` defaults to ``'Radau'``; ``rtol`` defaults to ``1e-10``.
+
+        Returns
+        -------
+        ~triceratops.dynamics.shocks.numerical.RelThinShellShockState
+            Named tuple with unit-bearing fields.
+        """
+        if isinstance(time, u.Quantity):
+            time = time.to(u.s).value
+        if isinstance(R_0, u.Quantity):
+            R_0 = R_0.to(u.cm).value
+        if isinstance(M_0, u.Quantity):
+            M_0 = M_0.to(u.g).value
+        if isinstance(t_0, u.Quantity):
+            t_0 = t_0.to(u.s).value
+
+        cgs = self._compute_shock_properties_cgs(
+            time=time,
+            rho_1=rho_1,
+            rho_4=rho_4,
+            beta_1=beta_1,
+            beta_4=beta_4,
+            R_0=float(R_0),
+            beta_0=float(beta_0),
+            M_0=float(M_0),
+            t_0=float(t_0),
+            **kwargs,
+        )
+
+        return RelThinShellShockState(
+            radius=cgs.radius * u.cm,
+            mass=cgs.mass * u.g,
+            energy=cgs.energy * u.erg,
+            momentum=cgs.momentum * (u.g * u.cm / u.s),
+            beta_sh=cgs.beta_sh,
+            Gamma_sh=cgs.Gamma_sh,
+            w_sh=cgs.w_sh,
+            beta_rel_rs=cgs.beta_rel_rs,
+            Gamma_rel_rs=cgs.Gamma_rel_rs,
+            beta_rel_fs=cgs.beta_rel_fs,
+            Gamma_rel_fs=cgs.Gamma_rel_fs,
+            pressure_2=cgs.pressure_2 * (u.dyn / u.cm**2),
+            pressure_3=cgs.pressure_3 * (u.dyn / u.cm**2),
+            eta_2=cgs.eta_2,
+            eta_3=cgs.eta_3,
+        )
+
+    def _compute_shock_properties_cgs(
+        self,
+        time: "_ArrayLike",
+        rho_1: Callable,
+        rho_4: Callable,
+        beta_1: Callable,
+        beta_4: Callable,
+        R_0: float = 1e11,
+        beta_0: float = 0.1,
+        M_0: float = 1e28,
+        t_0: float = 1.0,
+        **kwargs,
+    ) -> RelThinShellShockState:
+        r"""
+        Integrate the relativistic pressure-driven thin-shell ODEs in CGS units.
+
+        Parameters
+        ----------
+        time : array-like
+            Evaluation times in seconds.
+        rho_1, rho_4 : callable
+            Upstream density functions in CGS.
+        beta_1, beta_4 : callable
+            Upstream dimensionless velocity functions.
+        R_0 : float
+            Initial shell radius in cm.
+        beta_0 : float
+            Initial shell speed :math:`\beta_0 = v_0/c`.
+        M_0 : float
+            Initial swept baryonic rest mass in g.
+        t_0 : float
+            Initial time in seconds.
+        gamma : float
+            Adiabatic index :math:`\hat\gamma`.
+        **kwargs
+            Forwarded to :func:`scipy.integrate.solve_ivp`.
+
+        Returns
+        -------
+        ~triceratops.dynamics.shocks.numerical.RelThinShellShockState
+            CGS-valued named tuple.
+        """
+        time = np.atleast_1d(np.asarray(time, dtype=float))
+
+        # Cold-shell initial four-momentum: E = M c² Γ₀, Π = M c w₀.
+        Gamma_0 = 1.0 / np.sqrt(1.0 - beta_0**2)
+        E_0 = M_0 * c_cgs**2 * Gamma_0
+        Pi_0 = M_0 * c_cgs * Gamma_0 * beta_0
+
+        kernel = self.generate_evaluation_kernel(rho_1=rho_1, rho_4=rho_4, beta_1=beta_1, beta_4=beta_4)
+
+        y0 = np.array([R_0, M_0, E_0, Pi_0])
+        t_span = (t_0, float(np.amax(time)))
+
+        solver_kwargs = dict(kwargs)
+        rtol = solver_kwargs.pop("rtol", 1e-10)
+        method = solver_kwargs.pop("method", "Radau")
+
+        sol = solve_ivp(
+            fun=kernel,
+            t_span=t_span,
+            y0=y0,
+            t_eval=time,
+            rtol=rtol,
+            method=method,
+            **solver_kwargs,
+        )
+
+        if sol.status < 0:
+            raise RuntimeError(f"ODE solver failed to integrate the relativistic thin-shell equations:\n{sol.message}")
+
+        R_sh, M_sh, E_sh, Pi_sh = sol.y
+
+        # Derived shell kinematics.
+        beta_sh = np.clip(Pi_sh * c_cgs / E_sh, -(1.0 - 1e-10), 1.0 - 1e-10)
+        Gamma_sh = 1.0 / np.sqrt(1.0 - beta_sh**2)
+        w_sh = Gamma_sh * beta_sh
+
+        # Post-processed shock diagnostics at each output time.
+        n_steps = len(time)
+        rho1_arr = np.array([float(rho_1(R_sh[i], time[i])) for i in range(n_steps)])
+        rho4_arr = np.array([float(rho_4(R_sh[i], time[i])) for i in range(n_steps)])
+        b1_arr = np.array([float(beta_1(R_sh[i], time[i])) for i in range(n_steps)])
+        b4_arr = np.array([float(beta_4(R_sh[i], time[i])) for i in range(n_steps)])
+
+        denom_rs = 1.0 - b1_arr * beta_sh
+        denom_fs = 1.0 - beta_sh * b4_arr
+        beta_rel_rs = np.abs((b1_arr - beta_sh) / denom_rs)
+        beta_rel_fs = np.abs((beta_sh - b4_arr) / denom_fs)
+        Gamma_rel_rs = 1.0 / np.sqrt(1.0 - beta_rel_rs**2)
+        Gamma_rel_fs = 1.0 / np.sqrt(1.0 - beta_rel_fs**2)
+
+        pressure_2 = rho1_arr * c_cgs**2 * (Gamma_rel_rs - 1.0) * (self._gamma_ad_1 * Gamma_rel_rs + 1.0)
+        pressure_3 = rho4_arr * c_cgs**2 * (Gamma_rel_fs - 1.0) * (self._gamma_ad_4 * Gamma_rel_fs + 1.0)
+
+        return RelThinShellShockState(
+            radius=R_sh,
+            mass=M_sh,
+            energy=E_sh,
+            momentum=Pi_sh,
+            beta_sh=beta_sh,
+            Gamma_sh=Gamma_sh,
+            w_sh=w_sh,
+            beta_rel_rs=beta_rel_rs,
+            Gamma_rel_rs=Gamma_rel_rs,
+            beta_rel_fs=beta_rel_fs,
+            Gamma_rel_fs=Gamma_rel_fs,
+            pressure_2=pressure_2,
+            pressure_3=pressure_3,
+            eta_2=Gamma_rel_rs,
+            eta_3=Gamma_rel_fs,
+        )
 
 
 # =========================================================== #
@@ -487,14 +1118,22 @@ class RelPressureDrivenThinShellShockEngine(ShockEngine, ABC):
 # a minimal two-shock structure while remaining inexpensive
 # enough for parameter studies and inference workflows.
 
+# Fraction of M1_total at which the reverse shock is considered to have crossed all ejecta.
+# At M2 >= (1 - _EJECTA_MASS_TOL) * M1_total the RS is treated as fully traversed.
+_EJECTA_MASS_TOL = 1e-4
+
 
 class MechanicalShockState(NamedTuple):
     r"""
     Time-dependent state returned by :class:`MechanicalShockEngine`.
 
-    The low-level CGS interface returns plain :class:`numpy.ndarray` fields in
-    CGS units. The public unit-aware interface returns the same state structure
-    with dimensional fields converted to :class:`astropy.units.Quantity`.
+    The state separates three conceptually distinct groups of quantities:
+
+    1. The evolved dynamical variables integrated by the ODE solver.
+    2. Region-averaged thermodynamic quantities derived from the evolved
+       masses, energies, and effective volumes.
+    3. Instantaneous shock-front jump diagnostics derived from the current
+       Rankine--Hugoniot shock conditions.
 
     Region 2 denotes shocked ejecta, bounded externally by the contact
     discontinuity and internally by the reverse shock. Region 3 denotes shocked
@@ -502,200 +1141,249 @@ class MechanicalShockState(NamedTuple):
     forward shock.
     """
 
+    # ------------------------------------------------------------------ #
+    # Evolved dynamical state                                             #
+    # ------------------------------------------------------------------ #
     radius: np.ndarray | u.Quantity
     r"""
     Contact-discontinuity radius :math:`R_{\rm cd}` in cm.
-
-    This is the radius of the surface separating shocked ejecta from shocked
-    CSM.
     """
 
     velocity: np.ndarray | u.Quantity
     r"""
     Contact-discontinuity velocity :math:`v_{\rm cd}` in cm/s.
-
-    This is the velocity of the contact discontinuity and therefore the bulk
-    velocity assigned to the volume-averaged shocked region.
     """
 
     mass_2: np.ndarray | u.Quantity
     r"""
     Shocked ejecta mass :math:`M_2` in g.
-
-    This is the accumulated mass swept into Region 2 by the reverse shock.
     """
 
     mass_3: np.ndarray | u.Quantity
     r"""
     Shocked CSM mass :math:`M_3` in g.
-
-    This is the accumulated mass swept into Region 3 by the forward shock.
     """
 
     energy_2: np.ndarray | u.Quantity
     r"""
     Internal energy of the shocked ejecta, :math:`U_2`, in erg.
-
-    This is the volume-integrated thermal/internal energy assigned to Region 2.
-    It includes shock heating, adiabatic work, and any configured radiative loss
-    term.
     """
 
     energy_3: np.ndarray | u.Quantity
     r"""
     Internal energy of the shocked CSM, :math:`U_3`, in erg.
-
-    This is the volume-integrated thermal/internal energy assigned to Region 3.
-    It includes shock heating, adiabatic work, and any configured radiative loss
-    term.
     """
 
     width_2: np.ndarray | u.Quantity
     r"""
-    Effective shocked-ejecta width :math:`\Delta_2` in cm.
-
-    This width is defined by
-
-    .. math::
-
-        \Delta_2 = R_{\rm cd} - R_{\rm rs},
-
-    and sets the approximate Region 2 volume through
-
-    .. math::
-
-        V_2 \simeq 4\pi R_{\rm cd}^2 \Delta_2.
+    Effective shocked-ejecta width :math:`\Delta_2 = R_{\rm cd}-R_{\rm rs}` in cm.
     """
 
     width_3: np.ndarray | u.Quantity
     r"""
-    Effective shocked-CSM width :math:`\Delta_3` in cm.
-
-    This width is defined by
-
-    .. math::
-
-        \Delta_3 = R_{\rm fs} - R_{\rm cd},
-
-    and sets the approximate Region 3 volume through
-
-    .. math::
-
-        V_3 \simeq 4\pi R_{\rm cd}^2 \Delta_3.
+    Effective shocked-CSM width :math:`\Delta_3 = R_{\rm fs}-R_{\rm cd}` in cm.
     """
 
-    pressure_2: np.ndarray | u.Quantity
-    r"""
-    Volume-averaged shocked-ejecta pressure :math:`P_2` in dyn/cm².
-
-    This diagnostic is computed from the Region 2 internal energy and effective
-    volume using the adopted ideal-gas closure.
-    """
-
-    pressure_3: np.ndarray | u.Quantity
-    r"""
-    Volume-averaged shocked-CSM pressure :math:`P_3` in dyn/cm².
-
-    This diagnostic is computed from the Region 3 internal energy and effective
-    volume using the adopted ideal-gas closure.
-    """
-
+    # ------------------------------------------------------------------ #
+    # Shock geometry and kinematics                                       #
+    # ------------------------------------------------------------------ #
     radius_rs: np.ndarray | u.Quantity
     r"""
-    Reverse-shock radius :math:`R_{\rm rs}` in cm.
-
-    This derived diagnostic is computed from
-
-    .. math::
-
-        R_{\rm rs} = R_{\rm cd} - \Delta_2.
+    Reverse-shock radius :math:`R_{\rm rs} = R_{\rm cd}-\Delta_2` in cm.
     """
 
     radius_fs: np.ndarray | u.Quantity
     r"""
-    Forward-shock radius :math:`R_{\rm fs}` in cm.
-
-    This derived diagnostic is computed from
-
-    .. math::
-
-        R_{\rm fs} = R_{\rm cd} + \Delta_3.
+    Forward-shock radius :math:`R_{\rm fs} = R_{\rm cd}+\Delta_3` in cm.
     """
 
     velocity_rs: np.ndarray | u.Quantity
     r"""
     Reverse-shock speed :math:`D_{\rm rs}` in cm/s.
-
-    With the current sound-speed width closure, this diagnostic is computed as
-
-    .. math::
-
-        D_{\rm rs} = v_{\rm cd} - c_{s,2}.
     """
 
     velocity_fs: np.ndarray | u.Quantity
     r"""
     Forward-shock speed :math:`D_{\rm fs}` in cm/s.
+    """
 
-    With the current sound-speed width closure, this diagnostic is computed as
+    # ------------------------------------------------------------------ #
+    # Region-averaged thermodynamics                                     #
+    # ------------------------------------------------------------------ #
+    volume_2: np.ndarray | u.Quantity
+    r"""
+    Effective shocked-ejecta volume :math:`V_2 \simeq 4\pi R_{\rm cd}^2\Delta_2`
+    in cm³.
+    """
+
+    volume_3: np.ndarray | u.Quantity
+    r"""
+    Effective shocked-CSM volume :math:`V_3 \simeq 4\pi R_{\rm cd}^2\Delta_3`
+    in cm³.
+    """
+
+    density_2: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-ejecta density :math:`\bar{\rho}_2 = M_2/V_2`
+    in g/cm³.
+    """
+
+    density_3: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-CSM density :math:`\bar{\rho}_3 = M_3/V_3`
+    in g/cm³.
+    """
+
+    pressure_2: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-ejecta pressure
+    :math:`P_2 = (\gamma_2-1)U_2/V_2` in dyn/cm².
+    """
+
+    pressure_3: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-CSM pressure
+    :math:`P_3 = (\gamma_3-1)U_3/V_3` in dyn/cm².
+    """
+
+    temperature_2: np.ndarray | u.Quantity
+    r"""
+    Volume-averaged shocked-ejecta temperature
 
     .. math::
 
-        D_{\rm fs} = v_{\rm cd} + c_{s,3}.
+        T_2 =
+        \frac{\mu_2 m_p}{k_B}
+        \frac{P_2}{\bar{\rho}_2}
+        =
+        \frac{\mu_2 m_p}{k_B}
+        (\gamma_2-1)\frac{U_2}{M_2}.
+
+    Returned in K.
     """
 
-    post_shock_density_fs: np.ndarray | u.Quantity
+    temperature_3: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock density at the forward shock :math:`\rho_{s,3}` in
-    :math:`\mathrm{g\,cm^{-3}}`, from the strong cold-shock Rankine--Hugoniot
-    relation applied to the upstream CSM density :math:`\rho_4(R_{\rm fs},\,t)`.
+    Volume-averaged shocked-CSM temperature
+
+    .. math::
+
+        T_3 =
+        \frac{\mu_3 m_p}{k_B}
+        \frac{P_3}{\bar{\rho}_3}
+        =
+        \frac{\mu_3 m_p}{k_B}
+        (\gamma_3-1)\frac{U_3}{M_3}.
+
+    Returned in K.
     """
 
-    post_shock_pressure_fs: np.ndarray | u.Quantity
+    thermal_energy_density_2: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock pressure at the forward shock :math:`p_{s,3}` in
-    :math:`\mathrm{dyn\,cm^{-2}}`, from the strong cold-shock Rankine--Hugoniot
-    relation.
+    Volume-averaged shocked-ejecta thermal energy density
+    :math:`e_2 = U_2/V_2` in erg/cm³.
     """
 
-    post_shock_temperature_fs: np.ndarray | u.Quantity
+    thermal_energy_density_3: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock temperature at the forward shock :math:`T_{s,3}` in K,
-    from the ideal-gas relation.
+    Volume-averaged shocked-CSM thermal energy density
+    :math:`e_3 = U_3/V_3` in erg/cm³.
     """
 
-    thermal_energy_density_fs: np.ndarray | u.Quantity
+    sound_speed_2: np.ndarray | u.Quantity
     r"""
-    Post-shock thermal energy density at the forward shock
-    :math:`e_{\rm th,3} = p_{s,3} / (\gamma_3 - 1)` in
-    :math:`\mathrm{erg\,cm^{-3}}`.
+    Volume-averaged shocked-ejecta sound speed
+
+    .. math::
+
+        c_{s,2} =
+        \sqrt{\gamma_2 P_2/\bar{\rho}_2}
+        =
+        \sqrt{\gamma_2(\gamma_2-1)U_2/M_2}.
+
+    Returned in cm/s.
     """
 
-    post_shock_density_rs: np.ndarray | u.Quantity
+    sound_speed_3: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock density at the reverse shock :math:`\rho_{s,2}` in
-    :math:`\mathrm{g\,cm^{-3}}`, from the strong cold-shock Rankine--Hugoniot
-    relation applied to the upstream ejecta density :math:`\rho_1(R_{\rm rs},\,t)`.
+    Volume-averaged shocked-CSM sound speed
+
+    .. math::
+
+        c_{s,3} =
+        \sqrt{\gamma_3 P_3/\bar{\rho}_3}
+        =
+        \sqrt{\gamma_3(\gamma_3-1)U_3/M_3}.
+
+    Returned in cm/s.
     """
 
-    post_shock_pressure_rs: np.ndarray | u.Quantity
+    # ------------------------------------------------------------------ #
+    # Instantaneous reverse-shock jump diagnostics                        #
+    # ------------------------------------------------------------------ #
+    jump_density_rs: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock pressure at the reverse shock :math:`p_{s,2}` in
-    :math:`\mathrm{dyn\,cm^{-2}}`, from the strong cold-shock Rankine--Hugoniot
-    relation.
+    Immediate post-shock density at the reverse shock in g/cm³.
+
+    This is an instantaneous Rankine--Hugoniot jump diagnostic, not the
+    volume-averaged density of Region 2.
     """
 
-    post_shock_temperature_rs: np.ndarray | u.Quantity
+    jump_pressure_rs: np.ndarray | u.Quantity
     r"""
-    Immediate post-shock temperature at the reverse shock :math:`T_{s,2}` in K,
-    from the ideal-gas relation.
+    Immediate post-shock pressure at the reverse shock in dyn/cm².
+
+    This is an instantaneous Rankine--Hugoniot jump diagnostic, not the
+    volume-averaged pressure of Region 2.
     """
 
-    thermal_energy_density_rs: np.ndarray | u.Quantity
+    jump_temperature_rs: np.ndarray | u.Quantity
     r"""
-    Post-shock thermal energy density at the reverse shock
-    :math:`e_{\rm th,2} = p_{s,2} / (\gamma_2 - 1)` in
-    :math:`\mathrm{erg\,cm^{-3}}`.
+    Immediate post-shock temperature at the reverse shock in K.
+
+    This is an instantaneous shock-front diagnostic. It should be interpreted as
+    the injection temperature of newly shocked ejecta, not the evolved Region-2
+    temperature.
+    """
+
+    jump_thermal_energy_density_rs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock thermal energy density at the reverse shock in
+    erg/cm³.
+    """
+
+    # ------------------------------------------------------------------ #
+    # Instantaneous forward-shock jump diagnostics                        #
+    # ------------------------------------------------------------------ #
+    jump_density_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock density at the forward shock in g/cm³.
+
+    This is an instantaneous Rankine--Hugoniot jump diagnostic, not the
+    volume-averaged density of Region 3.
+    """
+
+    jump_pressure_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock pressure at the forward shock in dyn/cm².
+
+    This is an instantaneous Rankine--Hugoniot jump diagnostic, not the
+    volume-averaged pressure of Region 3.
+    """
+
+    jump_temperature_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock temperature at the forward shock in K.
+
+    This is an instantaneous shock-front diagnostic. It should be interpreted as
+    the injection temperature of newly shocked CSM, not the evolved Region-3
+    temperature.
+    """
+
+    jump_thermal_energy_density_fs: np.ndarray | u.Quantity
+    r"""
+    Immediate post-shock thermal energy density at the forward shock in
+    erg/cm³.
     """
 
 
@@ -727,9 +1415,10 @@ class MechanicalShockEngine(ShockEngine):
         \dot{\Delta}_i  &= c_{s,i},
 
     with layer-averaged pressures :math:`P_i = (\gamma_i-1)U_i/V_i`
-    (:math:`V_i = 4\pi R_{\rm cd}^2 \Delta_i`), sound-speed width closure
-    :math:`c_{s,i} = \sqrt{\gamma_i(\gamma_i-1)U_i/M_i}`, shock speeds
-    :math:`D_{\rm rs} = v_{\rm cd} - c_{s,2}` and :math:`D_{\rm fs} = v_{\rm cd} + c_{s,3}`,
+    (:math:`V_i = 4\pi R_{\rm cd}^2 \Delta_i`), forward-shock width closure
+    :math:`c_{s,3} = \sqrt{\gamma_3(\gamma_3-1)U_3/M_3}`, reverse-shock width closure
+    :math:`\dot{\Delta}_2 = (u_1(R_{\rm rs},t) - v_{\rm cd})/(\chi_2-1)`, shock speeds
+    :math:`D_{\rm rs} = v_{\rm cd} - \dot{\Delta}_2` and :math:`D_{\rm fs} = v_{\rm cd} + c_{s,3}`,
     Rankine--Hugoniot shock heating
 
     .. math::
@@ -860,25 +1549,33 @@ class MechanicalShockEngine(ShockEngine):
         Naively setting :math:`v_{{\rm rel},i,0}` from the shock speeds and then
         computing internal energies from those speeds produces a sound speed that
         is inconsistent with the assumed shock speed, generating a sharp transient
-        at the first ODE step.  To avoid this, the width closure
-        :math:`D_{{\rm rs}} = v_{{\rm cd}} - c_{s,2}` (and analogously for the
-        forward shock) is substituted into the definition of the shock-frame
-        relative velocity:
+        at the first ODE step.  To avoid this, each closure is substituted into
+        the shock-frame relative velocity definition.
+
+        For the reverse shock the velocity-ratio closure
+        :math:`\dot{\Delta}_2 = (u_1 - v_{\rm cd})/(\chi_2-1)` gives
+        :math:`D_{\rm rs} = v_{\rm cd} - \dot{\Delta}_2`, so:
 
         .. math::
 
             v_{{\rm rel},2,0}
-            = \frac{u_1(R_{{\rm rs},0},\,t_0) - v_{{\rm cd},0}}{1 - \beta_2},
-            \qquad
+            = u_1(R_{{\rm rs},0},\,t_0) - D_{{\rm rs},0}
+            = \frac{\chi_2}{\chi_2 - 1}\bigl(u_1(R_{{\rm rs},0},\,t_0) - v_{{\rm cd},0}\bigr).
+
+        For the forward shock the sound-speed closure
+        :math:`D_{{\rm fs}} = v_{{\rm cd}} + c_{s,3}` is substituted into the
+        definition of the shock-frame relative velocity:
+
+        .. math::
+
             v_{{\rm rel},3,0}
             = \frac{v_{{\rm cd},0} - u_4(R_{{\rm fs},0},\,t_0)}{1 - \beta_3},
 
         where :math:`\chi_i = (\gamma_i+1)/(\gamma_i-1)` and
-        :math:`\beta_i = \sqrt{\gamma_i(\chi_i-1)/\chi_i^2}` is the ratio of
+        :math:`\beta_3 = \sqrt{\gamma_3(\chi_3-1)/\chi_3^2}` is the ratio of
         the post-shock sound speed to the shock-frame upstream velocity in the
         strong-shock limit.  The resulting :math:`v_{{\rm rel},i,0}` are
-        self-consistent with the layer sound speeds implied by the initial
-        internal energies computed below.
+        self-consistent with each layer's width closure.
 
         The Rankine--Hugoniot jump conditions give the specific internal energy
         deposited by a strong shock:
@@ -1003,12 +1700,13 @@ class MechanicalShockEngine(ShockEngine):
         )
 
         # --- self-consistent shock-frame relative velocities ---
-        # Closure: D_rs = v_cd - c_s2, c_s2 = beta * v_rel_2.
-        # Substituting into v_rel_2 = u_1(R_rs) - D_rs gives the closed form below.
-        beta_2 = np.sqrt(gamma_2 * (chi_2 - 1) / chi_2**2)
+        # RS closure: dDelta2/dt = (u1 - v_cd) / (chi_2 - 1), D_rs = v_cd - dDelta2/dt.
+        # Substituting: v_rel_2 = u1 - D_rs = (u1 - v_cd) * chi_2 / (chi_2 - 1).
+        # FS closure: dDelta3/dt = c_s3 = beta_3 * v_rel_3.
+        # Substituting into v_rel_3 = D_fs - u_4 gives the closed form below.
         beta_3 = np.sqrt(gamma_3 * (chi_3 - 1) / chi_3**2)
 
-        v_rel_2_0 = (u_1(R_rs_0, t_0) - v_cd_0) / (1.0 - beta_2)
+        v_rel_2_0 = (u_1(R_rs_0, t_0) - v_cd_0) * chi_2 / (chi_2 - 1.0)
         v_rel_3_0 = (v_cd_0 - u_4(R_fs_0, t_0)) / (1.0 - beta_3)
 
         if v_rel_2_0 <= 0:
@@ -1041,6 +1739,7 @@ class MechanicalShockEngine(ShockEngine):
         gamma_3: float = 5 / 3,
         cooling_2: "Callable | None" = None,
         cooling_3: "Callable | None" = None,
+        M1_total: "float | None" = None,
     ) -> Callable:
         r"""
         Build the ODE right-hand side for the mechanical shock model.
@@ -1074,6 +1773,19 @@ class MechanicalShockEngine(ShockEngine):
             ``cooling_3(R_cd, v_cd, M3, U3, Delta3, t) -> dU3/dt`` in erg/s.
             Should return a **negative** value for energy losses. Default is
             no cooling.
+        M1_total : float or None, optional
+            Total ejecta mass in grams.  When ``M2`` reaches
+            ``(1 - 1e-4) * M1_total`` the reverse shock is considered to have
+            crossed all ejecta.  Three things are applied simultaneously:
+
+            1. **Mass loading quenched**: :math:`\dot{M}_2 = 0`.
+            2. **Shock heating quenched**: :math:`\dot{U}_{{\rm sh},2} = 0`.
+            3. **Width closure switched**: :math:`\dot{\Delta}_2` changes from
+               the velocity-ratio formula :math:`(u_1 - v_{\rm cd})/(\chi_2-1)`
+               to the sonic closure :math:`c_{s,2}`, so Region 2 continues to
+               expand adiabatically consistent with the Region-3 treatment.
+
+            Default ``None`` (no limit; reverse shock evolves without bound).
 
         Returns
         -------
@@ -1086,6 +1798,9 @@ class MechanicalShockEngine(ShockEngine):
 
         _cooling_2 = cooling_2 if cooling_2 is not None else lambda *_: 0.0
         _cooling_3 = cooling_3 if cooling_3 is not None else lambda *_: 0.0
+
+        # Capture the ejecta mass limit; treat None as no limit.
+        _M1_total = np.inf if M1_total is None else float(M1_total)
 
         def _kernel(t, y):
             R_cd, v_cd, M2, M3, U2, U3, Delta2, Delta3 = y
@@ -1100,13 +1815,11 @@ class MechanicalShockEngine(ShockEngine):
             P2 = (gamma_2 - 1) * U2 / V2
             P3 = (gamma_3 - 1) * U3 / V3
 
-            # --- Sound speeds (width closure: dDelta_i/dt = c_s_i) ---
-            c_s2 = np.sqrt(np.maximum(gamma_2 * (gamma_2 - 1) * U2 / M2, 0.0))
+            # --- Sound speeds ---
+            # c_s3 drives the FS width closure (dDelta3/dt = c_s3) throughout.
+            # c_s2 replaces the velocity-ratio RS closure once the ejecta is exhausted.
             c_s3 = np.sqrt(np.maximum(gamma_3 * (gamma_3 - 1) * U3 / M3, 0.0))
-
-            # --- Shock speeds ---
-            D_rs = v_cd - c_s2
-            D_fs = v_cd + c_s3
+            c_s2 = np.sqrt(np.maximum(gamma_2 * (gamma_2 - 1) * U2 / M2, 0.0))
 
             # --- Upstream quantities at shock faces ---
             rho1_rs = rho_1(R_rs, t)
@@ -1114,15 +1827,39 @@ class MechanicalShockEngine(ShockEngine):
             u1_rs = u_1(R_rs, t)
             u4_fs = u_4(R_fs, t)
 
+            # --- Ejecta-crossing flag ---
+            # True once the reverse shock has swept through (1 - tol) of all ejecta.
+            # Three things happen at this transition:
+            #   1. The RS width closure switches from velocity-ratio to sonic: dDelta2/dt = c_s2.
+            #      This lets Region 2 expand freely at its own sound speed, consistent with
+            #      the Region-3 (FS) closure. Without this switch dDelta2/dt would either
+            #      stall at zero (if v_cd ≥ u1) or keep using a now-unphysical velocity ratio.
+            #   2. Mass loading is quenched: dM2/dt = 0.
+            #   3. Shock heating is quenched: dU_sh2 = 0.
+            _is_ejecta_crossed = M2 >= (1.0 - _EJECTA_MASS_TOL) * _M1_total
+
+            # --- Shock speeds ---
+            # FS: sound-speed closure throughout.
+            # RS: velocity-ratio closure while ejecta exists; sonic closure after crossing.
+            #     The velocity-ratio closure is floored at zero so the shock cannot retreat.
+            delta_v_2 = u1_rs - v_cd
+            dDelta2_dt = np.where(
+                _is_ejecta_crossed,
+                c_s2,
+                np.maximum(delta_v_2 / (chi_2 - 1.0), 0.0),
+            )
+
+            D_rs = v_cd - dDelta2_dt
+            D_fs = v_cd + c_s3
+
             # --- Shock-frame relative velocities ---
-            # Clamped to zero: swept mass is non-decreasing. A negative value
-            # means the shock has stalled (closure breaks down); no mass is
-            # un-swept in that case, and shock heating ceases naturally.
+            # Clamped to zero: swept mass is non-decreasing. A negative value means the
+            # shock has stalled; no mass is un-swept in that case, and heating ceases.
             v_rel_2 = np.maximum(u1_rs - D_rs, 0.0)
             v_rel_3 = np.maximum(D_fs - u4_fs, 0.0)
 
             # --- Mass loading ---
-            dM2_dt = 4.0 * np.pi * R_rs**2 * rho1_rs * v_rel_2
+            dM2_dt = np.where(_is_ejecta_crossed, 0.0, 4.0 * np.pi * R_rs**2 * rho1_rs * v_rel_2)
             dM3_dt = 4.0 * np.pi * R_fs**2 * rho4_fs * v_rel_3
 
             # --- Contact-discontinuity motion ---
@@ -1130,11 +1867,15 @@ class MechanicalShockEngine(ShockEngine):
             dv_cd_dt = 4.0 * np.pi * R_cd**2 * (P2 - P3) / (M2 + M3)
 
             # --- Shock heating ---
-            dU_sh2 = (1.0 / (gamma_2 - 1)) * ((chi_2 - 1) / chi_2**2) * v_rel_2**2 * dM2_dt
+            dU_sh2 = np.where(
+                _is_ejecta_crossed,
+                0.0,
+                (1.0 / (gamma_2 - 1)) * ((chi_2 - 1) / chi_2**2) * v_rel_2**2 * dM2_dt,
+            )
             dU_sh3 = (1.0 / (gamma_3 - 1)) * ((chi_3 - 1) / chi_3**2) * v_rel_3**2 * dM3_dt
 
-            # --- Adiabatic expansion (P dV work via V_i = 4pi R_cd^2 Delta_i) ---
-            dU_ad2 = -(gamma_2 - 1) * U2 * (2.0 * v_cd / R_cd + c_s2 / Delta2)
+            # --- Adiabatic expansion losses (P dV work via V_i = 4π R_cd² Δ_i) ---
+            dU_ad2 = -(gamma_2 - 1) * U2 * (2.0 * v_cd / R_cd + dDelta2_dt / Delta2)
             dU_ad3 = -(gamma_3 - 1) * U3 * (2.0 * v_cd / R_cd + c_s3 / Delta3)
 
             # --- Radiative losses ---
@@ -1152,8 +1893,8 @@ class MechanicalShockEngine(ShockEngine):
                     dM3_dt,
                     dU2_dt,
                     dU3_dt,
-                    c_s2,  # dDelta2/dt
-                    c_s3,  # dDelta3/dt
+                    dDelta2_dt,
+                    c_s3,
                 ]
             )
 
@@ -1183,6 +1924,7 @@ class MechanicalShockEngine(ShockEngine):
         gamma_3: float = 5 / 3,
         cooling_2: "Callable | None" = None,
         cooling_3: "Callable | None" = None,
+        M1_total: "float | None" = None,
         **kwargs,
     ) -> MechanicalShockState:
         r"""
@@ -1230,6 +1972,13 @@ class MechanicalShockEngine(ShockEngine):
             :meth:`generate_evaluation_kernel`). Default is no cooling.
         cooling_3 : callable or None, optional
             Radiative loss rate for Region 3. Default is no cooling.
+        M1_total : ~astropy.units.Quantity or float or None, optional
+            Total ejecta mass.  Unit-bearing inputs are converted to g; bare floats
+            are interpreted as g.  When the swept ejecta mass ``M2`` reaches
+            ``(1 - 1e-4) * M1_total``, the reverse shock is treated as fully
+            traversed: mass loading and shock heating for Region 2 are quenched and
+            the width closure switches to the sonic form :math:`\dot{\Delta}_2 = c_{s,2}`.
+            Default ``None`` (no limit).
         **kwargs
             Forwarded to :func:`scipy.integrate.solve_ivp`.
             ``method`` defaults to ``'Radau'``; ``rtol`` defaults to ``1e-10``.
@@ -1259,6 +2008,10 @@ class MechanicalShockEngine(ShockEngine):
             Delta3_0 = Delta3_0.to(u.cm).value
         if isinstance(t_0, u.Quantity):
             t_0 = t_0.to(u.s).value
+        if M1_total is None:
+            M1_total = np.inf
+        elif isinstance(M1_total, u.Quantity):
+            M1_total = M1_total.to(u.g).value
 
         cgs = self._compute_shock_properties_cgs(
             time=time,
@@ -1279,6 +2032,7 @@ class MechanicalShockEngine(ShockEngine):
             gamma_3=gamma_3,
             cooling_2=cooling_2,
             cooling_3=cooling_3,
+            M1_total=M1_total,
             **kwargs,
         )
 
@@ -1291,20 +2045,30 @@ class MechanicalShockEngine(ShockEngine):
             energy_3=cgs.energy_3 * u.erg,
             width_2=cgs.width_2 * u.cm,
             width_3=cgs.width_3 * u.cm,
-            pressure_2=cgs.pressure_2 * (u.dyn / u.cm**2),
-            pressure_3=cgs.pressure_3 * (u.dyn / u.cm**2),
             radius_rs=cgs.radius_rs * u.cm,
             radius_fs=cgs.radius_fs * u.cm,
             velocity_rs=cgs.velocity_rs * (u.cm / u.s),
             velocity_fs=cgs.velocity_fs * (u.cm / u.s),
-            post_shock_density_fs=cgs.post_shock_density_fs * (u.g / u.cm**3),
-            post_shock_pressure_fs=cgs.post_shock_pressure_fs * (u.dyn / u.cm**2),
-            post_shock_temperature_fs=cgs.post_shock_temperature_fs * u.K,
-            thermal_energy_density_fs=cgs.thermal_energy_density_fs * (u.erg / u.cm**3),
-            post_shock_density_rs=cgs.post_shock_density_rs * (u.g / u.cm**3),
-            post_shock_pressure_rs=cgs.post_shock_pressure_rs * (u.dyn / u.cm**2),
-            post_shock_temperature_rs=cgs.post_shock_temperature_rs * u.K,
-            thermal_energy_density_rs=cgs.thermal_energy_density_rs * (u.erg / u.cm**3),
+            volume_2=cgs.volume_2 * u.cm**3,
+            volume_3=cgs.volume_3 * u.cm**3,
+            density_2=cgs.density_2 * (u.g / u.cm**3),
+            density_3=cgs.density_3 * (u.g / u.cm**3),
+            pressure_2=cgs.pressure_2 * (u.dyn / u.cm**2),
+            pressure_3=cgs.pressure_3 * (u.dyn / u.cm**2),
+            temperature_2=cgs.temperature_2 * u.K,
+            temperature_3=cgs.temperature_3 * u.K,
+            thermal_energy_density_2=cgs.thermal_energy_density_2 * (u.erg / u.cm**3),
+            thermal_energy_density_3=cgs.thermal_energy_density_3 * (u.erg / u.cm**3),
+            sound_speed_2=cgs.sound_speed_2 * (u.cm / u.s),
+            sound_speed_3=cgs.sound_speed_3 * (u.cm / u.s),
+            jump_density_rs=cgs.jump_density_rs * (u.g / u.cm**3),
+            jump_pressure_rs=cgs.jump_pressure_rs * (u.dyn / u.cm**2),
+            jump_temperature_rs=cgs.jump_temperature_rs * u.K,
+            jump_thermal_energy_density_rs=cgs.jump_thermal_energy_density_rs * (u.erg / u.cm**3),
+            jump_density_fs=cgs.jump_density_fs * (u.g / u.cm**3),
+            jump_pressure_fs=cgs.jump_pressure_fs * (u.dyn / u.cm**2),
+            jump_temperature_fs=cgs.jump_temperature_fs * u.K,
+            jump_thermal_energy_density_fs=cgs.jump_thermal_energy_density_fs * (u.erg / u.cm**3),
         )
 
     def _compute_shock_properties_cgs(
@@ -1327,39 +2091,20 @@ class MechanicalShockEngine(ShockEngine):
         gamma_3: float = 5 / 3,
         cooling_2: "Callable | None" = None,
         cooling_3: "Callable | None" = None,
+        M1_total: "float | None" = None,
         **kwargs,
     ) -> MechanicalShockState:
         r"""
         Integrate the mechanical shock ODEs in CGS units.
 
-        Parameters
-        ----------
-        time : array-like
-            Evaluation times in seconds. Must be sorted and satisfy
-            ``time >= t_0``.
-        rho_1, rho_4, u_1, u_4 : callable
-            Upstream density and velocity functions in CGS.
-        R_cd_0, v_cd_0 : float
-            Initial contact radius (cm) and velocity (cm/s).
-        M2_0, M3_0 : float
-            Initial shocked masses (g).
-        U2_0, U3_0 : float
-            Initial internal energies (erg).
-        Delta2_0, Delta3_0 : float
-            Initial layer widths (cm).
-        t_0 : float
-            Initial time (s).
-        gamma_2, gamma_3 : float
-            Adiabatic indices of Regions 2 and 3.
-        cooling_2, cooling_3 : callable or None
-            Radiative loss rates (see :meth:`generate_evaluation_kernel`).
-        **kwargs
-            Forwarded to :func:`scipy.integrate.solve_ivp`.
+        This method returns the evolved dynamical state, region-averaged
+        thermodynamic quantities, and instantaneous shock-front jump diagnostics.
 
-        Returns
-        -------
-        ~triceratops.dynamics.shocks.numerical.MechanicalShockState
-            Named tuple of plain numpy arrays in CGS units.
+        The region-averaged thermodynamic quantities are computed from the evolved
+        masses, internal energies, and effective volumes. The ``jump_*`` quantities
+        are computed from instantaneous Rankine--Hugoniot shock conditions and
+        describe newly shocked material at the shock fronts, not the volume-averaged
+        state of Regions 2 and 3.
         """
         time = np.atleast_1d(np.asarray(time, dtype=float))
 
@@ -1372,9 +2117,13 @@ class MechanicalShockEngine(ShockEngine):
             gamma_3=gamma_3,
             cooling_2=cooling_2,
             cooling_3=cooling_3,
+            M1_total=M1_total,
         )
 
-        y0 = np.array([R_cd_0, v_cd_0, M2_0, M3_0, U2_0, U3_0, Delta2_0, Delta3_0])
+        y0 = np.array(
+            [R_cd_0, v_cd_0, M2_0, M3_0, U2_0, U3_0, Delta2_0, Delta3_0],
+            dtype=float,
+        )
         t_span = (t_0, float(np.amax(time)))
 
         solver_kwargs = dict(kwargs)
@@ -1396,32 +2145,114 @@ class MechanicalShockEngine(ShockEngine):
 
         R_cd, v_cd, M2, M3, U2, U3, Delta2, Delta3 = sol.y
 
-        # Derived geometry
+        # ------------------------------------------------------------------ #
+        # Geometry                                                           #
+        # ------------------------------------------------------------------ #
         R_rs = R_cd - Delta2
         R_fs = R_cd + Delta3
 
-        # Layer volumes and pressures
         V2 = 4.0 * np.pi * R_cd**2 * Delta2
         V3 = 4.0 * np.pi * R_cd**2 * Delta3
-        P2 = (gamma_2 - 1) * U2 / V2
-        P3 = (gamma_3 - 1) * U3 / V3
 
-        # Shock speeds from sound-speed width closure
-        c_s2 = np.sqrt(np.maximum(gamma_2 * (gamma_2 - 1) * U2 / M2, 0.0))
-        c_s3 = np.sqrt(np.maximum(gamma_3 * (gamma_3 - 1) * U3 / M3, 0.0))
-        D_rs = v_cd - c_s2
-        D_fs = v_cd + c_s3
+        # ------------------------------------------------------------------ #
+        # Region-averaged thermodynamics                                     #
+        # ------------------------------------------------------------------ #
+        density_2 = M2 / V2
+        density_3 = M3 / V3
 
-        # Post-shock thermodynamics via strong cold-shock RH conditions.
-        # Upstream callables accept scalar (r, t), so evaluate element-by-element.
+        pressure_2 = (gamma_2 - 1.0) * U2 / V2
+        pressure_3 = (gamma_3 - 1.0) * U3 / V3
+
+        thermal_energy_density_2 = U2 / V2
+        thermal_energy_density_3 = U3 / V3
+
+        temperature_2 = self._mu_2 * m_p_cgs / k_B_cgs * pressure_2 / density_2
+        temperature_3 = self._mu_3 * m_p_cgs / k_B_cgs * pressure_3 / density_3
+
+        sound_speed_2 = np.sqrt(np.maximum(gamma_2 * pressure_2 / density_2, 0.0))
+        sound_speed_3 = np.sqrt(np.maximum(gamma_3 * pressure_3 / density_3, 0.0))
+
+        # ------------------------------------------------------------------ #
+        # Upstream quantities at shock faces                                 #
+        # ------------------------------------------------------------------ #
         n_steps = len(time)
+
         rho_4_fs = np.array([float(rho_4(R_fs[i], time[i])) for i in range(n_steps)])
         u_4_fs = np.array([float(u_4(R_fs[i], time[i])) for i in range(n_steps)])
+
         rho_1_rs = np.array([float(rho_1(R_rs[i], time[i])) for i in range(n_steps)])
         u_1_rs = np.array([float(u_1(R_rs[i], time[i])) for i in range(n_steps)])
 
-        rh_fs = StrongColdShockConditions._solve(D_fs, rho_4_fs, u_4_fs, gamma=gamma_3, mu=self._mu_3)
-        rh_rs = StrongColdShockConditions._solve(D_rs, rho_1_rs, u_1_rs, gamma=gamma_2, mu=self._mu_2)
+        # ------------------------------------------------------------------ #
+        # Shock kinematics                                                   #
+        # ------------------------------------------------------------------ #
+        chi_2 = (gamma_2 + 1.0) / (gamma_2 - 1.0)
+
+        # Ejecta-crossing flag: mirrors the identical check in the ODE kernel so
+        # the post-processed kinematics stay consistent with the integrated trajectory.
+        _ejecta_crossed = M2 >= (1.0 - _EJECTA_MASS_TOL) * (np.inf if M1_total is None else float(M1_total))
+
+        # Reverse shock: velocity-ratio closure while ejecta exists; sonic closure
+        # afterwards (same branch as the kernel).  active_rs is also False after
+        # crossing because there is no longer a physical shock front to diagnose.
+        delta_v_2_raw = u_1_rs - v_cd
+        dDelta2_dt = np.where(
+            _ejecta_crossed,
+            sound_speed_2,
+            np.maximum(delta_v_2_raw / (chi_2 - 1.0), 0.0),
+        )
+        D_rs = v_cd - dDelta2_dt
+        active_rs = (delta_v_2_raw > 0.0) & ~_ejecta_crossed
+
+        # Forward shock: sound-speed width closure.
+        D_fs = v_cd + sound_speed_3
+        v_rel_fs = D_fs - u_4_fs
+        active_fs = v_rel_fs > 0.0
+
+        # ------------------------------------------------------------------ #
+        # Instantaneous jump diagnostics via Rankine-Hugoniot conditions      #
+        # ------------------------------------------------------------------ #
+        # Forward shock: usually active, but still mask if the relative speed is
+        # non-positive.
+        jump_density_fs = np.full_like(R_cd, np.nan)
+        jump_pressure_fs = np.full_like(R_cd, np.nan)
+        jump_temperature_fs = np.full_like(R_cd, np.nan)
+        jump_thermal_energy_density_fs = np.full_like(R_cd, np.nan)
+
+        if np.any(active_fs):
+            rh_fs = StrongColdShockConditions._solve(
+                D_fs[active_fs],
+                rho_4_fs[active_fs],
+                u_4_fs[active_fs],
+                gamma=gamma_3,
+                mu=self._mu_3,
+            )
+
+            jump_density_fs[active_fs] = rh_fs["post_shock_density"]
+            jump_pressure_fs[active_fs] = rh_fs["post_shock_pressure"]
+            jump_temperature_fs[active_fs] = rh_fs["post_shock_temperature"]
+            jump_thermal_energy_density_fs[active_fs] = rh_fs["post_shock_thermal_energy_density"]
+
+        # Reverse shock: mask inactive phases. During inactive phases, Region 2 can
+        # remain hot, but there is no instantaneous reverse-shock injection state.
+        jump_density_rs = np.full_like(R_cd, np.nan)
+        jump_pressure_rs = np.full_like(R_cd, np.nan)
+        jump_temperature_rs = np.full_like(R_cd, np.nan)
+        jump_thermal_energy_density_rs = np.full_like(R_cd, np.nan)
+
+        if np.any(active_rs):
+            rh_rs = StrongColdShockConditions._solve(
+                D_rs[active_rs],
+                rho_1_rs[active_rs],
+                u_1_rs[active_rs],
+                gamma=gamma_2,
+                mu=self._mu_2,
+            )
+
+            jump_density_rs[active_rs] = rh_rs["post_shock_density"]
+            jump_pressure_rs[active_rs] = rh_rs["post_shock_pressure"]
+            jump_temperature_rs[active_rs] = rh_rs["post_shock_temperature"]
+            jump_thermal_energy_density_rs[active_rs] = rh_rs["post_shock_thermal_energy_density"]
 
         return MechanicalShockState(
             radius=R_cd,
@@ -1432,20 +2263,30 @@ class MechanicalShockEngine(ShockEngine):
             energy_3=U3,
             width_2=Delta2,
             width_3=Delta3,
-            pressure_2=P2,
-            pressure_3=P3,
             radius_rs=R_rs,
             radius_fs=R_fs,
             velocity_rs=D_rs,
             velocity_fs=D_fs,
-            post_shock_density_fs=rh_fs["post_shock_density"],
-            post_shock_pressure_fs=rh_fs["post_shock_pressure"],
-            post_shock_temperature_fs=rh_fs["post_shock_temperature"],
-            thermal_energy_density_fs=rh_fs["post_shock_thermal_energy_density"],
-            post_shock_density_rs=rh_rs["post_shock_density"],
-            post_shock_pressure_rs=rh_rs["post_shock_pressure"],
-            post_shock_temperature_rs=rh_rs["post_shock_temperature"],
-            thermal_energy_density_rs=rh_rs["post_shock_thermal_energy_density"],
+            volume_2=V2,
+            volume_3=V3,
+            density_2=density_2,
+            density_3=density_3,
+            pressure_2=pressure_2,
+            pressure_3=pressure_3,
+            temperature_2=temperature_2,
+            temperature_3=temperature_3,
+            thermal_energy_density_2=thermal_energy_density_2,
+            thermal_energy_density_3=thermal_energy_density_3,
+            sound_speed_2=sound_speed_2,
+            sound_speed_3=sound_speed_3,
+            jump_density_rs=jump_density_rs,
+            jump_pressure_rs=jump_pressure_rs,
+            jump_temperature_rs=jump_temperature_rs,
+            jump_thermal_energy_density_rs=jump_thermal_energy_density_rs,
+            jump_density_fs=jump_density_fs,
+            jump_pressure_fs=jump_pressure_fs,
+            jump_temperature_fs=jump_temperature_fs,
+            jump_thermal_energy_density_fs=jump_thermal_energy_density_fs,
         )
 
 

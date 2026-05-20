@@ -46,8 +46,6 @@ m_p_cgs = const.m_p.cgs.value  # Proton mass (g)
 # ================================================================== #
 # Private Helper Functions                                             #
 # ================================================================== #
-
-
 def _lorentz_factor(beta):
     """Lorentz factor Γ = 1/√(1−β²)."""
     return 1.0 / np.sqrt(1.0 - beta**2)
@@ -215,8 +213,66 @@ def _reconstruct_state_cgs(beta1, beta2, rho1, omega1, gamma_hat, mu):
     }
 
 
+def _solve_strong_cold_shock_beta(beta1, gamma_hat):
+    beta1 = float(beta1)
+    gamma_hat = float(gamma_hat)
+
+    if not (0.0 < beta1 < 1.0):
+        raise ValueError("`beta1` must satisfy 0 < beta1 < 1.")
+    if not (1.0 < gamma_hat <= 2.0):
+        raise ValueError("`gamma_hat` should satisfy 1 < gamma_hat <= 2.")
+
+    # Weak-shock / NR limit. Avoid the singular residual near beta2 = 0.
+    if beta1 < 1e-6:
+        chi = (gamma_hat + 1.0) / (gamma_hat - 1.0)
+        return beta1 / chi
+
+    gamma1 = _lorentz_factor(beta1)
+
+    def residual(beta2):
+        return _relativistic_implicit_eq(
+            beta2=beta2,
+            beta1=beta1,
+            gamma1=gamma1,
+            omega1=1.0,
+            pi1=0.0,
+            gamma_hat=gamma_hat,
+        )
+
+    # The physical downstream speed satisfies 0 < beta2 < beta1.
+    # Use the NR strong-shock estimate as a safer lower-scale guide.
+    chi = (gamma_hat + 1.0) / (gamma_hat - 1.0)
+    beta2_guess = beta1 / chi
+
+    lo = max(np.nextafter(0.0, 1.0), 0.01 * beta2_guess)
+    hi = np.nextafter(beta1, 0.0)
+
+    # The general residual is not always nicely signed at lo, so scan inside
+    # the physical interval and find a sign-changing sub-bracket.
+    grid = np.linspace(lo, hi, 64)
+    vals = np.array([residual(x) for x in grid])
+
+    idx = np.where(np.signbit(vals[:-1]) != np.signbit(vals[1:]))[0]
+    if idx.size == 0:
+        raise ValueError(
+            "Could not bracket physical shock root for "
+            f"beta1={beta1}, gamma_hat={gamma_hat}. "
+            f"residual min/max = {np.nanmin(vals)}, {np.nanmax(vals)}"
+        )
+
+    i = idx[0]
+    return brentq(
+        residual,
+        grid[i],
+        grid[i + 1],
+        xtol=1e-14,
+        rtol=1e-14,
+        maxiter=100,
+    )
+
+
 # ================================================================== #
-# Abstract Base Class                                                  #
+# Abstract Base Class                                                #
 # ================================================================== #
 
 

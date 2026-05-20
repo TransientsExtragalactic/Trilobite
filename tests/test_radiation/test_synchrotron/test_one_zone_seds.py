@@ -12,9 +12,7 @@ from triceratops.radiation.synchrotron.SEDs import (
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
-from triceratops.radiation.synchrotron.SEDs._one_zone_closure import (
-    _synchrotron_cooling_time_coefficient_cgs as THETA,
-)
+
 from triceratops.radiation.synchrotron.SEDs.one_zone_closure import (
     invert_powerlaw_implicit_cooling_sed,
     invert_powerlaw_implicit_cooling_ssa_sed,
@@ -1180,18 +1178,10 @@ def test_cooling_transition_continuity(diagnostic_plots, diagnostic_plots_dir):
     "B,R,t,p",
     list(
         itertools.product(
-            [
-                1 * u.G,
-            ],  # 0.1 * u.G, 1.0 * u.G],
-            [
-                1e15 * u.cm,
-            ],  # 1e16 * u.cm, 1e17 * u.cm],
-            [
-                1e6 * u.s,
-            ],  # 1e6 * u.s],
-            [
-                2.5,
-            ],  # 3.0],
+            [0.1 * u.G, 1.0 * u.G],
+            [1e15 * u.cm, 1e16 * u.cm],
+            [1e5 * u.s, 1e6 * u.s, 1e7 * u.s],
+            [2.5, 3.0],
         )
     ),
 )
@@ -1393,10 +1383,11 @@ def test_implicit_cooling_ssa_round_trip(regime, B, R, t, p, diagnostic_plots, d
     gamma_bulk = 1.0
     luminosity_distance = 35 * u.Mpc
 
-    # Compute gamma_c from the synchrotron cooling closure: gamma_c = THETA / (B^2 t)
+    # Compute gamma_c from the synchrotron cooling closure
     B_cgs = B.to_value("G")
     t_cgs = t.to_value("s")
-    gamma_c = np.exp(np.log(THETA) - 2.0 * np.log(B_cgs) - np.log(t_cgs))
+    cooling_engine = SynchrotronRadiativeCoolingEngine(pitch_averaged=True)
+    gamma_c = cooling_engine.compute_cooling_gamma(B=B, t=t)
 
     # Forward normalization
     model = PowerLaw_Cooling_SSA_SynchrotronSED()

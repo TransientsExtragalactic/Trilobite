@@ -181,7 +181,7 @@ import numpy as np
 from astropy import units as u
 from astropy.constants import c, k_B, m_p
 
-from triceratops.dynamics.supernovae import ChevalierSelfSimilarWindShockEngine
+from triceratops.dynamics.shocks.chevalier import ChevalierSelfSimilarWindShockEngine
 from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 from triceratops.utils.plot_utils import set_plot_style
 
@@ -361,8 +361,8 @@ shock_outputs = shock_engine.compute_shock_properties(
     **shock_params,
 )
 
-r_sh = shock_outputs["radius"].to(u.cm)
-v_sh = shock_outputs["velocity"].to(u.cm / u.s)
+r_sh = shock_outputs.radius.to(u.cm)
+v_sh = shock_outputs.velocity.to(u.cm / u.s)
 
 # Compute the upstream density at the shock radius (wind profile).
 rho_up = (shock_params["M_dot"] / (4 * np.pi * r_sh**2 * shock_params["v_wind"])).to(u.g / u.cm**3)

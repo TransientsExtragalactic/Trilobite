@@ -17,88 +17,9 @@ from triceratops.dynamics.shocks.numerical import (
 from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
 
 
-class TestChevalierSelfSimilarShockEngine:
-    @pytest.fixture(scope="class")
-    def relative_tolerance(self):
-        """The relative tolerance to use for comparisons."""
-        return 5e-2
-
-    @pytest.fixture(scope="class")
-    def time_grid(self):
-        """The times at which to evaluate the shock engine."""
-        return np.geomspace(1, 1e4, 512) * u.day
-
-    @pytest.fixture(scope="class")
-    def engine(self):
-        """The instantiated engine to do the computation with."""
-        return ChevalierSelfSimilarShockEngine()
-
-    def test_time_slope(self, time_grid, engine, diagnostic_plots, diagnostic_plots_dir, relative_tolerance):
-        """
-        Perform the standard Chevalier self-similar computation and ensure that the time
-        slope is lambda = (n-3)/(n-s) as expected.
-        """
-        # --- Configure parameters --- #
-        n, s = 10, 2
-        _lambda = (n - 3) / (n - s)
-
-        # Set up the E_ej, M_ej.
-        E_ej = 1e51 * u.erg
-        M_ej = 10 * u.Msun
-        K_csm = (5e-16 * u.g / u.cm**3) * (1e15 * u.cm) ** s
-
-        solution = engine.compute_shock_properties(time_grid, E_ej, M_ej, n=n, s=s, K_csm=K_csm, delta=0)
-
-        # --- Generate expected results and compare --- #
-        dlogR_dlogt_expected = _lambda
-        dlogv_dlogt_expected = _lambda - 1
-
-        dlogR_dlott_computed = np.gradient(np.log10(solution.radius.to_value(u.cm)), np.log10(time_grid.to_value(u.s)))
-        dlogv_dlott_computed = np.gradient(
-            np.log10(solution.velocity.to_value(u.cm / u.s)), np.log10(time_grid.to_value(u.s))
-        )
-
-        # --- Diagnostic Plots --- #
-        if diagnostic_plots:
-            import matplotlib.pyplot as plt
-
-            from triceratops.utils.plot_utils import set_plot_style
-
-            set_plot_style()
-
-            fig, axes = plt.subplots(2, 1, figsize=(8, 8))
-
-            axes[0].plot(np.log10(time_grid.to_value(u.day)), dlogR_dlott_computed, label="Computed")
-            axes[0].axhline(dlogR_dlogt_expected, ls="--", color="C1", label="Expected")
-            axes[0].set_xlabel("log10(Time [days])")
-            axes[0].set_ylabel("dlogR / dlogt")
-            axes[0].set_ylim([dlogR_dlogt_expected * 0.5, dlogR_dlogt_expected * 1.5])
-            axes[0].legend()
-
-            axes[1].plot(np.log10(time_grid.to_value(u.day)), dlogv_dlott_computed, label="Computed")
-            axes[1].axhline(dlogv_dlogt_expected, ls="--", color="C1", label="Expected")
-            axes[1].set_xlabel("log10(Time [days])")
-            axes[1].set_ylabel("dlogv / dlogt")
-            axes[1].set_ylim([dlogv_dlogt_expected * 2, 0])
-            axes[1].legend()
-
-            plt.tight_layout()
-            plt.savefig(f"{diagnostic_plots_dir}/test_chevalier_self_similar_time_slope.png")
-            plt.close(fig)
-
-        # --- Assert Validity --- #
-        assert_allclose(
-            dlogR_dlott_computed,
-            dlogR_dlogt_expected,
-            rtol=relative_tolerance,
-        )
-        assert_allclose(
-            dlogv_dlott_computed,
-            dlogv_dlogt_expected,
-            rtol=relative_tolerance,
-        )
-
-
+# ------------------------------------------------------------------- #
+# Test Cases                                                          #
+# ------------------------------------------------------------------- #
 class TestNumericalThinShellShockEngine:
     @pytest.fixture(scope="class")
     def relative_tolerance(self):

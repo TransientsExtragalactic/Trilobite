@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:01.164** total execution time for 52 files **from all galleries**:
+**00:04.107** total execution time for 54 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_cooling.py` (``galleries/dynamics/plot_mechanical_shock_cooling.py``)
-     - 00:01.164
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_relativistic_thin_shell_convergence.py` (``galleries/dynamics/plot_relativistic_thin_shell_convergence.py``)
+     - 00:04.107
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -74,10 +74,16 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_data_plot_specific_epochs.py` (``galleries/data/plot_specific_epochs.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_cooling.py` (``galleries/dynamics/plot_mechanical_shock_cooling.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_mechanical_shock_model.py` (``galleries/dynamics/plot_mechanical_shock_model.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shock_engine.py` (``galleries/dynamics/plot_numerical_shock_engine.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shocks_csms.py` (``galleries/dynamics/plot_numerical_shocks_csms.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_conditions.py` (``galleries/dynamics/plot_rh_jump_conditions.py``)

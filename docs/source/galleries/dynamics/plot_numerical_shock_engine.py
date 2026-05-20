@@ -1,9 +1,9 @@
 """
-Numerical Thin-Shell Shock in a Broken CSM
+Numerical Thin-Shell Shock Evolution
 ==========================================
 
 This example demonstrates how to use the
-:class:`~dynamics.shocks.numerical.NumericalThinShellShockEngine`
+:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 to model the evolution of a supernova shock expanding into a **non-uniform
 circumstellar medium (CSM)**.
 
@@ -14,19 +14,20 @@ environments, such as winds with termination shocks or multi-phase media.
 
 In this example, we consider:
 
-- Supernova ejecta with a broken power-law density profile in velocity space
+- Supernova ejecta with a **broken power-law density profile** in velocity space.
 - A circumstellar medium consisting of:
 
-  - a wind-like :math:`rho \propto r^{-2}` profile close to the progenitor
+  - a **wind-like** :math:`\\rho \\propto r^{-2}` profile close to the progenitor
   - a transition to a uniform-density interstellar medium (ISM) at larger radii
 
-We then compute and visualize the evolution of the shock radius, velocity,
-and swept-up mass as a function of time.
+We then compute and visualize the shock velocity as a function of time,
+highlighting the deceleration onset as the shock transitions from the stellar
+wind into the denser ambient ISM.
 """
 
 # %%
 # Setup
-# -------
+# -----
 #
 # We begin by importing the relevant numerical, plotting, and Triceratops
 # utilities needed for this example.
@@ -35,10 +36,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.supernovae.profiles import (
-    get_broken_power_law_ejecta_kernel_func,
+from triceratops.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+from triceratops.dynamics.shocks.utils import (
+    get_bpl_ejecta_kernel,
+    get_truncated_wind_csm_density_func,
+    make_homologous_stationary_sources,
 )
-from triceratops.dynamics.shocks.numerical import NumericalThinShellShockEngine
 from triceratops.utils.plot_utils import set_plot_style
 
 # %%
@@ -47,62 +50,59 @@ from triceratops.utils.plot_utils import set_plot_style
 # to be broadly representative of a core-collapse supernova interacting with
 # its surrounding environment.
 
-# Mass-loss rate of the progenitor wind
-M_dot = 1e-5 * u.M_sun / u.yr
 
-# Wind velocity
-v_wind = 1e5 * u.cm / u.s
+M_dot = 1e-5 * u.M_sun / u.yr  # Mass-loss rate of the progenitor wind
+v_wind = 100 * u.km / u.s  # Wind velocity
+t_wind = 1e2 * u.yr  # Duration of the wind phase prior to explosion
 
-# Duration of the wind phase prior to explosion
-t_wind = 1e8 * u.s
+rho_ism = 1e-24 * u.g / u.cm**3  # Density of the ambient ISM
 
-# Density of the ambient ISM
-rho_ism = 1e-21 * u.g / u.cm**3
+E_ej = 1e50 * u.erg  # Ejecta energy
+M_ej = 5 * u.M_sun  # Ejecta mass
 
-# Ejecta properties
-E_ej = 1e48 * u.erg
-M_ej = 10 * u.M_sun
-
-# Radius of the wind termination shock
+# Compute the wind termination radius, where the wind transitions to the ISM.
 R_wind = v_wind * t_wind
+
+print(f"Wind termination radius: {R_wind.to(u.pc):.2f}")
 
 # %%
 # Circumstellar Medium Density Profile
-# ------------------------------------
+# -------------------------------------
 #
 # The numerical thin-shell engine requires the CSM density profile to be provided
 # as a **callable function** returning the density in CGS units.
 #
-# Here we construct a broken profile:
+# Here we use :func:`~triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+# to construct a broken profile:
 #
-# - For :math:`r < R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
-# - For :math:`r \ge R_{\rm wind}`: a uniform ISM
+# - For :math:`r \le R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
+# - For :math:`r > R_{\rm wind}`: a uniform ISM floor density
 
-rho_0_cgs = (M_dot / (4 * np.pi * R_wind**2 * v_wind)).to_value(u.g / u.cm**3)
-R_wind_cgs = R_wind.to_value(u.cm)
-rho_ISM_cgs = rho_ism.to_value(u.g / u.cm**3)
+rho_csm = get_truncated_wind_csm_density_func(
+    mass_loss_rate=M_dot,
+    wind_velocity=v_wind,
+    r_max=R_wind,
+    density_floor=rho_ism,
+)
 
+# %%
+# Let's now plot that CSM density profile to verify that it has the expected structure.
 
-def rho_csm(r):
-    """
-    Broken CSM density profile.
+set_plot_style()
 
-    Parameters
-    ----------
-    r : float or ndarray
-        Radius in cm.
+r = np.geomspace(1e15, 1e20, 500) * u.cm
+rho_vals = rho_csm(r)
+r_wind_cm = R_wind.to_value(u.cm)
 
-    Returns
-    -------
-    rho : float or ndarray
-        CSM density in g/cm^3.
-    """
-    return np.where(
-        r < R_wind_cgs,
-        rho_0_cgs * r**-2,
-        rho_ISM_cgs,
-    )
-
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.loglog(r.to_value(u.cm), rho_vals, "k-")
+ax.axvline(r_wind_cm, ls="--", color="tomato", alpha=0.8, lw=1.5)
+ax.text(r_wind_cm * 0.07, rho_vals[0] * 0.8, r"Wind ($\rho \propto r^{-2}$)", fontsize=10)
+ax.text(r_wind_cm * 3, rho_ism.to_value(u.g / u.cm**3) * 3, "ISM floor", fontsize=10)
+ax.set_xlabel("Radius (cm)")
+ax.set_ylabel(r"Density ($\mathrm{g\,cm^{-3}}$)")
+plt.tight_layout()
+plt.show()
 
 # %%
 # Ejecta Density Profile
@@ -118,13 +118,37 @@ def rho_csm(r):
 # requires the kernel function :math:`G_{\rm ej}(v)`.
 #
 # Triceratops provides helper functions for constructing commonly used ejecta
-# profiles. Here we adopt a Chevalier-style broken power-law profile.
+# profiles. Here we adopt a Chevalier-style broken power-law profile via
+# :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
 
-G_ej = get_broken_power_law_ejecta_kernel_func(
-    E_ej,
-    M_ej,
+G_ej = get_bpl_ejecta_kernel(
+    E_ej=E_ej,
+    M_ej=M_ej,
     n=10,
     delta=0,
+)
+
+# %%
+# Upstream Source Functions
+# -------------------------
+#
+# The numerical shock engine expects four two-argument callables,
+# ``(rho_1, u_1, rho_4, u_4)``, representing the upstream ejecta density,
+# ejecta velocity, CSM density, and CSM velocity respectively. For the standard
+# case of homologous ejecta running into a stationary CSM,
+# :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`
+# builds all four from the kernel and the CSM profile:
+#
+# .. math::
+#
+#     \rho_1(r, t) = t^{-3} G_{\rm ej}(r/t), \quad
+#     u_1(r, t) = r/t, \quad
+#     \rho_4(r, t) = \rho_{\rm CSM}(r), \quad
+#     u_4(r, t) = 0.
+
+rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(
+    G_ej=G_ej,
+    rho_csm=rho_csm,
 )
 
 # %%
@@ -134,23 +158,7 @@ G_ej = get_broken_power_law_ejecta_kernel_func(
 # The shock engine itself is stateless. All physical information is passed in
 # at evaluation time.
 
-shock_engine = NumericalThinShellShockEngine()
-
-# %%
-# Initial Conditions
-# ------------------
-#
-# Numerical integration of the thin-shell equations requires initial conditions
-# for the shock radius, velocity, time, and swept-up mass.
-
-params = {
-    "rho_csm": rho_csm,
-    "G_ej": G_ej,
-    "R_0": 1e10 * u.cm,
-    "v_0": 1e9 * u.cm / u.s,
-    "t_0": 1e1 * u.s,
-    "M_0": 1e-4 * u.M_sun,
-}
+engine = PressureDrivenThinShellShockEngine()
 
 # %%
 # Time Grid
@@ -158,72 +166,57 @@ params = {
 #
 # We evaluate the shock evolution over several orders of magnitude in time.
 
-time = np.geomspace(1, 1000, 500) * u.day
+time = np.geomspace(1e-1, 10000, 500) * u.day
 
 # %%
 # Shock Evolution
 # ---------------
 #
 # We now compute the shock properties using the high-level API, which handles
-# unit conversion and validation internally.
+# unit conversion and validation internally. The result is a
+# :class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` named
+# tuple carrying all shock diagnostics as unit-bearing
+# :class:`~astropy.units.Quantity` arrays.
 
-shock_properties = shock_engine.compute_shock_properties(
-    time,
-    **params,
+state = engine.compute_shock_properties(
+    time=time,
+    rho_1=rho_1,
+    rho_4=rho_4,
+    u_1=u_1,
+    u_4=u_4,
+    R_0=1e10 * u.cm,
+    v_0=1e9 * u.cm / u.s,
+    t_0=1e1 * u.s,
+    M_0=1e-4 * u.M_sun,
 )
-
-# %%
-# Comparison: Homologous Expansion
-# --------------------------------
-#
-# For reference, we compute the radius expected from free homologous expansion
-# at the initial shock velocity.
-
-R_homologous = (1e9 * u.cm / u.s) * time
 
 # %%
 # Visualization
 # -------------
 #
-# Finally, we visualize the evolution of the shock radius, velocity, and
-# swept-up mass.
+# We plot shock velocity versus time. The blue and red shaded regions mark the
+# wind-dominated and ISM-dominated phases respectively; the dashed line shows
+# the initial free-expansion velocity for reference. The abrupt deceleration
+# when the forward shock crosses :math:`R_\mathrm{wind}` is clearly visible.
 
-set_plot_style()
+# Locate the wind–ISM crossing time
+i_cross = np.searchsorted(state.radius.to_value(u.cm), R_wind.to_value(u.cm))
+t_cross_day = time[i_cross].to_value(u.day)
 
-fig, axes = plt.subplots(3, 1, figsize=(8, 10), sharex=True)
+t_vals = time.to_value(u.day)
+v_vals = state.velocity.to_value(u.km / u.s)
+v0_kms = (1e9 * u.cm / u.s).to_value(u.km / u.s)
 
-# Shock radius
-axes[0].loglog(
-    time.to_value(u.day),
-    shock_properties["radius"].to_value(u.cm),
-    label="Numerical Shock Radius",
-)
-axes[0].loglog(
-    time.to_value(u.day),
-    R_homologous.to_value(u.cm),
-    ls="--",
-    label="Homologous Expansion",
-)
-axes[0].set_ylabel("Shock Radius (cm)")
-axes[0].legend()
-axes[0].grid(True, which="both", ls="--", alpha=0.5)
+fig, ax = plt.subplots(figsize=(8, 5))
 
-# Shock velocity
-axes[1].loglog(
-    time.to_value(u.day),
-    shock_properties["velocity"].to_value(u.cm / u.s),
-)
-axes[1].set_ylabel("Shock Velocity (cm/s)")
-axes[1].grid(True, which="both", ls="--", alpha=0.5)
+ax.loglog(t_vals, v_vals, "k", lw=2, label="Shock velocity")
+ax.axhline(v0_kms, ls="--", color="gray", lw=1.5, label=r"Free expansion ($v_0$)")
+ax.axvspan(t_vals[0], t_cross_day, alpha=0.10, color="steelblue", label="Wind phase")
+ax.axvspan(t_cross_day, t_vals[-1], alpha=0.10, color="tomato", label="ISM phase")
 
-# Swept-up mass
-axes[2].loglog(
-    time.to_value(u.day),
-    shock_properties["mass"].to_value(u.M_sun),
-)
-axes[2].set_xlabel("Time (days)")
-axes[2].set_ylabel(r"Swept-up Mass ($M_\odot$)")
-axes[2].grid(True, which="both", ls="--", alpha=0.5)
-
+ax.set_xlabel("Time (days)")
+ax.set_ylabel(r"Shock Velocity ($\mathrm{km\,s^{-1}}$)")
+ax.legend(loc="lower left")
 plt.tight_layout()
 plt.show()
+# sphinx_gallery_thumbnail_number = -1

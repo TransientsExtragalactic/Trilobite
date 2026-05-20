@@ -82,10 +82,11 @@ from triceratops.utils.plot_utils import set_plot_style
 #   normalization :math:`A = \dot{M}/(4\pi v_w)`, so that
 #   :math:`\rho_{\rm CSM}(r) = A\,r^{-2}`.
 
-E_ej = 1e51 * u.erg
+E_ej = 1e50 * u.erg
 M_ej = 5.0 * u.M_sun
-M_dot = 1e-5 * u.M_sun / u.yr
+M_dot = 1e-3 * u.M_sun / u.yr
 v_wind = 100.0 * u.km / u.s
+v_ej = np.sqrt(2 * E_ej / M_ej)
 
 # %%
 # Ejecta Profile
@@ -170,9 +171,17 @@ rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(
 # an inconsistency between the assumed shock speed and the sound-speed width
 # closure.
 
-t_0_cgs = (1.0 * u.day).to_value(u.s)
-R_cd_0 = 1e14  # cm
-v_cd_0 = 1e9  # cm/s
+n = 10.0
+s = 2.0
+m = (n - 3.0) / (n - s)
+
+t_0_cgs = (0.1 * u.day).to_value(u.s)
+
+v_coord_0 = 5.0 * v_ej.cgs.value  # position coordinate, not CD speed
+R_cd_0 = t_0_cgs * v_coord_0
+v_cd_0 = m * v_coord_0
+
+print(R_cd_0 / 1e14, v_cd_0 / 3e10)
 
 R0, v0, M2_0, M3_0, U2_0, U3_0, Dlt2_0, Dlt3_0 = MechanicalShockEngine.generate_initial_conditions(
     R_cd_0=R_cd_0,
@@ -192,7 +201,7 @@ R0, v0, M2_0, M3_0, U2_0, U3_0, Dlt2_0, Dlt3_0 = MechanicalShockEngine.generate_
 # returns a :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockState`
 # named tuple whose fields are :class:`~astropy.units.Quantity` arrays.
 
-time = np.geomspace(1, 1000, 4000) * u.day
+time = np.geomspace(1e-1, 1000000, 4000) * u.day
 
 engine = MechanicalShockEngine()
 
@@ -211,6 +220,7 @@ state = engine.compute_shock_properties(
     Delta2_0=Dlt2_0,
     Delta3_0=Dlt3_0,
     t_0=t_0_cgs,
+    M1_total=M_ej,
 )
 
 # %%
@@ -266,6 +276,7 @@ axes[1].grid(alpha=0.2, which="both")
 # --- Panel 3: Shocked masses ---
 axes[2].loglog(t_days, state.mass_2.to_value(u.M_sun), color=C_RS, lw=LW, label=r"Region 2 (shocked ejecta)")
 axes[2].loglog(t_days, state.mass_3.to_value(u.M_sun), color=C_FS, lw=LW, label=r"Region 3 (shocked CSM)")
+axes[2].axhline(M_ej.to_value(u.M_sun), ls="--", color="k", lw=1, label="Total ejecta mass")
 axes[2].set_xlabel("Time (days)")
 axes[2].set_ylabel(r"Mass ($M_\odot$)")
 axes[2].legend(frameon=False, fontsize=9)

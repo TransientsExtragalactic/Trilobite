@@ -17,7 +17,11 @@ structure of the shocked gas; instead, they replace the shocked interaction regi
 by a compact set of global variables whose evolution is governed by conservation
 laws and closure assumptions.
 
-This page develops the theory behind three non-relativistic shock models:
+This page develops the theory behind the numerical shock models implemented in
+:mod:`triceratops.dynamics.shocks.numerical`, organized into non-relativistic
+and relativistic families.
+
+**Non-relativistic models** (:math:`v \ll c`):
 
 #. the :ref:`conservative snowplow model <conservative_snowplow_model>`
    (:class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine`);
@@ -25,6 +29,12 @@ This page develops the theory behind three non-relativistic shock models:
    (:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`);
 #. the :ref:`mechanical internal-energy model <mechanical_internal_energy_model>`
    (:class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`).
+
+**Relativistic models** (arbitrary :math:`\beta`, Lorentz-invariant jump conditions):
+
+#. the :ref:`relativistic pressure-driven thin-shell model
+   <relativistic_pressure_driven_shells>`
+   (:class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`).
 
 Each model makes different assumptions about the relevant physics and is
 applicable in different regimes.
@@ -1210,37 +1220,426 @@ Collecting all equations, the minimal mechanical model is
 
     giving the boxed expression for :math:`\dot U_{{\rm ad},i}`.
 
+Relativistic Models
+--------------------
+
+We now generalize to the relativistic regime. The geometry remains the standard
+four-region structure, but the dynamics and shock jump conditions are governed by
+special relativity. The upstream media are specified by their **comoving
+rest-mass densities** and **lab-frame velocities**:
+
+.. math::
+
+   \rho_1(r,t),\;\beta_1(r,t)
+   \qquad\text{(unshocked ejecta)},
+
+.. math::
+
+   \rho_4(r,t),\;\beta_4(r,t)
+   \qquad\text{(unshocked CSM)}.
+
+The lab-frame Lorentz factors are :math:`\Gamma_i = 1/\!\sqrt{1-\beta_i^2}`.
+At the shell radius we write :math:`\rho_{i,\rm sh}\equiv\rho_i(R_{\rm sh},t)`,
+:math:`\beta_{i,\rm sh}\equiv\beta_i(R_{\rm sh},t)`, and
+:math:`\Gamma_{i,\rm sh}\equiv(1-\beta_{i,\rm sh}^2)^{-1/2}`.
+
 
 ----
 
-.. _model_comparison_summary:
 
-Summary of Modeling Choices
-----------------------------
+.. _relativistic_pressure_driven_shells:
 
-The three models differ in what is retained after the shocked region is reduced to
-a small number of degrees of freedom.
+Relativistic Pressure-Driven Thin-Shell Model
+-----------------------------------------------
 
-The **momentum-conserving snowplow** retains only mass and momentum. It is the
-most direct thin-shell closure and is appropriate when shock-generated thermal
-energy is not dynamically important — for example, in the fully radiative phase of
-a supernova remnant where cooling is efficient.
+The relativistic pressure-driven thin-shell model
+(:class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
+is the relativistic analogue of the
+:ref:`non-relativistic pressure-driven thin-shell model <pressure_driven_thin_shell_model>`.
+The shocked region is collapsed to a geometrically thin shell at a single radius
+:math:`R_{\rm sh}`, and the shell dynamics are governed by the net post-shock
+pressure difference across the contact discontinuity, evaluated from the
+relativistic Rankine--Hugoniot jump conditions.
 
-The **pressure-driven thin-shell model** retains mass and velocity, and computes
-the shell acceleration from instantaneous post-shock pressures without evolving
-separate internal energies. It is useful as a semi-analytic pressure-balance
-approximation for intermediate regimes.
+Assumptions
+^^^^^^^^^^^^
 
-The **mechanical model** retains mass, velocity, internal energy, and effective
-layer-width information for each shocked zone. It is the appropriate closure when
-shocked gas stores thermal energy that continues to provide pressure support over
-dynamical timescales.
+- Thin-shell geometry:
+  :math:`R_{\rm rs}\simeq R_{\rm cd}\simeq R_{\rm fs}\equiv R_{\rm sh}`.
+- The shell moves at the contact-discontinuity speed:
+  :math:`dR_{\rm sh}/dt = c\beta_{\rm sh}`.
+- Shell momentum is driven by the net pressure force
+  :math:`4\pi R_{\rm sh}^2(P_2-P_3)` across the contact discontinuity.
+- Upstream media are cold: :math:`P_1\simeq P_4\simeq 0`.
+- The model is adiabatic; no radiative losses are included.
 
-.. warning::
+Dynamical State
+^^^^^^^^^^^^^^^^
 
-    The pressure-driven and mechanical models both contain a term of the form
-    :math:`4\pi R^2(P_2-P_3)`, but the meaning of the pressures differs.
-    In the pressure-driven model, :math:`P_2` and :math:`P_3` are instantaneous
-    Rankine--Hugoniot pressures evaluated algebraically from the upstream state.
-    In the mechanical model, they are layer-averaged pressures computed from the
-    evolved internal energies :math:`U_2` and :math:`U_3`.
+In the relativistic case, shocked internal energy contributes to the shell
+inertia alongside the baryonic rest mass, so the shell is described by its
+**lab-frame four-momentum**. The dynamical state vector is
+
+.. math::
+
+   \boxed{
+   \mathbf{y}(t)
+   =
+   \bigl(
+       R_{\rm sh},\;
+       M_{\rm sh},\;
+       E_{\rm sh},\;
+       \Pi_{\rm sh}
+   \bigr),
+   }
+
+where :math:`M_{\rm sh}` is the **swept baryonic rest mass**, :math:`E_{\rm sh}`
+is the **lab-frame total energy**, and :math:`\Pi_{\rm sh}` is the **lab-frame
+radial momentum** of the shocked shell.
+
+The shell velocity follows algebraically from the four-momentum ratio,
+
+.. math::
+   :label: rel_pd_beta_from_energy_momentum
+
+   \boxed{
+   \beta_{\rm sh}
+   =
+   \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}},
+   \qquad
+   \Gamma_{\rm sh}
+   =
+   \frac{1}{\sqrt{1-\beta_{\rm sh}^2}},
+   \qquad
+   w_{\rm sh}
+   =
+   \Gamma_{\rm sh}\beta_{\rm sh}.
+   }
+
+Here :math:`w_{\rm sh} = \Gamma_{\rm sh}\beta_{\rm sh}` is the **proper
+velocity** of the shell, the spatial component of the four-velocity. This
+parametrization remains well behaved as :math:`\beta_{\rm sh}\to 1`.
+
+The shell-frame energy is the Lorentz-invariant norm of the four-momentum,
+
+.. math::
+   :label: rel_pd_shell_frame_energy
+
+   E'_{\rm sh}
+   =
+   \sqrt{E_{\rm sh}^2 - \Pi_{\rm sh}^2\,c^2},
+
+so the effective inertial mass :math:`\mathcal{M}_{\rm sh}=E'_{\rm sh}/c^2`
+needs no independent evolution.
+
+Shock Closure and Jump Conditions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the thin-shell approximation, both shocks travel at the shell speed
+:math:`\beta_{\rm sh}`. The upstream speed in the shell (downstream) frame
+follows from relativistic velocity addition:
+
+.. math::
+
+   \beta_{\rm rel,2}
+   =
+   \left|
+       \frac{\beta_{1,\rm sh}-\beta_{\rm sh}}
+       {1-\beta_{1,\rm sh}\,\beta_{\rm sh}}
+   \right|,
+   \qquad
+   \beta_{\rm rel,3}
+   =
+   \left|
+       \frac{\beta_{\rm sh}-\beta_{4,\rm sh}}
+       {1-\beta_{\rm sh}\,\beta_{4,\rm sh}}
+   \right|,
+
+with Lorentz factors
+:math:`\Gamma_{\rm rel,i}=(1-\beta_{\rm rel,i}^2)^{-1/2}`.
+
+For a cold upstream and ideal-gas downstream with adiabatic index
+:math:`\hat\gamma`, the relativistic Rankine--Hugoniot conditions give the
+post-shock pressure and energy-loading coefficient:
+
+.. math::
+
+   P_d^{({\rm RH})}
+   =
+   \rho_u\,c^2
+   (\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1),
+   \qquad
+   \eta_d
+   =
+   \frac{e_d}{\rho_d\,c^2}
+   =
+   \Gamma_{\rm rel},
+
+where :math:`e_d = \rho_d c^2 + u_d` is the downstream comoving total energy
+density. The coefficient :math:`\eta_d c^2` is the shell-frame energy injected
+per unit swept rest mass.
+
+.. dropdown:: Derivation: relativistic Rankine--Hugoniot jump conditions
+
+    For a cold upstream (:math:`P_u=0`, :math:`e_u=\rho_u c^2`) and a
+    relativistic ideal gas downstream, the Taub adiabat and the
+    Rankine--Hugoniot conservation laws give (in the shock rest frame, with
+    upstream Lorentz factor :math:`\Gamma_{\rm rel}`):
+
+    **Compression ratio:**
+
+    .. math::
+
+        \frac{\rho_d}{\rho_u}
+        =
+        \frac{\hat\gamma\Gamma_{\rm rel}+1}{\hat\gamma-1}.
+
+    **Downstream pressure:**
+
+    .. math::
+
+        P_d
+        =
+        \rho_u c^2(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1).
+
+    **Energy-loading coefficient** :math:`\eta_d`:
+    using :math:`e_d = \rho_d c^2 + P_d/(\hat\gamma-1)` and the compression ratio,
+
+    .. math::
+
+        \eta_d
+        =
+        \frac{e_d}{\rho_d c^2}
+        =
+        1 + \frac{P_d}{(\hat\gamma-1)\,\rho_d c^2}
+        =
+        1 + \frac{(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1)}
+                 {(\hat\gamma\Gamma_{\rm rel}+1)}
+        =
+        \Gamma_{\rm rel}.
+
+**Non-relativistic limit correction.** The formula :math:`P_d^{({\rm RH})}`
+does not reduce to the correct non-relativistic Rankine--Hugoniot pressure
+in the low-Mach limit. As :math:`\Gamma_{\rm rel}\to 1`:
+
+.. math::
+
+   P_d^{({\rm RH})}
+   \;\xrightarrow{\;\Gamma_{\rm rel}\to 1\;}\;
+   \frac{\hat\gamma+1}{2}\,\rho_u v_{\rm rel}^2,
+
+whereas the correct non-relativistic Hugoniot gives
+
+.. math::
+
+   P_d^{({\rm NR})}
+   =
+   \left(1-\frac{1}{\chi}\right)\rho_u v_{\rm rel}^2
+   =
+   \frac{2}{\hat\gamma+1}\,\rho_u v_{\rm rel}^2,
+   \qquad
+   \chi = \frac{\hat\gamma+1}{\hat\gamma-1}.
+
+The ratio is
+:math:`P_d^{({\rm NR})}/P_d^{({\rm RH})}\big|_{\rm NR} = (1-1/\chi)^2`.
+To preserve the non-relativistic Hugoniot in the low-Mach limit, the
+pressures driving the ODE are rescaled by this factor:
+
+.. math::
+
+   \boxed{
+   P_i
+   =
+   \left(1-\frac{1}{\chi}\right)^2
+   \rho_{u,i}\,c^2
+   \left(\Gamma_{\rm rel,i}-1\right)
+   \left(\hat\gamma\,\Gamma_{\rm rel,i}+1\right).
+   }
+
+One can verify that :math:`P_i\to(1-1/\chi)\rho_u v_{\rm rel}^2` as
+:math:`\Gamma_{\rm rel}\to 1`, recovering the correct non-relativistic result.
+Applied at each shock face:
+
+.. math::
+
+   P_2
+   =
+   \left(1-\frac{1}{\chi}\right)^2
+   \rho_{1,\rm sh}\,c^2
+   \left(\Gamma_{\rm rel,2}-1\right)
+   \left(\hat\gamma\,\Gamma_{\rm rel,2}+1\right),
+   \qquad
+   P_3
+   =
+   \left(1-\frac{1}{\chi}\right)^2
+   \rho_{4,\rm sh}\,c^2
+   \left(\Gamma_{\rm rel,3}-1\right)
+   \left(\hat\gamma\,\Gamma_{\rm rel,3}+1\right).
+
+.. note::
+
+   The diagnostic pressures stored in
+   :class:`~triceratops.dynamics.shocks.numerical.RelThinShellShockState`
+   are the **unmodified** Hugoniot pressures :math:`P_d^{({\rm RH})}`. The
+   corrected pressures :math:`P_i` are used only internally in the ODE
+   integration.
+
+Rest-Mass Fluxes
+^^^^^^^^^^^^^^^^^^
+
+The baryonic rest mass swept into the shell per unit time follows from the
+comoving-frame baryon-flux condition at each shock face:
+
+.. math::
+   :label: rel_pd_mdot_reverse_shell_speed
+
+   \boxed{
+   \dot{M}_2
+   =
+   4\pi R_{\rm sh}^2\,\rho_{1,\rm sh}\,\Gamma_{1,\rm sh}\,c
+   \left(\beta_{1,\rm sh}-\beta_{\rm sh}\right),
+   }
+
+.. math::
+   :label: rel_pd_mdot_forward_shell_speed
+
+   \boxed{
+   \dot{M}_3
+   =
+   4\pi R_{\rm sh}^2\,\rho_{4,\rm sh}\,\Gamma_{4,\rm sh}\,c
+   \left(\beta_{\rm sh}-\beta_{4,\rm sh}\right),
+   }
+
+clamped to be non-negative.
+
+Equations of Motion
+^^^^^^^^^^^^^^^^^^^^
+
+Combining baryon conservation, energy loading, and the pressure-driven momentum
+source gives the closed adiabatic system:
+
+.. math::
+   :label: rel_pd_closed_energy_momentum_system
+
+   \boxed{
+   \begin{aligned}
+       \frac{dR_{\rm sh}}{dt}
+       &=
+       c\,\beta_{\rm sh},
+       \\[6pt]
+       \frac{dM_{\rm sh}}{dt}
+       &=
+       \dot{M}_2+\dot{M}_3,
+       \\[6pt]
+       \frac{dE_{\rm sh}}{dt}
+       &=
+       \Gamma_{\rm sh}\,c^2
+       \!\left(
+           \Gamma_{\rm rel,2}\,\dot{M}_2
+           +
+           \Gamma_{\rm rel,3}\,\dot{M}_3
+       \right),
+       \\[6pt]
+       \frac{d\Pi_{\rm sh}}{dt}
+       &=
+       w_{\rm sh}\,c
+       \!\left(
+           \Gamma_{\rm rel,2}\,\dot{M}_2
+           +
+           \Gamma_{\rm rel,3}\,\dot{M}_3
+       \right)
+       +
+       4\pi R_{\rm sh}^2
+       \!\left(P_2-P_3\right),
+       \\[6pt]
+       \beta_{\rm sh}
+       &=
+       \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.
+   \end{aligned}
+   }
+
+The :math:`\Gamma_{\rm rel,i}` factors in the energy and momentum equations are
+the energy-loading coefficients :math:`\eta_i=\Gamma_{\rm rel,i}` from the
+Rankine--Hugoniot solution. The pressures :math:`P_2` and :math:`P_3` are the
+non-relativistically corrected values defined above.
+
+.. dropdown:: Derivation: energy and momentum loading
+
+    When newly shocked material is incorporated into the thin shell, it is
+    boosted from the upstream frame to the shell rest frame, depositing
+    shell-frame energy at the rate
+
+    .. math::
+
+        \dot{E}'_{\rm load}
+        =
+        c^2
+        \!\left(
+            \eta_2\,\dot{M}_2
+            +
+            \eta_3\,\dot{M}_3
+        \right)
+        =
+        c^2
+        \!\left(
+            \Gamma_{\rm rel,2}\,\dot{M}_2
+            +
+            \Gamma_{\rm rel,3}\,\dot{M}_3
+        \right).
+
+    Since the newly shocked material is at rest in the shell frame, its
+    contribution to the lab-frame four-momentum is parallel to the shell
+    four-velocity :math:`U^\mu_{\rm sh}\propto(\Gamma_{\rm sh},\,w_{\rm sh})`.
+    Boosting to the lab frame:
+
+    .. math::
+
+        \dot{E}_{\rm load}
+        =
+        \Gamma_{\rm sh}\,\dot{E}'_{\rm load},
+        \qquad
+        \dot{\Pi}_{\rm load}
+        =
+        \frac{w_{\rm sh}}{c}\,\dot{E}'_{\rm load},
+
+    which are the source terms appearing in the ODE system above.
+
+    In the non-relativistic limit :math:`w_{\rm sh}\,c\to v_{\rm sh}` and
+    :math:`\Gamma_{\rm rel,i}\to 1`, giving
+    :math:`\dot{\Pi}_{\rm load}\to v_{\rm sh}(\dot{M}_2+\dot{M}_3)` — the
+    familiar variable-mass momentum term.
+
+    The pressure-driven term :math:`4\pi R_{\rm sh}^2(P_2-P_3)` is the net
+    relativistic pressure force on the contact discontinuity. It is not added
+    on top of a snowplow momentum-flux term; it is the sole dynamical source
+    beyond mass loading, defining the pressure-driven approximation.
+
+Initial Conditions
+^^^^^^^^^^^^^^^^^^^
+
+The initial state is specified by the triple :math:`(R_0,\,\beta_0,\,M_0)` at
+time :math:`t_0`. Assuming a cold shell,
+
+.. math::
+
+   E_0 = M_0\,c^2\,\Gamma_0,
+   \qquad
+   \Pi_0 = M_0\,c\,\Gamma_0\,\beta_0,
+   \qquad
+   \Gamma_0 = \frac{1}{\sqrt{1-\beta_0^2}}.
+
+.. bigidea::
+
+   The evolved variables are :math:`R_{\rm sh}`, :math:`M_{\rm sh}`,
+   :math:`E_{\rm sh}`, and :math:`\Pi_{\rm sh}`. Rest mass :math:`M_{\rm sh}`
+   is tracked by baryon conservation; :math:`E_{\rm sh}` and :math:`\Pi_{\rm sh}`
+   jointly encode the relativistic inertia and speed of the shell. The
+   pressure-driven nature of the model enters through the explicit force
+
+   .. math::
+
+      4\pi R_{\rm sh}^2(P_2-P_3),
+
+   where :math:`P_i = (1-1/\chi)^2\,\rho_{u,i}\,c^2\,(\Gamma_{\rm rel,i}-1)(\hat\gamma\,\Gamma_{\rm rel,i}+1)`
+   are the non-relativistically corrected Hugoniot pressures, with
+   :math:`\chi = (\hat\gamma+1)/(\hat\gamma-1)`.
