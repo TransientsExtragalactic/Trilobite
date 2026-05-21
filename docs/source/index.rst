@@ -1,7 +1,7 @@
 .. raw:: html
 
    <div class="hero">
-       <img src="_images/logo.png" class="hero-logo">
+       <img src="_images/logo.svg" class="hero-logo">
        <div class="hero-text">
            <h1>TRILOBITE</h1>
            <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
@@ -18,8 +18,7 @@
 Overview
 =========
 
-The **TR**\ ansient **I**\ nteraction **C**\ ode for **E**\ jecta, **R**\ emnants, **A**\ and
-**T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRILOBITE**) is a powerful, modular computational
+The **TR**\ ansient **I**\ nference **L**\ ibrary for **O**\ bservation, **B**\ ayesian **I**\ nference, and **T**\ ime-domain **E**\ xploration (**TRILOBITE**) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
 .. grid:: 2
@@ -75,7 +74,14 @@ library for modeling the interaction of transient astrophysical outflows with th
 
        .. code-block:: bash
 
-          >>> pip install trilobite-lib
+          pip install trilobite
+
+       Or install from source:
+
+       .. code-block:: bash
+
+          git clone https://github.com/TransientsExtragalactic/Trilobite
+          cd Trilobite && pip install -e .
 
 .. raw:: html
 

@@ -1,17 +1,9 @@
-.. raw:: html
-
-   <div align="center">
-     <img src="docs/source/images/logo.svg" width="260" alt="Trilobite"><br/><br/>
-     <h1>TRILOBITE</h1>
-     <p><em>A Python ecosystem for rapid-deployment modeling of astrophysical transients</em></p>
-     <p>
+.. image:: https://raw.githubusercontent.com/TransientsExtragalactic/Trilobite/main/docs/source/images/logo.svg
+   :width: 260px
+   :align: center
+   :alt: Trilobite
 
 |Tests| |docs| |docs-stable| |RUFF| |PRE-COMMIT| |ISORT| |NUMPYDOC| |DOCFORMATTER| |COMMITIZEN| |CONVENTIONAL-COMMITS| |ASTROPY| |CONTRIBUTORS| |LAST-COMMIT|
-
-.. raw:: html
-
-     </p>
-   </div>
 
 ----
 
@@ -45,11 +37,13 @@ Overview
 Quick Install
 =============
 
+Install from PyPI:
+
 .. code-block:: bash
 
-    pip install trilobite-lib
+    pip install trilobite
 
-Or install from source:
+Install from source:
 
 .. code-block:: bash
 
