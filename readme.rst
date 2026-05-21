@@ -43,18 +43,18 @@ Alternatively, you can install directly from the GitHub repository:
 
 .. code-block:: bash
 
-    git clone https://www.github.com/Eliza-Diggins/Triceratops
+    git clone https://www.github.com/TransientsExtragalactic/Triceratops
     cd Triceratops
     pip install .
 
 For detailed setup instructions, see the
-`Installation Guide <https://Eliza-Diggins.github.io/Triceratops/getting_started/installation.html>`_.
+`Installation Guide <https://transientsextragalactic.github.io/Triceratops/getting_started/installation.html>`_.
 
 Documentation
 -------------
 
 The full documentation is available at
-`https://Eliza-Diggins.github.io/Triceratops <https://Eliza-Diggins.github.io/Triceratops>`_.
+`https://transientsextragalactic.github.io/Triceratops <https://transientsextragalactic.github.io/Triceratops>`_.
 
 This includes conceptual overviews, user guides, API references, and worked examples.
 
@@ -62,7 +62,7 @@ Contributing
 ------------
 
 Development takes place on
-`GitHub <https://www.github.com/Eliza-Diggins/Triceratops>`_.
+`GitHub <https://www.github.com/TransientsExtragalactic/Triceratops>`_.
 
 Bug reports, feature requests, and documentation improvements are welcome via the issue tracker.
 Contributions should follow the established coding, documentation, and commit-style guidelines
@@ -76,14 +76,14 @@ If you use Triceratops in your research, please cite or acknowledge it with text
     We acknowledge the use of the Triceratops software package, written by E. Diggins et al., in this work.
 
 
-.. |Tests| image:: https://github.com/eliza-diggins/Triceratops/actions/workflows/run_tests.yml/badge.svg
+.. |Tests| image:: https://github.com/TransientsExtragalactic/Triceratops/actions/workflows/run_tests.yml/badge.svg
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://Eliza-Diggins.github.io/Triceratops
+   :target: https://transientsextragalactic.github.io/Triceratops
    :alt: Latest Docs
 
 .. |docs-stable| image:: https://img.shields.io/badge/docs-stable-brightgreen.svg
-   :target: https://Eliza-Diggins.github.io/Triceratop/stable
+   :target: https://transientsextragalactic.github.io/Triceratops/stable
    :alt: Latest Docs
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
@@ -106,12 +106,12 @@ If you use Triceratops in your research, please cite or acknowledge it with text
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/eliza-diggins/Triceratops
-   :target: https://github.com/Eliza-Diggins/Triceratop/graphs/contributors
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Triceratops
+   :target: https://github.com/TransientsExtragalactic/Triceratops/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/eliza-diggins/Triceratop
-   :target: https://github.com/Eliza-Diggins/Triceratop
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Triceratops
+   :target: https://github.com/TransientsExtragalactic/Triceratops
    :alt: Last Commit
 
 .. |ASTROPY| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat

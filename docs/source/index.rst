@@ -213,7 +213,7 @@ Indices and tables
 
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://eliza-diggins.github.io/Triceratops
+   :target: https://transientsextragalactic.github.io/Triceratops
    :alt: Latest Docs
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
@@ -236,12 +236,12 @@ Indices and tables
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/eliza-diggins/Triceratops
-   :target: https://github.com/eliza-diggins/Triceratops/graphs/contributors
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Triceratops
+   :target: https://github.com/TransientsExtragalactic/Triceratops/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/eliza-diggins/Triceratops
-   :target: https://github.com/eliza-diggins/Triceratops
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Triceratops
+   :target: https://github.com/TransientsExtragalactic/Triceratops
    :alt: Last Commit
 
 .. |ASTROPY| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat

@@ -57,7 +57,7 @@ To get started, you will need to clone the Triceratops repository from GitHub. Y
 
 .. code-block:: bash
 
-    git clone https://github.com/eliza-diggins/Triceratops
+    git clone https://github.com/TransientsExtragalactic/Triceratops
 
 This will create a local copy of the Triceratops repository on your machine. To get a particular branch you will need to
 checkout the branch you want to work on:

@@ -81,7 +81,7 @@ html_theme_options = {
             # Label for this link
             "name": "GitHub",
             # URL where the link will redirect
-            "url": "https://github.com/eliza-diggins/Triceratops",  # required
+            "url": "https://github.com/TransientsExtragalactic/Triceratops",  # required
             # Icon class (if "type": "fontawesome"), or path to local image (if "type": "local")
             "icon": "fa-brands fa-square-github",
             # The type of image to be used (see below for details)
@@ -90,7 +90,7 @@ html_theme_options = {
     ],
     "navbar_end": ["theme-switcher", "version-switcher", "navbar-icon-links"],
     "switcher": {
-        "json_url": "https://eliza-diggins.github.io/Triceratops/versions.json",
+        "json_url": "https://transientsextragalactic.github.io/Triceratops/versions.json",
         "version_match": version,
     },
 }
