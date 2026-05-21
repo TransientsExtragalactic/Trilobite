@@ -39,7 +39,7 @@ which integrates the absorption coefficient from the shock radius outward.
 
 Relevant API
 ------------
-- :class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`
+- :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
 - :func:`~radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
 - :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
@@ -52,7 +52,7 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.supernovae import ChevalierSelfSimilarWindShockEngine
+from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
 from triceratops.radiation.free_free.absorption import (
     compute_ff_RJ_optical_depth_from_quadrature,
 )

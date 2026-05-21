@@ -299,4 +299,11 @@ sphinx_gallery_conf = {
     # fail in CI or constrained doc-build environments without invalidating
     # the rest of the documentation.
     "abort_on_example_error": False,
+    # Galleries that depend on models not yet implemented.  These are listed
+    # here so that the build treats them as known failures rather than
+    # unexpected errors.  Remove each entry once the corresponding model exists.
+    "expected_failing_examples": [
+        "galleries/modeling/plot_fred_blackbody_optical_lc.py",
+        "galleries/inference/plot_optical_lc_inference.py",
+    ],
 }
