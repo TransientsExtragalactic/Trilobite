@@ -41,6 +41,8 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # required for setuptools-scm tag-based versioning
 
       # Setup the python environment for the operation.
       - name: Set up Python
@@ -63,7 +65,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install "numpy>=1.22,<2.0.0" "Cython>=0.29"
+          pip install "setuptools>=61.2" "numpy>=1.26" "Cython>=3.0"
       - name: Build Cython extensions
         run: python setup.py build_ext --inplace
       - name: Install documentation dependencies
