@@ -2,13 +2,13 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.dynamics.shocks import (
+from trilobite.dynamics.shocks import (
     MechanicalShockEngine,
     get_bpl_ejecta_kernel,
     get_wind_csm_density_func,
     make_homologous_stationary_sources,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 G_ej    = get_bpl_ejecta_kernel(1e51 * u.erg, 5.0 * u.Msun, n=10.0, delta=1.0)
 rho_csm = get_wind_csm_density_func(1e-5 * u.Msun / u.yr, 100.0 * u.km / u.s)

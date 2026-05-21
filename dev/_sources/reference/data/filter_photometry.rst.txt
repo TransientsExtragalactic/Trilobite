@@ -4,23 +4,23 @@
 Optical Filters and Photometry
 ============================
 
-Triceratops includes a complete system for filter-based optical photometry. Whether you are working
+Trilobite includes a complete system for filter-based optical photometry. Whether you are working
 with archival ZTF or LSST observations, or building a multi-band light curve model for inference, this
 module provides efficient tools for filter convolution, magnitude conversions, and filter I/O.
 
 The central objects are:
 
-- :class:`~triceratops.utils.phot_utils.PhotometryFilter` — a single bandpass filter
-- :class:`~triceratops.utils.phot_utils.FilterBundle` — a collection of filters optimised for MCMC hot loops
-- Magnitude conversion utilities: :func:`~triceratops.utils.phot_utils.flux_to_ab_mag`,
-  :func:`~triceratops.utils.phot_utils.ab_mag_to_flux`, etc.
+- :class:`~trilobite.utils.phot_utils.PhotometryFilter` — a single bandpass filter
+- :class:`~trilobite.utils.phot_utils.FilterBundle` — a collection of filters optimised for MCMC hot loops
+- Magnitude conversion utilities: :func:`~trilobite.utils.phot_utils.flux_to_ab_mag`,
+  :func:`~trilobite.utils.phot_utils.ab_mag_to_flux`, etc.
 
 ----
 
 PhotometryFilter
 ----------------
 
-A :class:`~triceratops.utils.phot_utils.PhotometryFilter` wraps a filter transmission curve and
+A :class:`~trilobite.utils.phot_utils.PhotometryFilter` wraps a filter transmission curve and
 precomputes integration weights so that filter convolution is a single dot product at evaluation time.
 
 Construction
@@ -34,7 +34,7 @@ dimensionless.
 
     import numpy as np
     import astropy.units as u
-    from triceratops.utils.phot_utils import PhotometryFilter
+    from trilobite.utils.phot_utils import PhotometryFilter
 
     # From an Astropy Quantity (recommended)
     lam = np.linspace(5500, 7500, 300) * u.AA
@@ -89,7 +89,7 @@ There are three convolution entry points, trading off convenience against speed:
 All convolution methods accept a batch dimension: passing ``F_nu`` with shape ``(N_t, N_nu)``
 returns a result of shape ``(N_t,)`` — one band flux per time step.
 
-The filter object is also callable as a shorthand for :meth:`~triceratops.utils.phot_utils.PhotometryFilter.convolve_nu`:
+The filter object is also callable as a shorthand for :meth:`~trilobite.utils.phot_utils.PhotometryFilter.convolve_nu`:
 
 .. code-block:: python
 
@@ -109,7 +109,7 @@ FilterBundle
 ------------
 
 When running MCMC inference over a multi-band dataset, calling individual filters in a loop is
-wasteful. :class:`~triceratops.utils.phot_utils.FilterBundle` addresses this by precomputing a
+wasteful. :class:`~trilobite.utils.phot_utils.FilterBundle` addresses this by precomputing a
 **weight matrix** of shape ``(N_filters, N_common)`` at construction time, reducing all-band
 convolution to a single matrix multiply at inference time.
 
@@ -118,7 +118,7 @@ Construction
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import FilterBundle
+    from trilobite.utils.phot_utils import FilterBundle
 
     bundle = FilterBundle({
         "g": g_filt,
@@ -138,9 +138,9 @@ MCMC Hot-Loop Pattern
 The recommended workflow for MCMC evaluation is:
 
 1. Build the ``FilterBundle`` once, before the sampler starts.
-2. Obtain the :attr:`~triceratops.utils.phot_utils.FilterBundle.frequency_grid` and evaluate
+2. Obtain the :attr:`~trilobite.utils.phot_utils.FilterBundle.frequency_grid` and evaluate
    your model on that grid.
-3. Call :meth:`~triceratops.utils.phot_utils.FilterBundle.apply` — a pure matrix multiply with
+3. Call :meth:`~trilobite.utils.phot_utils.FilterBundle.apply` — a pure matrix multiply with
    no interpolation overhead.
 
 .. code-block:: python
@@ -164,7 +164,7 @@ For batched model evaluation (e.g. ``(N_walkers, N_common)``):
     F_bands    = bundle.apply(F_nu_batch)          # shape (N_walkers, N_filters)
 
 If your model is not already on the common grid, use
-:meth:`~triceratops.utils.phot_utils.FilterBundle.convolve_nu` which adds one interpolation step:
+:meth:`~trilobite.utils.phot_utils.FilterBundle.convolve_nu` which adds one interpolation step:
 
 .. code-block:: python
 
@@ -173,7 +173,7 @@ If your model is not already on the common grid, use
 Dict-like Interface
 ^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.utils.phot_utils.FilterBundle` supports a dictionary-like interface:
+:class:`~trilobite.utils.phot_utils.FilterBundle` supports a dictionary-like interface:
 
 .. code-block:: python
 
@@ -218,7 +218,7 @@ By default the wavelength column is assumed to be in Ångström:
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import load_filter_from_file
+    from trilobite.utils.phot_utils import load_filter_from_file
 
     filt = load_filter_from_file("sdss_r.dat")                       # Å default
     filt = load_filter_from_file("sdss_r.dat", wavelength_unit="nm") # nm
@@ -234,13 +234,13 @@ dependency with:
 
 .. code-block:: bash
 
-    pip install triceratops[optical]
+    pip install trilobite[optical]
 
 Then load any filter by its speclite name:
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import load_filter_from_speclite, list_speclite_filters
+    from trilobite.utils.phot_utils import load_filter_from_speclite, list_speclite_filters
 
     # List all available filters (or a subset by prefix)
     all_filters  = list_speclite_filters()
@@ -272,7 +272,7 @@ The **AB magnitude** system defines magnitude zero as a constant spectrum with
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import flux_to_ab_mag, ab_mag_to_flux
+    from trilobite.utils.phot_utils import flux_to_ab_mag, ab_mag_to_flux
 
     mag = flux_to_ab_mag(3.631e-20)   # → 0.0
     F   = ab_mag_to_flux(0.0)         # → 3.631e-20
@@ -293,7 +293,7 @@ where ``F_λ`` is in erg/s/cm²/Å.
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import flux_lambda_to_st_mag, st_mag_to_flux_lambda
+    from trilobite.utils.phot_utils import flux_lambda_to_st_mag, st_mag_to_flux_lambda
 
     mag = flux_lambda_to_st_mag(3.631e-9)      # erg/s/cm²/Å
     F_lambda = st_mag_to_flux_lambda(mag)
@@ -301,12 +301,12 @@ where ``F_λ`` is in erg/s/cm²/Å.
 Filter-Convolved Magnitudes
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:func:`~triceratops.utils.phot_utils.filter_to_ab_mag` combines filter convolution and magnitude
+:func:`~trilobite.utils.phot_utils.filter_to_ab_mag` combines filter convolution and magnitude
 conversion into a single call:
 
 .. code-block:: python
 
-    from triceratops.utils.phot_utils import filter_to_ab_mag
+    from trilobite.utils.phot_utils import filter_to_ab_mag
 
     # Single filter
     mag_r = filter_to_ab_mag(r_filt, nu, F_nu)   # scalar
@@ -322,7 +322,7 @@ conversion into a single call:
 I/O Reference
 -------------
 
-:class:`~triceratops.utils.phot_utils.PhotometryFilter` supports the following I/O formats:
+:class:`~trilobite.utils.phot_utils.PhotometryFilter` supports the following I/O formats:
 
 .. list-table::
     :header-rows: 1
@@ -353,7 +353,7 @@ I/O Reference
       - ``from_array(arr)``
       - Shape ``(2, N)``; row 0 = wavelength (cm), row 1 = transmission
 
-:class:`~triceratops.utils.phot_utils.FilterBundle` provides the same formats at the bundle level:
+:class:`~trilobite.utils.phot_utils.FilterBundle` provides the same formats at the bundle level:
 ``to_dict`` / ``from_dict``, ``to_json`` / ``from_json``, and ``to_hdf5`` / ``from_hdf5``. In the
 HDF5 file each filter occupies a separate group and the original filter order is preserved.
 

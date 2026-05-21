@@ -1,0 +1,1350 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.dynamics.shocks.core.relativistic_jump_conditions &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/dynamics/shocks/core/relativistic_jump_conditions';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../_static/language_data.js"></script>
+    <script src="../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.dynamics.shocks.core.relativistic_jump_conditions</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.dynamics.shocks.core.relativistic_jump_conditions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Relativistic Rankine–Hugoniot jump conditions for high-velocity astrophysical shocks.</span>
+
+<span class="sd">This module provides solvers for relativistic shock jump conditions, covering the</span>
+<span class="sd">full range from mildly relativistic to ultra-relativistic flows. All solvers accept</span>
+<span class="sd">lab-frame velocities and proper comoving-frame thermodynamic quantities as input.</span>
+
+<span class="sd">Classes</span>
+<span class="sd">-------</span>
+<span class="sd">RelativisticJumpConditions</span>
+<span class="sd">    Abstract base class for all relativistic jump-condition solvers.</span>
+<span class="sd">UltraRelativisticShockConditions</span>
+<span class="sd">    Analytic solver for the ultra-relativistic strong-shock limit (Γ₁ ≫ 1).</span>
+<span class="sd">UltraRelativisticColdShockConditions</span>
+<span class="sd">    Analytic solver for the UR strong-shock limit into a cold upstream medium.</span>
+<span class="sd">RelativisticShockConditions</span>
+<span class="sd">    General numerical solver for arbitrary upstream states.</span>
+<span class="sd">RelativisticColdShockConditions</span>
+<span class="sd">    Numerical solver for cold upstream media (P₁ ≈ 0).</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">See :ref:`relativistic_jump_conditions_theory` for the full theoretical derivation.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections</span><span class="w"> </span><span class="kn">import</span> <span class="n">namedtuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">brentq</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_UnitBearingArrayLike</span>
+
+<span class="c1"># --- CGS constants for low-level API --- #</span>
+<span class="n">c_cgs</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Speed of light (cm s⁻¹)</span>
+<span class="n">k_B_cgs</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">k_B</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Boltzmann constant (erg K⁻¹)</span>
+<span class="n">m_p_cgs</span> <span class="o">=</span> <span class="n">const</span><span class="o">.</span><span class="n">m_p</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span>  <span class="c1"># Proton mass (g)</span>
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># Private Helper Functions                                             #</span>
+<span class="c1"># ================================================================== #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_lorentz_factor</span><span class="p">(</span><span class="n">beta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Lorentz factor Γ = 1/√((1−β)(1+β)).</span>
+
+<span class="sd">    The factored form avoids catastrophic cancellation in 1−β² when β≈1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">beta</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_shock_frame_beta</span><span class="p">(</span><span class="n">beta_shock</span><span class="p">,</span> <span class="n">beta_upstream</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Upstream fluid velocity in the shock frame via relativistic velocity addition.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beta_shock : float</span>
+<span class="sd">        Shock velocity in the lab frame, β_sh = v_sh / c.</span>
+<span class="sd">    beta_upstream : float</span>
+<span class="sd">        Upstream fluid bulk velocity in the lab frame, β_up = v_up / c.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Upstream fluid velocity in the shock rest frame, β₁.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">beta_shock</span> <span class="o">-</span> <span class="n">beta_upstream</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta_shock</span> <span class="o">*</span> <span class="n">beta_upstream</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_maxwell_juttner_temperature_cgs</span><span class="p">(</span><span class="n">U_int</span><span class="p">,</span> <span class="n">rho</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Post-shock temperature from the Maxwell–Jüttner internal energy relation.</span>
+
+<span class="sd">    Inverts the Gammie–McKinney approximation :footcite:p:`1998ApJ...498..313G`</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        U_{\rm int} \approx \rho c^2 \Theta \frac{6 + 15\Theta}{4 + 5\Theta},</span>
+
+<span class="sd">    where :math:`\Theta = k_B T / (\mu m_p c^2)`, to obtain</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \Theta = \frac{5\xi - 6 + \sqrt{(6 - 5\xi)^2 + 240\xi}}{30},</span>
+
+<span class="sd">    with :math:`\xi = U_{\rm int} / (\rho c^2)`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The coefficient in the discriminant is 240, not 120 as printed in the</span>
+<span class="sd">    ``relativistic_jump_conditions_theory`` reference page (typographical error there).</span>
+<span class="sd">    The value 240 = 4 · 15 · 4 follows directly from the quadratic formula applied to</span>
+<span class="sd">    ``15Θ² + (6 − 5ξ)Θ − 4ξ = 0`` and is confirmed by substituting Θ = 1</span>
+<span class="sd">    (ξ = 7/3) and recovering the identity.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    U_int : float</span>
+<span class="sd">        Proper internal energy density (erg cm⁻³).</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        Proper rest-mass density (g cm⁻³).</span>
+<span class="sd">    mu : float</span>
+<span class="sd">        Mean molecular weight.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Post-shock temperature (K).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">xi</span> <span class="o">=</span> <span class="n">U_int</span> <span class="o">/</span> <span class="p">(</span><span class="n">rho</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">discriminant</span> <span class="o">=</span> <span class="p">(</span><span class="mf">6.0</span> <span class="o">-</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">xi</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="mf">240.0</span> <span class="o">*</span> <span class="n">xi</span>
+    <span class="n">theta</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">xi</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">discriminant</span><span class="p">))</span> <span class="o">/</span> <span class="mf">30.0</span>
+    <span class="k">return</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">k_B_cgs</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_relativistic_implicit_eq</span><span class="p">(</span><span class="n">beta2</span><span class="p">,</span> <span class="n">beta1</span><span class="p">,</span> <span class="n">gamma1</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">pi1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Residual of the relativistic jump condition.</span>
+
+<span class="sd">    Evaluates the left-hand side of :eq:`eq:relativistic_jump_condition_final`</span>
+<span class="sd">    from :ref:`relativistic_jump_conditions_theory`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \left(\frac{\hat{\gamma}-1}{\hat{\gamma}}\right)</span>
+<span class="sd">        \frac{\Gamma_1\beta_1}{\Gamma_2\beta_2}</span>
+<span class="sd">        \left[\Omega_1\frac{\Gamma_1}{\Gamma_2} - 1\right]</span>
+<span class="sd">        - \Omega_1\Gamma_1^2\beta_1^2\left(1 - \frac{\beta_2}{\beta_1}\right)</span>
+<span class="sd">        - \Pi_1 = 0.</span>
+
+<span class="sd">    The physical root lies in the open interval (0, β₁).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beta2 : float</span>
+<span class="sd">        Trial downstream shock-frame velocity β₂.</span>
+<span class="sd">    beta1, gamma1 : float</span>
+<span class="sd">        Upstream shock-frame velocity β₁ and Lorentz factor Γ₁.</span>
+<span class="sd">    omega1, pi1 : float</span>
+<span class="sd">        Dimensionless upstream enthalpy Ω₁ = w₁/(ρ₁c²) and pressure Π₁ = P₁/(ρ₁c²).</span>
+<span class="sd">    gamma_hat : float</span>
+<span class="sd">        Adiabatic index γ̂.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        Residual; zero at the physical downstream velocity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gamma2</span> <span class="o">=</span> <span class="n">_lorentz_factor</span><span class="p">(</span><span class="n">beta2</span><span class="p">)</span>
+    <span class="n">term1</span> <span class="o">=</span> <span class="p">((</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma_hat</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma1</span> <span class="o">*</span> <span class="n">beta1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma2</span> <span class="o">*</span> <span class="n">beta2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">omega1</span> <span class="o">*</span> <span class="n">gamma1</span> <span class="o">/</span> <span class="n">gamma2</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">term2</span> <span class="o">=</span> <span class="n">omega1</span> <span class="o">*</span> <span class="n">gamma1</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">beta2</span> <span class="o">/</span> <span class="n">beta1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">term1</span> <span class="o">-</span> <span class="n">term2</span> <span class="o">-</span> <span class="n">pi1</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_reconstruct_state_cgs</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">rho1</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Reconstruct the full post-shock state from β₁, β₂, and the upstream state.</span>
+
+<span class="sd">    Given the downstream shock-frame velocity β₂ (from root-finding or analytic</span>
+<span class="sd">    formula), applies the continuity and energy-momentum conditions to recover all</span>
+<span class="sd">    post-shock thermodynamic quantities.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    beta1 : float</span>
+<span class="sd">        Upstream fluid velocity in the shock frame, β₁.</span>
+<span class="sd">    beta2 : float</span>
+<span class="sd">        Downstream fluid velocity in the shock frame, β₂.</span>
+<span class="sd">    rho1 : float</span>
+<span class="sd">        Upstream proper rest-mass density (g cm⁻³).</span>
+<span class="sd">    omega1 : float</span>
+<span class="sd">        Upstream dimensionless enthalpy Ω₁ = w₁ / (ρ₁c²).</span>
+<span class="sd">    gamma_hat : float</span>
+<span class="sd">        Adiabatic index γ̂.</span>
+<span class="sd">    mu : float</span>
+<span class="sd">        Mean molecular weight.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        Post-shock quantities in CGS, keyed by :attr:`RelativisticJumpConditions.OUTPUT_FIELDS` names.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">gamma1</span> <span class="o">=</span> <span class="n">_lorentz_factor</span><span class="p">(</span><span class="n">beta1</span><span class="p">)</span>
+    <span class="n">gamma2</span> <span class="o">=</span> <span class="n">_lorentz_factor</span><span class="p">(</span><span class="n">beta2</span><span class="p">)</span>
+
+    <span class="c1"># Compression ratio (proper rest-mass density ratio)</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma1</span> <span class="o">*</span> <span class="n">beta1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma2</span> <span class="o">*</span> <span class="n">beta2</span><span class="p">)</span>
+    <span class="n">rho2</span> <span class="o">=</span> <span class="n">R</span> <span class="o">*</span> <span class="n">rho1</span>
+
+    <span class="c1"># Enthalpy density reconstruction (energy-flux continuity)</span>
+    <span class="n">w1</span> <span class="o">=</span> <span class="n">rho1</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">omega1</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="n">w1</span> <span class="o">*</span> <span class="n">gamma1</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta1</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma2</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">beta2</span><span class="p">)</span>
+
+    <span class="c1"># EOS: P₂ = [(γ̂−1)/γ̂](w₂ − ρ₂c²)</span>
+    <span class="n">P2</span> <span class="o">=</span> <span class="p">((</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">gamma_hat</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">w2</span> <span class="o">-</span> <span class="n">rho2</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># Proper internal and total energy densities</span>
+    <span class="n">U_int2</span> <span class="o">=</span> <span class="n">P2</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">e2</span> <span class="o">=</span> <span class="n">rho2</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">U_int2</span>
+
+    <span class="c1"># Proper number density and temperature</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">rho2</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span><span class="p">)</span>
+    <span class="n">T2</span> <span class="o">=</span> <span class="n">_maxwell_juttner_temperature_cgs</span><span class="p">(</span><span class="n">U_int2</span><span class="p">,</span> <span class="n">rho2</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">&quot;compression_ratio&quot;</span><span class="p">:</span> <span class="n">R</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_beta&quot;</span><span class="p">:</span> <span class="n">beta2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_lorentz_factor&quot;</span><span class="p">:</span> <span class="n">gamma2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_density&quot;</span><span class="p">:</span> <span class="n">rho2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_number_density&quot;</span><span class="p">:</span> <span class="n">n2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_pressure&quot;</span><span class="p">:</span> <span class="n">P2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_temperature&quot;</span><span class="p">:</span> <span class="n">T2</span><span class="p">,</span>
+        <span class="s2">&quot;post_shock_energy_density&quot;</span><span class="p">:</span> <span class="n">e2</span><span class="p">,</span>
+    <span class="p">}</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_solve_strong_cold_shock_beta</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">):</span>
+    <span class="n">beta1</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">beta1</span><span class="p">)</span>
+    <span class="n">gamma_hat</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">gamma_hat</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">0.0</span> <span class="o">&lt;</span> <span class="n">beta1</span> <span class="o">&lt;</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`beta1` must satisfy 0 &lt; beta1 &lt; 1.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">&lt;</span> <span class="n">gamma_hat</span> <span class="o">&lt;=</span> <span class="mf">2.0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;`gamma_hat` should satisfy 1 &lt; gamma_hat &lt;= 2.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Weak-shock / NR limit. Avoid the singular residual near beta2 = 0.</span>
+    <span class="k">if</span> <span class="n">beta1</span> <span class="o">&lt;</span> <span class="mf">1e-6</span><span class="p">:</span>
+        <span class="n">chi</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">beta1</span> <span class="o">/</span> <span class="n">chi</span>
+
+    <span class="n">gamma1</span> <span class="o">=</span> <span class="n">_lorentz_factor</span><span class="p">(</span><span class="n">beta1</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">residual</span><span class="p">(</span><span class="n">beta2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_relativistic_implicit_eq</span><span class="p">(</span>
+            <span class="n">beta2</span><span class="o">=</span><span class="n">beta2</span><span class="p">,</span>
+            <span class="n">beta1</span><span class="o">=</span><span class="n">beta1</span><span class="p">,</span>
+            <span class="n">gamma1</span><span class="o">=</span><span class="n">gamma1</span><span class="p">,</span>
+            <span class="n">omega1</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+            <span class="n">pi1</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># The physical downstream speed satisfies 0 &lt; beta2 &lt; beta1.</span>
+    <span class="c1"># Use the NR strong-shock estimate as a safer lower-scale guide.</span>
+    <span class="n">chi</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">beta2_guess</span> <span class="o">=</span> <span class="n">beta1</span> <span class="o">/</span> <span class="n">chi</span>
+
+    <span class="n">lo</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">),</span> <span class="mf">0.01</span> <span class="o">*</span> <span class="n">beta2_guess</span><span class="p">)</span>
+    <span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nextafter</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="c1"># The general residual is not always nicely signed at lo, so scan inside</span>
+    <span class="c1"># the physical interval and find a sign-changing sub-bracket.</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lo</span><span class="p">,</span> <span class="n">hi</span><span class="p">,</span> <span class="mi">64</span><span class="p">)</span>
+    <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">residual</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">grid</span><span class="p">])</span>
+
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">signbit</span><span class="p">(</span><span class="n">vals</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="o">!=</span> <span class="n">np</span><span class="o">.</span><span class="n">signbit</span><span class="p">(</span><span class="n">vals</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">idx</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">&quot;Could not bracket physical shock root for &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;beta1=</span><span class="si">{</span><span class="n">beta1</span><span class="si">}</span><span class="s2">, gamma_hat=</span><span class="si">{</span><span class="n">gamma_hat</span><span class="si">}</span><span class="s2">. &quot;</span>
+            <span class="sa">f</span><span class="s2">&quot;residual min/max = </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmin</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">nanmax</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">idx</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">brentq</span><span class="p">(</span>
+        <span class="n">residual</span><span class="p">,</span>
+        <span class="n">grid</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="n">grid</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">],</span>
+        <span class="n">xtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span>
+        <span class="n">rtol</span><span class="o">=</span><span class="mf">1e-14</span><span class="p">,</span>
+        <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># Abstract Base Class                                                #</span>
+<span class="c1"># ================================================================== #</span>
+
+
+<div class="viewcode-block" id="RelativisticJumpConditions">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticJumpConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticJumpConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RelativisticJumpConditions</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Abstract base class for relativistic Rankine–Hugoniot jump-condition solvers.</span>
+
+<span class="sd">    Mirrors the interface of</span>
+<span class="sd">    :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.JumpConditions`</span>
+<span class="sd">    but defines a separate hierarchy for relativistic flows.  All subclasses</span>
+<span class="sd">    accept lab-frame velocities and return results as proper comoving-frame</span>
+<span class="sd">    thermodynamic quantities attached to :class:`~astropy.units.Quantity` objects.</span>
+
+<span class="sd">    All output fields are defined by :attr:`OUTPUT_FIELDS` and shared across every</span>
+<span class="sd">    concrete subclass.  :meth:`__init_subclass__` auto-generates a named-tuple type</span>
+<span class="sd">    ``{ClassName}Result`` for each concrete subclass.</span>
+
+<span class="sd">    Subclasses must implement :meth:`_solve` (CGS backend) and :meth:`solve`</span>
+<span class="sd">    (public unit-aware wrapper).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">OUTPUT_FIELDS</span><span class="p">:</span> <span class="nb">tuple</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="s2">&quot;compression_ratio&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_beta&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_lorentz_factor&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_density&quot;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_number_density&quot;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_pressure&quot;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">dyn</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_temperature&quot;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">),</span>
+        <span class="p">(</span><span class="s2">&quot;post_shock_energy_density&quot;</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">),</span>
+    <span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;tuple: Post-shock output fields as ``(name, unit)`` pairs.</span>
+
+<span class="sd">    ``None`` units are returned as bare floats (dimensionless quantities).</span>
+<span class="sd">    The field order determines the named-tuple returned by :meth:`solve`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__init_subclass__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">__init_subclass__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">OUTPUT_FIELDS</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_result_type</span> <span class="o">=</span> <span class="n">namedtuple</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">cls</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">Result&quot;</span><span class="p">,</span>
+                <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">OUTPUT_FIELDS</span><span class="p">],</span>
+            <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_make_result</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">result_dict</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Attach :attr:`OUTPUT_FIELDS` units to *result_dict* and return the named tuple.&quot;&quot;&quot;</span>
+        <span class="c1"># noinspection PyArgumentList</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_result_type</span><span class="p">(</span>
+            <span class="o">**</span><span class="p">{</span>
+                <span class="n">name</span><span class="p">:</span> <span class="p">(</span><span class="n">result_dict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span> <span class="n">unit</span> <span class="k">if</span> <span class="n">unit</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">result_dict</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">OUTPUT_FIELDS</span>
+            <span class="p">}</span>
+        <span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CGS backend.  Returns a plain ``dict`` keyed by :attr:`OUTPUT_FIELDS` names.&quot;&quot;&quot;</span>
+        <span class="o">...</span>
+
+<div class="viewcode-block" id="RelativisticJumpConditions.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticJumpConditions.solve.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticJumpConditions.solve">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Compute jump-condition quantities and return them as a named tuple.</span>
+
+<span class="sd">        Subclasses define the explicit input signature.  Physical quantities are</span>
+<span class="sd">        returned as :class:`~astropy.units.Quantity` objects; dimensionless fields</span>
+<span class="sd">        (β, Γ, compression ratio) are bare floats.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="o">...</span></div>
+</div>
+
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># General Numerical Solver                                             #</span>
+<span class="c1"># ================================================================== #</span>
+
+
+<div class="viewcode-block" id="RelativisticShockConditions">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RelativisticShockConditions</span><span class="p">(</span><span class="n">RelativisticJumpConditions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;General relativistic jump conditions solved numerically.</span>
+
+<span class="sd">    Finds the downstream shock-frame velocity β₂ by bracketed root-finding</span>
+<span class="sd">    (:footcite:t:`brent2013algorithms`) applied to the implicit condition</span>
+<span class="sd">    (Eq. :eq:`eq:relativistic_jump_condition_final` of</span>
+<span class="sd">    :ref:`relativistic_jump_conditions_theory`), then reconstructs the full</span>
+<span class="sd">    post-shock state analytically.</span>
+
+<span class="sd">    Lab-frame shock and upstream velocities are the primary velocity inputs;</span>
+<span class="sd">    thermodynamic inputs (ρ, P, T) are proper comoving-frame quantities.</span>
+<span class="sd">    Either *upstream_pressure* or *upstream_temperature* is required to</span>
+<span class="sd">    determine the upstream dimensionless enthalpy Ω₁.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    RelativisticColdShockConditions : Specialisation for P₁ ≈ 0.</span>
+<span class="sd">    UltraRelativisticShockConditions : Analytic solver for Γ₁ ≫ 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">upstream_pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">upstream_temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CGS backend — all inputs are plain floats in CGS.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : float</span>
+<span class="sd">            Shock speed in the lab frame (cm s⁻¹).</span>
+<span class="sd">        upstream_density : float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium (g cm⁻³).</span>
+<span class="sd">        upstream_velocity : float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid (cm s⁻¹). Default 0.</span>
+<span class="sd">        upstream_pressure : float or None, optional</span>
+<span class="sd">            Proper upstream pressure (dyn cm⁻²).</span>
+<span class="sd">        upstream_temperature : float or None, optional</span>
+<span class="sd">            Proper upstream temperature (K). Used only when *upstream_pressure* is ``None``.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Post-shock quantities in CGS, keyed by :attr:`OUTPUT_FIELDS` names.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If neither *upstream_pressure* nor *upstream_temperature* is supplied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">upstream_temperature</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;RelativisticShockConditions requires upstream_pressure or &quot;</span>
+                <span class="s2">&quot;upstream_temperature to determine the upstream enthalpy Ω₁. &quot;</span>
+                <span class="s2">&quot;For a cold upstream (P₁ = 0), use RelativisticColdShockConditions.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Resolve upstream pressure from temperature if needed</span>
+        <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">upstream_pressure</span> <span class="o">=</span> <span class="n">upstream_density</span> <span class="o">*</span> <span class="n">k_B_cgs</span> <span class="o">*</span> <span class="n">upstream_temperature</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span><span class="p">)</span>
+
+        <span class="c1"># Lab-frame β values</span>
+        <span class="n">beta_sh</span> <span class="o">=</span> <span class="n">shock_velocity</span> <span class="o">/</span> <span class="n">c_cgs</span>
+        <span class="n">beta_up</span> <span class="o">=</span> <span class="n">upstream_velocity</span> <span class="o">/</span> <span class="n">c_cgs</span>
+
+        <span class="c1"># Upstream velocity in the shock rest frame</span>
+        <span class="n">beta1</span> <span class="o">=</span> <span class="n">_shock_frame_beta</span><span class="p">(</span><span class="n">beta_sh</span><span class="p">,</span> <span class="n">beta_up</span><span class="p">)</span>
+        <span class="n">gamma1</span> <span class="o">=</span> <span class="n">_lorentz_factor</span><span class="p">(</span><span class="n">beta1</span><span class="p">)</span>
+
+        <span class="c1"># Dimensionless upstream state</span>
+        <span class="n">pi1</span> <span class="o">=</span> <span class="n">upstream_pressure</span> <span class="o">/</span> <span class="p">(</span><span class="n">upstream_density</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">omega1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span> <span class="o">*</span> <span class="n">pi1</span>
+
+        <span class="c1"># Bracketed root-find for the physical downstream velocity</span>
+        <span class="n">_EPS</span> <span class="o">=</span> <span class="mf">1e-10</span>
+        <span class="n">beta2</span> <span class="o">=</span> <span class="n">brentq</span><span class="p">(</span>
+            <span class="n">_relativistic_implicit_eq</span><span class="p">,</span>
+            <span class="n">_EPS</span><span class="p">,</span>
+            <span class="n">beta1</span> <span class="o">-</span> <span class="n">_EPS</span><span class="p">,</span>
+            <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="n">gamma1</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">pi1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">),</span>
+        <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_reconstruct_state_cgs</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">upstream_density</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+
+<div class="viewcode-block" id="RelativisticShockConditions.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions.solve.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions.solve">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">upstream_pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">upstream_temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Solve the relativistic jump conditions for a general upstream state.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : ~astropy.units.Quantity or float</span>
+<span class="sd">            Shock speed in the lab frame. Bare floats are interpreted as cm s⁻¹.</span>
+<span class="sd">        upstream_density : ~astropy.units.Quantity or float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium. Bare floats are</span>
+<span class="sd">            interpreted as g cm⁻³.</span>
+<span class="sd">        upstream_velocity : ~astropy.units.Quantity or float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid. Bare floats are</span>
+<span class="sd">            interpreted as cm s⁻¹. Default 0.</span>
+<span class="sd">        upstream_pressure : ~astropy.units.Quantity or float or None, optional</span>
+<span class="sd">            Proper upstream pressure. Bare floats are interpreted as dyn cm⁻².</span>
+<span class="sd">            Takes precedence over *upstream_temperature* if both are given.</span>
+<span class="sd">        upstream_temperature : ~astropy.units.Quantity or float or None, optional</span>
+<span class="sd">            Proper upstream temperature (K). Used only when *upstream_pressure*</span>
+<span class="sd">            is ``None``.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RelativisticShockConditionsResult</span>
+<span class="sd">            Named tuple with post-shock fields in physical units as defined by</span>
+<span class="sd">            :attr:`~RelativisticJumpConditions.OUTPUT_FIELDS`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If neither *upstream_pressure* nor *upstream_temperature* is supplied.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rho1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">v_up</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">P1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_pressure</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">dyn</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">T1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_temperature</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span> <span class="k">if</span> <span class="n">upstream_temperature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_result</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">v_sh</span><span class="p">,</span> <span class="n">rho1</span><span class="p">,</span> <span class="n">v_up</span><span class="p">,</span> <span class="n">upstream_pressure</span><span class="o">=</span><span class="n">P1</span><span class="p">,</span> <span class="n">upstream_temperature</span><span class="o">=</span><span class="n">T1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># Numerical Solver — Cold Upstream                                     #</span>
+<span class="c1"># ================================================================== #</span>
+
+
+<div class="viewcode-block" id="RelativisticColdShockConditions">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">RelativisticColdShockConditions</span><span class="p">(</span><span class="n">RelativisticShockConditions</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Relativistic jump conditions for a cold upstream medium (P₁ ≈ 0).</span>
+
+<span class="sd">    A specialisation of :class:`RelativisticShockConditions` that fixes Π₁ = 0</span>
+<span class="sd">    and Ω₁ = 1.  Upstream pressure and temperature are not required as inputs.</span>
+<span class="sd">    This is the appropriate choice for most astrophysical blast-wave problems</span>
+<span class="sd">    (supernovae, TDE jets) where the ambient medium is cold relative to the shock.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    RelativisticShockConditions : General hot-upstream solver.</span>
+<span class="sd">    UltraRelativisticColdShockConditions : Analytic cold-upstream solver for Γ₁ ≫ 1.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span>
+            <span class="n">shock_velocity</span><span class="p">,</span>
+            <span class="n">upstream_density</span><span class="p">,</span>
+            <span class="n">upstream_velocity</span><span class="o">=</span><span class="n">upstream_velocity</span><span class="p">,</span>
+            <span class="n">upstream_pressure</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+            <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="RelativisticColdShockConditions.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions.solve.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions.solve">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Solve the relativistic jump conditions for a cold upstream medium.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : ~astropy.units.Quantity or float</span>
+<span class="sd">            Shock speed in the lab frame. Bare floats are interpreted as cm s⁻¹.</span>
+<span class="sd">        upstream_density : ~astropy.units.Quantity or float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium. Bare floats are</span>
+<span class="sd">            interpreted as g cm⁻³.</span>
+<span class="sd">        upstream_velocity : ~astropy.units.Quantity or float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid. Bare floats are</span>
+<span class="sd">            interpreted as cm s⁻¹. Default 0.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        RelativisticColdShockConditionsResult</span>
+<span class="sd">            Named tuple with post-shock fields in physical units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rho1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">v_up</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_result</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">v_sh</span><span class="p">,</span> <span class="n">rho1</span><span class="p">,</span> <span class="n">v_up</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">))</span></div>
+</div>
+
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># Analytic Ultra-Relativistic Solver                                   #</span>
+<span class="c1"># ================================================================== #</span>
+
+
+<div class="viewcode-block" id="UltraRelativisticShockConditions">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UltraRelativisticShockConditions</span><span class="p">(</span><span class="n">RelativisticJumpConditions</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Analytic jump-condition solver for the ultra-relativistic strong-shock limit.</span>
+
+<span class="sd">    In the limit :math:`\Gamma_1 \gg 1` the downstream shock-frame velocity</span>
+<span class="sd">    satisfies</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \beta_2 = \hat{\gamma} - 1,</span>
+
+<span class="sd">    independently of the upstream pressure (Π₁ drops out at leading order in</span>
+<span class="sd">    :math:`\Gamma_1`).  For :math:`\hat{\gamma} = 4/3` this gives the classical</span>
+<span class="sd">    GRB result :math:`\beta_2 = 1/3` :footcite:p:`2007nras.book.....P`.</span>
+
+<span class="sd">    The full post-shock state is then reconstructed analytically from the upstream</span>
+<span class="sd">    state.  Despite the analytic β₂, the shock velocity is still required because</span>
+<span class="sd">    the compression ratio and downstream thermodynamic quantities depend on Γ₁.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Although Π₁ does not enter β₂ in the UR limit, the upstream enthalpy Ω₁ still</span>
+<span class="sd">    affects :math:`w_2` and therefore :math:`P_2`, :math:`U_{\rm int,2}`, and</span>
+<span class="sd">    :math:`T_2`.  Pass *upstream_pressure* or *upstream_temperature* to account for</span>
+<span class="sd">    a warm upstream medium; leave both ``None`` to assume P₁ = 0 (equivalent to</span>
+<span class="sd">    :class:`UltraRelativisticColdShockConditions`).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    UltraRelativisticColdShockConditions : Simplified cold-upstream variant.</span>
+<span class="sd">    RelativisticShockConditions : General numerical solver.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_ur_beta2</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Analytic downstream velocity in the UR strong-shock limit.</span>
+
+<span class="sd">        Returns :math:`\beta_2 = \hat{\gamma} - 1`, derived by solving</span>
+<span class="sd">        :math:`\beta_2(1-\beta_2) = [(\hat{\gamma}-1)/\hat{\gamma}](1-\beta_2^2)`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">upstream_pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">upstream_temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;CGS backend — all inputs are plain floats in CGS.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : float</span>
+<span class="sd">            Shock speed in the lab frame (cm s⁻¹).</span>
+<span class="sd">        upstream_density : float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium (g cm⁻³).</span>
+<span class="sd">        upstream_velocity : float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid (cm s⁻¹). Default 0.</span>
+<span class="sd">        upstream_pressure : float or None, optional</span>
+<span class="sd">            Proper upstream pressure (dyn cm⁻²). Affects state reconstruction</span>
+<span class="sd">            via Ω₁ but does not alter β₂. Default None (→ P₁ = 0).</span>
+<span class="sd">        upstream_temperature : float or None, optional</span>
+<span class="sd">            Proper upstream temperature (K). Used to compute P₁ when</span>
+<span class="sd">            *upstream_pressure* is ``None``. Default None.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Post-shock quantities in CGS.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Resolve upstream pressure; default to cold (P₁ = 0) if neither supplied</span>
+        <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">upstream_temperature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">upstream_pressure</span> <span class="o">=</span> <span class="n">upstream_density</span> <span class="o">*</span> <span class="n">k_B_cgs</span> <span class="o">*</span> <span class="n">upstream_temperature</span> <span class="o">/</span> <span class="p">(</span><span class="n">mu</span> <span class="o">*</span> <span class="n">m_p_cgs</span><span class="p">)</span>
+        <span class="n">P1</span> <span class="o">=</span> <span class="n">upstream_pressure</span> <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+        <span class="n">beta_sh</span> <span class="o">=</span> <span class="n">shock_velocity</span> <span class="o">/</span> <span class="n">c_cgs</span>
+        <span class="n">beta_up</span> <span class="o">=</span> <span class="n">upstream_velocity</span> <span class="o">/</span> <span class="n">c_cgs</span>
+        <span class="n">beta1</span> <span class="o">=</span> <span class="n">_shock_frame_beta</span><span class="p">(</span><span class="n">beta_sh</span><span class="p">,</span> <span class="n">beta_up</span><span class="p">)</span>
+
+        <span class="n">pi1</span> <span class="o">=</span> <span class="n">P1</span> <span class="o">/</span> <span class="p">(</span><span class="n">upstream_density</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">omega1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">+</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma_hat</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">))</span> <span class="o">*</span> <span class="n">pi1</span>
+
+        <span class="c1"># Analytic downstream velocity (UR limit)</span>
+        <span class="n">beta2</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_ur_beta2</span><span class="p">(</span><span class="n">gamma_hat</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">_reconstruct_state_cgs</span><span class="p">(</span><span class="n">beta1</span><span class="p">,</span> <span class="n">beta2</span><span class="p">,</span> <span class="n">upstream_density</span><span class="p">,</span> <span class="n">omega1</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="p">,</span> <span class="n">mu</span><span class="p">)</span>
+
+<div class="viewcode-block" id="UltraRelativisticShockConditions.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions.solve.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions.solve">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">upstream_pressure</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">upstream_temperature</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Solve the ultra-relativistic jump conditions analytically.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : ~astropy.units.Quantity or float</span>
+<span class="sd">            Shock speed in the lab frame. Bare floats are interpreted as cm s⁻¹.</span>
+<span class="sd">        upstream_density : ~astropy.units.Quantity or float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium. Bare floats are</span>
+<span class="sd">            interpreted as g cm⁻³.</span>
+<span class="sd">        upstream_velocity : ~astropy.units.Quantity or float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid. Bare floats are</span>
+<span class="sd">            interpreted as cm s⁻¹. Default 0.</span>
+<span class="sd">        upstream_pressure : ~astropy.units.Quantity or float or None, optional</span>
+<span class="sd">            Proper upstream pressure. Bare floats are interpreted as dyn cm⁻².</span>
+<span class="sd">            Affects state reconstruction but not β₂. Default None (cold upstream).</span>
+<span class="sd">        upstream_temperature : ~astropy.units.Quantity or float or None, optional</span>
+<span class="sd">            Proper upstream temperature (K). Used only when *upstream_pressure*</span>
+<span class="sd">            is ``None``. Default None.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        UltraRelativisticShockConditionsResult</span>
+<span class="sd">            Named tuple with post-shock fields in physical units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rho1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">v_up</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">P1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_pressure</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">dyn</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">if</span> <span class="n">upstream_pressure</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="n">T1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_temperature</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span> <span class="k">if</span> <span class="n">upstream_temperature</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_result</span><span class="p">(</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">v_sh</span><span class="p">,</span> <span class="n">rho1</span><span class="p">,</span> <span class="n">v_up</span><span class="p">,</span> <span class="n">upstream_pressure</span><span class="o">=</span><span class="n">P1</span><span class="p">,</span> <span class="n">upstream_temperature</span><span class="o">=</span><span class="n">T1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">)</span>
+        <span class="p">)</span></div>
+</div>
+
+
+
+<span class="c1"># ================================================================== #</span>
+<span class="c1"># Analytic Ultra-Relativistic Solver — Cold Upstream                   #</span>
+<span class="c1"># ================================================================== #</span>
+
+
+<div class="viewcode-block" id="UltraRelativisticColdShockConditions">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">UltraRelativisticColdShockConditions</span><span class="p">(</span><span class="n">UltraRelativisticShockConditions</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Analytic jump conditions for the UR strong-shock limit into a cold medium.</span>
+
+<span class="sd">    A specialisation of :class:`UltraRelativisticShockConditions` that fixes</span>
+<span class="sd">    P₁ = 0 (Π₁ = 0, Ω₁ = 1).  Upstream pressure and temperature are not required</span>
+<span class="sd">    as inputs.  This is the canonical limit used in GRB afterglow modeling, where</span>
+<span class="sd">    :math:`\hat{\gamma} = 4/3` gives the classic result :math:`\beta_2 = 1/3`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    UltraRelativisticShockConditions : Generalisation that accepts a warm upstream.</span>
+<span class="sd">    RelativisticColdShockConditions : Numerical cold-upstream solver (arbitrary Γ₁).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+        <span class="n">mu</span><span class="o">=</span><span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span>
+            <span class="n">shock_velocity</span><span class="p">,</span>
+            <span class="n">upstream_density</span><span class="p">,</span>
+            <span class="n">upstream_velocity</span><span class="o">=</span><span class="n">upstream_velocity</span><span class="p">,</span>
+            <span class="n">upstream_pressure</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+            <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span>
+            <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">,</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="UltraRelativisticColdShockConditions.solve">
+<a class="viewcode-back" href="../../../../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions.solve.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions.solve">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">solve</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">shock_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_density</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+        <span class="n">upstream_velocity</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="mf">0.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+        <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.61</span><span class="p">,</span>
+        <span class="n">gamma_hat</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Solve the cold-upstream ultra-relativistic jump conditions analytically.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shock_velocity : ~astropy.units.Quantity or float</span>
+<span class="sd">            Shock speed in the lab frame. Bare floats are interpreted as cm s⁻¹.</span>
+<span class="sd">        upstream_density : ~astropy.units.Quantity or float</span>
+<span class="sd">            Proper rest-mass density of the upstream medium. Bare floats are</span>
+<span class="sd">            interpreted as g cm⁻³.</span>
+<span class="sd">        upstream_velocity : ~astropy.units.Quantity or float, optional</span>
+<span class="sd">            Lab-frame bulk velocity of the upstream fluid. Bare floats are</span>
+<span class="sd">            interpreted as cm s⁻¹. Default 0.</span>
+<span class="sd">        mu : float, optional</span>
+<span class="sd">            Mean molecular weight. Default 0.61.</span>
+<span class="sd">        gamma_hat : float, optional</span>
+<span class="sd">            Adiabatic index γ̂. Default 4/3.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        UltraRelativisticColdShockConditionsResult</span>
+<span class="sd">            Named tuple with post-shock fields in physical units.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v_sh</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">shock_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="n">rho1</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_density</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">v_up</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">upstream_velocity</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_make_result</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_solve</span><span class="p">(</span><span class="n">v_sh</span><span class="p">,</span> <span class="n">rho1</span><span class="p">,</span> <span class="n">v_up</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">gamma_hat</span><span class="o">=</span><span class="n">gamma_hat</span><span class="p">))</span></div>
+</div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

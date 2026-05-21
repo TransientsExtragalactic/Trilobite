@@ -27,7 +27,7 @@ from astropy import units as u
 from astropy.table import Table
 from unittest.mock import MagicMock
 
-from triceratops.data import RadioPhotometryContainer
+from trilobite.data import RadioPhotometryContainer
 
 rng = np.random.default_rng(0)
 n = 30
@@ -64,7 +64,7 @@ print(f"Upper limits:  {container.n_non_detections}")
 # ---------------------------
 #
 # In real usage you would import a physical model from
-# ``triceratops.models``. Here we use a mock that declares the same
+# ``trilobite.models``. Here we use a mock that declares the same
 # interface (``variable_names``, ``VARIABLES``, ``output_names``,
 # ``OUTPUTS``, ``UNITS``) to keep the example dependency-free.
 
@@ -117,12 +117,12 @@ print(inference_data.describe())
 # ``InferenceData`` is the only object that likelihoods accept. Passing
 # a container directly to ``GaussianLikelihood`` would raise a TypeError.
 #
-# In a real workflow you would import from ``triceratops.inference``:
+# In a real workflow you would import from ``trilobite.inference``:
 #
 # .. code-block:: python
 #
-#     from triceratops.inference.likelihood import GaussianLikelihood
-#     from triceratops.inference.problem import InferenceProblem
+#     from trilobite.inference.likelihood import GaussianLikelihood
+#     from trilobite.inference.problem import InferenceProblem
 #
 #     likelihood = GaussianLikelihood(model=model, data=inference_data)
 #     problem = InferenceProblem(likelihood)
@@ -138,7 +138,7 @@ print(inference_data.describe())
 #
 # .. code-block:: python
 #
-#     from triceratops.inference.sampling import EmceeSampler
+#     from trilobite.inference.sampling import EmceeSampler
 #
 #     sampler = EmceeSampler(problem)
 #     result  = sampler.run(n_walkers=32, n_steps=2000)

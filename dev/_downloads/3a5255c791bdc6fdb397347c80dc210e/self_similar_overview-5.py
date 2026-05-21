@@ -2,11 +2,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.dynamics.shocks import (
+from trilobite.dynamics.shocks import (
     BlandfordMcKeeShockEngine,
     BlandfordMcKeeWindShockEngine,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 fig, axes = plt.subplots(2, 1, figsize=(6, 6), sharex=True)

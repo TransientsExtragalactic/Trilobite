@@ -4,7 +4,7 @@
 Free-Free Emission Examples
 ****************************
 
-These examples cover thermal bremsstrahlung (free-free) radiation in Triceratops — from the
+These examples cover thermal bremsstrahlung (free-free) radiation in Trilobite — from the
 Gaunt factor corrections that shape the spectrum, through flux prediction for a free-free
 emitting plasma, to the free-free absorption that modifies synchrotron SEDs at low frequencies.
 

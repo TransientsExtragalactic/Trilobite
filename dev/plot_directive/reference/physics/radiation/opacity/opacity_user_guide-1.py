@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 from astropy import units as u
 from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-from triceratops.radiation.opacity import OPALOpacity, KramersOpacity, TOPSOpacity
+from trilobite.radiation.opacity import OPALOpacity, KramersOpacity, TOPSOpacity
 
 # ---------------------------------------------------------------------
 # Sampling grid

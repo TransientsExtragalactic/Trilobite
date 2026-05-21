@@ -48,21 +48,21 @@ a :math:`10^6\,M_\odot` black hole at a distance of :math:`D = 60\;\text{Mpc}`,
 a typical configuration for UV/optical TDE surveys.  The disk begins at the
 circularization radius with a total mass of :math:`M_{D,0} = 1\,M_\odot`.
 We use
-:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+:class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
 throughout, which is appropriate once the system has settled into the
 sub-Eddington thin-disk regime.
 
 See Also
 --------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
-- :func:`~triceratops.physics_utils.gravity.compute_tidal_radius`
-- :func:`~triceratops.physics_utils.general_relativity.compute_ISCO`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :func:`~trilobite.physics_utils.gravity.compute_tidal_radius`
+- :func:`~trilobite.physics_utils.general_relativity.compute_ISCO`
 - :ref:`tde_disk_observables` — TDE disk luminosity and Eddington ratio
 
 .. hint::
 
     For the super-Eddington early phase of TDE disk evolution, see the
-    :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+    :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
     gallery (:ref:`tde_disk_observables`).
 """
 
@@ -81,9 +81,9 @@ from astropy.modeling.models import BlackBody
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from triceratops.dynamics.accretion.one_zone import GasPressureDisk
-from triceratops.physics_utils import compute_ISCO, compute_tidal_radius
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import GasPressureDisk
+from trilobite.physics_utils import compute_ISCO, compute_tidal_radius
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -131,7 +131,7 @@ print(f"D      = {D_source}")
 # ------------------------------------------
 #
 # We instantiate a
-# :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+# :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
 # and generate self-consistent initial conditions from
 # :math:`(M_{D,0},\,R_{D,0})`.  The initial disk mass is taken as the full
 # stellar mass :math:`M_\star` — appropriate for the late-time phase where the

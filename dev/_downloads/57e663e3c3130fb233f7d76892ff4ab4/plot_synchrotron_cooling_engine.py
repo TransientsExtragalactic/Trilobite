@@ -51,8 +51,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Engine Instantiation

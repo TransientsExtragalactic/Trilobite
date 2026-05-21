@@ -1,0 +1,1644 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.radiation.opacity.grey_opacity.rosseland.models &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/radiation/opacity/grey_opacity/rosseland/models';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../../../_static/searchtools.js"></script>
+    <script src="../../../../../../_static/language_data.js"></script>
+    <script src="../../../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.radiation.opacity.grey_opacity.rosseland.models</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.radiation.opacity.grey_opacity.rosseland.models</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Grey (frequency-averaged) opacity laws for use in radiative diffusion problems.</span>
+
+<span class="sd">The Rosseland mean opacity is defined as</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    \frac{1}{\kappa_R} =</span>
+<span class="sd">        \frac{\int (1/\kappa_\nu)\,(\partial B_\nu/\partial T)\,d\nu}</span>
+<span class="sd">             {\int (\partial B_\nu/\partial T)\,d\nu}.</span>
+
+<span class="sd">It governs radiative transport in optically thick media:</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    F_{\rm rad} =</span>
+<span class="sd">        -\frac{4acT^3}{3\kappa_R\rho}\,\nabla T.</span>
+
+<span class="sd">Analytic Opacity Laws</span>
+<span class="sd">---------------------</span>
+
+<span class="sd">Closed-form power-law fits suited for diffusive, fully ionised plasmas.</span>
+<span class="sd">All analytic opacities are Cython-backed for performance.</span>
+
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| Class                                         | Description                                                  |</span>
+<span class="sd">+===============================================+==============================================================+</span>
+<span class="sd">| :class:`~trilobite.radiation.opacity.grey_  | Constant grey opacity:                                       |</span>
+<span class="sd">| opacity.base.ConstantGreyOpacity`             | :math:`\kappa(\rho,T) = \kappa_0`.                           |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`ElectronScatteringOpacity`            | Thomson scattering floor:                                    |</span>
+<span class="sd">|                                               | :math:`\kappa_{\rm es} \approx 0.34\,\mathrm{cm^2\,g^{-1}}`  |</span>
+<span class="sd">|                                               | (solar composition).                                         |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersFFOpacity`                     | Free-free opacity:                                           |</span>
+<span class="sd">|                                               | :math:`\kappa \propto \rho\,T^{-3.5}`.                       |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersBFOpacity`                     | Bound-free opacity:                                          |</span>
+<span class="sd">|                                               | :math:`\kappa \propto \rho\,T^{-3.5}`.                       |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersOpacity`                       | Combined free-free + bound-free opacity.                     |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersFFESOpacity`                   | Free-free Kramers opacity with electron-scattering floor.    |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersBFESOpacity`                   | Bound-free Kramers opacity with electron-scattering floor.   |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+<span class="sd">| :class:`KramersESOpacity`                     | Combined Kramers opacity with electron-scattering floor.     |</span>
+<span class="sd">+-----------------------------------------------+--------------------------------------------------------------+</span>
+
+<span class="sd">Tabulated Opacity Laws</span>
+<span class="sd">----------------------</span>
+
+<span class="sd">Numerical Rosseland mean tables for arbitrary compositions, including</span>
+<span class="sd">metal-line blanketing that is inaccessible to simple power laws.</span>
+
+<span class="sd">+--------------------------+-----------------------------------------------------------------+</span>
+<span class="sd">| Class                    | Description                                                     |</span>
+<span class="sd">+==========================+=================================================================+</span>
+<span class="sd">| :class:`OPALOpacity`     | Bilinear interpolation on a 2-D OPAL table                      |</span>
+<span class="sd">|                          | (:footcite:t:`2005ASPC..336...25A`).                            |</span>
+<span class="sd">|                          |                                                                 |</span>
+<span class="sd">|                          | Use :meth:`OPALOpacity.load_default` or                         |</span>
+<span class="sd">|                          | :func:`~trilobite.radiation.opacity.utils.load_opal_opacity`  |</span>
+<span class="sd">|                          | to construct instances from the bundled tables.                 |</span>
+<span class="sd">+--------------------------+-----------------------------------------------------------------+</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">ClassVar</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GreyOpacityLaw</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+
+<span class="c1"># ================================================================ #</span>
+<span class="c1">#  Kramers normalisation constants                                 #</span>
+<span class="c1"># ================================================================ #</span>
+
+<span class="c1">#: Free-free Kramers coefficient for solar composition (no Gaunt-factor</span>
+<span class="c1">#: correction), in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="n">KAPPA_FF_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.68e22</span>
+
+<span class="c1">#: Bound-free Kramers coefficient for solar composition (no Gaunt-factor</span>
+<span class="c1">#: correction), in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="n">KAPPA_BF_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">4.34e25</span>
+
+<span class="c1">#: Combined (FF + BF) Kramers coefficient, equal to ``KAPPA_FF_0 + KAPPA_BF_0``.</span>
+<span class="c1">#: Both terms share the same :math:`\rho\,T^{-3.5}` dependence, so they add</span>
+<span class="c1">#: as a single effective normalisation.</span>
+<span class="n">KAPPA_KR_0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_FF_0</span> <span class="o">+</span> <span class="n">KAPPA_BF_0</span>
+
+
+<span class="c1"># ================================================================ #</span>
+<span class="c1">#  Analytic Rosseland mean opacity laws                            #</span>
+<span class="c1"># ================================================================ #</span>
+<div class="viewcode-block" id="ElectronScatteringOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ElectronScatteringOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Thomson electron-scattering opacity.</span>
+
+<span class="sd">    Electron scattering is *grey* (frequency-independent) and provides a</span>
+<span class="sd">    constant opacity floor throughout a fully ionised plasma.  The value</span>
+<span class="sd">    follows from the Thomson cross-section :math:`\sigma_T` and the</span>
+<span class="sd">    mean particle mass per free electron:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa_{\rm es}</span>
+<span class="sd">            = \frac{\sigma_T}{m_{\rm H}}\,\frac{1+X}{2}</span>
+<span class="sd">            \approx 0.34\ \mathrm{cm^2\,g^{-1}} \quad (X = 0.70,\ {\rm solar}),</span>
+
+<span class="sd">    where :math:`X` is the hydrogen mass fraction.  This term dominates at</span>
+<span class="sd">    high temperatures (:math:`T \gtrsim 10^7\,\mathrm{K}`) and low densities</span>
+<span class="sd">    where bound–free and free–free cross-sections become negligible, for</span>
+<span class="sd">    example in stellar coronae, hot accretion-disc surfaces, and the</span>
+<span class="sd">    hydrogen-ionised outer layers of SNe~Ia.</span>
+
+<span class="sd">    For pure helium (:math:`X=0`) the value drops to</span>
+<span class="sd">    :math:`\approx 0.20\,\mathrm{cm^2\,g^{-1}}`; for hydrogen-rich</span>
+<span class="sd">    ejecta (:math:`X \approx 0.70`) use the solar default.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa_es : float, optional</span>
+<span class="sd">        Thomson opacity in :math:`\mathrm{cm^2\,g^{-1}}`.</span>
+<span class="sd">        Default ``0.34`` (solar composition, :math:`X = 0.70`).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity : Generic constant opacity without</span>
+<span class="sd">     the electron-scattering context.</span>
+<span class="sd">    KramersESOpacity : Adds a :math:`\rho T^{-3.5}` Kramers term on top of this floor.</span>
+<span class="sd">    OPALOpacity : Tabulated opacity that includes Thomson scattering automatically.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            ElectronScatteringOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op_solar = (</span>
+<span class="sd">            ElectronScatteringOpacity()</span>
+<span class="sd">        )  # κ = 0.34 cm² g⁻¹, X = 0.70</span>
+<span class="sd">        op_he = ElectronScatteringOpacity(</span>
+<span class="sd">            0.20</span>
+<span class="sd">        )  # helium-dominated ejecta</span>
+<span class="sd">        kap = op_solar.opacity(</span>
+<span class="sd">            1e-5 * u.g / u.cm**3, 1e7 * u.K</span>
+<span class="sd">        )</span>
+<span class="sd">        # → 0.34 cm² g⁻¹ (independent of ρ and T)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+    <span class="c1">#: Exposed so callers can read back the value without accessing the C companion.</span>
+    <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span>
+
+<div class="viewcode-block" id="ElectronScatteringOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="mf">0.34</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._electron_scattering</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">C_ElectronScatteringOpacity</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># noinspection PyArgumentList</span>
+        <span class="k">return</span> <span class="n">C_ElectronScatteringOpacity</span><span class="p">(</span><span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersFFOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersFFOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Free-free (bremsstrahlung) Kramers opacity.</span>
+
+<span class="sd">    The free-free Rosseland mean opacity follows the classical Kramers scaling</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa_{\rm ff}(\rho, T)</span>
+<span class="sd">            = \kappa_{\rm ff,0}\,\rho\,T^{-3.5},</span>
+
+<span class="sd">    where composition factors :math:`(1+X)` are absorbed into the normalisation</span>
+<span class="sd">    :attr:`kappa0`.  This is the dominant grey opacity source at</span>
+<span class="sd">    :math:`T \lesssim 10^7\,\mathrm{K}` in hot, diffuse, fully ionised</span>
+<span class="sd">    gas where there are few bound electrons for photoionisation (e.g. hot</span>
+<span class="sd">    ISM, stellar coronae, accretion disc corona).  Below</span>
+<span class="sd">    :math:`\sim\!10^4\,\mathrm{K}` recombination invalidates the fully</span>
+<span class="sd">    ionised assumption and bound-free opacity grows rapidly.</span>
+
+<span class="sd">    The steep :math:`T^{-3.5}` dependence means this term falls sharply at</span>
+<span class="sd">    high temperatures and is usually sub-dominant to electron scattering</span>
+<span class="sd">    above :math:`\sim\!10^8\,\mathrm{K}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``3.68e22`` (solar composition, :math:`X = 0.70`, no</span>
+<span class="sd">        Gaunt-factor correction; :footcite:t:`Rybicki1986`).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersBFOpacity : Bound-free counterpart; larger by ~3 orders of magnitude.</span>
+<span class="sd">    KramersOpacity : Combined FF + BF (use when both mechanisms are active).</span>
+<span class="sd">    KramersFFESOpacity : Adds an electron-scattering floor for high-:math:`T` accuracy.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersFFOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = (</span>
+<span class="sd">            KramersFFOpacity()</span>
+<span class="sd">        )  # κ₀ = 3.68 × 10²² cm⁵ g⁻² K³·⁵</span>
+<span class="sd">        op_custom = KramersFFOpacity(</span>
+<span class="sd">            kappa0=1.0e22</span>
+<span class="sd">        )  # non-solar composition</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e6 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersFFOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_FF_0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersOpacity</span>
+
+        <span class="c1"># noinspection PyArgumentList</span>
+        <span class="k">return</span> <span class="n">C_KramersOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersBFOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersBFOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bound-free (photoionisation) Kramers opacity.</span>
+
+<span class="sd">    The bound-free Rosseland mean follows the same :math:`\rho\,T^{-3.5}`</span>
+<span class="sd">    power law as the free-free term but with a significantly larger coefficient:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa_{\rm bf}(\rho, T)</span>
+<span class="sd">            = \kappa_{\rm bf,0}\,\rho\,T^{-3.5},</span>
+
+<span class="sd">    where composition factors :math:`Z\,(1+X)` are absorbed into :attr:`kappa0`.</span>
+<span class="sd">    For solar composition :math:`\kappa_{\rm bf,0} \approx 4.34 \times 10^{25}`, roughly</span>
+<span class="sd">    three orders of magnitude above the free-free coefficient, so bound-free</span>
+<span class="sd">    dominates the Kramers opacity in most stellar-envelope conditions</span>
+<span class="sd">    (:math:`T \sim 10^4\text{–}10^6\,\mathrm{K}`).</span>
+
+<span class="sd">    Use this class when photoionisation is the primary opacity mechanism and</span>
+<span class="sd">    electron scattering is negligible (low temperature, high density).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``4.34e25`` (solar composition, :math:`X = 0.70`, :math:`Z = 0.02`,</span>
+<span class="sd">        no Gaunt-factor correction; :footcite:t:`Rybicki1986`).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersFFOpacity : Free-free counterpart; smaller by ~3 orders of magnitude.</span>
+<span class="sd">    KramersOpacity : Combined FF + BF (preferred unless isolation is needed).</span>
+<span class="sd">    KramersBFESOpacity : Adds an electron-scattering floor for high-:math:`T` accuracy.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersBFOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = (</span>
+<span class="sd">            KramersBFOpacity()</span>
+<span class="sd">        )  # κ₀ = 4.34 × 10²⁵ cm⁵ g⁻² K³·⁵</span>
+<span class="sd">        op_lowZ = KramersBFOpacity(</span>
+<span class="sd">            kappa0=1.0e24</span>
+<span class="sd">        )  # metal-poor composition</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e6 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersBFOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_BF_0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersOpacity</span>
+
+        <span class="c1"># noinspection PyArgumentList</span>
+        <span class="k">return</span> <span class="n">C_KramersOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Combined free-free and bound-free Kramers opacity.</span>
+
+<span class="sd">    Both the free-free and bound-free Rosseland terms share the same</span>
+<span class="sd">    :math:`\rho\,T^{-3.5}` scaling, so they add to a single effective</span>
+<span class="sd">    normalisation:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa_{\rm Kramers}(\rho, T)</span>
+<span class="sd">            = (\kappa_{\rm ff,0} + \kappa_{\rm bf,0})\,\rho\,T^{-3.5}</span>
+<span class="sd">            \approx 4.38 \times 10^{25}\,\rho\,T^{-3.5}</span>
+<span class="sd">            \quad (\mathrm{solar\ composition}),</span>
+
+<span class="sd">    where the bound-free coefficient (:math:`4.34 \times 10^{25}`) dominates</span>
+<span class="sd">    over the free-free coefficient (:math:`3.68 \times 10^{22}`) by roughly</span>
+<span class="sd">    three orders of magnitude.  This is the standard grey Kramers opacity</span>
+<span class="sd">    for fully ionised stellar envelopes where electron scattering is not yet</span>
+<span class="sd">    important (:math:`T \lesssim 10^7\,\mathrm{K}`,</span>
+<span class="sd">    :math:`\rho \gtrsim 10^{-6}\,\mathrm{g\,cm^{-3}}`).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Combined normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``4.38e25`` (:math:`\kappa_{\rm ff,0} + \kappa_{\rm bf,0}`,</span>
+<span class="sd">        solar composition; :footcite:t:`Rybicki1986`).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersFFOpacity : Free-free contribution in isolation.</span>
+<span class="sd">    KramersBFOpacity : Bound-free contribution in isolation.</span>
+<span class="sd">    KramersESOpacity : Adds an electron-scattering floor — preferred for :math:`T \gtrsim 10^6\,\mathrm{K}`.</span>
+<span class="sd">    OPALOpacity : Full numerical Rosseland mean including line blanketing.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = (</span>
+<span class="sd">            KramersOpacity()</span>
+<span class="sd">        )  # κ₀ = 4.38 × 10²⁵ cm⁵ g⁻² K³·⁵</span>
+<span class="sd">        op_custom = KramersOpacity(</span>
+<span class="sd">            kappa0=2.0e25</span>
+<span class="sd">        )  # non-solar composition</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e6 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_KR_0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersOpacity</span>
+
+        <span class="c1"># noinspection PyArgumentList</span>
+        <span class="k">return</span> <span class="n">C_KramersOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersFFESOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersFFESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Free-free Kramers opacity with an electron-scattering floor.</span>
+
+<span class="sd">    Combines a frequency-independent Thomson floor with the free-free Kramers</span>
+<span class="sd">    term:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa(\rho, T)</span>
+<span class="sd">            = \kappa_{\rm es}</span>
+<span class="sd">            + \kappa_{\rm ff,0}\,\rho\,T^{-3.5}.</span>
+
+<span class="sd">    This is physically appropriate in hot, diffuse, fully ionised gas where</span>
+<span class="sd">    electron scattering and bremsstrahlung both contribute to the Rosseland</span>
+<span class="sd">    mean (e.g. Wolf-Rayet winds, diffuse accretion disc coronae,</span>
+<span class="sd">    :math:`T \sim 10^7\text{–}10^9\,\mathrm{K}`).  At high temperatures</span>
+<span class="sd">    the constant :math:`\kappa_{\rm es}` term dominates; at lower temperatures</span>
+<span class="sd">    and higher densities the :math:`\rho T^{-3.5}` term takes over.</span>
+
+<span class="sd">    Prefer :class:`KramersESOpacity` in environments where bound-free</span>
+<span class="sd">    opacity is also significant (most stellar-structure contexts).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Free-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``3.68e22`` (solar composition, :math:`X = 0.70`).</span>
+<span class="sd">    kappa_es : float, optional</span>
+<span class="sd">        Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.</span>
+<span class="sd">        Default ``0.34`` (solar composition, fully ionised).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersBFESOpacity : Bound-free variant with the same floor structure.</span>
+<span class="sd">    KramersESOpacity : Preferred combined FF + BF form including electron scattering.</span>
+<span class="sd">    ElectronScatteringOpacity : Thomson floor alone, without the Kramers term.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersFFESOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = (</span>
+<span class="sd">            KramersFFESOpacity()</span>
+<span class="sd">        )  # κ_es = 0.34, κ₀ = 3.68 × 10²² cm⁵ g⁻² K³·⁵</span>
+<span class="sd">        op_he = KramersFFESOpacity(</span>
+<span class="sd">            kappa_es=0.20</span>
+<span class="sd">        )  # helium-dominated composition</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e7 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersFFESOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_FF_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="mf">0.34</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers_es</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersESOpacity</span>
+
+        <span class="k">return</span> <span class="n">C_KramersESOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersBFESOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersBFESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bound-free Kramers opacity with an electron-scattering floor.</span>
+
+<span class="sd">    Combines a Thomson scattering floor with the bound-free Kramers term:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa(\rho, T)</span>
+<span class="sd">            = \kappa_{\rm es}</span>
+<span class="sd">            + \kappa_{\rm bf,0}\,\rho\,T^{-3.5}.</span>
+
+<span class="sd">    This is appropriate for stellar envelopes spanning a wide temperature</span>
+<span class="sd">    range (:math:`T \sim 10^4\text{–}10^7\,\mathrm{K}`) where</span>
+<span class="sd">    photoionisation is the dominant Kramers contribution but the electron</span>
+<span class="sd">    scattering floor becomes non-negligible in the hotter, more diffuse</span>
+<span class="sd">    upper layers.  The bound-free coefficient (``4.34e25``) is large enough</span>
+<span class="sd">    that the free-free term (:class:`KramersFFOpacity`, ``3.68e22``) is</span>
+<span class="sd">    essentially irrelevant, making this a good single-mechanism approximation</span>
+<span class="sd">    to the full Kramers + electron-scattering model.</span>
+
+<span class="sd">    Prefer :class:`KramersESOpacity` when you want both FF and BF included.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Bound-free normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``4.34e25`` (solar composition, :math:`X = 0.70`,</span>
+<span class="sd">        :math:`Z = 0.02`).</span>
+<span class="sd">    kappa_es : float, optional</span>
+<span class="sd">        Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.</span>
+<span class="sd">        Default ``0.34`` (solar composition, fully ionised).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersFFESOpacity : Free-free variant of the same floor structure.</span>
+<span class="sd">    KramersESOpacity : Combined FF + BF form — preferred in most contexts.</span>
+<span class="sd">    OPALOpacity : Full numerical opacity including metal-line blanketing.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersBFESOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = (</span>
+<span class="sd">            KramersBFESOpacity()</span>
+<span class="sd">        )  # κ_es = 0.34, κ₀ = 4.34 × 10²⁵ cm⁵ g⁻² K³·⁵</span>
+<span class="sd">        op_lowZ = KramersBFESOpacity(</span>
+<span class="sd">            kappa0=1.0e24, kappa_es=0.20</span>
+<span class="sd">        )  # metal-poor, helium-rich</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e6 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersBFESOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_BF_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="mf">0.34</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers_es</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersESOpacity</span>
+
+        <span class="k">return</span> <span class="n">C_KramersESOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="KramersESOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">KramersESOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Combined Kramers opacity with an electron-scattering floor.</span>
+
+<span class="sd">    The most complete grey analytic opacity for a hot, fully ionised plasma.</span>
+<span class="sd">    It sums a Thomson scattering floor with both free-free and bound-free</span>
+<span class="sd">    Kramers contributions:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \kappa(\rho, T)</span>
+<span class="sd">            = \kappa_{\rm es}</span>
+<span class="sd">            + (\kappa_{\rm ff,0} + \kappa_{\rm bf,0})\,\rho\,T^{-3.5}</span>
+<span class="sd">            \approx 0.34 + 4.38 \times 10^{25}\,\rho\,T^{-3.5}</span>
+<span class="sd">            \quad (\mathrm{solar\ composition}).</span>
+
+<span class="sd">    This is the standard choice for a self-consistent grey opacity across the</span>
+<span class="sd">    full range of stellar interior conditions:</span>
+
+<span class="sd">    - **High** :math:`T`, **low** :math:`\rho`: electron scattering dominates</span>
+<span class="sd">      (:math:`\kappa \to 0.34\,\mathrm{cm^2\,g^{-1}}`).</span>
+<span class="sd">    - **Low** :math:`T`, **high** :math:`\rho`: Kramers term dominates.</span>
+
+<span class="sd">    The transition between regimes occurs near</span>
+<span class="sd">    :math:`\rho\,T^{-3.5} \sim 7.8 \times 10^{-27}\,\mathrm{g\,cm^{-3}\,K^{3.5}}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    kappa0 : float, optional</span>
+<span class="sd">        Combined Kramers normalisation in :math:`\mathrm{cm^5\,g^{-2}\,K^{3.5}}`.</span>
+<span class="sd">        Default ``4.38e25`` (:math:`\kappa_{\rm ff,0} + \kappa_{\rm bf,0}`,</span>
+<span class="sd">        solar composition).</span>
+<span class="sd">    kappa_es : float, optional</span>
+<span class="sd">        Electron-scattering opacity in :math:`\mathrm{cm^2\,g^{-1}}`.</span>
+<span class="sd">        Default ``0.34`` (solar composition, :math:`X = 0.70`, fully ionised).</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    KramersFFESOpacity : Free-free only — use when BF is negligible.</span>
+<span class="sd">    KramersBFESOpacity : Bound-free only — nearly equivalent to this class.</span>
+<span class="sd">    OPALOpacity : Full numerical Rosseland mean with line blanketing; preferred</span>
+<span class="sd">                  when accuracy matters near the iron opacity bump.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import astropy.units as u</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            KramersESOpacity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        op = KramersESOpacity()  # solar defaults</span>
+<span class="sd">        op_he = KramersESOpacity(</span>
+<span class="sd">            kappa_es=0.20, kappa0=2.0e25</span>
+<span class="sd">        )  # helium-rich ejecta</span>
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e7 * u.K)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+<div class="viewcode-block" id="KramersESOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">KAPPA_KR_0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.34</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa0</span> <span class="o">=</span> <span class="n">kappa0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa_es</span> <span class="o">=</span> <span class="n">kappa_es</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="mf">0.34</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._kramers_es</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_KramersESOpacity</span>
+
+        <span class="k">return</span> <span class="n">C_KramersESOpacity</span><span class="p">(</span><span class="n">kappa0</span><span class="o">=</span><span class="n">kappa0</span><span class="p">,</span> <span class="n">kappa_es</span><span class="o">=</span><span class="n">kappa_es</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ================================================================ #</span>
+<span class="c1">#  Table-based Rosseland mean opacity                              #</span>
+<span class="c1"># ================================================================ #</span>
+
+<span class="c1">#: Out-of-bounds mode codes passed to C_OPALTableOpacity.</span>
+<span class="n">_OOB_MODES</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;raise&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;clamp&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;nan&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}</span>
+
+
+<div class="viewcode-block" id="OPALOpacity">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">OPALOpacity</span><span class="p">(</span><span class="n">GreyOpacityLaw</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rosseland mean opacity from bilinear interpolation on a 2-D OPAL table.</span>
+
+<span class="sd">    The OPAL tables (:footcite:t:`Iglesias1996`) provide numerically computed</span>
+<span class="sd">    Rosseland mean opacities on a grid of :math:`\log_{10}T` and</span>
+<span class="sd">    :math:`\log_{10}R`, where</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R = \frac{\rho}{\,T_6^3\,},</span>
+<span class="sd">        \quad T_6 = 10^{-6}\,T\,[\mathrm{K}],</span>
+
+<span class="sd">    covering temperatures :math:`3.75 \le \log_{10}T \le 8.7` and a wide</span>
+<span class="sd">    density range.  They include contributions from electron scattering,</span>
+<span class="sd">    free-free, bound-free, and bound-bound (line) transitions, making them</span>
+<span class="sd">    substantially more accurate than analytic Kramers fits at intermediate</span>
+<span class="sd">    temperatures where iron-group line blanketing is important.</span>
+
+<span class="sd">    This class delegates all arithmetic to a Cython extension that performs</span>
+<span class="sd">    bilinear interpolation in :math:`(\log_{10}T, \log_{10}R)` space.</span>
+
+<span class="sd">    The bundled OPAL table set (Asplund &amp; Grevesse 2005, 126 compositions) is</span>
+<span class="sd">    loaded lazily on first access via :meth:`get_tables` and cached for the</span>
+<span class="sd">    lifetime of the process.  Use :meth:`find` or :meth:`where` to identify</span>
+<span class="sd">    composition indices, and :meth:`load_default` to construct an instance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    grid_T : array_like, shape (n1,)</span>
+<span class="sd">        :math:`\log_{10}(T\,[\mathrm{K}])` grid values (strictly increasing).</span>
+<span class="sd">    grid_R : array_like, shape (n2,)</span>
+<span class="sd">        :math:`\log_{10}(R)` grid values (strictly increasing).</span>
+<span class="sd">    kappa : array_like, shape (n1, n2)</span>
+<span class="sd">        :math:`\log_{10}(\kappa\,[\mathrm{cm^2\,g^{-1}}])`.</span>
+<span class="sd">        ``NaN`` marks out-of-range cells.</span>
+<span class="sd">    out_of_bounds : {&#39;raise&#39;, &#39;clamp&#39;, &#39;nan&#39;}, optional</span>
+<span class="sd">        Behaviour when a query :math:`(T, \rho)` falls outside the table</span>
+<span class="sd">        grid or lands on a NaN-flagged cell.  Default ``&#39;raise&#39;``.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    load_opal_opacity : Convenience loader for the bundled table.</span>
+<span class="sd">    KramersESOpacity : Analytic alternative for rough estimates.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from trilobite.radiation.opacity import (</span>
+<span class="sd">            get_opacity,</span>
+<span class="sd">            load_opal_opacity,</span>
+<span class="sd">        )</span>
+<span class="sd">        from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">            OPALOpacity,</span>
+<span class="sd">        )</span>
+<span class="sd">        import astropy.units as u</span>
+
+<span class="sd">        # Via the registry (solar default)</span>
+<span class="sd">        op = get_opacity(&quot;opal&quot;)</span>
+
+<span class="sd">        # By composition</span>
+<span class="sd">        op = load_opal_opacity(X=0.70, Z=0.02)</span>
+
+<span class="sd">        # Inspect available compositions</span>
+<span class="sd">        idx = OPALOpacity.find(X=0.70, Z=0.02)</span>
+<span class="sd">        hits = OPALOpacity.where(Z=lambda z: z &gt; 0.05)</span>
+
+<span class="sd">        kap = op.opacity(1e-5 * u.g / u.cm**3, 1e7 * u.K)</span>
+<span class="sd">        dkdT = op.dlogkappa_dlogT(</span>
+<span class="sd">            1e-5 * u.g / u.cm**3, 1e7 * u.K</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">IS_C_BACKED</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">mean_type</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+
+    <span class="c1">#: Path to the bundled OPAL table HDF5 file.</span>
+    <span class="n">_PATH</span><span class="p">:</span> <span class="n">ClassVar</span><span class="p">[</span><span class="n">Path</span><span class="p">]</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;tables&quot;</span> <span class="o">/</span> <span class="s2">&quot;asplund_grevesse_05.h5&quot;</span>
+    <span class="c1">#: Lazily populated namespace; ``None`` until first :meth:`get_tables` call.</span>
+    <span class="n">_TABLES</span><span class="p">:</span> <span class="n">ClassVar</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Class-level table access                                            #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_read_h5</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SimpleNamespace&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Read the OPAL HDF5 file at *path* into a SimpleNamespace of arrays.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">types</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimpleNamespace</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="n">SimpleNamespace</span><span class="p">(</span>
+                <span class="n">grid_T</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;grid/grid_1&quot;</span><span class="p">][:],</span>
+                <span class="n">grid_R</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;grid/grid_2&quot;</span><span class="p">][:],</span>
+                <span class="n">opacity</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;opacity&quot;</span><span class="p">][:],</span>
+                <span class="n">X</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;metadata/X&quot;</span><span class="p">][:],</span>
+                <span class="n">Y</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;metadata/Y&quot;</span><span class="p">][:],</span>
+                <span class="n">Z</span><span class="o">=</span><span class="n">f</span><span class="p">[</span><span class="s2">&quot;metadata/Z&quot;</span><span class="p">][:],</span>
+            <span class="p">)</span>
+        <span class="k">for</span> <span class="n">arr</span> <span class="ow">in</span> <span class="nb">vars</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">arr</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">writeable</span> <span class="o">=</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">ns</span>
+
+<div class="viewcode-block" id="OPALOpacity.get_tables">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.get_tables.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.get_tables">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_tables</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;SimpleNamespace&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the full OPAL table set, loading from disk on first call.</span>
+
+<span class="sd">        The result is cached on the class after the first load (for the</span>
+<span class="sd">        bundled file).  Passing a custom *path* bypasses the cache and reads</span>
+<span class="sd">        fresh every time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        path : str or Path, optional</span>
+<span class="sd">            Path to an HDF5 file with the same schema as the bundled table.</span>
+<span class="sd">            If ``None``, the bundled Asplund &amp; Grevesse (2005) file is used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        SimpleNamespace</span>
+<span class="sd">            Read-only namespace with arrays:</span>
+
+<span class="sd">            * ``grid_T``  — :math:`\log_{10}(T\,[\mathrm{K}])`, shape ``(70,)``</span>
+<span class="sd">            * ``grid_R``  — :math:`\log_{10}(R)`, shape ``(19,)``</span>
+<span class="sd">            * ``opacity`` — :math:`\log_{10}(\kappa)`, shape ``(126, 70, 19)``; ``NaN`` = invalid</span>
+<span class="sd">            * ``X``, ``Y``, ``Z`` — composition fractions, shape ``(126,)``</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">path</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_read_h5</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TABLES</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">_TABLES</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_read_h5</span><span class="p">(</span><span class="bp">cls</span><span class="o">.</span><span class="n">_PATH</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_TABLES</span></div>
+
+
+<div class="viewcode-block" id="OPALOpacity.find">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.find.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.find">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">X</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">tol</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-6</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return the unique composition index matching *(X, Z)*.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        X : float</span>
+<span class="sd">            Hydrogen mass fraction.</span>
+<span class="sd">        Z : float</span>
+<span class="sd">            Metal mass fraction.</span>
+<span class="sd">        tol : float, optional</span>
+<span class="sd">            Absolute tolerance for composition matching.  Default ``1e-6``.</span>
+<span class="sd">        table_path : str or Path, optional</span>
+<span class="sd">            Custom table file; defaults to the bundled table.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            Zero-based index into the table.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If no table matches or more than one table matches.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">                OPALOpacity,</span>
+<span class="sd">            )</span>
+
+<span class="sd">            idx = OPALOpacity.find(X=0.70, Z=0.02)  # → 72</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_tables</span><span class="p">(</span><span class="n">table_path</span><span class="p">)</span>
+        <span class="n">hits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">X</span> <span class="o">-</span> <span class="n">X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">Z</span> <span class="o">-</span> <span class="n">Z</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">tol</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No OPAL table found for X=</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">, Z=</span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hits</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Multiple OPAL tables match X=</span><span class="si">{</span><span class="n">X</span><span class="si">}</span><span class="s2">, Z=</span><span class="si">{</span><span class="n">Z</span><span class="si">}</span><span class="s2">: indices </span><span class="si">{</span><span class="n">hits</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">hits</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="OPALOpacity.where">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.where.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.where">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">where</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">conditions</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return indices of tables satisfying all composition conditions.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        table_path : str or Path, optional</span>
+<span class="sd">            Custom table file; defaults to the bundled table.</span>
+<span class="sd">        **conditions</span>
+<span class="sd">            Each key must be one of ``&quot;X&quot;``, ``&quot;Y&quot;``, ``&quot;Z&quot;``.  The value</span>
+<span class="sd">            may be:</span>
+
+<span class="sd">            * a **scalar float** — matched within absolute tolerance ``1e-6``;</span>
+<span class="sd">            * a **callable** ``f(arr) -&gt; bool array`` — applied element-wise.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of int</span>
+<span class="sd">            Zero-based indices of matching tables.  Empty list if none match.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        .. code-block:: python</span>
+
+<span class="sd">            from trilobite.radiation.opacity.grey_opacity.rosseland import (</span>
+<span class="sd">                OPALOpacity,</span>
+<span class="sd">            )</span>
+
+<span class="sd">            # All tables with Z = 0.02</span>
+<span class="sd">            OPALOpacity.where(Z=0.02)</span>
+
+<span class="sd">            # All metal-enriched tables</span>
+<span class="sd">            OPALOpacity.where(Z=lambda z: z &gt; 0.05)</span>
+
+<span class="sd">            # Intersection of two conditions</span>
+<span class="sd">            OPALOpacity.where(X=0.70, Z=0.02)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_tables</span><span class="p">(</span><span class="n">table_path</span><span class="p">)</span>
+        <span class="n">arrays</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;X&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="s2">&quot;Y&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="s2">&quot;Z&quot;</span><span class="p">:</span> <span class="n">t</span><span class="o">.</span><span class="n">Z</span><span class="p">}</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">X</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">conditions</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown composition key </span><span class="si">{</span><span class="n">key</span><span class="si">!r}</span><span class="s2">. Valid keys: X, Y, Z.&quot;</span><span class="p">)</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">arrays</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+            <span class="k">if</span> <span class="nb">callable</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+                <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">val</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">mask</span> <span class="o">&amp;=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arr</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">))</span> <span class="o">&lt;=</span> <span class="mf">1e-6</span>
+        <span class="k">return</span> <span class="nb">list</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">mask</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Construction                                                        #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+
+<div class="viewcode-block" id="OPALOpacity.__init__">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">grid_T</span><span class="p">,</span>
+        <span class="n">grid_R</span><span class="p">,</span>
+        <span class="n">kappa</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">out_of_bounds</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raise&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">out_of_bounds</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_OOB_MODES</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;out_of_bounds must be one of </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">_OOB_MODES</span><span class="p">)</span><span class="si">}</span><span class="s2">, got </span><span class="si">{</span><span class="n">out_of_bounds</span><span class="si">!r}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">out_of_bounds</span> <span class="o">=</span> <span class="n">out_of_bounds</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">grid_T</span><span class="o">=</span><span class="n">grid_T</span><span class="p">,</span> <span class="n">grid_R</span><span class="o">=</span><span class="n">grid_R</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="n">kappa</span><span class="p">,</span> <span class="n">out_of_bounds</span><span class="o">=</span><span class="n">out_of_bounds</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_initialize_C_object</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">grid_T</span><span class="p">,</span> <span class="n">grid_R</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">out_of_bounds</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity.grey_opacity.rosseland._opal_table</span><span class="w"> </span><span class="kn">import</span> <span class="n">C_OPALTableOpacity</span>
+
+        <span class="k">return</span> <span class="n">C_OPALTableOpacity</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid_T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">grid_R</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kappa</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s2">&quot;C&quot;</span><span class="p">),</span>
+            <span class="n">_OOB_MODES</span><span class="p">[</span><span class="n">out_of_bounds</span><span class="p">],</span>
+        <span class="p">)</span>
+
+<div class="viewcode-block" id="OPALOpacity.load_default">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_default</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">Z</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">table_path</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">out_of_bounds</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;raise&quot;</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OPALOpacity&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Load an :class:`OPALOpacity` from the bundled OPAL table.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        index : int, optional</span>
+<span class="sd">            Zero-based composition index into the table.  Mutually exclusive</span>
+<span class="sd">            with *X* / *Z*.</span>
+<span class="sd">        X : float, optional</span>
+<span class="sd">            Hydrogen mass fraction.  Must be paired with *Z*.</span>
+<span class="sd">        Z : float, optional</span>
+<span class="sd">            Metal mass fraction.  Must be paired with *X*.</span>
+<span class="sd">        table_path : str or Path, optional</span>
+<span class="sd">            Override the default bundled table path.</span>
+<span class="sd">        out_of_bounds : {&#39;raise&#39;, &#39;clamp&#39;, &#39;nan&#39;}, optional</span>
+<span class="sd">            Out-of-bounds behaviour.  Default ``&#39;raise&#39;``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        OPALOpacity</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        With no arguments, solar composition (X = 0.70, Z = 0.02) is used.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">Z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Supply either &#39;index&#39; or (&#39;X&#39;, &#39;Z&#39;), not both.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">X</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">!=</span> <span class="p">(</span><span class="n">Z</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Supply both &#39;X&#39; and &#39;Z&#39; together, or neither.&quot;</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">get_tables</span><span class="p">(</span><span class="n">table_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">Z</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="n">X</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="n">Z</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="n">table_path</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">index</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="mf">0.70</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">,</span> <span class="n">table_path</span><span class="o">=</span><span class="n">table_path</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">grid_T</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">grid_R</span><span class="p">,</span> <span class="n">t</span><span class="o">.</span><span class="n">opacity</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">out_of_bounds</span><span class="o">=</span><span class="n">out_of_bounds</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Log-space interface (dispatches to Cython)                         #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_opacity</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return :math:`\ln\kappa` via bilinear interpolation in the table.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">log_opacity_array</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_rho</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">log_opacity</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dlogkappa_dlogrho</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return :math:`\partial\ln\kappa/\partial\ln\rho` from the table gradient.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogrho_array</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_rho</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogrho</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_dlogkappa_dlogT</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">):</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Return :math:`\partial\ln\kappa/\partial\ln T` from the table gradient.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogT_array</span><span class="p">(</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">log_rho</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogT</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Text-file conversion utility                                       #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+
+<div class="viewcode-block" id="OPALOpacity.read_from_opal_txt">
+<a class="viewcode-back" href="../../../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.read_from_opal_txt.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.read_from_opal_txt">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">read_from_opal_txt</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">txt_path</span><span class="p">,</span> <span class="n">h5_path</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Parse an OPAL fixed-width text file and write it to HDF5.</span>
+
+<span class="sd">        This classmethod is a provenance utility for (re-)generating the</span>
+<span class="sd">        bundled ``asplund_grevesse_05.h5`` from the original source text.</span>
+<span class="sd">        It does **not** construct an :class:`OPALOpacity` instance.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        txt_path : str or Path</span>
+<span class="sd">            Path to the OPAL-format fixed-width text file.</span>
+<span class="sd">        h5_path : str or Path</span>
+<span class="sd">            Output HDF5 path (overwritten if it exists).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">re</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">_re</span>
+
+        <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
+
+        <span class="n">txt_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">txt_path</span><span class="p">)</span>
+        <span class="n">h5_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">h5_path</span><span class="p">)</span>
+
+        <span class="n">_INVALID</span> <span class="o">=</span> <span class="mf">9.999</span>
+        <span class="n">lines</span> <span class="o">=</span> <span class="n">txt_path</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">splitlines</span><span class="p">()</span>
+
+        <span class="n">data_start</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">line</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lines</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\*+\s+Tables\s+\*+&quot;</span><span class="p">,</span> <span class="n">line</span><span class="o">.</span><span class="n">strip</span><span class="p">()):</span>
+                <span class="n">data_start</span> <span class="o">=</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">data_start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Could not find &#39;*** Tables ***&#39; separator in </span><span class="si">{</span><span class="n">txt_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">table_hdr</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span>
+            <span class="sa">r</span><span class="s2">&quot;TABLE\s*#\s*\d+\s+(\S+)\s+X=([0-9.]+)\s+Y=([0-9.]+)\s+&quot;</span>
+            <span class="sa">r</span><span class="s2">&quot;Z=([0-9.]+)\s+dX1=([0-9.]+)\s+dX2=([0-9.]+)&quot;</span>
+        <span class="p">)</span>
+        <span class="n">col_hdr</span> <span class="o">=</span> <span class="n">_re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;logT\s+(.*)&quot;</span><span class="p">)</span>
+
+        <span class="n">blocks</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">log_r_values</span> <span class="o">=</span> <span class="n">log_t_values</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">i</span> <span class="o">=</span> <span class="n">data_start</span>
+        <span class="n">n_lines</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_lines</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="n">table_hdr</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="k">if</span> <span class="n">m</span><span class="p">:</span>
+                <span class="n">tid</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">dX1</span><span class="p">,</span> <span class="n">dX2</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">2</span><span class="p">)),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">3</span><span class="p">)),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">4</span><span class="p">)),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">5</span><span class="p">)),</span>
+                    <span class="nb">float</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">6</span><span class="p">)),</span>
+                <span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">col_m</span> <span class="o">=</span> <span class="kc">None</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_lines</span><span class="p">:</span>
+                    <span class="n">col_m</span> <span class="o">=</span> <span class="n">col_hdr</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span>
+                    <span class="k">if</span> <span class="n">col_m</span><span class="p">:</span>
+                        <span class="k">break</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="n">col_m</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Missing &#39;logT ...&#39; column header after TABLE block.&quot;</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">log_r_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">log_r_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">col_m</span><span class="o">.</span><span class="n">group</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">rows_T</span><span class="p">,</span> <span class="n">rows_data</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+                <span class="k">while</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">n_lines</span><span class="p">:</span>
+                    <span class="n">dl</span> <span class="o">=</span> <span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="n">dl</span><span class="p">:</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+                    <span class="k">if</span> <span class="n">table_hdr</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">dl</span><span class="p">)</span> <span class="ow">or</span> <span class="n">_re</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;^\*+&quot;</span><span class="p">,</span> <span class="n">dl</span><span class="p">):</span>
+                        <span class="k">break</span>
+                    <span class="n">parts</span> <span class="o">=</span> <span class="n">dl</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="n">rows_T</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">parts</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="k">except</span> <span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="ne">IndexError</span><span class="p">):</span>
+                        <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">continue</span>
+                    <span class="n">rows_data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="nb">float</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">parts</span><span class="p">[</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">))</span>
+                    <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">rows_T</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_r_values</span><span class="p">)</span>
+                <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">rows_T</span><span class="p">),</span> <span class="n">n2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">ri</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows_data</span><span class="p">):</span>
+                    <span class="n">nc</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">row</span><span class="p">),</span> <span class="n">n2</span><span class="p">)</span>
+                    <span class="n">arr</span><span class="p">[</span><span class="n">ri</span><span class="p">,</span> <span class="p">:</span><span class="n">nc</span><span class="p">]</span> <span class="o">=</span> <span class="n">row</span><span class="p">[:</span><span class="n">nc</span><span class="p">]</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">arr</span> <span class="o">-</span> <span class="n">_INVALID</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">1e-3</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+                <span class="k">if</span> <span class="n">log_t_values</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">log_t_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rows_T</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+                <span class="n">blocks</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">tid</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">dX1</span><span class="p">,</span> <span class="n">dX2</span><span class="p">,</span> <span class="n">arr</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">i</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">blocks</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;No TABLE blocks found in </span><span class="si">{</span><span class="n">txt_path</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">,</span> <span class="n">n_tbl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_t_values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">log_r_values</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">blocks</span><span class="p">)</span>
+        <span class="n">opacity</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full</span><span class="p">((</span><span class="n">n_tbl</span><span class="p">,</span> <span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">tids</span><span class="p">,</span> <span class="n">Xs</span><span class="p">,</span> <span class="n">Ys</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">dX1s</span><span class="p">,</span> <span class="n">dX2s</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">ti</span><span class="p">,</span> <span class="p">(</span><span class="n">tid</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">dX1</span><span class="p">,</span> <span class="n">dX2</span><span class="p">,</span> <span class="n">data</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">blocks</span><span class="p">):</span>
+            <span class="n">r1</span><span class="p">,</span> <span class="n">r2</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">n1</span><span class="p">),</span> <span class="nb">min</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n2</span><span class="p">)</span>
+            <span class="n">opacity</span><span class="p">[</span><span class="n">ti</span><span class="p">,</span> <span class="p">:</span><span class="n">r1</span><span class="p">,</span> <span class="p">:</span><span class="n">r2</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:</span><span class="n">r1</span><span class="p">,</span> <span class="p">:</span><span class="n">r2</span><span class="p">]</span>
+            <span class="n">tids</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tid</span><span class="p">)</span>
+            <span class="n">Xs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+            <span class="n">Ys</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+            <span class="n">Zs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+            <span class="n">dX1s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dX1</span><span class="p">)</span>
+            <span class="n">dX2s</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">dX2</span><span class="p">)</span>
+
+        <span class="n">h5_path</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">mkdir</span><span class="p">(</span><span class="n">parents</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">with</span> <span class="n">h5py</span><span class="o">.</span><span class="n">File</span><span class="p">(</span><span class="n">h5_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;source&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;OPAL&quot;</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;reference&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;Iglesias &amp; Rogers 1996&quot;</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">attrs</span><span class="p">[</span><span class="s2">&quot;mean_type&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="s2">&quot;rosseland&quot;</span>
+            <span class="n">grp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;grid&quot;</span><span class="p">)</span>
+            <span class="n">grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;grid_1&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">log_t_values</span><span class="p">)</span>
+            <span class="n">grp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;grid_2&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">log_r_values</span><span class="p">)</span>
+            <span class="n">f</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;opacity&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">opacity</span><span class="p">)</span>
+            <span class="n">mgrp</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">create_group</span><span class="p">(</span><span class="s2">&quot;metadata&quot;</span><span class="p">)</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Xs</span><span class="p">))</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;Y&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Ys</span><span class="p">))</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;Z&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">Zs</span><span class="p">))</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dX1&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dX1s</span><span class="p">))</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;dX2&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">dX2s</span><span class="p">))</span>
+            <span class="n">mgrp</span><span class="o">.</span><span class="n">create_dataset</span><span class="p">(</span><span class="s2">&quot;table_id&quot;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tids</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">object</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">h5py</span><span class="o">.</span><span class="n">string_dtype</span><span class="p">())</span></div>
+
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;OPALOpacity(out_of_bounds=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">out_of_bounds</span><span class="si">!r}</span><span class="s2">)&quot;</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

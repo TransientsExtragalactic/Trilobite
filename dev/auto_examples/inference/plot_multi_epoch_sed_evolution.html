@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Multi-Epoch SED Fitting: Tracking Shock Evolution &#8212; Triceratops dev documentation</title>
+    <title>Multi-Epoch SED Fitting: Tracking Shock Evolution &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Upper Limit Constraints: Non-Detections as Information" href="plot_upper_limit_inference.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -621,8 +621,8 @@ posteriors.</p></li>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.SEDs.synchrotron</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">Synchrotron_SSA_SBPL_Model</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.SEDs.synchrotron</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">Synchrotron_SSA_SBPL_Model</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 
@@ -726,11 +726,11 @@ are the peak normalization <span class="math notranslate nohighlight">\(F_{\rm p
 <span class="math notranslate nohighlight">\(\nu_{\rm pk}\)</span>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.photometry</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryEpochContainer</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GaussianCensoredLikelihood</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.mcmc</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EmceeSampler</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data.photometry</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryEpochContainer</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GaussianCensoredLikelihood</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.mcmc</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EmceeSampler</span></a>
 
 <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">epoch_posteriors</span></a> <span class="o">=</span> <span class="p">{}</span>
 
@@ -778,14 +778,14 @@ are the peak normalization <span class="math notranslate nohighlight">\(F_{\rm p
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Triceratops/Triceratops/docs/source/galleries/inference/plot_multi_epoch_sed_evolution.py:178: DeprecationWarning: RadioPhotometryEpochContainer is deprecated and will be removed in a future release. Use RadioPhotometryEpoch instead.
   photometry = RadioPhotometryEpochContainer(data_table)
-  t =    10 d  |  F_pk = 0.00 mJy  |  nu_pk = 26.26 GHz
-  t =    20 d  |  F_pk = 0.01 mJy  |  nu_pk = 15.50 GHz
-  t =    35 d  |  F_pk = 0.01 mJy  |  nu_pk = 8.41 GHz
+  t =    10 d  |  F_pk = 0.00 mJy  |  nu_pk = 26.10 GHz
+  t =    20 d  |  F_pk = 0.01 mJy  |  nu_pk = 15.56 GHz
+  t =    35 d  |  F_pk = 0.01 mJy  |  nu_pk = 8.42 GHz
   t =    55 d  |  F_pk = 0.01 mJy  |  nu_pk = 5.57 GHz
-  t =    80 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.77 GHz
+  t =    80 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.76 GHz
   t =   110 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.18 GHz
   t =   150 d  |  F_pk = 0.01 mJy  |  nu_pk = 1.85 GHz
-  t =   200 d  |  F_pk = 0.02 mJy  |  nu_pk = 1.27 GHz
+  t =   200 d  |  F_pk = 0.02 mJy  |  nu_pk = 1.28 GHz
 </pre></div>
 </div>
 </section>
@@ -884,8 +884,8 @@ Chevalier scaling indices.</p>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_multi_epoch_sed_evolution_003.png" srcset="../../_images/sphx_glr_plot_multi_epoch_sed_evolution_003.png" alt="Peak Flux Power-Law Fit, Peak Frequency Power-Law Fit" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>=== Recovered power-law indices ===
-  beta_F  (fit): 0.568  (true: 0.5)
-  beta_nu (fit): -0.997  (true: -1.0)
+  beta_F  (fit): 0.572  (true: 0.5)
+  beta_nu (fit): -0.994  (true: -1.0)
 </pre></div>
 </div>
 </section>
@@ -918,11 +918,11 @@ cooling or geometrical losses)</p></li>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>=== Physical interpretation ===
   Inferred CSM model: wind (s=2) + SSA
   Expected: beta_nu = -1.0,  beta_F = +0.5
-  Recovered: beta_nu = -1.00,  beta_F = 0.57
+  Recovered: beta_nu = -0.99,  beta_F = 0.57
   Agreement: Good
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 19.542 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (1 minutes 53.037 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-inference-plot-multi-epoch-sed-evolution-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3873b51493e37ac0761feb601072f28f/plot_multi_epoch_sed_evolution.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_multi_epoch_sed_evolution.ipynb</span></code></a></p>

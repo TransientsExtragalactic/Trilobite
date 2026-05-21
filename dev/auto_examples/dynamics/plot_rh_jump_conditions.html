@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Rankine–Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic &#8212; Triceratops dev documentation</title>
+    <title>Rankine–Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Radiative Cooling in the Mechanical Shock Engine" href="plot_mechanical_shock_cooling.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -590,17 +590,17 @@ relativistic solution transitions between regimes.</p>
 </div>
 <p>Shock jump conditions relate the <strong>upstream (pre-shock)</strong> state to the <strong>downstream
 (post-shock)</strong> state via conservation of mass, momentum, and energy.</p>
-<p>Triceratops provides a number of solvers for these jump conditions, relevant to a
+<p>Trilobite provides a number of solvers for these jump conditions, relevant to a
 number of different physical regimes and assumptions. In this example, we compare three of them:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a> –
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a> –
 the Newtonian strong-shock limit, where the compression ratio is a fixed
 constant <span class="math notranslate nohighlight">\(R = (\hat{\gamma}+1)/(\hat{\gamma}-1)\)</span>, independent of
 shock velocity.</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions.html#triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions" title="triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativisticColdShockConditions</span></code></a> –
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions" title="trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativisticColdShockConditions</span></code></a> –
 a general relativistic solver valid at any shock velocity, found by
 numerical root-finding of the full relativistic jump condition.</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions.html#triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions" title="triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">UltraRelativisticColdShockConditions</span></code></a> –
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions.html#trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions" title="trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">UltraRelativisticColdShockConditions</span></code></a> –
 an analytic approximation for <span class="math notranslate nohighlight">\(\Gamma_1 \gg 1\)</span>, where the downstream
 shock-frame velocity is fixed at <span class="math notranslate nohighlight">\(\beta_2 = \hat{\gamma} - 1\)</span>.
 Only physically valid when <span class="math notranslate nohighlight">\(\beta_{\rm sh} &gt; \hat{\gamma} - 1\)</span>.</p></li>
@@ -611,9 +611,9 @@ We apply all three to a cold, stationary CSM across
 compression ratio, post-shock temperature, and post-shock pressure.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
-<p><a class="reference internal" href="../../reference/physics/shocks/overview.html#shock-overview"><span class="std std-ref">Shock Physics in Triceratops</span></a> for an overview of the shock physics modules and their structure.</p>
+<p><a class="reference internal" href="../../reference/physics/shocks/overview.html#shock-overview"><span class="std std-ref">Shock Physics in Trilobite</span></a> for an overview of the shock physics modules and their structure.</p>
 <p><a class="reference internal" href="../../reference/physics/shocks/jump_conditions_overview.html#rankine-hugoniot-overview"><span class="std std-ref">The Rankine-Hugoniot Jump Conditions</span></a> for an overview of the Rankine–Hugoniot jump conditions
-and the various solvers provided by Triceratops.</p>
+and the various solvers provided by Trilobite.</p>
 <p><a class="reference internal" href="../../reference/physics/shocks/jump_conditions_theory.html#rankine-hugoniot-theory"><span class="std std-ref">Methods: (Non-Relativistic) Jump Conditions</span></a> for a detailed theoretical discussion of the jump conditions and their derivation.</p>
 <p><a class="reference internal" href="../../reference/physics/shocks/relativistic_jump_conditions_theory.html#relativistic-jump-conditions-theory"><span class="std std-ref">Methods: (Relativistic) Jump Conditions</span></a> for a detailed theoretical discussion of the relativistic
 jump conditions and their derivation.</p>
@@ -644,12 +644,12 @@ of velocity, from the Newtonian to ultra-relativistic regime.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.constants</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">const</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">StrongColdShockConditions</span><span class="p">,</span>
     <span class="n">RelativisticColdShockConditions</span><span class="p">,</span>
     <span class="n">UltraRelativisticColdShockConditions</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GAMMA_HAT</span></a> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mf">3.0</span>
 <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">c_cgs</span></a> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.constants.Constant.html#astropy.constants.Constant.cgs" title="astropy.constants.Constant.cgs" class="sphx-glr-backref-module-astropy-constants sphx-glr-backref-type-py-attribute"><span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span></a>
@@ -791,7 +791,7 @@ become dynamically important (<span class="math notranslate nohighlight">\(\beta
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_rh_jump_conditions_003.png" srcset="../../_images/sphx_glr_plot_rh_jump_conditions_003.png" alt="Post-shock Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.100 seconds)</p>
+<img src="../../_images/sphx_glr_plot_rh_jump_conditions_003.png" srcset="../../_images/sphx_glr_plot_rh_jump_conditions_003.png" alt="Post-shock Pressure" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.309 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dynamics-plot-rh-jump-conditions-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/0a02a31837770c78215ce8e2cd7e3a5f/plot_rh_jump_conditions.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_rh_jump_conditions.ipynb</span></code></a></p>

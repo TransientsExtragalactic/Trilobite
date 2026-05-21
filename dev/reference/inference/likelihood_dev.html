@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Likelihood Development Guide &#8212; Triceratops dev documentation</title>
+    <title>Likelihood Development Guide &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -141,11 +141,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -168,7 +168,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -448,9 +448,9 @@
                   
   <section id="likelihood-development-guide">
 <span id="likelihood-dev"></span><h1>Likelihood Development Guide<a class="headerlink" href="#likelihood-development-guide" title="Link to this heading">#</a></h1>
-<p>Likelihoods are the bridge between physics and inference in Triceratops.
-They bind a concrete <a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> to a
-<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object under a specific statistical
+<p>Likelihoods are the bridge between physics and inference in Trilobite.
+They bind a concrete <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> to a
+<a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object under a specific statistical
 assumption and produce a scalar log-likelihood suitable for samplers,
 optimizers, or evidence estimators.</p>
 <p>This guide is written for developers. It does not assume that you merely want
@@ -479,24 +479,24 @@ extending the framework safely.</p>
 <hr class="docutils" />
 <section id="a-conceptual-overview">
 <h2><a class="toc-backref" href="#id1" role="doc-backlink">A Conceptual Overview</a><a class="headerlink" href="#a-conceptual-overview" title="Link to this heading">#</a></h2>
-<p>A Triceratops likelihood is not a monolithic object. It consists of two
+<p>A Trilobite likelihood is not a monolithic object. It consists of two
 conceptual layers:</p>
 <ol class="arabic simple">
 <li><p>A <strong>numerical backend</strong> that encodes pure statistics.</p></li>
 <li><p>A <strong>likelihood class</strong> that binds a forward model to validated numerical data.</p></li>
 </ol>
 <p>The separation between these layers is enforced by
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That base class
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That base class
 defines the initialization workflow, compatibility contract, and evaluation
 interface.</p>
 <p>Before diving into extension patterns, we examine each layer in turn.</p>
 </section>
 <section id="low-level-numerical-likelihoods">
 <h2><a class="toc-backref" href="#id2" role="doc-backlink">Low-Level Numerical Likelihoods</a><a class="headerlink" href="#low-level-numerical-likelihoods" title="Link to this heading">#</a></h2>
-<p>At the foundation of the Triceratops likelihood system lie the <strong>pure
+<p>At the foundation of the Trilobite likelihood system lie the <strong>pure
 numerical backends</strong>. These are ordinary Python functions — typically located
-in submodules of <a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.html#module-triceratops.inference.likelihood" title="triceratops.inference.likelihood"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.inference.likelihood</span></code></a> such as
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.gaussian.html#module-triceratops.inference.likelihood.gaussian" title="triceratops.inference.likelihood.gaussian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.inference.likelihood.gaussian</span></code></a> — whose sole responsibility
+in submodules of <a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.html#module-trilobite.inference.likelihood" title="trilobite.inference.likelihood"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.inference.likelihood</span></code></a> such as
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.gaussian.html#module-trilobite.inference.likelihood.gaussian" title="trilobite.inference.likelihood.gaussian"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.inference.likelihood.gaussian</span></code></a> — whose sole responsibility
 is to evaluate a statistical expression in array space.</p>
 <p>These functions operate directly on NumPy arrays and return a scalar
 log-likelihood value. They are deliberately unaware of:</p>
@@ -508,7 +508,7 @@ log-likelihood value. They are deliberately unaware of:</p>
 </ul>
 <p>Their role is purely mathematical.</p>
 <p>For example,
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.gaussian.gaussian_loglikelihood.html#triceratops.inference.likelihood.gaussian.gaussian_loglikelihood" title="triceratops.inference.likelihood.gaussian.gaussian_loglikelihood"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_loglikelihood()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.gaussian.gaussian_loglikelihood.html#trilobite.inference.likelihood.gaussian.gaussian_loglikelihood" title="trilobite.inference.likelihood.gaussian.gaussian_loglikelihood"><code class="xref py py-func docutils literal notranslate"><span class="pre">gaussian_loglikelihood()</span></code></a>
 computes the standard Gaussian log-likelihood from arrays of observed values,
 model predictions, and uncertainties. It assumes that the arrays are already
 compatible, correctly shaped, and expressed in consistent units. It does not
@@ -545,7 +545,7 @@ numerical backend layer.</p>
 <section id="the-likelihood-base-class">
 <h2><a class="toc-backref" href="#id3" role="doc-backlink">The Likelihood Base Class</a><a class="headerlink" href="#the-likelihood-base-class" title="Link to this heading">#</a></h2>
 <p>The structural core of the likelihood system is
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>.</p>
 <p>This abstract base class does not implement a specific statistical model.
 Instead, it defines the lifecycle and contract that all concrete likelihoods
 must obey. Its purpose is architectural: it ensures that model binding,
@@ -553,8 +553,8 @@ compatibility validation, and evaluation occur in a consistent and
 disciplined manner.</p>
 <p>A likelihood instance represents the binding of:</p>
 <ul class="simple">
-<li><p>one <a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>,</p></li>
-<li><p>one <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>,</p></li>
+<li><p>one <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>,</p></li>
+<li><p>one <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>,</p></li>
 <li><p>one statistical assumption.</p></li>
 </ul>
 <p>Once constructed, it becomes a callable object capable of evaluating
@@ -562,7 +562,7 @@ log-likelihoods efficiently and safely.</p>
 <section id="initialization-lifecycle">
 <h3><a class="toc-backref" href="#id4" role="doc-backlink">Initialization Lifecycle</a><a class="headerlink" href="#initialization-lifecycle" title="Link to this heading">#</a></h3>
 <p>All likelihood subclasses inherit the constructor defined in
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That constructor
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">Likelihood</span></code></a>. That constructor
 enforces a strict sequence of steps:</p>
 <ol class="arabic simple">
 <li><p>Bind the model and inference data.</p></li>
@@ -630,7 +630,7 @@ It does not transform arrays.</p>
 <h3><a class="toc-backref" href="#id8" role="doc-backlink">Likelihood Evaluation</a><a class="headerlink" href="#likelihood-evaluation" title="Link to this heading">#</a></h3>
 <p>Evaluation is intentionally split into two methods.</p>
 <p>The public method
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html#triceratops.inference.likelihood.base.Likelihood.log_likelihood" title="triceratops.inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html#trilobite.inference.likelihood.base.Likelihood.log_likelihood" title="trilobite.inference.likelihood.base.Likelihood.log_likelihood"><code class="xref py py-meth docutils literal notranslate"><span class="pre">log_likelihood()</span></code></a>
 accepts parameters in any format supported by the model and coerces them
 into the model’s internal representation.</p>
 <p>It then delegates to

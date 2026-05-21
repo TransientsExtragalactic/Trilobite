@@ -12,21 +12,21 @@ Pool API Reference
 Abstract Base Class
 -------------------
 
-*Module:* :mod:`triceratops.parallel.base`
+*Module:* :mod:`trilobite.parallel.base`
 
-All parallel pools in Triceratops inherit from :class:`~triceratops.parallel.base.Pool`.
+All parallel pools in Trilobite inherit from :class:`~trilobite.parallel.base.Pool`.
 This class defines the minimal interface required by ``emcee`` and other callers, and
-is intentionally backend-agnostic. Subclasses only need to implement :attr:`~triceratops.parallel.base.Pool.size`,
-:meth:`~triceratops.parallel.base.Pool.map`, and :meth:`~triceratops.parallel.base.Pool.close`.
+is intentionally backend-agnostic. Subclasses only need to implement :attr:`~trilobite.parallel.base.Pool.size`,
+:meth:`~trilobite.parallel.base.Pool.map`, and :meth:`~trilobite.parallel.base.Pool.close`.
 
-The :meth:`~triceratops.parallel.base.Pool.terminate` method defaults to calling
-:meth:`~triceratops.parallel.base.Pool.close`, but backends with a hard-kill path
-(such as :class:`~triceratops.parallel.mpi.LikelihoodMPIPool`) override it. The context
-manager calls :meth:`~triceratops.parallel.base.Pool.terminate` on exception and
-:meth:`~triceratops.parallel.base.Pool.close` on clean exit, ensuring resources are
+The :meth:`~trilobite.parallel.base.Pool.terminate` method defaults to calling
+:meth:`~trilobite.parallel.base.Pool.close`, but backends with a hard-kill path
+(such as :class:`~trilobite.parallel.mpi.LikelihoodMPIPool`) override it. The context
+manager calls :meth:`~trilobite.parallel.base.Pool.terminate` on exception and
+:meth:`~trilobite.parallel.base.Pool.close` on clean exit, ensuring resources are
 always released correctly.
 
-.. currentmodule:: triceratops.parallel.base
+.. currentmodule:: trilobite.parallel.base
 
 .. autosummary::
    :toctree: ../../_as_gen
@@ -41,7 +41,7 @@ always released correctly.
 Serial Pool
 -----------
 
-:class:`~triceratops.parallel.base.SerialPool` executes tasks sequentially in the calling
+:class:`~trilobite.parallel.base.SerialPool` executes tasks sequentially in the calling
 process using the built-in :func:`map`. It is the default fallback for:
 
 - debugging and testing (exceptions propagate immediately, no subprocess overhead),
@@ -50,12 +50,12 @@ process using the built-in :func:`map`. It is the default fallback for:
 
 .. code-block:: python
 
-    from triceratops.parallel import SerialPool
+    from trilobite.parallel import SerialPool
 
     pool = SerialPool()
     results = list(pool.map(my_func, my_tasks))
 
-:class:`~triceratops.parallel.base.SerialPool` always has ``size == 1``.
+:class:`~trilobite.parallel.base.SerialPool` always has ``size == 1``.
 
 ----
 
@@ -64,9 +64,9 @@ process using the built-in :func:`map`. It is the default fallback for:
 Multiprocessing Pool
 ---------------------
 
-*Module:* :mod:`triceratops.parallel.mp`
+*Module:* :mod:`trilobite.parallel.mp`
 
-:class:`~triceratops.parallel.mp.LikelihoodMPPool` distributes :class:`~triceratops.inference.problem.InferenceProblem`
+:class:`~trilobite.parallel.mp.LikelihoodMPPool` distributes :class:`~trilobite.inference.problem.InferenceProblem`
 likelihood evaluations across a pool of worker processes using Python's standard
 :mod:`multiprocessing` library.
 
@@ -77,7 +77,7 @@ Directly pickling a bound method such as
 ``InferenceProblem._log_free_posterior`` is fragile under the ``spawn`` start
 method (the default on macOS and Windows). To avoid this:
 
-1. The :class:`~triceratops.inference.problem.InferenceProblem` is serialized to JSON
+1. The :class:`~trilobite.inference.problem.InferenceProblem` is serialized to JSON
    **once** in the parent process.
 2. Each worker reconstructs it **exactly once** via a pool initializer and stores it in a
    worker-global variable.
@@ -92,7 +92,7 @@ Usage
 
 .. code-block:: python
 
-    from triceratops.parallel import LikelihoodMPPool
+    from trilobite.parallel import LikelihoodMPPool
 
     with LikelihoodMPPool(problem=my_problem, processes=8) as pool:
         result = sampler.run(n_steps=1000, pool=pool)
@@ -109,7 +109,7 @@ Workers ignore ``SIGINT`` so that ``Ctrl+C`` is caught cleanly by the parent.
 The parent polls asynchronous results with a timeout (``wait_timeout``, default 3600 s)
 so ``KeyboardInterrupt`` is never swallowed by a blocking wait.
 
-.. currentmodule:: triceratops.parallel.mp
+.. currentmodule:: trilobite.parallel.mp
 
 .. autosummary::
    :toctree: ../../_as_gen
@@ -123,31 +123,31 @@ so ``KeyboardInterrupt`` is never swallowed by a blocking wait.
 MPI Pool
 --------
 
-*Module:* :mod:`triceratops.parallel.mpi`
+*Module:* :mod:`trilobite.parallel.mpi`
 
-:class:`~triceratops.parallel.mpi.LikelihoodMPIPool` distributes likelihood evaluations
+:class:`~trilobite.parallel.mpi.LikelihoodMPIPool` distributes likelihood evaluations
 across MPI ranks using the ``mpi4py`` library. It is intended for multi-node HPC clusters
 where shared-memory multiprocessing is insufficient.
 
 .. important::
 
     ``mpi4py`` is an optional dependency. Importing this module is always safe;
-    however, instantiating :class:`~triceratops.parallel.mpi.LikelihoodMPIPool`
+    however, instantiating :class:`~trilobite.parallel.mpi.LikelihoodMPIPool`
     raises :exc:`RuntimeError` if ``mpi4py`` is not installed. Install it with::
 
-        pip install triceratops[mpi]
+        pip install trilobite[mpi]
 
 Design
 ^^^^^^
 
 The pool uses a **master-worker pattern**:
 
-- **Rank 0** (master) runs the sampler and calls :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.map`.
-- **Ranks 1 … N-1** (workers) block inside :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.wait`,
+- **Rank 0** (master) runs the sampler and calls :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.map`.
+- **Ranks 1 … N-1** (workers) block inside :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.wait`,
   processing tasks as they arrive.
 
 During initialization, the problem JSON is broadcast from rank 0 using ``MPI.Bcast``,
-so every rank reconstructs the :class:`~triceratops.inference.problem.InferenceProblem`
+so every rank reconstructs the :class:`~trilobite.inference.problem.InferenceProblem`
 exactly once. Only theta vectors travel over MPI at evaluation time.
 
 Task dispatch is *dynamic*: each worker is seeded with one task at start-up, and as
@@ -174,7 +174,7 @@ Point-to-point messages use three tags:
      - Worker → master: ``(task_index, result)``
    * - ``_TAG_STOP``
      - 3
-     - Master → worker: ``None`` — exit :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.wait`
+     - Master → worker: ``None`` — exit :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.wait`
 
 Usage
 ^^^^^
@@ -189,7 +189,7 @@ Inside the script:
 
 .. code-block:: python
 
-    from triceratops.parallel import LikelihoodMPIPool
+    from trilobite.parallel import LikelihoodMPIPool
 
     with LikelihoodMPIPool(problem=my_problem) as pool:
         if pool.is_master():
@@ -199,12 +199,12 @@ Inside the script:
 
 .. hint::
 
-    The :func:`~triceratops.parallel.factory.make_pool` factory provides a consistent
+    The :func:`~trilobite.parallel.factory.make_pool` factory provides a consistent
     entry point that works across all backends:
 
     .. code-block:: python
 
-        from triceratops.parallel import make_pool
+        from trilobite.parallel import make_pool
 
         with make_pool("mpi", problem=my_problem) as pool:
             if pool.is_master():
@@ -212,7 +212,7 @@ Inside the script:
             else:
                 pool.wait()
 
-.. currentmodule:: triceratops.parallel.mpi
+.. currentmodule:: trilobite.parallel.mpi
 
 .. autosummary::
    :toctree: ../../_as_gen
@@ -224,15 +224,15 @@ Inside the script:
 Factory
 -------
 
-*Module:* :mod:`triceratops.parallel.factory`
+*Module:* :mod:`trilobite.parallel.factory`
 
-:func:`~triceratops.parallel.factory.make_pool` is the recommended entry point for
+:func:`~trilobite.parallel.factory.make_pool` is the recommended entry point for
 constructing pools. It accepts a backend name and forwards all keyword arguments to
 the appropriate pool constructor, keeping backend-specific imports lazy:
 
 .. code-block:: python
 
-    from triceratops.parallel import make_pool
+    from trilobite.parallel import make_pool
 
     # Serial (no extra arguments)
     pool = make_pool("serial")
@@ -243,7 +243,7 @@ the appropriate pool constructor, keeping backend-specific imports lazy:
     # MPI
     pool = make_pool("mpi", problem=my_problem)
 
-.. currentmodule:: triceratops.parallel.factory
+.. currentmodule:: trilobite.parallel.factory
 
 .. autosummary::
    :toctree: ../../_as_gen

@@ -7,14 +7,14 @@
 API
 ===
 
-This page provides the complete reference for all public classes, functions, and modules in the Triceratops codebase.
+This page provides the complete reference for all public classes, functions, and modules in the Trilobite codebase.
 
-Triceratops is modular by design, and its API is organized into several key modules.
+Trilobite is modular by design, and its API is organized into several key modules.
 Below is an overview of the main modules available:
 
-Triceratops Models
+Trilobite Models
 ------------------
-The most relevant modules for typical users working with Triceratops is the set of model implementations. These
+The most relevant modules for typical users working with Trilobite is the set of model implementations. These
 are all located in the :mod:`models` subpackage and include various forward models of radio emission
 in different scenarios. These models can be used to simulate observations, fit data, and perform inference.
 
@@ -23,11 +23,11 @@ in different scenarios. These models can be used to simulate observations, fit d
     :recursive:
     :template: module.rst
 
-    triceratops.models.core
-    triceratops.models.generic
-    triceratops.models.SEDs
-    triceratops.models.GRBs
-    triceratops.models.supernovae
+    trilobite.models.core
+    trilobite.models.generic
+    trilobite.models.SEDs
+    trilobite.models.GRBs
+    trilobite.models.supernovae
 
 Data Modules
 ------------
@@ -39,10 +39,10 @@ and visualizing data sets.
     :recursive:
     :template: module.rst
 
-    triceratops.data.core
-    triceratops.data.light_curve
-    triceratops.data.photometry
-    triceratops.data.optical_photometry
+    trilobite.data.core
+    trilobite.data.light_curve
+    trilobite.data.photometry
+    trilobite.data.optical_photometry
 
 Inference Modules
 -----------------
@@ -55,21 +55,21 @@ estimation, and conducting statistical analysis.
     :recursive:
     :template: module.rst
 
-    triceratops.inference.prior
-    triceratops.inference.likelihood
-    triceratops.inference.sampling
-    triceratops.inference.problem
+    trilobite.inference.prior
+    trilobite.inference.likelihood
+    trilobite.inference.sampling
+    trilobite.inference.problem
 
 
 
 Physics and Computation Modules
 -------------------------------
-Underlying all of the models and inference pipelines in Triceratops are a set of physics and computation modules.
+Underlying all of the models and inference pipelines in Trilobite are a set of physics and computation modules.
 These modules implement the core algorithms for simulating plasma dynamics, radiation processes, and numerical methods.
 
 Physics
 ^^^^^^^
-The physics modules implement the core physical processes modeled in Triceratops, including shock dynamics,
+The physics modules implement the core physical processes modeled in Trilobite, including shock dynamics,
 radiation mechanisms, and ejecta evolution.
 
 .. autosummary::
@@ -77,12 +77,12 @@ radiation mechanisms, and ejecta evolution.
     :recursive:
     :template: module.rst
 
-    triceratops.radiation
-    triceratops.dynamics
+    trilobite.radiation
+    trilobite.dynamics
 
 Computation
 ^^^^^^^^^^^
-The computation modules provide the numerical methods and algorithms used throughout Triceratops. This includes solvers
+The computation modules provide the numerical methods and algorithms used throughout Trilobite. This includes solvers
 for differential equations, interpolation routines, and data handling utilities.
 
 .. autosummary::
@@ -90,11 +90,11 @@ for differential equations, interpolation routines, and data handling utilities.
     :recursive:
     :template: module.rst
 
-    triceratops.parallel
+    trilobite.parallel
 
 Utilities
 ---------
-The utilities modules contain helper functions and classes that support the main functionality of Triceratops.
+The utilities modules contain helper functions and classes that support the main functionality of Trilobite.
 These include data I/O, configuration management, and common mathematical operations.
 
 .. autosummary::
@@ -102,11 +102,11 @@ These include data I/O, configuration management, and common mathematical operat
     :recursive:
     :template: module.rst
 
-    triceratops.utils.plot_utils
-    triceratops.utils.io_utils
-    triceratops.utils.log
-    triceratops.utils.config
-    triceratops.utils.misc_utils
-    triceratops.utils.phot_utils
-    triceratops.physics_utils
-    triceratops.math_utils
+    trilobite.utils.plot_utils
+    trilobite.utils.io_utils
+    trilobite.utils.log
+    trilobite.utils.config
+    trilobite.utils.misc_utils
+    trilobite.utils.phot_utils
+    trilobite.physics_utils
+    trilobite.math_utils

@@ -2,7 +2,7 @@ r"""
 Magnitude Systems: AB, ST, and Filter-Convolved Photometry
 ===========================================================
 
-Triceratops natively supports the two photometric magnitude systems most commonly
+Trilobite natively supports the two photometric magnitude systems most commonly
 encountered in optical transient work:
 
 - **AB magnitudes** — defined by a constant SED of
@@ -20,12 +20,12 @@ This example demonstrates:
 
 Relevant API references
 -----------------------
-- :func:`triceratops.utils.phot_utils.flux_to_ab_mag`
-- :func:`triceratops.utils.phot_utils.ab_mag_to_flux`
-- :func:`triceratops.utils.phot_utils.flux_lambda_to_st_mag`
-- :func:`triceratops.utils.phot_utils.st_mag_to_flux_lambda`
-- :func:`triceratops.utils.phot_utils.filter_to_ab_mag`
-- :class:`triceratops.utils.phot_utils.FilterBundle`
+- :func:`trilobite.utils.phot_utils.flux_to_ab_mag`
+- :func:`trilobite.utils.phot_utils.ab_mag_to_flux`
+- :func:`trilobite.utils.phot_utils.flux_lambda_to_st_mag`
+- :func:`trilobite.utils.phot_utils.st_mag_to_flux_lambda`
+- :func:`trilobite.utils.phot_utils.filter_to_ab_mag`
+- :class:`trilobite.utils.phot_utils.FilterBundle`
 """
 
 # %%
@@ -35,7 +35,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astropy.units as u
 
-from triceratops.utils.phot_utils import (
+from trilobite.utils.phot_utils import (
     FilterBundle,
     PhotometryFilter,
     ab_mag_to_flux,
@@ -44,7 +44,7 @@ from triceratops.utils.phot_utils import (
     flux_to_ab_mag,
     st_mag_to_flux_lambda,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -136,10 +136,10 @@ plt.show()
 # Filter-Convolved AB Magnitudes
 # --------------------------------
 #
-# :func:`~triceratops.utils.phot_utils.filter_to_ab_mag` combines filter
+# :func:`~trilobite.utils.phot_utils.filter_to_ab_mag` combines filter
 # convolution and magnitude conversion in one call.  It accepts either a single
-# :class:`~triceratops.utils.phot_utils.PhotometryFilter` or a
-# :class:`~triceratops.utils.phot_utils.FilterBundle`.
+# :class:`~trilobite.utils.phot_utils.PhotometryFilter` or a
+# :class:`~trilobite.utils.phot_utils.FilterBundle`.
 #
 # Here we pass a flat spectrum (which should give AB mag = 0 in all bands)
 # and a power-law spectrum.
@@ -277,6 +277,6 @@ plt.show()
 #
 #    The call ``filter_to_ab_mag(bundle, nu_eval, F_nu_all)`` internally calls
 #    ``bundle.apply()`` (a single matrix multiply) followed by
-#    :func:`~triceratops.utils.phot_utils.flux_to_ab_mag`.  Passing ``nu_eval =
+#    :func:`~trilobite.utils.phot_utils.flux_to_ab_mag`.  Passing ``nu_eval =
 #    bundle.frequency_grid`` means no interpolation is required — this is the
 #    same hot-loop pattern as in the MCMC example.

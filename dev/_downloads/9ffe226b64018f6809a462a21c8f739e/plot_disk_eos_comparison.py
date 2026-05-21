@@ -2,12 +2,12 @@ r"""
 Gas Pressure vs. Full Pressure — Equation-of-State Comparison
 ==============================================================
 
-Triceratops provides two one-zone disk closures that differ only in the
+Trilobite provides two one-zone disk closures that differ only in the
 treatment of the equation of state (EOS):
 
-- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
   — ideal gas pressure only, with an analytic temperature solve.
-- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`
   — combined gas **and** radiation pressure, with an iterative temperature solve
   (bracket expansion + Brent's method) at every time-step.
 
@@ -53,9 +53,9 @@ faster viscous timescale and more rapid disk evolution.
 
 See Also
 --------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 
 .. hint::
 
@@ -72,11 +72,11 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import (
+from trilobite.dynamics.accretion.one_zone import (
     GasPressureDisk,
     FullPressureDisk,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

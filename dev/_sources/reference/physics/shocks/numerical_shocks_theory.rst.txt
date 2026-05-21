@@ -18,23 +18,23 @@ by a compact set of global variables whose evolution is governed by conservation
 laws and closure assumptions.
 
 This page develops the theory behind the numerical shock models implemented in
-:mod:`triceratops.dynamics.shocks.numerical`, organized into non-relativistic
+:mod:`trilobite.dynamics.shocks.numerical`, organized into non-relativistic
 and relativistic families.
 
 **Non-relativistic models** (:math:`v \ll c`):
 
 #. the :ref:`conservative snowplow model <conservative_snowplow_model>`
-   (:class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine`);
+   (:class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine`);
 #. the :ref:`pressure-driven thin-shell model <pressure_driven_thin_shell_model>`
-   (:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`);
+   (:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`);
 #. the :ref:`mechanical internal-energy model <mechanical_internal_energy_model>`
-   (:class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`).
+   (:class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`).
 
 **Relativistic models** (arbitrary :math:`\beta`, Lorentz-invariant jump conditions):
 
 #. the :ref:`relativistic pressure-driven thin-shell model
    <relativistic_pressure_driven_shells>`
-   (:class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`).
+   (:class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`).
 
 Each model makes different assumptions about the relevant physics and is
 applicable in different regimes.
@@ -508,9 +508,9 @@ below summarizes the key properties of each closure.
     :widths: 22 26 26 26
 
     * - Property
-      - :class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine`
-      - :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
-      - :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+      - :class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine`
+      - :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+      - :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
     * - Geometry
       - Razor-thin single shell; :math:`R_{\rm rs}\approx R_{\rm cd}\approx R_{\rm fs}`
       - Thin single shell; :math:`R_{\rm rs}\approx R_{\rm cd}\approx R_{\rm fs}`
@@ -549,7 +549,7 @@ Momentum-Conserving Snowplow
 -----------------------------
 
 The momentum-conserving snowplow
-(:class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine`)
+(:class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine`)
 is the simplest of the three numerical closures. It collapses the entire shocked
 interaction region into a single razor-thin shell of mass :math:`M_{\rm sh}` and
 evolves that shell purely through conservation of mass and momentum. No internal
@@ -734,7 +734,7 @@ Pressure-Driven Thin-Shell Model
 ---------------------------------
 
 The pressure-driven thin-shell model
-(:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`)
+(:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`)
 also collapses the shocked interaction region into a single thin shell of mass
 :math:`M_{\rm sh}=M_2+M_3`, radius :math:`R_{\rm sh}`, and velocity
 :math:`v_{\rm sh}`. However, rather than driving the shell with advective momentum
@@ -947,7 +947,7 @@ Mechanical Internal-Energy Model
 ----------------------------------
 
 The mechanical model
-(:class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`)
+(:class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`)
 is the most physically complete of the three numerical closures. Rather than
 collapsing the shocked region into a single shell, it assigns separate masses,
 internal energies, and effective volumes to the shocked ejecta (Region 2) and
@@ -1253,7 +1253,7 @@ Relativistic Pressure-Driven Thin-Shell Model
 -----------------------------------------------
 
 The relativistic pressure-driven thin-shell model
-(:class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
+(:class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
 is the relativistic analogue of the
 :ref:`non-relativistic pressure-driven thin-shell model <pressure_driven_thin_shell_model>`.
 The shocked region is collapsed to a geometrically thin shell at a single radius
@@ -1557,7 +1557,7 @@ the standard jump-condition result.
 .. note::
 
    The diagnostic pressures stored in
-   :class:`~triceratops.dynamics.shocks.numerical.RelThinShellShockState`
+   :class:`~trilobite.dynamics.shocks.numerical.RelThinShellShockState`
    are the **simplified** Hugoniot pressures
    :math:`P_d^{({\rm RH})}=\rho_u\,c^2(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1)`,
    evaluated with :math:`\Gamma_{\rm rel}` from the lab-frame velocity-addition

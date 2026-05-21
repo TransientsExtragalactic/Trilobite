@@ -32,17 +32,17 @@ Rankine--Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic
 Shock jump conditions relate the **upstream (pre-shock)** state to the **downstream
 (post-shock)** state via conservation of mass, momentum, and energy.
 
-Triceratops provides a number of solvers for these jump conditions, relevant to a
+Trilobite provides a number of solvers for these jump conditions, relevant to a
 number of different physical regimes and assumptions. In this example, we compare three of them:
 
-- :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions` --
+- :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions` --
   the Newtonian strong-shock limit, where the compression ratio is a fixed
   constant :math:`R = (\hat{\gamma}+1)/(\hat{\gamma}-1)`, independent of
   shock velocity.
-- :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions` --
+- :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions` --
   a general relativistic solver valid at any shock velocity, found by
   numerical root-finding of the full relativistic jump condition.
-- :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions` --
+- :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions` --
   an analytic approximation for :math:`\Gamma_1 \gg 1`, where the downstream
   shock-frame velocity is fixed at :math:`\beta_2 = \hat{\gamma} - 1`.
   Only physically valid when :math:`\beta_{\rm sh} > \hat{\gamma} - 1`.
@@ -57,7 +57,7 @@ compression ratio, post-shock temperature, and post-shock pressure.
     :ref:`shock_overview` for an overview of the shock physics modules and their structure.
 
     :ref:`rankine_hugoniot_overview` for an overview of the Rankine--Hugoniot jump conditions
-    and the various solvers provided by Triceratops.
+    and the various solvers provided by Trilobite.
 
     :ref:`rankine_hugoniot_theory` for a detailed theoretical discussion of the jump conditions and their derivation.
 
@@ -99,12 +99,12 @@ of velocity, from the Newtonian to ultra-relativistic regime.
     import astropy.constants as const
     import astropy.units as u
 
-    from triceratops.dynamics.shocks.core import (
+    from trilobite.dynamics.shocks.core import (
         StrongColdShockConditions,
         RelativisticColdShockConditions,
         UltraRelativisticColdShockConditions,
     )
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.utils.plot_utils import set_plot_style
 
     GAMMA_HAT = 5 / 3.0
     c_cgs = const.c.cgs.value
@@ -335,7 +335,7 @@ become dynamically important (:math:`\beta \gtrsim 0.3`).
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.100 seconds)
+   **Total running time of the script:** (0 minutes 1.309 seconds)
 
 
 .. _sphx_glr_download_auto_examples_dynamics_plot_rh_jump_conditions.py:

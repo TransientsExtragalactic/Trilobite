@@ -1,11 +1,11 @@
 .. _radiation_overview:
 
 ==================================
-Radiation Processes in Triceratops
+Radiation Processes in Trilobite
 ==================================
 
 Foundational to any model of emission from an astrophysical source are the radiation
-processes driving it.  The vast majority of models in Triceratops rely on a small set
+processes driving it.  The vast majority of models in Trilobite rely on a small set
 of core radiation processes which, together with the underlying source dynamics,
 determine the observed emission.  This page provides an entry point to each of those
 processes.  Each section starts with an overview that introduces the physical context,
@@ -21,11 +21,11 @@ Synchrotron Radiation
 Synchrotron radiation is emitted by relativistic charged particles (typically
 electrons) spiraling around magnetic field lines.  This process is responsible for a
 wide range of astrophysical phenomena, from radio emission in supernova remnants to
-the jets of active galactic nuclei.  Most importantly for Triceratops, synchrotron
+the jets of active galactic nuclei.  Most importantly for Trilobite, synchrotron
 emission is the dominant radiation mechanism in a variety of astrophysical transients
 such as gamma-ray bursts (GRBs) and radio outflows in TDEs.
 
-**Triceratops provides a comprehensive suite of tools for modeling synchrotron radiation**, covering
+**Trilobite provides a comprehensive suite of tools for modeling synchrotron radiation**, covering
 the full hierarchy of physical processes from the single-electron emission to the integrated SEDs of
 complex sources. The guides below will introduce the core modules and their structure. Theory notes and
 methods documents are provided for domain experts and developers interested in the inner workings of
@@ -86,7 +86,7 @@ Free-Free Radiation
 
 Thermal free-free (bremsstrahlung) emission and absorption from ionized plasmas.
 This is the primary opacity source in radio supernova CSM and HII regions modeled by
-Triceratops.
+Trilobite.
 
 .. grid:: 1 1 2 2
     :gutter: 3
@@ -103,7 +103,7 @@ Triceratops.
         :link-type: ref
 
         Derivation of the free-free emissivity, the Gaunt factor approximations
-        used in Triceratops, and their range of validity.
+        used in Trilobite, and their range of validity.
 
 .. toctree::
     :hidden:
@@ -119,10 +119,10 @@ Blackbody Radiation
 --------------------
 
 Thermal emission from a blackbody in local thermodynamic equilibrium.
-The :mod:`triceratops.radiation.blackbody` module provides the Planck
+The :mod:`trilobite.radiation.blackbody` module provides the Planck
 function (per unit frequency and per unit wavelength), the Wien displacement
 laws, and the Stefan-Boltzmann bolometric flux, all following the standard
-Triceratops two-level API so the same functions work in interactive analysis
+Trilobite two-level API so the same functions work in interactive analysis
 and in MCMC hot loops.
 
 .. grid:: 1 1 2 2
@@ -155,8 +155,8 @@ and in MCMC hot loops.
 Opacity Laws
 ------------
 
-The :mod:`triceratops.radiation.opacity` module provides opacity laws for use across
-Triceratops. This includes common analytic forms for the Rosseland and Planck mean opacities as
+The :mod:`trilobite.radiation.opacity` module provides opacity laws for use across
+Trilobite. This includes common analytic forms for the Rosseland and Planck mean opacities as
 well as numerical tables for various purposes. In many cases, these are implemented at the C-level to
 ensure seamless performance in hot loops.
 
@@ -165,9 +165,9 @@ ensure seamless performance in hot loops.
     Currently, all of the available opacity laws are gray (frequency-independent), Rosseland means
     or Planck means.  Future work will expand this to include frequency-dependent opacities and
     potentially more specialized forms (e.g. line opacities for specific ions); however, current
-    implementations are sufficient for the majority of applications in Triceratops.
+    implementations are sufficient for the majority of applications in Trilobite.
 
-    Triceratops is **not** a spectral synthesis code, so we do not implement detailed
+    Trilobite is **not** a spectral synthesis code, so we do not implement detailed
     frequency-dependent opacities.
 
 .. grid:: 1 1 3 3
@@ -191,7 +191,7 @@ ensure seamless performance in hot loops.
         :link: opacity_dev_guide
         :link-type: ref
 
-        How to implement a new opacity law and plug it into the Triceratops opacity
+        How to implement a new opacity law and plug it into the Trilobite opacity
         registry.
 
 .. toctree::

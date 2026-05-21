@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Numerical Shock Engines &#8212; Triceratops dev documentation</title>
+    <title>Numerical Shock Engines &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -141,11 +141,11 @@
       
     
     
-    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -168,7 +168,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -455,7 +455,7 @@ an overview of all shock engines and guidance on choosing between self-similar a
 numerical approaches, see <a class="reference internal" href="shock_engines_overview.html#shock-engines"><span class="std std-ref">Shock Engines</span></a>.  For the theoretical derivations of the
 thin-shell models implemented here, see <a class="reference internal" href="numerical_shocks_theory.html#numeric-shocks-theory"><span class="std std-ref">Theory: Numerical Shock Engines</span></a>.</p>
 <p>Upstream density and velocity profiles for these engines are built with the factory
-functions in <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.html#module-triceratops.dynamics.shocks.utils" title="triceratops.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>.</p>
+functions in <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.html#module-trilobite.dynamics.shocks.utils" title="trilobite.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
 <li><p><a class="reference internal" href="#non-relativistic-numerical-shock-engines" id="id9">Non-Relativistic Numerical Shock Engines</a></p></li>
@@ -480,11 +480,11 @@ summarises their applicability and trade-offs.</p>
 </tr>
 </thead>
 <tbody>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a></p></td>
 <td><p>Problems where only the <strong>shell kinematics</strong> matter and no separate energy budget
 for each shocked layer is needed.  Fastest and simplest numerical engine.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a></p></td>
 <td><p>Problems requiring <strong>separate forward and reverse shock tracking</strong>, independent
 internal energies, or optional radiative cooling in each layer.</p></td>
 </tr>
@@ -494,7 +494,7 @@ internal energies, or optional radiative cooling in each layer.</p></td>
 <hr class="docutils" />
 <section id="pressure-driven-thin-shell-shock-engine">
 <span id="pressure-driven-thin-shell-engine"></span><h3>Pressure-Driven Thin-Shell Shock Engine<a class="headerlink" href="#pressure-driven-thin-shell-shock-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 collapses the shocked interaction region to a single thin shell of mass
 <span class="math notranslate nohighlight">\(M_{\rm sh}\)</span>, radius <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span>, and velocity <span class="math notranslate nohighlight">\(v_{\rm sh}\)</span>.  The
 shell acceleration is driven by the net post-shock pressure difference estimated from the
@@ -527,7 +527,7 @@ ratio.</p>
 <p>When the distinction between the forward and reverse shock matters, for example,
 when separate post-shock temperatures or independent radiative losses in each layer
 are needed, use the
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> instead.</p>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> instead.</p>
 </div>
 <section id="problem-setup">
 <h4>Problem Setup<a class="headerlink" href="#problem-setup" title="Link to this heading">#</a></h4>
@@ -545,21 +545,21 @@ density and bulk velocity just outside each shock face:</p>
 assumption for young supernova ejecta) all four callables can be assembled from a
 single ejecta kernel <span class="math notranslate nohighlight">\(G(v)\)</span> and a one-argument CSM density function
 <span class="math notranslate nohighlight">\(\rho_{\rm CSM}(r)\)</span> using
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html#triceratops.dynamics.shocks.utils.make_homologous_stationary_sources" title="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.  Under
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.make_homologous_stationary_sources.html#trilobite.dynamics.shocks.utils.make_homologous_stationary_sources" title="trilobite.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.  Under
 this approximation the homologous ejecta density follows</p>
 <div class="math notranslate nohighlight">
 \[\rho_1(r,t) = t^{-3}\,G(r/t),
 \qquad
 u_1(r,t) = \frac{r}{t},\]</div>
 <p>while the CSM is stationary, <span class="math notranslate nohighlight">\(u_4 = 0\)</span>.  See
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.html#module-triceratops.dynamics.shocks.utils" title="triceratops.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a> for the full catalogue of available ejecta
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.html#module-trilobite.dynamics.shocks.utils" title="trilobite.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a> for the full catalogue of available ejecta
 kernels and CSM profile factories.</p>
 </div>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Example — profile and engine setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PressureDrivenThinShellShockEngine</span><span class="p">,</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_wind_csm_density_func</span><span class="p">,</span>
@@ -595,11 +595,11 @@ kernels and CSM profile factories.</p>
 <section id="solving-the-shock-properties">
 <h4>Solving The Shock Properties<a class="headerlink" href="#solving-the-shock-properties" title="Link to this heading">#</a></h4>
 <p>Call
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
 with a time array, the four source callables, and initial conditions for the shell
 radius <span class="math notranslate nohighlight">\(R_0\)</span>, velocity <span class="math notranslate nohighlight">\(v_0\)</span>, mass <span class="math notranslate nohighlight">\(M_0\)</span>, and start time <span class="math notranslate nohighlight">\(t_0\)</span>.
 The method returns a
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.ThinShellShockState.html#triceratops.dynamics.shocks.numerical.ThinShellShockState" title="triceratops.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> named tuple with
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.ThinShellShockState.html#trilobite.dynamics.shocks.numerical.ThinShellShockState" title="trilobite.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> named tuple with
 seven <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> fields:</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -645,7 +645,7 @@ forward shock.</p></td>
 </div>
 </div>
 </details><p>The four post-shock thermodynamic fields are evaluated at every output time step using
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a>
 with the shell velocity <span class="math notranslate nohighlight">\(v_{\rm sh}\)</span> as the shock velocity and
 <span class="math notranslate nohighlight">\(\rho_4(R_{\rm sh},t)\)</span>, <span class="math notranslate nohighlight">\(u_4(R_{\rm sh},t)\)</span> as the upstream CSM
 conditions.  The mean molecular weight <code class="docutils literal notranslate"><span class="pre">mu</span></code> can be changed at instantiation, e.g.
@@ -655,7 +655,7 @@ conditions.  The mean molecular weight <code class="docutils literal notranslate
 <p>The ODE integrator used internally is <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.solve_ivp()</span></code></a> with
 <code class="docutils literal notranslate"><span class="pre">method='Radau'</span></code> and <code class="docutils literal notranslate"><span class="pre">rtol=1e-10</span></code> by default.  Any extra keyword arguments
 passed to
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
 are forwarded directly to
 <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html#scipy.integrate.solve_ivp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">solve_ivp()</span></code></a>, making it straightforward to tighten tolerances
 or switch integration methods for stiff problems.</p>
@@ -667,13 +667,13 @@ or switch integration methods for stiff problems.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">PressureDrivenThinShellShockEngine</span><span class="p">,</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_wind_csm_density_func</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">G_ej</span>    <span class="o">=</span> <span class="n">get_bpl_ejecta_kernel</span><span class="p">(</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">rho_csm</span> <span class="o">=</span> <span class="n">get_wind_csm_density_func</span><span class="p">(</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
@@ -720,7 +720,7 @@ or switch integration methods for stiff problems.</p>
 </section>
 <section id="mechanical-shock-engine">
 <span id="id1"></span><h3>Mechanical Shock Engine<a class="headerlink" href="#mechanical-shock-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> implements the
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> implements the
 non-relativistic form of the mechanical shock model of
 Beloborodov and Uhm<a class="footnote-reference brackets" href="#footcite-beloborodovmechanicalmodelrelativistic2006a" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, following the simplifications
 described in Wang <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wangvegasafterglowhighperformanceframework2026" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.  It
@@ -752,7 +752,7 @@ For the full theoretical derivation see <a class="reference internal" href="nume
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>For most supernova modeling the
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 is faster and requires fewer setup steps.  Use the mechanical engine when you need
 the forward and reverse shock velocities separately, distinct post-shock temperatures
 in each layer, or independent radiative cooling terms.</p>
@@ -761,14 +761,14 @@ in each layer, or independent radiative cooling terms.</p>
 <h4>Problem Setup<a class="headerlink" href="#id4" title="Link to this heading">#</a></h4>
 <p>The profile and source-function setup is identical to the pressure-driven thin-shell
 engine: build an ejecta kernel with
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> (or
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel.html#triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel" title="triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_exponential_ejecta_kernel()</span></code></a>), build a CSM
-profile with one of the factories in <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.html#module-triceratops.dynamics.shocks.utils" title="triceratops.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>, and
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> (or
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel.html#trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel" title="trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_exponential_ejecta_kernel()</span></code></a>), build a CSM
+profile with one of the factories in <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.html#module-trilobite.dynamics.shocks.utils" title="trilobite.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>, and
 assemble the four source callables with
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html#triceratops.dynamics.shocks.utils.make_homologous_stationary_sources" title="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.</p>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.utils.make_homologous_stationary_sources.html#trilobite.dynamics.shocks.utils.make_homologous_stationary_sources" title="trilobite.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.</p>
 <p>The additional step specific to this engine is deriving self-consistent <strong>initial
 conditions</strong> for all eight state components.
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
 computes <span class="math notranslate nohighlight">\((M_{2,0},\,M_{3,0},\,U_{2,0},\,U_{3,0},\,\Delta_{2,0},\,\Delta_{3,0})\)</span>
 from the initial contact-discontinuity position <span class="math notranslate nohighlight">\(R_{{\rm cd},0}\)</span>, velocity
 <span class="math notranslate nohighlight">\(v_{{\rm cd},0}\)</span>, and start time <span class="math notranslate nohighlight">\(t_0\)</span>.  Swept-up masses are obtained by
@@ -780,7 +780,7 @@ transient at the first ODE step.</p>
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Example — profile and initial-condition setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">MechanicalShockEngine</span><span class="p">,</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_wind_csm_density_func</span><span class="p">,</span>
@@ -825,10 +825,10 @@ transient at the first ODE step.</p>
 <section id="id5">
 <h4>Solving The Shock Properties<a class="headerlink" href="#id5" title="Link to this heading">#</a></h4>
 <p>Call
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
 with a time array, the four source callables, and the 8-component initial condition
 vector.  The method returns a
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockState.html#triceratops.dynamics.shocks.numerical.MechanicalShockState" title="triceratops.dynamics.shocks.numerical.MechanicalShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockState</span></code></a> named tuple with
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockState.html#trilobite.dynamics.shocks.numerical.MechanicalShockState" title="trilobite.dynamics.shocks.numerical.MechanicalShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockState</span></code></a> named tuple with
 twenty-two <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> fields:</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
@@ -979,7 +979,7 @@ weight <code class="docutils literal notranslate"><span class="pre">mu_2</span><
 </div>
 </details><p>The eight post-shock thermodynamic fields are evaluated at every output time step
 using
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a>.
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a>.
 The forward-shock call uses <span class="math notranslate nohighlight">\(D_{\rm fs}\)</span> as the shock velocity with upstream
 conditions <span class="math notranslate nohighlight">\((\rho_4,u_4)\)</span> evaluated at <span class="math notranslate nohighlight">\(R_{\rm fs}\)</span>; the reverse-shock
 call uses <span class="math notranslate nohighlight">\(D_{\rm rs}\)</span> with upstream conditions <span class="math notranslate nohighlight">\((\rho_1,u_1)\)</span> evaluated
@@ -988,7 +988,7 @@ engine instantiation, e.g. <code class="docutils literal notranslate"><span clas
 <p>Optional radiative cooling in each layer is enabled by passing <code class="docutils literal notranslate"><span class="pre">cooling_2</span></code> and
 <code class="docutils literal notranslate"><span class="pre">cooling_3</span></code> callables of the signature
 <code class="docutils literal notranslate"><span class="pre">cooling(R_cd,</span> <span class="pre">v_cd,</span> <span class="pre">M,</span> <span class="pre">U,</span> <span class="pre">Delta,</span> <span class="pre">t)</span> <span class="pre">-&gt;</span> <span class="pre">dU/dt</span></code> (negative for energy loss) to
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>.</p>
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>.</p>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
 <summary class="sd-summary-title sd-card-header">
 <span class="sd-summary-text">Example — forward and reverse shock temperatures</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
@@ -996,13 +996,13 @@ engine instantiation, e.g. <code class="docutils literal notranslate"><span clas
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">MechanicalShockEngine</span><span class="p">,</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_wind_csm_density_func</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">G_ej</span>    <span class="o">=</span> <span class="n">get_bpl_ejecta_kernel</span><span class="p">(</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
 <span class="n">rho_csm</span> <span class="o">=</span> <span class="n">get_wind_csm_density_func</span><span class="p">(</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
@@ -1054,7 +1054,7 @@ engine instantiation, e.g. <code class="docutils literal notranslate"><span clas
 </section>
 <section id="momentum-conserving-shock-engine">
 <span id="id6"></span><h3>Momentum-Conserving Shock Engine<a class="headerlink" href="#momentum-conserving-shock-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine.html#triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine" title="triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MomentumConservingShockEngine</span></code></a> will
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine.html#trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine" title="trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MomentumConservingShockEngine</span></code></a> will
 implement a non-relativistic momentum-conserving thin-shell model.</p>
 <p><strong>Not yet implemented — planned for a future release.</strong></p>
 </section>
@@ -1066,24 +1066,24 @@ implement a non-relativistic momentum-conserving thin-shell model.</p>
 be necessary for modeling ultra-relativistic outflows such as GRB jets and
 mildly-relativistic TDE-driven shocks, where Lorentz factors <span class="math notranslate nohighlight">\(\Gamma \gtrsim 1\)</span>
 must be tracked self-consistently.  The class objects exist in
-<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.html#module-triceratops.dynamics.shocks.numerical" title="triceratops.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a> but raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> if
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.html#module-trilobite.dynamics.shocks.numerical" title="trilobite.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a> but raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#NotImplementedError" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">NotImplementedError</span></code></a> if
 called.</p>
 <section id="relativistic-pressure-driven-thin-shell-engine">
 <span id="rel-pressure-driven-thin-shell-engine"></span><h3>Relativistic Pressure-Driven Thin-Shell Engine<a class="headerlink" href="#relativistic-pressure-driven-thin-shell-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelPressureDrivenThinShellShockEngine</span></code></a>
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelPressureDrivenThinShellShockEngine</span></code></a>
 will extend the pressure-driven thin-shell formulation to the relativistic regime.</p>
 <p><strong>Not yet implemented — planned for a future release.</strong></p>
 </section>
 <section id="relativistic-mechanical-shock-engine">
 <span id="rel-mechanical-shock-engine"></span><h3>Relativistic Mechanical Shock Engine<a class="headerlink" href="#relativistic-mechanical-shock-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelMechanicalShockEngine</span></code></a> will
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.RelMechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.RelMechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.RelMechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelMechanicalShockEngine</span></code></a> will
 implement the full relativistic mechanical model of
 Beloborodov and Uhm<a class="footnote-reference brackets" href="#footcite-beloborodovmechanicalmodelrelativistic2006a" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
 <p><strong>Not yet implemented — planned for a future release.</strong></p>
 </section>
 <section id="relativistic-momentum-conserving-shock-engine">
 <span id="rel-momentum-conserving-shock-engine"></span><h3>Relativistic Momentum-Conserving Shock Engine<a class="headerlink" href="#relativistic-momentum-conserving-shock-engine" title="Link to this heading">#</a></h3>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine.html#triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine" title="triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelMomentumConservingShockEngine</span></code></a> will
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.numerical.RelMomentumConservingShockEngine.html#trilobite.dynamics.shocks.numerical.RelMomentumConservingShockEngine" title="trilobite.dynamics.shocks.numerical.RelMomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelMomentumConservingShockEngine</span></code></a> will
 implement a relativistic momentum-conserving shock engine.</p>
 <p><strong>Not yet implemented — planned for a future release.</strong></p>
 </section>

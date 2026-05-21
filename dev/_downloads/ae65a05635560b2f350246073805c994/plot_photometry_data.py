@@ -4,7 +4,7 @@ Plot Radio Photometry Data
 ====================================
 
 This example demonstrates how to load and plot radio photometry data using the
-Triceratops library. We'll be using the :class:`data.photometry.RadioPhotometryContainer`
+Trilobite library. We'll be using the :class:`data.photometry.RadioPhotometryContainer`
 to manage and visualize the data.
 """
 
@@ -15,8 +15,8 @@ to manage and visualize the data.
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.data.photometry import RadioPhotometryContainer
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.data.photometry import RadioPhotometryContainer
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # We'll use a set of synthetically generated radio photometry data for this example. The data is

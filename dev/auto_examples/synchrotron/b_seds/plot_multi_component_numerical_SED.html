@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Multi-Component Synchrotron SEDs with the Numerical Engine &#8212; Triceratops dev documentation</title>
+    <title>Multi-Component Synchrotron SEDs with the Numerical Engine &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="On-Axis Asymmetric Synchrotron SEDs" href="plot_on_axis_numerical.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -591,7 +591,7 @@ accelerated to high Lorentz factors.</p>
 <p>Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-<a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a> provides a
+<a class="reference internal" href="../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a> provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth <span class="math notranslate nohighlight">\(R\)</span>, without any piecewise approximation.</p>
@@ -617,8 +617,8 @@ pitch-angle distribution is isotropic.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NonRelativisticSphericalSynchrotronEngine</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NonRelativisticSphericalSynchrotronEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">engine</span> <span class="o">=</span> <span class="n">NonRelativisticSphericalSynchrotronEngine</span><span class="p">()</span>
 <span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">()</span>
@@ -724,7 +724,7 @@ contribute at a comparable level to the total distribution.</p>
 <section id="computing-the-sed">
 <h2>Computing the SED<a class="headerlink" href="#computing-the-sed" title="Link to this heading">#</a></h2>
 <p>We now pass the sampled distributions to
-<a class="reference internal" href="../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_specific_intensity()</span></code></a>.
+<a class="reference internal" href="../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_specific_intensity()</span></code></a>.
 The engine numerically integrates the synchrotron emissivity</p>
 <div class="math notranslate nohighlight">
 \[j_\nu = \chi B \int_0^\infty
@@ -748,7 +748,7 @@ grid before evaluating the emissivity.</p>
 <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">F_pl</span></a> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_flux_density</span><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nu</span></a><span class="p">,</span> <span class="n">N</span><span class="o">=</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_pl_array</span></a><span class="p">,</span> <span class="o">**</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">source_kwargs</span></a><span class="p">)</span>
 </pre></div>
 </div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Triceratops/Triceratops/triceratops/radiation/synchrotron/SEDs/numerical.py:2390: RuntimeWarning: divide by zero encountered in log
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Triceratops/Triceratops/trilobite/radiation/synchrotron/SEDs/numerical.py:2390: RuntimeWarning: divide by zero encountered in log
   return np.log(np.asarray(N_values, dtype=&quot;f8&quot;))
 </pre></div>
 </div>
@@ -805,7 +805,7 @@ without any artificial spectral breaks or patching — a direct consequence of
 numerically integrating the full <span class="math notranslate nohighlight">\(N(\gamma)\)</span>.</p></li>
 </ul>
 <p class="rubric">References</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.543 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.615 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-synchrotron-b-seds-plot-multi-component-numerical-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/7b83c025bc62391dcce11ec0631d22cf/plot_multi_component_numerical_SED.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_multi_component_numerical_SED.ipynb</span></code></a></p>

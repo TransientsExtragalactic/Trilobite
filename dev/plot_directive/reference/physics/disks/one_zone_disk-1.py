@@ -1,8 +1,8 @@
 import matplotlib.pyplot as plt
 from astropy import constants as const
 from astropy import units as u
-from triceratops.dynamics.accretion.one_zone import GasPressureDisk
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import GasPressureDisk
+from trilobite.utils.plot_utils import set_plot_style
 
 # 1. Setup Environment
 set_plot_style()

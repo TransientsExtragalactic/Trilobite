@@ -4,7 +4,7 @@
 Opacity Models
 *****************************
 
-These examples demonstrate the opacity classes available in Triceratops, covering both
+These examples demonstrate the opacity classes available in Trilobite, covering both
 analytic grey laws (Thomson electron scattering, Kramers free-free and bound-free) and
 the table-based Rosseland mean opacity from the OPAL project
 (Badnell et al. 2005, MNRAS 360:458).

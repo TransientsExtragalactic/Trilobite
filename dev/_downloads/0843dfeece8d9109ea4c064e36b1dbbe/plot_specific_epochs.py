@@ -16,8 +16,8 @@ method of :class:`data.photometry.RadioPhotometryContainer`.
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.data.photometry import RadioPhotometryContainer
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.data.photometry import RadioPhotometryContainer
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # We'll use a set of synthetically generated radio photometry data for this example. The data is

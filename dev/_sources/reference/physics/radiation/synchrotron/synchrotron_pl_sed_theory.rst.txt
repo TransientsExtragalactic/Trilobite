@@ -11,13 +11,13 @@ Methods: Single-Zone Synchrotron SEDs
     - :ref:`synchrotron_cooling_theory` for a discussion of synchrotron cooling and populations. Some of this
       theory is relevant for the discussion in this note.
 
-This document is intended to develop the theory behind Triceratops' implementation of **single-zone synchrotron SEDs**. This is a critical task
+This document is intended to develop the theory behind Trilobite' implementation of **single-zone synchrotron SEDs**. This is a critical task
 on the basis that the literature, spanning some 40 years at this point, is highly fractured in its methodology concerning
 these SEDs and their construction (see e.g. :footcite:t:`Chevalier1998SynchrotronSelfAbsorption`, :footcite:t:`ChevalierFranssonHandbook`,
 :footcite:t:`GranotSari2002SpectralBreaks`, :footcite:t:`GaoSynchrotronReview2013`, :footcite:t:`2025ApJ...992L..18S`, and
 references therein). Our goal in this presentation is to (a) provide a background to users who are not familiar with
 the details of this theory and, more importantly, (b) to establish our methodology in as robust a manner as possible ensuring
-that Triceratops remains extensible, reproducible, and accurate.
+that Trilobite remains extensible, reproducible, and accurate.
 
 .. contents::
     :local:
@@ -600,13 +600,13 @@ among others) and is often justified on the grounds that it minimizes the total 
 important to note that this is an **assumption** rather than a physical requirement. In other words, there is no guarantee that
 the system will actually be in equipartition, and indeed there is evidence from some systems that it is not.
 
-In Triceratops, we implement the SEDs in a **scale-free** manner such that the user may select **any normalization scheme** they
+In Trilobite, we implement the SEDs in a **scale-free** manner such that the user may select **any normalization scheme** they
 wish. This is achieved by separating the calculation of the break frequencies and spectral shapes from the normalization
 itself. The user may then implement any desired closure scheme to connect the SEDs to physical parameters. For example, one may
 choose to implement equipartition, or one may choose to implement a different closure based on, e.g., observations or theoretical
 considerations.
 
-For convenience, we do provide a normalization scheme implemented directly in the SED classes of :mod:`triceratops.radiation.synchrotron.SEDs`
+For convenience, we do provide a normalization scheme implemented directly in the SED classes of :mod:`trilobite.radiation.synchrotron.SEDs`
 which is based on Equipartition and is described here.
 
 .. admonition:: Convention Note
@@ -615,7 +615,7 @@ which is based on Equipartition and is described here.
     :footcite:t:`2025ApJ...992L..18S`, :footcite:t:`sari1999jets`, :footcite:t:`duran2013radius`,
     :footcite:t:`2020MNRAS.493.3521B` among others. This is different from the approach used in
     :footcite:t:`GranotSari2002SpectralBreaks` which was an insufficiently general scheme to suite a modular codebase
-    such as Triceratops.
+    such as Trilobite.
 
 The Normalizing Flux and Frequency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -996,7 +996,7 @@ It is therefore standard practice to invoke a **closure relation** to connect th
 As is the case for normalization, where one must invoke a **closure relation** to connect the SED to physical parameters,
 one must also invoke a closure relation to perform inversion.
 
-Triceratops does not provide an exhaustive set of closure relations as, following our development philosophy, we prefer
+Trilobite does not provide an exhaustive set of closure relations as, following our development philosophy, we prefer
 to allow for modeling flexibility rather than prescribing a particular set of assumptions. However, we do provide a few commonly
 used closure relations in the documentation, and we encourage users to implement their own closure relations as needed
 for their particular applications.
@@ -1334,7 +1334,7 @@ The normalization of the canonical SED is fixed by the following physical parame
           - Fraction of post-shock internal energy stored in magnetic fields.
         * - :math:`\sin\alpha`
           - Pitch Angle Factor
-          - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+          - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
             angles or isotropic pitch-angle averaging.
 
 The normalization of the power-law SED is most naturally anchored at the injection frequency
@@ -1420,7 +1420,7 @@ The inversion is the simple case of an optically thin peak at :math:`\nu_m`.
           - Fraction of post-shock internal energy stored in magnetic fields.
         * - :math:`\sin\alpha`
           - Pitch Angle Factor
-          - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+          - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
             angles or isotropic pitch-angle averaging.
 
 Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -1582,7 +1582,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         The normalization of the power-law SED is most naturally anchored at the injection frequency
@@ -1672,7 +1672,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed` but instead using :math:`\nu_c`, we can invert for the magnetic field strength.
@@ -1795,7 +1795,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         The normalization of the power-law SED is most naturally anchored at the injection frequency
@@ -1887,7 +1887,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -2011,7 +2011,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         The normalization of the power-law SED is most naturally anchored at the injection frequency
@@ -2101,7 +2101,7 @@ and no SSA. In this case, the three relevant break frequencies are :math:`\nu_m`
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -2297,7 +2297,7 @@ We now progress to the case with SSA but no cooling. In this case, there are 2(3
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -2478,7 +2478,7 @@ We now progress to the case with SSA but no cooling. In this case, there are 2(3
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation
@@ -2707,7 +2707,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -2771,7 +2771,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -2910,7 +2910,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -2998,7 +2998,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation
@@ -3204,7 +3204,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -3268,7 +3268,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed`, we can invert for the magnetic field strength. Using :eq:`inversion_R_fixed_thin_sed`, we can then
@@ -3415,7 +3415,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -3503,7 +3503,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation
@@ -3759,7 +3759,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -3832,7 +3832,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Using :eq:`inversion_nu_m_fixed` but instead using :math:`\nu_c`, we can invert for the magnetic field strength.
@@ -3996,7 +3996,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -4079,7 +4079,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation
@@ -4286,7 +4286,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -4370,7 +4370,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation
@@ -4584,7 +4584,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
                 * - :math:`\Omega`
                   - Angular Size
@@ -4668,7 +4668,7 @@ various cases.
                   - Fraction of post-shock internal energy stored in magnetic fields.
                 * - :math:`\sin\alpha`
                   - Pitch Angle Factor
-                  - Pitch angle dependence of synchrotron emission. Triceratops supports either fixed pitch
+                  - Pitch angle dependence of synchrotron emission. Trilobite supports either fixed pitch
                     angles or isotropic pitch-angle averaging.
 
         Because the SSA frequency corresponds to the peak, we have the standard equation

@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
-from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
 
 # Instantiate the engine.  No physical parameters are stored at construction time.
 engine = ChevalierSelfSimilarWindShockEngine()

@@ -30,7 +30,7 @@ accelerated to high Lorentz factors.
 Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-:class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth :math:`R`, without any piecewise approximation.
@@ -64,8 +64,8 @@ pitch-angle distribution is isotropic.
     import numpy as np
     from astropy import units as u
 
-    from triceratops.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
+    from trilobite.utils.plot_utils import set_plot_style
 
     engine = NonRelativisticSphericalSynchrotronEngine()
     engine.load_avg_first_kernel()
@@ -224,7 +224,7 @@ Computing the SED
 ------------------
 
 We now pass the sampled distributions to
-:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
 The engine numerically integrates the synchrotron emissivity
 
 .. math::
@@ -264,7 +264,7 @@ grid before evaluating the emissivity.
 
  .. code-block:: none
 
-    /home/runner/work/Triceratops/Triceratops/triceratops/radiation/synchrotron/SEDs/numerical.py:2390: RuntimeWarning: divide by zero encountered in log
+    /home/runner/work/Triceratops/Triceratops/trilobite/radiation/synchrotron/SEDs/numerical.py:2390: RuntimeWarning: divide by zero encountered in log
       return np.log(np.asarray(N_values, dtype="f8"))
 
 
@@ -350,7 +350,7 @@ Several features are visible in the combined spectrum:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.543 seconds)
+   **Total running time of the script:** (0 minutes 0.615 seconds)
 
 
 .. _sphx_glr_download_auto_examples_synchrotron_b_seds_plot_multi_component_numerical_SED.py:

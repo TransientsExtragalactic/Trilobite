@@ -9,18 +9,18 @@ Free-Free Emission Tools
     See :ref:`free_free_theory` for a detailed overview of the underlying physics of
     free-free (bremsstrahlung) radiation.
 
-The :mod:`triceratops.radiation.free_free` module provides a complete set of tools for
+The :mod:`trilobite.radiation.free_free` module provides a complete set of tools for
 computing thermal free-free emission and absorption in ionized astrophysical plasmas.  The
 module is organized into three sub-modules:
 
-* :mod:`~triceratops.radiation.free_free.core` — monochromatic emissivity and absorption
+* :mod:`~trilobite.radiation.free_free.core` — monochromatic emissivity and absorption
   coefficients.
-* :mod:`~triceratops.radiation.free_free.gaunt_factor` — Gaunt factor evaluation (analytic
+* :mod:`~trilobite.radiation.free_free.gaunt_factor` — Gaunt factor evaluation (analytic
   approximation and tabulated interpolators).
-* :mod:`~triceratops.radiation.free_free.absorption` — free-free optical depth integration
+* :mod:`~trilobite.radiation.free_free.absorption` — free-free optical depth integration
   over a variety of CSM density profiles.
 
-Each sub-module follows Triceratops's standard **two-level API pattern**: a private, log-space
+Each sub-module follows Trilobite's standard **two-level API pattern**: a private, log-space
 backend optimized for numerical performance and a public, unit-aware interface that accepts and
 returns :class:`astropy.units.Quantity` objects.
 
@@ -33,7 +33,7 @@ returns :class:`astropy.units.Quantity` objects.
 Emissivity and Absorption Coefficients
 ---------------------------------------
 
-The :mod:`~triceratops.radiation.free_free.core` module implements the monochromatic thermal
+The :mod:`~trilobite.radiation.free_free.core` module implements the monochromatic thermal
 free-free emissivity :math:`j_\nu` and absorption coefficient :math:`\alpha_\nu` together
 with their Rayleigh–Jeans and Wien limiting forms.
 
@@ -50,7 +50,7 @@ All computations are performed in two layers:
   loops.
 
 * **Public wrappers** (``compute_ff_*``) perform unit coercion via
-  :func:`~triceratops.utils.misc_utils.ensure_in_units`, delegate to the appropriate backend,
+  :func:`~trilobite.utils.misc_utils.ensure_in_units`, delegate to the appropriate backend,
   and return :class:`~astropy.units.Quantity` objects with appropriate CGS units.
 
 .. important::
@@ -77,7 +77,7 @@ The thermal free-free spectral emissivity follows
 
 where :math:`C_{\rm ff} = 6.8 \times 10^{-38}` CGS.
 
-Triceratops implements this via :func:`~triceratops.radiation.free_free.core.compute_ff_emissivity`:
+Trilobite implements this via :func:`~trilobite.radiation.free_free.core.compute_ff_emissivity`:
 
 .. tab-set::
 
@@ -91,7 +91,7 @@ Triceratops implements this via :func:`~triceratops.radiation.free_free.core.com
 
             import numpy as np
             from astropy import units as u
-            from triceratops.radiation.free_free.core import compute_ff_emissivity
+            from trilobite.radiation.free_free.core import compute_ff_emissivity
 
             j = compute_ff_emissivity(
                 nu=1e9 * u.Hz,
@@ -111,13 +111,13 @@ Triceratops implements this via :func:`~triceratops.radiation.free_free.core.com
 
     .. tab-item:: Low-Level API
 
-        The private backend :func:`~triceratops.radiation.free_free.core._log_ff_emissivity`
+        The private backend :func:`~trilobite.radiation.free_free.core._log_ff_emissivity`
         accepts natural logarithms of all arguments:
 
         .. code-block:: python
 
             import numpy as np
-            from triceratops.radiation.free_free.core import _log_ff_emissivity
+            from trilobite.radiation.free_free.core import _log_ff_emissivity
 
             log_j = _log_ff_emissivity(
                 log_nu=np.log(1e9),   # ln(ν / Hz)
@@ -131,8 +131,8 @@ Triceratops implements this via :func:`~triceratops.radiation.free_free.core.com
 
 The Rayleigh–Jeans emissivity—valid when :math:`h\nu \ll k_BT`—drops the exponential factor
 and is **frequency-independent**, scaling as :math:`T^{-1/2}`.  It is implemented via
-:func:`~triceratops.radiation.free_free.core.compute_ff_RJ_emissivity` (high-level) and
-:func:`~triceratops.radiation.free_free.core._log_ff_RJ_emissivity` (log-space backend).
+:func:`~trilobite.radiation.free_free.core.compute_ff_RJ_emissivity` (high-level) and
+:func:`~trilobite.radiation.free_free.core._log_ff_RJ_emissivity` (log-space backend).
 
 .. note::
 
@@ -158,7 +158,7 @@ The thermal free-free absorption coefficient is (:footcite:t:`RybickiLightman`, 
 
 where :math:`C_\alpha = 3.7 \times 10^{8}` CGS.
 
-This is implemented via :func:`~triceratops.radiation.free_free.core.compute_ff_absorption`:
+This is implemented via :func:`~trilobite.radiation.free_free.core.compute_ff_absorption`:
 
 .. tab-set::
 
@@ -168,7 +168,7 @@ This is implemented via :func:`~triceratops.radiation.free_free.core.compute_ff_
 
             import numpy as np
             from astropy import units as u
-            from triceratops.radiation.free_free.core import compute_ff_absorption
+            from trilobite.radiation.free_free.core import compute_ff_absorption
 
             alpha = compute_ff_absorption(
                 nu=1e9 * u.Hz,
@@ -192,14 +192,14 @@ This is implemented via :func:`~triceratops.radiation.free_free.core.compute_ff_
 
     .. tab-item:: Low-Level API
 
-        The log-space backend :func:`~triceratops.radiation.free_free.core._log_ff_absorption`
+        The log-space backend :func:`~trilobite.radiation.free_free.core._log_ff_absorption`
         evaluates :math:`\log(1 - e^{-h\nu/k_BT})` via ``numpy.log1p`` to avoid
         catastrophic cancellation at low frequencies where :math:`h\nu/k_BT \ll 1`:
 
         .. code-block:: python
 
             import numpy as np
-            from triceratops.radiation.free_free.core import _log_ff_absorption
+            from trilobite.radiation.free_free.core import _log_ff_absorption
 
             log_alpha = _log_ff_absorption(
                 log_nu=np.log(1e9),
@@ -213,14 +213,14 @@ This is implemented via :func:`~triceratops.radiation.free_free.core.compute_ff_
 The Rayleigh–Jeans approximation—valid when :math:`h\nu \ll k_BT`—replaces
 :math:`(1-e^{-h\nu/k_BT}) \to h\nu/k_BT`, yielding :math:`\alpha_\nu^{\rm RJ} \propto \nu^{-2}
 T^{-3/2}`.  This is the standard radio bremsstrahlung opacity scaling.  It is implemented via
-:func:`~triceratops.radiation.free_free.core.compute_ff_RJ_absorption` and its log-space backend.
+:func:`~trilobite.radiation.free_free.core.compute_ff_RJ_absorption` and its log-space backend.
 
 ----
 
 Gaunt Factor Evaluation
 -----------------------
 
-The :mod:`~triceratops.radiation.free_free.gaunt_factor` module provides two approaches to
+The :mod:`~trilobite.radiation.free_free.gaunt_factor` module provides two approaches to
 evaluating the free-free Gaunt factor :math:`g_{\rm ff}(Z, T, \nu)`.
 
 The Gaunt factor depends on two dimensionless collision parameters:
@@ -231,20 +231,20 @@ The Gaunt factor depends on two dimensionless collision parameters:
     \qquad
     \gamma^2 \equiv \frac{Z^2 R_y}{k_B T},
 
-where :math:`R_y = 13.6\,{\rm eV}` is the Rydberg energy.  Triceratops uses these parameters
+where :math:`R_y = 13.6\,{\rm eV}` is the Rydberg energy.  Trilobite uses these parameters
 internally to map physical inputs :math:`(Z, T, \nu)` onto the table axes.
 
 Analytic Approximation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 A fast closed-form approximation due to :footcite:t:`Draine2011ISM` (Eq. 10.9) is provided by
-:func:`~triceratops.radiation.free_free.gaunt_factor.gaunt_ff_draine`.  It accepts
+:func:`~trilobite.radiation.free_free.gaunt_factor.gaunt_ff_draine`.  It accepts
 unit-aware or plain-float inputs and is suitable for quick estimates in the radio through
 infrared regime:
 
 .. code-block:: python
 
-    from triceratops.radiation.free_free.gaunt_factor import gaunt_ff_draine
+    from trilobite.radiation.free_free.gaunt_factor import gaunt_ff_draine
 
     # Scalar
     gff = gaunt_ff_draine(Z=1, T=1e4, nu=1e10)
@@ -262,7 +262,7 @@ infrared regime:
 Tabulated Interpolators
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Triceratops ships two pre-computed Gaunt factor tables from
+Trilobite ships two pre-computed Gaunt factor tables from
 :footcite:t:`2014MNRAS.444..420V` and provides a class hierarchy for convenient, accurate
 interpolation.
 
@@ -273,10 +273,10 @@ interpolation.
    * - Class
      - Table dimensions
      - When to use
-   * - :class:`~triceratops.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
+   * - :class:`~trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
      - 2D (:math:`\log_{10} u`,  :math:`\log_{10}\gamma^2`)
      - Default; appropriate for most radio and thermal-plasma applications
-   * - :class:`~triceratops.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
+   * - :class:`~trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
      - 3D (:math:`Z`, :math:`\log_{10} u`, :math:`\log_{10}\gamma^2`)
      - High-temperature (:math:`T \gtrsim 10^7` K) or high-:math:`Z` plasma
 
@@ -287,18 +287,18 @@ the Python ``in`` operator to test whether a point lies within the table boundar
 
     .. tab-item:: Non-Relativistic Interpolator
 
-        The :class:`~triceratops.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
+        The :class:`~trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
         wraps a 2D :func:`scipy.interpolate.RegularGridInterpolator` over the non-relativistic
         van Hoof (2014) table.  The ionic charge :math:`Z` enters only through the coordinate
         transform to :math:`\log_{10}\gamma^2` and is not a table axis.
 
         The default instance can be obtained via the factory function
-        :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator`:
+        :func:`~trilobite.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator`:
 
         .. code-block:: python
 
             import numpy as np
-            from triceratops.radiation.free_free.gaunt_factor import (
+            from trilobite.radiation.free_free.gaunt_factor import (
                 get_default_gaunt_interpolator,
             )
 
@@ -317,18 +317,18 @@ the Python ``in`` operator to test whether a point lies within the table boundar
 
     .. tab-item:: Relativistic Interpolator
 
-        The :class:`~triceratops.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
+        The :class:`~trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
         wraps a 3D :func:`scipy.interpolate.RegularGridInterpolator`.  Z is a first-class table
         axis, allowing the interpolator to capture the explicit Z-dependence of relativistic
         corrections beyond what is encoded in :math:`\log_{10}\gamma^2` alone.
 
         The default relativistic instance can be obtained via
-        :func:`~triceratops.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator`:
+        :func:`~trilobite.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator`:
 
         .. code-block:: python
 
             import numpy as np
-            from triceratops.radiation.free_free.gaunt_factor import (
+            from trilobite.radiation.free_free.gaunt_factor import (
                 get_default_relativistic_gaunt_interpolator,
             )
 
@@ -345,13 +345,13 @@ Class Hierarchy
 ^^^^^^^^^^^^^^^
 
 Both interpolators share a common abstract base class,
-:class:`~triceratops.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase`, which
+:class:`~trilobite.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase`, which
 defines the public interface and provides the HDF5 loading helper.  Users implementing custom
-Gaunt factor tables can subclass this base class to integrate them into the Triceratops API.
+Gaunt factor tables can subclass this base class to integrate them into the Trilobite API.
 
 .. code-block:: python
 
-    from triceratops.radiation.free_free.gaunt_factor import (
+    from trilobite.radiation.free_free.gaunt_factor import (
         GauntFactorInterpolatorBase,
         NonRelativisticGauntFactorInterpolator,
         RelativisticGauntFactorInterpolator,
@@ -373,7 +373,7 @@ Gaunt factor tables can subclass this base class to integrate them into the Tric
 Free-Free Optical Depth
 ------------------------
 
-The :mod:`~triceratops.radiation.free_free.absorption` module provides routines to integrate
+The :mod:`~trilobite.radiation.free_free.absorption` module provides routines to integrate
 :math:`\alpha_\nu(r)` along a line of sight through an ionized CSM for five physically motivated
 density profiles.  For each profile type there is both an **exact** variant (using the full
 :math:`(1 - e^{-h\nu/k_BT})` factor) and a **Rayleigh–Jeans** variant (using the approximation
@@ -396,27 +396,27 @@ Profile Overview
 
    * - Function pair
      - Description
-   * - :func:`~triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature` /
-       :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature` /
+       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
      - Adaptive quadrature over arbitrary user-supplied CGS callables for
        :math:`n_e(r)`, :math:`n_i(r)`, :math:`T(r)`.  Maximum flexibility for non-analytic
        or tabulated CSM models.
-   * - :func:`~triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_arrays` /
-       :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_from_arrays` /
+       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays`
      - Trapezoidal integration over pre-computed (:math:`r`, :math:`\alpha_\nu`) or
        (:math:`r`, :math:`n_e`, :math:`n_i`, :math:`T`) grids.  Ideal for
        post-processing hydrodynamic simulation outputs.
-   * - :func:`~triceratops.radiation.free_free.absorption.compute_ff_optical_depth_wind` /
-       :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_wind` /
+       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind`
      - Analytic integral for a steady stellar wind with
        :math:`\rho \propto r^{-2}` (constant mass-loss rate :math:`\dot{M}`, wind velocity
        :math:`v_w`).  Gives :math:`\tau_{\rm ff} \propto r^{-3}`.
-   * - :func:`~triceratops.radiation.free_free.absorption.compute_ff_optical_depth_shell` /
-       :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_shell` /
+       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell`
      - Analytic integral for a uniform-density shell between radii :math:`r` and
        :math:`r_{\rm max}`.  Returns :math:`\tau_{\rm ff} = \alpha_\nu (r_{\rm max} - r)`.
-   * - :func:`~triceratops.radiation.free_free.absorption.compute_ff_optical_depth_powerlaw` /
-       :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw`
+   * - :func:`~trilobite.radiation.free_free.absorption.compute_ff_optical_depth_powerlaw` /
+       :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw`
      - Analytic integral for a generalized power-law density profile
        :math:`\rho \propto r^{-p}` between :math:`r` and :math:`r_{\rm max}`.  Encompasses
        the wind (:math:`p = 2`) and uniform (:math:`p = 0`) cases.
@@ -436,7 +436,7 @@ Usage Examples
 
             import numpy as np
             from astropy import units as u
-            from triceratops.radiation.free_free.absorption import (
+            from trilobite.radiation.free_free.absorption import (
                 compute_ff_optical_depth_from_quadrature,
             )
 
@@ -470,7 +470,7 @@ Usage Examples
         .. code-block:: python
 
             from astropy import units as u
-            from triceratops.radiation.free_free.absorption import (
+            from trilobite.radiation.free_free.absorption import (
                 compute_ff_optical_depth_wind,
                 compute_ff_RJ_optical_depth_wind,
             )
@@ -507,7 +507,7 @@ Usage Examples
         .. code-block:: python
 
             from astropy import units as u
-            from triceratops.radiation.free_free.absorption import (
+            from trilobite.radiation.free_free.absorption import (
                 compute_ff_optical_depth_shell,
             )
 
@@ -531,7 +531,7 @@ Usage Examples
         .. code-block:: python
 
             from astropy import units as u
-            from triceratops.radiation.free_free.absorption import (
+            from trilobite.radiation.free_free.absorption import (
                 compute_ff_optical_depth_powerlaw,
             )
 

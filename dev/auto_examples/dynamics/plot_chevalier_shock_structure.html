@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Chevalier Self-Similar Shock Structure &#8212; Triceratops dev documentation</title>
+    <title>Chevalier Self-Similar Shock Structure &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Forward Modeling" href="../modeling/index.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -595,15 +595,15 @@ the ejecta expand homologously, the entire structure is self-similar:</p>
 density index. Once the dimensionless profiles are computed for a given
 <span class="math notranslate nohighlight">\((n, s, \gamma)\)</span>, physical profiles at any time follow by rescaling
 <span class="math notranslate nohighlight">\(\xi = r / R_c(t)\)</span>.</p>
-<p>We use <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.compute_self_similar_functions.html#triceratops.dynamics.shocks.chevalier.compute_self_similar_functions" title="triceratops.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
+<p>We use <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.compute_self_similar_functions.html#trilobite.dynamics.shocks.chevalier.compute_self_similar_functions" title="trilobite.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
 to solve the self-similar ODEs and
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine.html#triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine" title="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code></a>
 to evaluate the physical shock trajectory for a representative RSG-wind CSM.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../../reference/physics/shocks/chevalier_theory.html#chevalier-theory"><span class="std std-ref">Theory: The Chevalier Self-Similar Solution</span></a> — full derivation of the self-similar solution
 including the ODE system, boundary conditions, and physical scalings.</p>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>
 — generalized engine for arbitrary CSM power-law index <span class="math notranslate nohighlight">\(s\)</span>.</p>
 </div>
 <section id="setup">
@@ -615,12 +615,12 @@ normalizer alongside standard numerical and plotting utilities.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.lines.Line2D.html#matplotlib.lines.Line2D" title="matplotlib.lines.Line2D" class="sphx-glr-backref-module-matplotlib-lines sphx-glr-backref-type-py-class"><span class="n">Line2D</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.chevalier</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.chevalier</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">ChevalierSelfSimilarWindShockEngine</span></a><span class="p">,</span>
     <span class="n">compute_self_similar_functions</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_bpl_ejecta</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalize_bpl_ejecta</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 </pre></div>
 </div>
 </section>
@@ -641,13 +641,13 @@ the contact-discontinuity expansion index is</p>
 </section>
 <section id="solve-the-dimensionless-self-similar-structure">
 <h2>Solve the Dimensionless Self-Similar Structure<a class="headerlink" href="#solve-the-dimensionless-self-similar-structure" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.compute_self_similar_functions.html#triceratops.dynamics.shocks.chevalier.compute_self_similar_functions" title="triceratops.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.compute_self_similar_functions.html#trilobite.dynamics.shocks.chevalier.compute_self_similar_functions" title="trilobite.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
 integrates two ODEs — one inward from the forward shock to the contact
 discontinuity and one outward from the reverse shock — to obtain the
 dimensionless velocity <span class="math notranslate nohighlight">\(U(\xi)\)</span>, density <span class="math notranslate nohighlight">\(\Omega(\xi)\)</span>, and
 pressure <span class="math notranslate nohighlight">\(P(\xi)\)</span> profiles on the global similarity coordinate
 <span class="math notranslate nohighlight">\(\xi = r / R_c\)</span>.</p>
-<p>The returned <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions.html#triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions" title="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarFunctions</span></code></a>
+<p>The returned <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarFunctions</span></code></a>
 also carries the dimensionless structure constants: <span class="math notranslate nohighlight">\(A\)</span> (the
 self-similar normalization), <span class="math notranslate nohighlight">\(R_{\rm fs}/R_c\)</span>, and <span class="math notranslate nohighlight">\(R_{\rm rs}/R_c\)</span>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">ss</span> <span class="o">=</span> <span class="n">compute_self_similar_functions</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">s</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">s</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">gamma</span></a><span class="p">,</span> <span class="n">n_points</span><span class="o">=</span><span class="mi">1024</span><span class="p">)</span>
@@ -677,7 +677,7 @@ discontinuity (CD, <span class="math notranslate nohighlight">\(\xi = 1\)</span>
 reverse shock and the contact.  The <strong>outer</strong> region (<span class="math notranslate nohighlight">\(\xi &gt; 1\)</span>) is
 the shocked CSM between the contact and the forward shock.  All quantities
 carry the shared normalization described in
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.compute_self_similar_functions.html#triceratops.dynamics.shocks.chevalier.compute_self_similar_functions" title="triceratops.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.compute_self_similar_functions.html#trilobite.dynamics.shocks.chevalier.compute_self_similar_functions" title="trilobite.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">set_plot_style</span><span class="p">()</span>
 
@@ -1052,7 +1052,7 @@ trajectory from the engine against the expected power-law scaling.</p>
 self-similar module:</p>
 <ol class="arabic simple">
 <li><p><strong>Solve the dimensionless structure</strong> with
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.compute_self_similar_functions.html#triceratops.dynamics.shocks.chevalier.compute_self_similar_functions" title="triceratops.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.compute_self_similar_functions.html#trilobite.dynamics.shocks.chevalier.compute_self_similar_functions" title="trilobite.dynamics.shocks.chevalier.compute_self_similar_functions"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_functions()</span></code></a>
 for a chosen <span class="math notranslate nohighlight">\((n, s, \gamma)\)</span>.  The resulting
 <span class="math notranslate nohighlight">\((\Omega, U, P)\)</span> profiles on the <span class="math notranslate nohighlight">\(\xi\)</span> grid are universal —
 they do not depend on the physical normalization.</p></li>
@@ -1067,20 +1067,20 @@ self-similar exponent <span class="math notranslate nohighlight">\(m = (n - 3)/(
 <p>The self-similar solution is most appropriate when both the ejecta and CSM
 are well described by scale-free power laws.  For more complex environments
 — shells, density breaks, or wind-to-ISM transitions — see the numerical
-shock engines in <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.html#module-triceratops.dynamics.shocks.numerical" title="triceratops.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a>.</p>
+shock engines in <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.html#module-trilobite.dynamics.shocks.numerical" title="trilobite.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a>.</p>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <p><a class="reference internal" href="../../reference/physics/shocks/chevalier_theory.html#chevalier-theory"><span class="std std-ref">Theory: The Chevalier Self-Similar Solution</span></a> — derivation of the self-similar equations and
 the physical normalization <span class="math notranslate nohighlight">\(A\)</span>.</p>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>
 — generalized engine for arbitrary <span class="math notranslate nohighlight">\(s\)</span>.</p>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.html#module-triceratops.dynamics.shocks.numerical" title="triceratops.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a> — numerical thin-shell
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.html#module-trilobite.dynamics.shocks.numerical" title="trilobite.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">numerical</span></code></a> — numerical thin-shell
 engines for non-power-law environments.</p>
 </div>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># sphinx_gallery_thumbnail_number = 2</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.730 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.033 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dynamics-plot-chevalier-shock-structure-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/8d0930dcd7b342cf4c37568f400a8853/plot_chevalier_shock_structure.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_chevalier_shock_structure.ipynb</span></code></a></p>

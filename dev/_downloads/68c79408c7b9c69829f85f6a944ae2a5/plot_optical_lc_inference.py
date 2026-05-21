@@ -5,18 +5,18 @@ Fitting a Multi-Band Optical Light Curve with MCMC
 This example performs a complete round-trip:
 
 1. **Forward model** — generate synthetic SDSS *ugriz* photometry from a
-   :class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
+   :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
    with known parameters.
 2. **Load** — package the noisy observations into an
-   :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer`,
+   :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`,
    demonstrating the standard data pipeline described in :ref:`data_overview`.
 3. **Inspect** — verify the container and convert to
-   :class:`~triceratops.data.core.InferenceData` via
-   :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
+   :class:`~trilobite.data.core.InferenceData` via
+   :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
 4. **Infer** — configure a
-   :class:`~triceratops.inference.likelihood.base.GaussianCensoredLikelihood`,
+   :class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`,
    set log-uniform priors, and run ``emcee`` MCMC via
-   :class:`~triceratops.inference.sampling.mcmc.EmceeSampler`.
+   :class:`~trilobite.inference.sampling.mcmc.EmceeSampler`.
 5. **Diagnose** — inspect chains, acceptance fraction, and corner plot; verify
    the recovered posteriors bracket the true parameters.
 6. **Posterior predictive check** — draw light curves from the posterior and
@@ -27,10 +27,10 @@ The coupled optical model architecture is detailed in
 
 See Also
 --------
-- :class:`triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
-- :class:`triceratops.data.optical_photometry.OpticalPhotometryContainer`
-- :class:`triceratops.inference.likelihood.base.GaussianCensoredLikelihood`
-- :class:`triceratops.inference.sampling.mcmc.EmceeSampler`
+- :class:`trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
+- :class:`trilobite.data.optical_photometry.OpticalPhotometryContainer`
+- :class:`trilobite.inference.likelihood.base.GaussianCensoredLikelihood`
+- :class:`trilobite.inference.sampling.mcmc.EmceeSampler`
 - :ref:`data_overview` — data pipeline overview
 - :ref:`data_to_inference` — step-by-step guide to ``to_inference_data()``
 """
@@ -40,12 +40,12 @@ See Also
 # -----------------------
 #
 # We assemble the SDSS *ugriz* filter bundle and instantiate the
-# :class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel`.
+# :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`.
 # The bundle's ``filter_names`` list defines the mapping
 # ``band_name → band_idx`` that is used automatically when the data container
-# calls :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
+# calls :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`.
 #
-# Triceratops loads real SDSS response curves via ``speclite``.  See
+# Trilobite loads real SDSS response curves via ``speclite``.  See
 # :ref:`sphx_glr_galleries_photometry_plot_filter_bundle.py` for details
 # on filter construction.
 
@@ -54,8 +54,8 @@ import numpy as np
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.models.generic.optical_photometry import FREDBlackbodyModel
-from triceratops.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
+from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
+from trilobite.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
 
 # ---- Build SDSS ugriz filter bundle ----------------------------------------
 SDSS_BANDS = {
@@ -121,7 +121,7 @@ print(f"Noise level: {noise_frac * 100:.0f}% Gaussian (S/N ~ {1 / noise_frac:.0f
 # Step 2 — Load into OpticalPhotometryContainer
 # ----------------------------------------------
 #
-# :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer` is
+# :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer` is
 # the standard entry point for multi-band optical photometry.  It validates the
 # schema (required columns, units, ``band_name`` string column) and provides
 # detection masking, dual flux/magnitude representation, and a direct path to
@@ -131,7 +131,7 @@ print(f"Noise level: {noise_frac * 100:.0f}% Gaussian (S/N ~ {1 / noise_frac:.0f
 # observations are detections.  For censored data workflows, see
 # :ref:`sphx_glr_galleries_inference_plot_censored_SED_fit.py`.
 
-from triceratops.data import OpticalPhotometryContainer
+from trilobite.data import OpticalPhotometryContainer
 
 obs_table = Table(
     {
@@ -216,13 +216,13 @@ plt.show()
 # Step 3 — Convert to InferenceData
 # ----------------------------------
 #
-# :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
+# :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
 # performs three operations in a single call:
 #
 # 1. Resolves each ``band_name`` string to an integer ``band_idx`` by looking
 #    up ``model.bundle.filter_names``.
 # 2. Converts time to seconds (the model's ``base_units`` for ``time``).
-# 3. Returns an :class:`~triceratops.data.core.InferenceData` object containing
+# 3. Returns an :class:`~trilobite.data.core.InferenceData` object containing
 #    only validated NumPy arrays — no units, no column names, no schema —
 #    ready for likelihood evaluation.
 #
@@ -236,7 +236,7 @@ print(inference_data.describe())
 # Step 4 — Likelihood and InferenceProblem
 # -----------------------------------------
 #
-# :class:`~triceratops.inference.likelihood.base.GaussianCensoredLikelihood`
+# :class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`
 # evaluates
 #
 # .. math::
@@ -249,14 +249,14 @@ print(inference_data.describe())
 # limits would contribute a complementary CDF term, but this dataset contains
 # only detections.
 #
-# :class:`~triceratops.inference.problem.InferenceProblem` wraps the likelihood
+# :class:`~trilobite.inference.problem.InferenceProblem` wraps the likelihood
 # together with priors on the free parameters.  All five parameters are
 # sampled; log-uniform (``loguniform``) priors are appropriate for
 # scale-invariant quantities.
 
-from triceratops.inference.likelihood.base import GaussianCensoredLikelihood
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.inference.likelihood.base import GaussianCensoredLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 likelihood = GaussianCensoredLikelihood(model=model, data=inference_data)
 
@@ -283,7 +283,7 @@ print(f"Initial log-posterior: {problem.initial_log_posterior:.1f}")
 # Step 5 — Run MCMC
 # ------------------
 #
-# We use :class:`~triceratops.inference.sampling.mcmc.EmceeSampler`, a thin
+# We use :class:`~trilobite.inference.sampling.mcmc.EmceeSampler`, a thin
 # wrapper around `emcee <https://emcee.readthedocs.io>`_ that handles
 # parameter packing/unpacking and result serialization.
 #
@@ -462,7 +462,7 @@ plt.show()
 # Key takeaways
 # ~~~~~~~~~~~~~
 #
-# - A :class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
+# - A :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
 #   with just five parameters (three temporal, two spectral) recovers the
 #   true light curves in all five *ugriz* bands simultaneously.
 # - Multi-band coverage strongly constrains :math:`T_\mathrm{eff}`: the colour
@@ -479,7 +479,7 @@ plt.show()
 #   ``container = OpticalPhotometryContainer.from_file("phot.fits")``.
 # - Add upper limits by setting ``flux_density = NaN`` and populating
 #   ``flux_upper_limit`` for non-detections.
-# - Try :class:`~triceratops.models.generic.optical_photometry.GeneralizedFREDBlackbodyModel`
+# - Try :class:`~trilobite.models.generic.optical_photometry.GeneralizedFREDBlackbodyModel`
 #   for a more flexible temporal shape, or
-#   :class:`~triceratops.models.generic.optical_photometry.GaussianBlackbodyModel`
+#   :class:`~trilobite.models.generic.optical_photometry.GaussianBlackbodyModel`
 #   for symmetric transients.

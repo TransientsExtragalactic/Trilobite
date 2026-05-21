@@ -3,8 +3,8 @@ import matplotlib.pyplot as plt
 from astropy import units as u
 from astropy import constants as const
 
-from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-from triceratops.radiation.synchrotron.microphysics import (
+from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+from trilobite.radiation.synchrotron.microphysics import (
     compute_MJD_and_PL_norm_from_magnetic_field,
     get_maxwell_juttner_distribution,
     get_power_law_distribution,

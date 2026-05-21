@@ -1,0 +1,2266 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.radiation.free_free.core &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/radiation/free_free/core';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.radiation.free_free.core</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.radiation.free_free.core</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Core free–free (bremsstrahlung) radiation functions.</span>
+
+<span class="sd">This module provides low-level and public-facing routines for computing</span>
+<span class="sd">**thermal free–free (bremsstrahlung) emissivity and absorption coefficients**</span>
+<span class="sd">in a fully-ionized plasma.  The formulas follow</span>
+<span class="sd">:footcite:t:`RybickiLightman` (Eqs. 5.14–5.19) and are valid in the</span>
+<span class="sd">non-relativistic thermal limit.</span>
+
+<span class="sd">The module is organised in two layers:</span>
+
+<span class="sd">* **Private backend** (``_log_ff_*``): all inputs are pre-converted to natural</span>
+<span class="sd">  logarithms and the results are returned as natural logarithms.  Working in</span>
+<span class="sd">  log-space gives numerical stability over the large dynamic range encountered</span>
+<span class="sd">  in astrophysical plasmas without any unit overhead.</span>
+<span class="sd">* **Public API** (``compute_ff_*``): unit-aware wrappers that accept plain</span>
+<span class="sd">  :class:`float` or :class:`~astropy.units.Quantity` inputs, perform unit</span>
+<span class="sd">  coercion via :func:`~trilobite.utils.misc_utils.ensure_in_units`, delegate</span>
+<span class="sd">  to the backend, and return :class:`~astropy.units.Quantity` results.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    All CGS coefficients are pre-computed at module load time and stored as</span>
+<span class="sd">    module-level constants for performance.  These constants are **not** part</span>
+<span class="sd">    of the public API and should not be imported directly.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">h_cgs</span><span class="p">,</span> <span class="n">kB_cgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gaunt_factor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ff_gaunt_factor</span><span class="p">,</span>
+    <span class="n">compute_ff_gaunt_factor_comp</span><span class="p">,</span>
+    <span class="n">compute_mean_ff_gaunt_factor</span><span class="p">,</span>
+    <span class="n">compute_mean_ff_gaunt_factor_comp</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
+
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Module-level CGS constants</span>
+<span class="c1"># =============================================== #</span>
+<span class="c1">#: Pre-computed free–free emissivity coefficient :math:`C_{ff}` in CGS</span>
+<span class="c1">#: (erg s⁻¹ cm⁻³ Hz⁻¹ sr⁻¹), from Rybicki &amp; Lightman Eq. 5.14.</span>
+<span class="n">_ff_emissivity_coefficient_cgs</span> <span class="o">=</span> <span class="mf">6.8e-38</span>
+<span class="n">_log_ff_emissivity_coefficient_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_ff_emissivity_coefficient_cgs</span><span class="p">)</span>
+
+<span class="c1">#: Pre-computed free–free absorption coefficient :math:`C_\alpha` in CGS</span>
+<span class="c1">#: (cm⁵ K^{1/2} Hz^3), from Rybicki &amp; Lightman Eq. 5.19.  Used by the</span>
+<span class="c1">#: *exact* (non-RJ) absorption backend which carries T^{-1/2} and ν^{-3}.</span>
+<span class="n">_ff_absorption_coefficient_cgs</span> <span class="o">=</span> <span class="mf">3.7e8</span>
+<span class="n">_log_ff_absorption_coefficient_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_ff_absorption_coefficient_cgs</span><span class="p">)</span>
+
+<span class="c1">#: Rayleigh–Jeans absorption coefficient :math:`C_\alpha^{\rm RJ}` in CGS</span>
+<span class="c1">#: (cm⁵ K^{3/2} Hz^2).  Derived from the exact coefficient via the RJ</span>
+<span class="c1">#: substitution :math:`(1 - e^{-h\nu/k_BT}) \approx h\nu/k_BT`:</span>
+<span class="c1">#:</span>
+<span class="c1">#:   :math:`C_\alpha^{\rm RJ} = C_\alpha \cdot h / k_B \approx 0.01776`.</span>
+<span class="c1">#:</span>
+<span class="c1">#: This is the constant that multiplies T^{-3/2} and ν^{-2} in the RJ form.</span>
+<span class="n">_ff_RJ_absorption_coefficient_cgs</span> <span class="o">=</span> <span class="n">_ff_absorption_coefficient_cgs</span> <span class="o">*</span> <span class="n">h_cgs</span> <span class="o">/</span> <span class="n">kB_cgs</span>
+<span class="n">_log_ff_RJ_absorption_coefficient_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_ff_RJ_absorption_coefficient_cgs</span><span class="p">)</span>
+
+<span class="n">_ff_cooling_time_coefficient_cgs</span> <span class="o">=</span> <span class="p">(</span><span class="mf">4.6e5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+<span class="n">_log_ff_cooling_time_coefficient_cgs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_ff_cooling_time_coefficient_cgs</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Low-Level Backend for Free-Free Core</span>
+<span class="c1"># =============================================== #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_emissivity</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the thermal free–free emissivity (exact form).</span>
+
+<span class="sd">    Evaluates the logarithm of the Rybicki &amp; Lightman bremsstrahlung</span>
+<span class="sd">    emissivity formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu =</span>
+<span class="sd">        C_{\rm ff}\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        e^{-h\nu / k_B T}\,</span>
+<span class="sd">        g_{\rm ff}</span>
+
+<span class="sd">    where :math:`C_{ff} = 6.8 \times 10^{-38}` CGS and :math:`g_{ff}` is the</span>
+<span class="sd">    velocity-averaged free–free Gaunt factor.  All inputs are expected in</span>
+<span class="sd">    **natural-log CGS** form to exploit the log-linear structure of the</span>
+<span class="sd">    expression and avoid numerical overflow across wide dynamic ranges.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_jnu : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the emissivity</span>
+<span class="sd">        :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_absorption : Corresponding absorption coefficient backend.</span>
+<span class="sd">    _log_ff_RJ_emissivity : Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    _log_ff_Wien_emissivity : Wien limit (:math:`h\nu \gg k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Recover the linear frequency and temperature for the exponential cutoff.</span>
+    <span class="c1"># All other terms remain in log-space.</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_nu</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># Dimensionless exponent −hν / k_B T</span>
+    <span class="n">exp_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">h_cgs</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB_cgs</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_emissivity_coefficient_cgs</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">log_n_e</span>
+        <span class="o">+</span> <span class="n">log_n_i</span>
+        <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_T</span>
+        <span class="o">+</span> <span class="n">exp_term</span>  <span class="c1"># log(exp(−hν/kT)) = −hν/kT</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_absorption</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the thermal free–free absorption coefficient (exact form).</span>
+
+<span class="sd">    Evaluates the logarithm of the bremsstrahlung absorption coefficient:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu =</span>
+<span class="sd">        C_\alpha\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        \nu^{-3}\,</span>
+<span class="sd">        \bigl(1 - e^{-h\nu / k_B T}\bigr)\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    where :math:`C_\alpha = 3.7 \times 10^{8}` CGS.  The factor</span>
+<span class="sd">    :math:`(1 - e^{-h\nu/k_B T})` enforces detailed balance between</span>
+<span class="sd">    emission and absorption (Kirchhoff&#39;s law).  It is computed via</span>
+<span class="sd">    :func:`numpy.log1p` to avoid catastrophic cancellation near</span>
+<span class="sd">    :math:`x = h\nu / k_B T \to 0`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_alpha : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The factor :math:`\log(1 - e^{-h\nu/k_B T})` is evaluated as</span>
+<span class="sd">    ``numpy.log1p(-numpy.exp(-h*nu/(k_B*T)))`` rather than the naive form</span>
+<span class="sd">    to preserve precision when :math:`h\nu \ll k_B T`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_emissivity : Corresponding emissivity backend.</span>
+<span class="sd">    _log_ff_RJ_absorption : Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    _log_ff_Wien_absorption : Wien limit (:math:`h\nu \gg k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_nu</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># Exponential argument −hν / k_B T (always ≤ 0)</span>
+    <span class="n">exp_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">h_cgs</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB_cgs</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_absorption_coefficient_cgs</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">log_n_e</span>
+        <span class="o">+</span> <span class="n">log_n_i</span>
+        <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_T</span>
+        <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">log_nu</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">exp_term</span><span class="p">))</span>  <span class="c1"># log(1 − exp(−hν/kT)), numerically stable</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_RJ_emissivity</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Rayleigh–Jeans free–free emissivity.</span>
+
+<span class="sd">    In the **Rayleigh–Jeans limit** :math:`h\nu \ll k_B T` the exponential</span>
+<span class="sd">    suppression factor satisfies :math:`e^{-h\nu/k_B T} \approx 1`, so the</span>
+<span class="sd">    emissivity simplifies to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu^{\rm RJ} =</span>
+<span class="sd">        C_{\rm ff}\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        g_{\rm ff}</span>
+
+<span class="sd">    i.e.\ it is **independent of frequency** and has a shallower temperature</span>
+<span class="sd">    dependence than the full expression.  This approximation is appropriate for</span>
+<span class="sd">    radio and microwave frequencies in hot (:math:`T \gtrsim 10^4` K) plasmas.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">        Accepted for API consistency but not used in the computation.</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_jnu : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the emissivity</span>
+<span class="sd">        :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The ``log_nu`` argument is accepted for interface consistency but is not</span>
+<span class="sd">    used in the computation.  This makes it safe to swap between</span>
+<span class="sd">    :func:`_log_ff_emissivity` and :func:`_log_ff_RJ_emissivity` without</span>
+<span class="sd">    changing the call signature.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_emissivity : Exact form of the emissivity.</span>
+<span class="sd">    _log_ff_RJ_absorption : Matching RJ absorption coefficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># log_nu is not used in the computation (RJ emissivity is frequency-independent),</span>
+    <span class="c1"># but we broadcast against it so the output shape matches the input shape of nu.</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_emissivity_coefficient_cgs</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">log_n_e</span>
+        <span class="o">+</span> <span class="n">log_n_i</span>
+        <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_T</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_RJ_absorption</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Rayleigh–Jeans free–free absorption coefficient.</span>
+
+<span class="sd">    In the **Rayleigh–Jeans limit** :math:`h\nu \ll k_B T`, the stimulated-</span>
+<span class="sd">    emission factor satisfies</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        1 - e^{-h\nu / k_B T} \approx \frac{h\nu}{k_B T}</span>
+
+<span class="sd">    and the absorption coefficient reduces to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu^{\rm RJ} \propto</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-3/2}\,</span>
+<span class="sd">        \nu^{-2}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    This is the classical **radio opacity** scaling commonly quoted for</span>
+<span class="sd">    HII regions and radio-emitting plasma shells.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_alpha : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Compared with :func:`_log_ff_absorption`, the temperature exponent changes</span>
+<span class="sd">    from :math:`-1/2` to :math:`-3/2` and the frequency exponent from</span>
+<span class="sd">    :math:`-3` to :math:`-2`, reflecting the substitution</span>
+<span class="sd">    :math:`(1 - e^{-h\nu/k_B T}) \to h\nu / k_B T`.  The :math:`h/k_B`</span>
+<span class="sd">    prefactor is absorbed into :data:`_ff_absorption_coefficient_cgs`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_absorption : Exact form of the absorption coefficient.</span>
+<span class="sd">    _log_ff_RJ_emissivity : Matching RJ emissivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_RJ_absorption_coefficient_cgs</span>
+        <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">log_n_e</span>
+        <span class="o">+</span> <span class="n">log_n_i</span>
+        <span class="o">-</span> <span class="mf">1.5</span> <span class="o">*</span> <span class="n">log_T</span>
+        <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">log_nu</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_emissivity_comp</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">gffs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the exact free–free emissivity for a multi-species plasma.</span>
+
+<span class="sd">    Computes the composition-weighted effective Gaunt factor</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    and evaluates the log-emissivity as if :math:`Z = 1` with</span>
+<span class="sd">    :math:`g_{\rm ff} = g_{\rm ff,eff}`, reproducing the full multi-species sum</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu = C_{\rm ff}\, n_e\, n_i\, T^{-1/2}\, e^{-h\nu/k_B T}\,</span>
+<span class="sd">                \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the total ion number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature [K].</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species (:math:`Z_i \geq 1`).</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    gffs : ~numpy.ndarray</span>
+<span class="sd">        Pre-computed free–free Gaunt factor for each species (dimensionless).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_jnu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the emissivity</span>
+<span class="sd">        :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_emissivity : Single-species exact emissivity.</span>
+<span class="sd">    _log_ff_absorption_comp : Composition-weighted exact absorption coefficient.</span>
+<span class="sd">    _log_ff_RJ_emissivity_comp : Composition-weighted Rayleigh–Jeans emissivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Xs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must have the same shape; got </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Zs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must be 1-D arrays; got shape </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">gffs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_log_ff_emissivity</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_n_e</span><span class="p">,</span> <span class="n">log_n_i</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_absorption_comp</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">gffs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the exact free–free absorption coefficient for a multi-species plasma.</span>
+
+<span class="sd">    Computes the composition-weighted effective Gaunt factor</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    and evaluates the log-absorption coefficient as if :math:`Z = 1` with</span>
+<span class="sd">    :math:`g_{\rm ff} = g_{\rm ff,eff}`, reproducing</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu = C_\alpha\, n_e\, n_i\, T^{-1/2}\, \nu^{-3}\,</span>
+<span class="sd">                     (1 - e^{-h\nu/k_B T})\,</span>
+<span class="sd">                     \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the total ion number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature [K].</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species (:math:`Z_i \geq 1`).</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    gffs : ~numpy.ndarray</span>
+<span class="sd">        Pre-computed free–free Gaunt factor for each species (dimensionless).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_alpha : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_absorption : Single-species exact absorption coefficient.</span>
+<span class="sd">    _log_ff_emissivity_comp : Composition-weighted exact emissivity.</span>
+<span class="sd">    _log_ff_RJ_absorption_comp : Composition-weighted Rayleigh–Jeans absorption.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Xs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must have the same shape; got </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Zs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must be 1-D arrays; got shape </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">gffs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_log_ff_absorption</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_n_e</span><span class="p">,</span> <span class="n">log_n_i</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_RJ_emissivity_comp</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">gffs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Rayleigh–Jeans free–free emissivity for a multi-species plasma.</span>
+
+<span class="sd">    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of</span>
+<span class="sd">    :func:`_log_ff_emissivity_comp`.  Computes</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    and evaluates :func:`_log_ff_RJ_emissivity` with :math:`Z = 1` and</span>
+<span class="sd">    :math:`g_{\rm ff} = g_{\rm ff,eff}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the total ion number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature [K].</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species (:math:`Z_i \geq 1`).</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    gffs : ~numpy.ndarray</span>
+<span class="sd">        Pre-computed free–free Gaunt factor for each species (dimensionless).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_jnu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the RJ emissivity</span>
+<span class="sd">        :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_RJ_emissivity : Single-species RJ emissivity.</span>
+<span class="sd">    _log_ff_emissivity_comp : Composition-weighted exact emissivity.</span>
+<span class="sd">    _log_ff_RJ_absorption_comp : Composition-weighted RJ absorption coefficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Xs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must have the same shape; got </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Zs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must be 1-D arrays; got shape </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">gffs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_log_ff_RJ_emissivity</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_n_e</span><span class="p">,</span> <span class="n">log_n_i</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_RJ_absorption_comp</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">gffs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.</span>
+
+<span class="sd">    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of</span>
+<span class="sd">    :func:`_log_ff_absorption_comp`.  Computes</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    and evaluates :func:`_log_ff_RJ_absorption` with :math:`Z = 1` and</span>
+<span class="sd">    :math:`g_{\rm ff} = g_{\rm ff,eff}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the total ion number density [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature [K].</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species (:math:`Z_i \geq 1`).</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    gffs : ~numpy.ndarray</span>
+<span class="sd">        Pre-computed free–free Gaunt factor for each species (dimensionless).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_alpha : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the RJ absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_RJ_absorption : Single-species RJ absorption coefficient.</span>
+<span class="sd">    _log_ff_absorption_comp : Composition-weighted exact absorption coefficient.</span>
+<span class="sd">    _log_ff_RJ_emissivity_comp : Composition-weighted RJ emissivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Xs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must have the same shape; got </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Zs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must be 1-D arrays; got shape </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">gffs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_log_ff_RJ_absorption</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_n_e</span><span class="p">,</span> <span class="n">log_n_i</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_Wien_emissivity</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Wien-limit free–free emissivity.</span>
+
+<span class="sd">    In the **Wien limit** :math:`h\nu \gg k_B T` the emissivity is dominated by</span>
+<span class="sd">    the exponential Boltzmann factor:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu^{\rm Wien} =</span>
+<span class="sd">        C_{ff}\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        e^{-h\nu / k_B T}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    .. note::</span>
+
+<span class="sd">        This expression is mathematically **identical** to the exact form</span>
+<span class="sd">        computed by :func:`_log_ff_emissivity`.  This backend exists as a</span>
+<span class="sd">        separate dispatch target so that higher-level code can select the</span>
+<span class="sd">        Wien approximation explicitly without sacrificing readability.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_jnu : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the emissivity</span>
+<span class="sd">        :math:`j_\nu^{\rm Wien}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_emissivity : Exact (and numerically equivalent) form.</span>
+<span class="sd">    _log_ff_Wien_absorption : Matching Wien absorption coefficient.</span>
+<span class="sd">    _log_ff_RJ_emissivity : Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_nu</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="n">exp_term</span> <span class="o">=</span> <span class="o">-</span><span class="n">h_cgs</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="n">kB_cgs</span> <span class="o">*</span> <span class="n">T</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_emissivity_coefficient_cgs</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_n_e</span> <span class="o">+</span> <span class="n">log_n_i</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_T</span> <span class="o">+</span> <span class="n">exp_term</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_Wien_absorption</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the Wien-limit free–free absorption coefficient.</span>
+
+<span class="sd">    In the **Wien limit** :math:`h\nu \gg k_B T`, the stimulated-emission</span>
+<span class="sd">    correction satisfies</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        1 - e^{-h\nu / k_B T} \approx 1</span>
+
+<span class="sd">    and the absorption coefficient reduces to</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu^{\rm Wien} =</span>
+<span class="sd">        C_\alpha\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        \nu^{-3}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    This is appropriate for X-ray and gamma-ray frequencies where stimulated</span>
+<span class="sd">    emission is negligible.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photon frequency :math:`\nu` [Hz].</span>
+<span class="sd">    log_n_e : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron number density :math:`n_e`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    log_n_i : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i`</span>
+<span class="sd">        [cm\ :sup:`-3`].</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    log_T : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    g_ff : float or ~numpy.ndarray</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_alpha : float or :class:`~numpy.ndarray`</span>
+<span class="sd">        Natural logarithm of the absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu^{\rm Wien}` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Compared with :func:`_log_ff_absorption`, this form omits the</span>
+<span class="sd">    :math:`\log(1 - e^{-h\nu/k_B T})` term (set to zero, i.e.\ the factor is</span>
+<span class="sd">    treated as unity), giving a shallower frequency dependence than the full</span>
+<span class="sd">    expression in the optically thin limit.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_absorption : Exact form valid at all frequencies.</span>
+<span class="sd">    _log_ff_Wien_emissivity : Matching Wien emissivity.</span>
+<span class="sd">    _log_ff_RJ_absorption : Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">_log_ff_absorption_coefficient_cgs</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_n_e</span> <span class="o">+</span> <span class="n">log_n_i</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">log_T</span> <span class="o">-</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">log_nu</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="p">)</span>
+
+
+<span class="c1"># ---------------------------------------------- #</span>
+<span class="c1"># Miscellaneous Functions</span>
+<span class="c1"># ---------------------------------------------- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_cooling_time</span><span class="p">(</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the thermal free–free cooling time.</span>
+
+<span class="sd">    Evaluates</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        t_{\rm cool} = C_{\rm cool}\,</span>
+<span class="sd">        \left(\frac{T}{10^4\,\mathrm{K}}\right)^{1/2}</span>
+<span class="sd">        \frac{1}{n_i\, Z^2\, \bar{g}_{\rm ff}}</span>
+
+<span class="sd">    where :math:`C_{\rm cool} = 4.6 \times 10^5\,\mathrm{yr}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_n_i : float or array_like</span>
+<span class="sd">        Natural logarithm of the ion number density :math:`n_i` [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or array_like</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    Z : float or array_like</span>
+<span class="sd">        Mean ionic charge :math:`Z` (dimensionless, must be positive).</span>
+<span class="sd">    g_ff : float or array_like</span>
+<span class="sd">        Frequency-averaged free–free Gaunt factor (dimensionless, must be positive).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_t : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the cooling time :math:`t_{\rm cool}` [s].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_cooling_time_comp : Composition-weighted variant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_ff_cooling_time_coefficient_cgs</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_T</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e4</span><span class="p">))</span> <span class="o">-</span> <span class="n">log_n_i</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">g_ff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="k">else</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_ff_cooling_time_comp</span><span class="p">(</span>
+    <span class="n">log_n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _ArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">gffs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Natural logarithm of the thermal free–free cooling time for a multi-species plasma.</span>
+
+<span class="sd">    Computes the composition-weighted effective Gaunt factor</span>
+<span class="sd">    :math:`g_{\rm ff,eff} = \sum_i Z_i^2\, x_i\, \bar{g}_{{\rm ff},i}` and</span>
+<span class="sd">    delegates to :func:`_log_ff_cooling_time` with :math:`Z = 1`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_n_i : float or array_like</span>
+<span class="sd">        Natural logarithm of the total ion number density :math:`n_i` [cm\ :sup:`-3`].</span>
+<span class="sd">    log_T : float or array_like</span>
+<span class="sd">        Natural logarithm of the electron temperature :math:`T` [K].</span>
+<span class="sd">    Zs : (N,) array_like</span>
+<span class="sd">        Ionic charge numbers of each species.</span>
+<span class="sd">    Xs : (N,) array_like</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    gffs : (N,) array_like</span>
+<span class="sd">        Frequency-averaged Gaunt factor for each species (dimensionless).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_t : float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the cooling time :math:`t_{\rm cool}` [s].</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    ValueError</span>
+<span class="sd">        If ``Zs``, ``Xs``, and ``gffs`` do not all have the same 1-D shape.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    _log_ff_cooling_time : Single-species variant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">gffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">Xs</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must have the same shape; got </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">Xs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">gffs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">Zs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Zs, Xs, and gffs must be 1-D arrays; got shape </span><span class="si">{</span><span class="n">Zs</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+    <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">gffs</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_log_ff_cooling_time</span><span class="p">(</span><span class="n">log_n_i</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Public Functions for Free-Free</span>
+<span class="c1"># =============================================== #</span>
+<div class="viewcode-block" id="compute_ff_emissivity">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_emissivity.html#trilobite.radiation.free_free.core.compute_ff_emissivity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_emissivity</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lu&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thermal free–free (bremsstrahlung) spectral emissivity.</span>
+
+<span class="sd">    Computes the monochromatic bremsstrahlung emissivity of a fully-ionized</span>
+<span class="sd">    thermal plasma using the Rybicki &amp; Lightman formula:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu =</span>
+<span class="sd">        C_{ff}\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        e^{-h\nu / k_B T}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    where :math:`C_{ff} = 6.8 \times 10^{-38}` CGS (integrated over the</span>
+<span class="sd">    solid angle :math:`4\pi` for isotropic emission) and :math:`g_{ff}` is the</span>
+<span class="sd">    velocity-averaged free–free Gaunt factor.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density :math:`n_e`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Ion number density :math:`n_i`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge (dimensionless).  For hydrogen plasma, ``Z = 1``.</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.</span>
+<span class="sd">    g_ff : float, ~numpy.ndarray, or None, optional</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless).  If ``None`` (default), the</span>
+<span class="sd">        Gaunt factor is computed automatically via ``approx``.  Pass a scalar</span>
+<span class="sd">        or array to override.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Approximation method forwarded to</span>
+<span class="sd">        :func:`~.gaunt_factor.compute_ff_gaunt_factor` when ``g_ff`` is</span>
+<span class="sd">        ``None``.  Default is ``&#39;lu&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    j_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Monochromatic emissivity</span>
+<span class="sd">        :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The Gaunt factor :math:`g_{ff}` varies weakly with frequency and</span>
+<span class="sd">    temperature; :footcite:t:`RybickiLightman` tabulate values and discuss</span>
+<span class="sd">    limiting forms.  For many practical applications a constant value</span>
+<span class="sd">    :math:`g_{ff} \approx 1`–\ :math:`5` is adequate.</span>
+
+<span class="sd">    The computation is performed in log-space via :func:`_log_ff_emissivity` to</span>
+<span class="sd">    ensure numerical stability at extreme frequencies or densities.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Emissivity of a hot coronal plasma at 1 GHz:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_emissivity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        j = compute_ff_emissivity(</span>
+<span class="sd">            nu=1e9 * u.Hz,</span>
+<span class="sd">            n_e=1e3 * u.cm**-3,</span>
+<span class="sd">            n_i=1e3 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e6 * u.K,</span>
+<span class="sd">        )</span>
+<span class="sd">        print(j.to(u.erg / u.s / u.cm**3 / u.Hz / u.sr))</span>
+
+<span class="sd">    Vectorised over a frequency array:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        nu_arr = np.geomspace(1e8, 1e15, 200) * u.Hz</span>
+<span class="sd">        j_arr = compute_ff_emissivity(</span>
+<span class="sd">            nu=nu_arr,</span>
+<span class="sd">            n_e=1e4 * u.cm**-3,</span>
+<span class="sd">            n_i=1e4 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e4 * u.K,</span>
+<span class="sd">        )</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_absorption : Free–free absorption coefficient for the same plasma.</span>
+<span class="sd">    compute_ff_RJ_emissivity : Fast Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff</span> <span class="o">=</span> <span class="n">compute_ff_gaunt_factor</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+
+    <span class="n">log_j</span> <span class="o">=</span> <span class="n">_log_ff_emissivity</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span>
+        <span class="n">Z</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
+        <span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_absorption">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_absorption.html#trilobite.radiation.free_free.core.compute_ff_absorption">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_absorption</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lu&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Thermal free–free (bremsstrahlung) absorption coefficient.</span>
+
+<span class="sd">    Computes the monochromatic free–free absorption coefficient:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu =</span>
+<span class="sd">        C_\alpha\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        \nu^{-3}\,</span>
+<span class="sd">        \bigl(1 - e^{-h\nu / k_B T}\bigr)\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    where :math:`C_\alpha = 3.7 \times 10^8` CGS.  The factor</span>
+<span class="sd">    :math:`(1 - e^{-h\nu/k_B T})` encodes detailed balance and approaches</span>
+<span class="sd">    :math:`h\nu / k_B T` in the Rayleigh–Jeans limit and unity in the Wien</span>
+<span class="sd">    limit.</span>
+
+<span class="sd">    The **free–free optical depth** along a line of sight of depth :math:`L` is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \tau_{\rm ff} = \int_0^L \alpha_\nu(l)\, dl \approx \alpha_\nu\, L</span>
+
+<span class="sd">    so sources with :math:`\tau_{\rm ff} \gg 1` appear as optically thick</span>
+<span class="sd">    emitters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density :math:`n_e`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Ion number density :math:`n_i`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge (dimensionless).</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.</span>
+<span class="sd">    g_ff : float, ~numpy.ndarray, or None, optional</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless).  If ``None`` (default),</span>
+<span class="sd">        computed automatically via ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Approximation method forwarded to</span>
+<span class="sd">        :func:`~.gaunt_factor.compute_ff_gaunt_factor` when ``g_ff`` is</span>
+<span class="sd">        ``None``.  Default is ``&#39;lu&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alpha_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Absorption coefficient :math:`\alpha_\nu` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The stimulated-emission factor :math:`(1 - e^{-h\nu/k_B T})` is evaluated</span>
+<span class="sd">    via :func:`numpy.log1p` in the log-space backend to avoid catastrophic</span>
+<span class="sd">    cancellation at low frequencies where :math:`h\nu / k_B T \ll 1`.</span>
+
+<span class="sd">    Use :func:`compute_ff_RJ_absorption` when the Rayleigh–Jeans condition</span>
+<span class="sd">    :math:`h\nu \ll k_B T` is firmly satisfied, as it is both faster and</span>
+<span class="sd">    avoids the numerical subtlety entirely.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Absorption coefficient of a dense, cool nebula at 5 GHz:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_absorption,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        alpha = compute_ff_absorption(</span>
+<span class="sd">            nu=5e9 * u.Hz,</span>
+<span class="sd">            n_e=1e4 * u.cm**-3,</span>
+<span class="sd">            n_i=1e4 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e4 * u.K,</span>
+<span class="sd">        )</span>
+<span class="sd">        print(alpha.to(u.cm**-1))</span>
+
+<span class="sd">    Estimating the turnover frequency where :math:`\alpha_\nu L = 1`:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_absorption,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        nu_arr = np.geomspace(1e8, 1e12, 300) * u.Hz</span>
+<span class="sd">        alpha_arr = compute_ff_absorption(</span>
+<span class="sd">            nu=nu_arr,</span>
+<span class="sd">            n_e=1e5 * u.cm**-3,</span>
+<span class="sd">            n_i=1e5 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e4 * u.K,</span>
+<span class="sd">        )</span>
+<span class="sd">        L = 1e17 * u.cm  # depth of the shell</span>
+<span class="sd">        tau = (alpha_arr * L).decompose()</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_emissivity : Corresponding spectral emissivity.</span>
+<span class="sd">    compute_ff_RJ_absorption : Rayleigh–Jeans approximation (:math:`h\nu \ll k_B T`).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff</span> <span class="o">=</span> <span class="n">compute_ff_gaunt_factor</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+
+    <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_log_ff_absorption</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span>
+        <span class="n">Z</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
+        <span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_RJ_emissivity">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_emissivity.html#trilobite.radiation.free_free.core.compute_ff_RJ_emissivity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_RJ_emissivity</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;draine&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rayleigh–Jeans limit free–free spectral emissivity.</span>
+
+<span class="sd">    Valid when :math:`h\nu \ll k_B T` (i.e.\ radio through sub-mm frequencies</span>
+<span class="sd">    for plasmas with :math:`T \gtrsim 10^4` K), this approximation drops the</span>
+<span class="sd">    exponential suppression factor:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu^{\rm RJ} =</span>
+<span class="sd">        C_{ff}\,</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-1/2}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    The emissivity is then **frequency-independent** (flat spectrum) and scales</span>
+<span class="sd">    as :math:`T^{-1/2}`.  This is the appropriate form for fast evaluations of</span>
+<span class="sd">    radio bremsstrahlung in hydrodynamical simulations or radiative transfer</span>
+<span class="sd">    codes.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Accepted for interface consistency with</span>
+<span class="sd">        :func:`compute_ff_emissivity` but **not used** in the computation.</span>
+<span class="sd">        Bare floats are assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density :math:`n_e`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Ion number density :math:`n_i`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge (dimensionless).</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.</span>
+<span class="sd">    g_ff : float, ~numpy.ndarray, or None, optional</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless).  If ``None`` (default),</span>
+<span class="sd">        computed automatically using the frequency-averaged approximation</span>
+<span class="sd">        selected by ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Approximation method forwarded to</span>
+<span class="sd">        :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor` when ``g_ff`` is</span>
+<span class="sd">        ``None``.  Default is ``&#39;draine&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    j_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Emissivity</span>
+<span class="sd">        :math:`j_\nu^{\rm RJ}` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The Rayleigh–Jeans condition is satisfied when</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{h\nu}{k_B T} \ll 1</span>
+<span class="sd">        \quad\Longleftrightarrow\quad</span>
+<span class="sd">        \nu \ll \frac{k_B T}{h}</span>
+<span class="sd">        \approx 2.08 \times 10^{10}\,\frac{T}{1\,\mathrm{K}}\;\mathrm{Hz}</span>
+
+<span class="sd">    For :math:`T = 10^4` K this limits the approximation to</span>
+<span class="sd">    :math:`\nu \lesssim 2 \times 10^{14}` Hz.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Compare the exact and RJ emissivities to verify the approximation:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_emissivity,</span>
+<span class="sd">            compute_ff_RJ_emissivity,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        nu = (</span>
+<span class="sd">            1e9 * u.Hz</span>
+<span class="sd">        )  # 1 GHz — safely in the RJ regime for T = 1e4 K</span>
+<span class="sd">        n_e = n_i = 1e3 * u.cm**-3</span>
+<span class="sd">        T = 1e4 * u.K</span>
+
+<span class="sd">        j_exact = compute_ff_emissivity(</span>
+<span class="sd">            nu=nu, n_e=n_e, n_i=n_i, Z=1, T=T</span>
+<span class="sd">        )</span>
+<span class="sd">        j_rj = compute_ff_RJ_emissivity(</span>
+<span class="sd">            nu=nu, n_e=n_e, n_i=n_i, Z=1, T=T</span>
+<span class="sd">        )</span>
+
+<span class="sd">        print(f&quot;Exact : {j_exact:.3e}&quot;)</span>
+<span class="sd">        print(f&quot;RJ    : {j_rj:.3e}&quot;)</span>
+<span class="sd">        print(</span>
+<span class="sd">            f&quot;Ratio : {(j_rj / j_exact).decompose():.6f}&quot;</span>
+<span class="sd">        )  # should be ≈ 1</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_emissivity : Exact emissivity valid at all frequencies.</span>
+<span class="sd">    compute_ff_RJ_absorption : Matching RJ absorption coefficient.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff</span> <span class="o">=</span> <span class="n">compute_mean_ff_gaunt_factor</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+
+    <span class="n">log_j</span> <span class="o">=</span> <span class="n">_log_ff_RJ_emissivity</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span>
+        <span class="n">Z</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
+        <span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_RJ_absorption">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_absorption.html#trilobite.radiation.free_free.core.compute_ff_RJ_absorption">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_RJ_absorption</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Z</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="p">:</span> <span class="s2">&quot;Union[float, np.ndarray, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;draine&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Rayleigh–Jeans limit free–free absorption coefficient.</span>
+
+<span class="sd">    Valid when :math:`h\nu \ll k_B T`, the stimulated-emission correction</span>
+<span class="sd">    simplifies to :math:`(1 - e^{-h\nu/k_B T}) \approx h\nu / k_B T` and</span>
+<span class="sd">    the absorption coefficient becomes</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu^{\rm RJ} \propto</span>
+<span class="sd">        Z^2\, n_e\, n_i\,</span>
+<span class="sd">        T^{-3/2}\,</span>
+<span class="sd">        \nu^{-2}\,</span>
+<span class="sd">        g_{ff}</span>
+
+<span class="sd">    This is the standard **radio bremsstrahlung opacity** scaling: steep</span>
+<span class="sd">    frequency dependence (:math:`\nu^{-2}`) and a stronger inverse temperature</span>
+<span class="sd">    dependence (:math:`T^{-3/2}`) than the exact form.  HII regions, radio</span>
+<span class="sd">    supernovae shells, and cool stellar coronae are often modelled with this</span>
+<span class="sd">    approximation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats are assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density :math:`n_e`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Ion number density :math:`n_i`.</span>
+<span class="sd">        Bare floats are assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    Z : float or ~numpy.ndarray</span>
+<span class="sd">        Mean ionic charge (dimensionless).</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature :math:`T`.  Bare floats are assumed to be in **K**.</span>
+<span class="sd">    g_ff : float, ~numpy.ndarray, or None, optional</span>
+<span class="sd">        Free–free Gaunt factor (dimensionless).  If ``None`` (default),</span>
+<span class="sd">        computed automatically using the frequency-averaged approximation</span>
+<span class="sd">        selected by ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Approximation method forwarded to</span>
+<span class="sd">        :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor` when ``g_ff`` is</span>
+<span class="sd">        ``None``.  Default is ``&#39;draine&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alpha_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Absorption coefficient</span>
+<span class="sd">        :math:`\alpha_\nu^{\rm RJ}` [cm\ :sup:`-1`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The free–free **turnover frequency** :math:`\nu_{\rm ff}` at which</span>
+<span class="sd">    :math:`\tau_{\rm ff} = \alpha_\nu^{\rm RJ} L = 1` scales as</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \nu_{\rm ff} \propto \bigl(n_e^2\, L\, T^{-3/2}\bigr)^{1/2}</span>
+
+<span class="sd">    (the emission measure :math:`{\rm EM} = n_e^2 L` sets the optical depth).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Absorption in a supernova radio shell at 1 GHz:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_RJ_absorption,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        alpha = compute_ff_RJ_absorption(</span>
+<span class="sd">            nu=1e9 * u.Hz,</span>
+<span class="sd">            n_e=1e5 * u.cm**-3,</span>
+<span class="sd">            n_i=1e5 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e4 * u.K,</span>
+<span class="sd">        )</span>
+<span class="sd">        print(alpha.to(u.cm**-1))</span>
+
+<span class="sd">    Frequency dependence of the optical depth for a fixed shell:</span>
+
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        import numpy as np</span>
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from trilobite.radiation.free_free.core import (</span>
+<span class="sd">            compute_ff_RJ_absorption,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        nu_arr = np.geomspace(1e8, 1e11, 200) * u.Hz</span>
+<span class="sd">        alpha_arr = compute_ff_RJ_absorption(</span>
+<span class="sd">            nu=nu_arr,</span>
+<span class="sd">            n_e=1e4 * u.cm**-3,</span>
+<span class="sd">            n_i=1e4 * u.cm**-3,</span>
+<span class="sd">            Z=1,</span>
+<span class="sd">            T=1e4 * u.K,</span>
+<span class="sd">        )</span>
+<span class="sd">        L_shell = 1e16 * u.cm</span>
+<span class="sd">        tau_arr = (</span>
+<span class="sd">            alpha_arr * L_shell</span>
+<span class="sd">        ).decompose()  # optical depth vs frequency</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_absorption : Exact absorption valid at all frequencies.</span>
+<span class="sd">    compute_ff_RJ_emissivity : Matching RJ emissivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ff</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff</span> <span class="o">=</span> <span class="n">compute_mean_ff_gaunt_factor</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+
+    <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_log_ff_RJ_absorption</span><span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span>
+        <span class="n">Z</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span>
+        <span class="n">g_ff</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Composition-weighted public wrappers            #</span>
+<span class="c1"># =============================================== #</span>
+<div class="viewcode-block" id="compute_ff_emissivity_comp">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_emissivity_comp.html#trilobite.radiation.free_free.core.compute_ff_emissivity_comp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_emissivity_comp</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">g_ffs</span><span class="p">:</span> <span class="s2">&quot;Union[_ArrayLike, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lu&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Thermal free–free emissivity for a multi-species plasma.</span>
+
+<span class="sd">    Computes</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        j_\nu = C_{\rm ff}\, n_e\, n_i\, T^{-1/2}\, e^{-h\nu/k_B T}\,</span>
+<span class="sd">                \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature.  Bare floats assumed to be in **K**.</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species.</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    g_ffs : ~numpy.ndarray or None, optional</span>
+<span class="sd">        Pre-computed per-species Gaunt factors.  If ``None`` (default),</span>
+<span class="sd">        computed via ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Forwarded to :func:`~.gaunt_factor.compute_ff_gaunt_factor_comp`</span>
+<span class="sd">        when ``g_ffs`` is ``None``.  Default is ``&#39;lu&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    j_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_emissivity : Single-species variant.</span>
+<span class="sd">    compute_ff_absorption_comp : Composition-weighted absorption coefficient.</span>
+<span class="sd">    compute_ff_RJ_emissivity_comp : Rayleigh–Jeans variant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">compute_ff_gaunt_factor_comp</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">Xs</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g_ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">g_ffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">g_ffs</span><span class="p">)</span>
+
+    <span class="n">log_j</span> <span class="o">=</span> <span class="n">_log_ff_emissivity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_absorption_comp">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_absorption_comp.html#trilobite.radiation.free_free.core.compute_ff_absorption_comp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_absorption_comp</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">g_ffs</span><span class="p">:</span> <span class="s2">&quot;Union[_ArrayLike, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;lu&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Thermal free–free absorption coefficient for a multi-species plasma.</span>
+
+<span class="sd">    Computes</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \alpha_\nu = C_\alpha\, n_e\, n_i\, T^{-1/2}\, \nu^{-3}\,</span>
+<span class="sd">                     (1 - e^{-h\nu/k_B T})\,</span>
+<span class="sd">                     \sum_i Z_i^2\, x_i\, g_{{\rm ff},i}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature.  Bare floats assumed to be in **K**.</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species.</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    g_ffs : ~numpy.ndarray or None, optional</span>
+<span class="sd">        Pre-computed per-species Gaunt factors.  If ``None`` (default),</span>
+<span class="sd">        computed via ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Forwarded to :func:`~.gaunt_factor.compute_ff_gaunt_factor_comp`</span>
+<span class="sd">        when ``g_ffs`` is ``None``.  Default is ``&#39;lu&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alpha_nu : ~astropy.units.Quantity</span>
+<span class="sd">        Absorption coefficient [cm\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_absorption : Single-species variant.</span>
+<span class="sd">    compute_ff_emissivity_comp : Composition-weighted emissivity.</span>
+<span class="sd">    compute_ff_RJ_absorption_comp : Rayleigh–Jeans variant.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">compute_ff_gaunt_factor_comp</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">Xs</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g_ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">g_ffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">g_ffs</span><span class="p">)</span>
+
+    <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_log_ff_absorption</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_RJ_emissivity_comp">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_emissivity_comp.html#trilobite.radiation.free_free.core.compute_ff_RJ_emissivity_comp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_RJ_emissivity_comp</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">g_ffs</span><span class="p">:</span> <span class="s2">&quot;Union[_ArrayLike, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;draine&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rayleigh–Jeans free–free emissivity for a multi-species plasma.</span>
+
+<span class="sd">    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of</span>
+<span class="sd">    :func:`compute_ff_emissivity_comp`.  Uses the frequency-averaged Gaunt</span>
+<span class="sd">    factor :math:`\bar{g}_{\rm ff}` by default.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature.  Bare floats assumed to be in **K**.</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species.</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    g_ffs : ~numpy.ndarray or None, optional</span>
+<span class="sd">        Pre-computed per-species Gaunt factors.  If ``None`` (default),</span>
+<span class="sd">        computed via the frequency-averaged ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Forwarded to :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor_comp`</span>
+<span class="sd">        when ``g_ffs`` is ``None``.  Default is ``&#39;draine&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    j_nu : ~astropy.units.Quantity</span>
+<span class="sd">        RJ emissivity [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_RJ_emissivity : Single-species RJ emissivity.</span>
+<span class="sd">    compute_ff_emissivity_comp : Exact composition-weighted emissivity.</span>
+<span class="sd">    compute_ff_RJ_absorption_comp : Composition-weighted RJ absorption.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">compute_mean_ff_gaunt_factor_comp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">Xs</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g_ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">g_ffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">g_ffs</span><span class="p">)</span>
+
+    <span class="n">log_j</span> <span class="o">=</span> <span class="n">_log_ff_RJ_emissivity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_j</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="compute_ff_RJ_absorption_comp">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_absorption_comp.html#trilobite.radiation.free_free.core.compute_ff_RJ_absorption_comp">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_ff_RJ_absorption_comp</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;Union[float, _UnitBearingArrayLike]&quot;</span><span class="p">,</span>
+    <span class="n">Zs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">Xs</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">g_ffs</span><span class="p">:</span> <span class="s2">&quot;Union[_ArrayLike, None]&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">approx</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;draine&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Rayleigh–Jeans free–free absorption coefficient for a multi-species plasma.</span>
+
+<span class="sd">    Rayleigh–Jeans limit (:math:`h\nu \ll k_B T`) of</span>
+<span class="sd">    :func:`compute_ff_absorption_comp`.  Uses the frequency-averaged Gaunt</span>
+<span class="sd">    factor :math:`\bar{g}_{\rm ff}` by default.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Photon frequency :math:`\nu`.  Bare floats assumed to be in **Hz**.</span>
+<span class="sd">    n_e : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    n_i : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Total ion number density.  Bare floats assumed to be in **cm**\ :sup:`-3`.</span>
+<span class="sd">    T : float, ~numpy.ndarray, or ~astropy.units.Quantity</span>
+<span class="sd">        Electron temperature.  Bare floats assumed to be in **K**.</span>
+<span class="sd">    Zs : ~numpy.ndarray</span>
+<span class="sd">        Ionic charge numbers of each species.</span>
+<span class="sd">    Xs : ~numpy.ndarray</span>
+<span class="sd">        Number fractions of each species (:math:`\sum_i x_i = 1`).</span>
+<span class="sd">    g_ffs : ~numpy.ndarray or None, optional</span>
+<span class="sd">        Pre-computed per-species Gaunt factors.  If ``None`` (default),</span>
+<span class="sd">        computed via the frequency-averaged ``approx``.</span>
+<span class="sd">    approx : str, optional</span>
+<span class="sd">        Forwarded to :func:`~.gaunt_factor.compute_mean_ff_gaunt_factor_comp`</span>
+<span class="sd">        when ``g_ffs`` is ``None``.  Default is ``&#39;draine&#39;``.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    alpha_nu : ~astropy.units.Quantity</span>
+<span class="sd">        RJ absorption coefficient [cm\ :sup:`-1`].</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    compute_ff_RJ_absorption : Single-species RJ absorption.</span>
+<span class="sd">    compute_ff_absorption_comp : Exact composition-weighted absorption.</span>
+<span class="sd">    compute_ff_RJ_emissivity_comp : Composition-weighted RJ emissivity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span>
+    <span class="n">n_e</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_e</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">n_i</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">n_i</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">Zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Zs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">Xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Xs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">g_ffs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">compute_mean_ff_gaunt_factor_comp</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">Zs</span><span class="p">,</span> <span class="n">Xs</span><span class="p">,</span> <span class="n">approx</span><span class="o">=</span><span class="n">approx</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">g_ffs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">g_ffs</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">g_ff_eff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Zs</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">Xs</span> <span class="o">*</span> <span class="n">g_ffs</span><span class="p">)</span>
+
+    <span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_log_ff_RJ_absorption</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_e</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">n_i</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="n">g_ff_eff</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_alpha</span><span class="p">)</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

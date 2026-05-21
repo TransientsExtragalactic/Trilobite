@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>FilterBundle: Batched Convolution for MCMC &#8212; Triceratops dev documentation</title>
+    <title>FilterBundle: Batched Convolution for MCMC &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Magnitude Systems: AB, ST, and Filter-Convolved Photometry" href="plot_magnitude_conversions.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -583,7 +583,7 @@ to download the full example code.</p>
 <p>MCMC inference evaluates a forward model millions of times.  If each evaluation must
 convolve a spectral energy distribution through several photometric filters, the per-filter
 loop cost accumulates quickly.</p>
-<p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> solves this by precomputing a
+<p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> solves this by precomputing a
 <strong>weight matrix</strong> <span class="math notranslate nohighlight">\(W\)</span> of shape <code class="docutils literal notranslate"><span class="pre">(N_\mathrm{filters},\,</span> <span class="pre">N_\mathrm{common})</span></code> at
 construction time.  During inference the band-averaged fluxes for <em>all</em> filters reduce to a
 single matrix–vector multiply:</p>
@@ -591,7 +591,7 @@ single matrix–vector multiply:</p>
 \[\mathbf{F}_\mathrm{bands} = W \cdot \mathbf{F}_\nu\]</div>
 <p>This example demonstrates:</p>
 <ol class="arabic simple">
-<li><p>Assembling a <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> from individual filters.</p></li>
+<li><p>Assembling a <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> from individual filters.</p></li>
 <li><p>Inspecting the <strong>common frequency grid</strong> and <strong>weight matrix</strong>.</p></li>
 <li><p>The MCMC-optimised <code class="docutils literal notranslate"><span class="pre">apply()</span></code> workflow vs. the convenience <code class="docutils literal notranslate"><span class="pre">convolve_nu()</span></code> path.</p></li>
 <li><p>Batched evaluation over a time series of SEDs in one call.</p></li>
@@ -600,9 +600,9 @@ single matrix–vector multiply:</p>
 <section id="relevant-api-references">
 <h2>Relevant API references<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.FilterBundle</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.apply.html#triceratops.utils.phot_utils.FilterBundle.apply" title="triceratops.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.FilterBundle.apply()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.convolve_nu.html#triceratops.utils.phot_utils.FilterBundle.convolve_nu" title="triceratops.utils.phot_utils.FilterBundle.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.FilterBundle.convolve_nu()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.FilterBundle</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.apply.html#trilobite.utils.phot_utils.FilterBundle.apply" title="trilobite.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.FilterBundle.apply()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.convolve_nu.html#trilobite.utils.phot_utils.FilterBundle.convolve_nu" title="trilobite.utils.phot_utils.FilterBundle.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.FilterBundle.convolve_nu()</span></code></a></p></li>
 </ul>
 </section>
 <section id="imports">
@@ -613,8 +613,8 @@ single matrix–vector multiply:</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterBundle</span><span class="p">,</span> <span class="n">PhotometryFilter</span><span class="p">,</span> <span class="n">flux_to_ab_mag</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterBundle</span><span class="p">,</span> <span class="n">PhotometryFilter</span><span class="p">,</span> <span class="n">flux_to_ab_mag</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -641,7 +641,7 @@ and add a broad <em>z</em>-band to illustrate overlapping filter ranges.</p>
 </section>
 <section id="constructing-the-filterbundle">
 <h2>Constructing the FilterBundle<a class="headerlink" href="#constructing-the-filterbundle" title="Link to this heading">#</a></h2>
-<p>Passing the dict to <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> triggers
+<p>Passing the dict to <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> triggers
 construction of the common frequency grid and weight matrix.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">bundle</span> <span class="o">=</span> <span class="n">FilterBundle</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">filters</span></a><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
@@ -698,7 +698,7 @@ Obtain the common evaluation grid from the bundle and pre-allocate anything
 that depends only on the filter configuration.</p>
 <p><strong>Inference (called millions of times):</strong>
 Evaluate the SED model on the common grid, then call
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.apply.html#triceratops.utils.phot_utils.FilterBundle.apply" title="triceratops.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> — a pure matrix
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.apply.html#trilobite.utils.phot_utils.FilterBundle.apply" title="trilobite.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> — a pure matrix
 multiply with no interpolation overhead.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Setup phase ---------------------------------------------------------------</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nu_eval</span></a> <span class="o">=</span> <span class="n">bundle</span><span class="o">.</span><span class="n">frequency_grid</span>  <span class="c1"># shape (N_common,) — the grid to evaluate on</span>
@@ -778,9 +778,9 @@ multiply with no interpolation overhead.</p>
 <p>We compare three approaches for a representative MCMC workload
 (1 000 repeated single-SED evaluations):</p>
 <ol class="arabic simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.apply.html#triceratops.utils.phot_utils.FilterBundle.apply" title="triceratops.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> — pure matrix multiply on the common grid.</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.convolve_nu.html#triceratops.utils.phot_utils.FilterBundle.convolve_nu" title="triceratops.utils.phot_utils.FilterBundle.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a> — interpolation + matrix multiply.</p></li>
-<li><p>Explicit Python loop over individual <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> objects.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.apply.html#trilobite.utils.phot_utils.FilterBundle.apply" title="trilobite.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> — pure matrix multiply on the common grid.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.convolve_nu.html#trilobite.utils.phot_utils.FilterBundle.convolve_nu" title="trilobite.utils.phot_utils.FilterBundle.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a> — interpolation + matrix multiply.</p></li>
+<li><p>Explicit Python loop over individual <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> objects.</p></li>
 </ol>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">N_reps</span></a> <span class="o">=</span> <span class="mi">1_000</span>
 <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">F_test</span></a> <span class="o">=</span> <span class="n">power_law_sed</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">nu_eval</span></a><span class="p">,</span> <span class="n">F_ref</span><span class="o">=</span><span class="mf">3.631e-20</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=-</span><span class="mf">0.7</span><span class="p">)</span>
@@ -813,9 +813,9 @@ multiply with no interpolation overhead.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Timing over 1,000 evaluations (4 filters):
-  bundle.apply()       : 3.43 ms  (21.7x faster than loop)
-  bundle.convolve_nu() : 21.47 ms  (3.5x faster than loop)
-  filter loop          : 74.46 ms  (baseline)
+  bundle.apply()       : 3.86 ms  (20.8x faster than loop)
+  bundle.convolve_nu() : 21.47 ms  (3.7x faster than loop)
+  filter loop          : 80.17 ms  (baseline)
 </pre></div>
 </div>
 <p>Visualise the speedup as a bar chart</p>
@@ -844,7 +844,7 @@ multiply with no interpolation overhead.</p>
 This avoids the interpolation cost of <code class="docutils literal notranslate"><span class="pre">convolve_nu()</span></code> and typically delivers
 an order-of-magnitude speedup over per-filter loops.</p>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.535 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.597 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-photometry-plot-filter-bundle-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/d547c099a31362d72234dcb2372f4427/plot_filter_bundle.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_filter_bundle.ipynb</span></code></a></p>

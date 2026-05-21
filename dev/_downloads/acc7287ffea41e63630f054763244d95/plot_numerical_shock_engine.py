@@ -3,7 +3,7 @@ Numerical Thin-Shell Shock Evolution
 ==========================================
 
 This example demonstrates how to use the
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 to model the evolution of a supernova shock expanding into a **non-uniform
 circumstellar medium (CSM)**.
 
@@ -29,20 +29,20 @@ wind into the denser ambient ISM.
 # Setup
 # -----
 #
-# We begin by importing the relevant numerical, plotting, and Triceratops
+# We begin by importing the relevant numerical, plotting, and Trilobite
 # utilities needed for this example.
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
-from triceratops.dynamics.shocks.utils import (
+from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+from trilobite.dynamics.shocks.utils import (
     get_bpl_ejecta_kernel,
     get_truncated_wind_csm_density_func,
     make_homologous_stationary_sources,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 #
@@ -72,7 +72,7 @@ print(f"Wind termination radius: {R_wind.to(u.pc):.2f}")
 # The numerical thin-shell engine requires the CSM density profile to be provided
 # as a **callable function** returning the density in CGS units.
 #
-# Here we use :func:`~triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+# Here we use :func:`~trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
 # to construct a broken profile:
 #
 # - For :math:`r \le R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
@@ -117,9 +117,9 @@ plt.show()
 # Rather than specifying :math:`\rho(r, t)` directly, the thin-shell engine
 # requires the kernel function :math:`G_{\rm ej}(v)`.
 #
-# Triceratops provides helper functions for constructing commonly used ejecta
+# Trilobite provides helper functions for constructing commonly used ejecta
 # profiles. Here we adopt a Chevalier-style broken power-law profile via
-# :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
+# :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
 
 G_ej = get_bpl_ejecta_kernel(
     E_ej=E_ej,
@@ -136,7 +136,7 @@ G_ej = get_bpl_ejecta_kernel(
 # ``(rho_1, u_1, rho_4, u_4)``, representing the upstream ejecta density,
 # ejecta velocity, CSM density, and CSM velocity respectively. For the standard
 # case of homologous ejecta running into a stationary CSM,
-# :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`
+# :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`
 # builds all four from the kernel and the CSM profile:
 #
 # .. math::
@@ -174,7 +174,7 @@ time = np.geomspace(1e-1, 10000, 500) * u.day
 #
 # We now compute the shock properties using the high-level API, which handles
 # unit conversion and validation internally. The result is a
-# :class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` named
+# :class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` named
 # tuple carrying all shock diagnostics as unit-bearing
 # :class:`~astropy.units.Quantity` arrays.
 

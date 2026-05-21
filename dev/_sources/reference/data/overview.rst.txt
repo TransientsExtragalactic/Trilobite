@@ -4,22 +4,22 @@
 Data Loading, Handling, and Visualization
 =========================================
 
-The :mod:`triceratops.data` module is the boundary between raw observational
-data and the Triceratops modeling and inference systems. It provides
+The :mod:`trilobite.data` module is the boundary between raw observational
+data and the Trilobite modeling and inference systems. It provides
 schema-validated, unit-aware containers for every major data type encountered
 in time-domain radio and optical astronomy, and a clean translation layer
 into the numerical representation required by the inference pipeline.
 
 .. tip::
 
-   New to Triceratops data? The fastest route to an inference-ready dataset
+   New to Trilobite data? The fastest route to an inference-ready dataset
    is the step-by-step guide: :ref:`data_to_inference`.
 
 
 How the Data Layer Fits In
 ---------------------------
 
-Every analysis in Triceratops follows the same four-stage pipeline.
+Every analysis in Trilobite follows the same four-stage pipeline.
 The data module owns the first two stages.
 
 .. code-block:: text
@@ -122,22 +122,22 @@ appropriate class.
      - Container
    * - Radio, multiple epochs and frequencies
      - —
-     - :class:`~triceratops.data.photometry.RadioPhotometryContainer`
+     - :class:`~trilobite.data.photometry.RadioPhotometryContainer`
    * - Radio, single epoch, multiple frequencies
      - Time (single epoch)
-     - :class:`~triceratops.data.photometry.RadioPhotometryEpoch`
+     - :class:`~trilobite.data.photometry.RadioPhotometryEpoch`
    * - Radio, single frequency, multiple epochs
      - Frequency (metadata)
-     - :class:`~triceratops.data.light_curve.RadioLightCurveContainer`
+     - :class:`~trilobite.data.light_curve.RadioLightCurveContainer`
    * - Optical, multiple epochs and bands
      - —
-     - :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer`
+     - :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
    * - Optical, single epoch, multiple bands
      - Time (single epoch)
-     - :class:`~triceratops.data.optical_photometry.OpticalPhotometryEpoch`
+     - :class:`~trilobite.data.optical_photometry.OpticalPhotometryEpoch`
    * - Optical, single band, multiple epochs
      - Band (metadata)
-     - :class:`~triceratops.data.light_curve.OpticalLightCurveContainer`
+     - :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`
 
 
 Common Patterns
@@ -154,7 +154,7 @@ are immediately familiar.
 
       .. code-block:: python
 
-          from triceratops.data import RadioPhotometryContainer
+          from trilobite.data import RadioPhotometryContainer
           from astropy import units as u
 
           # From an Astropy Table
@@ -265,7 +265,7 @@ direct inference conversion.
 
 .. dropdown:: RadioPhotometryContainer — multi-epoch, multi-frequency
 
-   :class:`~triceratops.data.photometry.RadioPhotometryContainer` is the
+   :class:`~trilobite.data.photometry.RadioPhotometryContainer` is the
    most general radio container. Each row is one observation at a specific
    time and frequency:
 
@@ -288,7 +288,7 @@ direct inference conversion.
 
 .. dropdown:: RadioPhotometryEpoch — single-epoch SED
 
-   :class:`~triceratops.data.photometry.RadioPhotometryEpoch` stores a
+   :class:`~trilobite.data.photometry.RadioPhotometryEpoch` stores a
    multi-frequency snapshot at a single epoch, where **frequency is the
    independent variable**:
 
@@ -297,14 +297,14 @@ direct inference conversion.
       F_\nu(\nu) \quad \text{at fixed } t
 
    This is the correct container for broadband radio SED fitting at one
-   moment in time. Unlike :class:`~triceratops.data.photometry.RadioPhotometryContainer`,
+   moment in time. Unlike :class:`~trilobite.data.photometry.RadioPhotometryContainer`,
    there is no time column — the epoch is implicit.
 
    Full reference: :ref:`radio_photometry_epoch`
 
 .. dropdown:: RadioLightCurveContainer — single-frequency time series
 
-   :class:`~triceratops.data.light_curve.RadioLightCurveContainer` stores
+   :class:`~trilobite.data.light_curve.RadioLightCurveContainer` stores
    time-series data at a **fixed observing frequency**:
 
    .. math::
@@ -326,13 +326,13 @@ Optical containers support **dual representation**: data may be supplied as
 flux densities (F\ :sub:`ν` in erg/s/cm²/Hz), AB magnitudes, or both.
 Whichever form is absent is computed on-the-fly. Band names are human-readable
 strings (``"g"``, ``"r"``, etc.) that are resolved to integer indices at
-inference time via the model's :class:`~triceratops.utils.phot_utils.FilterBundle`.
+inference time via the model's :class:`~trilobite.utils.phot_utils.FilterBundle`.
 
 .. dropdown:: OpticalPhotometryContainer — multi-epoch, multi-band
 
-   :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer`
+   :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
    is the optical analog of
-   :class:`~triceratops.data.photometry.RadioPhotometryContainer`.
+   :class:`~trilobite.data.photometry.RadioPhotometryContainer`.
    Each row is one observation in a specific band at a specific time:
 
    .. math::
@@ -356,7 +356,7 @@ inference time via the model's :class:`~triceratops.utils.phot_utils.FilterBundl
 
 .. dropdown:: OpticalPhotometryEpoch — single-epoch SED
 
-   :class:`~triceratops.data.optical_photometry.OpticalPhotometryEpoch`
+   :class:`~trilobite.data.optical_photometry.OpticalPhotometryEpoch`
    stores a snapshot across multiple bands at a single epoch, where
    **band index is the independent variable**:
 
@@ -371,7 +371,7 @@ inference time via the model's :class:`~triceratops.utils.phot_utils.FilterBundl
 
 .. dropdown:: OpticalLightCurveContainer — single-band time series
 
-   :class:`~triceratops.data.light_curve.OpticalLightCurveContainer` stores
+   :class:`~trilobite.data.light_curve.OpticalLightCurveContainer` stores
    a time series in a **fixed photometric band**. Data may be supplied as
    flux density or AB magnitude; both forms are always accessible regardless
    of input format.
@@ -386,7 +386,7 @@ inference time via the model's :class:`~triceratops.utils.phot_utils.FilterBundl
 InferenceData
 --------------
 
-:class:`~triceratops.data.core.InferenceData` is the numerical bridge between
+:class:`~trilobite.data.core.InferenceData` is the numerical bridge between
 the data layer and the inference layer. It contains only validated NumPy arrays
 — no units, no column names, no schema.
 
@@ -426,15 +426,15 @@ The data module is deliberately layered around **three distinct responsibilities
      - Class
      - Responsibility
    * - Observational semantics
-     - :class:`~triceratops.data.core.DataContainer` subclasses
+     - :class:`~trilobite.data.core.DataContainer` subclasses
      - Column names, units, detection logic, epoch grouping,
        dual flux/magnitude representation.
    * - Numerical inference representation
-     - :class:`~triceratops.data.core.InferenceData`
+     - :class:`~trilobite.data.core.InferenceData`
      - Validated NumPy arrays matched to a model's declared
        variables and outputs. No schema, no units.
    * - Statistical assumptions
-     - :class:`~triceratops.inference.likelihood.base.GaussianLikelihood` (and siblings)
+     - :class:`~trilobite.inference.likelihood.base.GaussianLikelihood` (and siblings)
      - Noise model, censoring, likelihood evaluation. Consumes
        InferenceData only.
 

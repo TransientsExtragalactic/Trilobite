@@ -1,0 +1,924 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.parallel.mpi &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/parallel/mpi';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.parallel.mpi</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.parallel.mpi</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">MPI processing pools for Trilobite parallelism.</span>
+
+<span class="sd">This module contains :class:`LikelihoodMPIPool`, a :class:`~trilobite.parallel.base.Pool`</span>
+<span class="sd">subclass for distributing likelihood evaluations across MPI ranks using the ``mpi4py`` library.</span>
+
+<span class="sd">.. note::</span>
+
+<span class="sd">    ``mpi4py`` is an optional dependency. Importing this module is always safe; however,</span>
+<span class="sd">    instantiating :class:`LikelihoodMPIPool` will raise :exc:`RuntimeError` if ``mpi4py`` is</span>
+<span class="sd">    not installed. Install it with ``pip install trilobite[mpi]``.</span>
+
+<span class="sd">Design Overview</span>
+<span class="sd">---------------</span>
+<span class="sd">The pool follows a classic master-worker pattern:</span>
+
+<span class="sd">- **Rank 0** is the *master*. It runs ``emcee`` (or any caller that invokes</span>
+<span class="sd">  ``pool.map(func, iterable)``). It never enters :meth:`~LikelihoodMPIPool.wait`.</span>
+<span class="sd">- **Ranks 1 .. N-1** are *workers*. After constructing the pool they must call</span>
+<span class="sd">  :meth:`~LikelihoodMPIPool.wait`, which blocks until the master sends a stop sentinel</span>
+<span class="sd">  via :meth:`~LikelihoodMPIPool.close`.</span>
+
+<span class="sd">Startup Sequence</span>
+<span class="sd">~~~~~~~~~~~~~~~~</span>
+<span class="sd">1. All ranks construct :class:`LikelihoodMPIPool`.</span>
+<span class="sd">2. The constructor broadcasts the serialized ``InferenceProblem`` JSON from rank 0 so</span>
+<span class="sd">   every rank reconstructs it exactly once.</span>
+<span class="sd">3. Worker ranks call ``pool.wait()``; the master proceeds to run emcee.</span>
+<span class="sd">4. ``emcee`` calls ``pool.map(func, thetas)`` repeatedly.</span>
+<span class="sd">5. The master dispatches tasks one-by-one to available workers using dynamic dispatch</span>
+<span class="sd">   and collects results in original task order.</span>
+<span class="sd">6. When ``emcee`` finishes, the master calls ``pool.close()``, which sends a stop sentinel</span>
+<span class="sd">   to every worker. Workers unblock from :meth:`~LikelihoodMPIPool.wait` and continue.</span>
+
+<span class="sd">MPI Tag Protocol</span>
+<span class="sd">~~~~~~~~~~~~~~~~</span>
+<span class="sd">- ``_TAG_TASK = 1``   — master → worker: ``(task_index, theta)``</span>
+<span class="sd">- ``_TAG_RESULT = 2`` — worker → master: ``(task_index, result)``</span>
+<span class="sd">- ``_TAG_STOP = 3``   — master → worker: ``None`` (sentinel; worker exits ``wait()``)</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Iterable</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Pool</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Optional mpi4py import</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">mpi4py</span><span class="w"> </span><span class="kn">import</span> <span class="n">MPI</span> <span class="k">as</span> <span class="n">_MPI</span>
+
+    <span class="n">_MPI_AVAILABLE</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">_MPI_AVAILABLE</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">_MPI</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore[assignment]</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># MPI tag constants</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="n">_TAG_TASK</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">_TAG_RESULT</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">_TAG_STOP</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">3</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Worker-global problem store</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="n">_LIKELIHOOD_MPI_POOL_WORKER_PROBLEM</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">The ``InferenceProblem`` instance reconstructed in every MPI rank.</span>
+
+<span class="sd">Set once during :meth:`LikelihoodMPIPool.__init__` after the ``comm.bcast``.</span>
+<span class="sd">Only lightweight theta vectors travel over MPI at evaluation time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="LikelihoodMPIPool">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html#trilobite.parallel.mpi.LikelihoodMPIPool">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LikelihoodMPIPool</span><span class="p">(</span><span class="n">Pool</span><span class="p">[</span><span class="n">Any</span><span class="p">,</span> <span class="nb">float</span><span class="p">]):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MPI pool specialized for evaluating a single ``InferenceProblem`` in parallel.</span>
+
+<span class="sd">    This class implements the minimal interface required by ``emcee``</span>
+<span class="sd">    (``pool.map(func, iterable) -&gt; list``) using MPI point-to-point</span>
+<span class="sd">    communication for dynamic task dispatch.</span>
+
+<span class="sd">    Important</span>
+<span class="sd">    ---------</span>
+<span class="sd">    The ``func`` argument to :meth:`map` is intentionally ignored.</span>
+<span class="sd">    Likelihood evaluation is always performed via the ``InferenceProblem`` stored</span>
+<span class="sd">    inside each rank after :meth:`__init__` broadcasts it.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    problem : InferenceProblem</span>
+<span class="sd">        The inference problem to evaluate in parallel. All ranks must pass</span>
+<span class="sd">        a valid problem object; rank 0 serializes it and broadcasts the JSON</span>
+<span class="sd">        to other ranks, which reconstruct it independently.</span>
+<span class="sd">    comm : mpi4py.MPI.Comm, optional</span>
+<span class="sd">        MPI communicator. Defaults to ``MPI.COMM_WORLD``.</span>
+
+<span class="sd">    Raises</span>
+<span class="sd">    ------</span>
+<span class="sd">    RuntimeError</span>
+<span class="sd">        If ``mpi4py`` is not installed, or if the communicator has fewer than</span>
+<span class="sd">        2 ranks (at least one master and one worker are required).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Typical MPI script (run with ``mpirun -n N python script.py``)::</span>
+
+<span class="sd">        from trilobite.parallel import LikelihoodMPIPool</span>
+
+<span class="sd">        with LikelihoodMPIPool(</span>
+<span class="sd">            problem=my_problem</span>
+<span class="sd">        ) as pool:</span>
+<span class="sd">            if pool.is_master():</span>
+<span class="sd">                result = sampler.run(</span>
+<span class="sd">                    n_steps=1000, pool=pool</span>
+<span class="sd">                )</span>
+<span class="sd">            else:</span>
+<span class="sd">                pool.wait()</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Initialization</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">problem</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">comm</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct the MPI likelihood pool and broadcast the problem to all ranks.</span>
+
+<span class="sd">        All MPI ranks must call this constructor collectively; it performs a</span>
+<span class="sd">        ``comm.bcast`` internally.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        problem : InferenceProblem</span>
+<span class="sd">            Inference problem instance. Serialized on rank 0 and broadcast to</span>
+<span class="sd">            all other ranks, which reconstruct it independently.</span>
+<span class="sd">        comm : mpi4py.MPI.Comm, optional</span>
+<span class="sd">            MPI communicator. Defaults to ``MPI.COMM_WORLD``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">_MPI_AVAILABLE</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;mpi4py is required to use LikelihoodMPIPool but is not installed. &quot;</span>
+                <span class="s2">&quot;Install it with: pip install trilobite[mpi]&quot;</span>
+            <span class="p">)</span>
+
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span> <span class="o">=</span> <span class="n">comm</span> <span class="k">if</span> <span class="n">comm</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">_MPI</span><span class="o">.</span><span class="n">COMM_WORLD</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">Get_rank</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">Get_size</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;LikelihoodMPIPool requires at least 2 MPI ranks (1 master + 1 worker), &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;but the communicator has only </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span><span class="si">}</span><span class="s2"> rank(s). &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Launch your script with: mpirun -n 2 python script.py&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Serialize the problem on rank 0 and broadcast the JSON to all ranks.</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">problem_json</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">to_json</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">problem_json</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># type: ignore[assignment]</span>
+
+        <span class="n">problem_json</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">bcast</span><span class="p">(</span><span class="n">problem_json</span><span class="p">,</span> <span class="n">root</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Reconstruct the problem in every rank and cache in the module-level</span>
+        <span class="c1"># global so the worker receive loop can access it without referencing self.</span>
+        <span class="k">global</span> <span class="n">_LIKELIHOOD_MPI_POOL_WORKER_PROBLEM</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
+
+        <span class="n">_LIKELIHOOD_MPI_POOL_WORKER_PROBLEM</span> <span class="o">=</span> <span class="n">InferenceProblem</span><span class="o">.</span><span class="n">from_json</span><span class="p">(</span><span class="n">problem_json</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Properties</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">size</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Number of worker ranks (communicator size minus the master rank).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            ``comm.size - 1``. Always &gt;= 1 after successful construction.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Master / worker helpers</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="LikelihoodMPIPool.is_master">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html#trilobite.parallel.mpi.LikelihoodMPIPool.is_master">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">is_master</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return ``True`` if this process is the master rank (rank 0).</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_rank</span> <span class="o">==</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="LikelihoodMPIPool.wait">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html#trilobite.parallel.mpi.LikelihoodMPIPool.wait">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">wait</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Block worker ranks in a receive loop until a stop sentinel is received.</span>
+
+<span class="sd">        Call this on all non-master ranks immediately after constructing the pool.</span>
+<span class="sd">        The worker receives ``(task_index, theta)`` tuples tagged :data:`_TAG_TASK`,</span>
+<span class="sd">        evaluates the log posterior, and replies with ``(task_index, result)`` tagged</span>
+<span class="sd">        :data:`_TAG_RESULT`. On receiving a :data:`_TAG_STOP` message the loop exits.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - No-op on rank 0 (returns immediately without blocking).</span>
+<span class="sd">        - Workers do not need to call :meth:`close` themselves.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_master</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="n">status</span> <span class="o">=</span> <span class="n">_MPI</span><span class="o">.</span><span class="n">Status</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span><span class="n">source</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">_MPI</span><span class="o">.</span><span class="n">ANY_TAG</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">)</span>
+            <span class="n">tag</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">Get_tag</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">tag</span> <span class="o">==</span> <span class="n">_TAG_STOP</span><span class="p">:</span>
+                <span class="k">return</span>
+
+            <span class="c1"># tag == _TAG_TASK: data is (task_index, theta)</span>
+            <span class="n">task_index</span><span class="p">,</span> <span class="n">theta</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">result</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_LIKELIHOOD_MPI_POOL_WORKER_PROBLEM</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">send</span><span class="p">((</span><span class="n">task_index</span><span class="p">,</span> <span class="n">result</span><span class="p">),</span> <span class="n">dest</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">_TAG_RESULT</span><span class="p">)</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Core map interface</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="LikelihoodMPIPool.map">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html#trilobite.parallel.mpi.LikelihoodMPIPool.map">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">map</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">func</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span>
+        <span class="n">iterable</span><span class="p">:</span> <span class="n">Iterable</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
+        <span class="n">callback</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="n">Callable</span><span class="p">[[</span><span class="nb">float</span><span class="p">],</span> <span class="n">Any</span><span class="p">],</span> <span class="kc">None</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">float</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Distribute tasks to worker ranks and collect results in original order.</span>
+
+<span class="sd">        Uses dynamic task dispatch: each worker is seeded with one task, and as</span>
+<span class="sd">        results arrive the newly-free worker is sent the next pending task. This</span>
+<span class="sd">        keeps all workers busy and handles uneven workloads gracefully.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        func : callable</span>
+<span class="sd">            Ignored. Present for interface compatibility with ``emcee``.</span>
+<span class="sd">        iterable : Iterable</span>
+<span class="sd">            Parameter vectors (``theta``) to evaluate.</span>
+<span class="sd">        callback : callable, optional</span>
+<span class="sd">            Called with each result as it arrives from a worker. Results are</span>
+<span class="sd">            fired in arrival order, but the final list is always in task order.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of float</span>
+<span class="sd">            Log-posterior values, one per element of ``iterable``, in the same</span>
+<span class="sd">            order as the input.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If called on a worker rank. Worker ranks must be blocked in</span>
+<span class="sd">            :meth:`wait` when the master calls this method.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_master</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                <span class="s2">&quot;LikelihoodMPIPool.map() must only be called on rank 0 (the master). &quot;</span>
+                <span class="s2">&quot;Worker ranks should be blocked in pool.wait().&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">tasks</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">iterable</span><span class="p">)</span>
+        <span class="n">n_tasks</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tasks</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n_tasks</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">[]</span>
+
+        <span class="c1"># results_map stores task_index -&gt; result as replies arrive.</span>
+        <span class="n">results_map</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+        <span class="c1"># Index of the next task not yet dispatched.</span>
+        <span class="n">next_task_index</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="c1"># --- Seed phase: send one task to each worker --------------------</span>
+        <span class="k">for</span> <span class="n">worker_rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">next_task_index</span> <span class="o">&gt;=</span> <span class="n">n_tasks</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                <span class="p">(</span><span class="n">next_task_index</span><span class="p">,</span> <span class="n">tasks</span><span class="p">[</span><span class="n">next_task_index</span><span class="p">]),</span>
+                <span class="n">dest</span><span class="o">=</span><span class="n">worker_rank</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TAG_TASK</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">next_task_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># --- Collection phase: receive results, dispatch remaining tasks --</span>
+        <span class="n">status</span> <span class="o">=</span> <span class="n">_MPI</span><span class="o">.</span><span class="n">Status</span><span class="p">()</span>
+
+        <span class="k">while</span> <span class="nb">len</span><span class="p">(</span><span class="n">results_map</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_tasks</span><span class="p">:</span>
+            <span class="n">task_index</span><span class="p">,</span> <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">recv</span><span class="p">(</span>
+                <span class="n">source</span><span class="o">=</span><span class="n">_MPI</span><span class="o">.</span><span class="n">ANY_SOURCE</span><span class="p">,</span>
+                <span class="n">tag</span><span class="o">=</span><span class="n">_TAG_RESULT</span><span class="p">,</span>
+                <span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">worker_rank</span> <span class="o">=</span> <span class="n">status</span><span class="o">.</span><span class="n">Get_source</span><span class="p">()</span>
+            <span class="n">results_map</span><span class="p">[</span><span class="n">task_index</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span>
+
+            <span class="k">if</span> <span class="n">callback</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">callback</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="c1"># Dispatch the next pending task to this now-free worker.</span>
+            <span class="k">if</span> <span class="n">next_task_index</span> <span class="o">&lt;</span> <span class="n">n_tasks</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">send</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">next_task_index</span><span class="p">,</span> <span class="n">tasks</span><span class="p">[</span><span class="n">next_task_index</span><span class="p">]),</span>
+                    <span class="n">dest</span><span class="o">=</span><span class="n">worker_rank</span><span class="p">,</span>
+                    <span class="n">tag</span><span class="o">=</span><span class="n">_TAG_TASK</span><span class="p">,</span>
+                <span class="p">)</span>
+                <span class="n">next_task_index</span> <span class="o">+=</span> <span class="mi">1</span>
+
+        <span class="c1"># Reconstruct in original task order.</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">results_map</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_tasks</span><span class="p">)]</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Lifecycle</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+<div class="viewcode-block" id="LikelihoodMPIPool.close">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html#trilobite.parallel.mpi.LikelihoodMPIPool.close">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Send a stop sentinel to all worker ranks and finalize the pool.</span>
+
+<span class="sd">        Call this on the master after ``emcee`` (or any caller) finishes.</span>
+<span class="sd">        Workers unblock from :meth:`wait` upon receiving the sentinel.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        - No-op on worker ranks.</span>
+<span class="sd">        - Do not call :meth:`map` after calling :meth:`close`.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_master</span><span class="p">():</span>
+            <span class="k">return</span>
+
+        <span class="k">for</span> <span class="n">worker_rank</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_comm_size</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">dest</span><span class="o">=</span><span class="n">worker_rank</span><span class="p">,</span> <span class="n">tag</span><span class="o">=</span><span class="n">_TAG_STOP</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="LikelihoodMPIPool.terminate">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html#trilobite.parallel.mpi.LikelihoodMPIPool.terminate">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">terminate</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Abort the MPI communicator immediately.</span>
+
+<span class="sd">        Called automatically by the context manager when an exception occurs.</span>
+<span class="sd">        This is a hard kill of all MPI ranks via ``comm.Abort()``.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_comm</span><span class="o">.</span><span class="n">Abort</span><span class="p">()</span></div>
+
+
+    <span class="c1"># ------------------------------------------------------------------</span>
+    <span class="c1"># Context manager</span>
+    <span class="c1"># ------------------------------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__enter__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;LikelihoodMPIPool&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Return self to allow use as a context manager.&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__exit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">exc</span><span class="p">:</span> <span class="n">Any</span><span class="p">,</span> <span class="n">tb</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Clean up the pool on context manager exit.</span>
+
+<span class="sd">        On a clean exit, sends the stop sentinel to workers via :meth:`close`.</span>
+<span class="sd">        On exception, calls :meth:`terminate` (``comm.Abort()``) for an immediate</span>
+<span class="sd">        hard kill of all ranks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">exc_type</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">terminate</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

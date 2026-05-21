@@ -24,8 +24,8 @@ In the Newtonian regime, two important limits emerge:
 
 In this example, we compare:
 
-- :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions`
-- :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+- :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions`
+- :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
 
 to show how the weak-shock solution approaches the strong-shock limit
 as the Mach number increases.
@@ -57,11 +57,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astropy.units as u
 
-from triceratops.dynamics.shocks.core import (
+from trilobite.dynamics.shocks.core import (
     WeakShockConditions,
     StrongColdShockConditions,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 GAMMA = 5.0 / 3.0
 

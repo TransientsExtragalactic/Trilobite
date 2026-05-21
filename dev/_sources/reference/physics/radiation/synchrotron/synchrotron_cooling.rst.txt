@@ -9,9 +9,9 @@ Radiative Cooling Engines
     See :ref:`synchrotron_theory` for a detailed discussion of radiative cooling
     processes and their role in shaping synchrotron spectra.
 
-The :mod:`triceratops.radiation.synchrotron.cooling` module provides the **low-level and
+The :mod:`trilobite.radiation.synchrotron.cooling` module provides the **low-level and
 high-level tools required to compute radiative cooling of relativistic
-electrons**. Whereas the :mod:`triceratops.radiation.synchrotron.core` module focuses on
+electrons**. Whereas the :mod:`trilobite.radiation.synchrotron.core` module focuses on
 *emission*, this module focuses on *energy loss* and the evolution of electron
 Lorentz factors.
 
@@ -30,7 +30,7 @@ Overview of the API
 
 Radiative cooling is exposed through **cooling engines**, each corresponding to
 a distinct physical process. Each engine implements a common interface defined
-by :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronCoolingEngine`.
+by :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronCoolingEngine`.
 
 Every cooling engine provides methods to compute:
 
@@ -84,9 +84,9 @@ magnetic field. In the isotropic, Thomson-regime limit, the energy loss rate is
     u_B = \frac{B^2}{8\pi}.
 
 This process is implemented by
-:class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+:class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
-.. currentmodule:: triceratops.radiation.synchrotron.cooling
+.. currentmodule:: trilobite.radiation.synchrotron.cooling
 
 .. tab-set::
 
@@ -97,7 +97,7 @@ This process is implemented by
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.cooling import (
+            from trilobite.radiation.synchrotron.cooling import (
                 SynchrotronRadiativeCoolingEngine
             )
             import astropy.units as u
@@ -132,7 +132,7 @@ This process is implemented by
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.cooling import (
+            from trilobite.radiation.synchrotron.cooling import (
                 _opt_compute_synchrotron_cooling_rate,
                 _opt_compute_synchrotron_cooling_time,
                 _opt_compute_synchrotron_cooling_gamma,
@@ -170,7 +170,7 @@ with radiation energy density
     \frac{L_{\rm bol}}{4\pi R^2 c}.
 
 This process is implemented by
-:class:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine`.
+:class:`~trilobite.radiation.synchrotron.cooling.InverseComptonCoolingEngine`.
 
 .. tab-set::
 
@@ -178,7 +178,7 @@ This process is implemented by
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.cooling import (
+            from trilobite.radiation.synchrotron.cooling import (
                 InverseComptonCoolingEngine
             )
             import astropy.units as u
@@ -222,7 +222,7 @@ This process is implemented by
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.cooling import (
+            from trilobite.radiation.synchrotron.cooling import (
                 _opt_compute_IC_cooling_rate,
                 _opt_compute_IC_cooling_time,
                 _opt_compute_IC_cooling_gamma,
@@ -242,7 +242,7 @@ This process is implemented by
 Combining Cooling Channels
 --------------------------
 
-Triceratops does **not** implicitly combine cooling processes. When multiple
+Trilobite does **not** implicitly combine cooling processes. When multiple
 cooling channels are relevant, users are expected to explicitly sum cooling
 rates:
 
@@ -259,4 +259,4 @@ and modeling pipelines.
 
 Higher-level modeling layers may build composite cooling models on top of these
 engines, but the primitives provided here form the **canonical foundation for
-radiative cooling calculations in Triceratops**.
+radiative cooling calculations in Trilobite**.

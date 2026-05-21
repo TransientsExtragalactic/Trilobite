@@ -4,7 +4,7 @@
 Parallel Computing
 ========================
 
-Triceratops provides a unified framework for parallel execution across several
+Trilobite provides a unified framework for parallel execution across several
 backends. Parallelism appears at multiple levels of the library:
 
 - **Inference** — evaluating log-posteriors for many walker positions simultaneously
@@ -14,7 +14,7 @@ backends. Parallelism appears at multiple levels of the library:
 - **Simulation batches** — running independent simulations in parallel for ensemble
   analyses (e.g., light-curve grids for TDE or GRB parameter studies).
 
-All parallel execution in Triceratops is organized around a common :class:`~triceratops.parallel.base.Pool`
+All parallel execution in Trilobite is organized around a common :class:`~trilobite.parallel.base.Pool`
 abstraction. Every backend — whether single-process, multiprocessing, or MPI — exposes
 the same interface, making it straightforward to switch backends without modifying
 application code.
@@ -23,7 +23,7 @@ application code.
 
     MPI support requires the optional ``mpi4py`` dependency. Install it with::
 
-        pip install triceratops[mpi]
+        pip install trilobite[mpi]
 
     All other parallel backends are available without additional dependencies.
 
@@ -42,23 +42,23 @@ The right backend depends on your compute environment and task structure:
      - Class
      - When to use
    * - ``"serial"``
-     - :class:`~triceratops.parallel.base.SerialPool`
+     - :class:`~trilobite.parallel.base.SerialPool`
      - Debugging, single-core environments, testing.
    * - ``"mp"``
-     - :class:`~triceratops.parallel.mp.LikelihoodMPPool`
+     - :class:`~trilobite.parallel.mp.LikelihoodMPPool`
      - Multi-core shared-memory machines (laptops, workstations). Best for
        MCMC inference on a single node.
    * - ``"mpi"``
-     - :class:`~triceratops.parallel.mpi.LikelihoodMPIPool`
+     - :class:`~trilobite.parallel.mpi.LikelihoodMPIPool`
      - Multi-node HPC clusters. Requires ``mpi4py`` and launching with
        ``mpirun`` / ``srun``.
 
-The :func:`~triceratops.parallel.factory.make_pool` factory function provides a
+The :func:`~trilobite.parallel.factory.make_pool` factory function provides a
 single entry point that selects the right backend by name:
 
 .. code-block:: python
 
-    from triceratops.parallel import make_pool
+    from trilobite.parallel import make_pool
 
     pool = make_pool("mp", problem=my_problem, processes=8)
 
@@ -72,7 +72,7 @@ single entry point that selects the right backend by name:
 Pool System
 -----------
 
-The core abstraction is the abstract base class :class:`~triceratops.parallel.base.Pool`.
+The core abstraction is the abstract base class :class:`~trilobite.parallel.base.Pool`.
 All backends inherit from it and expose the same minimal interface:
 
 .. code-block:: python
@@ -99,7 +99,7 @@ MPI Workflow
 ------------
 
 MPI execution requires all processes to start together (via ``mpirun`` or a cluster
-job scheduler). The master-worker pattern used by :class:`~triceratops.parallel.mpi.LikelihoodMPIPool`
+job scheduler). The master-worker pattern used by :class:`~trilobite.parallel.mpi.LikelihoodMPIPool`
 means that **rank 0** drives the computation while **all other ranks** block waiting
 for tasks:
 
@@ -107,7 +107,7 @@ for tasks:
 
     # Run with: mpirun -n 8 python my_script.py
 
-    from triceratops.parallel import LikelihoodMPIPool
+    from trilobite.parallel import LikelihoodMPIPool
 
     with LikelihoodMPIPool(problem=my_problem) as pool:
         if pool.is_master():
@@ -118,11 +118,11 @@ for tasks:
 .. important::
 
     Every rank must construct the pool before the ``if pool.is_master():`` branch.
-    The :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.__init__` broadcasts the
-    serialized :class:`~triceratops.inference.problem.InferenceProblem` to all ranks
+    The :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.__init__` broadcasts the
+    serialized :class:`~trilobite.inference.problem.InferenceProblem` to all ranks
     using a collective ``MPI.Bcast``.
 
-    Calling :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.map` from a non-master
+    Calling :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.map` from a non-master
     rank raises :exc:`RuntimeError`.
 
 ----

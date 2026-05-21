@@ -5,9 +5,9 @@ Relativistic vs. Non-Relativistic Thin-Shell Convergence
 .. admonition:: What this example does
 
    This example compares the relativistic thin-shell engine
-   (:class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
+   (:class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
    against its non-relativistic counterpart
-   (:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`)
+   (:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`)
    across four initial shell momenta spanning
    :math:`\Gamma_0\beta_0 = 0.5` to :math:`\Gamma_0\beta_0 = 70`.
    The goal is to show where relativistic corrections become essential — all
@@ -17,7 +17,7 @@ Relativistic vs. Non-Relativistic Thin-Shell Convergence
 **When the non-relativistic engine is sufficient.** At low velocities
 (:math:`\beta_0 \lesssim 0.01`) the two engines produce nearly identical
 trajectories and the simpler
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 is appropriate.  This example focuses on the regime where that approximation
 breaks down.  As :math:`\beta_0` increases, two relativistic effects that
 the NR engine ignores grow in importance:
@@ -57,7 +57,7 @@ grid, so their trajectories can be compared directly.
    :ref:`numeric_shocks_theory`
        Overview of all numerical shock engines and when to prefer each one.
 
-   :class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
+   :class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
        API reference for the relativistic thin-shell engine.
 
 ----
@@ -68,7 +68,7 @@ grid, so their trajectories can be compared directly.
 # Setup
 # -----
 #
-# We import both engines and the Triceratops plotting utilities.
+# We import both engines and the Trilobite plotting utilities.
 
 import matplotlib.colors as mcolors
 import matplotlib.pyplot as plt
@@ -78,11 +78,11 @@ from astropy import units as u
 from matplotlib.lines import Line2D
 from matplotlib.transforms import blended_transform_factory
 
-from triceratops.dynamics.shocks.numerical import (
+from trilobite.dynamics.shocks.numerical import (
     PressureDrivenThinShellShockEngine,
     RelPressureDrivenThinShellShockEngine,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Physical Parameters

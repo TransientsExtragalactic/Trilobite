@@ -4,7 +4,7 @@ On-Axis Asymmetric Synchrotron SEDs
 
 Most synchrotron models treat the emitting region as a single homogeneous
 zone. The
-:class:`~triceratops.radiation.synchrotron.SEDs.numerical.OnAxisAsymmetricSynchrotronEngine`
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.OnAxisAsymmetricSynchrotronEngine`
 generalizes this picture by assigning independent physical conditions to
 each polar-angle sightline :math:`\theta \in [0,\pi/2]`.
 
@@ -28,14 +28,14 @@ import numpy as np
 from astropy import units as u
 from matplotlib.colors import Normalize
 
-from triceratops.radiation.synchrotron.SEDs.numerical import (
+from trilobite.radiation.synchrotron.SEDs.numerical import (
     OnAxisAsymmetricSynchrotronEngine,
 )
-from triceratops.radiation.synchrotron.microphysics import (
+from trilobite.radiation.synchrotron.microphysics import (
     compute_PL_norm_from_magnetic_field,
     get_power_law_distribution,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Engine Setup

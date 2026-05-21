@@ -9,8 +9,8 @@ processes which govern the synchrotron emission from first principles. Instead, 
 parameters / closures which encapsulate our ignorance of the detailed physics at play. These microphysical parameters are
 critical to the modeling of synchrotron emission, as they directly influence the resulting spectra and light curves.
 
-In this document, we'll describe the available microphysical closures implemented in Triceratops, how to use them,
-and provide references for further reading on the subject. The :mod:`triceratops.radiation.synchrotron.microphysics` module is
+In this document, we'll describe the available microphysical closures implemented in Trilobite, how to use them,
+and provide references for further reading on the subject. The :mod:`trilobite.radiation.synchrotron.microphysics` module is
 responsible for two core aspects of synchrotron microphysics:
 
 1. Operations regarding electron distributions, including computing moments of the distributions
@@ -30,7 +30,7 @@ Electron Distributions
     See :ref:`synch_theory_populations` for the corresponding documentation on synchrotron theory.
 
 While it is possible to compute synchrotron emission from an arbitrary population of electrons, in practice, one
-often selects a specific distribution function for their electron population. Triceratops provides explicit support
+often selects a specific distribution function for their electron population. Trilobite provides explicit support
 for three electron distributions: **power-law**, **broken power-law**, and **Maxwell-Jüttner** (thermal). Mixed
 thermal-plus-nonthermal (Maxwell-Jüttner + power-law) populations are also supported.
 
@@ -59,7 +59,7 @@ A detailed discussion of the physical origin of this distribution can be found i
 
 .. note::
 
-    (See :ref:`synchrotron_theory` for detailed discussion) For the sake of clarity, Triceratops
+    (See :ref:`synchrotron_theory` for detailed discussion) For the sake of clarity, Trilobite
     always defaults to using the Lorentz factor :math:`\gamma` as the independent variable in
     electron distributions, not the energy. Nonetheless, support for both is included and conversion functions
     are available.
@@ -68,13 +68,13 @@ A detailed discussion of the physical origin of this distribution can be found i
 
     From the perspective of **model building**, the important point is that essentially all synchrotron
     observables depend on *moments* of this distribution rather than on its detailed shape. Thus, there are
-    a number of useful functions in the :mod:`triceratops.radiation.synchrotron` module for computing these moments
+    a number of useful functions in the :mod:`trilobite.radiation.synchrotron` module for computing these moments
     directly without needing to manipulate the distribution itself.
 
 
 .. rubric:: API Reference
 
-*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
+*current module*: :mod:`trilobite.radiation.synchrotron.microphysics`
 
 .. tab-set::
 
@@ -83,7 +83,7 @@ A detailed discussion of the physical origin of this distribution can be found i
         The following high-level helper functions are provided for working with power-law electron
         distributions:
 
-        .. currentmodule:: triceratops.radiation.synchrotron.microphysics
+        .. currentmodule:: trilobite.radiation.synchrotron.microphysics
         .. autosummary::
            :nosignatures:
 
@@ -138,7 +138,7 @@ of a power-law electron distribution with :math:`p = 2.5`, :math:`\gamma_{\min} 
 
 .. code-block:: python
 
-    from triceratops.radiation.synchrotron.microphysics import compute_mean_gamma_PL
+    from trilobite.radiation.synchrotron.microphysics import compute_mean_gamma_PL
 
     p = 2.5
     gamma_min = 1e2
@@ -154,7 +154,7 @@ corresponding Lorentz factor normalization, one could use the following code:
 
 .. code-block:: python
 
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         swap_electron_PL_normalization
     )
 
@@ -196,12 +196,12 @@ cooling, or escape processes modify the electron spectrum, such as radiative coo
 in synchrotron-emitting plasmas or multi-stage acceleration mechanisms.
 
 As with the single power-law case, essentially all synchrotron observables depend on **moments**
-of the distribution rather than its detailed shape. Triceratops therefore provides a comprehensive
+of the distribution rather than its detailed shape. Trilobite therefore provides a comprehensive
 set of utilities for computing these moments directly.
 
 .. note::
 
-    As with power-law distributions, Triceratops consistently treats the Lorentz factor
+    As with power-law distributions, Trilobite consistently treats the Lorentz factor
     :math:`\gamma` as the independent variable for broken power-law distributions. Support
     for energy-space representations is provided internally, and conversion utilities
     are available where appropriate.
@@ -216,7 +216,7 @@ set of utilities for computing these moments directly.
 
 .. rubric:: API Reference
 
-*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
+*current module*: :mod:`trilobite.radiation.synchrotron.microphysics`
 
 .. tab-set::
 
@@ -225,7 +225,7 @@ set of utilities for computing these moments directly.
         The following high-level helper functions are provided for working with broken
         power-law electron distributions:
 
-        .. currentmodule:: triceratops.radiation.synchrotron.microphysics
+        .. currentmodule:: trilobite.radiation.synchrotron.microphysics
         .. autosummary::
            :nosignatures:
 
@@ -277,7 +277,7 @@ with :math:`a_1 = 2.0`, :math:`a_2 = 3.5`, :math:`\gamma_b = 10^4`,
 
 .. code-block:: python
 
-    from triceratops.radiation.synchrotron.microphysics import compute_mean_gamma_BPL
+    from trilobite.radiation.synchrotron.microphysics import compute_mean_gamma_BPL
 
     a1 = 2.0
     a2 = 3.5
@@ -298,7 +298,7 @@ power-law distribution with normalization :math:`N_0 = 10^5 \, \rm cm^{-3}`, one
 
 .. code-block:: python
 
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         compute_BPL_effective_number_density
     )
 
@@ -336,7 +336,7 @@ well-defined temperature.
 
 .. note::
 
-    As with the power-law and broken power-law cases, Triceratops consistently treats the
+    As with the power-law and broken power-law cases, Trilobite consistently treats the
     Lorentz factor :math:`\gamma` as the independent variable. The Maxwell-Jüttner
     distribution is fully specified by :math:`\Theta` and its normalization
     :math:`N_{\rm therm}`.
@@ -361,7 +361,7 @@ Mixed Thermal + Non-thermal Populations
 """""""""""""""""""""""""""""""""""""""""
 
 Many astrophysical sources are best described by a **mixed** population containing both
-a thermalized component and a non-thermal power-law tail. Triceratops parameterizes this
+a thermalized component and a non-thermal power-law tail. Trilobite parameterizes this
 split with a single parameter :math:`\delta \in [0,1]`:
 
 .. math::
@@ -375,7 +375,7 @@ Setting :math:`\delta = 1` recovers a pure thermal population; :math:`\delta = 0
 recovers the standard power-law-only case.
 .. rubric:: API Reference
 
-*current module*: :mod:`triceratops.radiation.synchrotron.microphysics`
+*current module*: :mod:`trilobite.radiation.synchrotron.microphysics`
 
 .. tab-set::
 
@@ -442,7 +442,7 @@ field strength:
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         compute_MJD_norm_from_magnetic_field,
     )
 
@@ -465,7 +465,7 @@ Similarly, to compute the normalization of a mixed thermal + power-law populatio
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         compute_MJD_and_PL_norm_from_thermal_energy_density,
     )
 
@@ -497,7 +497,7 @@ Equipartition Closure
 
     See :ref:`synch_equipartition_theory` for the corresponding documentation on synchrotron theory.
 
-The most common closure mechanism used in the literature (and the only primarily used in Triceratops) is the
+The most common closure mechanism used in the literature (and the only primarily used in Trilobite) is the
 **equipartition closure**. In this framework, we assume that a fixed fraction of the thermal energy density
 behind the shock is partitioned into relativistic electrons and magnetic fields. Specifically, we define two
 dimensionless parameters:
@@ -511,8 +511,8 @@ has been widely used in the literature to model synchrotron emission from a vari
 sources (e.g. :footcite:t:`Margutti2019COW`,
 :footcite:t:`demarchiRadioAnalysisSN2004C2022`, :footcite:t:`wuDelayedRadioEmission2025`, etc.)
 
-In Triceratops, the helper functions for performing equipartition closure are provided in the
-:mod:`triceratops.radiation.synchrotron.microphysics` module. Before highlighting some of these functions, we'll provide
+In Trilobite, the helper functions for performing equipartition closure are provided in the
+:mod:`trilobite.radiation.synchrotron.microphysics` module. Before highlighting some of these functions, we'll provide
 the API in the tab-set below:
 
 .. tab-set::
@@ -521,7 +521,7 @@ the API in the tab-set below:
 
         The following high-level helper functions are provided for performing equipartition closure:
 
-        .. currentmodule:: triceratops.radiation.synchrotron.microphysics
+        .. currentmodule:: trilobite.radiation.synchrotron.microphysics
         .. autosummary::
            :nosignatures:
 
@@ -589,7 +589,7 @@ and an equipartition parameter of :math:`\epsilon_B = 0.01`. We can do this usin
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         compute_equipartition_magnetic_field
     )
 
@@ -611,7 +611,7 @@ we can use the following code:
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.synchrotron.microphysics import (
+    from trilobite.radiation.synchrotron.microphysics import (
         compute_bol_emissivity_from_thermal_energy_density
     )
 

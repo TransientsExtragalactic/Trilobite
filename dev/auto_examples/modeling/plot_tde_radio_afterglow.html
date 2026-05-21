@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TDE Radio Afterglow: Mildly Relativistic Outflow in ISM &#8212; Triceratops dev documentation</title>
+    <title>TDE Radio Afterglow: Mildly Relativistic Outflow in ISM &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Phenomenological Radio Light Curve Fitting" href="plot_phenomenological_lc_fit.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -591,7 +591,7 @@ follows from the kinetic energy and launch velocity:</p>
 <div class="math notranslate nohighlight">
 \[M_{\rm ej} = \frac{2 E_{\rm ej}}{v_{\rm init}^2} \approx 1.2 \times 10^{-3}\,M_\odot.\]</div>
 <p>The shock dynamics are computed using
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 with a uniform-density ISM of <span class="math notranslate nohighlight">\(n_{\rm ISM} = 10\,\text{cm}^{-3}\)</span>, placing the
 Sedov-Taylor transition at roughly 500 days. The synchrotron emission is then
 computed using the standard forward-closure machinery.</p>
@@ -609,15 +609,15 @@ predict the radio light curves given these parameters.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_uniform_csm_density_func</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">SynchrotronRadiativeCoolingEngine</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.cooling</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">SynchrotronRadiativeCoolingEngine</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -673,10 +673,10 @@ sweeps up mass. Initially the ejecta are in <strong>free expansion</strong>
 (<span class="math notranslate nohighlight">\(R \propto t\)</span>), then transition to the <strong>Sedov-Taylor</strong> phase
 (<span class="math notranslate nohighlight">\(R \propto t^{2/5}\)</span>) once the swept-up mass equals the ejecta mass.
 With these parameters the transition occurs at roughly 500 days.</p>
-<p>We use <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_uniform_csm_density_func.html#triceratops.dynamics.shocks.utils.get_uniform_csm_density_func" title="triceratops.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>
-and <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> to build
+<p>We use <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_uniform_csm_density_func.html#trilobite.dynamics.shocks.utils.get_uniform_csm_density_func" title="trilobite.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> to build
 the upstream source callables, then combine them with
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html#triceratops.dynamics.shocks.utils.make_homologous_stationary_sources" title="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.make_homologous_stationary_sources.html#trilobite.dynamics.shocks.utils.make_homologous_stationary_sources" title="trilobite.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">rho_csm</span> <span class="o">=</span> <span class="n">get_uniform_csm_density_func</span><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rho_ISM</span></a><span class="p">)</span>
 <span class="n">G_ej</span> <span class="o">=</span> <span class="n">get_bpl_ejecta_kernel</span><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">E_ej</span></a><span class="p">,</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">M_ej</span></a><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">delta</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 <span class="n">rho_1</span><span class="p">,</span> <span class="n">u_1</span><span class="p">,</span> <span class="n">rho_4</span><span class="p">,</span> <span class="n">u_4</span> <span class="o">=</span> <span class="n">make_homologous_stationary_sources</span><span class="p">(</span><span class="n">G_ej</span><span class="o">=</span><span class="n">G_ej</span><span class="p">,</span> <span class="n">rho_csm</span><span class="o">=</span><span class="n">rho_csm</span><span class="p">)</span>
@@ -757,7 +757,7 @@ swept-up ISM mass equals the ejecta mass.</p>
 <h2>Post-Shock Magnetic Field<a class="headerlink" href="#post-shock-magnetic-field" title="Link to this heading">#</a></h2>
 <p>The magnetic field is estimated from equipartition with the post-shock thermal
 energy density. The
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.ThinShellShockState.html#triceratops.dynamics.shocks.numerical.ThinShellShockState" title="triceratops.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> carries
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.ThinShellShockState.html#trilobite.dynamics.shocks.numerical.ThinShellShockState" title="trilobite.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> carries
 the immediate post-shock pressure at the forward shock from the
 Rankine–Hugoniot jump conditions, so the thermal energy density is</p>
 <div class="math notranslate nohighlight">
@@ -945,7 +945,7 @@ ISM mass.</p></li>
 the total outflow kinetic energy, the ISM density at the black hole’s sphere
 of influence, and (via the microphysical parameters) the efficiency of
 particle acceleration at the shock.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.165 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.442 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-modeling-plot-tde-radio-afterglow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/25d6785627ff42cf9a8a25e6be1bb037/plot_tde_radio_afterglow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_tde_radio_afterglow.ipynb</span></code></a></p>

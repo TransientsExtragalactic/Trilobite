@@ -1,8 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import astropy.units as u
-from triceratops.radiation.synchrotron.core import compute_nu_critical
-from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+from trilobite.radiation.synchrotron.core import compute_nu_critical
+from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
 
 B = 1.0 * u.G
 gamma_min = 1e2

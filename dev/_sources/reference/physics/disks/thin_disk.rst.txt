@@ -41,7 +41,7 @@ the far-UV through soft X-rays.
    import matplotlib.pyplot as plt
    from astropy import constants as const
    from astropy import units as u
-   from triceratops.dynamics.accretion import AlphaDisk
+   from trilobite.dynamics.accretion import AlphaDisk
 
    # ── Physical parameters ───────────────────────────────────────────────────
    M_BH  = 10 * const.M_sun           # black hole mass
@@ -115,7 +115,7 @@ equations combined with the :math:`\alpha`-viscosity relation
 :math:`\nu = \alpha c_s H`, a Keplerian rotation profile, and a zero-torque
 inner boundary condition at :math:`R_{\rm in}`.
 
-The scalings implemented in :class:`~triceratops.dynamics.accretion.AlphaDisk`
+The scalings implemented in :class:`~trilobite.dynamics.accretion.AlphaDisk`
 correspond to the **gas-pressure-dominated, Kramers-opacity** (zone C) regime
 of :footcite:t:`frank2002accretion` Eq. 5.49.  In this regime the midplane
 temperature is low enough that radiation pressure is negligible and the dominant
@@ -198,7 +198,7 @@ Usage Guide
 -----------
 
 This section walks through the full workflow for working with
-:class:`~triceratops.dynamics.accretion.AlphaDisk` — from construction through
+:class:`~trilobite.dynamics.accretion.AlphaDisk` — from construction through
 unit handling to SED computation.  All public methods accept both plain floats
 (assumed CGS) and :class:`~astropy.units.Quantity` objects, so you can mix-and-match
 as is most convenient.
@@ -206,7 +206,7 @@ as is most convenient.
 Instantiating the Model
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.dynamics.accretion.AlphaDisk` takes a single model-level
+:class:`~trilobite.dynamics.accretion.AlphaDisk` takes a single model-level
 parameter: the Shakura-Sunyaev viscosity :math:`\alpha`.  Physical disk parameters
 (:math:`M_{\rm BH}`, :math:`\dot{M}`, :math:`R_{\rm in}`) are *not* stored on the
 object; they are passed at evaluation time.  This makes the same ``disk`` instance
@@ -214,14 +214,14 @@ reusable across parameter surveys without re-instantiation.
 
 .. code-block:: python
 
-    from triceratops.dynamics.accretion import AlphaDisk
+    from trilobite.dynamics.accretion import AlphaDisk
 
     disk = AlphaDisk(alpha=0.1)   # 0 < alpha <= 1
 
 Computing the Disk Structure
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Call :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute` (or equivalently
+Call :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute` (or equivalently
 ``disk(radius, M_BH, mdot, R_in)``) to evaluate the full set of structural
 variables at one or more radii:
 
@@ -276,7 +276,7 @@ The return value is a plain Python ``dict`` whose values are
 Handling Units
 ^^^^^^^^^^^^^^^
 
-All public methods use :func:`~triceratops.utils.misc_utils.ensure_in_units`
+All public methods use :func:`~trilobite.utils.misc_utils.ensure_in_units`
 internally to convert inputs to CGS before computation.  This means you can pass
 parameters in any consistent unit system and the conversion happens transparently:
 
@@ -305,7 +305,7 @@ If you pass raw floats (no units attached), they are assumed to be in CGS:
 The Effective Temperature Profile
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_effective_temperature`
+:meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_effective_temperature`
 returns :math:`T_{\rm eff}(r)` from the first-principles viscous dissipation
 formula — independently of the zone-C structural scalings.  This is the temperature
 that governs the emitted spectrum from each annulus and the one that enters the SED
@@ -320,7 +320,7 @@ computation:
     \right)^{1/4}.
 
 Note that :math:`T_c \neq T_{\rm eff}`.  The midplane temperature :math:`T_c`
-returned by :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute` is hotter
+returned by :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute` is hotter
 because photons must diffuse vertically through the disk; the two are related by
 :math:`T_c = \bigl(\tfrac{3\tau}{4}\bigr)^{1/4} T_{\rm eff}`.
 
@@ -332,7 +332,7 @@ because photons must diffuse vertically through the disk; the two are related by
 Computing the SED
 ^^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_sed` integrates the
+:meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_sed` integrates the
 Planck function over all annuli to produce the multi-colour blackbody spectrum.
 The radial integral is evaluated on a log-spaced grid using the trapezoidal rule.
 At minimum you must supply a frequency grid, the three physical disk parameters,
@@ -369,7 +369,7 @@ Bolometric Luminosity
 
 For a quick analytic estimate of the total radiated power — without evaluating the
 full SED integral — use
-:meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_bolometric_luminosity`.
+:meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_bolometric_luminosity`.
 This returns the exact result of integrating the viscous dissipation profile over
 both disk faces to :math:`R_{\rm out} \to \infty`:
 
@@ -394,8 +394,8 @@ The thin-disk models and the :ref:`one-zone models <one_zone_disk>` are compleme
     :widths: 30 35 35
 
     * -
-      - Thin disk (:class:`~triceratops.dynamics.accretion.AlphaDisk`)
-      - One-zone (:class:`~triceratops.dynamics.accretion.GasPressureDisk`)
+      - Thin disk (:class:`~trilobite.dynamics.accretion.AlphaDisk`)
+      - One-zone (:class:`~trilobite.dynamics.accretion.GasPressureDisk`)
     * - Time dependence
       - Steady state (snapshot at fixed :math:`\dot{M}`)
       - Time-evolved ODE (tracks :math:`M_D(t)`, :math:`J_D(t)`)
@@ -414,7 +414,7 @@ The thin-disk models and the :ref:`one-zone models <one_zone_disk>` are compleme
 API Reference
 -------------
 
-.. currentmodule:: triceratops.dynamics.accretion
+.. currentmodule:: trilobite.dynamics.accretion
 
 .. autosummary::
     :toctree: ../../../_as_gen

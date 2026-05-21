@@ -4,15 +4,15 @@
 Light Curves
 ============================
 
-Triceratops provides two light curve container types:
+Trilobite provides two light curve container types:
 
-- :class:`~triceratops.data.light_curve.RadioLightCurveContainer` — single-frequency radio time-series (:math:`F_\nu(t)`)
-- :class:`~triceratops.data.light_curve.OpticalLightCurveContainer` — single-band optical time-series (:math:`F_\nu(t)` or :math:`m_\mathrm{AB}(t)`)
+- :class:`~trilobite.data.light_curve.RadioLightCurveContainer` — single-frequency radio time-series (:math:`F_\nu(t)`)
+- :class:`~trilobite.data.light_curve.OpticalLightCurveContainer` — single-band optical time-series (:math:`F_\nu(t)` or :math:`m_\mathrm{AB}(t)`)
 
 Both containers wrap an :class:`astropy.table.Table` with an enforced schema,
 providing a validated, unit-aware, and immutable interface for downstream
 modeling and inference. Both expose a :meth:`to_inference_data` method for
-seamless integration with the Triceratops inference pipeline.
+seamless integration with the Trilobite inference pipeline.
 
 
 .. _radio_light_curve:
@@ -82,7 +82,7 @@ From an Astropy Table:
     import numpy as np
     from astropy.table import Table
     from astropy import units as u
-    from triceratops.data import RadioLightCurveContainer
+    from trilobite.data import RadioLightCurveContainer
 
     table = Table({
         "time": [0, 10, 30, 100] * u.day,
@@ -242,7 +242,7 @@ The ``band`` keyword argument is required:
 
 .. code-block:: python
 
-    from triceratops.data import OpticalLightCurveContainer
+    from trilobite.data import OpticalLightCurveContainer
 
     # From flux density columns
     lc = OpticalLightCurveContainer(table, band="g")
@@ -311,7 +311,7 @@ This call:
 1. Resolves ``lc.band`` → an integer band index via ``model.bundle.filter_names``.
 2. Passes ``time`` as the temporal independent variable.
 3. Broadcasts the band index as a constant array (same value for every row).
-4. Returns a validated :class:`~triceratops.data.core.InferenceData` object.
+4. Returns a validated :class:`~trilobite.data.core.InferenceData` object.
 
 .. code-block:: python
 
@@ -336,7 +336,7 @@ See :ref:`data_to_inference` for the full pipeline walkthrough.
 API Reference
 -------------
 
-.. autoclass:: triceratops.data.light_curve.RadioLightCurveContainer
+.. autoclass:: trilobite.data.light_curve.RadioLightCurveContainer
    :no-index:
    :members:
    :undoc-members:
@@ -344,7 +344,7 @@ API Reference
 
 ----
 
-.. autoclass:: triceratops.data.light_curve.OpticalLightCurveContainer
+.. autoclass:: trilobite.data.light_curve.OpticalLightCurveContainer
    :no-index:
    :members:
    :undoc-members:

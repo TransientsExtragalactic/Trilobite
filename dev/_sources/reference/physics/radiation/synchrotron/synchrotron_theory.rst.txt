@@ -6,12 +6,12 @@ Synchrotron Radiation Theory
 
 Synchrotron radiation is one of the most fundamental radiative processes in the world of transient astrophysics. It is
 responsible for a wide variety of observed phenomena, from the radio afterglows of gamma-ray bursts (GRBs) to the emission from
-active galactic nuclei (AGN) jets. Because Triceratops is so heavily reliant on synchrotron radiation for modeling
+active galactic nuclei (AGN) jets. Because Trilobite is so heavily reliant on synchrotron radiation for modeling
 transient sources, it is important to have a solid understanding of the theory; particularly the conventions and
-terminology used throughout the Triceratops documentation.
+terminology used throughout the Trilobite documentation.
 
 In this documentation, we seek to provide a concise overview of the topics one needs to understand to begin using
-Triceratops for synchrotron modeling. We cannot hope to provide a comprehensive review of synchrotron radiation theory;
+Trilobite for synchrotron modeling. We cannot hope to provide a comprehensive review of synchrotron radiation theory;
 however, we provide references throughout to more detailed treatments of the subject and the relevant literature
 for various results.
 
@@ -22,7 +22,7 @@ for various results.
 Synchrotron From a Single Electron
 ----------------------------------
 
-To describe, from first principles, the relevant synchrotron theory used in Triceratops, we first need to develop
+To describe, from first principles, the relevant synchrotron theory used in Trilobite, we first need to develop
 the emission of a single relativistic electron spiraling in a magnetic field. With that in hand, it will be a
 relatively straightforward process to extend to a population of electrons with some distribution function.
 
@@ -226,7 +226,7 @@ band.
 
 .. dropdown:: Pitch-Angle Averaging
 
-    Throughout Triceratops, we provide two standard options for handing the pitch angle dependence of synchrotron
+    Throughout Trilobite, we provide two standard options for handing the pitch angle dependence of synchrotron
     emission: (a) assume a fixed pitch angle, or (b) perform a pitch-angle average assuming an isotropic
     distribution of pitch angles.
 
@@ -531,7 +531,7 @@ where :math:`\nu_c` is the characteristic synchrotron frequency defined previous
 
 .. important::
 
-    In Triceratops, :math:`F(x)` is referred to as the **first synchrotron kernel** and :math:`G(x)` as
+    In Trilobite, :math:`F(x)` is referred to as the **first synchrotron kernel** and :math:`G(x)` as
     the **second synchrotron kernel**.
 
 
@@ -554,7 +554,7 @@ emission from a population of electrons. There are generally two ways to define 
 
 .. note::
 
-    In Triceratops, we offer implementations and support for the use of *both approaches*; however, the
+    In Trilobite, we offer implementations and support for the use of *both approaches*; however, the
     Lorentz factor approach is the **standard convention** unless the documentation clearly indicates otherwise.
 
     In this documentation, we will always write the Lorentz factor distribution as :math:`\frac{dN}{d\gamma}`,
@@ -576,7 +576,7 @@ are some scenarios which are of particular relevance to astrophysical sources wh
 .. note::
 
     Support for performing these integrations numerically for arbitrary distribution functions is a planned
-    feature of Triceratops, but not currently implemented.
+    feature of Trilobite, but not currently implemented.
 
 The Spectrum of a Power-Law Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -612,7 +612,7 @@ Given the normalization in one parameterization, the other normalization can be 
 
 .. important::
 
-    In Triceratops, we strive to fully support both such parameterizations; however, the Lorentz factor
+    In Trilobite, we strive to fully support both such parameterizations; however, the Lorentz factor
     parameterization is the **standard convention** unless the documentation clearly indicates otherwise.
 
 Now, given a power-law distribution in Lorentz factor:
@@ -929,7 +929,7 @@ of order unity.
 
 .. note::
 
-    Triceratops supports **both** approaches. The low-level API exposes the
+    Trilobite supports **both** approaches. The low-level API exposes the
     pitch-angle–dependent emissivity :math:`j_\nu(\alpha)`, while the high-level
     routines return the angle-averaged emissivity using the isotropic assumption.
 
@@ -1015,13 +1015,13 @@ Outside this range, the distribution is assumed to vanish.
 
         \frac{dN}{dE} = N_{E,0} E^{-p}.
 
-    Triceratops adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
-    implemented in the relevant API (see :mod:`triceratops.radiation.synchrotron.microphysics`).
+    Trilobite adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
+    implemented in the relevant API (see :mod:`trilobite.radiation.synchrotron.microphysics`).
 
 .. note::
 
     :math:`N` may be either the total number of electrons or the number density of electrons, depending on context.
-    Triceratops generally works with number densities to facilitate coupling with hydrodynamical quantities. The
+    Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
     conversion between the two is just a division by the relevant volume.
 
 Equipartition for Power-Law Distributions
@@ -1029,7 +1029,7 @@ Equipartition for Power-Law Distributions
 
 .. hint::
 
-    The relevant API in Triceratops is in the :mod:`triceratops.radiation.synchrotron.microphysics` module. See
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
     :ref:`synchrotron_microphysics` for details on use.
 
 Assuming a power-law distribution of electrons, we can derive normalization of the distribution
@@ -1090,8 +1090,8 @@ In terms of the magnetic field, we also have
 
 .. important::
 
-    This is the canonical way to convert dynamics into synchrotron emission in Triceratops when assuming
-    equipartition and a power-law distribution of electrons. See :mod:`triceratops.radiation.synchrotron.microphysics`
+    This is the canonical way to convert dynamics into synchrotron emission in Trilobite when assuming
+    equipartition and a power-law distribution of electrons. See :mod:`trilobite.radiation.synchrotron.microphysics`
     for the relevant API.
 
 Another useful computation which is made possible with equipartition is the **total emitted power** from synchrotron.
@@ -1146,7 +1146,7 @@ of the second kind, and :math:`N_0` is a normalization constant.
 .. note::
 
     :math:`N` may be either the total number of electrons or the number density of electrons, depending on context.
-    Triceratops generally works with number densities to facilitate coupling with hydrodynamical quantities. The
+    Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
     conversion between the two is just a division by the relevant volume.
 
 Equipartition for Thermal Electron Distributions
@@ -1154,7 +1154,7 @@ Equipartition for Thermal Electron Distributions
 
 .. hint::
 
-    The relevant API in Triceratops is in the :mod:`triceratops.radiation.synchrotron.microphysics` module. See
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
     :ref:`synchrotron_microphysics` for details on use.
 
 Given a thermal energy density :math:`U_{\rm thermal}`, the energy density in relativistic electrons is (by
@@ -1245,7 +1245,7 @@ Cooling of Electrons
 .. hint::
 
     For a much more detailed discussion of electron cooling, including all of the relevant theory which
-    is applied in Triceratops, see :ref:`synchrotron_cooling_theory`.
+    is applied in Trilobite, see :ref:`synchrotron_cooling_theory`.
 
 As a population, relativistic electrons will cool and thereby evolve away from their injected energy distribution.
 This evolution can imprint additional spectral breaks and modify the normalization of the synchrotron emission.
@@ -1314,8 +1314,8 @@ The corresponding synchrotron frequency is
 
 .. hint::
 
-    This is implemented in the :mod:`triceratops.radiation.synchrotron.cooling` module via
-    :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+    This is implemented in the :mod:`trilobite.radiation.synchrotron.cooling` module via
+    :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 
 IC Cooling
@@ -1403,14 +1403,14 @@ within a dynamical time, while lower-energy electrons remain effectively uncoole
 
     At sufficiently high electron energies, inverse Compton scattering enters the
     **Klein–Nishina regime**, where the scattering cross section is reduced and the
-    :math:`\gamma^2` scaling of the cooling rate breaks down. Triceratops currently assumes
+    :math:`\gamma^2` scaling of the cooling rate breaks down. Trilobite currently assumes
     Thomson-regime IC cooling; Klein–Nishina corrections are not yet implemented.
 
 .. hint::
 
-    This is implemented in the :mod:`triceratops.radiation.synchrotron.cooling` module. See
-    :class:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
-    :meth:`~triceratops.radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
+    This is implemented in the :mod:`trilobite.radiation.synchrotron.cooling` module. See
+    :class:`~trilobite.radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
+    :meth:`~trilobite.radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
     method for the associated API.
 
 Absorption Processes in Synchrotron Radiation

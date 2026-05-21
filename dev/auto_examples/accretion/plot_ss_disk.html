@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED &#8212; Triceratops dev documentation</title>
+    <title>Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Accretion Disk with Fallback Mass Supply" href="plot_fallback_disk.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -605,7 +605,7 @@ function over all annuli.</p></li>
 <section id="relevant-api">
 <h2>Relevant API<a class="headerlink" href="#relevant-api" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html#triceratops.dynamics.accretion.AlphaDisk" title="triceratops.dynamics.accretion.AlphaDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlphaDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html#trilobite.dynamics.accretion.AlphaDisk" title="trilobite.dynamics.accretion.AlphaDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlphaDisk</span></code></a></p></li>
 <li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute()</span></code></p></li>
 <li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_sed()</span></code></p></li>
 <li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_effective_temperature()</span></code></p></li>
@@ -614,15 +614,15 @@ function over all annuli.</p></li>
 </section>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
-<p>Import the <a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html#triceratops.dynamics.accretion.AlphaDisk" title="triceratops.dynamics.accretion.AlphaDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlphaDisk</span></code></a> class together
-with Astropy units and the Triceratops plot style.</p>
+<p>Import the <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html#trilobite.dynamics.accretion.AlphaDisk" title="trilobite.dynamics.accretion.AlphaDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AlphaDisk</span></code></a> class together
+with Astropy units and the Trilobite plot style.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">AlphaDisk</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.accretion</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">AlphaDisk</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -840,7 +840,7 @@ peak <span class="math notranslate nohighlight">\(T_{\rm eff}\)</span>) to the a
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_ss_disk_003.png" srcset="../../_images/sphx_glr_plot_ss_disk_003.png" alt="SS73 Alpha-Disk SED  ($M_{\rm BH} = 10\,M_\odot$, $\alpha = 0.1$), Multi-colour BB SED  ($\alpha=0.1$, $D = 10.0 kpc$), Effective Temperature Profile" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 2.688 seconds)</p>
+<img src="../../_images/sphx_glr_plot_ss_disk_003.png" srcset="../../_images/sphx_glr_plot_ss_disk_003.png" alt="SS73 Alpha-Disk SED  ($M_{\rm BH} = 10\,M_\odot$, $\alpha = 0.1$), Multi-colour BB SED  ($\alpha=0.1$, $D = 10.0 kpc$), Effective Temperature Profile" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.058 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-ss-disk-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/b993ce20b4681cf2248893cef152d8c7/plot_ss_disk.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_ss_disk.ipynb</span></code></a></p>

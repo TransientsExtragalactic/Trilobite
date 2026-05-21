@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 engine = ChevalierTwoShockSelfSimilarEngine()
 time   = np.geomspace(1, 1000, 300) * u.day

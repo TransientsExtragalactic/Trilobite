@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Loading Filters from the SVO Filter Profile Service &#8212; Triceratops dev documentation</title>
+    <title>Loading Filters from the SVO Filter Profile Service &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Photometric Filters: Construction and Convolution" href="plot_filter_basics.html" />
@@ -142,11 +142,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -169,7 +169,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -581,26 +581,26 @@ to download the full example code.</p>
 <span id="sphx-glr-auto-examples-photometry-plot-svo-filters-py"></span><h1>Loading Filters from the SVO Filter Profile Service<a class="headerlink" href="#loading-filters-from-the-svo-filter-profile-service" title="Link to this heading">#</a></h1>
 <p>The <a class="reference external" href="https://svo2.cab.inta-csic.es/svo/theory/fps/">Spanish Virtual Observatory (SVO) Filter Profile Service</a> catalogues thousands of
 photometric bandpasses from virtually every major telescope and instrument.
-Triceratops can fetch any of them via <code class="docutils literal notranslate"><span class="pre">astroquery.svo_fps</span></code> and wrap them
-directly into a <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> or a
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>.</p>
+Trilobite can fetch any of them via <code class="docutils literal notranslate"><span class="pre">astroquery.svo_fps</span></code> and wrap them
+directly into a <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> or a
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This example requires an internet connection on first run. Results are
 cached locally by <code class="docutils literal notranslate"><span class="pre">astroquery</span></code> for one week, so subsequent runs are
 offline.</p>
 <p>Install the required optional dependencies with:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">triceratops</span><span class="p">[</span><span class="n">optical</span><span class="p">]</span>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">trilobite</span><span class="p">[</span><span class="n">optical</span><span class="p">]</span>
 </pre></div>
 </div>
 </div>
 <section id="relevant-api-references">
 <h2>Relevant API references<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.list_svo_filters.html#triceratops.utils.phot_utils.list_svo_filters" title="triceratops.utils.phot_utils.list_svo_filters"><code class="xref py py-func docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.list_svo_filters()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filter_from_svo.html#triceratops.utils.phot_utils.load_filter_from_svo" title="triceratops.utils.phot_utils.load_filter_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.load_filter_from_svo()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filters_from_svo.html#triceratops.utils.phot_utils.load_filters_from_svo" title="triceratops.utils.phot_utils.load_filters_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.load_filters_from_svo()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.FilterBundle</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.list_svo_filters.html#trilobite.utils.phot_utils.list_svo_filters" title="trilobite.utils.phot_utils.list_svo_filters"><code class="xref py py-func docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.list_svo_filters()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filter_from_svo.html#trilobite.utils.phot_utils.load_filter_from_svo" title="trilobite.utils.phot_utils.load_filter_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.load_filter_from_svo()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filters_from_svo.html#trilobite.utils.phot_utils.load_filters_from_svo" title="trilobite.utils.phot_utils.load_filters_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.load_filters_from_svo()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.FilterBundle</span></code></a></p></li>
 </ul>
 </section>
 <section id="imports">
@@ -608,12 +608,12 @@ offline.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">FilterBundle</span><span class="p">,</span>
     <span class="n">load_filter_from_svo</span><span class="p">,</span>
     <span class="n">list_svo_filters</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -621,7 +621,7 @@ offline.</p>
 </section>
 <section id="browsing-available-filters">
 <h2>Browsing Available Filters<a class="headerlink" href="#browsing-available-filters" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.list_svo_filters.html#triceratops.utils.phot_utils.list_svo_filters" title="triceratops.utils.phot_utils.list_svo_filters"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_svo_filters()</span></code></a> returns a metadata
+<p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.list_svo_filters.html#trilobite.utils.phot_utils.list_svo_filters" title="trilobite.utils.phot_utils.list_svo_filters"><code class="xref py py-func docutils literal notranslate"><span class="pre">list_svo_filters()</span></code></a> returns a metadata
 table for every filter registered for a given facility. Passing
 <code class="docutils literal notranslate"><span class="pre">instrument=</span></code> restricts the listing to a single detector/camera — the
 filtering is applied client-side on the <code class="docutils literal notranslate"><span class="pre">filterID</span></code> column, so the function
@@ -647,9 +647,9 @@ HST/WFC3_UVIS1.FQ243N 2420.6730813443 34.740690723422
 </section>
 <section id="loading-a-single-filter">
 <h2>Loading a Single Filter<a class="headerlink" href="#loading-a-single-filter" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filter_from_svo.html#triceratops.utils.phot_utils.load_filter_from_svo" title="triceratops.utils.phot_utils.load_filter_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_filter_from_svo()</span></code></a> takes any SVO
+<p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filter_from_svo.html#trilobite.utils.phot_utils.load_filter_from_svo" title="trilobite.utils.phot_utils.load_filter_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_filter_from_svo()</span></code></a> takes any SVO
 filter ID in <code class="docutils literal notranslate"><span class="pre">&quot;facility/instrument.band&quot;</span></code> format and returns a
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> with the
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> with the
 transmission curve already normalised into integration weights.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">f555w</span> <span class="o">=</span> <span class="n">load_filter_from_svo</span><span class="p">(</span><span class="s2">&quot;HST/WFC3_UVIS1.F555W&quot;</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="n">f555w</span><span class="p">)</span>
@@ -666,7 +666,7 @@ transmission curve already normalised into integration weights.</p>
 <section id="building-a-filterbundle-from-a-selection-of-filters">
 <h2>Building a FilterBundle from a Selection of Filters<a class="headerlink" href="#building-a-filterbundle-from-a-selection-of-filters" title="Link to this heading">#</a></h2>
 <p>We load five classic WFC3/UVIS1 broadband filters spanning UV to near-IR
-and assemble them into a <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.html#triceratops.utils.phot_utils.FilterBundle" title="triceratops.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>.
+and assemble them into a <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>.
 The bundle merges all individual grids into one common frequency grid and
 precomputes the weight matrix, so all five filters can be applied to any SED
 in a single matrix multiplication — the hot-loop method for MCMC.</p>
@@ -715,13 +715,13 @@ in a single matrix multiplication — the hot-loop method for MCMC.</p>
 </pre></div>
 </div>
 <img src="../../_images/sphx_glr_plot_svo_filters_001.png" srcset="../../_images/sphx_glr_plot_svo_filters_001.png" alt="HST/WFC3 UVIS1 broadband passbands (from the SVO catalogue)" class = "sphx-glr-single-img"/><p>Any filter loaded from the SVO is a standard
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a>, so all the usual
-methods — <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.convolve_nu.html#triceratops.utils.phot_utils.PhotometryFilter.convolve_nu" title="triceratops.utils.phot_utils.PhotometryFilter.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a>,
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.FilterBundle.apply.html#triceratops.utils.phot_utils.FilterBundle.apply" title="triceratops.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a>,
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a>, so all the usual
+methods — <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.convolve_nu.html#trilobite.utils.phot_utils.PhotometryFilter.convolve_nu" title="trilobite.utils.phot_utils.PhotometryFilter.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a>,
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.apply.html#trilobite.utils.phot_utils.FilterBundle.apply" title="trilobite.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a>,
 serialisation to HDF5/JSON — work without modification.</p>
 <p>To load every filter for a facility at once, use
-<a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filters_from_svo.html#triceratops.utils.phot_utils.load_filters_from_svo" title="triceratops.utils.phot_utils.load_filters_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_filters_from_svo()</span></code></a>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_filters_from_svo</span><span class="p">,</span> <span class="n">FilterBundle</span>
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filters_from_svo.html#trilobite.utils.phot_utils.load_filters_from_svo" title="trilobite.utils.phot_utils.load_filters_from_svo"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_filters_from_svo()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_filters_from_svo</span><span class="p">,</span> <span class="n">FilterBundle</span>
 <span class="n">all_hst</span> <span class="o">=</span> <span class="n">load_filters_from_svo</span><span class="p">(</span><span class="s2">&quot;HST&quot;</span><span class="p">,</span> <span class="n">instrument</span><span class="o">=</span><span class="s2">&quot;WFC3_UVIS1&quot;</span><span class="p">)</span>
 <span class="n">bundle</span> <span class="o">=</span> <span class="n">FilterBundle</span><span class="p">(</span><span class="n">all_hst</span><span class="p">)</span>
 </pre></div>
@@ -729,7 +729,7 @@ serialisation to HDF5/JSON — work without modification.</p>
 <p>To explore other facilities, browse
 <a class="reference external" href="https://svo2.cab.inta-csic.es/svo/theory/fps/">https://svo2.cab.inta-csic.es/svo/theory/fps/</a> and replace <code class="docutils literal notranslate"><span class="pre">&quot;HST&quot;</span></code> /
 <code class="docutils literal notranslate"><span class="pre">&quot;WFC3_UVIS1&quot;</span></code> with any facility/instrument pair listed there.</p>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 16.486 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 15.686 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-photometry-plot-svo-filters-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/a6e24174a7722479849a3ba9e1503a25/plot_svo_filters.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_svo_filters.ipynb</span></code></a></p>

@@ -23,7 +23,7 @@ TOPS Rosseland Mean Opacity: :math:`\kappa(T,\rho)` for Solar Composition
 
 The TOPS opacity code (Los Alamos National Laboratory) provides tables of the
 Rosseland mean opacity :math:`\kappa_R(T,\rho)` for arbitrary mixtures of
-elements.  Triceratops ships a bundled table for solar composition
+elements.  Trilobite ships a bundled table for solar composition
 (:math:`X \approx 0.70,\;Z \approx 0.02`) from which opacity and its
 log-space derivatives are evaluated via bilinear interpolation.
 
@@ -54,8 +54,8 @@ reproducing the characteristic features of stellar-interior opacity:
 
 Relevant API references
 -----------------------
-- :func:`~triceratops.radiation.opacity.utils.load_tops_opacity`
-- :class:`~triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity`
+- :func:`~trilobite.radiation.opacity.utils.load_tops_opacity`
+- :class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity`
 
 .. GENERATED FROM PYTHON SOURCE LINES 41-51
 
@@ -68,8 +68,8 @@ Relevant API references
     from matplotlib.cm import ScalarMappable
     from matplotlib.colors import Normalize
 
-    from triceratops.radiation.opacity import load_tops_opacity
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.radiation.opacity import load_tops_opacity
+    from trilobite.utils.plot_utils import set_plot_style
 
 
 
@@ -83,7 +83,7 @@ Relevant API references
 Load the Default Solar Opacity
 ------------------------------
 
-:func:`~triceratops.radiation.opacity.utils.load_tops_opacity` loads the
+:func:`~trilobite.radiation.opacity.utils.load_tops_opacity` loads the
 bundled ``tops_solar.dat`` file (9-element solar mixture, X = 0.70, Z = 0.02).
 We use ``out_of_bounds='nan'`` so that points outside the tabulated domain
 are silently returned as ``NaN`` and appear as gaps in the plot.
@@ -272,7 +272,7 @@ density grid (100 points over :math:`10^{-7}`–:math:`10^2\;\mathrm{g\,cm^{-3}}
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.884 seconds)
+   **Total running time of the script:** (0 minutes 0.935 seconds)
 
 
 .. _sphx_glr_download_auto_examples_opacity_plot_tops_rosseland_opacity.py:

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Prior Development Guide &#8212; Triceratops dev documentation</title>
+    <title>Prior Development Guide &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -141,11 +141,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -168,7 +168,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -449,13 +449,13 @@
   <section id="prior-development-guide">
 <span id="priors-dev"></span><h1>Prior Development Guide<a class="headerlink" href="#prior-development-guide" title="Link to this heading">#</a></h1>
 <p>This document describes how prior distributions are implemented in
-Triceratops and how developers can extend the prior system safely
+Trilobite and how developers can extend the prior system safely
 and consistently.</p>
 <p>The reference implementation lives in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/prior.py</span></code> :contentReference[oaicite:0]{index=0}.</p>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/prior.py</span></code> :contentReference[oaicite:0]{index=0}.</p>
 <section id="overview">
 <h2>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
-<p>In Triceratops, priors are lightweight, stateless, callable objects
+<p>In Trilobite, priors are lightweight, stateless, callable objects
 that evaluate the <strong>log-prior probability</strong> of a parameter value in
 physical parameter space. The only quantity required by the inference
 engine is:</p>
@@ -476,7 +476,7 @@ is optional or handled elsewhere.</p>
 <section id="the-prior-base-class">
 <h2>The Prior Base Class<a class="headerlink" href="#the-prior-base-class" title="Link to this heading">#</a></h2>
 <p>All priors inherit from the abstract base class
-<a class="reference internal" href="../../_as_gen/triceratops.inference.prior.Prior.html#triceratops.inference.prior.Prior" title="triceratops.inference.prior.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prior</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.prior.Prior.html#trilobite.inference.prior.Prior" title="trilobite.inference.prior.Prior"><code class="xref py py-class docutils literal notranslate"><span class="pre">Prior</span></code></a>.</p>
 <p>At construction time, a prior stores its defining parameters and
 generates callable evaluation functions:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span><span class="w"> </span><span class="nc">NormalPrior</span><span class="p">(</span><span class="n">Prior</span><span class="p">):</span>
@@ -596,7 +596,7 @@ as non-reconstructible.</p>
 </section>
 <section id="support-and-stability-guarantees">
 <h2>Support and Stability Guarantees<a class="headerlink" href="#support-and-stability-guarantees" title="Link to this heading">#</a></h2>
-<p>All priors in Triceratops must satisfy the following invariants:</p>
+<p>All priors in Trilobite must satisfy the following invariants:</p>
 <ul class="simple">
 <li><p>They operate on scalar floats in physical units.</p></li>
 <li><p>They are deterministic and side-effect free.</p></li>
@@ -629,7 +629,7 @@ receives a float and returns a float.</p>
 </section>
 <section id="final-remarks">
 <h2>Final Remarks<a class="headerlink" href="#final-remarks" title="Link to this heading">#</a></h2>
-<p>The prior system in Triceratops is intentionally simple and explicit.
+<p>The prior system in Trilobite is intentionally simple and explicit.
 Its design prioritizes clarity, extensibility, and numerical stability
 over abstraction or implicit behavior.</p>
 <p>When implementing new priors, focus on:</p>

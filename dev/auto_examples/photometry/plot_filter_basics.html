@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Photometric Filters: Construction and Convolution &#8212; Triceratops dev documentation</title>
+    <title>Photometric Filters: Construction and Convolution &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="FilterBundle: Batched Convolution for MCMC" href="plot_filter_bundle.html" />
@@ -142,11 +142,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -169,7 +169,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -579,8 +579,8 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="photometric-filters-construction-and-convolution">
 <span id="sphx-glr-auto-examples-photometry-plot-filter-basics-py"></span><h1>Photometric Filters: Construction and Convolution<a class="headerlink" href="#photometric-filters-construction-and-convolution" title="Link to this heading">#</a></h1>
-<p>This example introduces the <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> class
-— the fundamental building block of Triceratops’s optical photometry system.</p>
+<p>This example introduces the <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> class
+— the fundamental building block of Trilobite’s optical photometry system.</p>
 <p>We cover:</p>
 <ol class="arabic simple">
 <li><p><strong>Constructing</strong> a filter from a wavelength grid and a transmission curve.</p></li>
@@ -593,9 +593,9 @@ integration weights.</p></li>
 <section id="relevant-api-references">
 <h2>Relevant API references<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.PhotometryFilter</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filter_from_file.html#triceratops.utils.phot_utils.load_filter_from_file" title="triceratops.utils.phot_utils.load_filter_from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.load_filter_from_file()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.load_filter_from_speclite.html#triceratops.utils.phot_utils.load_filter_from_speclite" title="triceratops.utils.phot_utils.load_filter_from_speclite"><code class="xref py py-func docutils literal notranslate"><span class="pre">triceratops.utils.phot_utils.load_filter_from_speclite()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.PhotometryFilter</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filter_from_file.html#trilobite.utils.phot_utils.load_filter_from_file" title="trilobite.utils.phot_utils.load_filter_from_file"><code class="xref py py-func docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.load_filter_from_file()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.load_filter_from_speclite.html#trilobite.utils.phot_utils.load_filter_from_speclite" title="trilobite.utils.phot_utils.load_filter_from_speclite"><code class="xref py py-func docutils literal notranslate"><span class="pre">trilobite.utils.phot_utils.load_filter_from_speclite()</span></code></a></p></li>
 </ul>
 </section>
 <section id="imports">
@@ -604,8 +604,8 @@ integration weights.</p></li>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhotometryFilter</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">PhotometryFilter</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -613,7 +613,7 @@ integration weights.</p></li>
 </section>
 <section id="building-filters-from-scratch">
 <h2>Building Filters from Scratch<a class="headerlink" href="#building-filters-from-scratch" title="Link to this heading">#</a></h2>
-<p>A <a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.html#triceratops.utils.phot_utils.PhotometryFilter" title="triceratops.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> accepts:</p>
+<p>A <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> accepts:</p>
 <ul class="simple">
 <li><p>A wavelength grid as either a bare NumPy array <strong>in cm</strong>, or an
 <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> in any compatible unit (Å, nm, μm …).</p></li>
@@ -699,11 +699,11 @@ No explicit numerical integration is needed at evaluation time.</p>
 <p>We construct a power-law SED resembling an optically-thin synchrotron source
 and convolve it through each filter.  Three convolution paths are available:</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.apply.html#triceratops.utils.phot_utils.PhotometryFilter.apply" title="triceratops.utils.phot_utils.PhotometryFilter.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> —
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.apply.html#trilobite.utils.phot_utils.PhotometryFilter.apply" title="trilobite.utils.phot_utils.PhotometryFilter.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> —
 fastest, requires <code class="docutils literal notranslate"><span class="pre">F_nu</span></code> on the filter’s own grid.</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.convolve_nu.html#triceratops.utils.phot_utils.PhotometryFilter.convolve_nu" title="triceratops.utils.phot_utils.PhotometryFilter.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a> —
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.convolve_nu.html#trilobite.utils.phot_utils.PhotometryFilter.convolve_nu" title="trilobite.utils.phot_utils.PhotometryFilter.convolve_nu"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_nu()</span></code></a> —
 interpolates from any frequency grid (used here).</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda.html#triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda" title="triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_lambda()</span></code></a> —
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.convolve_lambda.html#trilobite.utils.phot_utils.PhotometryFilter.convolve_lambda" title="trilobite.utils.phot_utils.PhotometryFilter.convolve_lambda"><code class="xref py py-meth docutils literal notranslate"><span class="pre">convolve_lambda()</span></code></a> —
 accepts <code class="docutils literal notranslate"><span class="pre">F_lambda</span></code> on a wavelength grid.</p></li>
 </ul>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Power-law SED: F_nu ∝ nu^alpha, normalised at 1e14 Hz</span>
@@ -828,7 +828,7 @@ correct choice: CCDs count individual photons, so the detector response
 is proportional to the photon rate, not the energy rate.
 Energy weighting is appropriate for infrared bolometric detectors.</p>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.853 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.028 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-photometry-plot-filter-basics-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/43597b74d3da3e722b5bf54b39c92eb9/plot_filter_basics.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_filter_basics.ipynb</span></code></a></p>

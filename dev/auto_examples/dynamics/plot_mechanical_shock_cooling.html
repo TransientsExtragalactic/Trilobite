@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Radiative Cooling in the Mechanical Shock Engine &#8212; Triceratops dev documentation</title>
+    <title>Radiative Cooling in the Mechanical Shock Engine &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Mechanical Shock Model: Forward and Reverse Shock Evolution" href="plot_mechanical_shock_model.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -584,7 +584,7 @@ to download the full example code.</p>
 <p class="admonition-title">What this example does</p>
 <p>This example adds a <span class="math notranslate nohighlight">\(\rho^2\)</span>-type radiative cooling term to Region 3
 (the shocked CSM) of the
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> and
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a> and
 shows how varying the cooling coefficient from sub-dominant to strongly
 radiative changes the thermal energy budget, forward-shock speed, and shell
 width of the shocked CSM layer.</p>
@@ -603,7 +603,7 @@ remain hot and pressure-supported.  The layer cools rapidly, becomes
 geometrically thin, and the forward shock decelerates.  This transition from
 <em>adiabatic</em> to <em>radiative</em> shock is critical in dense CSM environments such as
 Type IIn supernovae and luminous radio transients.</p>
-<p>The <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a>
+<p>The <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.MechanicalShockEngine.html#trilobite.dynamics.shocks.numerical.MechanicalShockEngine" title="trilobite.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a>
 exposes this through the <code class="docutils literal notranslate"><span class="pre">cooling_3</span></code> keyword argument, which accepts a
 callable with signature</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">cooling_3</span><span class="p">(</span><span class="n">R_cd</span><span class="p">,</span> <span class="n">v_cd</span><span class="p">,</span> <span class="n">M3</span><span class="p">,</span> <span class="n">U3</span><span class="p">,</span> <span class="n">Delta3</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">dU3</span><span class="o">/</span><span class="n">dt</span>   <span class="p">[</span><span class="n">erg</span><span class="o">/</span><span class="n">s</span><span class="p">]</span>
@@ -633,12 +633,12 @@ examples.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">MechanicalShockEngine</span></a><span class="p">,</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">E_ej</span></a> <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">erg</span></a>
 <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">M_ej</span></a> <span class="o">=</span> <span class="mf">5.0</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">M_sun</span></a>
@@ -844,7 +844,7 @@ to a geometrically thin radiative shell.</p></li>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_mechanical_shock_cooling_001.png" srcset="../../_images/sphx_glr_plot_mechanical_shock_cooling_001.png" alt="plot mechanical shock cooling" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.598 seconds)</p>
+<img src="../../_images/sphx_glr_plot_mechanical_shock_cooling_001.png" srcset="../../_images/sphx_glr_plot_mechanical_shock_cooling_001.png" alt="plot mechanical shock cooling" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 4.796 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dynamics-plot-mechanical-shock-cooling-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/15a5147de4af44119a9c2e77701b72f5/plot_mechanical_shock_cooling.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_mechanical_shock_cooling.ipynb</span></code></a></p>

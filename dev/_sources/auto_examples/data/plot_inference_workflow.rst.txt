@@ -51,7 +51,7 @@ synthetic radio light curve to keep the example self-contained.
     from astropy.table import Table
     from unittest.mock import MagicMock
 
-    from triceratops.data import RadioPhotometryContainer
+    from trilobite.data import RadioPhotometryContainer
 
     rng = np.random.default_rng(0)
     n = 30
@@ -104,7 +104,7 @@ Step 2: Build a Mock Model
 ---------------------------
 
 In real usage you would import a physical model from
-``triceratops.models``. Here we use a mock that declares the same
+``trilobite.models``. Here we use a mock that declares the same
 interface (``variable_names``, ``VARIABLES``, ``output_names``,
 ``OUTPUTS``, ``UNITS``) to keep the example dependency-free.
 
@@ -215,12 +215,12 @@ Step 4: Wire into Likelihood and InferenceProblem
 ``InferenceData`` is the only object that likelihoods accept. Passing
 a container directly to ``GaussianLikelihood`` would raise a TypeError.
 
-In a real workflow you would import from ``triceratops.inference``:
+In a real workflow you would import from ``trilobite.inference``:
 
 .. code-block:: python
 
-    from triceratops.inference.likelihood import GaussianLikelihood
-    from triceratops.inference.problem import InferenceProblem
+    from trilobite.inference.likelihood import GaussianLikelihood
+    from trilobite.inference.problem import InferenceProblem
 
     likelihood = GaussianLikelihood(model=model, data=inference_data)
     problem = InferenceProblem(likelihood)
@@ -236,7 +236,7 @@ Once configured, pass the problem to a sampler:
 
 .. code-block:: python
 
-    from triceratops.inference.sampling import EmceeSampler
+    from trilobite.inference.sampling import EmceeSampler
 
     sampler = EmceeSampler(problem)
     result  = sampler.run(n_walkers=32, n_steps=2000)
@@ -300,7 +300,7 @@ Plot the detections and upper limits to verify the data look as expected.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.318 seconds)
+   **Total running time of the script:** (0 minutes 0.380 seconds)
 
 
 .. _sphx_glr_download_auto_examples_data_plot_inference_workflow.py:

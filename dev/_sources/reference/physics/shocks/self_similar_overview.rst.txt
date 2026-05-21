@@ -18,7 +18,7 @@ approaches, see :ref:`shock_engines`.
 Non-Relativistic Self-Similar Shocks
 -------------------------------------
 
-The first major class of self-similar shock engines in Triceratops are non-relativistic, based on the
+The first major class of self-similar shock engines in Trilobite are non-relativistic, based on the
 classical Rankine-Hugoniot jump conditions.  Three engines cover the most common scenarios; the
 table below summarises their applicability.
 
@@ -28,19 +28,19 @@ table below summarises their applicability.
 
    * - Engine
      - Best For
-   * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
      - **Ejecta dominated** supernova evolution; single-surface (contact discontinuity only)
        with analytic thin-shell normalization. Fast, stateless.
-   * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
      - Same as above for a **steady-wind CSM** (:math:`s=2`); accepts :math:`\dot{M}` and :math:`v_w` directly.
-   * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
+   * - :class:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
      - **Two-surface** (forward + reverse shock) Chevalier evolution with power-law CSM.
        Uses a tabulated :math:`(n,s)` grid for accurate normalization and separate
        post-shock conditions at each surface. Recommended when thermodynamics at each
        shock matters.
-   * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
+   * - :class:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
      - Same as above for a **steady-wind CSM** (:math:`s=2`).
-   * - :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
      - **Sedov-Taylor Phase** of SNe, when the shock is driven by thermal pressure in the ejecta. Requires
        a uniform ambient medium.
 
@@ -77,9 +77,9 @@ where :math:`\zeta` is a dimensionless constant of order unity that depends on :
 
 .. hint::
 
-    The :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine` handles
+    The :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine` handles
     arbitrary :math:`s`.  The
-    :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine` is a
+    :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine` is a
     convenience specialization for :math:`s = 2`: it accepts :math:`\dot{M}` and :math:`v_w`
     directly and derives :math:`K_{\rm CSM} = \dot{M}/(4\pi v_w)` internally.
 
@@ -93,7 +93,7 @@ practice :math:`\delta = 0` or :math:`1` is standard for Type II supernovae.
 
 The CSM is parameterized by its power-law index :math:`s` and the normalization constant
 :math:`K_{\rm CSM}`.  The static helper
-:meth:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.normalize_csm_density`
+:meth:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.normalize_csm_density`
 converts a reference density :math:`\rho_0` at a reference radius :math:`r_0` into
 :math:`K_{\rm CSM} = \rho_0\,r_0^s`.  For the wind engine the normalization is derived
 internally from :math:`\dot{M}` and :math:`v_w`, so no explicit :math:`K_{\rm CSM}` is needed.
@@ -106,7 +106,7 @@ without re-instantiation.
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
+        from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine
 
         engine = ChevalierSelfSimilarShockEngine()
 
@@ -129,7 +129,7 @@ without re-instantiation.
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+        from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
 
         engine = ChevalierSelfSimilarWindShockEngine()
 
@@ -148,9 +148,9 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_shock_properties`
 with a time array and the physical parameters.  The method returns a
-:class:`~triceratops.dynamics.shocks.chevalier.ChevalierShockState` named tuple with six
+:class:`~trilobite.dynamics.shocks.chevalier.ChevalierShockState` named tuple with six
 :class:`~astropy.units.Quantity` fields:
 
 - ``radius`` — the shock contact-discontinuity radius :math:`R(t)`.
@@ -163,7 +163,7 @@ with a time array and the physical parameters.  The method returns a
 .. note::
 
     Post-shock thermodynamics are computed via
-    :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+    :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
     using :math:`v_{\rm cd}` as the shock velocity, following the standard convention in the
     supernova radio-afterglow literature.  The true forward shock outruns the contact
     discontinuity by a factor :math:`R_{\rm fs}/R_c > 1` that depends on :math:`n` and
@@ -178,8 +178,8 @@ with a time array and the physical parameters.  The method returns a
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine
+        from trilobite.utils.plot_utils import set_plot_style
 
         engine = ChevalierSelfSimilarShockEngine()
         time   = np.geomspace(1, 1000, 500) * u.day
@@ -222,8 +222,8 @@ with a time array and the physical parameters.  The method returns a
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+        from trilobite.utils.plot_utils import set_plot_style
 
         engine = ChevalierSelfSimilarWindShockEngine()
         time   = np.geomspace(1, 1000, 500) * u.day
@@ -265,7 +265,7 @@ normalization constant :math:`A` from the full ODE solution instead of the thin-
 approximation :math:`\zeta`.
 
 At instantiation both engines call
-:func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_critical_grid`
+:func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_critical_grid`
 to precompute a table of the three dimensionless self-similar constants
 
 .. math::
@@ -280,9 +280,9 @@ ratios, see :ref:`chevalier_theory`.
 
 .. hint::
 
-   :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
+   :class:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
    handles arbitrary :math:`s`. The
-   :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
+   :class:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
    is the :math:`s=2` specialization that accepts :math:`\dot{M}` and :math:`v_w` directly.
 
 .. important::
@@ -299,14 +299,14 @@ Problem Setup
 ~~~~~~~~~~~~~~~
 
 The physical inputs are identical to those of
-:class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`.
+:class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`.
 
 .. dropdown:: Example — two-shock general engine
 
    .. code-block:: python
 
       from astropy import units as u
-      from triceratops.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
+      from trilobite.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
 
       # Table is built once here
       engine = ChevalierTwoShockSelfSimilarEngine()
@@ -324,7 +324,7 @@ The physical inputs are identical to those of
    .. code-block:: python
 
       from astropy import units as u
-      from triceratops.dynamics.shocks import ChevalierTwoShockSelfSimilarWindEngine
+      from trilobite.dynamics.shocks import ChevalierTwoShockSelfSimilarWindEngine
 
       engine = ChevalierTwoShockSelfSimilarWindEngine()
 
@@ -341,9 +341,9 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.compute_shock_properties`
 with a time array and the physical parameters. The method returns a
-:class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockState` named tuple with
+:class:`~trilobite.dynamics.shocks.chevalier.ChevalierTwoShockState` named tuple with
 fourteen :class:`~astropy.units.Quantity` fields — six kinematic and eight thermodynamic:
 
 - ``radius_cd``, ``radius_fs``, ``radius_rs`` — positions of the contact discontinuity,
@@ -377,8 +377,8 @@ fourteen :class:`~astropy.units.Quantity` fields — six kinematic and eight the
       import matplotlib.pyplot as plt
       from astropy import units as u
 
-      from triceratops.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
-      from triceratops.utils.plot_utils import set_plot_style
+      from trilobite.dynamics.shocks import ChevalierTwoShockSelfSimilarEngine
+      from trilobite.utils.plot_utils import set_plot_style
 
       engine = ChevalierTwoShockSelfSimilarEngine()
       time   = np.geomspace(1, 1000, 300) * u.day
@@ -427,7 +427,7 @@ fourteen :class:`~astropy.units.Quantity` fields — six kinematic and eight the
 Sedov--Taylor Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine` implements the
+The :class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine` implements the
 classic point-explosion blast wave in a uniform ambient medium
 :footcite:p:`sedov1946propagation` :footcite:p:`taylor1950formation`.  The shock radius and
 velocity evolve as
@@ -467,7 +467,7 @@ a fully ionized hydrogen plasma.
 
     .. code-block:: python
 
-        from triceratops.dynamics.shocks import SedovTaylorShockEngine
+        from trilobite.dynamics.shocks import SedovTaylorShockEngine
 
         # Default: monatomic ideal gas, fully ionized hydrogen
         engine = SedovTaylorShockEngine()
@@ -480,9 +480,9 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.compute_shock_properties`
 with a time array, an explosion energy, and an ambient density.  The method returns a
-:class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockState` named tuple with six
+:class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockState` named tuple with six
 :class:`~astropy.units.Quantity` fields:
 
 - ``radius`` — shock radius :math:`R_s(t)`.
@@ -501,8 +501,8 @@ with a time array, an explosion energy, and an ambient density.  The method retu
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import SedovTaylorShockEngine
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.dynamics.shocks import SedovTaylorShockEngine
+        from trilobite.utils.plot_utils import set_plot_style
 
         engine = SedovTaylorShockEngine()
         time   = np.geomspace(100, 1e6, 500) * u.yr
@@ -545,7 +545,7 @@ Weaver Wind Shock Engine
 Relativistic Self-Similar Shocks
 -------------------------------------
 
-In addition to the non-relativistic shock engines available in Triceratops, we also provide a number of fully
+In addition to the non-relativistic shock engines available in Trilobite, we also provide a number of fully
 relativistic self-similar shock engines based on the various known solutions to ultra-relativistic flows. These
 are very useful for things like GRB modeling, jets, etc.
 
@@ -572,10 +572,10 @@ in which the blast wave is ultra-relativistic (:math:`\Gamma \gg 1`).
 
    * - Engine
      - Best For
-   * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
      - Ultra-relativistic blast wave in a **general power-law** external medium
        (:math:`k < 3`). All analytic; no ODE integration required.
-   * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
      - Same as above for a **stellar-wind** external medium (:math:`k = 2`).
        Accepts :math:`\dot{M}` and :math:`v_w` directly rather than :math:`K`.
 
@@ -613,9 +613,9 @@ For the full derivation see :ref:`blandford_mckee_theory`.
 
 .. hint::
 
-    :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
+    :class:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
     handles any :math:`k < 3`.  The
-    :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
+    :class:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
     fixes :math:`k = 2` and accepts :math:`\dot{M}` and :math:`v_w` directly,
     computing :math:`K = \dot{M}/(4\pi v_w)` internally.
 
@@ -624,7 +624,7 @@ Problem Setup
 
 The two physical inputs are the isotropic-equivalent explosion energy :math:`E` and
 the external medium normalization :math:`K`.  The static helper
-:meth:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.normalize_csm_density`
+:meth:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.normalize_csm_density`
 converts a reference density :math:`\rho_0` at radius :math:`r_0` into
 :math:`K = \rho_0\,r_0^k`.  For the wind engine, :math:`K` is computed internally from
 :math:`\dot{M}` and :math:`v_w`.
@@ -644,7 +644,7 @@ A :class:`ValueError` is raised if :math:`k \geq 3`.
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import BlandfordMcKeeShockEngine
+        from trilobite.dynamics.shocks import BlandfordMcKeeShockEngine
 
         engine = BlandfordMcKeeShockEngine()
 
@@ -663,7 +663,7 @@ A :class:`ValueError` is raised if :math:`k \geq 3`.
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import BlandfordMcKeeWindShockEngine
+        from trilobite.dynamics.shocks import BlandfordMcKeeWindShockEngine
 
         engine = BlandfordMcKeeWindShockEngine()
 
@@ -676,9 +676,9 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.compute_shock_properties`
 with a time array and the physical parameters.  The method returns a
-:class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState` named tuple
+:class:`~trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState` named tuple
 with eleven fields.  Dimensionless fields are returned as bare arrays; all fields with
 physical dimensions carry :class:`~astropy.units.Quantity` units.
 
@@ -722,11 +722,11 @@ physical dimensions carry :class:`~astropy.units.Quantity` units.
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import (
+        from trilobite.dynamics.shocks import (
             BlandfordMcKeeShockEngine,
             BlandfordMcKeeWindShockEngine,
         )
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
         fig, axes = plt.subplots(2, 1, figsize=(6, 6), sharex=True)

@@ -74,8 +74,8 @@ Setup
     import numpy as np
     from astropy import units as u
 
-    from triceratops.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
+    from trilobite.utils.plot_utils import set_plot_style
 
     set_plot_style()
 
@@ -226,11 +226,11 @@ are the peak normalization :math:`F_{\rm pk}` and peak frequency
 
     from astropy.table import Table
 
-    from triceratops.data import InferenceData
-    from triceratops.data.photometry import RadioPhotometryEpochContainer
-    from triceratops.inference import GaussianCensoredLikelihood
-    from triceratops.inference.problem import InferenceProblem
-    from triceratops.inference.sampling.mcmc import EmceeSampler
+    from trilobite.data import InferenceData
+    from trilobite.data.photometry import RadioPhotometryEpochContainer
+    from trilobite.inference import GaussianCensoredLikelihood
+    from trilobite.inference.problem import InferenceProblem
+    from trilobite.inference.sampling.mcmc import EmceeSampler
 
     epoch_posteriors = {}
 
@@ -285,14 +285,14 @@ are the peak normalization :math:`F_{\rm pk}` and peak frequency
 
     /home/runner/work/Triceratops/Triceratops/docs/source/galleries/inference/plot_multi_epoch_sed_evolution.py:178: DeprecationWarning: RadioPhotometryEpochContainer is deprecated and will be removed in a future release. Use RadioPhotometryEpoch instead.
       photometry = RadioPhotometryEpochContainer(data_table)
-      t =    10 d  |  F_pk = 0.00 mJy  |  nu_pk = 26.26 GHz
-      t =    20 d  |  F_pk = 0.01 mJy  |  nu_pk = 15.50 GHz
-      t =    35 d  |  F_pk = 0.01 mJy  |  nu_pk = 8.41 GHz
+      t =    10 d  |  F_pk = 0.00 mJy  |  nu_pk = 26.10 GHz
+      t =    20 d  |  F_pk = 0.01 mJy  |  nu_pk = 15.56 GHz
+      t =    35 d  |  F_pk = 0.01 mJy  |  nu_pk = 8.42 GHz
       t =    55 d  |  F_pk = 0.01 mJy  |  nu_pk = 5.57 GHz
-      t =    80 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.77 GHz
+      t =    80 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.76 GHz
       t =   110 d  |  F_pk = 0.01 mJy  |  nu_pk = 3.18 GHz
       t =   150 d  |  F_pk = 0.01 mJy  |  nu_pk = 1.85 GHz
-      t =   200 d  |  F_pk = 0.02 mJy  |  nu_pk = 1.27 GHz
+      t =   200 d  |  F_pk = 0.02 mJy  |  nu_pk = 1.28 GHz
 
 
 
@@ -433,8 +433,8 @@ Chevalier scaling indices.
 
 
     === Recovered power-law indices ===
-      beta_F  (fit): 0.568  (true: 0.5)
-      beta_nu (fit): -0.997  (true: -1.0)
+      beta_F  (fit): 0.572  (true: 0.5)
+      beta_nu (fit): -0.994  (true: -1.0)
 
 
 
@@ -484,7 +484,7 @@ Deviations from these scalings suggest a different CSM geometry:
     === Physical interpretation ===
       Inferred CSM model: wind (s=2) + SSA
       Expected: beta_nu = -1.0,  beta_F = +0.5
-      Recovered: beta_nu = -1.00,  beta_F = 0.57
+      Recovered: beta_nu = -0.99,  beta_F = 0.57
       Agreement: Good
 
 
@@ -493,7 +493,7 @@ Deviations from these scalings suggest a different CSM geometry:
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (1 minutes 19.542 seconds)
+   **Total running time of the script:** (1 minutes 53.037 seconds)
 
 
 .. _sphx_glr_download_auto_examples_inference_plot_multi_epoch_sed_evolution.py:

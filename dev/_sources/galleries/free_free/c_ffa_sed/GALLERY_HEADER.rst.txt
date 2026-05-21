@@ -8,7 +8,7 @@ turnover that is distinct from synchrotron self-absorption (SSA).  Unlike the
 as :math:`F_\nu \propto \nu^2` below the absorption turnover.
 
 These examples show how to construct an FFA-attenuated synchrotron SED using the
-wind optical depth functions from :mod:`triceratops.radiation.free_free.absorption`.
+wind optical depth functions from :mod:`trilobite.radiation.free_free.absorption`.
 
 **Theory:** :ref:`free_free_theory`, :ref:`synch_sed_theory`
 

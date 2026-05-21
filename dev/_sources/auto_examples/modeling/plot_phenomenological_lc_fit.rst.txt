@@ -36,8 +36,8 @@ This approach is valuable because:
 - It reveals whether the transient has multiple components, re-brightenings, or
   other complex behavior that would complicate physical modeling.
 
-Triceratops provides several phenomenological light curve models in
-:mod:`~triceratops.models.generic.light_curve`:
+Trilobite provides several phenomenological light curve models in
+:mod:`~trilobite.models.generic.light_curve`:
 
 - :class:`~models.generic.light_curve.FRED`: Fast Rise, Exponential Decay —
   the workhorse model for smooth, single-peaked transients.
@@ -80,14 +80,14 @@ Setup
     import numpy as np
     from astropy import units as u
 
-    from triceratops.models.generic.light_curve import (
+    from trilobite.models.generic.light_curve import (
         FRED,
         BrokenPowerLawTime,
         GaussianPulse,
         NorrisPulse,
         SmoothedBrokenPowerLawTime,
     )
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.utils.plot_utils import set_plot_style
 
     set_plot_style()
 
@@ -277,11 +277,11 @@ well-characterized uncertainties.
 
     from astropy.table import Table
 
-    from triceratops.data import InferenceData
-    from triceratops.inference import GaussianCensoredLikelihood
-    from triceratops.inference.likelihood.base import GaussianLikelihood
-    from triceratops.inference.problem import InferenceProblem
-    from triceratops.inference.sampling.mcmc import EmceeSampler
+    from trilobite.data import InferenceData
+    from trilobite.inference import GaussianCensoredLikelihood
+    from trilobite.inference.likelihood.base import GaussianLikelihood
+    from trilobite.inference.problem import InferenceProblem
+    from trilobite.inference.sampling.mcmc import EmceeSampler
 
     fit_results = {}
 
@@ -361,10 +361,10 @@ well-characterized uncertainties.
 
  .. code-block:: none
 
-      1.4 GHz  |  t_pk = 20.6±2.4 d  |  F_pk = 1.15±0.07 mJy
-      5.0 GHz  |  t_pk = 8.9±1.0 d  |  F_pk = 2.84±0.19 mJy
-      10.0 GHz  |  t_pk = 7.0±1.3 d  |  F_pk = 3.35±0.83 mJy
-      15.0 GHz  |  t_pk = 4.1±1.2 d  |  F_pk = 5.74±1.48 mJy
+      1.4 GHz  |  t_pk = 20.8±2.6 d  |  F_pk = 1.15±0.07 mJy
+      5.0 GHz  |  t_pk = 8.9±0.9 d  |  F_pk = 2.84±0.19 mJy
+      10.0 GHz  |  t_pk = 6.7±1.1 d  |  F_pk = 3.38±0.52 mJy
+      15.0 GHz  |  t_pk = 4.1±0.9 d  |  F_pk = 5.65±1.76 mJy
 
 
 
@@ -517,7 +517,7 @@ recovers a consistent value.
  .. code-block:: none
 
 
-    Fitted power-law index: t_pk ~ nu^-0.64
+    Fitted power-law index: t_pk ~ nu^-0.65
     Expected (SSA in wind CSM): t_pk ~ nu^-1.00
 
 
@@ -526,7 +526,7 @@ recovers a consistent value.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 35.248 seconds)
+   **Total running time of the script:** (0 minutes 48.090 seconds)
 
 
 .. _sphx_glr_download_auto_examples_modeling_plot_phenomenological_lc_fit.py:

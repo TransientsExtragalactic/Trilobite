@@ -85,14 +85,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron import (
+from trilobite.radiation.synchrotron import (
     compute_bol_emissivity,
     compute_bol_emissivity_BPL,
     compute_bol_emissivity_from_thermal_energy_density,
     compute_equipartition_magnetic_field,
     compute_PL_norm_from_magnetic_field,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Section 1: Bolometric Emissivity vs Magnetic Field

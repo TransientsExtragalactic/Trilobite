@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Disk Thermal Equilibrium: The S-curve &#8212; Triceratops dev documentation</title>
+    <title>Disk Thermal Equilibrium: The S-curve &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Advective Cooling in One-Zone Accretion Disks" href="plot_adv_disk.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -600,8 +600,8 @@ during the evolution.</p>
 <section id="relevant-api">
 <h2>Relevant API<a class="headerlink" href="#relevant-api" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.utils.compute_advection_s_curve.html#triceratops.dynamics.accretion.one_zone.utils.compute_advection_s_curve" title="triceratops.dynamics.accretion.one_zone.utils.compute_advection_s_curve"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_advection_s_curve()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html#triceratops.dynamics.accretion.one_zone.AdvectiveDisk" title="triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve.html#trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve" title="trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_advection_s_curve()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
 </ul>
 </section>
 <section id="setup">
@@ -613,8 +613,8 @@ during the evolution.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.collections</span><span class="w"> </span><span class="kn">import</span> <a href="https://matplotlib.org/stable/api/collections_api.html#matplotlib.collections.LineCollection" title="matplotlib.collections.LineCollection" class="sphx-glr-backref-module-matplotlib-collections sphx-glr-backref-type-py-class"><span class="n">LineCollection</span></a>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.LogNorm.html#matplotlib.colors.LogNorm" title="matplotlib.colors.LogNorm" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class"><span class="n">LogNorm</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">AdvectiveDisk</span></a><span class="p">,</span> <span class="n">compute_advection_s_curve</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">AdvectiveDisk</span></a><span class="p">,</span> <span class="n">compute_advection_s_curve</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -707,34 +707,34 @@ riding at that moment.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4376.91it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 3877.53it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4412.60it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 3934.49it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4461.93it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 3933.38it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4383.61it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 3943.26it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4586.57it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4057.86it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4536.81it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4065.94it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4515.44it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4019.73it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4493.24it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4056.66it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4507.31it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4026.04it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 4493.09it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 4056.62it/s]
 </pre></div>
 </div>
 </section>
@@ -787,7 +787,7 @@ as both the surface density and the S-curve itself evolve.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_disk_scurve_001.png" srcset="../../_images/sphx_glr_plot_disk_scurve_001.png" alt="TDE Disk Track vs. Evolving S-curves ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.200 seconds)</p>
+<img src="../../_images/sphx_glr_plot_disk_scurve_001.png" srcset="../../_images/sphx_glr_plot_disk_scurve_001.png" alt="TDE Disk Track vs. Evolving S-curves ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.352 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-disk-scurve-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/6ffa17f370b198da01e40fdf47465af6/plot_disk_scurve.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_disk_scurve.ipynb</span></code></a></p>

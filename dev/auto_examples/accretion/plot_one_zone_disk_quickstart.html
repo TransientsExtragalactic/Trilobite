@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>One-Zone Accretion Disk — Quickstart &#8212; Triceratops dev documentation</title>
+    <title>One-Zone Accretion Disk — Quickstart &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="TDE Disk Evolution and Observable Signatures" href="plot_tde_disk_observables.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -580,7 +580,7 @@ to download the full example code.</p>
 </div>
 <section class="sphx-glr-example-title" id="one-zone-accretion-disk-quickstart">
 <span id="sphx-glr-auto-examples-accretion-plot-one-zone-disk-quickstart-py"></span><h1>One-Zone Accretion Disk — Quickstart<a class="headerlink" href="#one-zone-accretion-disk-quickstart" title="Link to this heading">#</a></h1>
-<p>This example introduces the one-zone accretion disk framework in Triceratops.
+<p>This example introduces the one-zone accretion disk framework in Trilobite.
 It walks through the minimal workflow end-to-end: constructing a disk model,
 generating physically consistent initial conditions, running the Cython
 integrator, and visualising the time evolution of the key disk observables.</p>
@@ -594,7 +594,7 @@ midplane temperature <span class="math notranslate nohighlight">\(T_c\)</span>, 
 accretion rate <span class="math notranslate nohighlight">\(\dot{M}\)</span> — are computed self-consistently from these two
 quantities at every time-step via an analytic <strong>closure relation</strong>.</p>
 <p>In this example we use
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a>,
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html#trilobite.dynamics.accretion.one_zone.GasPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a>,
 the simplest physically self-consistent closure.  It assumes:</p>
 <ul class="simple">
 <li><p><strong>Pressure</strong>: ideal gas, <span class="math notranslate nohighlight">\(P = \rho k_B T_c / (\mu m_p)\)</span>.</p></li>
@@ -620,7 +620,7 @@ angular momentum is transported outward and mass drains inward.</p></li>
 </ul>
 <p>The disk is initialized at a characteristic outer radius <span class="math notranslate nohighlight">\(R_{D,0}\)</span> with
 a given total mass <span class="math notranslate nohighlight">\(M_{D,0}\)</span>.  We then use the
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
 helper to infer the corresponding angular momentum <span class="math notranslate nohighlight">\(J_{D,0}\)</span> from the
 Metzger+08 kinematic constraint</p>
 <div class="math notranslate nohighlight">
@@ -630,10 +630,10 @@ Metzger+08 kinematic constraint</p>
 <section id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html#trilobite.dynamics.accretion.one_zone.GasPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a></p></li>
 </ul>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
@@ -650,8 +650,8 @@ see <a class="reference internal" href="../../reference/physics/disks/one_zone_d
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GasPressureDisk</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GasPressureDisk</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="n">set_plot_style</span><span class="p">()</span>
 </pre></div>
@@ -659,7 +659,7 @@ see <a class="reference internal" href="../../reference/physics/disks/one_zone_d
 </section>
 <section id="model-instantiation">
 <h2>Model Instantiation<a class="headerlink" href="#model-instantiation" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html#triceratops.dynamics.accretion.one_zone.GasPressureDisk" title="triceratops.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html#trilobite.dynamics.accretion.one_zone.GasPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a>
 takes a single <em>context parameter</em>: the mean molecular weight <code class="docutils literal notranslate"><span class="pre">mu</span></code>.
 Context parameters characterise the equation of state and are fixed for the
 lifetime of the model object.  The default <code class="docutils literal notranslate"><span class="pre">mu</span> <span class="pre">=</span> <span class="pre">0.6</span></code> is appropriate for a
@@ -730,7 +730,7 @@ our adopted <span class="math notranslate nohighlight">\(R_{\rm in} = 3 \times 1
 <h2>Initial Conditions<a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h2>
 <p>Rather than specifying <span class="math notranslate nohighlight">\(M_{D,0}\)</span> and <span class="math notranslate nohighlight">\(J_{D,0}\)</span> independently —
 which risks an inconsistent initial disk radius — we use
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a>
 to derive <span class="math notranslate nohighlight">\(J_{D,0}\)</span> from the initial disk mass and outer radius.</p>
 <p>We start with a disk of mass <span class="math notranslate nohighlight">\(M_{D,0} = 0.05\,M_\odot\)</span> at an initial
 outer radius <span class="math notranslate nohighlight">\(R_{D,0} = 3 \times 10^{11}\;\mathrm{cm}\)</span> — roughly
@@ -752,9 +752,9 @@ Initial angular momentum:        8.920508530252099e+50 cm2 g / s
 </section>
 <section id="running-the-integrator">
 <h2>Running the Integrator<a class="headerlink" href="#running-the-integrator" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a>
 runs the Cython explicit-Euler integrator and returns a
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a>.
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code></a>.
 The time span is supplied as a <code class="docutils literal notranslate"><span class="pre">(t_start,</span> <span class="pre">t_end)</span></code> tuple; both plain floats
 (seconds) and <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects are accepted.</p>
 <div class="admonition hint">
@@ -782,10 +782,10 @@ Steps taken:             1,000,000
 </section>
 <section id="accessing-results">
 <h2>Accessing Results<a class="headerlink" href="#accessing-results" title="Link to this heading">#</a></h2>
-<p>The <a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>
+<p>The <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data"><code class="xref py py-attr docutils literal notranslate"><span class="pre">data</span></code></a>
 property returns a dictionary of unit-bearing
 <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> arrays — one entry per declared
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code></a>
 key, plus <code class="docutils literal notranslate"><span class="pre">&quot;t&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;M_D&quot;</span></code>, and <code class="docutils literal notranslate"><span class="pre">&quot;J_D&quot;</span></code>.  Field names, units, and
 descriptions are all recorded in the model’s <code class="docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code> declaration
 and are therefore self-documenting.</p>
@@ -890,9 +890,9 @@ alternative (e.g. slim-disk or ADAF) models should be considered.</p>
 <img src="../../_images/sphx_glr_plot_one_zone_disk_quickstart_002.png" srcset="../../_images/sphx_glr_plot_one_zone_disk_quickstart_002.png" alt="Scale Height, Aspect Ratio" class = "sphx-glr-single-img"/></section>
 <section id="inspecting-the-initial-and-final-states">
 <h2>Inspecting the Initial and Final States<a class="headerlink" href="#inspecting-the-initial-and-final-states" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">initial_state</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">initial_state</span></code></a>
 and
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">final_state</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state"><code class="xref py py-attr docutils literal notranslate"><span class="pre">final_state</span></code></a>
 provide the full set of derived quantities at the first and last time-steps
 respectively — useful for quick sanity checks.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">init</span></a> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">initial_state</span>
@@ -928,7 +928,7 @@ Final state
   H/R        = 0.8617
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.660 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 3.771 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-one-zone-disk-quickstart-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/d0468987f6023ebce035cdf24bcc9970/plot_one_zone_disk_quickstart.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_one_zone_disk_quickstart.ipynb</span></code></a></p>

@@ -8,7 +8,7 @@ Methods: Quadrature Based SEDs
     - :ref:`synch_sed_theory` for the methods used to compute analytical synchrotron SEDs.
     - :ref:`synch_numerical_sed` for the user guide for the numerical synchrotron code.
 
-This document describes the numerical methods implemented in Triceratops for **computing synchrotron spectral energy
+This document describes the numerical methods implemented in Trilobite for **computing synchrotron spectral energy
 distributions (SEDs) from an arbitrary electron distribution**. The analytical library described in :ref:`synch_sed_theory`
 covers a wide range of important cases, but there are many physically interesting scenarios for which a closed-form
 expression for the SED is either unavailable or impractical to derive. These include:
@@ -20,10 +20,10 @@ expression for the SED is either unavailable or impractical to derive. These inc
 - **Heterogeneous magnetic field structures**, where the field varies across the source and a simple single-zone
   treatment is insufficient.
 
-In these cases, a robust numerical method is needed. The approach implemented in Triceratops is based on direct
+In these cases, a robust numerical method is needed. The approach implemented in Trilobite is based on direct
 quadrature of the fundamental synchrotron integrals, performed in log-space for numerical stability. The central
 objective of this note is to document the mathematics and algorithmic choices behind that implementation, which lives
-in :mod:`triceratops.radiation.synchrotron.SEDs.numerical`.
+in :mod:`trilobite.radiation.synchrotron.SEDs.numerical`.
 
 .. hint::
 
@@ -74,7 +74,7 @@ involves evaluating the kernel :math:`F(x)` at each point in a two-dimensional g
 values. The kernel itself is expensive to evaluate directly (it requires numerical integration of a Bessel function),
 so efficient computation demands that it be pre-tabulated and interpolated.
 
-The following sections describe the methods by which Triceratops achieves these calculations with a high
+The following sections describe the methods by which Trilobite achieves these calculations with a high
 degree of fidelity and numerical stability, including the handling of asymptotic regimes, the use of log-space quadrature,
 and the application of integration by parts to simplify the absorption coefficient integral.
 
@@ -113,7 +113,7 @@ It may also be well approximated by\ :footcite:p:`lu_2026_18603474`
     F(x) \approx \frac{\left[(\pi x/2)^{s_1/2} + 1\right]^{1/s_1}}{[(2.150x^{1/3})^{-s_2} + 1]^{1/s_2}} e^{-x},
 
 where :math:`s_1 = 1.430` and :math:`s_2 = 2.627`. To properly capture the behavior of :math:`F(x)` across its entire
-domain, Triceratops uses the exact Bessel integral for intermediate :math:`x` values and switches to
+domain, Trilobite uses the exact Bessel integral for intermediate :math:`x` values and switches to
 the asymptotic forms outside a user-configurable range. The exact method is preferred for production
 calculations, while the approximation can be used for rapid prototyping.
 
@@ -209,7 +209,7 @@ where :math:`s_1 = 1.430` and :math:`s_2 = 2.627`. This approximation
 reproduces the exact kernel to better than one percent over the full
 range of :math:`x`.
 
-In Triceratops, the exact Bessel-function form is used in the intermediate
+In Trilobite, the exact Bessel-function form is used in the intermediate
 regime, while the asymptotic limits are applied at small and large
 :math:`x` to ensure numerical stability and efficiency.
 
@@ -218,7 +218,7 @@ regime, while the asymptotic limits are applied at small and large
 Computing the Emissivity
 -------------------------
 
-To avoid repeated evaluation of the synchrotron kernels, Triceratops precomputes a table of these values on
+To avoid repeated evaluation of the synchrotron kernels, Trilobite precomputes a table of these values on
 a configurable grid of :math:`x` values. Then for any given frequency :math:`\nu`, magnetic field strength :math:`B`, and pitch angle :math:`\alpha`,
 the kernel can be interpolated rapidly to determine the correct value of :math:`F(x)` for each electron Lorentz factor :math:`\gamma` in the distribution.
 
@@ -259,7 +259,7 @@ The standard expression for the self-absorption coefficient,
 
 involves the derivative of the quantity :math:`N(\gamma)/\gamma^2`. For a numerical distribution :math:`N(\gamma)`
 given only on a discrete grid, computing this derivative reliably is awkward and introduces additional numerical
-error. Triceratops avoids this difficulty entirely by applying an **integration by parts** (IBP) to transform the
+error. Trilobite avoids this difficulty entirely by applying an **integration by parts** (IBP) to transform the
 integral into one that involves only :math:`N(\gamma)` itself and the log-derivative of the kernel.
 
 Setting :math:`u = F(x)` and :math:`dv = \gamma^2\,\frac{d}{d\gamma}(N/\gamma^2) d\gamma`, and noting that the
@@ -418,9 +418,9 @@ the observer follows from integrating over the solid angle subtended by the sour
 
 where :math:`A_{\rm eff}` is the effective projected area of the source on the sky (defaulting to :math:`\pi R^2`
 for a sphere) and :math:`D_A` is the angular diameter distance to the source. This is the quantity returned by
-:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`, which
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`, which
 handles distance resolution (including conversion from luminosity distance, proper distance, or redshift) via
-:func:`~triceratops.physics_utils.resolve_cosmological_distances`.
+:func:`~trilobite.physics_utils.resolve_cosmological_distances`.
 
 .. rubric:: References
 

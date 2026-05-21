@@ -21,7 +21,7 @@
 Multi-Band Optical Light Curve: FREDBlackbodyModel
 ====================================================
 
-This example demonstrates the :class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
+This example demonstrates the :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
 — the coupled model that pairs a Fast Rise, Exponential Decay (FRED) temporal
 profile with a Planck blackbody SED, and convolves the result through a set of
 photometric filters to produce broadband optical light curves.
@@ -40,7 +40,7 @@ where:
   (peak value = 1, onset at :math:`t_0`, rise timescale :math:`\tau_r`,
   decay timescale :math:`\tau_d`),
 - :math:`\mathbf{W}` is the filter weight matrix from
-  :class:`~triceratops.utils.phot_utils.FilterBundle` (shape
+  :class:`~trilobite.utils.phot_utils.FilterBundle` (shape
   ``(N_\mathrm{filters}, N_\mathrm{freq})``),
 - :math:`B_\nu` is the Planck function, normalized so that the parameter
   :math:`A` equals :math:`F_\nu` at the V-band pivot frequency, and
@@ -50,9 +50,9 @@ This architecture is described in detail in :ref:`optical_photometry_models`.
 
 See Also
 --------
-- :class:`triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
-- :class:`triceratops.models.core.optical.CoupledOpticalModel`
-- :class:`triceratops.utils.phot_utils.FilterBundle`
+- :class:`trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
+- :class:`trilobite.models.core.optical.CoupledOpticalModel`
+- :class:`trilobite.utils.phot_utils.FilterBundle`
 - :ref:`optical_light_curve` — data container for single-band optical time series
 - Gallery: :ref:`sphx_glr_galleries_inference_plot_optical_lc_inference.py` — fitting this model to data
 
@@ -62,10 +62,10 @@ Setup
 -----
 
 We load the SDSS *ugriz* passbands from the ``speclite`` registry and assemble
-them into a :class:`~triceratops.utils.phot_utils.FilterBundle`. The bundle
+them into a :class:`~trilobite.utils.phot_utils.FilterBundle`. The bundle
 precomputes the weight matrix :math:`\mathbf{W}` once so that all subsequent
 filter convolutions are a single matrix–vector multiply — the hot-loop pattern
-used by the :class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel`
+used by the :class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel`
 internally.
 
 See :ref:`sphx_glr_galleries_photometry_plot_filter_bundle.py` for a deeper
@@ -80,9 +80,9 @@ look at ``FilterBundle`` mechanics and a timing comparison.
     import numpy as np
     from astropy import units as u
 
-    from triceratops.models.generic.optical_photometry import FREDBlackbodyModel
-    from triceratops.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
+    from trilobite.utils.phot_utils import FilterBundle, flux_to_ab_mag, load_filter_from_speclite
+    from trilobite.utils.plot_utils import set_plot_style
 
     set_plot_style()
 
@@ -112,8 +112,8 @@ look at ``FilterBundle`` mechanics and a timing comparison.
 
     Traceback (most recent call last):
       File "/home/runner/work/Triceratops/Triceratops/docs/source/galleries/modeling/plot_fred_blackbody_optical_lc.py", line 59, in <module>
-        from triceratops.models.generic.optical_photometry import FREDBlackbodyModel
-    ModuleNotFoundError: No module named 'triceratops.models.generic.optical_photometry'
+        from trilobite.models.generic.optical_photometry import FREDBlackbodyModel
+    ModuleNotFoundError: No module named 'trilobite.models.generic.optical_photometry'
 
 
 
@@ -123,10 +123,10 @@ look at ``FilterBundle`` mechanics and a timing comparison.
 Build the Model and Set True Parameters
 ----------------------------------------
 
-:class:`~triceratops.models.generic.optical_photometry.FREDBlackbodyModel` requires
-a :class:`~triceratops.utils.phot_utils.FilterBundle` as its only constructor
+:class:`~trilobite.models.generic.optical_photometry.FREDBlackbodyModel` requires
+a :class:`~trilobite.utils.phot_utils.FilterBundle` as its only constructor
 argument.  The model's ``bundle`` attribute is also used later by
-:meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
+:meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
 to resolve ``band_name → band_idx`` automatically.
 
 The five free parameters of this model are:
@@ -235,7 +235,7 @@ Multi-Band Light Curves in Flux
 
 We evaluate the model at a dense time grid for each band by building
 ``(time, band_idx)`` variable arrays. The
-:meth:`~triceratops.models.core.base.Model.forward_model` call performs:
+:meth:`~trilobite.models.core.base.Model.forward_model` call performs:
 
 1. Evaluate the Planck SED :math:`B_\nu` on ``bundle.frequency_grid``.
 2. Convolve through the weight matrix → band-averaged fluxes (one per filter).
@@ -363,7 +363,7 @@ Because the temperature is fixed in this model variant, the :math:`g - r`
 colour is constant — it depends only on :math:`T_\mathrm{eff}` (and the filter
 convolution), not on time. Models with spectral evolution (e.g. cooling or
 shock reionization) would show colour evolution here. The
-:class:`~triceratops.models.generic.optical_photometry.GeneralizedFREDBlackbodyModel`
+:class:`~trilobite.models.generic.optical_photometry.GeneralizedFREDBlackbodyModel`
 follows the same pattern but with a more flexible temporal shape controlled by
 additional shape exponents :math:`\nu_r` and :math:`\nu_d`.
 

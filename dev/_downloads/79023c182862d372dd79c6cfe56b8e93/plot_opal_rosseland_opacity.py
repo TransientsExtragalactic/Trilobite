@@ -4,7 +4,7 @@ OPAL Rosseland Mean Opacity: :math:`\kappa(T,\rho)` for Solar Composition
 
 The OPAL project (Badnell et al. 2005, MNRAS 360:458) provides tables of the
 Rosseland mean opacity :math:`\kappa_R(T,\rho)` for a wide range of stellar
-compositions.  Triceratops ships a bundled table for solar composition
+compositions.  Trilobite ships a bundled table for solar composition
 (:math:`X=0.70,\;Z=0.02`) from which opacity and its log-space derivatives are
 evaluated via bilinear interpolation.
 
@@ -27,9 +27,9 @@ reproducing the characteristic features of stellar-interior opacity:
 
 Relevant API references
 -----------------------
-- :func:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.load_opal_opacity`
-- :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
-- :class:`~triceratops.radiation.opacity.tables.opacity_table.OPALOpacityTable`
+- :func:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.load_opal_opacity`
+- :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
+- :class:`~trilobite.radiation.opacity.tables.opacity_table.OPALOpacityTable`
 """
 
 import matplotlib.pyplot as plt
@@ -38,14 +38,14 @@ from astropy import units as u
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from triceratops.radiation.opacity import load_opal_opacity
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.opacity import load_opal_opacity
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Load the Default Solar Opacity
 # ------------------------------
 #
-# :func:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.load_opal_opacity` loads
+# :func:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.load_opal_opacity` loads
 # table index 72 from the bundled HDF5 file (X = 0.70, Z = 0.02).
 # We use ``out_of_bounds='nan'`` so that points outside the tabulated domain
 # are silently returned as ``NaN`` and appear as gaps in the plot.

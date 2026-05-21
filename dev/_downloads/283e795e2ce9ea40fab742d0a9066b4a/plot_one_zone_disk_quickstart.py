@@ -2,7 +2,7 @@ r"""
 One-Zone Accretion Disk — Quickstart
 =====================================
 
-This example introduces the one-zone accretion disk framework in Triceratops.
+This example introduces the one-zone accretion disk framework in Trilobite.
 It walks through the minimal workflow end-to-end: constructing a disk model,
 generating physically consistent initial conditions, running the Cython
 integrator, and visualising the time evolution of the key disk observables.
@@ -21,7 +21,7 @@ accretion rate :math:`\dot{M}` — are computed self-consistently from these two
 quantities at every time-step via an analytic **closure relation**.
 
 In this example we use
-:class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`,
+:class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`,
 the simplest physically self-consistent closure.  It assumes:
 
 - **Pressure**: ideal gas, :math:`P = \rho k_B T_c / (\mu m_p)`.
@@ -49,7 +49,7 @@ compact-object mergers.  The key input parameters are:
 
 The disk is initialized at a characteristic outer radius :math:`R_{D,0}` with
 a given total mass :math:`M_{D,0}`.  We then use the
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
 helper to infer the corresponding angular momentum :math:`J_{D,0}` from the
 Metzger+08 kinematic constraint
 
@@ -61,10 +61,10 @@ so that the initial state is internally self-consistent.
 
 See Also
 --------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
-- :class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :class:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
 
 .. hint::
 
@@ -84,8 +84,8 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import GasPressureDisk
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import GasPressureDisk
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -93,7 +93,7 @@ set_plot_style()
 # Model Instantiation
 # -------------------
 #
-# :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+# :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
 # takes a single *context parameter*: the mean molecular weight ``mu``.
 # Context parameters characterise the equation of state and are fixed for the
 # lifetime of the model object.  The default ``mu = 0.6`` is appropriate for a
@@ -137,7 +137,7 @@ alpha = 0.1  # Shakura-Sunyaev viscosity parameter
 #
 # Rather than specifying :math:`M_{D,0}` and :math:`J_{D,0}` independently —
 # which risks an inconsistent initial disk radius — we use
-# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+# :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
 # to derive :math:`J_{D,0}` from the initial disk mass and outer radius.
 #
 # We start with a disk of mass :math:`M_{D,0} = 0.05\,M_\odot` at an initial
@@ -157,9 +157,9 @@ print("Initial angular momentum:       ", ic["J_D_0"].to(u.g * u.cm**2 / u.s))
 # Running the Integrator
 # ----------------------
 #
-# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+# :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 # runs the Cython explicit-Euler integrator and returns a
-# :class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult`.
+# :class:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult`.
 # The time span is supplied as a ``(t_start, t_end)`` tuple; both plain floats
 # (seconds) and :class:`~astropy.units.Quantity` objects are accepted.
 #
@@ -184,10 +184,10 @@ print(f"Steps taken:             {result.n_steps:,}")
 # Accessing Results
 # -----------------
 #
-# The :attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data`
+# The :attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data`
 # property returns a dictionary of unit-bearing
 # :class:`~astropy.units.Quantity` arrays — one entry per declared
-# :attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS`
+# :attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.RESULT_FIELDS`
 # key, plus ``"t"``, ``"M_D"``, and ``"J_D"``.  Field names, units, and
 # descriptions are all recorded in the model's ``RESULT_FIELDS`` declaration
 # and are therefore self-documenting.
@@ -295,9 +295,9 @@ plt.show()
 # Inspecting the Initial and Final States
 # ----------------------------------------
 #
-# :attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state`
+# :attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state`
 # and
-# :attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state`
+# :attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state`
 # provide the full set of derived quantities at the first and last time-steps
 # respectively — useful for quick sanity checks.
 

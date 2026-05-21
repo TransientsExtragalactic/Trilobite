@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from triceratops.radiation.synchrotron.core import (
+from trilobite.radiation.synchrotron.core import (
     compute_first_synchrotron_kernel,
     compute_averaged_first_synchrotron_kernel,
 )

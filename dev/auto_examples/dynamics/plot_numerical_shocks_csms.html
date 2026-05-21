@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>SNe Shocks In Different CSM Environments &#8212; Triceratops dev documentation</title>
+    <title>SNe Shocks In Different CSM Environments &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Chevalier Self-Similar Shock Structure" href="plot_chevalier_shock_structure.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -583,22 +583,22 @@ to download the full example code.</p>
 <p>This example explores how a pressure-driven supernova shock evolves when the
 same ejecta model is launched into several different circumstellar medium
 (CSM) density profiles.  It uses the
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 together with the CSM factory functions in
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.html#module-triceratops.dynamics.shocks.utils" title="triceratops.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.html#module-trilobite.dynamics.shocks.utils" title="trilobite.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>.</p>
 <p>The goal is not to fit a specific transient, but to build intuition for how
 density structure imprints itself on the shock dynamics. We compare shocks
 propagating into:</p>
 <ul class="simple">
-<li><p>a low-density uniform ISM (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_uniform_csm_density_func.html#triceratops.dynamics.shocks.utils.get_uniform_csm_density_func" title="triceratops.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>),</p></li>
-<li><p>a dense uniform medium (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_uniform_csm_density_func.html#triceratops.dynamics.shocks.utils.get_uniform_csm_density_func" title="triceratops.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>),</p></li>
-<li><p>a steady wind (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_wind_csm_density_func.html#triceratops.dynamics.shocks.utils.get_wind_csm_density_func" title="triceratops.dynamics.shocks.utils.get_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wind_csm_density_func()</span></code></a>),</p></li>
-<li><p>a wind with an outer ISM floor (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func.html#triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func" title="triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wind_with_floor_csm_density_func()</span></code></a>),</p></li>
-<li><p>a sharply truncated wind (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func.html#triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func" title="triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_truncated_wind_csm_density_func()</span></code></a>),</p></li>
-<li><p>a smoothly truncated wind (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func.html#triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func" title="triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smooth_truncated_wind_csm_density_func()</span></code></a>),</p></li>
-<li><p>a dense top-hat shell (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_shell_csm_density_func.html#triceratops.dynamics.shocks.utils.get_shell_csm_density_func" title="triceratops.dynamics.shocks.utils.get_shell_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_shell_csm_density_func()</span></code></a>),</p></li>
-<li><p>a smooth Gaussian shell (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func.html#triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func" title="triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_gaussian_shell_csm_density_func()</span></code></a>),</p></li>
-<li><p>and a broken power-law CSM (<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func.html#triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func" title="triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_broken_power_law_csm_density_func()</span></code></a>).</p></li>
+<li><p>a low-density uniform ISM (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_uniform_csm_density_func.html#trilobite.dynamics.shocks.utils.get_uniform_csm_density_func" title="trilobite.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>),</p></li>
+<li><p>a dense uniform medium (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_uniform_csm_density_func.html#trilobite.dynamics.shocks.utils.get_uniform_csm_density_func" title="trilobite.dynamics.shocks.utils.get_uniform_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_uniform_csm_density_func()</span></code></a>),</p></li>
+<li><p>a steady wind (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_wind_csm_density_func.html#trilobite.dynamics.shocks.utils.get_wind_csm_density_func" title="trilobite.dynamics.shocks.utils.get_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wind_csm_density_func()</span></code></a>),</p></li>
+<li><p>a wind with an outer ISM floor (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_wind_with_floor_csm_density_func.html#trilobite.dynamics.shocks.utils.get_wind_with_floor_csm_density_func" title="trilobite.dynamics.shocks.utils.get_wind_with_floor_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_wind_with_floor_csm_density_func()</span></code></a>),</p></li>
+<li><p>a sharply truncated wind (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func.html#trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func" title="trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_truncated_wind_csm_density_func()</span></code></a>),</p></li>
+<li><p>a smoothly truncated wind (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func.html#trilobite.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func" title="trilobite.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_smooth_truncated_wind_csm_density_func()</span></code></a>),</p></li>
+<li><p>a dense top-hat shell (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_shell_csm_density_func.html#trilobite.dynamics.shocks.utils.get_shell_csm_density_func" title="trilobite.dynamics.shocks.utils.get_shell_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_shell_csm_density_func()</span></code></a>),</p></li>
+<li><p>a smooth Gaussian shell (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_gaussian_shell_csm_density_func.html#trilobite.dynamics.shocks.utils.get_gaussian_shell_csm_density_func" title="trilobite.dynamics.shocks.utils.get_gaussian_shell_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_gaussian_shell_csm_density_func()</span></code></a>),</p></li>
+<li><p>and a broken power-law CSM (<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_broken_power_law_csm_density_func.html#trilobite.dynamics.shocks.utils.get_broken_power_law_csm_density_func" title="trilobite.dynamics.shocks.utils.get_broken_power_law_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_broken_power_law_csm_density_func()</span></code></a>).</p></li>
 </ul>
 <p>All models use the same homologous broken-power-law ejecta profile and the
 same initial shock conditions. This isolates the dynamical effect of the CSM
@@ -614,15 +614,15 @@ choosing between self-similar and numerical approaches.</p>
 </div>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
-<p>We begin with the numerical, unit, plotting, and Triceratops imports.</p>
+<p>We begin with the numerical, unit, plotting, and Trilobite imports.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/dataclasses.html#dataclasses.dataclass" title="dataclasses.dataclass" class="sphx-glr-backref-module-dataclasses sphx-glr-backref-type-py-function"><span class="n">dataclass</span></a>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_broken_power_law_csm_density_func</span><span class="p">,</span>
     <span class="n">get_gaussian_shell_csm_density_func</span><span class="p">,</span>
@@ -634,7 +634,7 @@ choosing between self-similar and numerical approaches.</p>
     <span class="n">get_wind_with_floor_csm_density_func</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 </pre></div>
 </div>
 </section>
@@ -662,11 +662,11 @@ supernova.</p>
 <div class="math notranslate nohighlight">
 \[\rho_{\rm ej}(r,t) = t^{-3} G_{\rm ej}(r/t),\]</div>
 <p>with an outer velocity-space slope <code class="docutils literal notranslate"><span class="pre">n=10</span></code> and an inner slope <code class="docutils literal notranslate"><span class="pre">delta=0</span></code>.
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> computes
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a> computes
 the normalization constants from the explosion energy and ejecta mass and
 returns a callable <span class="math notranslate nohighlight">\(G_{\rm ej}(v)\)</span>.</p>
 <p>A single stateless
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 instance is shared across all scenarios; see
 <a class="reference internal" href="../../reference/physics/shocks/numerical_shocks_overview.html#pressure-driven-thin-shell-engine"><span class="std std-ref">Pressure-Driven Thin-Shell Shock Engine</span></a> for the equations it integrates.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">E_ej</span></a> <span class="o">=</span> <span class="mf">1e50</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">erg</span></a>
@@ -693,7 +693,7 @@ instance is shared across all scenarios; see
 <section id="csm-profile-gallery">
 <h2>CSM Profile Gallery<a class="headerlink" href="#csm-profile-gallery" title="Link to this heading">#</a></h2>
 <p>We now define the CSM environments using the factory functions in
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.html#module-triceratops.dynamics.shocks.utils" title="triceratops.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>. Each factory accepts physical
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.html#module-trilobite.dynamics.shocks.utils" title="trilobite.dynamics.shocks.utils"><code class="xref py py-mod docutils literal notranslate"><span class="pre">utils</span></code></a>. Each factory accepts physical
 parameters as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects, converts units once
 at call time, and returns a unit-free CGS callable suitable for evaluation
 inside the ODE integrator. See <a class="reference internal" href="../../reference/physics/shocks/shock_engines_overview.html#shock-engines"><span class="std std-ref">Shock Engines</span></a> for a complete table of
@@ -849,7 +849,7 @@ the density jump or transition that caused them.</p>
 <img src="../../_images/sphx_glr_plot_numerical_shocks_csms_001.png" srcset="../../_images/sphx_glr_plot_numerical_shocks_csms_001.png" alt="plot numerical shocks csms" class = "sphx-glr-single-img"/></section>
 <section id="compute-shock-evolution">
 <h2>Compute Shock Evolution<a class="headerlink" href="#compute-shock-evolution" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html#triceratops.dynamics.shocks.utils.make_homologous_stationary_sources" title="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.make_homologous_stationary_sources.html#trilobite.dynamics.shocks.utils.make_homologous_stationary_sources" title="trilobite.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>
 assembles the four upstream source callables expected by the engine from a
 single ejecta kernel <span class="math notranslate nohighlight">\(G_{\rm ej}\)</span> and a one-argument CSM density
 function:</p>
@@ -862,10 +862,10 @@ u_1(r,t) = r/t,
 \qquad
 u_4(r,t) = 0.\]</div>
 <p>We then call
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
 with the same time grid and initial conditions for every CSM environment.
 Each call returns a
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.ThinShellShockState.html#triceratops.dynamics.shocks.numerical.ThinShellShockState" title="triceratops.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> with
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.ThinShellShockState.html#trilobite.dynamics.shocks.numerical.ThinShellShockState" title="trilobite.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> with
 the shell radius, velocity, mass, and post-shock thermodynamic quantities as
 <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> arrays.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">states</span></a> <span class="o">=</span> <span class="p">{}</span>
@@ -1054,7 +1054,7 @@ shock engines for a given modeling problem.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># sphinx_gallery_thumbnail_number = -1</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 5.522 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 7.517 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dynamics-plot-numerical-shocks-csms-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3e2af4b8118f6fcabcfea570f661d6eb/plot_numerical_shocks_csms.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_numerical_shocks_csms.ipynb</span></code></a></p>

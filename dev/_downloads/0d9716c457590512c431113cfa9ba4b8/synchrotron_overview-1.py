@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
-from triceratops.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
+from trilobite.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
 
 # ── Instantiate the SED model ─────────────────────────────────────────────
 # SED objects are stateless: physical parameters are passed at call time,

@@ -27,7 +27,7 @@ eventually sub-Eddington.
 
 Physical Setup
 --------------
-We use :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+We use :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
 with a power-law fallback supply, which combines:
 
 - Gas + radiation pressure EOS
@@ -44,9 +44,9 @@ cooling is physically required.
 
 Relevant API
 ------------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
 """
 
 # %%
@@ -58,8 +58,8 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import AdvectiveDisk
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import AdvectiveDisk
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -110,7 +110,7 @@ print(f"L_Edd   = {L_Edd:.3e}")
 # -----------------------------------------
 #
 # We generate self-consistent initial conditions via
-# :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`.
+# :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`.
 # The initial disk mass is :math:`M_{D,0} = M_\star / 5` (the fraction
 # that reaches the inner region on the fallback timescale) and the
 # initial radius is the circularization radius.

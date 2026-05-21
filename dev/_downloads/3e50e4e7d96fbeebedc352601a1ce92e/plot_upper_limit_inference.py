@@ -13,7 +13,7 @@ This example demonstrates:
 1. **The astrophysical context**: early radio upper limits from a supernova
    search constrain the CSM wind density and ejecta energy before any
    detection is possible.
-2. **How Triceratops handles upper limits**: using
+2. **How Trilobite handles upper limits**: using
    :class:`~inference.likelihood.base.GaussianCensoredLikelihood`, which
    implements a censored Gaussian likelihood that treats non-detections as
    one-sided constraints.
@@ -52,8 +52,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -162,11 +162,11 @@ plt.show()
 
 from astropy.table import Table
 
-from triceratops.data import InferenceData
-from triceratops.data.photometry import RadioPhotometryEpochContainer
-from triceratops.inference import GaussianCensoredLikelihood
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.data import InferenceData
+from trilobite.data.photometry import RadioPhotometryEpochContainer
+from trilobite.inference import GaussianCensoredLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 
 def _build_problem(use_upper_limits: bool):

@@ -7,23 +7,23 @@ Sampler Development Guide
 ==========================
 
 This document describes how sampling algorithms are integrated into the
-Triceratops inference framework and how to implement new samplers
+Trilobite inference framework and how to implement new samplers
 in a way that is consistent, robust, and fully compatible with the
 existing infrastructure.
 
 The core sampler interface is defined in
-``triceratops/inference/sampling/base.py``
+``trilobite/inference/sampling/base.py``
 An example concrete implementation using ``emcee`` can be found in
-``triceratops/inference/sampling/mcmc.py``
+``trilobite/inference/sampling/mcmc.py``
 Sampling outputs are handled by classes in
-``triceratops/inference/sampling/result.py``
+``trilobite/inference/sampling/result.py``
 Supporting statistical utilities live in
-``triceratops/inference/sampling/utils.py``
+``trilobite/inference/sampling/utils.py``
 
 Overview and Design Philosophy
 -------------------------------
 
-In Triceratops, a sampler is responsible for *exploring* the posterior
+In Trilobite, a sampler is responsible for *exploring* the posterior
 distribution defined by an :class:`InferenceProblem`. It does not define
 the posterior, it does not manage priors, and it does not interact directly
 with the physical model or dataset. All of that logic is encapsulated inside
@@ -42,7 +42,7 @@ The Sampler Base Class
 ----------------------
 
 All samplers must inherit from
-:class:`~triceratops.inference.sampling.base.Sampler`
+:class:`~trilobite.inference.sampling.base.Sampler`
 
 The base class defines a minimal interface:
 
@@ -54,8 +54,8 @@ A minimal skeleton looks like:
 
 .. code-block:: python
 
-    from triceratops.inference.sampling.base import Sampler
-    from triceratops.inference.sampling.result import SamplingResult
+    from trilobite.inference.sampling.base import Sampler
+    from trilobite.inference.sampling.result import SamplingResult
 
     class MySampler(Sampler):
 
@@ -118,7 +118,7 @@ For example, the ``EmceeSampler`` verifies that:
 - the number of walkers is sufficient.
 
 See the implementation in
-``triceratops/inference/sampling/mcmc.py``
+``trilobite/inference/sampling/mcmc.py``
 
 Implementing a New Sampler
 --------------------------
@@ -215,7 +215,7 @@ For example, the Gelman–Rubin statistic:
 
 .. code-block:: python
 
-    from triceratops.inference.sampling.utils import compute_gelman_rubin_rhat
+    from trilobite.inference.sampling.utils import compute_gelman_rubin_rhat
 
 These utilities are intentionally separated from sampler implementations
 so that they can be reused across algorithms.
@@ -263,4 +263,4 @@ model-specific assumptions.
 
 If these invariants are respected, new sampling strategies can be
 added safely and will integrate cleanly with the broader
-Triceratops inference ecosystem.
+Trilobite inference ecosystem.

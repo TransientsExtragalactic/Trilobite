@@ -9,13 +9,13 @@ In the context of tidal disruption events (TDEs), disrupted stellar debris
 circularises and forms a disk around the central black hole whose thermal emission
 powers much of the observed UV and optical flux.  Disk winds and state transitions
 also drive the formation of radio-emitting outflows whose synchrotron emission
-Triceratops is designed to model.  More broadly, whenever a compact object accretes
+Trilobite is designed to model.  More broadly, whenever a compact object accretes
 from a disrupted body or a companion, the disk sets the long-term light-curve
 envelope, determines the seed photon field for inverse-Compton cooling of shock-accelerated
 electrons, and regulates the rate at which matter and angular momentum are deposited
 onto the central object.
 
-Triceratops provides a flexible framework for **computationally lightweight** disk
+Trilobite provides a flexible framework for **computationally lightweight** disk
 models that are nonetheless physically self-consistent.  The design priorities are:
 
 - **Efficiency** — models must be fast enough to run inside Bayesian inference pipelines.
@@ -27,10 +27,10 @@ models that are nonetheless physically self-consistent.  The design priorities a
 
 .. note::
 
-    Triceratops does not aim to replace global MHD simulations or full
+    Trilobite does not aim to replace global MHD simulations or full
     radiation-hydrodynamics codes.  The models here are effective descriptions
     designed to match the accuracy requirements of transient light-curve and
-    spectral fitting. Depending on context, models provided by Triceratops may range
+    spectral fitting. Depending on context, models provided by Trilobite may range
     from simple toy models to 1-D hydrodynamics; however, the underlying philosophy is to capture
     the essential physics with minimal free parameters and computational overhead.
 

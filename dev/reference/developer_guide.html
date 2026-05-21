@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Triceratops Developer Guide &#8212; Triceratops dev documentation</title>
+    <title>Trilobite Developer Guide &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../_static/logo.png"/>
+    <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -140,11 +140,11 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -167,7 +167,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -428,7 +428,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Triceratops Developer Guide</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Trilobite Developer Guide</span></li>
   </ul>
 </nav>
 </div>
@@ -445,27 +445,27 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="triceratops-developer-guide">
-<span id="developer-guide"></span><h1>Triceratops Developer Guide<a class="headerlink" href="#triceratops-developer-guide" title="Link to this heading">#</a></h1>
-<p>Welcome to the <strong>Triceratops Developer Guide</strong>! This section is intended for contributors, maintainers, and advanced users
-who want to understand the internal architecture of Triceratops, develop new features, or contribute improvements to the
+  <section id="trilobite-developer-guide">
+<span id="developer-guide"></span><h1>Trilobite Developer Guide<a class="headerlink" href="#trilobite-developer-guide" title="Link to this heading">#</a></h1>
+<p>Welcome to the <strong>Trilobite Developer Guide</strong>! This section is intended for contributors, maintainers, and advanced users
+who want to understand the internal architecture of Trilobite, develop new features, or contribute improvements to the
 codebase.</p>
 <section id="development-structure">
 <h2>Development Structure<a class="headerlink" href="#development-structure" title="Link to this heading">#</a></h2>
-<p>Before diving into the specifics of contributing to Triceratops, it’s important to understand the overall structure of the git repository
+<p>Before diving into the specifics of contributing to Trilobite, it’s important to understand the overall structure of the git repository
 and how development is organized.</p>
-<p>Triceratops uses a dual versioning system to manage both stable releases and ongoing development. There are three types
+<p>Trilobite uses a dual versioning system to manage both stable releases and ongoing development. There are three types
 of branches to be familiar with in the repository:</p>
 <ul>
-<li><p><code class="docutils literal notranslate"><span class="pre">main</span></code>: This is the primary branch that contains the latest stable release of Triceratops.
+<li><p><code class="docutils literal notranslate"><span class="pre">main</span></code>: This is the primary branch that contains the latest stable release of Trilobite.
 Each release is tagged in <code class="docutils literal notranslate"><span class="pre">main</span></code> with a version number following the <a class="reference external" href="https://semver.org/">Semantic Versioning</a> scheme.</p>
 <p>For example, a stable release might be tagged as <code class="docutils literal notranslate"><span class="pre">v1.2.0</span></code>.</p>
 </li>
-<li><p><code class="docutils literal notranslate"><span class="pre">dev_vX.Y.Z</span></code>: This is the active development branch for the next version of Triceratops.
+<li><p><code class="docutils literal notranslate"><span class="pre">dev_vX.Y.Z</span></code>: This is the active development branch for the next version of Trilobite.
 There is only one active development branch at a time, which corresponds to the next version to be released. This is
 the branch where active development should occur and where pull requests for new features or bug fixes should be directed.</p></li>
 <li><p><code class="docutils literal notranslate"><span class="pre">stable_vX.Y.Z</span></code>: On each release of the code, a static branch is also generated from <code class="docutils literal notranslate"><span class="pre">main</span></code> at the point of
-the tag so that there is also a stable branch for each version of Triceratops.</p></li>
+the tag so that there is also a stable branch for each version of Trilobite.</p></li>
 </ul>
 <p>In the case of a hotfix to a release, branches should be made from the stable version tag and named <code class="docutils literal notranslate"><span class="pre">hotfix_...</span></code>.</p>
 <section id="version-tagging-workflow">
@@ -485,18 +485,18 @@ Semantic Versioning scheme. The changelog and release notes are updated accordin
 </section>
 <section id="setting-up-the-development-environment">
 <h2>Setting Up the Development Environment<a class="headerlink" href="#setting-up-the-development-environment" title="Link to this heading">#</a></h2>
-<p>In order to successfully contribute to Triceratops, you will need to set up a development environment that allows you to run the code,
+<p>In order to successfully contribute to Trilobite, you will need to set up a development environment that allows you to run the code,
 test changes, and build documentation. This section provides a step-by-step guide to getting started. Note that
 this will require some external tools to be installed on your system to provide linting, testing, etc.</p>
 <section id="cloning-the-repository">
 <h3>Cloning the Repository<a class="headerlink" href="#cloning-the-repository" title="Link to this heading">#</a></h3>
-<p>To get started, you will need to clone the Triceratops repository from GitHub. You can do this using the following command:</p>
+<p>To get started, you will need to clone the Trilobite repository from GitHub. You can do this using the following command:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/TransientsExtragalactic/Triceratops
 </pre></div>
 </div>
-<p>This will create a local copy of the Triceratops repository on your machine. To get a particular branch you will need to
+<p>This will create a local copy of the Trilobite repository on your machine. To get a particular branch you will need to
 checkout the branch you want to work on:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>Triceratops
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span><span class="w"> </span>Trilobite
 git<span class="w"> </span>checkout<span class="w"> </span>dev_vX.Y.Z<span class="w">  </span><span class="c1"># Replace with the desired development version</span>
 </pre></div>
 </div>
@@ -510,14 +510,14 @@ on the top right of the repository page on GitHub, then cloning your forked repo
 </section>
 <section id="installing-dependencies">
 <h3>Installing Dependencies<a class="headerlink" href="#installing-dependencies" title="Link to this heading">#</a></h3>
-<p>A number of dependencies are required to run Triceratops and to develop it effectively. In addition to the basic
+<p>A number of dependencies are required to run Trilobite and to develop it effectively. In addition to the basic
 requirements of the library, you will also need to install some development tools to help with linting, testing, and documentation generation.
 These are all managed through the <code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> file. To install the package and all of its development dependencies,
 run the following command in the root directory of the cloned repository:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.<span class="o">[</span>dev<span class="o">]</span>
 </pre></div>
 </div>
-<p>This will install Triceratops in editable mode, allowing you to make changes to the code and see them reflected immediately. Additionally,
+<p>This will install Trilobite in editable mode, allowing you to make changes to the code and see them reflected immediately. Additionally,
 it will install all the development dependencies required for testing, linting, and documentation generation. Before proceeding,
 ensure that hooks are installed by running:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pre-commit<span class="w"> </span>install
@@ -537,7 +537,7 @@ are accepted into the main codebase. This includes writing tests, following the 
 linting checks. The following sections provide detailed information on how to contribute code effectively.</p>
 <section id="commit-messages-and-changelogs">
 <h3>Commit Messages and Changelogs<a class="headerlink" href="#commit-messages-and-changelogs" title="Link to this heading">#</a></h3>
-<p>Triceratops uses the <a class="reference external" href="https://commitizen-tools.github.io/commitizen/">Commitizen</a> tool to enforce structured commit messages
+<p>Trilobite uses the <a class="reference external" href="https://commitizen-tools.github.io/commitizen/">Commitizen</a> tool to enforce structured commit messages
 following the <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/">Conventional Commits</a> standard. This system enables
 automatic changelog generation and helps keep versioning consistent and predictable.</p>
 <section id="commit-message-format">
@@ -593,24 +593,24 @@ merging it into the development branch.</p>
 you will need to address the issues before your PR can be merged.</p>
 </section>
 </section>
-<section id="triceratops-standards-conventions-and-structures">
-<h2>Triceratops Standards, Conventions, and Structures<a class="headerlink" href="#triceratops-standards-conventions-and-structures" title="Link to this heading">#</a></h2>
-<p>Triceratops is developed with the explicit intention of allowing easy extensibility and maintainability. A big part of this
+<section id="trilobite-standards-conventions-and-structures">
+<h2>Trilobite Standards, Conventions, and Structures<a class="headerlink" href="#trilobite-standards-conventions-and-structures" title="Link to this heading">#</a></h2>
+<p>Trilobite is developed with the explicit intention of allowing easy extensibility and maintainability. A big part of this
 is the modular style of various parts of the codebase with the use of well-defined interfaces and abstract base classes.
 While the details of these APIs is not relevant for the user, as developers, it is important to understand the
 structure and conventions used throughout the codebase. This section provides an overview of the key standards and
-conventions used in Triceratops development.</p>
+conventions used in Trilobite development.</p>
 <div class="toctree-wrapper compound">
 </div>
 </section>
 <section id="linting-and-formatting">
 <h2>Linting and Formatting<a class="headerlink" href="#linting-and-formatting" title="Link to this heading">#</a></h2>
-<p>To ensure a consistent code style and reduce potential errors, Triceratops enforces a set of linting and formatting rules
+<p>To ensure a consistent code style and reduce potential errors, Trilobite enforces a set of linting and formatting rules
 across the entire codebase. These tools are automatically run in continuous integration and should also be run locally
 before submitting any pull requests.</p>
 <section id="formatting-black">
 <h3>Formatting: <code class="docutils literal notranslate"><span class="pre">black</span></code><a class="headerlink" href="#formatting-black" title="Link to this heading">#</a></h3>
-<p>Triceratops uses <a class="reference external" href="https://black.readthedocs.io/en/stable/">black</a> as the standard code formatter. <code class="docutils literal notranslate"><span class="pre">black</span></code> automatically
+<p>Trilobite uses <a class="reference external" href="https://black.readthedocs.io/en/stable/">black</a> as the standard code formatter. <code class="docutils literal notranslate"><span class="pre">black</span></code> automatically
 rewrites Python code to follow a consistent style.</p>
 <p>To apply formatting:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>black<span class="w"> </span>.
@@ -624,7 +624,7 @@ rewrites Python code to follow a consistent style.</p>
 </section>
 <section id="linting-ruff">
 <h3>Linting: <code class="docutils literal notranslate"><span class="pre">ruff</span></code><a class="headerlink" href="#linting-ruff" title="Link to this heading">#</a></h3>
-<p>For fast and comprehensive linting, Triceratops uses <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a>. Ruff checks for unused imports,
+<p>For fast and comprehensive linting, Trilobite uses <a class="reference external" href="https://docs.astral.sh/ruff/">ruff</a>. Ruff checks for unused imports,
 undefined variables, formatting errors, docstring issues, and more.</p>
 <p>To run ruff manually:</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>ruff<span class="w"> </span>check<span class="w"> </span>.
@@ -639,12 +639,12 @@ undefined variables, formatting errors, docstring issues, and more.</p>
 </section>
 <section id="documentation">
 <h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading">#</a></h2>
-<p>See <a class="reference internal" href="dev/documentation.html#documentation"><span class="std std-ref">Documentation Guide</span></a> for details on how to contribute to the Triceratops documentation, including
+<p>See <a class="reference internal" href="dev/documentation.html#documentation"><span class="std std-ref">Documentation Guide</span></a> for details on how to contribute to the Trilobite documentation, including
 docstring standards, building the documentation, and contributing examples.</p>
 </section>
 <section id="testing">
 <h2>Testing<a class="headerlink" href="#testing" title="Link to this heading">#</a></h2>
-<p>See <a class="reference internal" href="dev/testing.html#testing"><span class="std std-ref">Triceratops Testing Structures</span></a> for details on how to contribute to Triceratops testing, including
+<p>See <a class="reference internal" href="dev/testing.html#testing"><span class="std std-ref">Trilobite Testing Structures</span></a> for details on how to contribute to Trilobite testing, including
 test structure, writing new tests, and running tests locally.</p>
 </section>
 </section>
@@ -695,7 +695,7 @@ test structure, writing new tests, and running tests locally.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#pull-requests">Pull Requests</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triceratops-standards-conventions-and-structures">Triceratops Standards, Conventions, and Structures</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite-standards-conventions-and-structures">Trilobite Standards, Conventions, and Structures</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#linting-and-formatting">Linting and Formatting</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#formatting-black">Formatting: <code class="docutils literal notranslate"><span class="pre">black</span></code></a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#linting-ruff">Linting: <code class="docutils literal notranslate"><span class="pre">ruff</span></code></a></li>

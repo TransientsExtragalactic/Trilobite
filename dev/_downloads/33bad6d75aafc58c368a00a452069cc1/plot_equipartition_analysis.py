@@ -19,7 +19,7 @@ source physics:
 
 Together these constrain the source radius :math:`R`, magnetic field :math:`B`,
 electron number density :math:`n_e`, and minimum energy :math:`U_{\rm min}`
-through the **inverse closure relations** built into Triceratops.
+through the **inverse closure relations** built into Trilobite.
 
 Overview
 --------
@@ -57,8 +57,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs import PowerLaw_SynchrotronSED
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.synchrotron.SEDs import PowerLaw_SynchrotronSED
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

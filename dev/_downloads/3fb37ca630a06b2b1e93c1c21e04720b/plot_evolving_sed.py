@@ -3,7 +3,7 @@ Fitting a Time-Evolving Synchrotron SED
 =======================================
 
 This example demonstrates a complete end-to-end inference workflow in
-Triceratops:
+Trilobite:
 
 - Loading radio photometry data using the :class:`~data.photometry.RadioPhotometryContainer`, including
   some special configurations for analysis.
@@ -21,11 +21,11 @@ import numpy as np
 from astropy import units as u
 from astropy.time import Time
 
-from triceratops.data.photometry import RadioPhotometryContainer
-from triceratops.inference import GaussianCensoredLikelihood, InferenceProblem
-from triceratops.inference.sampling import EmceeSampler
-from triceratops.models.generic import PL_Evolving_SBPL_Model
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.data.photometry import RadioPhotometryContainer
+from trilobite.inference import GaussianCensoredLikelihood, InferenceProblem
+from trilobite.inference.sampling import EmceeSampler
+from trilobite.models.generic import PL_Evolving_SBPL_Model
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 np.random.seed(42)

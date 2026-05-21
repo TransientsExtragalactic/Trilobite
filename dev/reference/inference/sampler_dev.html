@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Sampler Development Guide &#8212; Triceratops dev documentation</title>
+    <title>Sampler Development Guide &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
@@ -140,11 +140,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -167,7 +167,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -448,20 +448,20 @@
   <section id="sampler-development-guide">
 <span id="samplers-dev"></span><h1>Sampler Development Guide<a class="headerlink" href="#sampler-development-guide" title="Link to this heading">#</a></h1>
 <p>This document describes how sampling algorithms are integrated into the
-Triceratops inference framework and how to implement new samplers
+Trilobite inference framework and how to implement new samplers
 in a way that is consistent, robust, and fully compatible with the
 existing infrastructure.</p>
 <p>The core sampler interface is defined in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/base.py</span></code>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/sampling/base.py</span></code>
 An example concrete implementation using <code class="docutils literal notranslate"><span class="pre">emcee</span></code> can be found in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/mcmc.py</span></code>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/sampling/mcmc.py</span></code>
 Sampling outputs are handled by classes in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/result.py</span></code>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/sampling/result.py</span></code>
 Supporting statistical utilities live in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/utils.py</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/sampling/utils.py</span></code></p>
 <section id="overview-and-design-philosophy">
 <h2>Overview and Design Philosophy<a class="headerlink" href="#overview-and-design-philosophy" title="Link to this heading">#</a></h2>
-<p>In Triceratops, a sampler is responsible for <em>exploring</em> the posterior
+<p>In Trilobite, a sampler is responsible for <em>exploring</em> the posterior
 distribution defined by an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code>. It does not define
 the posterior, it does not manage priors, and it does not interact directly
 with the physical model or dataset. All of that logic is encapsulated inside
@@ -478,7 +478,7 @@ modifying any model or likelihood code.</p>
 <section id="the-sampler-base-class">
 <h2>The Sampler Base Class<a class="headerlink" href="#the-sampler-base-class" title="Link to this heading">#</a></h2>
 <p>All samplers must inherit from
-<a class="reference internal" href="../../_as_gen/triceratops.inference.sampling.base.Sampler.html#triceratops.inference.sampling.base.Sampler" title="triceratops.inference.sampling.base.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.sampling.base.Sampler.html#trilobite.inference.sampling.base.Sampler" title="trilobite.inference.sampling.base.Sampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">Sampler</span></code></a></p>
 <p>The base class defines a minimal interface:</p>
 <ul class="simple">
 <li><p>It stores a reference to an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code>.</p></li>
@@ -486,8 +486,8 @@ modifying any model or likelihood code.</p>
 <li><p>It provides a hook for validating compatibility.</p></li>
 </ul>
 <p>A minimal skeleton looks like:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.result</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplingResult</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.result</span><span class="w"> </span><span class="kn">import</span> <span class="n">SamplingResult</span>
 
 <span class="k">class</span><span class="w"> </span><span class="nc">MySampler</span><span class="p">(</span><span class="n">Sampler</span><span class="p">):</span>
 
@@ -542,7 +542,7 @@ problem is fully specified and valid. The standard approach is:</p>
 <li><p>the number of walkers is sufficient.</p></li>
 </ul>
 <p>See the implementation in
-<code class="docutils literal notranslate"><span class="pre">triceratops/inference/sampling/mcmc.py</span></code></p>
+<code class="docutils literal notranslate"><span class="pre">trilobite/inference/sampling/mcmc.py</span></code></p>
 </section>
 <section id="implementing-a-new-sampler">
 <h2>Implementing a New Sampler<a class="headerlink" href="#implementing-a-new-sampler" title="Link to this heading">#</a></h2>
@@ -627,7 +627,7 @@ you may instead return a plain <code class="xref py py-class docutils literal no
 <p>Common diagnostics are implemented in
 <code class="docutils literal notranslate"><span class="pre">sampling/utils.py</span></code></p>
 <p>For example, the Gelman–Rubin statistic:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_gelman_rubin_rhat</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_gelman_rubin_rhat</span>
 </pre></div>
 </div>
 <p>These utilities are intentionally separated from sampler implementations
@@ -669,7 +669,7 @@ reconstructing the full inference stack.</p>
 model-specific assumptions.</p>
 <p>If these invariants are respected, new sampling strategies can be
 added safely and will integrate cleanly with the broader
-Triceratops inference ecosystem.</p>
+Trilobite inference ecosystem.</p>
 </section>
 </section>
 

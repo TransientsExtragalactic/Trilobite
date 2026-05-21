@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>TOPS Rosseland Mean Opacity: \(\kappa(T,\rho)\) for Solar Composition &#8212; Triceratops dev documentation</title>
+    <title>TOPS Rosseland Mean Opacity: \(\kappa(T,\rho)\) for Solar Composition &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="OPAL Rosseland Mean Opacity: \(\kappa(T,\rho)\) for Solar Composition" href="plot_opal_rosseland_opacity.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -582,7 +582,7 @@ to download the full example code.</p>
 <span id="sphx-glr-auto-examples-opacity-plot-tops-rosseland-opacity-py"></span><h1>TOPS Rosseland Mean Opacity: <span class="math notranslate nohighlight">\(\kappa(T,\rho)\)</span> for Solar Composition<a class="headerlink" href="#tops-rosseland-mean-opacity-kappa-t-rho-for-solar-composition" title="Link to this heading">#</a></h1>
 <p>The TOPS opacity code (Los Alamos National Laboratory) provides tables of the
 Rosseland mean opacity <span class="math notranslate nohighlight">\(\kappa_R(T,\rho)\)</span> for arbitrary mixtures of
-elements.  Triceratops ships a bundled table for solar composition
+elements.  Trilobite ships a bundled table for solar composition
 (<span class="math notranslate nohighlight">\(X \approx 0.70,\;Z \approx 0.02\)</span>) from which opacity and its
 log-space derivatives are evaluated via bilinear interpolation.</p>
 <p>Unlike the OPAL tables — which are parameterised on a
@@ -612,8 +612,8 @@ appear as gaps.</p>
 <section id="relevant-api-references">
 <h2>Relevant API references<a class="headerlink" href="#relevant-api-references" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.utils.load_tops_opacity.html#triceratops.radiation.opacity.utils.load_tops_opacity" title="triceratops.radiation.opacity.utils.load_tops_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_tops_opacity()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity.html#triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity" title="triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOPSOpacity</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.utils.load_tops_opacity.html#trilobite.radiation.opacity.utils.load_tops_opacity" title="trilobite.radiation.opacity.utils.load_tops_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_tops_opacity()</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity.html#trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity" title="trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOPSOpacity</span></code></a></p></li>
 </ul>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -621,14 +621,14 @@ appear as gaps.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.cm</span><span class="w"> </span><span class="kn">import</span> <a href="https://matplotlib.org/stable/api/colorizer_api.html#matplotlib.colorizer._ScalarMappable" title="matplotlib.colorizer._ScalarMappable" class="sphx-glr-backref-module-matplotlib-colorizer sphx-glr-backref-type-py-class"><span class="n">ScalarMappable</span></a>
 <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="kn">import</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.colors.Normalize.html#matplotlib.colors.Normalize" title="matplotlib.colors.Normalize" class="sphx-glr-backref-module-matplotlib-colors sphx-glr-backref-type-py-class"><span class="n">Normalize</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_tops_opacity</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_tops_opacity</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 </pre></div>
 </div>
 </section>
 <section id="load-the-default-solar-opacity">
 <h2>Load the Default Solar Opacity<a class="headerlink" href="#load-the-default-solar-opacity" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.utils.load_tops_opacity.html#triceratops.radiation.opacity.utils.load_tops_opacity" title="triceratops.radiation.opacity.utils.load_tops_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_tops_opacity()</span></code></a> loads the
+<p><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.utils.load_tops_opacity.html#trilobite.radiation.opacity.utils.load_tops_opacity" title="trilobite.radiation.opacity.utils.load_tops_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_tops_opacity()</span></code></a> loads the
 bundled <code class="docutils literal notranslate"><span class="pre">tops_solar.dat</span></code> file (9-element solar mixture, X = 0.70, Z = 0.02).
 We use <code class="docutils literal notranslate"><span class="pre">out_of_bounds='nan'</span></code> so that points outside the tabulated domain
 are silently returned as <code class="docutils literal notranslate"><span class="pre">NaN</span></code> and appear as gaps in the plot.</p>
@@ -741,7 +741,7 @@ density grid (100 points over <span class="math notranslate nohighlight">\(10^{-
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">sphinx_gallery_thumbnail_number</span></a> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
 </pre></div>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.884 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.935 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-opacity-plot-tops-rosseland-opacity-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/e6f3ee019791e88113c58668f4e8e768/plot_tops_rosseland_opacity.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_tops_rosseland_opacity.ipynb</span></code></a></p>

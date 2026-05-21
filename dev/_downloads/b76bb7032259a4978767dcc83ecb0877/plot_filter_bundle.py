@@ -6,7 +6,7 @@ MCMC inference evaluates a forward model millions of times.  If each evaluation 
 convolve a spectral energy distribution through several photometric filters, the per-filter
 loop cost accumulates quickly.
 
-:class:`~triceratops.utils.phot_utils.FilterBundle` solves this by precomputing a
+:class:`~trilobite.utils.phot_utils.FilterBundle` solves this by precomputing a
 **weight matrix** :math:`W` of shape ``(N_\mathrm{filters},\, N_\mathrm{common})`` at
 construction time.  During inference the band-averaged fluxes for *all* filters reduce to a
 single matrix–vector multiply:
@@ -17,7 +17,7 @@ single matrix–vector multiply:
 
 This example demonstrates:
 
-1. Assembling a :class:`~triceratops.utils.phot_utils.FilterBundle` from individual filters.
+1. Assembling a :class:`~trilobite.utils.phot_utils.FilterBundle` from individual filters.
 2. Inspecting the **common frequency grid** and **weight matrix**.
 3. The MCMC-optimised ``apply()`` workflow vs. the convenience ``convolve_nu()`` path.
 4. Batched evaluation over a time series of SEDs in one call.
@@ -25,9 +25,9 @@ This example demonstrates:
 
 Relevant API references
 -----------------------
-- :class:`triceratops.utils.phot_utils.FilterBundle`
-- :meth:`triceratops.utils.phot_utils.FilterBundle.apply`
-- :meth:`triceratops.utils.phot_utils.FilterBundle.convolve_nu`
+- :class:`trilobite.utils.phot_utils.FilterBundle`
+- :meth:`trilobite.utils.phot_utils.FilterBundle.apply`
+- :meth:`trilobite.utils.phot_utils.FilterBundle.convolve_nu`
 """
 
 # %%
@@ -39,8 +39,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astropy.units as u
 
-from triceratops.utils.phot_utils import FilterBundle, PhotometryFilter, flux_to_ab_mag
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.phot_utils import FilterBundle, PhotometryFilter, flux_to_ab_mag
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -68,7 +68,7 @@ for band, (center, width) in BANDS.items():
 # Constructing the FilterBundle
 # ------------------------------
 #
-# Passing the dict to :class:`~triceratops.utils.phot_utils.FilterBundle` triggers
+# Passing the dict to :class:`~trilobite.utils.phot_utils.FilterBundle` triggers
 # construction of the common frequency grid and weight matrix.
 
 bundle = FilterBundle(filters)
@@ -121,7 +121,7 @@ plt.show()
 #
 # **Inference (called millions of times):**
 # Evaluate the SED model on the common grid, then call
-# :meth:`~triceratops.utils.phot_utils.FilterBundle.apply` — a pure matrix
+# :meth:`~trilobite.utils.phot_utils.FilterBundle.apply` — a pure matrix
 # multiply with no interpolation overhead.
 
 # Setup phase ---------------------------------------------------------------
@@ -193,9 +193,9 @@ plt.show()
 # We compare three approaches for a representative MCMC workload
 # (1 000 repeated single-SED evaluations):
 #
-# 1. :meth:`~triceratops.utils.phot_utils.FilterBundle.apply` — pure matrix multiply on the common grid.
-# 2. :meth:`~triceratops.utils.phot_utils.FilterBundle.convolve_nu` — interpolation + matrix multiply.
-# 3. Explicit Python loop over individual :class:`~triceratops.utils.phot_utils.PhotometryFilter` objects.
+# 1. :meth:`~trilobite.utils.phot_utils.FilterBundle.apply` — pure matrix multiply on the common grid.
+# 2. :meth:`~trilobite.utils.phot_utils.FilterBundle.convolve_nu` — interpolation + matrix multiply.
+# 3. Explicit Python loop over individual :class:`~trilobite.utils.phot_utils.PhotometryFilter` objects.
 
 N_reps = 1_000
 F_test = power_law_sed(nu_eval, F_ref=3.631e-20, alpha=-0.7)

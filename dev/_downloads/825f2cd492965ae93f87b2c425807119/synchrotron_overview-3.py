@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-from triceratops.radiation.synchrotron.microphysics import (
+from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+from trilobite.radiation.synchrotron.microphysics import (
     compute_PL_norm_from_magnetic_field,
     compute_BPL_norm_from_magnetic_field,
     get_power_law_distribution,

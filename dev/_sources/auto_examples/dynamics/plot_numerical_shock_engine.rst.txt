@@ -22,7 +22,7 @@ Numerical Thin-Shell Shock Evolution
 ==========================================
 
 This example demonstrates how to use the
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 to model the evolution of a supernova shock expanding into a **non-uniform
 circumstellar medium (CSM)**.
 
@@ -48,7 +48,7 @@ wind into the denser ambient ISM.
 Setup
 -----
 
-We begin by importing the relevant numerical, plotting, and Triceratops
+We begin by importing the relevant numerical, plotting, and Trilobite
 utilities needed for this example.
 
 .. GENERATED FROM PYTHON SOURCE LINES 34-47
@@ -60,13 +60,13 @@ utilities needed for this example.
     import numpy as np
     from astropy import units as u
 
-    from triceratops.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
-    from triceratops.dynamics.shocks.utils import (
+    from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+    from trilobite.dynamics.shocks.utils import (
         get_bpl_ejecta_kernel,
         get_truncated_wind_csm_density_func,
         make_homologous_stationary_sources,
     )
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.utils.plot_utils import set_plot_style
 
 
 
@@ -122,7 +122,7 @@ Circumstellar Medium Density Profile
 The numerical thin-shell engine requires the CSM density profile to be provided
 as a **callable function** returning the density in CGS units.
 
-Here we use :func:`~triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+Here we use :func:`~trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
 to construct a broken profile:
 
 - For :math:`r \le R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
@@ -198,9 +198,9 @@ For homologously expanding ejecta, the density takes the form
 Rather than specifying :math:`\rho(r, t)` directly, the thin-shell engine
 requires the kernel function :math:`G_{\rm ej}(v)`.
 
-Triceratops provides helper functions for constructing commonly used ejecta
+Trilobite provides helper functions for constructing commonly used ejecta
 profiles. Here we adopt a Chevalier-style broken power-law profile via
-:func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
+:func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
 
 .. GENERATED FROM PYTHON SOURCE LINES 123-131
 
@@ -230,7 +230,7 @@ The numerical shock engine expects four two-argument callables,
 ``(rho_1, u_1, rho_4, u_4)``, representing the upstream ejecta density,
 ejecta velocity, CSM density, and CSM velocity respectively. For the standard
 case of homologous ejecta running into a stationary CSM,
-:func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`
+:func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`
 builds all four from the kernel and the CSM profile:
 
 .. math::
@@ -307,7 +307,7 @@ Shock Evolution
 
 We now compute the shock properties using the high-level API, which handles
 unit conversion and validation internally. The result is a
-:class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` named
+:class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` named
 tuple carrying all shock diagnostics as unit-bearing
 :class:`~astropy.units.Quantity` arrays.
 
@@ -386,7 +386,7 @@ when the forward shock crosses :math:`R_\mathrm{wind}` is clearly visible.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 0.957 seconds)
+   **Total running time of the script:** (0 minutes 1.192 seconds)
 
 
 .. _sphx_glr_download_auto_examples_dynamics_plot_numerical_shock_engine.py:

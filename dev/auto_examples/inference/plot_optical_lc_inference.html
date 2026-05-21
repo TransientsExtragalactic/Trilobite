@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Fitting a Multi-Band Optical Light Curve with MCMC &#8212; Triceratops dev documentation</title>
+    <title>Fitting a Multi-Band Optical Light Curve with MCMC &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Quickstart Guide" href="../../getting_started.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -586,15 +586,15 @@ to download the full example code.</p>
 <code class="xref py py-class docutils literal notranslate"><span class="pre">FREDBlackbodyModel</span></code>
 with known parameters.</p></li>
 <li><p><strong>Load</strong> — package the noisy observations into an
-<a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.html#triceratops.data.optical_photometry.OpticalPhotometryContainer" title="triceratops.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a>,
+<a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a>,
 demonstrating the standard data pipeline described in <a class="reference internal" href="../../reference/data/overview.html#data-overview"><span class="std std-ref">Data Loading, Handling, and Visualization</span></a>.</p></li>
 <li><p><strong>Inspect</strong> — verify the container and convert to
-<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> via
-<a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>.</p></li>
+<a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> via
+<a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>.</p></li>
 <li><p><strong>Infer</strong> — configure a
-<a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood" title="triceratops.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code></a>,
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code></a>,
 set log-uniform priors, and run <code class="docutils literal notranslate"><span class="pre">emcee</span></code> MCMC via
-<a class="reference internal" href="../../_as_gen/triceratops.inference.sampling.mcmc.EmceeSampler.html#triceratops.inference.sampling.mcmc.EmceeSampler" title="triceratops.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmceeSampler</span></code></a>.</p></li>
+<a class="reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmceeSampler</span></code></a>.</p></li>
 <li><p><strong>Diagnose</strong> — inspect chains, acceptance fraction, and corner plot; verify
 the recovered posteriors bracket the true parameters.</p></li>
 <li><p><strong>Posterior predictive check</strong> — draw light curves from the posterior and
@@ -605,10 +605,10 @@ overlay them on the data in all five bands.</p></li>
 <section id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.models.generic.optical_photometry.FREDBlackbodyModel</span></code></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.html#triceratops.data.optical_photometry.OpticalPhotometryContainer" title="triceratops.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.data.optical_photometry.OpticalPhotometryContainer</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood" title="triceratops.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.inference.likelihood.base.GaussianCensoredLikelihood</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/triceratops.inference.sampling.mcmc.EmceeSampler.html#triceratops.inference.sampling.mcmc.EmceeSampler" title="triceratops.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.inference.sampling.mcmc.EmceeSampler</span></code></a></p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.generic.optical_photometry.FREDBlackbodyModel</span></code></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.data.optical_photometry.OpticalPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.inference.likelihood.base.GaussianCensoredLikelihood</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.inference.sampling.mcmc.EmceeSampler</span></code></a></p></li>
 <li><p><a class="reference internal" href="../../reference/data/overview.html#data-overview"><span class="std std-ref">Data Loading, Handling, and Visualization</span></a> — data pipeline overview</p></li>
 <li><p><a class="reference internal" href="../../reference/data/data_to_inference.html#data-to-inference"><span class="std std-ref">From Data to Inference: A Complete Guide</span></a> — step-by-step guide to <code class="docutils literal notranslate"><span class="pre">to_inference_data()</span></code></p></li>
 </ul>
@@ -619,8 +619,8 @@ overlay them on the data in all five bands.</p></li>
 <code class="xref py py-class docutils literal notranslate"><span class="pre">FREDBlackbodyModel</span></code>.
 The bundle’s <code class="docutils literal notranslate"><span class="pre">filter_names</span></code> list defines the mapping
 <code class="docutils literal notranslate"><span class="pre">band_name</span> <span class="pre">→</span> <span class="pre">band_idx</span></code> that is used automatically when the data container
-calls <a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>.</p>
-<p>Triceratops loads real SDSS response curves via <code class="docutils literal notranslate"><span class="pre">speclite</span></code>.  See
+calls <a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>.</p>
+<p>Trilobite loads real SDSS response curves via <code class="docutils literal notranslate"><span class="pre">speclite</span></code>.  See
 <span class="xref std std-ref">sphx_glr_galleries_photometry_plot_filter_bundle.py</span> for details
 on filter construction.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
@@ -628,8 +628,8 @@ on filter construction.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.generic.optical_photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">FREDBlackbodyModel</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterBundle</span><span class="p">,</span> <span class="n">flux_to_ab_mag</span><span class="p">,</span> <span class="n">load_filter_from_speclite</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.generic.optical_photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">FREDBlackbodyModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.phot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilterBundle</span><span class="p">,</span> <span class="n">flux_to_ab_mag</span><span class="p">,</span> <span class="n">load_filter_from_speclite</span>
 
 <span class="c1"># ---- Build SDSS ugriz filter bundle ----------------------------------------</span>
 <span class="n">SDSS_BANDS</span> <span class="o">=</span> <span class="p">{</span>
@@ -662,8 +662,8 @@ on filter construction.</p>
 </div>
 <div class="sphx-glr-script-out highlight-pytb notranslate"><div class="highlight"><pre><span></span><span class="gt">Traceback (most recent call last):</span>
   File <span class="nb">&quot;/home/runner/work/Triceratops/Triceratops/docs/source/galleries/inference/plot_optical_lc_inference.py&quot;</span>, line <span class="m">57</span>, in <span class="n">&lt;module&gt;</span>
-<span class="w">    </span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.models.generic.optical_photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">FREDBlackbodyModel</span>
-<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;triceratops.models.generic.optical_photometry&#39;</span>
+<span class="w">    </span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.generic.optical_photometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">FREDBlackbodyModel</span>
+<span class="gr">ModuleNotFoundError</span>: <span class="n">No module named &#39;trilobite.models.generic.optical_photometry&#39;</span>
 </pre></div>
 </div>
 <p>Observation grid: 9 epochs × 5 bands (ugriz) = 45 synthetic measurements.
@@ -700,7 +700,7 @@ multi-band transient follow-up.</p>
 </section>
 <section id="step-2-load-into-opticalphotometrycontainer">
 <h2>Step 2 — Load into OpticalPhotometryContainer<a class="headerlink" href="#step-2-load-into-opticalphotometrycontainer" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.html#triceratops.data.optical_photometry.OpticalPhotometryContainer" title="triceratops.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a> is
+<p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a> is
 the standard entry point for multi-band optical photometry.  It validates the
 schema (required columns, units, <code class="docutils literal notranslate"><span class="pre">band_name</span></code> string column) and provides
 detection masking, dual flux/magnitude representation, and a direct path to
@@ -708,7 +708,7 @@ the inference layer.</p>
 <p>The <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code> column is <code class="docutils literal notranslate"><span class="pre">NaN</span></code> for all rows because all
 observations are detections.  For censored data workflows, see
 <span class="xref std std-ref">sphx_glr_galleries_inference_plot_censored_SED_fit.py</span>.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalPhotometryContainer</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalPhotometryContainer</span>
 
 <span class="n">obs_table</span> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a><span class="p">(</span>
     <span class="p">{</span>
@@ -792,13 +792,13 @@ observations are detections.  For censored data workflows, see
 </section>
 <section id="step-3-convert-to-inferencedata">
 <h2>Step 3 — Convert to InferenceData<a class="headerlink" href="#step-3-convert-to-inferencedata" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>
 performs three operations in a single call:</p>
 <ol class="arabic simple">
 <li><p>Resolves each <code class="docutils literal notranslate"><span class="pre">band_name</span></code> string to an integer <code class="docutils literal notranslate"><span class="pre">band_idx</span></code> by looking
 up <code class="docutils literal notranslate"><span class="pre">model.bundle.filter_names</span></code>.</p></li>
 <li><p>Converts time to seconds (the model’s <code class="docutils literal notranslate"><span class="pre">base_units</span></code> for <code class="docutils literal notranslate"><span class="pre">time</span></code>).</p></li>
-<li><p>Returns an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object containing
+<li><p>Returns an <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object containing
 only validated NumPy arrays — no units, no column names, no schema —
 ready for likelihood evaluation.</p></li>
 </ol>
@@ -811,7 +811,7 @@ interface.</p>
 </section>
 <section id="step-4-likelihood-and-inferenceproblem">
 <h2>Step 4 — Likelihood and InferenceProblem<a class="headerlink" href="#step-4-likelihood-and-inferenceproblem" title="Link to this heading">#</a></h2>
-<p><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html#triceratops.inference.likelihood.base.GaussianCensoredLikelihood" title="triceratops.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code></a>
+<p><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code></a>
 evaluates</p>
 <div class="math notranslate nohighlight">
 \[\ln \mathcal{L} = -\frac{1}{2} \sum_i
@@ -820,13 +820,13 @@ evaluates</p>
 <p>for detections (rows where the upper limit column is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>).  Upper
 limits would contribute a complementary CDF term, but this dataset contains
 only detections.</p>
-<p><a class="reference internal" href="../../_as_gen/triceratops.inference.problem.InferenceProblem.html#triceratops.inference.problem.InferenceProblem" title="triceratops.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a> wraps the likelihood
+<p><a class="reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.problem.InferenceProblem"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceProblem</span></code></a> wraps the likelihood
 together with priors on the free parameters.  All five parameters are
 sampled; log-uniform (<code class="docutils literal notranslate"><span class="pre">loguniform</span></code>) priors are appropriate for
 scale-invariant quantities.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCensoredLikelihood</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling.mcmc</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmceeSampler</span>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.likelihood.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianCensoredLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.mcmc</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmceeSampler</span>
 
 <span class="n">likelihood</span> <span class="o">=</span> <span class="n">GaussianCensoredLikelihood</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">inference_data</span><span class="p">)</span>
 
@@ -853,7 +853,7 @@ scale-invariant quantities.</p>
 </section>
 <section id="step-5-run-mcmc">
 <h2>Step 5 — Run MCMC<a class="headerlink" href="#step-5-run-mcmc" title="Link to this heading">#</a></h2>
-<p>We use <a class="reference internal" href="../../_as_gen/triceratops.inference.sampling.mcmc.EmceeSampler.html#triceratops.inference.sampling.mcmc.EmceeSampler" title="triceratops.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmceeSampler</span></code></a>, a thin
+<p>We use <a class="reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.sampling.mcmc.EmceeSampler"><code class="xref py py-class docutils literal notranslate"><span class="pre">EmceeSampler</span></code></a>, a thin
 wrapper around <a class="reference external" href="https://emcee.readthedocs.io">emcee</a> that handles
 parameter packing/unpacking and result serialization.</p>
 <p><strong>Burn-in strategy</strong>: the first 400 steps are discarded as burn-in; the

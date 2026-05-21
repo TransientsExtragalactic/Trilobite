@@ -16,7 +16,7 @@ fully self-consistent model that includes both the dynamical evolution
 and the radiative cooling processes. However, such models are frequently
 unnecessarily complex for rapid exploratory analysis of synchrotron data.
 
-To address this, the Triceratops synchrotron SED framework provides a
+To address this, the Trilobite synchrotron SED framework provides a
 built-in **cooling closure relation** corresponding to synchrotron
 radiative cooling. This closure allows the cooling Lorentz factor to be
 computed self-consistently from the magnetic field strength and the

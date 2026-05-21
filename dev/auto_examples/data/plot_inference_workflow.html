@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>From Data to Inference: End-to-End Workflow &#8212; Triceratops dev documentation</title>
+    <title>From Data to Inference: End-to-End Workflow &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Plot Radio Photometry Epochs" href="plot_epoch_photometry.html" />
@@ -142,11 +142,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -169,7 +169,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -599,7 +599,7 @@ synthetic radio light curve to keep the example self-contained.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
 <span class="kn">from</span><span class="w"> </span><span class="nn">unittest.mock</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock" title="unittest.mock.MagicMock" class="sphx-glr-backref-module-unittest-mock sphx-glr-backref-type-py-class"><span class="n">MagicMock</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryContainer</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryContainer</span></a>
 
 <a href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="numpy.random.Generator" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rng</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="numpy.random.default_rng" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span></a><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a> <span class="o">=</span> <span class="mi">30</span>
@@ -641,7 +641,7 @@ Upper limits:  5
 <section id="step-2-build-a-mock-model">
 <h2>Step 2: Build a Mock Model<a class="headerlink" href="#step-2-build-a-mock-model" title="Link to this heading">#</a></h2>
 <p>In real usage you would import a physical model from
-<code class="docutils literal notranslate"><span class="pre">triceratops.models</span></code>. Here we use a mock that declares the same
+<code class="docutils literal notranslate"><span class="pre">trilobite.models</span></code>. Here we use a mock that declares the same
 interface (<code class="docutils literal notranslate"><span class="pre">variable_names</span></code>, <code class="docutils literal notranslate"><span class="pre">VARIABLES</span></code>, <code class="docutils literal notranslate"><span class="pre">output_names</span></code>,
 <code class="docutils literal notranslate"><span class="pre">OUTPUTS</span></code>, <code class="docutils literal notranslate"><span class="pre">UNITS</span></code>) to keep the example dependency-free.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">_mock_var</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">unit</span><span class="p">):</span>
@@ -716,9 +716,9 @@ counts — if something looks wrong, check the mask or column mapping.</p>
 <h2>Step 4: Wire into Likelihood and InferenceProblem<a class="headerlink" href="#step-4-wire-into-likelihood-and-inferenceproblem" title="Link to this heading">#</a></h2>
 <p><code class="docutils literal notranslate"><span class="pre">InferenceData</span></code> is the only object that likelihoods accept. Passing
 a container directly to <code class="docutils literal notranslate"><span class="pre">GaussianLikelihood</span></code> would raise a TypeError.</p>
-<p>In a real workflow you would import from <code class="docutils literal notranslate"><span class="pre">triceratops.inference</span></code>:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihood</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
+<p>In a real workflow you would import from <code class="docutils literal notranslate"><span class="pre">trilobite.inference</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
 
 <span class="n">likelihood</span> <span class="o">=</span> <span class="n">GaussianLikelihood</span><span class="p">(</span><a href="https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock" title="unittest.mock.MagicMock" class="sphx-glr-backref-module-unittest-mock sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">model</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/unittest.mock.html#unittest.mock.MagicMock" title="unittest.mock.MagicMock" class="sphx-glr-backref-module-unittest-mock sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">model</span></a><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">inference_data</span><span class="p">)</span>
 <span class="n">problem</span> <span class="o">=</span> <span class="n">InferenceProblem</span><span class="p">(</span><span class="n">likelihood</span><span class="p">)</span>
@@ -732,7 +732,7 @@ a container directly to <code class="docutils literal notranslate"><span class="
 </pre></div>
 </div>
 <p>Once configured, pass the problem to a sampler:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmceeSampler</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling</span><span class="w"> </span><span class="kn">import</span> <span class="n">EmceeSampler</span>
 
 <span class="n">sampler</span> <span class="o">=</span> <span class="n">EmceeSampler</span><span class="p">(</span><span class="n">problem</span><span class="p">)</span>
 <span class="n">result</span>  <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">n_walkers</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">n_steps</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
@@ -776,7 +776,7 @@ a container directly to <code class="docutils literal notranslate"><span class="
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_inference_workflow_001.png" srcset="../../_images/sphx_glr_plot_inference_workflow_001.png" alt="Synthetic Radio Photometry — InferenceData" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.318 seconds)</p>
+<img src="../../_images/sphx_glr_plot_inference_workflow_001.png" srcset="../../_images/sphx_glr_plot_inference_workflow_001.png" alt="Synthetic Radio Photometry — InferenceData" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.380 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-data-plot-inference-workflow-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3040021c02cf90fde209733a1e0f82b1/plot_inference_workflow.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_inference_workflow.ipynb</span></code></a></p>

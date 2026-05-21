@@ -2,8 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.dynamics.shocks import SedovTaylorShockEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.shocks import SedovTaylorShockEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 engine = SedovTaylorShockEngine()
 time   = np.geomspace(100, 1e6, 500) * u.yr

@@ -4,9 +4,9 @@
 Accretion Disk Models
 *****************************
 
-These examples cover both steady-state and time-dependent accretion disk models in Triceratops.
+These examples cover both steady-state and time-dependent accretion disk models in Trilobite.
 
-**Steady-state thin disks** (:class:`~triceratops.dynamics.accretion.AlphaDisk`) evaluate the
+**Steady-state thin disks** (:class:`~trilobite.dynamics.accretion.AlphaDisk`) evaluate the
 Shakura-Sunyaev (SS73) radial structure and multi-colour blackbody SED at a fixed accretion
 rate — useful for spectral fitting and structural validation.
 

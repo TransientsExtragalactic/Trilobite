@@ -8,8 +8,8 @@ thick) a substantial fraction of the viscous heating can be carried inward with
 the accreting gas rather than radiated away, a process called *advective
 cooling*.
 
-:class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` extends the
-standard :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` by
+:class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk` extends the
+standard :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk` by
 splitting the viscous dissipation rate into a radiated component and an
 advected component:
 
@@ -39,7 +39,7 @@ The dimensionless entropy-gradient parameter :math:`\xi` sets the strength of
 advective transport.  :math:`A\,c_s^{-2}\,T_c^4` is the fraction of viscous
 heating that is radiated away, while :math:`B\,c_s^2` is the advected fraction.
 Setting :math:`\xi \to 0` recovers the non-advective
-:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` limit.
+:class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk` limit.
 
 .. note::
 
@@ -59,9 +59,9 @@ Setting :math:`\xi \to 0` recovers the non-advective
 
 See Also
 -----------------------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
-- :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 
 .. hint::
 
@@ -78,8 +78,8 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import FullPressureDisk, AdvectiveDisk
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import FullPressureDisk, AdvectiveDisk
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -90,9 +90,9 @@ set_plot_style()
 # We use a :math:`1 \;{\rm M_{\odot}}` BH with a :math:`0.02 \;{\rm M_{\odot}}` initial disk, a configuration
 # representative of a compact-object TDE or a neutron-star merger remnant. We can also
 # set the inner radius of the black hole based on the black hole's ISCO. To do this, we'll use the
-# :func:`~triceratops.physics_utils.general_relativity.compute_ISCO`.
-from triceratops.physics_utils.general_relativity import compute_ISCO
-from triceratops.radiation.opacity import KramersBFESOpacity
+# :func:`~trilobite.physics_utils.general_relativity.compute_ISCO`.
+from trilobite.physics_utils.general_relativity import compute_ISCO
+from trilobite.radiation.opacity import KramersBFESOpacity
 
 M_BH = 1 * const.M_sun
 R_in = compute_ISCO(M_BH, spin=0)
@@ -119,7 +119,7 @@ max_steps = 500_000
 # Effect of the :math:`\xi` Parameter
 # ------------------------------------
 #
-# We run :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` for three values of
+# We run :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk` for three values of
 # :math:`\xi` to show how the advective fraction :math:`q_{\rm adv}/q_{\rm visc}` scales with the
 # entropy-gradient parameter.
 
@@ -181,7 +181,7 @@ plt.show()
 # :math:`T_c^{(0)}` (recovered when :math:`\xi \to 0`).
 #
 # Here we compare the midplane temperature :math:`T_c` for the non-advective baseline
-# (:class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`, :math:`\xi = 0`)
+# (:class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`, :math:`\xi = 0`)
 # and two advective runs.
 
 disk_no_adv = FullPressureDisk(mu=mu, opacity=KramersBFESOpacity())

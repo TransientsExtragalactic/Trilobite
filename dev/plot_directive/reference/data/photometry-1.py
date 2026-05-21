@@ -4,7 +4,7 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 from astropy.table import Table
 from astropy import units as u
-from triceratops.data import RadioPhotometryContainer
+from trilobite.data import RadioPhotometryContainer
 
 rng = np.random.default_rng(0)
 n = 24

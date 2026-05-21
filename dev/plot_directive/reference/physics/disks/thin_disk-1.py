@@ -2,7 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from astropy import constants as const
 from astropy import units as u
-from triceratops.dynamics.accretion import AlphaDisk
+from trilobite.dynamics.accretion import AlphaDisk
 
 # ── Physical parameters ───────────────────────────────────────────────────
 M_BH  = 10 * const.M_sun           # black hole mass

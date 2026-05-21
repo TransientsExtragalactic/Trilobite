@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Optical Light Curve Container &#8212; Triceratops dev documentation</title>
+    <title>Optical Light Curve Container &#8212; Trilobite dev documentation</title>
   
   
   
@@ -63,7 +63,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="From Data to Inference: End-to-End Workflow" href="plot_inference_workflow.html" />
@@ -142,11 +142,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -169,7 +169,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -311,7 +311,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -580,7 +580,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="optical-light-curve-container">
 <span id="sphx-glr-auto-examples-data-plot-optical-light-curve-py"></span><h1>Optical Light Curve Container<a class="headerlink" href="#optical-light-curve-container" title="Link to this heading">#</a></h1>
 <p>This example demonstrates how to construct an
-<a class="reference internal" href="../../_as_gen/triceratops.data.light_curve.OpticalLightCurveContainer.html#triceratops.data.light_curve.OpticalLightCurveContainer" title="triceratops.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a> from
+<a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a> from
 tabular data, access its dual flux/magnitude representations, separate
 detections from upper limits, and plot the resulting light curve.</p>
 <section id="setup">
@@ -592,7 +592,7 @@ contains both detections and upper limits.</p>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">OpticalLightCurveContainer</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">OpticalLightCurveContainer</span></a>
 
 <a href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="numpy.random.Generator" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rng</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.default_rng" title="numpy.random.default_rng" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span></a><span class="p">(</span><span class="mi">42</span><span class="p">)</span>
 <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n</span></a> <span class="o">=</span> <span class="mi">20</span>
@@ -709,7 +709,7 @@ AB magnitude (detections, computed from flux):
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_optical_light_curve_001.png" srcset="../../_images/sphx_glr_plot_optical_light_curve_001.png" alt="Synthetic g-band Optical Light Curve  (band='g')" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.264 seconds)</p>
+<img src="../../_images/sphx_glr_plot_optical_light_curve_001.png" srcset="../../_images/sphx_glr_plot_optical_light_curve_001.png" alt="Synthetic g-band Optical Light Curve  (band='g')" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.311 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-data-plot-optical-light-curve-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/3d897e5aa6f6aa472b7e635fdf584f4d/plot_optical_light_curve.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_optical_light_curve.ipynb</span></code></a></p>

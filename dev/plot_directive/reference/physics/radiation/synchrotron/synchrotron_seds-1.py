@@ -1,7 +1,7 @@
 import numpy as np
 from astropy import units as u
 import matplotlib.pyplot as plt
-from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 
 sed = PowerLaw_Cooling_SSA_SynchrotronSED()
 nu = np.logspace(8, 18, 500) * u.Hz

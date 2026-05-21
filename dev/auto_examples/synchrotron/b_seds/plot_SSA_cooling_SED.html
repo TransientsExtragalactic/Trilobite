@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Synchrotron Spectra With Cooling and SSA &#8212; Triceratops dev documentation</title>
+    <title>Synchrotron Spectra With Cooling and SSA &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="icon" href="../../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
     <link rel="next" title="Electron Cooling" href="../c_cooling/index.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -590,10 +590,10 @@ modeling, the effect of synchrotron self absorption (SSA) and radiative cooling 
 population are often included to better match observed spectra (e.g. Granot and Sari<a class="footnote-reference brackets" href="#footcite-granotsari2002spectralbreaks" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>).</p>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
-<p>For a detailed discussion of the relevant theory and its implementation in Triceratops, see
+<p>For a detailed discussion of the relevant theory and its implementation in Trilobite, see
 <a class="reference internal" href="../../../reference/physics/radiation/synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>.</p>
 </div>
-<p>In Triceratops, we have implemented the general synchrotron SED including both SSA and cooling
+<p>In Trilobite, we have implemented the general synchrotron SED including both SSA and cooling
 effects in the class <code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SSA_SynchrotronSED</span></code>.</p>
 <p>In this example, we’re going to simply demonstrate the shapes of the different spectra using
 contrived values of the various break frequencies. In practice, models relying on these
@@ -604,7 +604,7 @@ when both cooling and SSA are included.</p>
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <p>To get started, we’ll need to import the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SSA_SynchrotronSED</span></code> class
-from Triceratops, along with some standard packages for numerical work and plotting.</p>
+from Trilobite, along with some standard packages for numerical work and plotting.</p>
 <p>Synchrotron SEDs (all descended from <code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronSED</span></code>) need
 to be instantiated before use (so that hyper-parameters and flags for various choices can be set). Once instantiated
 we can define a frequency grid and some fixed phenomenological parameters for the spectra and then evaluate
@@ -613,8 +613,8 @@ the SED for different values of the relevant frequencies.</p>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.SEDs</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 
 <span class="c1"># Instantiate the SED.</span>
 <span class="n">sed</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PowerLaw_Cooling_SSA_SynchrotronSED</span></a><span class="p">()</span>
@@ -1054,7 +1054,7 @@ optically thin structure unchanged.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../../_images/sphx_glr_plot_SSA_cooling_SED_005.png" srcset="../../../_images/sphx_glr_plot_SSA_cooling_SED_005.png" alt="Slow-Cooling Synchrotron Spectra with SSA" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.144 seconds)</p>
+<img src="../../../_images/sphx_glr_plot_SSA_cooling_SED_005.png" srcset="../../../_images/sphx_glr_plot_SSA_cooling_SED_005.png" alt="Slow-Cooling Synchrotron Spectra with SSA" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.250 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-synchrotron-b-seds-plot-ssa-cooling-sed-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../../_downloads/547ca73ead2c60b3d873ba2ad75edf28/plot_SSA_cooling_SED.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SSA_cooling_SED.ipynb</span></code></a></p>

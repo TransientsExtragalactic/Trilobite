@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Numerical Thin-Shell Shock Evolution &#8212; Triceratops dev documentation</title>
+    <title>Numerical Thin-Shell Shock Evolution &#8212; Trilobite dev documentation</title>
   
   
   
@@ -64,7 +64,7 @@
             false;
         </script>
     <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
-    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
     <link rel="next" title="Rankine–Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic" href="plot_rh_jump_conditions.html" />
@@ -143,11 +143,11 @@
       
     
     
-    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
-    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
   
   
-    <p class="title logo__title">Triceratops</p>
+    <p class="title logo__title">Trilobite</p>
   
 </a></div>
     
@@ -170,7 +170,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -312,7 +312,7 @@
 
 <li class="nav-item ">
   <a class="nav-link nav-internal" href="../../reference/user_guide.html">
-    Triceratops User Guide
+    Trilobite User Guide
   </a>
 </li>
 
@@ -581,7 +581,7 @@ to download the full example code.</p>
 <section class="sphx-glr-example-title" id="numerical-thin-shell-shock-evolution">
 <span id="sphx-glr-auto-examples-dynamics-plot-numerical-shock-engine-py"></span><h1>Numerical Thin-Shell Shock Evolution<a class="headerlink" href="#numerical-thin-shell-shock-evolution" title="Link to this heading">#</a></h1>
 <p>This example demonstrates how to use the
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>
 to model the evolution of a supernova shock expanding into a <strong>non-uniform
 circumstellar medium (CSM)</strong>.</p>
 <p>Unlike self-similar shock solutions, which rely on idealized power-law density
@@ -603,19 +603,19 @@ highlighting the deceleration onset as the shock transitions from the stellar
 wind into the denser ambient ISM.</p>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
-<p>We begin by importing the relevant numerical, plotting, and Triceratops
+<p>We begin by importing the relevant numerical, plotting, and Trilobite
 utilities needed for this example.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
 
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.numerical</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">PressureDrivenThinShellShockEngine</span></a>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
     <span class="n">get_bpl_ejecta_kernel</span><span class="p">,</span>
     <span class="n">get_truncated_wind_csm_density_func</span><span class="p">,</span>
     <span class="n">make_homologous_stationary_sources</span><span class="p">,</span>
 <span class="p">)</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
 </pre></div>
 </div>
 <p>We now define the physical parameters of the system. These values are chosen
@@ -644,7 +644,7 @@ its surrounding environment.</p>
 <h2>Circumstellar Medium Density Profile<a class="headerlink" href="#circumstellar-medium-density-profile" title="Link to this heading">#</a></h2>
 <p>The numerical thin-shell engine requires the CSM density profile to be provided
 as a <strong>callable function</strong> returning the density in CGS units.</p>
-<p>Here we use <a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func.html#triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func" title="triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_truncated_wind_csm_density_func()</span></code></a>
+<p>Here we use <a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func.html#trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func" title="trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_truncated_wind_csm_density_func()</span></code></a>
 to construct a broken profile:</p>
 <ul class="simple">
 <li><p>For <span class="math notranslate nohighlight">\(r \le R_{\rm wind}\)</span>: a steady wind with <span class="math notranslate nohighlight">\(\rho \propto r^{-2}\)</span></p></li>
@@ -684,9 +684,9 @@ to construct a broken profile:</p>
 \[\rho_{\rm ej}(r, t) = t^{-3} G_{\rm ej}(r / t)\]</div>
 <p>Rather than specifying <span class="math notranslate nohighlight">\(\rho(r, t)\)</span> directly, the thin-shell engine
 requires the kernel function <span class="math notranslate nohighlight">\(G_{\rm ej}(v)\)</span>.</p>
-<p>Triceratops provides helper functions for constructing commonly used ejecta
+<p>Trilobite provides helper functions for constructing commonly used ejecta
 profiles. Here we adopt a Chevalier-style broken power-law profile via
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a>.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel.html#trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel" title="trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_bpl_ejecta_kernel()</span></code></a>.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">G_ej</span> <span class="o">=</span> <span class="n">get_bpl_ejecta_kernel</span><span class="p">(</span>
     <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">E_ej</span></a><span class="o">=</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">E_ej</span></a><span class="p">,</span>
     <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">M_ej</span></a><span class="o">=</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">M_ej</span></a><span class="p">,</span>
@@ -702,7 +702,7 @@ profiles. Here we adopt a Chevalier-style broken power-law profile via
 <code class="docutils literal notranslate"><span class="pre">(rho_1,</span> <span class="pre">u_1,</span> <span class="pre">rho_4,</span> <span class="pre">u_4)</span></code>, representing the upstream ejecta density,
 ejecta velocity, CSM density, and CSM velocity respectively. For the standard
 case of homologous ejecta running into a stationary CSM,
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html#triceratops.dynamics.shocks.utils.make_homologous_stationary_sources" title="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.utils.make_homologous_stationary_sources.html#trilobite.dynamics.shocks.utils.make_homologous_stationary_sources" title="trilobite.dynamics.shocks.utils.make_homologous_stationary_sources"><code class="xref py py-func docutils literal notranslate"><span class="pre">make_homologous_stationary_sources()</span></code></a>
 builds all four from the kernel and the CSM profile:</p>
 <div class="math notranslate nohighlight">
 \[\rho_1(r, t) = t^{-3} G_{\rm ej}(r/t), \quad
@@ -735,7 +735,7 @@ at evaluation time.</p>
 <h2>Shock Evolution<a class="headerlink" href="#shock-evolution" title="Link to this heading">#</a></h2>
 <p>We now compute the shock properties using the high-level API, which handles
 unit conversion and validation internally. The result is a
-<a class="reference internal" href="../../_as_gen/triceratops.dynamics.shocks.numerical.ThinShellShockState.html#triceratops.dynamics.shocks.numerical.ThinShellShockState" title="triceratops.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> named
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.shocks.numerical.ThinShellShockState.html#trilobite.dynamics.shocks.numerical.ThinShellShockState" title="trilobite.dynamics.shocks.numerical.ThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ThinShellShockState</span></code></a> named
 tuple carrying all shock diagnostics as unit-bearing
 <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> arrays.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">state</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
@@ -781,7 +781,7 @@ when the forward shock crosses <span class="math notranslate nohighlight">\(R_\m
 <span class="c1"># sphinx_gallery_thumbnail_number = -1</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_numerical_shock_engine_002.png" srcset="../../_images/sphx_glr_plot_numerical_shock_engine_002.png" alt="plot numerical shock engine" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.957 seconds)</p>
+<img src="../../_images/sphx_glr_plot_numerical_shock_engine_002.png" srcset="../../_images/sphx_glr_plot_numerical_shock_engine_002.png" alt="plot numerical shock engine" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.192 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-dynamics-plot-numerical-shock-engine-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/c8aa3ab83f60c04ddab612eeae188b66/plot_numerical_shock_engine.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_numerical_shock_engine.ipynb</span></code></a></p>

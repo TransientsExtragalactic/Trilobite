@@ -46,7 +46,7 @@ eventually sub-Eddington.
 
 Physical Setup
 --------------
-We use :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+We use :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
 with a power-law fallback supply, which combines:
 
 - Gas + radiation pressure EOS
@@ -63,9 +63,9 @@ cooling is physically required.
 
 Relevant API
 ------------
-- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
-- :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+- :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
 
 .. GENERATED FROM PYTHON SOURCE LINES 53-55
 
@@ -82,8 +82,8 @@ Setup
     from astropy import constants as const
     from astropy import units as u
 
-    from triceratops.dynamics.accretion.one_zone import AdvectiveDisk
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.dynamics.accretion.one_zone import AdvectiveDisk
+    from trilobite.utils.plot_utils import set_plot_style
 
     set_plot_style()
 
@@ -167,7 +167,7 @@ Initial Conditions and Runtime Parameters
 -----------------------------------------
 
 We generate self-consistent initial conditions via
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`.
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`.
 The initial disk mass is :math:`M_{D,0} = M_\star / 5` (the fraction
 that reaches the inner region on the fallback timescale) and the
 initial radius is the circularization radius.
@@ -386,7 +386,7 @@ wins and the disk depletes.
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 1.801 seconds)
+   **Total running time of the script:** (0 minutes 2.018 seconds)
 
 
 .. _sphx_glr_download_auto_examples_accretion_plot_tde_disk_observables.py:

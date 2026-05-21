@@ -6,9 +6,9 @@
 Likelihood Development Guide
 ===============================
 
-Likelihoods are the bridge between physics and inference in Triceratops.
-They bind a concrete :class:`~triceratops.models.core.base.Model` to a
-:class:`~triceratops.data.core.InferenceData` object under a specific statistical
+Likelihoods are the bridge between physics and inference in Trilobite.
+They bind a concrete :class:`~trilobite.models.core.base.Model` to a
+:class:`~trilobite.data.core.InferenceData` object under a specific statistical
 assumption and produce a scalar log-likelihood suitable for samplers,
 optimizers, or evidence estimators.
 
@@ -29,14 +29,14 @@ extending the framework safely.
 A Conceptual Overview
 ---------------------
 
-A Triceratops likelihood is not a monolithic object. It consists of two
+A Trilobite likelihood is not a monolithic object. It consists of two
 conceptual layers:
 
 1. A **numerical backend** that encodes pure statistics.
 2. A **likelihood class** that binds a forward model to validated numerical data.
 
 The separation between these layers is enforced by
-:class:`~triceratops.inference.likelihood.base.Likelihood`. That base class
+:class:`~trilobite.inference.likelihood.base.Likelihood`. That base class
 defines the initialization workflow, compatibility contract, and evaluation
 interface.
 
@@ -45,10 +45,10 @@ Before diving into extension patterns, we examine each layer in turn.
 Low-Level Numerical Likelihoods
 -------------------------------
 
-At the foundation of the Triceratops likelihood system lie the **pure
+At the foundation of the Trilobite likelihood system lie the **pure
 numerical backends**. These are ordinary Python functions — typically located
-in submodules of :mod:`triceratops.inference.likelihood` such as
-:mod:`triceratops.inference.likelihood.gaussian` — whose sole responsibility
+in submodules of :mod:`trilobite.inference.likelihood` such as
+:mod:`trilobite.inference.likelihood.gaussian` — whose sole responsibility
 is to evaluate a statistical expression in array space.
 
 These functions operate directly on NumPy arrays and return a scalar
@@ -62,7 +62,7 @@ log-likelihood value. They are deliberately unaware of:
 Their role is purely mathematical.
 
 For example,
-:func:`~triceratops.inference.likelihood.gaussian.gaussian_loglikelihood`
+:func:`~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood`
 computes the standard Gaussian log-likelihood from arrays of observed values,
 model predictions, and uncertainties. It assumes that the arrays are already
 compatible, correctly shaped, and expressed in consistent units. It does not
@@ -105,7 +105,7 @@ The Likelihood Base Class
 -------------------------
 
 The structural core of the likelihood system is
-:class:`~triceratops.inference.likelihood.base.Likelihood`.
+:class:`~trilobite.inference.likelihood.base.Likelihood`.
 
 This abstract base class does not implement a specific statistical model.
 Instead, it defines the lifecycle and contract that all concrete likelihoods
@@ -115,8 +115,8 @@ disciplined manner.
 
 A likelihood instance represents the binding of:
 
-- one :class:`~triceratops.models.core.base.Model`,
-- one :class:`~triceratops.data.core.InferenceData`,
+- one :class:`~trilobite.models.core.base.Model`,
+- one :class:`~trilobite.data.core.InferenceData`,
 - one statistical assumption.
 
 Once constructed, it becomes a callable object capable of evaluating
@@ -127,7 +127,7 @@ Initialization Lifecycle
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 All likelihood subclasses inherit the constructor defined in
-:class:`~triceratops.inference.likelihood.base.Likelihood`. That constructor
+:class:`~trilobite.inference.likelihood.base.Likelihood`. That constructor
 enforces a strict sequence of steps:
 
 1. Bind the model and inference data.
@@ -210,12 +210,12 @@ Likelihood Evaluation
 Evaluation is intentionally split into two methods.
 
 The public method
-:meth:`~triceratops.inference.likelihood.base.Likelihood.log_likelihood`
+:meth:`~trilobite.inference.likelihood.base.Likelihood.log_likelihood`
 accepts parameters in any format supported by the model and coerces them
 into the model’s internal representation.
 
 It then delegates to
-:meth:`~triceratops.inference.likelihood.base.Likelihood._log_likelihood`,
+:meth:`~trilobite.inference.likelihood.base.Likelihood._log_likelihood`,
 which assumes parameters are already in raw format.
 
 A typical implementation looks like:
