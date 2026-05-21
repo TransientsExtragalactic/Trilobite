@@ -53,12 +53,12 @@ Or install from source:
 
 .. code-block:: bash
 
-    git clone https://github.com/TransientsExtragalactic/Triceratops
-    cd Triceratops
+    git clone https://github.com/TransientsExtragalactic/Trilobite
+    cd Trilobite
     pip install -e .
 
 For full setup instructions, see the
-`Installation Guide <https://transientsextragalactic.github.io/Triceratops/getting_started/installation.html>`_.
+`Installation Guide <https://transientsextragalactic.github.io/Trilobite/getting_started/installation.html>`_.
 
 ----
 
@@ -67,7 +67,7 @@ Documentation
 
 The full documentation — user guides, API references, worked examples, and theory background — is available at:
 
-    `https://transientsextragalactic.github.io/Triceratops <https://transientsextragalactic.github.io/Triceratops>`_
+    `https://transientsextragalactic.github.io/Trilobite <https://transientsextragalactic.github.io/Trilobite>`_
 
 ----
 
@@ -75,7 +75,7 @@ Contributing
 ============
 
 Development takes place on
-`GitHub <https://github.com/TransientsExtragalactic/Triceratops>`_.
+`GitHub <https://github.com/TransientsExtragalactic/Trilobite>`_.
 
 Bug reports, feature requests, and documentation improvements are welcome via the issue tracker.
 Contributions should follow the established coding, documentation, and
@@ -96,16 +96,16 @@ TRILOBITE is developed and maintained by Eliza Diggins and the
 
 ----
 
-.. |Tests| image:: https://github.com/TransientsExtragalactic/Triceratops/actions/workflows/run_tests.yml/badge.svg
-   :target: https://github.com/TransientsExtragalactic/Triceratops/actions/workflows/run_tests.yml
+.. |Tests| image:: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml/badge.svg
+   :target: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml
    :alt: Tests
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://transientsextragalactic.github.io/Triceratops
+   :target: https://transientsextragalactic.github.io/Trilobite
    :alt: Latest Docs
 
 .. |docs-stable| image:: https://img.shields.io/badge/docs-stable-brightgreen.svg
-   :target: https://transientsextragalactic.github.io/Triceratops/stable
+   :target: https://transientsextragalactic.github.io/Trilobite/stable
    :alt: Stable Docs
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
@@ -128,12 +128,12 @@ TRILOBITE is developed and maintained by Eliza Diggins and the
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Triceratops?cacheSeconds=86400
-   :target: https://github.com/TransientsExtragalactic/Triceratops/graphs/contributors
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Trilobite?cacheSeconds=86400
+   :target: https://github.com/TransientsExtragalactic/Trilobite/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Triceratops?cacheSeconds=86400
-   :target: https://github.com/TransientsExtragalactic/Triceratops
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Trilobite?cacheSeconds=86400
+   :target: https://github.com/TransientsExtragalactic/Trilobite
    :alt: Last Commit
 
 .. |ASTROPY| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat

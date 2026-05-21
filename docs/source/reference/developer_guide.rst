@@ -57,7 +57,7 @@ To get started, you will need to clone the Trilobite repository from GitHub. You
 
 .. code-block:: bash
 
-    git clone https://github.com/TransientsExtragalactic/Triceratops
+    git clone https://github.com/TransientsExtragalactic/Trilobite
 
 This will create a local copy of the Trilobite repository on your machine. To get a particular branch you will need to
 checkout the branch you want to work on:
