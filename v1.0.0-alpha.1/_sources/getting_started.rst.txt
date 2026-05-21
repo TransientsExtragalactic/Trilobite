@@ -1,71 +1,145 @@
-
-.. image:: ./images/logo.png
-   :width: 200px
-   :align: center
-
 .. _getting_started:
+
+.. raw:: html
+
+   <style>
+     .bd-article h1 {
+         font-size: 2.6rem;
+         color: #1f7a8c;
+         margin-bottom: 0.5rem;
+     }
+   </style>
+
+   <div style="
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 2.5rem 0 2.4rem 0;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 1.8rem;
+    ">
+
+       <img src="_images/logo.svg" style="width: 25%; height: auto;">
+
+       <div style="max-width: 620px;">
 
 ==================
 Quickstart Guide
 ==================
 
-Welcome to TRILOBITE! This guide will help you get started with the code, including installation instructions and
-resources for new users and developers.
+.. raw:: html
+
+           <p style="
+               margin: 0.4rem 0 0 0;
+               font-size: 1rem;
+               color: #666;
+           ">
+               Get up and running with Trilobite.
+           </p>
+
+           <p style="
+               margin: 1rem 0 0 0;
+               font-size: 1.1rem;
+               line-height: 1.6;
+               color: #3a4a52;
+           ">
+               Install the package, explore worked examples, and understand
+               how the library is structured — everything you need to start
+               modeling astrophysical transients.
+           </p>
+
+       </div>
+   </div>
 
 Installation
-------------
+============
 
-Trilobite is currently in development and has not been released on PyPI. To install Trilobite, you can clone the repository
-from GitHub and install it using pip. Here are the steps:
+.. tab-set::
 
-1. Clone the Trilobite repository:
+   .. tab-item:: PyPI (Recommended)
+      :sync: pypi
 
-   .. code-block::
+      Install the latest stable release directly from PyPI:
 
-        git clone https://github.com/TransientsExtragalactic/Trilobite
+      .. code-block:: bash
 
-2. Navigate to the cloned directory:
+         pip install trilobite
 
-   .. code-block::
+      To include optional support for optical photometry (requires ``speclite``):
 
-        cd Trilobite
+      .. code-block:: bash
 
-3. Install Trilobite using pip:
+         pip install trilobite[optical]
 
-   .. code-block::
+   .. tab-item:: From Source
+      :sync: source
 
-        pip install -e .
+      Clone the repository and install in editable mode to work with the latest
+      development code or contribute to the project:
 
-This will install Trilobite in editable mode, allowing you to make changes to the code and see them reflected immediately.
+      .. code-block:: bash
 
-.. important::
+         git clone https://github.com/TransientsExtragalactic/Trilobite
+         cd Trilobite
+         pip install -e .
 
-    In the future, Trilobite will be available on PyPI, and you will be able to install it using:
+      For the full development environment (testing, linting, docs):
 
-    .. code-block::
+      .. code-block:: bash
 
-        pip install trilobite
+         pip install -e ".[dev]"
 
-Getting Started
------------------
+----
 
-To get started using Trilobite, we recommend the following steps:
+Where to Go Next
+================
 
-1. Look through the documentation available at :ref:`user_guide` to familiarize yourself with
-   the relevant modules and the general structure of the library. This documentation is
-   written with brevity in mind to ensure that you can quickly find the information you need and
-   get started with your work.
+.. grid:: 2
+   :gutter: 3
 
-2. Explore the examples provided in the :ref:`examples` document. These examples will cover
-   most of the basic functionality of Trilobite and will help you understand how to use the library effectively.
+   .. grid-item-card:: User Guide
+      :link: user_guide
+      :link-type: ref
 
-If you have specific questions about using Trilobite, encounter a bug, or have suggestions for improvements,
-please feel free to open an issue on the `Trilobite GitHub <https://github.com/TransientsExtragalactic/Trilobite>`__ repository.
-We welcome contributions and feedback from the community to help improve the library.
+      **The primary reference for using Trilobite.**
 
-Developers
------------
+      Covers data handling, model construction, inference pipelines, and the
+      physics building blocks — from shocks and synchrotron emission to
+      accretion disks.
 
-Are you interested in helping to develop Trilobite? We welcome contributions from developers of all skill levels. To
-get started as a developer, please refer to the :ref:`developer_guide` for information on how to contribute,
-coding standards, and the development workflow.
+   .. grid-item-card:: Example Gallery
+      :link: gallery_examples
+      :link-type: ref
+
+      **Runnable, self-contained worked examples.**
+
+      Explore end-to-end workflows: loading data, fitting shock models,
+      computing synchrotron SEDs, and running MCMC inference.
+
+   .. grid-item-card:: API Reference
+      :link: api
+      :link-type: ref
+
+      **Complete call signatures and module documentation.**
+
+      Auto-generated reference for every public class, function, and
+      parameter in the library.
+
+   .. grid-item-card:: Developer Guide
+      :link: developer_guide
+      :link-type: ref
+
+      **Contribute to Trilobite.**
+
+      Coding standards, testing conventions, the documentation workflow,
+      and guidance for extending the physics building blocks.
+
+----
+
+Getting Help
+============
+
+If you encounter a bug, have a question, or want to suggest an improvement,
+open an issue on the
+`Trilobite GitHub <https://github.com/TransientsExtragalactic/Trilobite/issues>`__.
+Contributions are welcome at all skill levels.

@@ -460,62 +460,139 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <a class="reference internal image-reference" href="images/logo.png"><img alt="images/logo.png" class="align-center" src="images/logo.png" style="width: 200px;" />
-</a>
-<section id="quickstart-guide">
-<span id="getting-started"></span><h1>Quickstart Guide<a class="headerlink" href="#quickstart-guide" title="Link to this heading">#</a></h1>
-<p>Welcome to TRILOBITE! This guide will help you get started with the code, including installation instructions and
-resources for new users and developers.</p>
-<section id="installation">
+  <style>
+  .bd-article h1 {
+      font-size: 2.6rem;
+      color: #1f7a8c;
+      margin-bottom: 0.5rem;
+  }
+</style>
+
+<div style="
+ display: flex;
+ align-items: center;
+ gap: 2.5rem;
+ padding: 2.5rem 0 2.4rem 0;
+ border-bottom: 1px solid #e5e7eb;
+ margin-bottom: 1.8rem;
+ ">
+
+    <img src="_images/logo.svg" style="width: 25%; height: auto;">
+
+    <div style="max-width: 620px;"><section id="quickstart-guide">
+<h1>Quickstart Guide<a class="headerlink" href="#quickstart-guide" title="Link to this heading">#</a></h1>
+        <p style="
+            margin: 0.4rem 0 0 0;
+            font-size: 1rem;
+            color: #666;
+        ">
+            Get up and running with Trilobite.
+        </p>
+
+        <p style="
+            margin: 1rem 0 0 0;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            color: #3a4a52;
+        ">
+            Install the package, explore worked examples, and understand
+            how the library is structured — everything you need to start
+            modeling astrophysical transients.
+        </p>
+
+    </div>
+</div><section id="installation">
 <h2>Installation<a class="headerlink" href="#installation" title="Link to this heading">#</a></h2>
-<p>Trilobite is currently in development and has not been released on PyPI. To install Trilobite, you can clone the repository
-from GitHub and install it using pip. Here are the steps:</p>
-<ol class="arabic">
-<li><p>Clone the Trilobite repository:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">TransientsExtragalactic</span><span class="o">/</span><span class="n">Trilobite</span>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" data-sync-group="tab" data-sync-id="pypi" for="sd-tab-item-0">
+PyPI (Recommended)</label><div class="sd-tab-content docutils">
+<p>Install the latest stable release directly from PyPI:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>trilobite
 </pre></div>
 </div>
-</li>
-<li><p>Navigate to the cloned directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">Trilobite</span>
+<p>To include optional support for optical photometry (requires <code class="docutils literal notranslate"><span class="pre">speclite</span></code>):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>trilobite<span class="o">[</span>optical<span class="o">]</span>
 </pre></div>
 </div>
-</li>
-<li><p>Install Trilobite using pip:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="o">-</span><span class="n">e</span> <span class="o">.</span>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" data-sync-group="tab" data-sync-id="source" for="sd-tab-item-1">
+From Source</label><div class="sd-tab-content docutils">
+<p>Clone the repository and install in editable mode to work with the latest
+development code or contribute to the project:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>git<span class="w"> </span>clone<span class="w"> </span>https://github.com/TransientsExtragalactic/Trilobite
+<span class="nb">cd</span><span class="w"> </span>Trilobite
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span>.
 </pre></div>
 </div>
-</li>
-</ol>
-<p>This will install Trilobite in editable mode, allowing you to make changes to the code and see them reflected immediately.</p>
-<div class="admonition important">
-<p class="admonition-title">Important</p>
-<p>In the future, Trilobite will be available on PyPI, and you will be able to install it using:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">trilobite</span>
+<p>For the full development environment (testing, linting, docs):</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
 </pre></div>
+</div>
 </div>
 </div>
 </section>
-<section id="id1">
-<h2>Getting Started<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
-<p>To get started using Trilobite, we recommend the following steps:</p>
-<ol class="arabic simple">
-<li><p>Look through the documentation available at <a class="reference internal" href="reference/user_guide.html#user-guide"><span class="std std-ref">Trilobite User Guide</span></a> to familiarize yourself with
-the relevant modules and the general structure of the library. This documentation is
-written with brevity in mind to ensure that you can quickly find the information you need and
-get started with your work.</p></li>
-<li><p>Explore the examples provided in the <span class="xref std std-ref">examples</span> document. These examples will cover
-most of the basic functionality of Trilobite and will help you understand how to use the library effectively.</p></li>
-</ol>
-<p>If you have specific questions about using Trilobite, encounter a bug, or have suggestions for improvements,
-please feel free to open an issue on the <a class="reference external" href="https://github.com/TransientsExtragalactic/Trilobite">Trilobite GitHub</a> repository.
-We welcome contributions and feedback from the community to help improve the library.</p>
+<hr class="docutils" />
+<section id="where-to-go-next">
+<h2>Where to Go Next<a class="headerlink" href="#where-to-go-next" title="Link to this heading">#</a></h2>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+User Guide</div>
+<p class="sd-card-text"><strong>The primary reference for using Trilobite.</strong></p>
+<p class="sd-card-text">Covers data handling, model construction, inference pipelines, and the
+physics building blocks — from shocks and synchrotron emission to
+accretion disks.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="reference/user_guide.html#user-guide"><span class="std std-ref">Trilobite User Guide</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Example Gallery</div>
+<p class="sd-card-text"><strong>Runnable, self-contained worked examples.</strong></p>
+<p class="sd-card-text">Explore end-to-end workflows: loading data, fitting shock models,
+computing synchrotron SEDs, and running MCMC inference.</p>
+</div>
+<span class="sd-stretched-link sd-hide-link-text">gallery_examples</span></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+API Reference</div>
+<p class="sd-card-text"><strong>Complete call signatures and module documentation.</strong></p>
+<p class="sd-card-text">Auto-generated reference for every public class, function, and
+parameter in the library.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="api.html#api"><span class="std std-ref">API</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Developer Guide</div>
+<p class="sd-card-text"><strong>Contribute to Trilobite.</strong></p>
+<p class="sd-card-text">Coding standards, testing conventions, the documentation workflow,
+and guidance for extending the physics building blocks.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="reference/developer_guide.html#developer-guide"><span class="std std-ref">Trilobite Developer Guide</span></a></div>
+</div>
+</div>
+</div>
 </section>
-<section id="developers">
-<h2>Developers<a class="headerlink" href="#developers" title="Link to this heading">#</a></h2>
-<p>Are you interested in helping to develop Trilobite? We welcome contributions from developers of all skill levels. To
-get started as a developer, please refer to the <a class="reference internal" href="reference/developer_guide.html#developer-guide"><span class="std std-ref">Trilobite Developer Guide</span></a> for information on how to contribute,
-coding standards, and the development workflow.</p>
+<hr class="docutils" />
+<section id="getting-help">
+<h2>Getting Help<a class="headerlink" href="#getting-help" title="Link to this heading">#</a></h2>
+<p>If you encounter a bug, have a question, or want to suggest an improvement,
+open an issue on the
+<a class="reference external" href="https://github.com/TransientsExtragalactic/Trilobite/issues">Trilobite GitHub</a>.
+Contributions are welcome at all skill levels.</p>
 </section>
 </section>
 
@@ -558,8 +635,8 @@ coding standards, and the development workflow.</p>
   <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
     <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#installation">Installation</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Getting Started</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#developers">Developers</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#where-to-go-next">Where to Go Next</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#getting-help">Getting Help</a></li>
 </ul>
   </nav></div>
 

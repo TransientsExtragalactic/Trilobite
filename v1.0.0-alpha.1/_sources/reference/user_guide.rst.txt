@@ -3,6 +3,7 @@
 ========================
 Trilobite User Guide
 ========================
+
 Welcome to the **Trilobite User Guide**! This page is the location of all technical documentation for the
 trilobite library and is generally the first place to look when seeking information on how to use the library. In
 addition to the resources on this page, the API reference (:ref:`api`) gives in-depth information about call signatures
@@ -16,10 +17,8 @@ a comprehensive overview of the relevant components and their usage.
     :align: center
     :alt: Trilobite Code Structure
 
-    The structure of the Trilobite codebase, showing the main modules and their relationships. The user guide covers the
-    data, models, inference, and physics modules, which are the core components of the library. The extensions and
-    analysis sections cover additional functionality and workflows that leverage these core components.
-
+    The core structure of TRILOBITE, from data and physics modules to a final inference product. The typical workflow
+    in Trilobite will touch each of these 4 layers, but the user can also interact with each layer independently.
 ----
 
 Getting Started
