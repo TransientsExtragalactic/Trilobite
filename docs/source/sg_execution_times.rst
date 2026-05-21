@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**00:04.107** total execution time for 54 files **from all galleries**:
+**00:00.703** total execution time for 55 files **from all galleries**:
 
 .. container::
 
@@ -32,8 +32,8 @@ Computation times
    * - Example
      - Time
      - Mem (MB)
-   * - :ref:`sphx_glr_auto_examples_dynamics_plot_relativistic_thin_shell_convergence.py` (``galleries/dynamics/plot_relativistic_thin_shell_convergence.py``)
-     - 00:04.107
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_chevalier_shock_structure.py` (``galleries/dynamics/plot_chevalier_shock_structure.py``)
+     - 00:00.703
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -84,6 +84,9 @@ Computation times
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_numerical_shocks_csms.py` (``galleries/dynamics/plot_numerical_shocks_csms.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_dynamics_plot_relativistic_thin_shell_convergence.py` (``galleries/dynamics/plot_relativistic_thin_shell_convergence.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_dynamics_plot_rh_jump_conditions.py` (``galleries/dynamics/plot_rh_jump_conditions.py``)

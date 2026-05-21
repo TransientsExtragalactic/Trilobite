@@ -10,9 +10,19 @@ __all__ = [
     "rankine_hugoniot",
     "relativistic_jump_conditions",
     "numerical",
+    "BlandfordMcKeeShockState",
+    "BlandfordMcKeeShockEngine",
+    "BlandfordMcKeeWindShockEngine",
+    "ChevalierSelfSimilarFunctions",
+    "ChevalierSelfSimilarCriticalGrid",
     "ChevalierShockState",
     "ChevalierSelfSimilarShockEngine",
     "ChevalierSelfSimilarWindShockEngine",
+    "ChevalierTwoShockState",
+    "ChevalierTwoShockSelfSimilarEngine",
+    "ChevalierTwoShockSelfSimilarWindEngine",
+    "compute_self_similar_functions",
+    "compute_self_similar_critical_grid",
     "SedovTaylorShockState",
     "SedovTaylorShockEngine",
     "sedov_taylor_beta",
@@ -31,10 +41,22 @@ __all__ = [
     "make_homologous_stationary_sources",
 ]
 from triceratops.dynamics.shocks import numerical
+from triceratops.dynamics.shocks.blandford_mckee import (
+    BlandfordMcKeeShockEngine,
+    BlandfordMcKeeShockState,
+    BlandfordMcKeeWindShockEngine,
+)
 from triceratops.dynamics.shocks.chevalier import (
+    ChevalierSelfSimilarCriticalGrid,
+    ChevalierSelfSimilarFunctions,
     ChevalierSelfSimilarShockEngine,
     ChevalierSelfSimilarWindShockEngine,
     ChevalierShockState,
+    ChevalierTwoShockSelfSimilarEngine,
+    ChevalierTwoShockSelfSimilarWindEngine,
+    ChevalierTwoShockState,
+    compute_self_similar_critical_grid,
+    compute_self_similar_functions,
 )
 from triceratops.dynamics.shocks.core import rankine_hugoniot, relativistic_jump_conditions
 from triceratops.dynamics.shocks.core.relativistic_jump_conditions import (

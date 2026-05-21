@@ -1418,71 +1418,151 @@ per unit swept rest mass.
         =
         \Gamma_{\rm rel}.
 
-**Non-relativistic limit correction.** The formula :math:`P_d^{({\rm RH})}`
-does not reduce to the correct non-relativistic Rankine--Hugoniot pressure
-in the low-Mach limit. As :math:`\Gamma_{\rm rel}\to 1`:
+Numerical Implementation: Pre-tabulation and Exact Pressure Closure
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The engine does not evaluate the ODE pressures directly from
+:math:`\Gamma_{\rm rel,i}`.  Instead it uses the *exact* Rankine--Hugoniot
+result derived by combining baryon conservation, energy conservation, and
+momentum conservation in the shock frame.
+
+**Pre-tabulation.**  At initialisation the engine solves the full cold-upstream
+relativistic implicit equation
 
 .. math::
 
-   P_d^{({\rm RH})}
-   \;\xrightarrow{\;\Gamma_{\rm rel}\to 1\;}\;
-   \frac{\hat\gamma+1}{2}\,\rho_u v_{\rm rel}^2,
+   \left(\frac{\hat\gamma-1}{\hat\gamma}\right)
+   \frac{\Gamma_{1s}\beta_{1s}}{\Gamma_{2s}\beta_{2s}}
+   \left[\frac{\Gamma_{1s}}{\Gamma_{2s}} - 1\right]
+   =
+   \Gamma_{1s}^2\beta_{1s}^2
+   \left(1 - \frac{\beta_{2s}}{\beta_{1s}}\right)
 
-whereas the correct non-relativistic Hugoniot gives
+numerically for :math:`\beta_{2s}(\beta_{1s})` at each node of a fine
+:math:`\beta_{1s}` grid.  Separate tables are built for the adiabatic
+indices :math:`\hat\gamma_1` (reverse shock) and :math:`\hat\gamma_4`
+(forward shock).  During ODE integration the downstream shock-frame
+speeds :math:`\beta_{2s}` and :math:`\beta_{3s}` are obtained by linear
+interpolation from these tables, avoiding a root-find at every function
+evaluation.
+
+**Post-shock quantities.**  Given the upstream shock-frame speed
+:math:`\beta_{is}` and the interpolated downstream speed :math:`\beta_{ds}`
+at each face, the post-shock state used in the ODE is:
+
+*Compression ratio* (baryon-number conservation in the shock frame):
 
 .. math::
 
-   P_d^{({\rm NR})}
+   R_i
    =
-   \left(1-\frac{1}{\chi}\right)\rho_u v_{\rm rel}^2
+   \frac{\rho_{d,i}}{\rho_{u,i}}
    =
-   \frac{2}{\hat\gamma+1}\,\rho_u v_{\rm rel}^2,
-   \qquad
-   \chi = \frac{\hat\gamma+1}{\hat\gamma-1}.
+   \frac{\Gamma_{is}\,\beta_{is}}{\Gamma_{ds}\,\beta_{ds}}.
 
-The ratio is
-:math:`P_d^{({\rm NR})}/P_d^{({\rm RH})}\big|_{\rm NR} = (1-1/\chi)^2`.
-To preserve the non-relativistic Hugoniot in the low-Mach limit, the
-pressures driving the ODE are rescaled by this factor:
+*Post-shock density*:
+
+.. math::
+
+   \rho_{d,i} = R_i\,\rho_{u,i}.
+
+*Post-shock pressure* (combining energy and momentum conservation in the
+shock frame for a cold upstream :math:`P_u=0`):
 
 .. math::
 
    \boxed{
    P_i
    =
-   \left(1-\frac{1}{\chi}\right)^2
-   \rho_{u,i}\,c^2
-   \left(\Gamma_{\rm rel,i}-1\right)
-   \left(\hat\gamma\,\Gamma_{\rm rel,i}+1\right).
+   \rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2
+   \!\left(1 - \frac{\beta_{ds}}{\beta_{is}}\right).
    }
 
-One can verify that :math:`P_i\to(1-1/\chi)\rho_u v_{\rm rel}^2` as
-:math:`\Gamma_{\rm rel}\to 1`, recovering the correct non-relativistic result.
-Applied at each shock face:
+This is the *exact* result from the relativistic jump conditions; no
+additional correction factor is required.  In the non-relativistic limit
+:math:`\beta_{is}\ll 1` it reduces to the correct strong-shock Hugoniot
+pressure :math:`(1-1/\chi)\,\rho_u v_{\rm rel}^2`.
+
+.. dropdown:: Derivation: exact pressure from conservation laws
+
+    In the shock rest frame, for a cold upstream (:math:`P_u=0`,
+    :math:`e_u=\rho_u c^2`), the three conservation conditions are:
+
+    *Baryon conservation* (mass flux):
+
+    .. math::
+
+        \rho_u\,\Gamma_{us}\,\beta_{us}
+        =
+        \rho_d\,\Gamma_{ds}\,\beta_{ds}.
+
+    *Energy conservation* (energy flux):
+
+    .. math::
+
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}
+        =
+        (e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}.
+
+    *Momentum conservation* (momentum flux):
+
+    .. math::
+
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+        =
+        (e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}^2
+        +
+        P_d.
+
+    Dividing the energy equation by :math:`\beta_{us}` gives
+
+    .. math::
+
+        (e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}
+        =
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}.
+
+    Substituting into the momentum equation:
+
+    .. math::
+
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+        =
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}\,\beta_{ds}
+        +
+        P_d.
+
+    Rearranging gives the boxed formula:
+
+    .. math::
+
+        P_d
+        =
+        \rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+        \!\left(1-\frac{\beta_{ds}}{\beta_{us}}\right).
+
+*Energy-loading coefficient* (from the ideal-gas equation of state applied
+to the reconstructed downstream state):
 
 .. math::
 
-   P_2
+   \eta_i
    =
-   \left(1-\frac{1}{\chi}\right)^2
-   \rho_{1,\rm sh}\,c^2
-   \left(\Gamma_{\rm rel,2}-1\right)
-   \left(\hat\gamma\,\Gamma_{\rm rel,2}+1\right),
-   \qquad
-   P_3
-   =
-   \left(1-\frac{1}{\chi}\right)^2
-   \rho_{4,\rm sh}\,c^2
-   \left(\Gamma_{\rm rel,3}-1\right)
-   \left(\hat\gamma\,\Gamma_{\rm rel,3}+1\right).
+   1 + \frac{P_i}{(\hat\gamma-1)\,\rho_{d,i}\,c^2}.
+
+When :math:`\beta_{ds}` is the exact solution of the implicit equation,
+:math:`\eta_i` is numerically equal to :math:`\Gamma_{\rm rel,i}` from
+the standard jump-condition result.
 
 .. note::
 
    The diagnostic pressures stored in
    :class:`~triceratops.dynamics.shocks.numerical.RelThinShellShockState`
-   are the **unmodified** Hugoniot pressures :math:`P_d^{({\rm RH})}`. The
-   corrected pressures :math:`P_i` are used only internally in the ODE
-   integration.
+   are the **simplified** Hugoniot pressures
+   :math:`P_d^{({\rm RH})}=\rho_u\,c^2(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1)`,
+   evaluated with :math:`\Gamma_{\rm rel}` from the lab-frame velocity-addition
+   formula.  The ODE integration uses the exact momentum-flux pressures
+   :math:`P_i` defined above.
 
 Rest-Mass Fluxes
 ^^^^^^^^^^^^^^^^^^
@@ -1561,7 +1641,7 @@ source gives the closed adiabatic system:
 The :math:`\Gamma_{\rm rel,i}` factors in the energy and momentum equations are
 the energy-loading coefficients :math:`\eta_i=\Gamma_{\rm rel,i}` from the
 Rankine--Hugoniot solution. The pressures :math:`P_2` and :math:`P_3` are the
-non-relativistically corrected values defined above.
+exact momentum-flux pressures defined in the pre-tabulation section above.
 
 .. dropdown:: Derivation: energy and momentum loading
 
@@ -1640,6 +1720,8 @@ time :math:`t_0`. Assuming a cold shell,
 
       4\pi R_{\rm sh}^2(P_2-P_3),
 
-   where :math:`P_i = (1-1/\chi)^2\,\rho_{u,i}\,c^2\,(\Gamma_{\rm rel,i}-1)(\hat\gamma\,\Gamma_{\rm rel,i}+1)`
-   are the non-relativistically corrected Hugoniot pressures, with
-   :math:`\chi = (\hat\gamma+1)/(\hat\gamma-1)`.
+   where :math:`P_i = \rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2(1-\beta_{ds}/\beta_{is})`
+   is the exact post-shock pressure from the relativistic Rankine--Hugoniot conditions,
+   with :math:`\beta_{is}` and :math:`\beta_{ds}` the upstream and downstream
+   shock-frame speeds obtained by pre-tabulated interpolation of the full implicit
+   cold-upstream equation.

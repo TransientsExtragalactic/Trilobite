@@ -31,13 +31,15 @@ workflows that would otherwise be prohibitively expensive.
 
     - :ref:`chevalier_theory` — the Chevalier self-similar ejecta--CSM interaction
     - :ref:`sedov_taylor_theory` — the Sedov--Taylor point-explosion blast wave
+    - :ref:`blandford_mckee_theory` — the Blandford--McKee ultra-relativistic blast wave
     - :ref:`numeric_shocks_theory` — the thin-shell ODE formulations, including the
       :ref:`pressure-driven <pressure_driven_thin_shell_model>` and
       :ref:`mechanical internal-energy <mechanical_internal_energy_model>` models
 
     :footcite:t:`ChevalierFranssonHandbook` is an excellent review of supernovae in
     circumstellar media; :footcite:t:`chevalierSelfsimilarSolutionsInteraction1982`
-    is the primary reference for the self-similar solutions implemented here.
+    is the primary reference for the Chevalier self-similar solutions.
+    The Blandford--McKee solution is derived in :footcite:t:`1976PhFl...19.1130B`.
     The mechanical shock engine follows :footcite:t:`beloborodovMechanicalModelRelativistic2006a`.
 
 .. contents::
@@ -109,16 +111,37 @@ analytic prescriptions valid when density profiles take special forms.
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
       - Self-similar ejecta--CSM interaction for arbitrary power-law density profiles
         :footcite:p:`chevalierSelfsimilarSolutionsInteraction1982`.
+        Single-surface (contact discontinuity only) with analytic thin-shell normalization.
         See :ref:`chevalier_theory`.
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
-      - Specialization of the Chevalier engine for a steady stellar wind CSM
+      - Specialization of the single-surface Chevalier engine for a steady stellar wind CSM
         (:math:`s = 2`). Accepts the mass-loss rate :math:`\dot{M}` and wind velocity
         :math:`v_w` directly, rather than a pre-computed normalization constant.
+    * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
+      - Two-surface Chevalier engine that resolves the **forward and reverse shocks
+        separately** using a pre-tabulated :math:`(n,s)` grid of self-similar constants
+        (:math:`A`, :math:`R_{\rm fs}/R_c`, :math:`R_{\rm rs}/R_c`).  More accurate
+        post-shock thermodynamics than the single-surface engine.
+        See :ref:`chevalier_two_shock_engine`.
+    * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
+      - Steady-wind (:math:`s = 2`) specialization of
+        :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`.
+        Accepts :math:`\dot{M}` and :math:`v_w` directly.
     * - :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
       - Point-explosion blast wave in a uniform ambient medium
         :footcite:p:`sedov1946propagation` :footcite:p:`taylor1950formation`.
         Returns post-shock density, pressure, and temperature in addition to kinematics.
         See :ref:`sedov_taylor_theory`.
+    * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
+      - Ultra-relativistic blast wave in a power-law external medium
+        :footcite:p:`1976PhFl...19.1130B`.  Fully analytic normalization
+        :math:`C_E(k) = 8\pi/(17-4k)` for arbitrary :math:`k < 3`.
+        Returns both proper (comoving) and lab-frame post-shock quantities.
+        See :ref:`blandford_mckee_engine`.
+    * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
+      - Stellar-wind (:math:`k=2`) specialization of
+        :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`.
+        Accepts :math:`\dot{M}` and :math:`v_w` directly.
 
 .. rubric:: Numerical Engines
 
@@ -256,11 +279,11 @@ and, in the most favorable cases, yielding a fully analytic result.  These solut
 computationally cheap and carry intuitive physical scaling relations, making them the
 preferred first choice for parameter inference.
 
-Three self-similar engines are currently implemented:
+Five self-similar engines are currently implemented:
 
 .. list-table::
     :header-rows: 1
-    :widths: 40 18 18 24
+    :widths: 38 14 16 32
 
     * - Class
       - Geometry
@@ -270,17 +293,39 @@ Three self-similar engines are currently implemented:
         — :ref:`details <chevalier_engine>`
       - Spherical
       - Power-law (:math:`\rho \propto r^{-s}`)
-      - SN ejecta--CSM interaction with a general power-law CSM
+      - Fast single-surface estimate; inference pipelines where speed matters most
     * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
         — :ref:`details <chevalier_engine>`
       - Spherical
       - Stellar wind (:math:`s = 2`)
-      - SN ejecta in a steady wind; :math:`\dot{M}` and :math:`v_w` as direct inputs
+      - Same as above; :math:`\dot{M}` and :math:`v_w` as direct inputs
+    * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`
+        — :ref:`details <chevalier_two_shock_engine>`
+      - Spherical
+      - Power-law (:math:`\rho \propto r^{-s}`)
+      - Separate forward/reverse shock thermodynamics; accurate normalization from ODE table
+    * - :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine`
+        — :ref:`details <chevalier_two_shock_engine>`
+      - Spherical
+      - Stellar wind (:math:`s = 2`)
+      - Same as above; :math:`\dot{M}` and :math:`v_w` as direct inputs
     * - :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
         — :ref:`details <sedov_taylor_engine>`
       - Spherical
       - Uniform (:math:`\rho = \rho_0`)
       - Point explosion in a uniform medium; full post-shock thermodynamics returned
+    * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine`
+        — :ref:`details <blandford_mckee_engine>`
+      - Spherical
+      - Power-law (:math:`\rho \propto r^{-k},\; k < 3`)
+      - Ultra-relativistic (:math:`\Gamma \gg 1`) blast wave; both proper and
+        lab-frame post-shock quantities; returns :math:`\Gamma`, :math:`\beta`,
+        and :math:`\gamma_{2,\mathrm{lab}}`
+    * - :class:`~triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine`
+        — :ref:`details <blandford_mckee_engine>`
+      - Spherical
+      - Stellar wind (:math:`k = 2`)
+      - Same as above; :math:`\dot{M}` and :math:`v_w` as direct inputs
 
 
 Numerical Shock Engines
@@ -556,11 +601,12 @@ All engines are also directly callable: ``engine(time, **parameters)`` is an ali
 
 .. important::
 
-    The :class:`~triceratops.dynamics.shocks.core.shock_engine.ShockEngine` is designed to
-    be **stateless**.  The ``__init__`` method should only set up instance-level
-    configuration — numerical tolerances, pre-cached coefficients, or similar — and must
-    *never* store physical model parameters.  All physical parameters must be passed as
-    arguments to ``compute_shock_properties`` at call time.
+    Physical model parameters must **never** be stored at construction time; all must be
+    passed as arguments to ``compute_shock_properties`` at call time.  The ``__init__``
+    method may set up instance-level configuration that does **not** depend on physical
+    parameters — for example, numerical tolerances, pre-cached algorithmic coefficients,
+    or lookup tables derived from solver settings (such as the :math:`(n,s)` grid used by
+    :class:`~triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine`).
 
     This design ensures that a single engine instance can be reused across many sets of
     parameters in a sweep or MCMC chain without unintended cross-contamination between
@@ -624,6 +670,8 @@ The table below maps common modeling tasks to the relevant documentation:
       - :ref:`chevalier_theory`
     * - Understand the Sedov--Taylor blast wave
       - :ref:`sedov_taylor_theory`
+    * - Understand the Blandford--McKee ultra-relativistic blast wave
+      - :ref:`blandford_mckee_theory`
     * - Use the self-similar engines (API and examples)
       - :ref:`self_similar_shocks_overview`
     * - Understand the thin-shell ODE formulations

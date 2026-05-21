@@ -47,8 +47,11 @@ m_p_cgs = const.m_p.cgs.value  # Proton mass (g)
 # Private Helper Functions                                             #
 # ================================================================== #
 def _lorentz_factor(beta):
-    """Lorentz factor Γ = 1/√(1−β²)."""
-    return 1.0 / np.sqrt(1.0 - beta**2)
+    """Lorentz factor Γ = 1/√((1−β)(1+β)).
+
+    The factored form avoids catastrophic cancellation in 1−β² when β≈1.
+    """
+    return 1.0 / np.sqrt((1.0 - beta) * (1.0 + beta))
 
 
 def _shock_frame_beta(beta_shock, beta_upstream):
