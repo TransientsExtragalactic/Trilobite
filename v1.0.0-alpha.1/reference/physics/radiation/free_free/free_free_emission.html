@@ -1,0 +1,1335 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Free-Free Emission Tools &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/free_free/free_free_emission';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Free-Free Radiation Theory" href="free_free_theory.html" />
+    <link rel="prev" title="Theory Note: The Barniol-Duran Formalism" href="../synchrotron/synchrotron_barniol_duran.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Free-Free Emission Tools</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="free-free-emission-tools">
+<span id="free-free-emission"></span><h1>Free-Free Emission Tools<a class="headerlink" href="#free-free-emission-tools" title="Link to this heading">#</a></h1>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>See <a class="reference internal" href="free_free_theory.html#free-free-theory"><span class="std std-ref">Free-Free Radiation Theory</span></a> for a detailed overview of the underlying physics of
+free-free (bremsstrahlung) radiation.</p>
+</div>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.html#module-trilobite.radiation.free_free" title="trilobite.radiation.free_free"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.free_free</span></code></a> module provides a complete set of tools for
+computing thermal free-free emission and absorption in ionized astrophysical plasmas.  The
+module is organized into three sub-modules:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.html#module-trilobite.radiation.free_free.core" title="trilobite.radiation.free_free.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a> — monochromatic emissivity and absorption
+coefficients.</p></li>
+<li><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.html#module-trilobite.radiation.free_free.gaunt_factor" title="trilobite.radiation.free_free.gaunt_factor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gaunt_factor</span></code></a> — Gaunt factor evaluation (analytic
+approximation and tabulated interpolators).</p></li>
+<li><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.html#module-trilobite.radiation.free_free.absorption" title="trilobite.radiation.free_free.absorption"><code class="xref py py-mod docutils literal notranslate"><span class="pre">absorption</span></code></a> — free-free optical depth integration
+over a variety of CSM density profiles.</p></li>
+</ul>
+<p>Each sub-module follows Trilobite’s standard <strong>two-level API pattern</strong>: a private, log-space
+backend optimized for numerical performance and a public, unit-aware interface that accepts and
+returns <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> objects.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#emissivity-and-absorption-coefficients" id="id6">Emissivity and Absorption Coefficients</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-two-level-api" id="id7">The Two-Level API</a></p></li>
+<li><p><a class="reference internal" href="#emissivity" id="id8">Emissivity</a></p></li>
+<li><p><a class="reference internal" href="#absorption-coefficient" id="id9">Absorption Coefficient</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#gaunt-factor-evaluation" id="id10">Gaunt Factor Evaluation</a></p>
+<ul>
+<li><p><a class="reference internal" href="#analytic-approximation" id="id11">Analytic Approximation</a></p></li>
+<li><p><a class="reference internal" href="#tabulated-interpolators" id="id12">Tabulated Interpolators</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#free-free-optical-depth" id="id13">Free-Free Optical Depth</a></p>
+<ul>
+<li><p><a class="reference internal" href="#profile-overview" id="id14">Profile Overview</a></p></li>
+<li><p><a class="reference internal" href="#usage-examples" id="id15">Usage Examples</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="emissivity-and-absorption-coefficients">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Emissivity and Absorption Coefficients</a><a class="headerlink" href="#emissivity-and-absorption-coefficients" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.html#module-trilobite.radiation.free_free.core" title="trilobite.radiation.free_free.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a> module implements the monochromatic thermal
+free-free emissivity <span class="math notranslate nohighlight">\(j_\nu\)</span> and absorption coefficient <span class="math notranslate nohighlight">\(\alpha_\nu\)</span> together
+with their Rayleigh–Jeans and Wien limiting forms.</p>
+<section id="the-two-level-api">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">The Two-Level API</a><a class="headerlink" href="#the-two-level-api" title="Link to this heading">#</a></h3>
+<p>All computations are performed in two layers:</p>
+<ul class="simple">
+<li><p><strong>Private backends</strong> (<code class="docutils literal notranslate"><span class="pre">_log_ff_*</span></code>) operate entirely in natural-logarithm CGS space.
+All six inputs (<code class="docutils literal notranslate"><span class="pre">log_nu</span></code>, <code class="docutils literal notranslate"><span class="pre">log_n_e</span></code>, <code class="docutils literal notranslate"><span class="pre">log_n_i</span></code>, <code class="docutils literal notranslate"><span class="pre">log_Z</span></code>, <code class="docutils literal notranslate"><span class="pre">log_T</span></code>, <code class="docutils literal notranslate"><span class="pre">g_ff</span></code>) are
+expected in natural log CGS form, and the functions return the natural log of the result.
+Working in log-space provides numerical stability over the many decades of dynamic range
+that arise in astrophysical plasmas and eliminates unit overhead in performance-critical
+loops.</p></li>
+<li><p><strong>Public wrappers</strong> (<code class="docutils literal notranslate"><span class="pre">compute_ff_*</span></code>) perform unit coercion via
+<a class="reference internal" href="../../../../_as_gen/trilobite.utils.misc_utils.ensure_in_units.html#trilobite.utils.misc_utils.ensure_in_units" title="trilobite.utils.misc_utils.ensure_in_units"><code class="xref py py-func docutils literal notranslate"><span class="pre">ensure_in_units()</span></code></a>, delegate to the appropriate backend,
+and return <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects with appropriate CGS units.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The private backends accept plain floats assumed to be in natural-log CGS.  Passing
+un-logged values or quantities in non-CGS units to the private functions will produce
+silently incorrect results.  Unless you are building a performance-critical pipeline,
+use the public API.</p>
+</div>
+</section>
+<section id="emissivity">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Emissivity</a><a class="headerlink" href="#emissivity" title="Link to this heading">#</a></h3>
+<p>The thermal free-free spectral emissivity follows
+Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, Eq. 5.14:</p>
+<div class="math notranslate nohighlight">
+\[j_\nu =
+C_{\rm ff}\,
+Z^2\, n_e\, n_i\,
+T^{-1/2}\,
+e^{-h\nu / k_B T}\,
+g_{\rm ff},\]</div>
+<p>where <span class="math notranslate nohighlight">\(C_{\rm ff} = 6.8 \times 10^{-38}\)</span> CGS.</p>
+<p>Trilobite implements this via <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_emissivity.html#trilobite.radiation.free_free.core.compute_ff_emissivity" title="trilobite.radiation.free_free.core.compute_ff_emissivity"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_emissivity()</span></code></a>:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+High-Level API</label><div class="sd-tab-content docutils">
+<p>The public API accepts <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.units.Quantity</span></code></a> inputs and returns the
+emissivity as a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> in
+erg s<sup>-1</sup> cm<sup>-3</sup> Hz<sup>-1</sup> sr<sup>-1</sup>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_ff_emissivity</span>
+
+<span class="n">j</span> <span class="o">=</span> <span class="n">compute_ff_emissivity</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">j</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">sr</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>Plain floats are also accepted and interpreted as Hz, cm<sup>-3</sup>, and K
+respectively—the Gaunt factor <code class="docutils literal notranslate"><span class="pre">g_ff</span></code> is always dimensionless:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">j</span> <span class="o">=</span> <span class="n">compute_ff_emissivity</span><span class="p">(</span><span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span><span class="p">,</span> <span class="n">n_e</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">n_i</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Low-Level API</label><div class="sd-tab-content docutils">
+<p>The private backend <code class="xref py py-func docutils literal notranslate"><span class="pre">_log_ff_emissivity()</span></code>
+accepts natural logarithms of all arguments:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">_log_ff_emissivity</span>
+
+<span class="n">log_j</span> <span class="o">=</span> <span class="n">_log_ff_emissivity</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e9</span><span class="p">),</span>   <span class="c1"># ln(ν / Hz)</span>
+    <span class="n">log_n_e</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e3</span><span class="p">),</span>  <span class="c1"># ln(n_e / cm⁻³)</span>
+    <span class="n">log_n_i</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e3</span><span class="p">),</span>
+    <span class="n">log_Z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">log_T</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span>    <span class="c1"># ln(T / K)</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">j</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_j</span><span class="p">)</span>  <span class="c1"># erg s⁻¹ cm⁻³ Hz⁻¹ sr⁻¹</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Rayleigh–Jeans emissivity—valid when <span class="math notranslate nohighlight">\(h\nu \ll k_BT\)</span>—drops the exponential factor
+and is <strong>frequency-independent</strong>, scaling as <span class="math notranslate nohighlight">\(T^{-1/2}\)</span>.  It is implemented via
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_emissivity.html#trilobite.radiation.free_free.core.compute_ff_RJ_emissivity" title="trilobite.radiation.free_free.core.compute_ff_RJ_emissivity"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_emissivity()</span></code></a> (high-level) and
+<code class="xref py py-func docutils literal notranslate"><span class="pre">_log_ff_RJ_emissivity()</span></code> (log-space backend).</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">log_nu</span></code> argument is accepted by <code class="docutils literal notranslate"><span class="pre">_log_ff_RJ_emissivity</span></code> for interface
+consistency but does not contribute to the result.  The output is broadcast to the
+shape of <code class="docutils literal notranslate"><span class="pre">log_nu</span></code> so that the function behaves identically to the full emissivity
+when used in vectorized expressions.</p>
+</div>
+</section>
+<section id="absorption-coefficient">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Absorption Coefficient</a><a class="headerlink" href="#absorption-coefficient" title="Link to this heading">#</a></h3>
+<p>The thermal free-free absorption coefficient is (Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, Eq. 5.19):</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu =
+C_\alpha\,
+Z^2\, n_e\, n_i\,
+T^{-1/2}\,
+\nu^{-3}\,
+\bigl(1 - e^{-h\nu / k_B T}\bigr)\,
+g_{\rm ff},\]</div>
+<p>where <span class="math notranslate nohighlight">\(C_\alpha = 3.7 \times 10^{8}\)</span> CGS.</p>
+<p>This is implemented via <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_absorption.html#trilobite.radiation.free_free.core.compute_ff_absorption" title="trilobite.radiation.free_free.core.compute_ff_absorption"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_absorption()</span></code></a>:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+High-Level API</label><div class="sd-tab-content docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_ff_absorption</span>
+
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">compute_ff_absorption</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">alpha</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">1</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The result can be integrated along a line of sight to obtain the optical depth.
+For a uniform slab of thickness <span class="math notranslate nohighlight">\(L\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">nu_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e8</span><span class="p">,</span> <span class="mf">1e12</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+<span class="n">alpha_arr</span> <span class="o">=</span> <span class="n">compute_ff_absorption</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="n">nu_arr</span><span class="p">,</span> <span class="n">n_e</span><span class="o">=</span><span class="mf">1e5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_i</span><span class="o">=</span><span class="mf">1e5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="p">)</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="p">(</span><span class="n">alpha_arr</span> <span class="o">*</span> <span class="mf">1e17</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Low-Level API</label><div class="sd-tab-content docutils">
+<p>The log-space backend <code class="xref py py-func docutils literal notranslate"><span class="pre">_log_ff_absorption()</span></code>
+evaluates <span class="math notranslate nohighlight">\(\log(1 - e^{-h\nu/k_BT})\)</span> via <code class="docutils literal notranslate"><span class="pre">numpy.log1p</span></code> to avoid
+catastrophic cancellation at low frequencies where <span class="math notranslate nohighlight">\(h\nu/k_BT \ll 1\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">_log_ff_absorption</span>
+
+<span class="n">log_alpha</span> <span class="o">=</span> <span class="n">_log_ff_absorption</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e9</span><span class="p">),</span>
+    <span class="n">log_n_e</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span>
+    <span class="n">log_n_i</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span>
+    <span class="n">log_Z</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span><span class="p">),</span>
+    <span class="n">log_T</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e4</span><span class="p">),</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>The Rayleigh–Jeans approximation—valid when <span class="math notranslate nohighlight">\(h\nu \ll k_BT\)</span>—replaces
+<span class="math notranslate nohighlight">\((1-e^{-h\nu/k_BT}) \to h\nu/k_BT\)</span>, yielding <span class="math notranslate nohighlight">\(\alpha_\nu^{\rm RJ} \propto \nu^{-2}
+T^{-3/2}\)</span>.  This is the standard radio bremsstrahlung opacity scaling.  It is implemented via
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.compute_ff_RJ_absorption.html#trilobite.radiation.free_free.core.compute_ff_RJ_absorption" title="trilobite.radiation.free_free.core.compute_ff_RJ_absorption"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_absorption()</span></code></a> and its log-space backend.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="gaunt-factor-evaluation">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Gaunt Factor Evaluation</a><a class="headerlink" href="#gaunt-factor-evaluation" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.html#module-trilobite.radiation.free_free.gaunt_factor" title="trilobite.radiation.free_free.gaunt_factor"><code class="xref py py-mod docutils literal notranslate"><span class="pre">gaunt_factor</span></code></a> module provides two approaches to
+evaluating the free-free Gaunt factor <span class="math notranslate nohighlight">\(g_{\rm ff}(Z, T, \nu)\)</span>.</p>
+<p>The Gaunt factor depends on two dimensionless collision parameters:</p>
+<div class="math notranslate nohighlight">
+\[u \equiv \frac{h\nu}{k_B T},
+\qquad
+\gamma^2 \equiv \frac{Z^2 R_y}{k_B T},\]</div>
+<p>where <span class="math notranslate nohighlight">\(R_y = 13.6\,{\rm eV}\)</span> is the Rydberg energy.  Trilobite uses these parameters
+internally to map physical inputs <span class="math notranslate nohighlight">\((Z, T, \nu)\)</span> onto the table axes.</p>
+<section id="analytic-approximation">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Analytic Approximation</a><a class="headerlink" href="#analytic-approximation" title="Link to this heading">#</a></h3>
+<p>A fast closed-form approximation due to Draine<a class="footnote-reference brackets" href="#footcite-draine2011ism" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> (Eq. 10.9) is provided by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">gaunt_ff_draine()</span></code>.  It accepts
+unit-aware or plain-float inputs and is suitable for quick estimates in the radio through
+infrared regime:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.gaunt_factor</span><span class="w"> </span><span class="kn">import</span> <span class="n">gaunt_ff_draine</span>
+
+<span class="c1"># Scalar</span>
+<span class="n">gff</span> <span class="o">=</span> <span class="n">gaunt_ff_draine</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">1e10</span><span class="p">)</span>
+
+<span class="c1"># With astropy units</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="n">gff</span> <span class="o">=</span> <span class="n">gaunt_ff_draine</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e6</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The Draine approximation is accurate to a few percent in the RJ regime but can deviate
+more significantly at high frequencies or extreme temperatures.  For production-quality
+calculations, the tabulated interpolators described below are preferred.</p>
+</div>
+</section>
+<section id="tabulated-interpolators">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Tabulated Interpolators</a><a class="headerlink" href="#tabulated-interpolators" title="Link to this heading">#</a></h3>
+<p>Trilobite ships two pre-computed Gaunt factor tables from
+van Hoof <em>et al.</em><a class="footnote-reference brackets" href="#footcite-2014mnras-444-420v" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> and provides a class hierarchy for convenient, accurate
+interpolation.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 20.0%" />
+<col style="width: 45.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Table dimensions</p></th>
+<th class="head"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonRelativisticGauntFactorInterpolator</span></code></a></p></td>
+<td><p>2D (<span class="math notranslate nohighlight">\(\log_{10} u\)</span>,  <span class="math notranslate nohighlight">\(\log_{10}\gamma^2\)</span>)</p></td>
+<td><p>Default; appropriate for most radio and thermal-plasma applications</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativisticGauntFactorInterpolator</span></code></a></p></td>
+<td><p>3D (<span class="math notranslate nohighlight">\(Z\)</span>, <span class="math notranslate nohighlight">\(\log_{10} u\)</span>, <span class="math notranslate nohighlight">\(\log_{10}\gamma^2\)</span>)</p></td>
+<td><p>High-temperature (<span class="math notranslate nohighlight">\(T \gtrsim 10^7\)</span> K) or high-<span class="math notranslate nohighlight">\(Z\)</span> plasma</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Both classes share the same interface: they are callable with <span class="math notranslate nohighlight">\((Z, T, \nu)\)</span> and support
+the Python <code class="docutils literal notranslate"><span class="pre">in</span></code> operator to test whether a point lies within the table boundaries.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Non-Relativistic Interpolator</label><div class="sd-tab-content docutils">
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">NonRelativisticGauntFactorInterpolator</span></code></a>
+wraps a 2D <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.RegularGridInterpolator()</span></code> over the non-relativistic
+van Hoof (2014) table.  The ionic charge <span class="math notranslate nohighlight">\(Z\)</span> enters only through the coordinate
+transform to <span class="math notranslate nohighlight">\(\log_{10}\gamma^2\)</span> and is not a table axis.</p>
+<p>The default instance can be obtained via the factory function
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator.html#trilobite.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator" title="trilobite.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_default_gaunt_interpolator()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.gaunt_factor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_default_gaunt_interpolator</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">nr</span> <span class="o">=</span> <span class="n">get_default_gaunt_interpolator</span><span class="p">()</span>
+
+<span class="c1"># Scalar evaluation</span>
+<span class="n">gff</span> <span class="o">=</span> <span class="n">nr</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">1e10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gff</span><span class="p">)</span>           <span class="c1"># ≈ 4.46</span>
+
+<span class="c1"># Array evaluation</span>
+<span class="n">T_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">,</span> <span class="mi">50</span><span class="p">)</span>
+<span class="n">gff_arr</span> <span class="o">=</span> <span class="n">nr</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T_arr</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">1e10</span><span class="p">)</span>
+
+<span class="c1"># Domain check</span>
+<span class="nb">print</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span> <span class="ow">in</span> <span class="n">nr</span><span class="p">)</span>  <span class="c1"># True</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Relativistic Interpolator</label><div class="sd-tab-content docutils">
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator.html#trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator" title="trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelativisticGauntFactorInterpolator</span></code></a>
+wraps a 3D <code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.interpolate.RegularGridInterpolator()</span></code>.  Z is a first-class table
+axis, allowing the interpolator to capture the explicit Z-dependence of relativistic
+corrections beyond what is encoded in <span class="math notranslate nohighlight">\(\log_{10}\gamma^2\)</span> alone.</p>
+<p>The default relativistic instance can be obtained via
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator.html#trilobite.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator" title="trilobite.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_default_relativistic_gaunt_interpolator()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.gaunt_factor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">get_default_relativistic_gaunt_interpolator</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">r</span> <span class="o">=</span> <span class="n">get_default_relativistic_gaunt_interpolator</span><span class="p">()</span>
+
+<span class="c1"># Scalar evaluation</span>
+<span class="n">gff</span> <span class="o">=</span> <span class="n">r</span><span class="p">(</span><span class="n">Z</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="mf">1e10</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">gff</span><span class="p">)</span>           <span class="c1"># ≈ 4.71</span>
+
+<span class="c1"># Domain check</span>
+<span class="nb">print</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e10</span><span class="p">)</span> <span class="ow">in</span> <span class="n">r</span><span class="p">)</span>  <span class="c1"># True</span>
+</pre></div>
+</div>
+</div>
+</div>
+<section id="class-hierarchy">
+<h4>Class Hierarchy<a class="headerlink" href="#class-hierarchy" title="Link to this heading">#</a></h4>
+<p>Both interpolators share a common abstract base class,
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase.html#trilobite.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase" title="trilobite.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">GauntFactorInterpolatorBase</span></code></a>, which
+defines the public interface and provides the HDF5 loading helper.  Users implementing custom
+Gaunt factor tables can subclass this base class to integrate them into the Trilobite API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.gaunt_factor</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">GauntFactorInterpolatorBase</span><span class="p">,</span>
+    <span class="n">NonRelativisticGauntFactorInterpolator</span><span class="p">,</span>
+    <span class="n">RelativisticGauntFactorInterpolator</span><span class="p">,</span>
+    <span class="n">get_default_gaunt_interpolator</span><span class="p">,</span>
+    <span class="n">get_default_relativistic_gaunt_interpolator</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">nr</span> <span class="o">=</span> <span class="n">get_default_gaunt_interpolator</span><span class="p">()</span>
+<span class="n">r</span>  <span class="o">=</span> <span class="n">get_default_relativistic_gaunt_interpolator</span><span class="p">()</span>
+
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">nr</span><span class="p">,</span> <span class="n">GauntFactorInterpolatorBase</span><span class="p">)</span>
+<span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">r</span><span class="p">,</span>  <span class="n">GauntFactorInterpolatorBase</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">nr</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>  <span class="c1"># Non-relativistic free-free Gaunt factors (...)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">description</span><span class="p">)</span>   <span class="c1"># Relativistic free-free Gaunt factors (...)</span>
+</pre></div>
+</div>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="free-free-optical-depth">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Free-Free Optical Depth</a><a class="headerlink" href="#free-free-optical-depth" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.html#module-trilobite.radiation.free_free.absorption" title="trilobite.radiation.free_free.absorption"><code class="xref py py-mod docutils literal notranslate"><span class="pre">absorption</span></code></a> module provides routines to integrate
+<span class="math notranslate nohighlight">\(\alpha_\nu(r)\)</span> along a line of sight through an ionized CSM for five physically motivated
+density profiles.  For each profile type there is both an <strong>exact</strong> variant (using the full
+<span class="math notranslate nohighlight">\((1 - e^{-h\nu/k_BT})\)</span> factor) and a <strong>Rayleigh–Jeans</strong> variant (using the approximation
+<span class="math notranslate nohighlight">\(\propto \nu^{-2} T^{-3/2}\)</span>).  All public functions accept and return unit-bearing
+quantities; the quadrature-based variants accept CGS-only callables for maximum flexibility.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For the quadrature-based profiles (<code class="docutils literal notranslate"><span class="pre">_from_quadrature</span></code> variants), the callable arguments
+must return values in <strong>CGS units</strong> without any astropy unit overhead.  This is the only
+place in the public API where plain CGS callables are required; all other parameters
+remain unit-aware.</p>
+</div>
+<section id="profile-overview">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Profile Overview</a><a class="headerlink" href="#profile-overview" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Function pair</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_optical_depth_from_quadrature()</span></code> /
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature.html#trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature" title="trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_optical_depth_from_quadrature()</span></code></a></p></td>
+<td><p>Adaptive quadrature over arbitrary user-supplied CGS callables for
+<span class="math notranslate nohighlight">\(n_e(r)\)</span>, <span class="math notranslate nohighlight">\(n_i(r)\)</span>, <span class="math notranslate nohighlight">\(T(r)\)</span>.  Maximum flexibility for non-analytic
+or tabulated CSM models.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_optical_depth_from_arrays()</span></code> /
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays.html#trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays" title="trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_optical_depth_from_arrays()</span></code></a></p></td>
+<td><p>Trapezoidal integration over pre-computed (<span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(\alpha_\nu\)</span>) or
+(<span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(n_e\)</span>, <span class="math notranslate nohighlight">\(n_i\)</span>, <span class="math notranslate nohighlight">\(T\)</span>) grids.  Ideal for
+post-processing hydrodynamic simulation outputs.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_optical_depth_wind()</span></code> /
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind.html#trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind" title="trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_optical_depth_wind()</span></code></a></p></td>
+<td><p>Analytic integral for a steady stellar wind with
+<span class="math notranslate nohighlight">\(\rho \propto r^{-2}\)</span> (constant mass-loss rate <span class="math notranslate nohighlight">\(\dot{M}\)</span>, wind velocity
+<span class="math notranslate nohighlight">\(v_w\)</span>).  Gives <span class="math notranslate nohighlight">\(\tau_{\rm ff} \propto r^{-3}\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_optical_depth_shell()</span></code> /
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell.html#trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell" title="trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_optical_depth_shell()</span></code></a></p></td>
+<td><p>Analytic integral for a uniform-density shell between radii <span class="math notranslate nohighlight">\(r\)</span> and
+<span class="math notranslate nohighlight">\(r_{\rm max}\)</span>.  Returns <span class="math notranslate nohighlight">\(\tau_{\rm ff} = \alpha_\nu (r_{\rm max} - r)\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_optical_depth_powerlaw()</span></code> /
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw.html#trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw" title="trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_ff_RJ_optical_depth_powerlaw()</span></code></a></p></td>
+<td><p>Analytic integral for a generalized power-law density profile
+<span class="math notranslate nohighlight">\(\rho \propto r^{-p}\)</span> between <span class="math notranslate nohighlight">\(r\)</span> and <span class="math notranslate nohighlight">\(r_{\rm max}\)</span>.  Encompasses
+the wind (<span class="math notranslate nohighlight">\(p = 2\)</span>) and uniform (<span class="math notranslate nohighlight">\(p = 0\)</span>) cases.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="usage-examples">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Usage Examples</a><a class="headerlink" href="#usage-examples" title="Link to this heading">#</a></h3>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+Quadrature</label><div class="sd-tab-content docutils">
+<p>Compute the free-free optical depth through a CSM described by arbitrary number
+density and temperature profiles, using adaptive quadrature from <span class="math notranslate nohighlight">\(r\)</span> to
+<span class="math notranslate nohighlight">\(r_{\rm max}\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ff_optical_depth_from_quadrature</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Define CGS callables (no astropy units inside)</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">n_e</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">1e3</span> <span class="o">*</span> <span class="p">(</span><span class="n">r</span> <span class="o">/</span> <span class="mf">1e15</span><span class="p">)</span> <span class="o">**</span> <span class="o">-</span><span class="mi">2</span>  <span class="c1"># cm⁻³, wind profile</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">n_i</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">n_e</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">T</span><span class="p">(</span><span class="n">r</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">1e4</span>  <span class="c1"># Kelvin, uniform temperature</span>
+
+<span class="n">tau</span> <span class="o">=</span> <span class="n">compute_ff_optical_depth_from_quadrature</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">n_e_func</span><span class="o">=</span><span class="n">n_e</span><span class="p">,</span>
+    <span class="n">n_i_func</span><span class="o">=</span><span class="n">n_i</span><span class="p">,</span>
+    <span class="n">T_func</span><span class="o">=</span><span class="n">T</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="o">=</span><span class="mf">2e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tau</span><span class="p">)</span>  <span class="c1"># dimensionless optical depth</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
+Wind Profile</label><div class="sd-tab-content docutils">
+<p>For a steady stellar wind with mass-loss rate <span class="math notranslate nohighlight">\(\dot{M}\)</span> and wind velocity
+<span class="math notranslate nohighlight">\(v_w\)</span>, use the analytic wind integral:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ff_optical_depth_wind</span><span class="p">,</span>
+    <span class="n">compute_ff_RJ_optical_depth_wind</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Wind parameters</span>
+<span class="n">mdot</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+<span class="n">v_w</span>  <span class="o">=</span> <span class="mi">10</span>   <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+
+<span class="n">tau_exact</span> <span class="o">=</span> <span class="n">compute_ff_optical_depth_wind</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">mdot</span><span class="o">=</span><span class="n">mdot</span><span class="p">,</span>
+    <span class="n">v_wind</span><span class="o">=</span><span class="n">v_w</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tau_rj</span> <span class="o">=</span> <span class="n">compute_ff_RJ_optical_depth_wind</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">mdot</span><span class="o">=</span><span class="n">mdot</span><span class="p">,</span>
+    <span class="n">v_wind</span><span class="o">=</span><span class="n">v_w</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-8" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-8">
+Shell Profile</label><div class="sd-tab-content docutils">
+<p>For a uniform-density shell, the integral reduces to
+<span class="math notranslate nohighlight">\(\tau = \alpha_\nu (r_{\rm max} - r)\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ff_optical_depth_shell</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">tau</span> <span class="o">=</span> <span class="n">compute_ff_optical_depth_shell</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="o">=</span><span class="mf">2e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-9">
+Power-Law Profile</label><div class="sd-tab-content docutils">
+<p>For a generalized <span class="math notranslate nohighlight">\(\rho \propto r^{-p}\)</span> profile, the integral is computed
+analytically.  The power-law exponent is <span class="math notranslate nohighlight">\(p = 0\)</span> (uniform) or <span class="math notranslate nohighlight">\(p = 2\)</span>
+(wind) as special cases:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.free_free.absorption</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_ff_optical_depth_powerlaw</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># General p = 1.5 profile</span>
+<span class="n">tau</span> <span class="o">=</span> <span class="n">compute_ff_optical_depth_powerlaw</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">=</span><span class="mf">1e9</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+    <span class="n">Z</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">n_e</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">n_i</span><span class="o">=</span><span class="mf">1e3</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">T</span><span class="o">=</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">r</span><span class="o">=</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">r_max</span><span class="o">=</span><span class="mf">2e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">g_ff</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>For power-law profiles with <span class="math notranslate nohighlight">\(p &gt; 0.5\)</span> (i.e. <span class="math notranslate nohighlight">\(k \equiv 1-2p &lt; 0\)</span>), the
+optical depth integral converges as <span class="math notranslate nohighlight">\(r_{\rm max} \to \infty\)</span>.  Setting
+<code class="docutils literal notranslate"><span class="pre">r_max=np.inf</span></code> is valid and will return the asymptotic total optical depth in this
+case.  For <span class="math notranslate nohighlight">\(p &lt; 0.5\)</span> the integral diverges at <span class="math notranslate nohighlight">\(r_{\rm max} \to \infty\)</span>
+and a finite upper limit must be provided.</p>
+</div>
+<hr class="docutils" />
+<div class="docutils container" id="id5">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>)</span>
+<p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-draine2011ism" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>B. T. Draine. <em>Physics of the Interstellar and Intergalactic Medium</em>. Princeton University Press, Princeton, NJ, 2011. ISBN 978-0-691-12214-4.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2014mnras-444-420v" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>P. A. M. van Hoof, R. J. R. Williams, K. Volk, M. Chatzikos, G. J. Ferland, M. Lykins, R. L. Porter, and Y. Wang. Accurate determination of the free-free Gaunt factor - I. Non-relativistic Gaunt factors. <em>\mnras </em>, 444(1):420–428, October 2014. <a class="reference external" href="https://arxiv.org/abs/1407.5048">arXiv:1407.5048</a>, <a class="reference external" href="https://doi.org/10.1093/mnras/stu1438">doi:10.1093/mnras/stu1438</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../synchrotron/synchrotron_barniol_duran.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Theory Note: The Barniol-Duran Formalism</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="free_free_theory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Free-Free Radiation Theory</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#emissivity-and-absorption-coefficients">Emissivity and Absorption Coefficients</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-two-level-api">The Two-Level API</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#emissivity">Emissivity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#absorption-coefficient">Absorption Coefficient</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#gaunt-factor-evaluation">Gaunt Factor Evaluation</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analytic-approximation">Analytic Approximation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-interpolators">Tabulated Interpolators</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#class-hierarchy">Class Hierarchy</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-free-optical-depth">Free-Free Optical Depth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#profile-overview">Profile Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-examples">Usage Examples</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/free_free/free_free_emission.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

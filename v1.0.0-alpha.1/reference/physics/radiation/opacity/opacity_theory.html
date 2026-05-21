@@ -1,0 +1,1275 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Opacity Theory &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/opacity/opacity_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Developer Guide: Implementing Opacity Laws" href="opacity_dev_guide.html" />
+    <link rel="prev" title="trilobite.radiation.opacity.load_opal_opacity" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Opacity Theory</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="opacity-theory">
+<span id="id1"></span><h1>Opacity Theory<a class="headerlink" href="#opacity-theory" title="Link to this heading">#</a></h1>
+<p>Opacity quantifies how strongly a medium attenuates radiation.  In Trilobite it appears in a
+variety of physical contexts: as the Rosseland mean opacity driving radiative diffusion in
+optically thick accretion disks, as a photon-absorption cross-section in spectral-transfer
+calculations, as the column-averaged opacity entering free-free optical-depth estimates for
+supernova CSM, and as a grey effective opacity in single-zone stellar-wind models.  The
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.html#module-trilobite.radiation.opacity" title="trilobite.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.opacity</span></code></a> module is deliberately <strong>context-agnostic</strong>: it provides a
+uniform evaluation interface so that the same opacity object can be dropped into any solver that
+needs <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span>, its logarithmic derivatives, or both.</p>
+<p>This document reviews the physical basis of the opacity laws currently implemented in Trilobite
+and derives the power-law scalings and partial derivatives that enter iterative thermal solvers.</p>
+<p>For usage instructions see <a class="reference internal" href="opacity_user_guide.html#opacity-user-guide"><span class="std std-ref">Opacity Laws</span></a>.  For a guide to implementing new opacity
+laws see <a class="reference internal" href="opacity_dev_guide.html#opacity-dev-guide"><span class="std std-ref">Developer Guide: Implementing Opacity Laws</span></a>.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#definitions-and-context" id="id6">Definitions and Context</a></p>
+<ul>
+<li><p><a class="reference internal" href="#opacity-laws-in-trilobite" id="id7">Opacity Laws in Trilobite</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#electron-scattering" id="id8">Electron Scattering</a></p></li>
+<li><p><a class="reference internal" href="#kramers-opacity-laws" id="id9">Kramers Opacity Laws</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-kramers-power-laws" id="id10">The Kramers Power Laws</a></p></li>
+<li><p><a class="reference internal" href="#partial-derivatives-for-pure-kramers" id="id11">Partial Derivatives for Pure Kramers</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#combined-kramers-and-electron-scattering" id="id12">Combined Kramers and Electron Scattering</a></p>
+<ul>
+<li><p><a class="reference internal" href="#partial-derivatives-for-the-combined-form" id="id13">Partial Derivatives for the Combined Form</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#log-space-representation" id="id14">Log-Space Representation</a></p></li>
+<li><p><a class="reference internal" href="#summary-of-implemented-laws" id="id15">Summary of Implemented Laws</a></p></li>
+<li><p><a class="reference internal" href="#table-based-rosseland-mean-opacity-opal" id="id16">Table-based Rosseland Mean Opacity (OPAL)</a></p>
+<ul>
+<li><p><a class="reference internal" href="#coordinate-system" id="id17">Coordinate System</a></p></li>
+<li><p><a class="reference internal" href="#bilinear-interpolation" id="id18">Bilinear Interpolation</a></p></li>
+<li><p><a class="reference internal" href="#log-space-derivatives" id="id19">Log-space Derivatives</a></p></li>
+<li><p><a class="reference internal" href="#out-of-bounds-strategies" id="id20">Out-of-bounds Strategies</a></p></li>
+<li><p><a class="reference internal" href="#when-to-use-opal-vs-analytic-laws" id="id21">When to Use OPAL vs. Analytic Laws</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="definitions-and-context">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Definitions and Context</a><a class="headerlink" href="#definitions-and-context" title="Link to this heading">#</a></h2>
+<p>The opacity <span class="math notranslate nohighlight">\(\kappa\)</span> (<span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>) is defined as the attenuation
+cross-section <em>per unit mass</em> of the medium.  For a plasma of density <span class="math notranslate nohighlight">\(\rho\)</span>, the
+monochromatic absorption coefficient is</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu = \kappa_\nu\,\rho,\]</div>
+<p>so the optical depth across a column of surface density <span class="math notranslate nohighlight">\(\Sigma\)</span> is
+<span class="math notranslate nohighlight">\(\tau_\nu = \kappa_\nu\,\Sigma\)</span>.</p>
+<p>Depending on the physical context, different frequency-averaged opacities are appropriate:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Mean</p></th>
+<th class="head"><p>When to use</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><strong>Rosseland mean</strong> <span class="math notranslate nohighlight">\(\kappa_R\)</span></p></td>
+<td><p>Radiative diffusion in optically thick media (accretion disk interiors,
+stellar envelopes).  Harmonic average over <span class="math notranslate nohighlight">\(\partial B_\nu/\partial T\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><strong>Planck mean</strong> <span class="math notranslate nohighlight">\(\kappa_P\)</span></p></td>
+<td><p>Emission/absorption in optically thin media.  Arithmetic average over <span class="math notranslate nohighlight">\(B_\nu\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><strong>Grey approximation</strong> <span class="math notranslate nohighlight">\(\kappa\)</span></p></td>
+<td><p>Single effective opacity independent of frequency; used when a simple effective
+description is sufficient or when the frequency dependence is not modelled.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The <strong>Rosseland mean</strong> is defined as</p>
+<div class="math notranslate nohighlight" id="equation-eq-rosseland-mean">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-rosseland-mean" title="Link to this equation">#</a></span>\[\frac{1}{\kappa_R} =
+\frac{\displaystyle\int_0^\infty \frac{1}{\kappa_\nu}
+      \frac{\partial B_\nu}{\partial T}\,d\nu}
+     {\displaystyle\int_0^\infty \frac{\partial B_\nu}{\partial T}\,d\nu},\]</div>
+<p>which weights each frequency by the gradient of the Planck function.  Because
+<span class="math notranslate nohighlight">\(\partial B_\nu / \partial T\)</span> peaks near <span class="math notranslate nohighlight">\(h\nu \approx 3.83\,k_BT\)</span>, the
+Rosseland mean is dominated by the <em>most transparent</em> frequency channels (those with
+low <span class="math notranslate nohighlight">\(\kappa_\nu\)</span>) — a harmonic average that correctly captures photon diffusion in
+optically thick material.</p>
+<p>The <strong>Planck mean</strong> is the arithmetic average weighted by the emission spectrum,</p>
+<div class="math notranslate nohighlight" id="equation-eq-planck-mean">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-planck-mean" title="Link to this equation">#</a></span>\[\kappa_P =
+\frac{\displaystyle\int_0^\infty \kappa_\nu\,B_\nu\,d\nu}
+     {\displaystyle\int_0^\infty B_\nu\,d\nu},\]</div>
+<p>where <span class="math notranslate nohighlight">\(B_\nu(T) = (2h\nu^3/c^2)/(\exp(h\nu/k_BT)-1)\)</span> is the Planck function.
+Unlike <span class="math notranslate nohighlight">\(\kappa_R\)</span>, the Planck mean is dominated by the <em>highest</em>-opacity channels, making
+it appropriate for optically thin emission and radiative cooling calculations.  By Jensen’s
+inequality <span class="math notranslate nohighlight">\(\kappa_P \geq \kappa_R\)</span> everywhere.</p>
+<section id="opacity-laws-in-trilobite">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Opacity Laws in Trilobite</a><a class="headerlink" href="#opacity-laws-in-trilobite" title="Link to this heading">#</a></h3>
+<p>All currently implemented opacity laws are Rosseland mean and live in
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.rosseland.html#module-trilobite.radiation.opacity.grey_opacity.rosseland" title="trilobite.radiation.opacity.grey_opacity.rosseland"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.opacity.grey_opacity.rosseland</span></code></a>.  The module structure is:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>trilobite.radiation.opacity
+└── grey_opacity/          frequency-averaged (grey) opacities
+    ├── rosseland/         Rosseland mean — all current implementations
+    └── planck/            Planck mean — stub, ready for future work
+</pre></div>
+</div>
+<p>Each class carries a <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.mean_type.html#trilobite.radiation.opacity.base.OpacityLaw.mean_type" title="trilobite.radiation.opacity.base.OpacityLaw.mean_type"><code class="xref py py-attr docutils literal notranslate"><span class="pre">mean_type</span></code></a>
+attribute (<code class="docutils literal notranslate"><span class="pre">&quot;rosseland&quot;</span></code> for all current laws) so that solvers can distinguish opacity
+types at runtime without inspecting class identity.  Planck mean implementations would
+set <code class="docutils literal notranslate"><span class="pre">mean_type</span> <span class="pre">=</span> <span class="pre">&quot;planck&quot;</span></code> and live in
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.planck.html#module-trilobite.radiation.opacity.grey_opacity.planck" title="trilobite.radiation.opacity.grey_opacity.planck"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.opacity.grey_opacity.planck</span></code></a>.</p>
+<p>The top-level <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.utils.get_opacity.html#trilobite.radiation.opacity.utils.get_opacity" title="trilobite.radiation.opacity.utils.get_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_opacity()</span></code></a> resolver exposes
+all registered laws by string key regardless of their location in the subpackage hierarchy.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="electron-scattering">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Electron Scattering</a><a class="headerlink" href="#electron-scattering" title="Link to this heading">#</a></h2>
+<p>For a fully ionized plasma, electrons scatter photons via the <strong>Thomson process</strong>.  The
+cross-section per electron is the Thomson cross-section <span class="math notranslate nohighlight">\(\sigma_T = 6.652 \times 10^{-25}\)</span>
+cm², which gives a mass opacity</p>
+<div class="math notranslate nohighlight" id="equation-eq-electron-scattering">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-electron-scattering" title="Link to this equation">#</a></span>\[\boxed{
+\kappa_{\rm es} = \frac{\sigma_T}{m_p}\,\frac{1 + X}{2}
+\approx 0.34\,\mathrm{cm^2\,g^{-1}}
+}\]</div>
+<p>for solar hydrogen mass fraction <span class="math notranslate nohighlight">\(X = 0.70\)</span>.  The factor <span class="math notranslate nohighlight">\((1+X)/2\)</span> arises because
+there are <span class="math notranslate nohighlight">\((1+X)/2\)</span> free electrons per proton mass in a fully ionized H/He mixture.</p>
+<p>Electron scattering is a <strong>grey</strong> and <strong>constant</strong> opacity: it does not depend on density,
+temperature, or frequency at the photon energies relevant to accretion disks.  It therefore
+dominates the opacity whenever the Kramers contribution (see below) is small, which occurs in
+low-density, high-temperature environments.</p>
+<p>The partial derivatives are identically zero:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \ln \kappa_{\rm es}}{\partial \ln \rho} = 0,
+\qquad
+\frac{\partial \ln \kappa_{\rm es}}{\partial \ln T} = 0.\]</div>
+</section>
+<hr class="docutils" />
+<section id="kramers-opacity-laws">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Kramers Opacity Laws</a><a class="headerlink" href="#kramers-opacity-laws" title="Link to this heading">#</a></h2>
+<p>For a fully ionized plasma at temperatures <span class="math notranslate nohighlight">\(T \lesssim 10^{7\text{–}8}\)</span> K, photon–matter
+interactions are dominated by <strong>free–free</strong> (bremsstrahlung) absorption and <strong>bound–free</strong>
+(photoionization) absorption.  Both processes share the same power-law dependence on density and
+temperature — a result known as <strong>Kramers’ law</strong> — and can therefore be combined into a single
+effective opacity.</p>
+<section id="the-kramers-power-laws">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">The Kramers Power Laws</a><a class="headerlink" href="#the-kramers-power-laws" title="Link to this heading">#</a></h3>
+<p>The <strong>free–free</strong> Kramers opacity arises from inverse bremsstrahlung (stimulated emission
+of photons by free electrons in the Coulomb field of ions).  Integrating the monochromatic
+free-free absorption coefficient over a Planck-weighted frequency average and expressing the
+result as a mass opacity gives Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-ff">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-kramers-ff" title="Link to this equation">#</a></span>\[\kappa_{\rm ff}(\rho, T)
+= \kappa_{\rm ff,0}\,\rho\,T^{-3.5},
+\qquad
+\kappa_{\rm ff,0} \approx 3.68 \times 10^{22}\;\mathrm{cm^5\,g^{-2}\,K^{3.5}},\]</div>
+<p>for solar composition without a Gaunt-factor correction.</p>
+<p>The <strong>bound–free</strong> Kramers opacity arises from photoionization of partially or highly ionized
+atoms.  The same Planck-weighted average yields the same power-law form but with a larger
+normalization Frank <em>et al.</em><a class="footnote-reference brackets" href="#footcite-frank2002accretion" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-bf">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-kramers-bf" title="Link to this equation">#</a></span>\[\kappa_{\rm bf}(\rho, T)
+= \kappa_{\rm bf,0}\,\rho\,T^{-3.5},
+\qquad
+\kappa_{\rm bf,0} \approx 4.34 \times 10^{25}\;\mathrm{cm^5\,g^{-2}\,K^{3.5}}.\]</div>
+<p>Because both processes share the exponents <span class="math notranslate nohighlight">\((\rho^1, T^{-3.5})\)</span>, the <strong>combined Kramers
+opacity</strong> is</p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-combined">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-kramers-combined" title="Link to this equation">#</a></span>\[\kappa_{\rm ff+bf}(\rho, T)
+= (\kappa_{\rm ff,0} + \kappa_{\rm bf,0})\,\rho\,T^{-3.5}
+\equiv \kappa_{\rm Kr,0}\,\rho\,T^{-3.5},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\kappa_{\rm Kr,0} = \kappa_{\rm ff,0} + \kappa_{\rm bf,0} \approx 4.34 \times 10^{25}\)</span>
+cm⁵ g⁻² K³·⁵ (dominated by the bound-free term).</p>
+<div class="admonition-physical-picture admonition">
+<p class="admonition-title">Physical Picture</p>
+<p>The <span class="math notranslate nohighlight">\(\rho\,T^{-3.5}\)</span> scaling can be understood as follows.  The absorption cross-section
+per electron–ion pair grows as <span class="math notranslate nohighlight">\(\nu^{-3}\)</span> (free–free) and the Boltzmann factor penalizes
+photons with <span class="math notranslate nohighlight">\(h\nu \gg k_B T\)</span>.  Integrating over a thermal photon distribution weighted
+by <span class="math notranslate nohighlight">\(\partial B_\nu / \partial T\)</span> selects photons near the peak of the Planck function
+at <span class="math notranslate nohighlight">\(\nu_{\rm peak} \propto T\)</span>, yielding an effective cross-section
+<span class="math notranslate nohighlight">\(\propto T^{-3.5}\)</span>.  The density factor arises because the absorption rate is
+proportional to the density of both the absorber (electron) and target (ion).</p>
+</div>
+</section>
+<section id="partial-derivatives-for-pure-kramers">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Partial Derivatives for Pure Kramers</a><a class="headerlink" href="#partial-derivatives-for-pure-kramers" title="Link to this heading">#</a></h3>
+<p>Working in logarithmic space — as required by the Cython solvers — the partial derivatives are
+constant and exact:</p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-partials">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-kramers-partials" title="Link to this equation">#</a></span>\[\frac{\partial \ln \kappa_{\rm Kr}}{\partial \ln \rho} = 1,
+\qquad
+\frac{\partial \ln \kappa_{\rm Kr}}{\partial \ln T} = -3.5.\]</div>
+<p>These values are independent of the normalization constant and hold for
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html#trilobite.radiation.opacity.KramersFFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFOpacity</span></code></a>,
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html#trilobite.radiation.opacity.KramersBFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersBFOpacity</span></code></a>, and
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html#trilobite.radiation.opacity.KramersOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersOpacity</span></code></a>.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="combined-kramers-and-electron-scattering">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Combined Kramers and Electron Scattering</a><a class="headerlink" href="#combined-kramers-and-electron-scattering" title="Link to this heading">#</a></h2>
+<p>The most physically complete grey opacity for a hot, fully ionized plasma includes both
+Thomson scattering and Kramers absorption.  Because these are distinct processes that
+contribute additively to the total opacity,</p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-es">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-kramers-es" title="Link to this equation">#</a></span>\[\kappa(\rho, T)
+= \kappa_{\rm es}
+  + \kappa_{\rm Kr,0}\,\rho\,T^{-3.5}.\]</div>
+<p>This form interpolates smoothly between two limiting regimes:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Regime</p></th>
+<th class="head"><p>Condition</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\kappa \approx\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\rho\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>ES-dominated</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm Kr}\,\rho\,T^{-3.5} \ll \kappa_{\rm es}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm es}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\to 0\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\to 0\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>Kramers-dominated</p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm Kr}\,\rho\,T^{-3.5} \gg \kappa_{\rm es}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm Kr}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\to 1\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(\to -3.5\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="partial-derivatives-for-the-combined-form">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Partial Derivatives for the Combined Form</a><a class="headerlink" href="#partial-derivatives-for-the-combined-form" title="Link to this heading">#</a></h3>
+<p>Let <span class="math notranslate nohighlight">\(\kappa_{\rm Kr}(\rho,T) \equiv \kappa_{\rm Kr,0}\,\rho\,T^{-3.5}\)</span> denote the
+Kramers contribution.  Then</p>
+<div class="math notranslate nohighlight" id="equation-eq-kramers-es-partials">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-kramers-es-partials" title="Link to this equation">#</a></span>\[\frac{\partial \ln \kappa}{\partial \ln \rho}
+= \frac{\kappa_{\rm Kr}(\rho,T)}{\kappa(\rho,T)},
+\qquad
+\frac{\partial \ln \kappa}{\partial \ln T}
+= -3.5\,\frac{\kappa_{\rm Kr}(\rho,T)}{\kappa(\rho,T)}.\]</div>
+<p>These expressions hold for
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html#trilobite.radiation.opacity.KramersFFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFESOpacity</span></code></a>,
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html#trilobite.radiation.opacity.KramersBFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersBFESOpacity</span></code></a>, and
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a>.
+Note that the two partial derivatives are always related by</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \ln \kappa}{\partial \ln T}
+= -3.5\,\frac{\partial \ln \kappa}{\partial \ln \rho},\]</div>
+<p>which provides a useful consistency check when implementing new combined-form laws.</p>
+</section>
+</section>
+<hr class="docutils" />
+<section id="log-space-representation">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Log-Space Representation</a><a class="headerlink" href="#log-space-representation" title="Link to this heading">#</a></h2>
+<p>The Cython-level disk solvers work entirely in <strong>natural-logarithm CGS space</strong> for numerical
+stability.  For a function <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span>, the key quantities passed between Python
+and Cython are</p>
+<div class="math notranslate nohighlight">
+\[\ln\kappa,\quad
+\frac{\partial\ln\kappa}{\partial\ln\rho},\quad
+\frac{\partial\ln\kappa}{\partial\ln T},\]</div>
+<p>evaluated at <span class="math notranslate nohighlight">\((\ln T,\,\ln\rho)\)</span> rather than <span class="math notranslate nohighlight">\((T,\,\rho)\)</span>.  This choice ensures
+that the solver can represent opacity values spanning many decades (from
+<span class="math notranslate nohighlight">\({\sim}10^{-7}\)</span> to <span class="math notranslate nohighlight">\({\sim}10^2\)</span> cm² g⁻¹) without overflow or cancellation
+errors.</p>
+<p>The correspondence between physical opacity and log-space representation is</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Public API</p></th>
+<th class="head"><p>Log-space private method</p></th>
+<th class="head"><p>Returns</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.opacity.html#trilobite.radiation.opacity.base.OpacityLaw.opacity" title="trilobite.radiation.opacity.base.OpacityLaw.opacity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code></a></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_opacity()</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\ln\kappa\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho.html#trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho" title="trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogrho()</span></code></a></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_dlogkappa_dlogrho()</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\rho\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT.html#trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT" title="trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogT()</span></code></a></p></td>
+<td><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_dlogkappa_dlogT()</span></code></p></td>
+<td><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<hr class="docutils" />
+<section id="summary-of-implemented-laws">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">Summary of Implemented Laws</a><a class="headerlink" href="#summary-of-implemented-laws" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Formula</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\rho\)</span></p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_0\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html#trilobite.radiation.opacity.ElectronScatteringOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElectronScatteringOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm es}\)</span></p></td>
+<td><p>0</p></td>
+<td><p>0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html#trilobite.radiation.opacity.KramersFFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm ff,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>−3.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html#trilobite.radiation.opacity.KramersBFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersBFOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm bf,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>−3.5</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html#trilobite.radiation.opacity.KramersOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm Kr,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p>1</p></td>
+<td><p>−3.5</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html#trilobite.radiation.opacity.KramersFFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFESOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm es} + \kappa_{\rm ff,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((0,\,1)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((-3.5,\,0)\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html#trilobite.radiation.opacity.KramersBFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersBFESOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm es} + \kappa_{\rm bf,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((0,\,1)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((-3.5,\,0)\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></p></td>
+<td><p><span class="math notranslate nohighlight">\(\kappa_{\rm es} + \kappa_{\rm Kr,0}\,\rho\,T^{-3.5}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((0,\,1)\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\((-3.5,\,0)\)</span></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Values in the derivative columns denote the asymptotic limits (ES-dominated, Kramers-dominated)
+for the combined-form laws.</p>
+<blockquote>
+<div><ul class="simple">
+<li><ul>
+<li><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a></p></li>
+<li><p><span class="math notranslate nohighlight">\(\kappa_R(T,\rho)\)</span> from bilinear table interpolation</p></li>
+<li><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\rho\)</span> (table-derived)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span> (table-derived)</p></li>
+</ul>
+</li>
+</ul>
+</div></blockquote>
+<hr class="docutils" />
+</section>
+<section id="table-based-rosseland-mean-opacity-opal">
+<span id="opacity-opal-theory"></span><h2><a class="toc-backref" href="#id16" role="doc-backlink">Table-based Rosseland Mean Opacity (OPAL)</a><a class="headerlink" href="#table-based-rosseland-mean-opacity-opal" title="Link to this heading">#</a></h2>
+<p>The OPAL project Badnell <em>et al.</em><a class="footnote-reference brackets" href="#footcite-badnell2005" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> provides pre-computed Rosseland mean opacities
+for a wide range of stellar compositions.  Trilobite ships a bundled table of 126
+compositions from the Asplund &amp; Grevesse (2005) solar mixture, covering</p>
+<div class="math notranslate nohighlight">
+\[3.75 \le \log_{10}(T\,[\mathrm{K}]) \le 8.70,
+\qquad
+-8 \le \log_{10}(R) \le 1,\]</div>
+<p>where <span class="math notranslate nohighlight">\(R \equiv \rho / T_6^3\)</span> and <span class="math notranslate nohighlight">\(T_6 = 10^{-6}\,T\)</span>.  Cells outside the
+physically valid region are marked <code class="docutils literal notranslate"><span class="pre">NaN</span></code> by the OPAL authors and are handled gracefully
+by the out-of-bounds strategy chosen at construction time.</p>
+<section id="coordinate-system">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Coordinate System</a><a class="headerlink" href="#coordinate-system" title="Link to this heading">#</a></h3>
+<p>OPAL tables are stored on a <span class="math notranslate nohighlight">\((\log_{10}T,\,\log_{10}R)\)</span> grid.  The compressed variable
+<span class="math notranslate nohighlight">\(R\)</span> effectively normalises density by the temperature-dependent degeneracy threshold,
+making the valid table region approximately rectangular in <span class="math notranslate nohighlight">\(\log_{10}T\)</span>–<span class="math notranslate nohighlight">\(\log_{10}R\)</span>
+space even though the valid <span class="math notranslate nohighlight">\(\log_{10}T\)</span>–<span class="math notranslate nohighlight">\(\log_{10}\rho\)</span> region is highly irregular.</p>
+<p>The coordinate transformation (applied inside the Cython kernel) is</p>
+<div class="math notranslate nohighlight">
+\[\log_{10}R = \log_{10}\rho - 3\,(\log_{10}T - 6).\]</div>
+<p>Trilobite also supports tables stored on a direct <span class="math notranslate nohighlight">\((\log_{10}T,\,\log_{10}\rho)\)</span> grid
+via the <code class="docutils literal notranslate"><span class="pre">'T_rho'</span></code> coordinate system, in which no transformation is applied.</p>
+</section>
+<section id="bilinear-interpolation">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Bilinear Interpolation</a><a class="headerlink" href="#bilinear-interpolation" title="Link to this heading">#</a></h3>
+<p>Within each rectangular cell of the <span class="math notranslate nohighlight">\((\log_{10}T,\,\log_{10}R)\)</span> grid, the Cython kernel
+<code class="xref py py-class docutils literal notranslate"><span class="pre">C_OPALTableOpacity</span></code> applies standard
+bilinear interpolation of <span class="math notranslate nohighlight">\(\log_{10}\kappa\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\log_{10}\kappa \approx
+  (1-t_x)(1-t_y)\,k_{00}
++ t_x(1-t_y)\,k_{10}
++ (1-t_x)t_y\,k_{01}
++ t_x t_y\,k_{11},\]</div>
+<p>where <span class="math notranslate nohighlight">\(t_x = (\log_{10}T - g_1^{(i)}) / (g_1^{(i+1)} - g_1^{(i)})\)</span> and similarly
+for <span class="math notranslate nohighlight">\(t_y\)</span>.  If any corner <span class="math notranslate nohighlight">\(k_{ij}\)</span> is <code class="docutils literal notranslate"><span class="pre">NaN</span></code>, the cell is treated as invalid
+and the out-of-bounds handler is invoked.</p>
+</section>
+<section id="log-space-derivatives">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Log-space Derivatives</a><a class="headerlink" href="#log-space-derivatives" title="Link to this heading">#</a></h3>
+<p>Because the interpolation is piecewise bilinear, the log-space derivatives are piecewise
+constant within each cell and can be computed analytically from the cell corners:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\frac{\partial\ln\kappa}{\partial\ln\rho}
+= \frac{\partial\log_{10}\kappa}{\partial\log_{10}g_2}\\\begin{split}\frac{\partial\ln\kappa}{\partial\ln T}\bigg|_\rho
+= \begin{cases}
+    \dfrac{\partial\log_{10}\kappa}{\partial\log_{10}T}\bigg|_R
+    - 3\,\dfrac{\partial\log_{10}\kappa}{\partial\log_{10}R}\bigg|_T
+    &amp; \text{(T\_R system)} \\[6pt]
+    \dfrac{\partial\log_{10}\kappa}{\partial\log_{10}T}\bigg|_\rho
+    &amp; \text{(T\_rho system)}
+  \end{cases}\end{split}\end{aligned}\end{align} \]</div>
+<p>The <span class="math notranslate nohighlight">\(-3\)</span> cross-term in the T_R system arises from the chain rule
+<span class="math notranslate nohighlight">\(\partial\log_{10}R/\partial\log_{10}T\big|_\rho = -3\)</span>.</p>
+</section>
+<section id="out-of-bounds-strategies">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Out-of-bounds Strategies</a><a class="headerlink" href="#out-of-bounds-strategies" title="Link to this heading">#</a></h3>
+<p>Queries outside the table domain (or landing in NaN cells) are handled by one of three
+strategies selected at construction time:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 15.0%" />
+<col style="width: 85.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Mode</p></th>
+<th class="head"><p>Behaviour</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'raise'</span></code></p></td>
+<td><p>Raises <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">ValueError</span></code></a> with the out-of-range coordinates (default; safest for
+debugging).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">'clamp'</span></code></p></td>
+<td><p>Returns the opacity at the nearest valid boundary point silently.  Useful when
+the query point is expected to be near but occasionally outside the domain.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">'nan'</span></code></p></td>
+<td><p>Returns <code class="docutils literal notranslate"><span class="pre">NaN</span></code> silently.  Useful for plotting or masking workflows where gaps
+are preferable to exceptions.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="when-to-use-opal-vs-analytic-laws">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">When to Use OPAL vs. Analytic Laws</a><a class="headerlink" href="#when-to-use-opal-vs-analytic-laws" title="Link to this heading">#</a></h3>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 35.0%" />
+<col style="width: 35.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Scenario</p></th>
+<th class="head"><p>Recommended law</p></th>
+<th class="head"><p>Reason</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>High-<span class="math notranslate nohighlight">\(T\)</span>, low-<span class="math notranslate nohighlight">\(\rho\)</span> (accretion disk corona)</p></td>
+<td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html#trilobite.radiation.opacity.ElectronScatteringOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ElectronScatteringOpacity</span></code></a></p></td>
+<td><p>Constant ES dominates; fast; exact.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Intermediate <span class="math notranslate nohighlight">\(T\)</span> (disk midplane, <span class="math notranslate nohighlight">\(10^5\)</span>–<span class="math notranslate nohighlight">\(10^7\)</span> K)</p></td>
+<td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a>
+or <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a></p></td>
+<td><p>KramersES is fast and analytic; OPAL captures the iron-group peak and
+non-power-law behaviour.</p></td>
+</tr>
+<tr class="row-even"><td><p>Stellar interior / full <span class="math notranslate nohighlight">\((T,\rho)\)</span> sweep</p></td>
+<td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a></p></td>
+<td><p>Accurate Rosseland mean including composition dependence.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter-grid studies or MCMC</p></td>
+<td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></p></td>
+<td><p>Analytic evaluation is O(1); OPAL bilinear interpolation is slightly slower.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+<div class="docutils container" id="id5">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">1</a><span class="fn-bracket">]</span></span>
+<p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-frank2002accretion" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>Juhan Frank, Andrew R King, and Derek Raine. <em>Accretion power in astrophysics</em>. Cambridge university press, 2002.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-badnell2005" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">3</a><span class="fn-bracket">]</span></span>
+<p>N. R. Badnell, M. A. Bautista, K. Butler, F. Delahaye, C. Mendoza, P. Palmeri, C. J. Zeippen, and M. J. Seaton. Updated opacities from the Opacity Project. <em>Monthly Notices of the Royal Astronomical Society</em>, 360(2):458–465, July 2005. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0410744">arXiv:astro-ph/0410744</a>, <a class="reference external" href="https://doi.org/10.1111/j.1365-2966.2005.08991.x">doi:10.1111/j.1365-2966.2005.08991.x</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">trilobite.radiation.opacity.load_opal_opacity</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="opacity_dev_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Developer Guide: Implementing Opacity Laws</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions-and-context">Definitions and Context</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opacity-laws-in-trilobite">Opacity Laws in Trilobite</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#electron-scattering">Electron Scattering</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#kramers-opacity-laws">Kramers Opacity Laws</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-kramers-power-laws">The Kramers Power Laws</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#partial-derivatives-for-pure-kramers">Partial Derivatives for Pure Kramers</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combined-kramers-and-electron-scattering">Combined Kramers and Electron Scattering</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#partial-derivatives-for-the-combined-form">Partial Derivatives for the Combined Form</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#log-space-representation">Log-Space Representation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#summary-of-implemented-laws">Summary of Implemented Laws</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#table-based-rosseland-mean-opacity-opal">Table-based Rosseland Mean Opacity (OPAL)</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#coordinate-system">Coordinate System</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bilinear-interpolation">Bilinear Interpolation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#log-space-derivatives">Log-space Derivatives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#out-of-bounds-strategies">Out-of-bounds Strategies</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#when-to-use-opal-vs-analytic-laws">When to Use OPAL vs. Analytic Laws</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/opacity/opacity_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

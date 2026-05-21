@@ -1,0 +1,274 @@
+r"""
+Radiative Cooling in the Mechanical Shock Engine
+=================================================
+
+.. admonition:: What this example does
+
+   This example adds a :math:`\rho^2`-type radiative cooling term to Region 3
+   (the shocked CSM) of the
+   :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` and
+   shows how varying the cooling coefficient from sub-dominant to strongly
+   radiative changes the thermal energy budget, forward-shock speed, and shell
+   width of the shocked CSM layer.
+
+**When does radiative cooling matter?**
+In the post-shock region the gas is hot and the dominant energy-loss channel
+is two-body radiative emission (free-free bremsstrahlung and collisionally
+excited line cooling).  Both processes scale with the square of the local
+number density, and therefore with :math:`\rho^2`.  When the radiative-loss
+timescale
+
+.. math::
+
+    t_{\rm cool} = \frac{U_3}{|\dot{U}_{\rm rad}|}
+
+becomes short compared with the dynamical timescale
+:math:`t_{\rm dyn} = R_{\rm fs}/v_{\rm fs}`, the shocked shell can no longer
+remain hot and pressure-supported.  The layer cools rapidly, becomes
+geometrically thin, and the forward shock decelerates.  This transition from
+*adiabatic* to *radiative* shock is critical in dense CSM environments such as
+Type IIn supernovae and luminous radio transients.
+
+The :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
+exposes this through the ``cooling_3`` keyword argument, which accepts a
+callable with signature
+
+.. code-block:: python
+
+    cooling_3(R_cd, v_cd, M3, U3, Delta3, t) -> dU3/dt   [erg/s]
+
+returning a **negative** value for energy losses.
+
+.. seealso::
+
+   :ref:`sphx_glr_galleries_dynamics_plot_mechanical_shock_model.py`
+       Full walkthrough of the engine setup without cooling.
+
+   :ref:`mechanical_internal_energy_model`
+       Derivation of the governing ODE system.
+
+----
+
+"""
+
+# %%
+# Setup
+# -----
+#
+# We use a Type IIn-like dense wind
+# (:math:`\dot{M} = 10^{-3}\,M_\odot\,\mathrm{yr}^{-1}`,
+# :math:`v_w = 100\,\mathrm{km\,s^{-1}}`) so that the post-shock CSM density
+# is high enough for radiative cooling to have a visible dynamical effect on
+# the 1-100 day timescale.  The ejecta profile is the same canonical
+# :math:`n=10`, :math:`\delta=1` broken power-law used throughout these
+# examples.
+
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import units as u
+
+from trilobite.dynamics.shocks import (
+    MechanicalShockEngine,
+    get_bpl_ejecta_kernel,
+    make_homologous_stationary_sources,
+)
+from trilobite.utils.plot_utils import set_plot_style
+
+E_ej = 1e51 * u.erg
+M_ej = 5.0 * u.M_sun
+M_dot = 1e-3 * u.M_sun / u.yr  # dense Type IIn wind
+v_wind = 100.0 * u.km / u.s
+
+G_ej = get_bpl_ejecta_kernel(E_ej, M_ej, n=10, delta=1)
+
+A_cgs = (M_dot / (4 * np.pi * v_wind)).to_value(u.g / u.cm)
+
+
+def rho_csm(r):
+    return A_cgs / r**2
+
+
+rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(
+    G_ej=G_ej,
+    rho_csm=rho_csm,
+)
+
+t_0_cgs = (1.0 * u.day).to_value(u.s)
+R_cd_0 = 1e14  # cm
+v_cd_0 = 1e9  # cm/s
+
+R0, v0, M2_0, M3_0, U2_0, U3_0, Dlt2_0, Dlt3_0 = MechanicalShockEngine.generate_initial_conditions(
+    R_cd_0=R_cd_0,
+    v_cd_0=v_cd_0,
+    t_0=t_0_cgs,
+    rho_1=rho_1,
+    rho_4=rho_4,
+    u_1=u_1,
+    u_4=u_4,
+)
+
+# Focus on the first 100 days, where the cooling effect is concentrated.
+time = np.geomspace(1, 100, 2000) * u.day
+
+# %%
+# Cooling Function
+# ----------------
+#
+# We model the radiative loss in Region 3 as a two-body emissivity integrated
+# over the shell volume.  For a uniform-density layer of mass :math:`M_3` and
+# effective volume :math:`V_3 = 4\pi R_{\rm cd}^2 \Delta_3`, the
+# volume-averaged density is :math:`\bar\rho_3 = M_3 / V_3`, and the
+# volumetric cooling rate is
+#
+# .. math::
+#
+#     \dot{U}_{\rm rad} = -\Lambda\,\bar\rho_3^2\,V_3
+#                       = -\Lambda\,\frac{M_3^2}{V_3},
+#
+# where :math:`\Lambda` is a constant cooling coefficient in
+# :math:`\mathrm{erg\,cm^3\,g^{-2}\,s^{-1}}`.  This is the simplest form of
+# density-squared cooling; it captures bremsstrahlung and collisionally excited
+# line emission in the limit where temperature variations within the shell are
+# ignored.
+#
+# In the strongly radiative regime, :math:`U_3` approaches zero and the
+# cooling timescale :math:`t_{\rm cool} = U_3 V_3 / (\Lambda M_3^2)` becomes
+# very short, which would stall the ODE integrator.  We prevent this with a
+# smooth multiplicative limiter :math:`U_3 / (U_3 + \varepsilon)`, where
+# :math:`\varepsilon = 10^{35}\,\mathrm{erg}` is many orders of magnitude
+# below any physically meaningful :math:`U_3` but regularises the near-zero
+# behaviour.  The limiter has no effect when the shell is hot.
+
+_U_FLOOR = 1e35  # erg — numerical regularisation floor
+
+
+def make_cooling_3(Lambda_cool):
+    """Return a Region 3 cooling callable parameterised by Lambda_cool."""
+
+    def cooling_3(R_cd, v_cd, M3, U3, Delta3, t):
+        if Delta3 <= 0.0:
+            return 0.0
+        V3 = 4.0 * np.pi * R_cd**2 * Delta3
+        u3c = max(U3, 0.0)
+        return -Lambda_cool * M3**2 / V3 * u3c / (u3c + _U_FLOOR)
+
+    return cooling_3
+
+
+# %%
+# Cooling Parameter Survey
+# ------------------------
+#
+# For these wind parameters the critical cooling coefficient — at which the
+# radiative timescale equals the dynamical timescale at :math:`t = 1\,\mathrm{day}` — is
+# :math:`\Lambda_{\rm crit} \approx 3\times10^{24}\,\mathrm{erg\,cm^3\,g^{-2}\,s^{-1}}`.
+# We scan four values spanning roughly an order of magnitude around this
+# threshold:
+#
+# ========================  ==================================================
+# Label                     :math:`\Lambda` (erg cm³ g⁻² s⁻¹)
+# ========================  ==================================================
+# Adiabatic                 0
+# Weak                      :math:`10^{24}` (:math:`\approx 0.3\,\Lambda_{\rm crit}`)
+# Moderate                  :math:`10^{25}` (:math:`\approx 3\,\Lambda_{\rm crit}`)
+# Strong                    :math:`3\times10^{25}` (:math:`\approx 9\,\Lambda_{\rm crit}`)
+# ========================  ==================================================
+
+Lambda_vals = [0.0, 1e24, 1e25, 3e25]
+labels = [
+    r"Adiabatic ($\Lambda = 0$)",
+    r"Weak ($\Lambda = 10^{24}$)",
+    r"Moderate ($\Lambda = 10^{25}$)",
+    r"Strong ($\Lambda = 3{\times}10^{25}$)",
+]
+colors = ["#808080", "#4C72B0", "#DD8452", "#C44E52"]
+
+engine = MechanicalShockEngine()
+states = []
+
+for Lambda in Lambda_vals:
+    cooling_fn = make_cooling_3(Lambda) if Lambda > 0 else None
+    state = engine.compute_shock_properties(
+        time=time,
+        rho_1=rho_1,
+        rho_4=rho_4,
+        u_1=u_1,
+        u_4=u_4,
+        R_cd_0=R0,
+        v_cd_0=v0,
+        M2_0=M2_0,
+        M3_0=M3_0,
+        U2_0=U2_0,
+        U3_0=U3_0,
+        Delta2_0=Dlt2_0,
+        Delta3_0=Dlt3_0,
+        t_0=t_0_cgs,
+        cooling_3=cooling_fn,
+    )
+    states.append(state)
+
+# %%
+# Visualization
+# -------------
+#
+# The three panels show the effect of cooling on distinct aspects of the
+# shocked CSM layer:
+#
+# - **Top**: Internal energy :math:`U_3(t)`.  In the adiabatic case the shell
+#   heats up as it sweeps up dense CSM.  Moderate cooling suppresses this
+#   growth; in the strongly radiative case :math:`U_3` collapses to the
+#   regularisation floor within a few days, meaning the shell is effectively
+#   cold throughout the evolution.
+#
+# - **Middle**: Forward-shock speed :math:`v_{\rm fs}(t)`.  The forward shock
+#   is driven by the pressure of Region 3; when cooling drains that pressure,
+#   the shock decelerates.  The strongly cooled case loses roughly one-third
+#   of its speed by 10 days.
+#
+# - **Bottom**: Shocked-CSM width :math:`\Delta_3(t)`.  Width grows at the
+#   local sound speed (:math:`\dot\Delta_3 = c_{s,3} \propto \sqrt{U_3/M_3}`).
+#   Once :math:`U_3` is depleted the sound speed vanishes and the shell
+#   freezes at a fraction of its adiabatic width, signalling the transition
+#   to a geometrically thin radiative shell.
+
+LW = 1.8
+t_days = time.to_value(u.day)
+
+set_plot_style()
+
+fig, axes = plt.subplots(3, 1, figsize=(7, 9), sharex=True)
+
+for state, label, color in zip(states, labels, colors):
+    axes[0].semilogy(
+        t_days,
+        state.energy_3.to_value(u.erg),
+        color=color,
+        lw=LW,
+        label=label,
+    )
+    axes[1].semilogy(
+        t_days,
+        state.velocity_fs.to_value(u.km / u.s),
+        color=color,
+        lw=LW,
+    )
+    axes[2].semilogy(
+        t_days,
+        state.width_3.to_value(u.cm),
+        color=color,
+        lw=LW,
+    )
+
+axes[0].set_ylabel(r"$U_3$ (erg)")
+axes[0].legend(frameon=False, fontsize=9)
+axes[0].grid(alpha=0.2, which="both")
+
+axes[1].set_ylabel(r"$v_{\rm fs}$ (km s$^{-1}$)")
+axes[1].grid(alpha=0.2, which="both")
+
+axes[2].set_ylabel(r"$\Delta_3$ (cm)")
+axes[2].set_xlabel("Time (days)")
+axes[2].grid(alpha=0.2, which="both")
+
+plt.tight_layout()
+plt.show()

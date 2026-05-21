@@ -1,0 +1,183 @@
+"""
+From Data to Inference: End-to-End Workflow
+============================================
+
+This example walks through the full chain from a synthetic radio
+photometry table to a configured ``InferenceProblem``. It is intended
+as a concrete, runnable illustration of the pipeline described in
+:ref:`data_to_inference`.
+
+The four steps are:
+
+1. Load data into a container.
+2. Inspect the container.
+3. Call ``to_inference_data(model)`` to produce a validated numerical dataset.
+4. Wire into a likelihood and ``InferenceProblem``.
+"""
+
+# %%
+# Step 1: Build a Synthetic Dataset
+# ----------------------------------
+#
+# In a real workflow you would load from a file. Here we construct a
+# synthetic radio light curve to keep the example self-contained.
+
+import numpy as np
+from astropy import units as u
+from astropy.table import Table
+from unittest.mock import MagicMock
+
+from trilobite.data import RadioPhotometryContainer
+
+rng = np.random.default_rng(0)
+n = 30
+time = np.sort(rng.uniform(1, 1000, n)) * u.day
+freq = rng.choice([5.5, 8.5, 15.0], size=n) * u.GHz
+
+# Synthetic detections (power-law decay)
+flux = 1e-26 * (time.value / 10.0) ** -0.8 * rng.lognormal(0, 0.1, n) * u.Unit("erg/(s cm2 Hz)")
+err = flux * rng.uniform(0.05, 0.15, n)
+ul = np.full(n, np.nan) * u.Unit("erg/(s cm2 Hz)")
+
+# Mark the last 5 rows as upper limits
+flux[n - 5 :] = np.nan * u.Unit("erg/(s cm2 Hz)")
+err[n - 5 :] = np.nan * u.Unit("erg/(s cm2 Hz)")
+ul[n - 5 :] = rng.uniform(1e-29, 5e-29, 5) * u.Unit("erg/(s cm2 Hz)")
+
+table = Table(
+    {
+        "time": time,
+        "freq": freq,
+        "flux_density": flux,
+        "flux_density_error": err,
+        "flux_upper_limit": ul,
+    }
+)
+
+container = RadioPhotometryContainer(table)
+print(f"Observations:  {container.n_obs}")
+print(f"Detections:    {container.n_detections}")
+print(f"Upper limits:  {container.n_non_detections}")
+
+# %%
+# Step 2: Build a Mock Model
+# ---------------------------
+#
+# In real usage you would import a physical model from
+# ``trilobite.models``. Here we use a mock that declares the same
+# interface (``variable_names``, ``VARIABLES``, ``output_names``,
+# ``OUTPUTS``, ``UNITS``) to keep the example dependency-free.
+
+
+def _mock_var(name, unit):
+    v = MagicMock()
+    v.name = name
+    v.base_units = unit
+    return v
+
+
+model = MagicMock()
+model.variable_names = ["time", "freq"]
+model.output_names = ["flux_density"]
+model.VARIABLES = [
+    _mock_var("time", u.s),
+    _mock_var("freq", u.Hz),
+]
+outputs = MagicMock()
+outputs._fields = ["flux_density"]
+model.OUTPUTS = outputs
+units = MagicMock()
+units.flux_density = u.Unit("erg/(s cm2 Hz)")
+model.UNITS = units
+
+# %%
+# Step 3: Convert to InferenceData
+# ---------------------------------
+#
+# This single call performs all unit coercion, column mapping,
+# upper-limit error inference, and shape validation.
+
+inference_data = container.to_inference_data(
+    model,
+    infer_errors=True,
+    detection_threshold=3.0,
+)
+
+print(inference_data.describe())
+
+# %%
+# Verify that the data looks physically reasonable before proceeding.
+# The ``describe()`` output shows per-variable ranges and detection
+# counts — if something looks wrong, check the mask or column mapping.
+
+# %%
+# Step 4: Wire into Likelihood and InferenceProblem
+# --------------------------------------------------
+#
+# ``InferenceData`` is the only object that likelihoods accept. Passing
+# a container directly to ``GaussianLikelihood`` would raise a TypeError.
+#
+# In a real workflow you would import from ``trilobite.inference``:
+#
+# .. code-block:: python
+#
+#     from trilobite.inference.likelihood import GaussianLikelihood
+#     from trilobite.inference.problem import InferenceProblem
+#
+#     likelihood = GaussianLikelihood(model=model, data=inference_data)
+#     problem = InferenceProblem(likelihood)
+#
+#     problem.set_prior("B",         "log_uniform", lower=0.01*u.G,        upper=100*u.G)
+#     problem.set_prior("n0",        "log_uniform", lower=1e-3/u.cm**3,    upper=100/u.cm**3)
+#     problem.set_prior("epsilon_e", "uniform",     lower=0.0,              upper=1.0)
+#     problem.set_prior("epsilon_B", "uniform",     lower=0.0,              upper=1.0)
+#
+#     print(problem.initial_log_posterior)   # should be finite
+#
+# Once configured, pass the problem to a sampler:
+#
+# .. code-block:: python
+#
+#     from trilobite.inference.sampling import EmceeSampler
+#
+#     sampler = EmceeSampler(problem)
+#     result  = sampler.run(n_walkers=32, n_steps=2000)
+
+# %%
+# Quick Diagnostic Plot
+# ----------------------
+#
+# Plot the detections and upper limits to verify the data look as expected.
+
+import matplotlib.pyplot as plt
+
+x_time = inference_data.x["time"]  # in seconds
+obs = inference_data.observables["flux_density"]
+
+is_det = np.isfinite(obs.value)
+time_day = x_time / 86400.0  # convert back to days for readability
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.errorbar(
+    time_day[is_det],
+    obs.value[is_det],
+    yerr=obs.error[is_det],
+    fmt="o",
+    color="steelblue",
+    label="Detection",
+)
+ax.errorbar(
+    time_day[~is_det],
+    obs.upper[~is_det],
+    fmt="v",
+    color="gray",
+    label="Upper limit",
+)
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlabel("Time (days)")
+ax.set_ylabel(r"$F_\nu$ (erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$)")
+ax.set_title("Synthetic Radio Photometry — InferenceData")
+ax.legend()
+plt.tight_layout()
+plt.show()

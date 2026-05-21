@@ -1,0 +1,1366 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>One-Zone Accretion Disk Models: Theory &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/disks/one_zone_disk_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Developer Guide: Adding One-Zone Disk Closures" href="one_zone_disk_dev.html" />
+    <link rel="prev" title="trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Accretion Disks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">One-Zone Accretion Disk Models: Theory</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="one-zone-accretion-disk-models-theory">
+<span id="one-zone-disk-theory"></span><h1>One-Zone Accretion Disk Models: Theory<a class="headerlink" href="#one-zone-accretion-disk-models-theory" title="Link to this heading">#</a></h1>
+<p>A central challenge in accretion disk modelling is that the viscous timescale,</p>
+<div class="math notranslate nohighlight" id="equation-eq-viscous-timescale">
+<span class="eqno">(1)<a class="headerlink" href="#equation-eq-viscous-timescale" title="Link to this equation">#</a></span>\[t_{\rm visc} = \alpha^{-1} \left(\frac{R}{H}\right)^2 \Omega^{-1},\]</div>
+<p>scales as <span class="math notranslate nohighlight">\(t_{\rm visc} \propto R^{3/2}\)</span>, so different parts of the disk
+evolve on wildly different timescales.  Rather than resolving this hierarchy with
+a full radial grid and adaptive timestepping, we follow
+Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and represent the entire disk
+with a <strong>single spatial zone</strong> located at the characteristic radius where the viscous
+timescale is comparable to the elapsed time.  This <em>one-zone</em> approach reduces the
+disk evolution to a coupled two-component ODE system that can be integrated very
+efficiently while still capturing global viscous spreading, thermodynamic structure,
+and accretion onto the central object.</p>
+<p>This document describes the theoretical framework underlying the one-zone disk models
+implemented in Trilobite.  For usage instructions see <a class="reference internal" href="one_zone_disk.html#one-zone-disk"><span class="std std-ref">One-Zone Accretion Disk Models</span></a>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Throughout our implementation, we follow the conventions of Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>
+and Piro and Mockler<a class="footnote-reference brackets" href="#footcite-pirolatetimeevolutioninstabilities2025" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</div>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-core-model" id="id14">The Core Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#one-zone-geometry" id="id15">One-Zone Geometry</a></p></li>
+<li><p><a class="reference internal" href="#evolution-equations" id="id16">Evolution Equations</a></p></li>
+<li><p><a class="reference internal" href="#timestepping" id="id17">Timestepping</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#thermodynamics" id="id18">Thermodynamics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#overview" id="id19">Overview</a></p></li>
+<li><p><a class="reference internal" href="#viscosity" id="id20">Viscosity</a></p></li>
+<li><p><a class="reference internal" href="#equation-of-state" id="id21">Equation of State</a></p></li>
+<li><p><a class="reference internal" href="#energy-balance" id="id22">Energy Balance</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#additional-physics" id="id23">Additional Physics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#wind-launching" id="id24">Wind Launching</a></p></li>
+<li><p><a class="reference internal" href="#irradiation" id="id25">Irradiation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#specific-disk-models" id="id26">Specific Disk Models</a></p>
+<ul>
+<li><p><a class="reference internal" href="#standard-disks" id="id27">Standard Disks</a></p></li>
+<li><p><a class="reference internal" href="#modified-dynamical-disks" id="id28">Modified Dynamical Disks</a></p></li>
+<li><p><a class="reference internal" href="#fallback-disks" id="id29">Fallback Disks</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="the-core-model">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">The Core Model</a><a class="headerlink" href="#the-core-model" title="Link to this heading">#</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>We follow the development of the one-zone formalism in
+Metzger <em>et al.</em><a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>.</p>
+</div>
+<p>The one-zone approximation partitions the disk into three characteristic regions
+based on the ratio <span class="math notranslate nohighlight">\(t_{\rm visc}/t\)</span>:</p>
+<ul class="simple">
+<li><p><strong>Inner disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \ll t\)</span>) — in quasi-steady state; mass is
+rapidly accreted and this region is dynamically subdominant.</p></li>
+<li><p><strong>Outer disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \gg t\)</span>) — has not yet had time to evolve away
+from the initial conditions.</p></li>
+<li><p><strong>Middle disk</strong> (<span class="math notranslate nohighlight">\(t_{\rm visc} \sim t\)</span>) — currently spreading viscously and
+dominant in mass.</p></li>
+</ul>
+<p>The one-zone model tracks the middle disk, treating the disk mass <span class="math notranslate nohighlight">\(M_D\)</span> and
+angular momentum <span class="math notranslate nohighlight">\(J_D\)</span> as its only two degrees of freedom.</p>
+<section id="one-zone-geometry">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">One-Zone Geometry</a><a class="headerlink" href="#one-zone-geometry" title="Link to this heading">#</a></h3>
+<p>Following the Green’s function analysis of a viscously spreading ring
+<a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, the area-averaged surface
+density and characteristic disk radius are related to the state variables by</p>
+<div class="math notranslate nohighlight">
+\[M_D = A\, \pi\, \Sigma_D\, R_D^2,
+\qquad
+J_D = \frac{B}{A}\, M_D\, \sqrt{G M_{\rm BH} R_D},\]</div>
+<p>where <span class="math notranslate nohighlight">\(A = 1.62\)</span> and <span class="math notranslate nohighlight">\(B = 1.33\)</span> are dimensionless correction constants
+calibrated to match the exact spreading-ring solution.  Defining the ratio</p>
+<div class="math notranslate nohighlight">
+\[\xi \equiv \frac{B}{A} \approx 0.821,\]</div>
+<p>the outer disk radius and surface density follow directly from the state vector:</p>
+<div class="math notranslate nohighlight" id="equation-eq-disk-radius">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-disk-radius" title="Link to this equation">#</a></span>\[R_D = \frac{J_D^2}{\xi^2\, M_D^2\, G M_{\rm BH}},
+\qquad
+\Sigma_D = \frac{M_D}{\pi\, A\, R_D^2}.\]</div>
+<p>These algebraic relations are re-evaluated at every integration timestep and require
+no additional free parameters beyond <span class="math notranslate nohighlight">\(M_{\rm BH}\)</span>.</p>
+</section>
+<section id="evolution-equations">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Evolution Equations</a><a class="headerlink" href="#evolution-equations" title="Link to this heading">#</a></h3>
+<p>The disk mass and angular momentum evolve as</p>
+<div class="math notranslate nohighlight" id="equation-eq-disk-evolution">
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-disk-evolution" title="Link to this equation">#</a></span>\[\begin{split}\begin{aligned}
+\dot{M}_D &amp;= -\dot{M}_{\rm acc} + \dot{M}_{\rm inflow} - \dot{M}_{\rm outflow}, \\
+\dot{J}_D &amp;= -\dot{J}_{\rm acc} + \dot{J}_{\rm inflow} - \dot{J}_{\rm outflow}.
+\end{aligned}\end{split}\]</div>
+<p>In the base implementation, only the accretion sink terms are active:</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_{\rm acc}
+= f_D\,\frac{M_D}{t_{\rm visc}}
+= f_D\,\nu\,\frac{M_D}{R_D^2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\nu\)</span> is the kinematic viscosity and</p>
+<div class="math notranslate nohighlight" id="equation-eq-fd">
+<span class="eqno">(4)<a class="headerlink" href="#equation-eq-fd" title="Link to this equation">#</a></span>\[f_D = \frac{F_0}{1 - \sqrt{R_{\rm in}/R_D}},
+\qquad F_0 = 1.6,\]</div>
+<p>enforces a zero-torque inner boundary condition (<span class="math notranslate nohighlight">\(F_0 = 1.6\)</span> in <a class="footnote-reference brackets" href="#footcite-metzgertimedependentmodelsaccretion2008" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>
+).  Matter draining through the inner edge at
+<span class="math notranslate nohighlight">\(R_{\rm in}\)</span> carries the local Keplerian specific angular momentum
+<span class="math notranslate nohighlight">\(\ell_{\rm in} = \sqrt{G M_{\rm BH} R_{\rm in}}\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[\dot{J}_{\rm acc} = \dot{M}_{\rm acc}\,\sqrt{G M_{\rm BH} R_{\rm in}}.\]</div>
+<p>Because <span class="math notranslate nohighlight">\(\ell_{\rm in} \ll J_D / M_D\)</span> when <span class="math notranslate nohighlight">\(R_{\rm in} \ll R_D\)</span>,
+angular momentum drains more slowly than mass and the disk outer radius grows over
+time — the standard viscous spreading behaviour.</p>
+</section>
+<section id="timestepping">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Timestepping</a><a class="headerlink" href="#timestepping" title="Link to this heading">#</a></h3>
+<p>In order to correctly capture the evolution of the disk in these various scenarios, we follow the prescription of
+Piro and Mockler<a class="footnote-reference brackets" href="#footcite-2025apj-985-77p" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> and utilize an adaptive timestep which effectively requires that the mass not evolve
+too greatly between timesteps:</p>
+<div class="math notranslate nohighlight">
+\[\Delta t = \epsilon \min\left(\frac{M_D}{|\dot{M}_D|}, \frac{J_D}{|\dot{J}_D|}, t_{\rm visc}\right).\]</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="thermodynamics">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">Thermodynamics</a><a class="headerlink" href="#thermodynamics" title="Link to this heading">#</a></h2>
+<p>The above equations would be entirely sufficient to specify the state of the disk were it not for the
+dependence on <span class="math notranslate nohighlight">\(t_{\rm visc}\)</span>, which depends on the viscosity <span class="math notranslate nohighlight">\(\nu\)</span> and therefore on the thermodynamic
+state of the disk. Because of this, it becomes <strong>necessary to treat (in some detail) the microphysics of the disk</strong>. Many
+options exist in the literature for how to do this in different scenarios and regimes; however, Trilobite
+aims to be as flexible as possible in this regard, and so the thermodynamic closure is implemented as a modular
+component that can be swapped out for different physics choices.  The following sections describe
+the general framework for the thermodynamic closure and the specific closures currently implemented in Trilobite.</p>
+<section id="overview">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h3>
+<p>In order to fully specify the evolution of a disk, choices must be made for each of the following properties
+of the disk:</p>
+<ul class="simple">
+<li><p><strong>The Viscosity</strong>: the parameterization of the viscosity (e.g. the <span class="math notranslate nohighlight">\(\alpha\)</span>-prescription) and the physical
+processes that contribute to it (e.g. turbulence, magnetic fields, self-gravity). This should result in a
+function <span class="math notranslate nohighlight">\(\nu(\boldsymbol{\Theta}_D)\)</span> that gives the viscosity as a function of the disk state.</p></li>
+<li><p><strong>The Equation of State (EoS)</strong>: the relation between the thermodynamic variables (e.g. pressure, temperature, density)
+that defines the sound speed <span class="math notranslate nohighlight">\(c_s\)</span> and therefore the disk scale height <span class="math notranslate nohighlight">\(H = c_s / \Omega\)</span>. This should
+produce a function <span class="math notranslate nohighlight">\(c_s(\boldsymbol{\Theta}_D)\)</span> that gives the sound speed as a function of the disk state as
+well as a function <span class="math notranslate nohighlight">\(P(\boldsymbol{\Theta}_D)\)</span> that gives the pressure as a function of the disk state.</p></li>
+<li><p><strong>The Opacity</strong>: the relation between the thermodynamic variables that defines the opacity <span class="math notranslate nohighlight">\(\kappa\)</span> and
+therefore the optical depth <span class="math notranslate nohighlight">\(\tau = \kappa \Sigma\)</span>. This should produce a function
+<span class="math notranslate nohighlight">\(\kappa(\boldsymbol{\Theta}_D)\)</span> that gives the opacity as a function of the disk state.</p></li>
+<li><p><strong>The Heating and Cooling Processes</strong>: the physical processes that contribute to the heating and cooling of the disk
+(e.g. viscous heating, radiative cooling, neutrino cooling) and therefore the thermal structure of the disk. This should
+produce functions <span class="math notranslate nohighlight">\(Q^+(\boldsymbol{\Theta}_D)\)</span> and <span class="math notranslate nohighlight">\(Q^-(\boldsymbol{\Theta}_D)\)</span> that give the
+heating and cooling rates as a function of the disk state.</p></li>
+</ul>
+<p>Once each of these processes has been specified, the thermal structure of the disk can (in principle) be solved for. In
+some sense, this is the artful element of constructing these models: the choices made for each of these processes will
+determine the physical regimes that the model can capture and the computational cost of solving for the thermal structure.</p>
+<p>In the following sections, we will describe the closures which are included explicitly in Trilobite, which are
+designed to capture the physics of accretion disks in a variety of regimes while still being computationally efficient.
+We will also describe the general framework for how these closures are implemented
+in the code, and how users can extend this framework to include their own closures if desired.</p>
+</section>
+<section id="viscosity">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Viscosity</a><a class="headerlink" href="#viscosity" title="Link to this heading">#</a></h3>
+<p>The viscous parameterization is generally the first choice to be made when constructing a disk model as it determines
+the set of available relations between various disk properties. By default, Trilobite only provides the <strong>alpha-prescription</strong> for viscosity,
+which assumes that the viscosity can be expressed as</p>
+<div class="math notranslate nohighlight" id="equation-eq-alpha-viscosity">
+<span class="eqno">(5)<a class="headerlink" href="#equation-eq-alpha-viscosity" title="Link to this equation">#</a></span>\[\boxed{
+\nu = \alpha\, c_s\, H,
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\alpha\)</span> is a dimensionless parameter that encapsulates the efficiency of angular momentum transport in
+the disk, <span class="math notranslate nohighlight">\(c_s\)</span> is the sound speed, and <span class="math notranslate nohighlight">\(H\)</span> is the disk scale height.
+This prescription is widely used in the literature due to its simplicity and ability to capture a wide range
+of physical processes that can contribute to viscosity (e.g. turbulence, magnetic fields, self-gravity) without
+needing to model them explicitly.</p>
+<p>In most cases, the scale height is not a primitive variable of the model but is instead derived from the sound speed and
+the local Keplerian angular velocity on the basis of vertical hydrostatic equilibrium:</p>
+<div class="math notranslate nohighlight" id="equation-eq-scale-height">
+<span class="eqno">(6)<a class="headerlink" href="#equation-eq-scale-height" title="Link to this equation">#</a></span>\[H = \frac{c_s}{\Omega}.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This assertion is generally well supported on the basis that <span class="math notranslate nohighlight">\(t_{\rm thermal} \ll t_{\rm visc}\)</span>, so the disk can
+be assumed to be in thermal equilibrium at all times. However, this may not hold in some regimes (e.g. during rapid
+transitions between different accretion states) and so users should be aware of
+this assumption when constructing their models.</p>
+</div>
+</section>
+<section id="equation-of-state">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Equation of State</a><a class="headerlink" href="#equation-of-state" title="Link to this heading">#</a></h3>
+<p>By default, Trilobite provides two closures for the equation of state:</p>
+<ol class="arabic simple">
+<li><p><strong>Gas Pressure Only</strong> — assumes that the pressure is dominated by an ideal gas of mean molecular weight <span class="math notranslate nohighlight">\(\mu\)</span>.</p></li>
+<li><p><strong>Gas + Radiation Pressure</strong> — includes both the ideal gas pressure and the radiation pressure.</p></li>
+</ol>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Gas Pressure Only</label><div class="sd-tab-content docutils">
+<p>The equation of state is</p>
+<div class="math notranslate nohighlight">
+\[P = \frac{\rho k_B T_c}{\mu m_p},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\rho\)</span> is the midplane density, <span class="math notranslate nohighlight">\(T_c\)</span> is the midplane temperature, and
+<span class="math notranslate nohighlight">\(\mu\)</span> is the mean molecular weight.  The sound speed is then</p>
+<div class="math notranslate nohighlight">
+\[c_s^2 = \frac{P}{\rho} = \frac{k_B T_c}{\mu m_p}.\]</div>
+<p>This is very convenient because the temperature can be deduced from heating equilibrium and the sound
+speed follows directly in a manner which does not require any root-finding.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Gas + Radiation Pressure</label><div class="sd-tab-content docutils">
+<p>When the ideal gas is modified to include both the gas pressure contribution and the
+radiation pressure contribution, the equation of state becomes</p>
+<div class="math notranslate nohighlight">
+\[P = \frac{\rho k_B T_c}{\mu m_p} + \frac{a T_c^4}{3},\]</div>
+<p>where <span class="math notranslate nohighlight">\(a\)</span> is the radiation constant.  The sound speed is then made considerably more complicated to
+obtain. Dividing both sides by <span class="math notranslate nohighlight">\(\rho\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[c_s^2 = \frac{P}{\rho} = \frac{k_B T_c}{\mu m_p} + \frac{a T_c^4}{3 \rho}.\]</div>
+<p>the second term on the RHS can be replaced with the disk properties (<span class="math notranslate nohighlight">\(\Sigma\)</span> and <span class="math notranslate nohighlight">\(\Omega\)</span>) using
+vertical hydrostatic equilibrium:</p>
+<div class="math notranslate nohighlight">
+\[\rho = \frac{\Sigma}{\sqrt{2\pi} H} = \frac{\Sigma\,\Omega}{\sqrt{2\pi} \,c_s}.\]</div>
+<p>This then produces a quadratic equation for <span class="math notranslate nohighlight">\(c_s\)</span> in terms of <span class="math notranslate nohighlight">\(T_c\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-cs-quadratic">
+<span class="eqno">(7)<a class="headerlink" href="#equation-eq-cs-quadratic" title="Link to this equation">#</a></span>\[c_s^2 -
+\underbrace{\frac{\sqrt{2\pi}}{3}\frac{a T_c^4}{ \Sigma \Omega }}_{A(T)} c_s -
+\underbrace{\frac{k_B T_c}{\mu m_p}}_{B(T)} = 0.\]</div>
+<p>The physically meaningful (positive) root of this equation gives the sound speed. To ensure
+that the root is found robustly in numerical implementations, the quadratic formula is evaluated in
+a manner that avoids catastrophic cancellation:</p>
+<div class="math notranslate nohighlight">
+\[c_s(T_c)
+=
+\frac{A(T_c) + \sqrt{A(T_c)^2 + 4 B(T_c)}}{2}.\]</div>
+<p>This closure is more computationally expensive than the gas-only case because it requires
+root-finding to solve for the sound speed, but it is necessary to capture the physics of disks in
+regimes where radiation pressure becomes important (e.g. at high temperatures or low densities).</p>
+</div>
+</div>
+</section>
+<section id="energy-balance">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">Energy Balance</a><a class="headerlink" href="#energy-balance" title="Link to this heading">#</a></h3>
+<p>At the core of every closure is a simple energy balance condition which requires that the local heating
+and cooling be in equilibrium at the midplane temperature <span class="math notranslate nohighlight">\(T_c\)</span>:</p>
+<div class="math notranslate nohighlight" id="equation-eq-energy-balance">
+<span class="eqno">(8)<a class="headerlink" href="#equation-eq-energy-balance" title="Link to this equation">#</a></span>\[Q^+(T_c) = Q^-(T_c).\]</div>
+<p>Depending on the choices made for the viscosity, equation of state, and opacity, this condition can be reduced
+to a single algebraic equation in <span class="math notranslate nohighlight">\(T_c\)</span> that can be solved for the thermal
+structure of the disk at each timestep. Several heating terms appear in various different disk closures:</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Viscous Heating</label><div class="sd-tab-content docutils">
+<p>The viscous heating rate per unit area is (in the alpha prescription with vertical hydrostatic equilibrium)</p>
+<div class="math notranslate nohighlight" id="equation-eq-q-plus">
+<span class="eqno">(9)<a class="headerlink" href="#equation-eq-q-plus" title="Link to this equation">#</a></span>\[Q^+ = \frac{9}{8}\,\nu\,\Sigma\,\Omega^2
+    = \frac{9}{8}\,\alpha\,\frac{c_s^2}{\Omega}\,\Sigma\,\Omega^2
+    = \frac{9}{8}\,\alpha\,c_s^2\,\Sigma\,\Omega,\]</div>
+<p>In this form, this is a function only of the thermodynamics and the structure of the disk and is
+therefore easily evaluated once the sound speed is known.  This is the dominant heating term in most
+disk models, but other terms can be added to capture additional physics (e.g. neutrino heating,
+nuclear burning) if desired.</p>
+</div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Radiative Cooling</label><div class="sd-tab-content docutils">
+<p>Radiative cooling can be done in a number of ways with varying levels of sophistication. Tradiationally,
+one takes some prescription for the Rosseland opacity <span class="math notranslate nohighlight">\(\kappa_R(T_c, \rho_c)\)</span> and utilizes radiative
+diffusion to approximate the cooling rate. This, of course, presumes that the disk is optically thick
+and that the diffusion approximation is valid, which may not hold in all regimes.</p>
+<p>When radiative diffusion is relevant, we presume that the surface radiates at some blackbody temperature
+<span class="math notranslate nohighlight">\(T_{\rm eff}\)</span> and that the midplane temperature is related to the effective temperature through the
+optical depth of the disk:</p>
+<div class="math notranslate nohighlight" id="equation-eq-tc-teff">
+<span class="eqno">(10)<a class="headerlink" href="#equation-eq-tc-teff" title="Link to this equation">#</a></span>\[T_c^4 = \frac{3}{4}\,\tau\,T_{\rm eff}^4,\]</div>
+<p>where the optical depth is given by <span class="math notranslate nohighlight">\(\tau = \kappa_R \Sigma\)</span>.  The radiative cooling rate per unit area
+is then</p>
+<div class="math notranslate nohighlight">
+\[Q^- = \sigma_{\rm SB}\,T_{\rm eff}^4 =
+\frac{4 \sigma_{\rm SB}}{3 \tau} T_c^4 =
+\frac{16 \sigma_{\rm SB}}{3 \kappa_R \Sigma} T_c^4.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <span class="math notranslate nohighlight">\(\frac{16}{3}\)</span> factor corresponds to our choice to use <span class="math notranslate nohighlight">\(\Sigma = \sqrt{2\pi} \rho H\)</span> as the
+surface density in the optical depth, which is motivated by the fact that the disk photosphere is located at a height
+of order the scale height above the midplane.  Other choices are also present in the literature.</p>
+</div>
+<p>The choice of opacity is also an important consideration. At this point, we implement only electron scattering
+opacity; however, we will eventually support both Kramer’s opacity and the more sophisticated OPAL opacity tables,
+which will allow us to capture a wider range of physical regimes.</p>
+</div>
+<input id="sd-tab-item-4" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Advection</label><div class="sd-tab-content docutils">
+<p>In some regimes, advection can become an important cooling term. This is particularly relevant in the context of
+radiatively inefficient accretion flows (RIAFs), where the disk is optically thin and the cooling timescale is long
+compared to the accretion timescale. In this case, the advective cooling rate per unit area can be approximated as</p>
+<div class="math notranslate nohighlight">
+\[Q^-_{\rm adv} = \xi \frac{\dot{M}}{2\pi R_D^2} c_s^2,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}\)</span> is the mass accretion rate and <span class="math notranslate nohighlight">\(\xi\)</span> is the logarithmic entropy gradient and is
+typically of order unity (1.5 is typical, see Watarai<a class="footnote-reference brackets" href="#footcite-2007pasj-59-443w" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>).
+This term can be added to the total cooling rate to capture the physics of RIAFs and other
+regimes where advection is important.</p>
+</div>
+</div>
+<p>Once all of these specifications have been made, the energy balance condition can be solved for the midplane
+temperature <span class="math notranslate nohighlight">\(T_c\)</span> at each timestep, which then allows for the evaluation of the sound speed, scale height,
+viscosity, and therefore the viscous timescale.  This closes the system of equations and allows for the integration
+of the disk evolution over time.</p>
+</section>
+</section>
+<section id="additional-physics">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Additional Physics</a><a class="headerlink" href="#additional-physics" title="Link to this heading">#</a></h2>
+<p>As we have described in the preceding section, there are many modifications which may be made to the canonical
+disk scenarios to implement new physics. In this section, we’ll describe the theory behind a few of the common
+modifications that are implemented in Trilobite.
+Fallback
+^^^^^^^^</p>
+<p>In many astrophysical systems, the accretion disk is continuously supplied with mass
+from an external reservoir. In the context of tidal disruption events (TDEs), this
+corresponds to the fallback of stellar debris onto the disk. This process modifies the
+standard viscous evolution by introducing source terms in both the mass and angular
+momentum equations.</p>
+<p>For a parabolic TDE, the late-time fallback rate follows a characteristic power-law decay,
+set by the orbital period of the most bound debris:</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_{\rm FB}
+=
+\frac{M_\star}{5 t_{\rm fb}}
+\left(\frac{t}{t_{\rm fb}}\right)^{-5/3},\]</div>
+<p>where the fallback timescale is</p>
+<div class="math notranslate nohighlight">
+\[t_{\rm fb}
+=
+\frac{\pi R_t^3}{\sqrt{2 G M_\bullet} R_\star^{3/2}}
+\approx
+3.5\times 10^6\;{\rm s}\;
+M_6^{1/2} m_\star^{-1} r_\star^{3/2}.\]</div>
+<p>The fallback material carries angular momentum corresponding to the circularization
+radius, which we approximate as</p>
+<div class="math notranslate nohighlight">
+\[\ell_{\rm FB} = \sqrt{G M_\bullet R_{\rm circ}}.\]</div>
+<p>To allow for greater flexibility, Trilobite adopts a generalized parameterization of
+the fallback rate:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+\dot{M}_{\rm FB} &amp;= \dot{M}_0
+\left(\frac{t}{t_0}\right)^{-\alpha_{\rm FB}}, \\
+\dot{J}_{\rm FB} &amp;= \sqrt{G M_\bullet R_{\rm circ}}\;\dot{M}_{\rm FB},
+\end{aligned}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}_0\)</span>, <span class="math notranslate nohighlight">\(t_0\)</span>, <span class="math notranslate nohighlight">\(\alpha_{\rm FB}\)</span>, and <span class="math notranslate nohighlight">\(R_{\rm circ}\)</span>
+are free parameters that can be tuned to represent a range of fallback scenarios.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The current implementation does not include heating associated with fallback
+dissipation. This contribution can, in principle, be incorporated as an additional
+term in the energy balance condition. See Piro and Mockler<a class="footnote-reference brackets" href="#footcite-2025apj-985-77p" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> for
+a discussion of the potential importance of fallback heating in TDE disks.</p>
+</div>
+<section id="wind-launching">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Wind Launching</a><a class="headerlink" href="#wind-launching" title="Link to this heading">#</a></h3>
+<p>In many accretion disks, the accretion rate can exceed the Eddington limit, leading to
+the launching of powerful radiatively driven winds. These winds remove both mass and
+angular momentum from the disk, modifying the standard viscous evolution through
+additional sink terms.</p>
+<p>A common parameterization assumes that the accretion rate decreases with radius due
+to cumulative mass loss (e.g. Begelman<a class="footnote-reference brackets" href="#footcite-begelmancansphericallyaccreting1979" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>):</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}(r)
+=
+\dot{M}_{\rm sph}
+\left(\frac{r}{R_{\rm sph}}\right)^p,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}_{\rm sph}\)</span> is the accretion rate at the spherization radius
+<span class="math notranslate nohighlight">\(R_{\rm sph}\)</span>, and <span class="math notranslate nohighlight">\(p\)</span> controls the strength of the wind.</p>
+<p>The spherization radius marks the transition where radiation pressure becomes dynamically
+important and can be approximated as</p>
+<div class="math notranslate nohighlight">
+\[R_{\rm sph}
+=
+\min\left(
+    R_D,
+    \frac{\kappa \dot{M}}{4\pi c}
+\right).\]</div>
+<p>Integrating the radial mass loss profile yields the total mass outflow rate:</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_{\rm out}
+=
+\left[
+    1 - \left(\frac{R_{\rm in}}{R_{\rm sph}}\right)^p
+\right]
+\dot{M}_{\rm sph}.\]</div>
+<p>The associated angular momentum loss is obtained by weighting the outflow by the
+local Keplerian specific angular momentum, giving</p>
+<div class="math notranslate nohighlight">
+\[\frac{dJ_D}{dt}
+=
+-\frac{2p}{2p+1}
+\sqrt{G M_{\rm BH} R_{\rm sph}}\;
+\dot{M}_{\rm sph}.\]</div>
+</section>
+<section id="irradiation">
+<h3><a class="toc-backref" href="#id25" role="doc-backlink">Irradiation</a><a class="headerlink" href="#irradiation" title="Link to this heading">#</a></h3>
+<p>In many accretion flows, radiation produced near the central object can illuminate
+the outer disk and modify its thermal structure. This scenario is referred to as an
+<strong>irradiated disk</strong>, and is particularly relevant in systems with persistent high-energy
+emission (e.g. X-ray binaries, active galactic nuclei, and disks surrounding neutron stars).
+In such cases, irradiation can contribute significantly to the local heating budget.</p>
+<p>We model the central radiation field as a point source of luminosity <span class="math notranslate nohighlight">\(L\)</span>. At the
+characteristic disk radius <span class="math notranslate nohighlight">\(R_D\)</span>, the incident flux is</p>
+<div class="math notranslate nohighlight">
+\[F_{\rm irr} = \frac{L}{4\pi R_D^2} \cos\psi,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\psi\)</span> is the angle between the disk surface normal and the direction to the
+central source. Only a fraction of this flux is absorbed by the disk, with the remainder
+reflected. The corresponding heating rate per unit area is therefore</p>
+<div class="math notranslate nohighlight">
+\[Q^+_{\rm irr} = (1 - \beta)\, F_{\rm irr},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta\)</span> is the disk albedo <a class="footnote-reference brackets" href="#footcite-frank2002accretion" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>.</p>
+<p>The geometric factor <span class="math notranslate nohighlight">\(\cos\psi\)</span> determines how efficiently the disk intercepts
+the central radiation. In general, this depends on the global disk structure, including
+its scale height and radial flaring. For a disk surface described by a height profile
+<span class="math notranslate nohighlight">\(H(R)\)</span>, the relevant angles can be written as</p>
+<div class="math notranslate nohighlight">
+\[\psi = \frac{\pi}{2} - \theta + \phi,\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[\tan \theta = \frac{dH}{dR}, \qquad \tan \phi = \frac{H}{R}.\]</div>
+<p>In the thin-disk limit (<span class="math notranslate nohighlight">\(H \ll R\)</span>), these angles are small, and we may approximate</p>
+<div class="math notranslate nohighlight">
+\[\cos\psi \approx \frac{dH}{dR} - \frac{H}{R}.\]</div>
+<p>This expression highlights an important physical point: irradiation requires disk
+flaring. A purely flat disk (<span class="math notranslate nohighlight">\(H \propto R\)</span>) intercepts no central radiation,
+while a flared disk (<span class="math notranslate nohighlight">\(dH/dR &gt; H/R\)</span>) presents a non-zero projected area to the
+source and can therefore be efficiently heated.</p>
+<p>Because the one-zone model does not resolve the radial structure of the disk, we
+parametrize this geometric factor. Motivated by analytic thin-disk solutions, we assume
+a power-law scaling of the form</p>
+<div class="math notranslate nohighlight">
+\[H \propto R^{n_{\rm irr}},\]</div>
+<p>which implies</p>
+<div class="math notranslate nohighlight">
+\[\frac{dH}{dR} = n_{\rm irr} \frac{H}{R}.\]</div>
+<p>Substituting into the expression for <span class="math notranslate nohighlight">\(\cos\psi\)</span>, we obtain</p>
+<div class="math notranslate nohighlight">
+\[\cos\psi \approx (n_{\rm irr} - 1)\,\frac{H}{R}.\]</div>
+<p>The irradiating flux can therefore be written as</p>
+<div class="math notranslate nohighlight">
+\[F_{\rm irr}
+=
+\frac{L}{4\pi R_D^2}\,(n_{\rm irr} - 1)\,\frac{H}{R}.\]</div>
+<p>Including the albedo, the final expression for the irradiative heating term becomes</p>
+<div class="math notranslate nohighlight">
+\[Q^+_{\rm irr}
+=
+(1 - \beta_{\rm irr})\,
+\frac{L}{4\pi R_D^2}\,(n_{\rm irr} - 1)\,\frac{H}{R}.\]</div>
+<p>Typical values are <span class="math notranslate nohighlight">\(n_{\rm irr} \approx 9/8\)</span> for viscously heated thin disks and
+<span class="math notranslate nohighlight">\(n_{\rm irr} \approx 9/7\)</span> for irradiation-dominated disks
+<a class="footnote-reference brackets" href="#footcite-frank2002accretion" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>. In practice, we treat <span class="math notranslate nohighlight">\(n_{\rm irr}\)</span> as a free
+parameter that encapsulates the uncertain large-scale geometry of the disk.</p>
+</section>
+</section>
+<section id="specific-disk-models">
+<h2><a class="toc-backref" href="#id26" role="doc-backlink">Specific Disk Models</a><a class="headerlink" href="#specific-disk-models" title="Link to this heading">#</a></h2>
+<p>Having now covered the detailed theoretical framework for constructing one-zone disk models, we can now describe the
+specific disk models that are currently implemented in Trilobite.  Each of these models is designed
+to capture the physics of accretion disks in a particular regime while still being computationally efficient.</p>
+<section id="standard-disks">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Standard Disks</a><a class="headerlink" href="#standard-disks" title="Link to this heading">#</a></h3>
+<p>In this section, we describe the theoretical elements of our “standard” disk models</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+gP + ES</label><div class="sd-tab-content docutils">
+<p>This model includes gas pressure and electron scattering opacity.  The heating is dominated by viscous
+dissipation and the cooling is dominated by radiative diffusion.  This is a very common model in the literature
+and captures the physics of many accretion disks in a variety of regimes.</p>
+<p>A fortunate feature of this disk is that the temperature can be computed from the energy balance condition
+analytically. The heating balance equation takes the form</p>
+<div class="math notranslate nohighlight">
+\[\frac{9}{8}\,\alpha\,\frac{k_B T_c}{\mu m_p}\,\Sigma\,\Omega =
+\frac{16 \sigma_{\rm SB}}{3 \kappa_{\rm es} \Sigma} T_c^4,\]</div>
+<p>which results in</p>
+<div class="math notranslate nohighlight" id="equation-eq-gas-pressure-temperature">
+<span class="eqno">(11)<a class="headerlink" href="#equation-eq-gas-pressure-temperature" title="Link to this equation">#</a></span>\[\boxed{
+T_c^3 = \frac{27}{128}\,\frac{\kappa_{\rm es} k_B}{\sigma_{\rm SB} \mu m_p}\,\alpha\,\Sigma^2\,\Omega.
+}\]</div>
+</div>
+<input id="sd-tab-item-6" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
+igP + ES</label><div class="sd-tab-content docutils">
+<p>This model includes gas pressure and radiation pressure in a single equation of state, as well
+as electron scattering opacity.  The heating is dominated by viscous dissipation and the cooling
+is dominated by radiative diffusion.  This model is necessary to capture the physics of disks in
+regimes where radiation pressure becomes important (e.g. at high temperatures or low densities).</p>
+<p>Once again,</p>
+<div class="math notranslate nohighlight">
+\[\frac{9}{8}\,\alpha\,\frac{k_B T_c}{\mu m_p}\,\Sigma\,\Omega =
+\frac{16 \sigma_{\rm SB}}{3 \kappa_{\rm es} \Sigma} T_c^4,\]</div>
+<p>however, the sound speed is now a non-trivial function of the temperature. We therefore utilize a
+root finding algorithm which occurs in two steps:</p>
+<ol class="arabic simple">
+<li><p>For a given proposal temperature, the sound speed is computed by solving the quadratic equation (eq:cs_quadratic).</p></li>
+<li><p>The energy balance condition is evaluated and the proposal temperature is updated until the balance condition
+is satisfied to within some tolerance.</p></li>
+</ol>
+<p>This then produces the correct balancing temperature.</p>
+</div>
+</div>
+</section>
+<section id="modified-dynamical-disks">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Modified Dynamical Disks</a><a class="headerlink" href="#modified-dynamical-disks" title="Link to this heading">#</a></h3>
+<p>In disks with advection of heat as well as the standard balance between viscous heating and radiative cooling,
+the energy balance condition becomes</p>
+<div class="math notranslate nohighlight">
+\[\frac{9}{8}\,\alpha\,c_s^2\,\Sigma\,\Omega =
+\frac{16 \sigma_{\rm SB}}{3 \kappa_R \Sigma} T_c^4 +
+\xi \frac{\dot{M}}{2\pi R_D^2} c_s^2.\]</div>
+<p>where the second term on the RHS captures the advective cooling.  This model is necessary to capture
+the physics of radiatively inefficient accretion flows (RIAFs) and other regimes where advection is important.</p>
+<p>In this case, the procedure largely mirrors that of the standard disks with the additional complication of
+having additional terms which must be computed. Using the standard closure, we use</p>
+<div class="math notranslate nohighlight">
+\[\dot{M} = f_D\,\frac{M_D}{t_{\rm visc}} = f_D\,\nu\,\frac{M_D}{R_D^2} = f_D\,\alpha\,\frac{c_s^2}{\Omega}\,\frac{M_D}{R_D^2},\]</div>
+<p>to compute the mass accretion rate, which then allows for the evaluation of the advective cooling term.  This is then
+added to the radiative cooling term and the energy balance condition is solved for the temperature as before.</p>
+</section>
+<section id="fallback-disks">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Fallback Disks</a><a class="headerlink" href="#fallback-disks" title="Link to this heading">#</a></h3>
+<p>In many astrophysical systems, the accretion disk is continuously supplied with mass from an external reservoir.
+In the context of tidal disruption events (TDEs), this corresponds to the fallback of stellar debris onto the disk.
+This mass supply modifies the standard viscous evolution by introducing a source term in the mass and angular
+momentum equations.</p>
+<p>We model the fallback accretion rate using a simple power-law prescription:</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_{\rm fb}(t) = \dot{M}_0 \left(\frac{t}{t_0}\right)^{-5/3},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}_0\)</span> is the normalization of the fallback rate at a reference time <span class="math notranslate nohighlight">\(t_0\)</span>.</p>
+<p>The disk mass evolution equation then becomes</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_D =
+-\dot{M}_{\rm acc}
++ \dot{M}_{\rm fb}
+- \dot{M}_{\rm outflow}.\]</div>
+<p>The fallback material also carries angular momentum. Assuming the material circularizes at a characteristic
+radius <span class="math notranslate nohighlight">\(R_{\rm circ}\)</span>, the specific angular momentum of the inflow is</p>
+<div class="math notranslate nohighlight">
+\[\ell_{\rm fb} = \sqrt{G M_{\rm BH} R_{\rm circ}}.\]</div>
+<p>The angular momentum evolution equation is therefore</p>
+<div class="math notranslate nohighlight">
+\[\dot{J}_D =
+-\dot{J}_{\rm acc}
++ \dot{M}_{\rm fb}\,\ell_{\rm fb}
+- \dot{J}_{\rm outflow}.\]</div>
+<p>In the simplest implementation, the fallback radius is assumed to be comparable to the disk radius
+(<span class="math notranslate nohighlight">\(R_{\rm circ} \sim R_D\)</span>), so that the injected material has a similar specific angular momentum
+to the bulk of the disk. More detailed treatments may instead track the circularization radius explicitly.</p>
+<p>The inclusion of fallback fundamentally alters the disk evolution. At early times, when
+<span class="math notranslate nohighlight">\(\dot{M}_{\rm fb} \gg \dot{M}_{\rm acc}\)</span>, the disk mass grows and the disk can enter
+high-accretion states. At late times, as the fallback rate declines, the disk transitions
+to a viscously dominated evolution where</p>
+<div class="math notranslate nohighlight">
+\[\dot{M}_D \approx -\dot{M}_{\rm acc},\]</div>
+<p>and the system asymptotically approaches the standard spreading-disk solution.</p>
+<hr class="docutils" />
+<div class="docutils container" id="id13">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-metzgertimedependentmodelsaccretion2008" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id2">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id5">4</a>,<a role="doc-backlink" href="#id6">5</a>)</span>
+<p>B. D. Metzger, A. L. Piro, and E. Quataert. Time-Dependent Models of Accretion Disks Formed from Compact Object Mergers. <em>Monthly Notices of the Royal Astronomical Society</em>, September 2008. arXiv:0805.4415 [astro-ph]. URL: <a class="reference external" href="http://arxiv.org/abs/0805.4415">http://arxiv.org/abs/0805.4415</a> (visited on 2026-03-14), <a class="reference external" href="https://doi.org/10.1111/j.1365-2966.2008.13789.x">doi:10.1111/j.1365-2966.2008.13789.x</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-pirolatetimeevolutioninstabilities2025" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id3">2</a><span class="fn-bracket">]</span></span>
+<p>Anthony L. Piro and Brenna Mockler. Late-time Evolution and Instabilities of Tidal Disruption Disks. <em>The Astrophysical Journal</em>, 985:77, May 2025. ADS Bibcode: 2025ApJ…985…77P. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2025ApJ...985...77P">https://ui.adsabs.harvard.edu/abs/2025ApJ…985…77P</a> (visited on 2026-04-14), <a class="reference external" href="https://doi.org/10.3847/1538-4357/adc729">doi:10.3847/1538-4357/adc729</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2025apj-985-77p" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id9">2</a>)</span>
+<p>Anthony L. Piro and Brenna Mockler. Late-time Evolution and Instabilities of Tidal Disruption Disks. <em>\apj </em>, 985(1):77, May 2025. <a class="reference external" href="https://arxiv.org/abs/2412.01922">arXiv:2412.01922</a>, <a class="reference external" href="https://doi.org/10.3847/1538-4357/adc729">doi:10.3847/1538-4357/adc729</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2007pasj-59-443w" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">4</a><span class="fn-bracket">]</span></span>
+<p>Ken-Ya Watarai. New Analytical Formulae for Optically Thin Accretion Flows. <em>\pasj </em>, 59:443–449, April 2007. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0612747">arXiv:astro-ph/0612747</a>, <a class="reference external" href="https://doi.org/10.1093/pasj/59.2.443">doi:10.1093/pasj/59.2.443</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-begelmancansphericallyaccreting1979" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id10">5</a><span class="fn-bracket">]</span></span>
+<p>M. C. Begelman. Can a spherically accreting black hole radiate very near the Eddington limit? <em>Monthly Notices of the Royal Astronomical Society</em>, 187:237–251, April 1979. ADS Bibcode: 1979MNRAS.187..237B. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1979MNRAS.187..237B">https://ui.adsabs.harvard.edu/abs/1979MNRAS.187..237B</a> (visited on 2026-04-14), <a class="reference external" href="https://doi.org/10.1093/mnras/187.2.237">doi:10.1093/mnras/187.2.237</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-frank2002accretion" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id11">1</a>,<a role="doc-backlink" href="#id12">2</a>)</span>
+<p>Juhan Frank, Andrew R King, and Derek Raine. <em>Accretion power in astrophysics</em>. Cambridge university press, 2002.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="one_zone_disk_dev.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Developer Guide: Adding One-Zone Disk Closures</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-core-model">The Core Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#one-zone-geometry">One-Zone Geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evolution-equations">Evolution Equations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#timestepping">Timestepping</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thermodynamics">Thermodynamics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#viscosity">Viscosity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equation-of-state">Equation of State</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-balance">Energy Balance</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#additional-physics">Additional Physics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wind-launching">Wind Launching</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#irradiation">Irradiation</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specific-disk-models">Specific Disk Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#standard-disks">Standard Disks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#modified-dynamical-disks">Modified Dynamical Disks</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fallback-disks">Fallback Disks</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/disks/one_zone_disk_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,213 @@
+:orphan:
+
+.. _dynamics_gallery:
+
+*****************************
+Shock Dynamics
+*****************************
+
+These examples demonstrate the low-level shock physics machinery in Trilobite. They cover
+the numerical shock engine that evolves blast-wave radius, velocity, and swept-up mass through
+an arbitrary density profile, using Rankine–Hugoniot jump conditions at each step.
+
+These examples are most useful when working with the :mod:`~trilobite.dynamics` subpackage
+directly (e.g., to implement a new shock model) rather than through the higher-level model
+interface in :mod:`~trilobite.models`.
+
+.. rubric:: What you'll find here
+
+- Rankine--Hugoniot jump conditions from the Newtonian to the ultra-relativistic regime
+- Configuring and running the numerical shock engine
+- Shock evolution in power-law circumstellar density profiles
+- Visualizing shock radius, velocity, and column density over time
+
+.. rubric:: API reference
+
+:mod:`trilobite.dynamics.shocks`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="   This example compares weak-shock and strong-shock Rankine–Hugoniot    solvers in a cold upstream medium. By sweeping the shock velocity    from subsonic to highly supersonic values, it shows how the weak-shock    solution smoothly transitions into the strong-shock limit.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_rh_jump_weak_conditions_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_rh_jump_weak_conditions`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Weak vs Strong Shock Jump Conditions (Cold Medium)</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to use the PressureDrivenThinShellShockEngine to model the evolution of a supernova shock expanding into a non-uniform circumstellar medium (CSM).">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_numerical_shock_engine_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_numerical_shock_engine`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Numerical Thin-Shell Shock Evolution</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="   This example compares Newtonian, relativistic, and ultra-relativistic    shock jump-condition solvers across a wide range of shock velocities.    By sweeping from \beta \sim 10^{-3} to relativistic speeds,    it shows where classical approximations break down and how the full    relativistic solution transitions between regimes.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_rh_jump_conditions_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_rh_jump_conditions`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Rankine--Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="   This example adds a \rho^2-type radiative cooling term to Region 3    (the shocked CSM) of the    MechanicalShockEngine and    shows how varying the cooling coefficient from sub-dominant to strongly    radiative changes the thermal energy budget, forward-shock speed, and shell    width of the shocked CSM layer.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_mechanical_shock_cooling_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_mechanical_shock_cooling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Radiative Cooling in the Mechanical Shock Engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="   This example walks through the full setup of the    MechanicalShockEngine for a    canonical core-collapse supernova expanding into a red-supergiant wind.    It covers ejecta and CSM profile construction, source-function wrapping,    self-consistent initial conditions, and interpretation of the two-shock    structure in the outputs.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_mechanical_shock_model_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_mechanical_shock_model`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mechanical Shock Model: Forward and Reverse Shock Evolution</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="   This example compares the relativistic thin-shell engine    (~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine)    against its non-relativistic counterpart    (~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine)    across four initial shell momenta spanning    \Gamma_0\beta_0 = 0.5 to \Gamma_0\beta_0 = 70.    The goal is to show where relativistic corrections become essential — all    four cases are genuinely relativistic, so the two engines disagree    throughout.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_relativistic_thin_shell_convergence_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_relativistic_thin_shell_convergence`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Relativistic vs. Non-Relativistic Thin-Shell Convergence</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example explores how a pressure-driven supernova shock evolves when the same ejecta model is launched into several different circumstellar medium (CSM) density profiles.  It uses the PressureDrivenThinShellShockEngine together with the CSM factory functions in utils.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_numerical_shocks_csms_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_numerical_shocks_csms`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">SNe Shocks In Different CSM Environments</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the internal structure of the Chevalier self-similar two-shock system and maps it back to physical space at a series of snapshot times.">
+
+.. only:: html
+
+  .. image:: /auto_examples/dynamics/images/thumb/sphx_glr_plot_chevalier_shock_structure_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/dynamics/plot_chevalier_shock_structure`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Chevalier Self-Similar Shock Structure</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/dynamics/plot_rh_jump_weak_conditions
+   /auto_examples/dynamics/plot_numerical_shock_engine
+   /auto_examples/dynamics/plot_rh_jump_conditions
+   /auto_examples/dynamics/plot_mechanical_shock_cooling
+   /auto_examples/dynamics/plot_mechanical_shock_model
+   /auto_examples/dynamics/plot_relativistic_thin_shell_convergence
+   /auto_examples/dynamics/plot_numerical_shocks_csms
+   /auto_examples/dynamics/plot_chevalier_shock_structure
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: dynamics_python.zip </auto_examples/dynamics/dynamics_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: dynamics_jupyter.zip </auto_examples/dynamics/dynamics_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

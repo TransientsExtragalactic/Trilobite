@@ -1,0 +1,1408 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Trilobite Models &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/models/overview';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Trilobite Model Directory" href="directory.html" />
+    <link rel="prev" title="Optical Filters and Photometry" href="../data/filter_photometry.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/radiation/overview.html">Radiation Processes in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Trilobite Models</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="trilobite-models">
+<span id="models-overview"></span><h1>Trilobite Models<a class="headerlink" href="#trilobite-models" title="Link to this heading">#</a></h1>
+<p>At the heart of every Trilobite workflow is a <strong>model</strong>. At their core, models are a relatively simple concept:
+They are a mapping <span class="math notranslate nohighlight">\(\mathcal{M}\)</span> from a set of parameters <span class="math notranslate nohighlight">\(\boldsymbol{\Theta}\)</span> and a set of variables
+<span class="math notranslate nohighlight">\({\bf x}\)</span> to a set of observables <span class="math notranslate nohighlight">\({\bf y}\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{M}(\boldsymbol{\Theta}, {\bf x}) = {\bf y}.\]</div>
+<p>That’s really all there is to it! The exact nature of the mapping is entirely dependent on the model itself, as are
+the variables, the parameters, and the observables.</p>
+<p>The intention of Trilobite is to provide an <strong>extensive backend library of physics and mathematics modules</strong> so that,
+when it comes time to write your model, you can generate the model with just a few lines of code to patch together
+the different pieces of physics that you need. Once your model is completed, you can use it to generate forward modeled
+synthetic data or to perform inference on real data. This is the principle of <strong>rapid-deployment modeling</strong>.</p>
+<p>In this guide, we’ll discuss the steps and the nuances to consider when building your own Trilobite models.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#the-model-class" id="id1">The Model Class</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-forward-modelling-directive" id="id2">The Forward Modelling Directive</a></p></li>
+<li><p><a class="reference internal" href="#model-parameters-and-variables" id="id3">Model Parameters and Variables</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#a-simple-example" id="id4">A Simple Example</a></p></li>
+<li><p><a class="reference internal" href="#specialized-model-patterns" id="id5">Specialized Model Patterns</a></p>
+<ul>
+<li><p><a class="reference internal" href="#optical-photometry-models" id="id6">Optical Photometry Models</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="the-model-class">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">The Model Class</a><a class="headerlink" href="#the-model-class" title="Link to this heading">#</a></h2>
+<p>(<em>source module</em>: <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model</span></code></a>)</p>
+<p>In order to explain the model building process, we first need to understand the <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model</span></code></a> class,
+which is <strong>the building block for all Trilobite models</strong>. This class provides a basic template for building a model, and
+its suggested that you actually look at the source code of the model class while building your own so you can understand
+what the different wrapper methods are doing.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For <strong>any model</strong> you develop in the Trilobite framework, you should do the following basic steps:</p>
+<ol class="arabic simple">
+<li><p><strong>Develop the forward model</strong>: This is the core of your model, where you determine the physics you
+want to represent. (See <a class="reference internal" href="#forward-modeling"><span class="std std-ref">The Forward Modelling Directive</span></a> for more details on this step.)</p></li>
+<li><p><strong>Define the model’s parameters and variables</strong>: This is where you specify the parameters and variables that
+your model will use, along with their base units and other metadata. (See <a class="reference internal" href="#model-parameters"><span class="std std-ref">Model Parameters and Variables</span></a> for more details on this step.)</p></li>
+</ol>
+<p>This is really all there is to it! In a few cases, specialized modeling patterns have been developed for
+specific types of models (e.g. optical photometry models), but in general, the above two steps are all you need to do to build a new model.</p>
+</div>
+<p>To get started, you can create a new class that inherits from <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model</span></code></a> and
+implement the necessary methods and attributes.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyModel</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>
+    <span class="c1"># Step 1: Define the model&#39;s parameters and variables as class attributes.</span>
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># ... define your parameters here ...</span>
+    <span class="p">)</span>
+    <span class="n">VARIABLES</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="c1"># ... define your variables here ...</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Step 2: Implement the forward model method to compute the outputs based on the inputs.</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">variables</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="c1"># ... implement your model&#39;s physics here ...</span>
+        <span class="k">return</span> <span class="n">outputs</span>
+</pre></div>
+</div>
+</div>
+</details><section id="the-forward-modelling-directive">
+<span id="forward-modeling"></span><h3><a class="toc-backref" href="#id2" role="doc-backlink">The Forward Modelling Directive</a><a class="headerlink" href="#the-forward-modelling-directive" title="Link to this heading">#</a></h3>
+<p>The most important method in the <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model</span></code></a> class is the
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model._forward_model()</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nd">@abstractmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n">_ModelVariablesInputRaw</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">_ModelParametersInputRaw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ModelOutputRaw</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the model&#39;s outputs based on the provided variables and parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    variables: dict of str, array-like</span>
+<span class="sd">        The model&#39;s input variables. Each variable must be provided as a key-value pair in the</span>
+<span class="sd">        dictionary, where the key is the variable name and the value is the variable&#39;s value. Each element</span>
+<span class="sd">        must either be a float or an array-like object. Standard numpy broadcasting rules are applied</span>
+<span class="sd">        throughout.</span>
+<span class="sd">    parameters: dict of str, array-like</span>
+<span class="sd">        The model&#39;s parameters. Each parameter must be provided as a key-value pair in the</span>
+<span class="sd">        dictionary, where the key is the parameter name and the value is the parameter&#39;s value. Each element</span>
+<span class="sd">        must either be a float or an array-like object. Standard numpy broadcasting rules are applied</span>
+<span class="sd">        throughout. All parameters must be provided; there are no default values at this level.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    outputs: dict of str, array-like</span>
+<span class="sd">        The model&#39;s outputs. Each output is provided as a key-value pair in the dictionary, where the key</span>
+<span class="sd">        is the output name and the value is the computed output value. Each element will either be a float</span>
+<span class="sd">        or an array-like object, depending on the inputs. Standard numpy broadcasting rules are applied throughout.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">pass</span>
+</pre></div>
+</div>
+<p>This is the real workhorse of the model class: it takes in the model’s variables and parameters (as <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) and
+performs whatever work the model need to generate its outputs. It then bundles those outputs into another <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>
+and returns them.</p>
+<p>When building your own model, you will need to implement this method to define how your model computes its outputs
+based on the provided variables and parameters.</p>
+<p>There are a few pieces of advice to be aware of when implementing this method:</p>
+<ol class="arabic">
+<li><p><strong>Use Numpy Broadcasting</strong>: The inputs to this method can be either scalar values or array-like objects.
+Make sure to leverage numpy’s broadcasting capabilities to handle both cases seamlessly. This will allow your
+model to work with a variety of input shapes and sizes.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The convention throughout Trilobite is that <strong>numpy broadcasting rules are implicitly assumed</strong> everywhere
+unless otherwise specified. As an example, consider a function</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">example_function</span><span class="p">(</span><span class="n">a</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">a</span> <span class="o">+</span> <span class="n">b</span>
+</pre></div>
+</div>
+<p>The developer should <strong>NOT</strong> attempt to coerce the shapes of <code class="docutils literal notranslate"><span class="pre">a</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> to be the same shape.
+Instead, they should
+simply rely on numpy’s broadcasting rules to handle the shapes appropriately.
+This means that if <code class="docutils literal notranslate"><span class="pre">a</span></code> is of shape
+<code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">M)</span></code> and <code class="docutils literal notranslate"><span class="pre">b</span></code> is of shape <code class="docutils literal notranslate"><span class="pre">(M,)</span></code>, numpy will automatically
+broadcast <code class="docutils literal notranslate"><span class="pre">b</span></code> to shape <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">M)</span></code> during the addition operation.</p>
+</div>
+</li>
+<li><p><strong>Performance is Critical</strong>: Since this method will be called frequently during model evaluations,
+it’s essential to optimize its performance. Avoid unnecessary computations and leverage efficient
+numerical libraries whenever possible.</p>
+<p>To ensure that this method is performant, consider the following tips:</p>
+<ul class="simple">
+<li><p><strong>Vectorization</strong>: Whenever possible, use vectorized operations instead of loops. Numpy and similar libraries
+are optimized for vectorized computations, which can significantly speed up your model evaluations.</p></li>
+<li><p><strong>No Units</strong>: Units should <strong>never</strong> be coerced within the computational layer. The public-facing method
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.forward_model.html#trilobite.models.core.base.Model.forward_model" title="trilobite.models.core.base.Model.forward_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model.forward_model()</span></code></a> handles all unit conversions before and after calling
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model._forward_model()</span></code>. This ensures that the computational layer remains as efficient
+as possible. The convention for base units is discussed in <a class="reference internal" href="#model-parameters"><span class="std std-ref">Model Parameters and Variables</span></a>.</p></li>
+<li><p><strong>Low-Level Building Blocks</strong>: Whenever possible, leverage low-level building blocks from the Trilobite
+library. These building blocks are designed to be efficient and can help you avoid reinventing the wheel.</p></li>
+<li><p><strong>Cythonize if Necessary</strong>: If you find that certain parts of your model are still too slow, consider implementing
+those parts in Cython or using other performance optimization techniques.</p></li>
+</ul>
+</li>
+<li><p><strong>Clear Documentation</strong>: Document the expected inputs and outputs of your model clearly. This will help
+other developers (and your future self) understand how to use your model effectively.</p></li>
+</ol>
+</section>
+<section id="model-parameters-and-variables">
+<span id="model-parameters"></span><h3><a class="toc-backref" href="#id3" role="doc-backlink">Model Parameters and Variables</a><a class="headerlink" href="#model-parameters-and-variables" title="Link to this heading">#</a></h3>
+<p>At the top of every <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model</span></code></a> class are two important class attributes: the
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.PARAMETERS.html#trilobite.models.core.base.Model.PARAMETERS" title="trilobite.models.core.base.Model.PARAMETERS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model.PARAMETERS</span></code></a> and <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.VARIABLES.html#trilobite.models.core.base.Model.VARIABLES" title="trilobite.models.core.base.Model.VARIABLES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model.VARIABLES</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># =============================================== #</span>
+<span class="c1"># Parameter and Variable Declarations             #</span>
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Each model must declare its parameters and variables as class-level attributes. These</span>
+<span class="c1"># must each be instances of `ModelParameter` and `ModelVariable`, respectively.</span>
+<span class="n">PARAMETERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ModelParameter</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelParameter`: The model&#39;s parameters.</span>
+
+<span class="sd">Each element of :attr:`PARAMETERS` is a :class:`ModelParameter` instance that defines a single</span>
+<span class="sd">parameter of the model. These parameters are used to configure the model and control its behavior. Each</span>
+<span class="sd">parameter contains information about the base units, default value, and valid range for that parameter.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">VARIABLES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">ModelVariable</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">()</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelVariable`: The model&#39;s variables.</span>
+
+<span class="sd">Each element of :attr:`VARIABLES` is a :class:`ModelVariable` instance that defines a single</span>
+<span class="sd">variable of the model. These variables represent the inputs to the model that can vary during</span>
+<span class="sd">evaluation. Each variable contains information about the base units, name, etc. of the variable. Notably,</span>
+<span class="sd">variables differ from the parameters (:attr:`PARAMETERS`) in that variables are do **NOT** have default</span>
+<span class="sd">values, do **NOT** have validity ranges, and are expected to be provided at model evaluation time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>These two attributes are used to define the parameters and variables that your model will use. Each parameter
+and variable is represented by an instance of the <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.parameters.ModelParameter</span></code></a> and
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelVariable.html#trilobite.models.core.parameters.ModelVariable" title="trilobite.models.core.parameters.ModelVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">trilobite.models.core.parameters.ModelVariable</span></code></a> classes, respectively.</p>
+<p>When building your own model, you’ll need to populate these attributes with the appropriate parameters and
+variables for your model. This will help ensure that your model is well-defined and can be used effectively
+within the Trilobite framework.</p>
+<p>For example,</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example Parameter and Variable Declarations</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># =============================================== #</span>
+<span class="c1"># Parameter and Variable Declarations             #</span>
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Each model must declare its parameters and variables as class-level attributes. These</span>
+<span class="c1"># must each be instances of `ModelParameter` and `ModelVariable`, respectively.</span>
+<span class="n">PARAMETERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;ModelParameter&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Normalization constant of the SED.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;Jy&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;F_{\rm nu,0}&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;nu_break&quot;</span><span class="p">,</span>
+        <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Break frequency of the SED.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;GHz&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\nu_{\rm break}&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Power-law index for the electron energy distribution.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;p&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;s&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The smoothing parameter of the broken power-law.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelParameter`: The model&#39;s parameters.</span>
+
+<span class="sd">Each element of :attr:`PARAMETERS` is a :class:`ModelParameter` instance that defines a single</span>
+<span class="sd">parameter of the model. These parameters are used to configure the model and control its behavior. Each</span>
+<span class="sd">parameter contains information about the base units, default value, and valid range for that parameter.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">VARIABLES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;ModelVariable&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ModelVariable</span><span class="p">(</span>
+        <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Observing frequency at which to evaluate the SED.&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;GHz&quot;</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\nu&quot;</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelVariable`: The model&#39;s variables.</span>
+
+<span class="sd">Each element of :attr:`VARIABLES` is a :class:`ModelVariable` instance that defines a single</span>
+<span class="sd">variable of the model. These variables represent the inputs to the model that can vary during</span>
+<span class="sd">evaluation. Each variable contains information about the base units, name, etc. of the variable. Notably,</span>
+<span class="sd">variables differ from the parameters (:attr:`PARAMETERS`) in that variables are do **NOT** have default</span>
+<span class="sd">values, do **NOT** have validity ranges, and are expected to be provided at model evaluation time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</div>
+</details><section id="the-modelparameter-and-modelvariable-classes">
+<h4>The ModelParameter and ModelVariable Classes<a class="headerlink" href="#the-modelparameter-and-modelvariable-classes" title="Link to this heading">#</a></h4>
+<p>Each element of the <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.PARAMETERS.html#trilobite.models.core.base.Model.PARAMETERS" title="trilobite.models.core.base.Model.PARAMETERS"><code class="xref py py-attr docutils literal notranslate"><span class="pre">PARAMETERS</span></code></a> and <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.VARIABLES.html#trilobite.models.core.base.Model.VARIABLES" title="trilobite.models.core.base.Model.VARIABLES"><code class="xref py py-attr docutils literal notranslate"><span class="pre">VARIABLES</span></code></a> must be
+an instance of the <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a> and <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelVariable.html#trilobite.models.core.parameters.ModelVariable" title="trilobite.models.core.parameters.ModelVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariable</span></code></a> classes, respectively.</p>
+<p>By means of a brief introduction to each of these classes, we can understand how to use them effectively when defining our model’s parameters and variables.
+The core idea with these classes is that they provide a simple structure for tracking a parameters / variables name,
+its base units, and other metadata that is useful for documentation and validation.</p>
+<p>From the <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a> documentation:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">default</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_units</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">]</span> <span class="o">=</span> <span class="n">u</span><span class="o">.</span><span class="n">dimensionless_unscaled</span><span class="p">,</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">latex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="p">:</span> <span class="n">BoundType</span> <span class="o">=</span> <span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize a :class:`ModelParameter` instance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    name : str</span>
+<span class="sd">        Name of the parameter. This must match the keyword expected by the model&#39;s</span>
+<span class="sd">        forward function.</span>
+<span class="sd">    default : float or astropy.units.Quantity</span>
+<span class="sd">        Default value of the parameter. If a Quantity is provided, it will be coerced</span>
+<span class="sd">        into ``base_units``.</span>
+<span class="sd">    base_units : str or astropy.units.Unit, optional</span>
+<span class="sd">        Base units assumed by the model&#39;s internal (low-level) physics implementation.</span>
+<span class="sd">        Defaults to dimensionless.</span>
+<span class="sd">    description : str, optional</span>
+<span class="sd">        Human-readable description of the parameter.</span>
+<span class="sd">    latex : str, optional</span>
+<span class="sd">        LaTeX representation of the parameter symbol (e.g. ``r&quot;$\epsilon_B$&quot;``).</span>
+<span class="sd">    bounds : tuple or callable, optional</span>
+<span class="sd">        Either:</span>
+
+<span class="sd">        - A ``(min, max)`` tuple of floats in base units, or</span>
+<span class="sd">        - A callable ``f(value) -&gt; bool`` that returns whether the value is valid.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>Thus, a <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a> instance requires a name, a default value, and optionally accepts base units, a description,
+a LaTeX representation, and bounds for valid values. Likewise, the <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelVariable.html#trilobite.models.core.parameters.ModelVariable" title="trilobite.models.core.parameters.ModelVariable"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelVariable</span></code></a> class has a similar structure:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">base_units</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">],</span>
+    <span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+    <span class="n">latex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+<span class="p">):</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">name</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Name of the variable.&quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">description</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">description</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: Human-readable description of the variable.&quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">latex</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="n">latex</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;str: LaTeX representation of the variable symbol.&quot;&quot;&quot;</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">base_units</span><span class="p">:</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_parse_base_units</span><span class="p">(</span><span class="n">base_units</span><span class="p">)</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;astropy.units.Unit: Base units for this variable.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="parameter-bounds">
+<h4>Parameter Bounds<a class="headerlink" href="#parameter-bounds" title="Link to this heading">#</a></h4>
+<p>One confusing aspect of the <a class="reference internal" href="../../_as_gen/trilobite.models.core.parameters.ModelParameter.html#trilobite.models.core.parameters.ModelParameter" title="trilobite.models.core.parameters.ModelParameter"><code class="xref py py-class docutils literal notranslate"><span class="pre">ModelParameter</span></code></a> class is the
+<code class="docutils literal notranslate"><span class="pre">bounds</span></code> argument. This argument can either be a tuple of <code class="docutils literal notranslate"><span class="pre">(min,</span> <span class="pre">max)</span></code> values or a callable function that
+takes in a value and returns whether that value is valid. For example, a parameter which must be positive
+could be specified as</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">param</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+    <span class="s2">&quot;positive_param&quot;</span><span class="p">,</span>
+    <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;Jy&quot;</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Likewise, a parameter which must be any value except for 2.0 would require a callable function:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">is_valid</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">value</span> <span class="o">!=</span> <span class="mf">2.0</span>
+
+<span class="n">param</span> <span class="o">=</span> <span class="n">ModelParameter</span><span class="p">(</span>
+    <span class="s2">&quot;not_two_param&quot;</span><span class="p">,</span>
+    <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;Jy&quot;</span><span class="p">,</span>
+    <span class="n">bounds</span><span class="o">=</span><span class="n">is_valid</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Bounds checking is not performed automatically by <code class="docutils literal notranslate"><span class="pre">_forward_model</span></code>: this is for performance reasons. Instead,
+bounds checking is performed at the public-facing method <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.forward_model.html#trilobite.models.core.base.Model.forward_model" title="trilobite.models.core.base.Model.forward_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model.forward_model()</span></code></a>, which
+handles all unit conversions and validation before and after calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model._forward_model()</span></code>.
+This ensures that the computational layer remains as efficient as possible.</p>
+<p>In inference workflows, it is instead the likelihood object which evaluates the bounds of the parameters during
+sampling.</p>
+<p>DO NOT implement bounds checking in your <code class="docutils literal notranslate"><span class="pre">_forward_model</span></code> method!</p>
+</div>
+</section>
+<section id="units">
+<h4>Units<a class="headerlink" href="#units" title="Link to this heading">#</a></h4>
+<p>Every parameter and variable in Trilobite has associated <code class="docutils literal notranslate"><span class="pre">base_units</span></code>. These base units are used to ensure that
+the model’s computations are performed in a consistent unit system. When building your model, it’s important to
+choose appropriate base units for each parameter and variable. The choice of base units can impact the performance and
+accuracy of your model, so it’s worth taking the time to consider this carefully.</p>
+<p>When implementing the <code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model._forward_model()</span></code> method, you can assume that all inputs are provided
+in their base units. Likewise, the outputs you return from this method should also be in the appropriate base units.</p>
+<p>The public facing API method <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.forward_model.html#trilobite.models.core.base.Model.forward_model" title="trilobite.models.core.base.Model.forward_model"><code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model.forward_model()</span></code></a> will handle all unit conversions before and after
+calling <code class="xref py py-meth docutils literal notranslate"><span class="pre">trilobite.models.core.base.Model._forward_model()</span></code>. This ensures that the computational layer remains as efficient as possible.</p>
+<p>Unitless variables should have <code class="docutils literal notranslate"><span class="pre">&quot;&quot;</span></code> as their base units.</p>
+</section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="a-simple-example">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">A Simple Example</a><a class="headerlink" href="#a-simple-example" title="Link to this heading">#</a></h2>
+<p>Let’s look at the simple mode <a class="reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Synchrotron_SSA_SBPL_Model</span></code></a>,
+which models a synchrotron self-absorbed broken power-law spectral energy distribution (SED).</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>You can read more about this model and other synchrotron SED models in <a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_overview.html#synchrotron-overview"><span class="std std-ref">Synchrotron Emission Overview</span></a>.</p>
+</div>
+<p>Looking at the source code, the variables and parameters are</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># =============================================== #</span>
+<span class="c1"># Parameter and Variable Declarations             #</span>
+<span class="c1"># =============================================== #</span>
+<span class="c1"># Each model must declare its parameters and variables as class-level attributes. These</span>
+<span class="c1"># must each be instances of `ModelParameter` and `ModelVariable`, respectively.</span>
+<span class="n">PARAMETERS</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;ModelParameter&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;norm&quot;</span><span class="p">,</span>
+        <span class="mf">1.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Normalization constant of the SED.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;Jy&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;F_{\rm nu,0}&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;nu_break&quot;</span><span class="p">,</span>
+        <span class="mf">5.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Break frequency of the SED.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;GHz&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\nu_{\rm break}&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;p&quot;</span><span class="p">,</span>
+        <span class="mf">3.0</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Power-law index for the electron energy distribution.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;p&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+    <span class="n">ModelParameter</span><span class="p">(</span>
+        <span class="s2">&quot;s&quot;</span><span class="p">,</span>
+        <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span>
+        <span class="n">description</span><span class="o">=</span><span class="s2">&quot;The smoothing parameter of the broken power-law.&quot;</span><span class="p">,</span>
+        <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+        <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="mi">0</span><span class="p">),</span>
+        <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;s&quot;</span><span class="p">,</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelParameter`: The model&#39;s parameters.</span>
+
+<span class="sd">Each element of :attr:`PARAMETERS` is a :class:`ModelParameter` instance that defines a single</span>
+<span class="sd">parameter of the model. These parameters are used to configure the model and control its behavior. Each</span>
+<span class="sd">parameter contains information about the base units, default value, and valid range for that parameter.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="n">VARIABLES</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="s2">&quot;ModelVariable&quot;</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="n">ModelVariable</span><span class="p">(</span>
+        <span class="s2">&quot;frequency&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Observing frequency at which to evaluate the SED.&quot;</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;GHz&quot;</span><span class="p">,</span> <span class="n">latex</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;\nu&quot;</span>
+    <span class="p">),</span>
+<span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;tuple of :class:`ModelVariable`: The model&#39;s variables.</span>
+
+<span class="sd">Each element of :attr:`VARIABLES` is a :class:`ModelVariable` instance that defines a single</span>
+<span class="sd">variable of the model. These variables represent the inputs to the model that can vary during</span>
+<span class="sd">evaluation. Each variable contains information about the base units, name, etc. of the variable. Notably,</span>
+<span class="sd">variables differ from the parameters (:attr:`PARAMETERS`) in that variables are do **NOT** have default</span>
+<span class="sd">values, do **NOT** have validity ranges, and are expected to be provided at model evaluation time.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<p>As such, we can immediately see that this model has four parameters: <code class="docutils literal notranslate"><span class="pre">norm</span></code>, <code class="docutils literal notranslate"><span class="pre">nu_break</span></code>, <code class="docutils literal notranslate"><span class="pre">p</span></code>, and <code class="docutils literal notranslate"><span class="pre">s</span></code>,
+and one variable: <code class="docutils literal notranslate"><span class="pre">frequency</span></code>. The base units for each parameter and variable are also clearly defined. The forward
+model then implements the mapping:</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{M}: \nu \rightarrow F_\nu,\;{\rm s.t.}\; F_\nu = F_{\nu,0}
+\left[\left(\frac{\nu}{\nu_{\rm break}}\right)^{\alpha_1/s} +
+\left(\frac{\nu}{\nu_{\rm break}}\right)^{\alpha_2/s}\right]^{s},\]</div>
+<p>We can see this in the <code class="docutils literal notranslate"><span class="pre">_forward_model</span></code> method:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># =============================================== #</span>
+<span class="c1"># Model Evaluation Method                         #</span>
+<span class="c1"># =============================================== #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_forward_model</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">variables</span><span class="p">:</span> <span class="n">_ModelVariablesInputRaw</span><span class="p">,</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="n">_ModelParametersInputRaw</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">_ModelOutputRaw</span><span class="p">:</span>
+    <span class="c1"># Construct the indices from the value of p.</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;p&quot;</span><span class="p">]</span>
+    <span class="n">alpha_2</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">/</span> <span class="mi">3</span>
+    <span class="n">alpha_1</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">smoothed_BPL</span><span class="p">(</span>
+        <span class="n">variables</span><span class="p">[</span><span class="s2">&quot;frequency&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;norm&quot;</span><span class="p">],</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;nu_break&quot;</span><span class="p">],</span> <span class="n">alpha_1</span><span class="p">,</span> <span class="n">alpha_2</span><span class="p">,</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;s&quot;</span><span class="p">]</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">&quot;flux_density&quot;</span><span class="p">:</span> <span class="n">result</span><span class="p">}</span>
+</pre></div>
+</div>
+<p>That’s all there really is to it! Before implementing your own models, its worth spending some time looking through
+the existing models in the Trilobite library to see how they are structured and implemented. Likewise, familiarizing
+yourself with the existing physics toolchains will help you leverage the existing building blocks effectively.</p>
+</section>
+<hr class="docutils" id="optical-model-pattern" />
+<section id="specialized-model-patterns">
+<h2><a class="toc-backref" href="#id5" role="doc-backlink">Specialized Model Patterns</a><a class="headerlink" href="#specialized-model-patterns" title="Link to this heading">#</a></h2>
+<p>While the <a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a> class provides a fully
+general interface for defining forward models, many common modeling tasks
+follow recurring structural patterns. To support these use cases,
+Trilobite provides a set of <strong>specialized model base classes</strong> that extend
+the core model interface with additional functionality.</p>
+<p>These patterns are designed to:</p>
+<ul class="simple">
+<li><p>Encapsulate common workflows (e.g., filter convolution for photometric data),</p></li>
+<li><p>Reduce boilerplate in model implementations,</p></li>
+<li><p>Provide clearer and more constrained interfaces for specific problem domains.</p></li>
+</ul>
+<p>In practice, users are encouraged to subclass one of these specialized models
+whenever their modeling task aligns with the corresponding pattern, rather than
+re-implementing the same logic within a generic
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>.</p>
+<p>The following sections describe the available specialized model patterns and
+their intended use cases.</p>
+<section id="optical-photometry-models">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Optical Photometry Models</a><a class="headerlink" href="#optical-photometry-models" title="Link to this heading">#</a></h3>
+<p>A very common scenario in transient modeling is the need to predict <strong>broadband
+photometric observations</strong>—that is, fluxes measured through a set of filters at
+discrete epochs.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>From the user’s perspective, an optical photometry model behaves as follows:</p>
+<ul class="simple">
+<li><p>The model is constructed with a collection of filters (a
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>).</p></li>
+<li><p>At evaluation time, the user provides:</p>
+<ul>
+<li><p><code class="docutils literal notranslate"><span class="pre">band_index</span></code> — specifying which filters to evaluate</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">time</span></code> (for time-dependent models)</p></li>
+</ul>
+</li>
+<li><p>The model returns fluxes corresponding to those filters and epochs.</p></li>
+</ul>
+</div>
+<p>For example:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span> <span class="o">=</span> <span class="n">MyOpticalModel</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+
+<span class="n">flux</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;band_index&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">],</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">2e5</span><span class="p">]},</span>
+    <span class="n">params</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>In this interface, the user never explicitly performs filter convolution—the
+model takes care of this internally.</p>
+<p>Conceptually, this process is implemented by constructing an underlying
+spectral energy distribution (SED), <span class="math notranslate nohighlight">\(F_\nu(\nu, t)\)</span>, and convolving it
+with the filter transmission curves:</p>
+<div class="math notranslate nohighlight">
+\[F_{\rm band}(t) = \int F_\nu(\nu, t)\, T_{\rm band}(\nu)\, d\nu\]</div>
+<p>Trilobite provides two abstract base classes that implement this workflow:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.models.core.optical.OpticalModel.html#trilobite.models.core.optical.OpticalModel" title="trilobite.models.core.optical.OpticalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalModel</span></code></a> — for <strong>time-evolving</strong>
+multi-band observations.
+Variables: <code class="docutils literal notranslate"><span class="pre">band_index</span></code> and <code class="docutils literal notranslate"><span class="pre">time</span></code>.</p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.models.core.optical.OpticalEpochModel.html#trilobite.models.core.optical.OpticalEpochModel" title="trilobite.models.core.optical.OpticalEpochModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalEpochModel</span></code></a> — for <strong>single-epoch</strong>
+multi-band SEDs.
+Variable: <code class="docutils literal notranslate"><span class="pre">band_index</span></code> only.</p></li>
+</ul>
+<p>These classes manage:</p>
+<ul class="simple">
+<li><p>Filter convolution</p></li>
+<li><p>Band selection via <code class="docutils literal notranslate"><span class="pre">band_index</span></code></p></li>
+<li><p>Output assembly and broadcasting</p></li>
+</ul>
+<p>As a result, model implementations can focus entirely on computing the
+underlying SED.</p>
+<section id="the-compute-sed-contract">
+<h4>The <code class="docutils literal notranslate"><span class="pre">_compute_sed</span></code> Contract<a class="headerlink" href="#the-compute-sed-contract" title="Link to this heading">#</a></h4>
+<p>To define a custom optical model, subclasses implement <code class="docutils literal notranslate"><span class="pre">_compute_sed</span></code> rather
+than <code class="xref py py-meth docutils literal notranslate"><span class="pre">_forward_model()</span></code>.</p>
+<p>This method evaluates the SED on a shared frequency grid, which is then passed
+to the base class for convolution and output construction.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># For OpticalModel (time-evolving):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_sed</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">nu_grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>    <span class="c1"># shape (N_nu,), Hz</span>
+    <span class="n">t_unique</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>   <span class="c1"># shape (N_t,), seconds — deduplicated</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>            <span class="c1"># shape (N_t, N_nu), erg/s/cm²/Hz</span>
+
+<span class="c1"># For OpticalEpochModel (single epoch):</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_sed</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">nu_grid</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>    <span class="c1"># shape (N_nu,), Hz</span>
+    <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>            <span class="c1"># shape (N_nu,), erg/s/cm²/Hz</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">nu_grid</span></code> argument is always <code class="docutils literal notranslate"><span class="pre">self.bundle.frequency_grid</span></code>, constructed
+from the union of all filter transmission curves. The returned SED must be in
+linear-space <span class="math notranslate nohighlight">\(F_\nu\)</span> with units of
+<span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}\)</span>.</p>
+<p>Once computed, the base class applies
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.apply.html#trilobite.utils.phot_utils.FilterBundle.apply" title="trilobite.utils.phot_utils.FilterBundle.apply"><code class="xref py py-meth docutils literal notranslate"><span class="pre">apply()</span></code></a> to perform the filter
+convolution and assembles the requested outputs.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For <a class="reference internal" href="../../_as_gen/trilobite.models.core.optical.OpticalModel.html#trilobite.models.core.optical.OpticalModel" title="trilobite.models.core.optical.OpticalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalModel</span></code></a>, the <code class="docutils literal notranslate"><span class="pre">t_unique</span></code>
+array contains only the <strong>unique</strong> times present in the input—not the full
+input array.</p>
+<p>This ensures that expensive computations are performed only once per epoch,
+even if multiple filters are evaluated at that time.</p>
+</div>
+</section>
+<section id="the-band-index-variable">
+<h4>The <code class="docutils literal notranslate"><span class="pre">band_index</span></code> Variable<a class="headerlink" href="#the-band-index-variable" title="Link to this heading">#</a></h4>
+<p>Both classes define <code class="docutils literal notranslate"><span class="pre">band_index</span></code> as a variable identifying which filters to
+evaluate. It may be provided either as integer indices into the
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a>, or as filter names:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;band_index&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">2e5</span><span class="p">]},</span>
+    <span class="n">params</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">(</span>
+    <span class="p">{</span><span class="s2">&quot;band_index&quot;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;R&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">],</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">2e5</span><span class="p">]},</span>
+    <span class="n">params</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>String inputs are automatically resolved during
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.base.Model.coerce_model_variables.html#trilobite.models.core.base.Model.coerce_model_variables" title="trilobite.models.core.base.Model.coerce_model_variables"><code class="xref py py-meth docutils literal notranslate"><span class="pre">coerce_model_variables()</span></code></a>.</p>
+</section>
+<section id="filterbundle-ownership-and-mutation">
+<h4>FilterBundle Ownership and Mutation<a class="headerlink" href="#filterbundle-ownership-and-mutation" title="Link to this heading">#</a></h4>
+<p>The <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> is provided at construction
+time and stored as <code class="docutils literal notranslate"><span class="pre">self.bundle</span></code>. The associated convolution weights are
+precomputed.</p>
+<p>Filters may be modified via:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">model</span><span class="o">.</span><span class="n">add_filter</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span> <span class="n">b_filter</span><span class="p">)</span>
+<span class="n">model</span><span class="o">.</span><span class="n">remove_filter</span><span class="p">(</span><span class="s2">&quot;V&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Modifying the filter bundle rebuilds the convolution weights and must be
+done <strong>before</strong> any inference run. Changing filters mid-inference will
+invalidate previously computed results.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Full Example</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">The following skeleton illustrates the minimal implementation of an
+<a class="reference internal" href="../../_as_gen/trilobite.models.core.optical.OpticalModel.html#trilobite.models.core.optical.OpticalModel" title="trilobite.models.core.optical.OpticalModel"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalModel</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.optical</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalModel</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.parameters</span><span class="w"> </span><span class="kn">import</span> <span class="n">ModelParameter</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyOpticalModel</span><span class="p">(</span><span class="n">OpticalModel</span><span class="p">):</span>
+    <span class="n">PARAMETERS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ModelParameter</span><span class="p">(</span><span class="s2">&quot;T&quot;</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="n">base_units</span><span class="o">=</span><span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="n">bounds</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)),</span>
+    <span class="p">)</span>
+
+    <span class="n">DESCRIPTION</span> <span class="o">=</span> <span class="s2">&quot;My custom optical photometry model.&quot;</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bundle</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">bundle</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_sed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nu_grid</span><span class="p">,</span> <span class="n">t_unique</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+        <span class="c1"># nu_grid: (N_nu,) Hz</span>
+        <span class="c1"># t_unique: (N_t,) s</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">parameters</span><span class="p">[</span><span class="s2">&quot;T&quot;</span><span class="p">]</span>
+
+        <span class="c1"># ... compute SED ...</span>
+        <span class="k">return</span> <span class="n">f_nu</span>  <span class="c1"># shape (N_t, N_nu)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../data/filter_photometry.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Optical Filters and Photometry</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="directory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Trilobite Model Directory</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-model-class">The Model Class</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-forward-modelling-directive">The Forward Modelling Directive</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-parameters-and-variables">Model Parameters and Variables</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-modelparameter-and-modelvariable-classes">The ModelParameter and ModelVariable Classes</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-bounds">Parameter Bounds</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#units">Units</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-simple-example">A Simple Example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#specialized-model-patterns">Specialized Model Patterns</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#optical-photometry-models">Optical Photometry Models</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-compute-sed-contract">The <code class="docutils literal notranslate"><span class="pre">_compute_sed</span></code> Contract</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-band-index-variable">The <code class="docutils literal notranslate"><span class="pre">band_index</span></code> Variable</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#filterbundle-ownership-and-mutation">FilterBundle Ownership and Mutation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/reference/models/overview.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

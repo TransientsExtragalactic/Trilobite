@@ -1,0 +1,1127 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.inference.likelihood.base &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/inference/likelihood/base';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.inference.likelihood.base</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.inference.likelihood.base</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Abstract base class for likelihood models.&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.gaussian</span><span class="w"> </span><span class="kn">import</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">,</span> <span class="n">gaussian_loglikelihood</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models._typing</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+        <span class="n">_ModelParametersInput</span><span class="p">,</span>
+        <span class="n">_ModelParametersInputRaw</span><span class="p">,</span>
+    <span class="p">)</span>
+
+<span class="c1"># Defining the __all__ variable.</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">,</span> <span class="s2">&quot;GaussianLikelihood&quot;</span><span class="p">,</span> <span class="s2">&quot;GaussianCensoredLikelihood&quot;</span><span class="p">]</span>
+
+
+<span class="c1"># ============================================================ #</span>
+<span class="c1"># Likelihood Base Class                                        #</span>
+<span class="c1"># ============================================================ #</span>
+<div class="viewcode-block" id="Likelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Likelihood</span><span class="p">(</span><span class="n">ABC</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Abstract base class for statistical likelihood functions.</span>
+
+<span class="sd">    The :class:`~trilobite.inference.likelihood.base.Likelihood` class defines the interface and execution</span>
+<span class="sd">    semantics for evaluating the probability of observational data</span>
+<span class="sd">    given a physical model.</span>
+
+<span class="sd">    This class operates strictly on:</span>
+
+<span class="sd">    - A validated :class:`~trilobite.data.core.InferenceData` object</span>
+<span class="sd">    - A concrete subclass of :class:`~trilobite.models.core.base.Model`</span>
+
+<span class="sd">    It performs **no unit coercion, column resolution, or table parsing**.</span>
+<span class="sd">    Those responsibilities belong to the data ingestion layer</span>
+<span class="sd">    (e.g. :class:`~trilobite.data.core.DataContainer` → :class:`~trilobite.data.core.InferenceData`).</span>
+
+<span class="sd">    Architectural Role</span>
+<span class="sd">    ------------------</span>
+<span class="sd">    The inference stack is intentionally layered:</span>
+
+<span class="sd">    1. **DataContainer**</span>
+<span class="sd">       Handles column resolution and unit coercion.</span>
+
+<span class="sd">    2. **InferenceData**</span>
+<span class="sd">       Stores validated, immutable NumPy arrays.</span>
+
+<span class="sd">    3. **Likelihood**</span>
+<span class="sd">       Implements statistical assumptions and evaluates</span>
+<span class="sd">       log-likelihood values using numerical arrays.</span>
+
+<span class="sd">    4. **Model**</span>
+<span class="sd">       Encodes forward physics.</span>
+
+<span class="sd">    The :class:`~trilobite.inference.likelihood.base.Likelihood` layer is therefore a **pure statistical engine**</span>
+<span class="sd">    operating on already-validated numerical data.</span>
+
+<span class="sd">    Design Principles</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    - The likelihood should contain *only statistical logic*.</span>
+<span class="sd">    - All unit validation and shape checking must already be complete.</span>
+<span class="sd">    - Model–data compatibility must be explicitly validated.</span>
+<span class="sd">    - The likelihood evaluation itself must be stateless with respect</span>
+<span class="sd">      to model parameters.</span>
+
+<span class="sd">    Extending Likelihood</span>
+<span class="sd">    --------------------</span>
+<span class="sd">    Concrete likelihood implementations must implement:</span>
+
+<span class="sd">    - :meth:`_configure`</span>
+<span class="sd">    - :meth:`_validate_model_and_data`</span>
+<span class="sd">    - :meth:`_log_likelihood`</span>
+
+<span class="sd">    Subclasses are responsible for:</span>
+
+<span class="sd">    - Enforcing model–data compatibility</span>
+<span class="sd">    - Extracting required arrays from :class:`InferenceData`</span>
+<span class="sd">    - Calling the appropriate numerical backend</span>
+<span class="sd">    - Implementing the statistical form of the likelihood</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - This class makes no assumptions about priors or sampling strategies.</span>
+<span class="sd">    - Parameter coercion is delegated to the model.</span>
+<span class="sd">    - Data validation is delegated to :class:`InferenceData`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Initialization                                               #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">:</span> <span class="n">Model</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">InferenceData</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the likelihood object.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        model : Model</span>
+<span class="sd">            The forward model used to generate predicted observables.</span>
+<span class="sd">            Must be an instance of :class:`~trilobite.models.core.base.Model`.</span>
+
+<span class="sd">        data : InferenceData</span>
+<span class="sd">            Fully validated, immutable dataset containing</span>
+<span class="sd">            numerical arrays required for likelihood evaluation.</span>
+<span class="sd">            All unit coercion and shape validation must already</span>
+<span class="sd">            have been performed.</span>
+
+<span class="sd">        **kwargs</span>
+<span class="sd">            Additional keyword arguments forwarded to :meth:`_configure`.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If `model` is not a :class:`~trilobite.models.core.base.Model` instance.</span>
+<span class="sd">        TypeError</span>
+<span class="sd">            If `data` is not an :class:`InferenceData` instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">Model</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`model` must be an instance of Model.&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">InferenceData</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;`data` must be an instance of InferenceData.&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="p">:</span> <span class="n">Model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="p">:</span> <span class="n">InferenceData</span> <span class="o">=</span> <span class="n">data</span>
+
+        <span class="c1"># Allow subclasses to configure internal state</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="c1"># Validate model–data compatibility</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_validate_model_and_data</span><span class="p">()</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Configuration &amp; Validation                                   #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Configure subclass-specific behavior.</span>
+
+<span class="sd">        Called immediately after model and data assignment.</span>
+<span class="sd">        Subclasses may use this hook to define flags, options,</span>
+<span class="sd">        or internal parameters prior to validation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        **kwargs</span>
+<span class="sd">            Arbitrary configuration options provided at initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate compatibility between the model and data.</span>
+
+<span class="sd">        This method must verify that:</span>
+
+<span class="sd">        - The model structure is compatible with this likelihood</span>
+<span class="sd">        - The data structure satisfies required statistical constraints</span>
+
+<span class="sd">        It must raise an exception if incompatibility is detected.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+    <span class="c1"># ============================================================ #</span>
+    <span class="c1"># Likelihood Evaluation                                        #</span>
+    <span class="c1"># ============================================================ #</span>
+    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInputRaw&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute the log-likelihood for raw model parameters.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Mapping of model parameter names to values in the</span>
+<span class="sd">            model&#39;s raw, unit-consistent internal format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+<div class="viewcode-block" id="Likelihood.log_likelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html#trilobite.inference.likelihood.base.Likelihood.log_likelihood">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">log_likelihood</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">parameters</span><span class="p">:</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="s2">&quot;_ModelParametersInput&quot;</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the log-likelihood for model parameters.</span>
+
+<span class="sd">        This is the public entry point for likelihood evaluation.</span>
+<span class="sd">        It accepts parameters in any format supported by the model</span>
+<span class="sd">        (e.g., quantities with units, scalars, array-like objects)</span>
+<span class="sd">        and coerces them into the model’s raw internal representation</span>
+<span class="sd">        before delegating to :meth:`_log_likelihood`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict</span>
+<span class="sd">            Mapping of model parameter names to values in any format</span>
+<span class="sd">            accepted by :meth:`~trilobite.models.core.base.Model.coerce_model_parameters`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        For performance-critical inference backends, prefer calling</span>
+<span class="sd">        :meth:`_log_likelihood` directly with parameters already</span>
+<span class="sd">        in raw format to avoid repeated coercion overhead.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">raw</span><span class="p">)</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="GaussianLikelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html#trilobite.inference.likelihood.base.GaussianLikelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianLikelihood</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multivariate Gaussian log-likelihood for uncensored observations.</span>
+
+<span class="sd">    This likelihood assumes that all observed data points are detections</span>
+<span class="sd">    with symmetric Gaussian uncertainties. Let the forward model predict observables</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \mathbf{y}_{\mathrm{model}}(\theta)</span>
+
+<span class="sd">    at parameter vector :math:`\theta`, evaluated at fixed independent</span>
+<span class="sd">    variables :math:`\mathbf{x}`.</span>
+
+<span class="sd">    Given observed data :math:`\mathbf{y}` with associated 1σ</span>
+<span class="sd">    uncertainties :math:`\boldsymbol{\sigma}`, the Gaussian log-likelihood is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \log \mathcal{L}(\theta)</span>
+<span class="sd">        =</span>
+<span class="sd">        -\frac{1}{2}</span>
+<span class="sd">        \sum_{i}</span>
+<span class="sd">        \left[</span>
+<span class="sd">            \frac{</span>
+<span class="sd">                (y_i - y_{\mathrm{model},i})^2</span>
+<span class="sd">            }{</span>
+<span class="sd">                \sigma_i^2</span>
+<span class="sd">            }</span>
+<span class="sd">            +</span>
+<span class="sd">            \log(2\pi \sigma_i^2)</span>
+<span class="sd">        \right].</span>
+
+<span class="sd">    The summation is taken over **all data points and all observables**.</span>
+<span class="sd">    Observables are stacked along the final axis.</span>
+
+<span class="sd">    Assumptions</span>
+<span class="sd">    -----------</span>
+
+<span class="sd">    - All observations are detections (no censoring).</span>
+<span class="sd">    - Symmetric Gaussian uncertainties are provided.</span>
+<span class="sd">    - Model output shape matches observed data shape.</span>
+<span class="sd">    - Errors are independent (diagonal covariance).</span>
+
+<span class="sd">    Shape Conventions</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    If there are:</span>
+
+<span class="sd">    - `N` data points</span>
+<span class="sd">    - `P` observables</span>
+
+<span class="sd">    then:</span>
+
+<span class="sd">    - ``data_y`` has shape `(N, P)`</span>
+<span class="sd">    - ``model_y`` has shape `(N, P)`</span>
+<span class="sd">    - ``y_err`` has shape `(N, P)`</span>
+
+<span class="sd">    These arrays are cached during initialization for efficiency.</span>
+
+<span class="sd">    Performance Notes</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    - All data extraction occurs once during initialization.</span>
+<span class="sd">    - The hot loop in :meth:`_log_likelihood` performs only:</span>
+<span class="sd">      1. Forward model evaluation</span>
+<span class="sd">      2. Stacking of model outputs</span>
+<span class="sd">      3. A call to the numerical backend</span>
+
+<span class="sd">    This makes the class suitable for MCMC or nested sampling.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ~trilobite.inference.likelihood.gaussian.gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Configuration</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract and cache numerical arrays from :class:`InferenceData`.</span>
+
+<span class="sd">        This method is called exactly once during initialization.</span>
+
+<span class="sd">        Extracted attributes</span>
+<span class="sd">        --------------------</span>
+<span class="sd">        _data_y : ndarray, shape (N, P)</span>
+<span class="sd">            Observed values.</span>
+
+<span class="sd">        _y_err : ndarray, shape (N, P)</span>
+<span class="sd">            1σ uncertainties.</span>
+
+<span class="sd">        _x : dict[str, ndarray]</span>
+<span class="sd">            Independent variable arrays used by the forward model.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Cache independent variables for faster access</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="c1"># Stack observed values across observables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Stack uncertainties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_error_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Validation</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Validate structural compatibility between model and data.</span>
+
+<span class="sd">        Ensures:</span>
+<span class="sd">        - Uncertainties are present</span>
+<span class="sd">        - Shapes are consistent</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Ensure that shapes are consistent.</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Provided data container must have equal shapes for observed values and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; uncertainties. Found shapes: y: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, y_err: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Ensure that we have EITHER a detection, an upper limit, or a lower limit</span>
+        <span class="c1"># for EVERY entry.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GaussianCensoredLikelihood requires that every entry has a detection.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Ensure that an error is provided for EVERY entry.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GaussianCensoredLikelihood requires defined uncertainties for all entries.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Likelihood evaluation</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate the Gaussian log-likelihood.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict[str, Any]</span>
+<span class="sd">            Raw model parameters in unit-consistent internal format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="c1"># Forward model evaluation</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="c1"># Returns a tuple of length P, each of shape (N,)</span>
+        <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Stack into shape (N, P)</span>
+        <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="c1"># Delegate statistical computation</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="k">return</span> <span class="n">gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="GaussianCensoredLikelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GaussianCensoredLikelihood</span><span class="p">(</span><span class="n">Likelihood</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Multivariate Gaussian log-likelihood with support for censored data.</span>
+
+<span class="sd">    This likelihood extends the standard Gaussian likelihood to support:</span>
+
+<span class="sd">    - Uncensored detections</span>
+<span class="sd">    - Upper limits (right-censoring)</span>
+<span class="sd">    - Lower limits (left-censoring)</span>
+
+<span class="sd">    For uncensored observations, the likelihood contribution is:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \log \mathcal{L}_i</span>
+<span class="sd">        =</span>
+<span class="sd">        -\frac{1}{2}</span>
+<span class="sd">        \left[</span>
+<span class="sd">            \frac{(y_i - \mu_i)^2}{\sigma_i^2}</span>
+<span class="sd">            +</span>
+<span class="sd">            \log(2\pi \sigma_i^2)</span>
+<span class="sd">        \right]</span>
+
+<span class="sd">    For upper-censored observations (upper limits):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \log \mathcal{L}_i</span>
+<span class="sd">        =</span>
+<span class="sd">        \log \Phi\left(</span>
+<span class="sd">            \frac{y_{\mathrm{upper}, i} - \mu_i}{\sigma_i}</span>
+<span class="sd">        \right)</span>
+
+<span class="sd">    For lower-censored observations (lower limits):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \log \mathcal{L}_i</span>
+<span class="sd">        =</span>
+<span class="sd">        \log \left[</span>
+<span class="sd">            1 - \Phi\left(</span>
+<span class="sd">                \frac{y_{\mathrm{lower}, i} - \mu_i}{\sigma_i}</span>
+<span class="sd">            \right)</span>
+<span class="sd">        \right]</span>
+
+<span class="sd">    where :math:`\Phi` is the standard normal CDF.</span>
+
+<span class="sd">    The total log-likelihood is the sum over all data points and observables.</span>
+
+<span class="sd">    Assumptions</span>
+<span class="sd">    -----------</span>
+
+<span class="sd">    - Symmetric 1-sigma uncertainties are defined for all entries.</span>
+<span class="sd">    - Censoring is indicated via `upper` and/or `lower` arrays.</span>
+<span class="sd">    - Non-censored entries contain `np.nan` in the corresponding limit arrays.</span>
+<span class="sd">    - Observables are independent (diagonal covariance).</span>
+
+<span class="sd">    Shape Conventions</span>
+<span class="sd">    -----------------</span>
+<span class="sd">    If there are:</span>
+
+<span class="sd">    - `N` data points</span>
+<span class="sd">    - `P` observables</span>
+
+<span class="sd">    then:</span>
+
+<span class="sd">    - ``data_y`` has shape `(N, P)`</span>
+<span class="sd">    - ``model_y`` has shape `(N, P)`</span>
+<span class="sd">    - ``y_err`` has shape `(N, P)`</span>
+<span class="sd">    - ``y_upper`` has shape `(N, P)`</span>
+<span class="sd">    - ``y_lower`` has shape `(N, P)`</span>
+<span class="sd">    - mask arrays have shape `(N, P)`</span>
+
+<span class="sd">    Performance Notes</span>
+<span class="sd">    -----------------</span>
+
+<span class="sd">    - All data extraction and mask construction occurs once</span>
+<span class="sd">      during initialization.</span>
+<span class="sd">    - The hot loop only evaluates the forward model and</span>
+<span class="sd">      calls the numerical backend.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ~trilobite.inference.likelihood.gaussian.censored_gaussian_loglikelihood : Low-level numerical backend.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Configuration</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Extract and cache numerical arrays and censoring masks.</span>
+
+<span class="sd">        Executed once during initialization.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Cache independent variables</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">x</span>
+
+        <span class="c1"># Extract observed values</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Extract uncertainties</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_error_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Extract censoring arrays</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_upper_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_container</span><span class="o">.</span><span class="n">get_y_lower_array</span><span class="p">(</span><span class="n">flatten</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Construct masks</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Validation</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_validate_model_and_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Validate structural compatibility and required fields.&quot;&quot;&quot;</span>
+        <span class="c1"># Ensure that shapes are consistent.</span>
+        <span class="n">shape</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="o">.</span><span class="n">shape</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Provided data container must have equal shapes for observed values and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; uncertainties. Found shapes: y: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, y_err: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Provided data container must have equal shapes for observed values and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; upper limits. Found shapes: y: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, y_upper: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="o">.</span><span class="n">shape</span> <span class="o">!=</span> <span class="n">shape</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;Provided data container must have equal shapes for observed values and&quot;</span>
+                <span class="sa">f</span><span class="s2">&quot; lower limits. Found shapes: y: </span><span class="si">{</span><span class="n">shape</span><span class="si">}</span><span class="s2">, y_lower: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="o">.</span><span class="n">shape</span><span class="si">}</span><span class="s2">&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Ensure that we have EITHER a detection, an upper limit, or a lower limit</span>
+        <span class="c1"># for EVERY entry.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">)</span> <span class="o">&amp;</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;GaussianCensoredLikelihood requires that every entry has either a detection&quot;</span>
+                <span class="s2">&quot;, an upper limit, or a lower limit.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># Ensure that an error is provided for EVERY entry.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;GaussianCensoredLikelihood requires defined uncertainties for all entries.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># ============================================================</span>
+    <span class="c1"># Likelihood evaluation</span>
+    <span class="c1"># ============================================================</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Evaluate censored Gaussian log-likelihood.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict[str, Any]</span>
+<span class="sd">            Raw model parameters in unit-consistent internal format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="c1"># Forward model evaluation</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="c1"># Delegate to numerical backend</span>
+        <span class="c1"># --------------------------------------------------------</span>
+        <span class="k">return</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+            <span class="n">y_upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span>
+            <span class="n">y_lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">,</span>
+            <span class="n">y_upper_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span><span class="p">,</span>
+            <span class="n">y_lower_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

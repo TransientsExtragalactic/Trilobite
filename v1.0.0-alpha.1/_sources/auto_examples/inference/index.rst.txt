@@ -1,0 +1,198 @@
+:orphan:
+
+.. _inference_gallery:
+
+***************************************
+Inference and Parameter Estimation
+***************************************
+
+These examples demonstrate end-to-end Bayesian parameter inference with Trilobite. Starting
+from observational data (real or simulated), they walk through constructing a likelihood,
+defining priors, running an MCMC sampler, and interpreting the resulting posteriors.
+
+The :mod:`~trilobite.inference` subpackage ties a physical model to a dataset via a
+:class:`~trilobite.inference.InferenceProblem`. The sampler backend (``emcee``) handles
+the MCMC, and result containers provide convergence diagnostics, posterior summaries, and
+corner plots.
+
+.. rubric:: What you'll find here
+
+- Fitting a single-epoch synchrotron SED (with and without upper limits)
+- Fitting an evolving, multi-epoch SED time series
+- Recovering shock physical parameters from a simulated radio light curve
+- Propagating SED posteriors through closure relations to obtain source-size posteriors
+
+.. rubric:: API reference
+
+:mod:`trilobite.inference` — :class:`~trilobite.inference.InferenceProblem`,
+:class:`~trilobite.data.InferenceData`,
+:class:`~trilobite.inference.GaussianCensoredLikelihood`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example, we&#x27;ll do the simplest possible SED fit to radio photometry data using a broken power-law (BPL) model. This is an excellent place to start for understanding how to fit models to data using the Trilobite library.">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_SED_fit_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_SED_fit`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fit Radio Photometry to a BPL</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates a complete end-to-end inference workflow in Trilobite:">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_evolving_sed_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_evolving_sed`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fitting a Time-Evolving Synchrotron SED</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example, we&#x27;ll do consider the relatively simple task of fitting a single epoch of censored radio photometry data using a broken power-law (BPL) model. This is an excellent example of the robust data handling and likelihood construction of the Trilobite library.">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_censored_SED_fit_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_censored_SED_fit`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fit Censored Radio Photometry to a BPL</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="A densely sampled radio monitoring campaign — spanning multiple epochs over weeks to months — allows us to track how the synchrotron SED evolves over time. By fitting the SED independently at each epoch, we can extract the time dependence of the spectral peak:">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_multi_epoch_sed_evolution_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_multi_epoch_sed_evolution`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Multi-Epoch SED Fitting: Tracking Shock Evolution</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In radio surveys, newly discovered transients are often not detected at early times. Rather than discarding these non-detections, they can be incorporated as upper limits that constrain the parameter space just as powerfully as detections — sometimes more so.">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_upper_limit_inference_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_upper_limit_inference`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Upper Limit Constraints: Non-Detections as Information</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates the full science-grade inference workflow for recovering the astrophysical parameters of a radio supernova from multi-frequency radio observations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_shock_parameter_inference_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_shock_parameter_inference`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Inferring Physical Shock Parameters from a Radio Supernova</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example performs a complete round-trip:">
+
+.. only:: html
+
+  .. image:: /auto_examples/inference/images/thumb/sphx_glr_plot_optical_lc_inference_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/inference/plot_optical_lc_inference`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fitting a Multi-Band Optical Light Curve with MCMC</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/inference/plot_SED_fit
+   /auto_examples/inference/plot_evolving_sed
+   /auto_examples/inference/plot_censored_SED_fit
+   /auto_examples/inference/plot_multi_epoch_sed_evolution
+   /auto_examples/inference/plot_upper_limit_inference
+   /auto_examples/inference/plot_shock_parameter_inference
+   /auto_examples/inference/plot_optical_lc_inference
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: inference_python.zip </auto_examples/inference/inference_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: inference_jupyter.zip </auto_examples/inference/inference_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

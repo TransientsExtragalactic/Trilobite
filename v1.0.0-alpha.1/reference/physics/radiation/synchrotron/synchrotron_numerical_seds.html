@@ -1,0 +1,1098 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Methods: Quadrature Based SEDs &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_numerical_seds';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Theory Note: Electron Populations" href="synchrotron_cooling_theory.html" />
+    <link rel="prev" title="Methods: Single-Zone Synchrotron SEDs" href="synchrotron_pl_sed_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Methods: Quadrature Based SEDs</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="methods-quadrature-based-seds">
+<span id="synch-numerical-sed-theory"></span><h1>Methods: Quadrature Based SEDs<a class="headerlink" href="#methods-quadrature-based-seds" title="Link to this heading">#</a></h1>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a> for the methods used to compute analytical synchrotron SEDs.</p></li>
+<li><p><a class="reference internal" href="synchrotron_seds.html#synch-numerical-sed"><span class="std std-ref">Quadrature SEDs</span></a> for the user guide for the numerical synchrotron code.</p></li>
+</ul>
+</div>
+<p>This document describes the numerical methods implemented in Trilobite for <strong>computing synchrotron spectral energy
+distributions (SEDs) from an arbitrary electron distribution</strong>. The analytical library described in <a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>
+covers a wide range of important cases, but there are many physically interesting scenarios for which a closed-form
+expression for the SED is either unavailable or impractical to derive. These include:</p>
+<ul class="simple">
+<li><p><strong>Arbitrary electron distributions</strong>, such as thermal (Maxwell-Jüttner), broken power-laws with non-trivial cooling,
+or numerically evolved particle spectra. The analytical library is restricted to simple power-law forms.</p></li>
+<li><p><strong>Multi-component sources</strong>, where several distinct emission regions contribute to the observed SED and each must be
+evaluated independently before being combined.</p></li>
+<li><p><strong>Heterogeneous magnetic field structures</strong>, where the field varies across the source and a simple single-zone
+treatment is insufficient.</p></li>
+</ul>
+<p>In these cases, a robust numerical method is needed. The approach implemented in Trilobite is based on direct
+quadrature of the fundamental synchrotron integrals, performed in log-space for numerical stability. The central
+objective of this note is to document the mathematics and algorithmic choices behind that implementation, which lives
+in <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.html#module-trilobite.radiation.synchrotron.SEDs.numerical" title="trilobite.radiation.synchrotron.SEDs.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.synchrotron.SEDs.numerical</span></code></a>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The algorithm described in this section is sufficiently quick for use in MCMC hot loop models, making it
+an excellent workhorse for fitting complex synchrotron emission scenarios.</p>
+</div>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id16">Overview</a></p></li>
+<li><p><a class="reference internal" href="#synchrotron-kernels" id="id17">Synchrotron Kernels</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-first-kernel" id="id18">The First Kernel</a></p></li>
+<li><p><a class="reference internal" href="#the-pitch-angle-averaged-kernel" id="id19">The Pitch-Angle Averaged Kernel</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#computing-the-emissivity" id="id20">Computing the Emissivity</a></p></li>
+<li><p><a class="reference internal" href="#computing-the-absorption-coefficient" id="id21">Computing the Absorption Coefficient</a></p></li>
+<li><p><a class="reference internal" href="#the-radiative-transfer-solution" id="id22">The Radiative Transfer Solution</a></p></li>
+<li><p><a class="reference internal" href="#relativistic-corrections" id="id23">Relativistic Corrections</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>Even in the <strong>analytical theory</strong> of synchrotron emission, the fundamental building blocks are the emissivity and
+absorption coefficients, which can be represented as <strong>integrals over fundamental kernels</strong> (see <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>).
+For a population of relativistic electrons with number density <span class="math notranslate nohighlight">\(dN/d\gamma = N(\gamma)\)</span> spiraling in a magnetic
+field <span class="math notranslate nohighlight">\(B\)</span> at a pitch angle <span class="math notranslate nohighlight">\(\alpha\)</span> to the field, the emissivity is given by (see e.g. Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>,
+Chapter 6; Lu<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, Chapter 8;
+Ghisellini<a class="footnote-reference brackets" href="#footcite-ghisellini2013radiative" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, Chapter 4):</p>
+<div class="math notranslate nohighlight">
+\[j_\nu = \frac{\sqrt{3}\,e^3 B \sin\alpha}{4\pi m_e c^2}
+        \int_{\gamma_{\min}}^{\gamma_{\max}} N(\gamma)\,F\!\left(\frac{\nu}{\nu_c}\right) d\gamma,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\nu_c = c_{1\gamma} B \sin\alpha\,\gamma^2\)</span> is the <strong>critical synchrotron frequency</strong> for an electron
+with Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span>, and <span class="math notranslate nohighlight">\(c_{1\gamma} = 3e/(4\pi m_e c)\)</span>. The function <span class="math notranslate nohighlight">\(F(x)\)</span> is the
+<strong>first synchrotron kernel</strong>, defined by</p>
+<div class="math notranslate nohighlight">
+\[F(x) = x \int_x^\infty K_{5/3}(z)\, dz,\]</div>
+<p>where <span class="math notranslate nohighlight">\(K_{5/3}(z)\)</span> is the modified Bessel function of the second kind of order <span class="math notranslate nohighlight">\(5/3\)</span>. The kernel
+is a smooth, unimodal function that peaks at <span class="math notranslate nohighlight">\(x \approx 0.29\)</span> and describes the spectral shape of the
+radiation emitted by a single electron.</p>
+<p>The synchrotron self-absorption coefficient is, likewise, given by<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-ghisellini2013radiative" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu = -\frac{\sqrt{3}\,e^3 B \sin\alpha}{8\pi m_e^2 c^2 \nu^2}
+             \int_{\gamma_{\min}}^{\gamma_{\max}} F\!\left(\frac{\nu}{\nu_c}\right)\,\gamma^2\,
+             \frac{d}{d\gamma}\!\left(\frac{N(\gamma)}{\gamma^2}\right) d\gamma.\]</div>
+<p>Both <span class="math notranslate nohighlight">\(j_\nu\)</span> and <span class="math notranslate nohighlight">\(\alpha_\nu\)</span> require a numerical integration over the electron distribution that
+involves evaluating the kernel <span class="math notranslate nohighlight">\(F(x)\)</span> at each point in a two-dimensional grid of <span class="math notranslate nohighlight">\((\nu, \gamma)\)</span>
+values. The kernel itself is expensive to evaluate directly (it requires numerical integration of a Bessel function),
+so efficient computation demands that it be pre-tabulated and interpolated.</p>
+<p>The following sections describe the methods by which Trilobite achieves these calculations with a high
+degree of fidelity and numerical stability, including the handling of asymptotic regimes, the use of log-space quadrature,
+and the application of integration by parts to simplify the absorption coefficient integral.</p>
+</section>
+<section id="synchrotron-kernels">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Synchrotron Kernels</a><a class="headerlink" href="#synchrotron-kernels" title="Link to this heading">#</a></h2>
+<p>At the core of our numerical synchrotron implementation is a nuanced handling of the so-called
+<strong>synchrotron kernels</strong>, which are the special functions that appear in the integrals for the emissivity and absorption coefficients.</p>
+<section id="the-first-kernel">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">The First Kernel</a><a class="headerlink" href="#the-first-kernel" title="Link to this heading">#</a></h3>
+<p>The central special function in synchrotron theory is the <strong>synchrotron kernel of the first kind</strong>, defined by<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[F(x) = x \int_x^\infty K_{5/3}(z)\, dz.\]</div>
+<p>From a numerical standpoint, it is not only infeasible to evaluate <span class="math notranslate nohighlight">\(F(x)\)</span> frequently to construct an SED, but also
+quite pathological to simply evaluate it at all for certain values of <span class="math notranslate nohighlight">\(x\)</span>. Particularly in the limit <span class="math notranslate nohighlight">\(x\gg 1\)</span>,
+the Bessel function <span class="math notranslate nohighlight">\(K_{5/3}(z)\)</span> is exponentially suppressed, and numerical quadrature begins to fail.</p>
+<p>Fortunately, asymptotic forms of <span class="math notranslate nohighlight">\(F(x)\)</span> have been
+derived in both the small-<span class="math notranslate nohighlight">\(x\)</span> and large-<span class="math notranslate nohighlight">\(x\)</span> limits<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[F(x) \;\approx\; \frac{4\pi}{2^{1/3} 3^{1/2} \Gamma(1/3)}\,x^{1/3} \quad\text{for } x \ll 1,
+\qquad\qquad
+F(x) \;\approx\; \sqrt{\frac{\pi x}{2}}\,e^{-x} \quad\text{for } x \gg 1.\]</div>
+<p>It may also be well approximated by<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id10" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[F(x) \approx \frac{\left[(\pi x/2)^{s_1/2} + 1\right]^{1/s_1}}{[(2.150x^{1/3})^{-s_2} + 1]^{1/s_2}} e^{-x},\]</div>
+<p>where <span class="math notranslate nohighlight">\(s_1 = 1.430\)</span> and <span class="math notranslate nohighlight">\(s_2 = 2.627\)</span>. To properly capture the behavior of <span class="math notranslate nohighlight">\(F(x)\)</span> across its entire
+domain, Trilobite uses the exact Bessel integral for intermediate <span class="math notranslate nohighlight">\(x\)</span> values and switches to
+the asymptotic forms outside a user-configurable range. The exact method is preferred for production
+calculations, while the approximation can be used for rapid prototyping.</p>
+<p>In addition to the kernel itself, we are also interested in its derivative</p>
+<div class="math notranslate nohighlight">
+\[\frac{dF}{dx} = \frac{\partial}{\partial x}\!\left[x \int_x^\infty K_{5/3}(z)\, dz\right],\]</div>
+<p>which, by the Leibniz rule, can be expressed as</p>
+<div class="math notranslate nohighlight">
+\[\frac{dF}{dx} = \frac{F(x)}{x} - x K_{5/3}(x).\]</div>
+<p>Which has the asymptotic behavior</p>
+<div class="math notranslate nohighlight">
+\[\frac{dF}{dx} \;\approx\; \frac{4\pi}{3\sqrt{3}} \frac{1}{\Gamma(1/3)2^{1/3}} x^{-2/3} \quad\text{for } x \ll 1,
+\qquad\qquad
+\frac{dF}{dx} \;\approx\; \sqrt{\frac{\pi x}{2}} e^{-x} \left(\frac{1}{2x} - 1\right) \quad\text{for } x \gg 1.\]</div>
+</section>
+<section id="the-pitch-angle-averaged-kernel">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">The Pitch-Angle Averaged Kernel</a><a class="headerlink" href="#the-pitch-angle-averaged-kernel" title="Link to this heading">#</a></h3>
+<p>When the electron pitch angles are distributed <strong>isotropically</strong>, as is appropriate for most astrophysical
+environments where magnetic field fluctuations randomize the electron trajectories on timescales shorter than a
+dynamical time, one should use the pitch-angle averaged emissivity. In this case, no single pitch angle
+<span class="math notranslate nohighlight">\(\alpha\)</span> characterizes the source, and the emission must be averaged over the isotropic distribution. The
+relevant kernel is the <strong>pitch-angle averaged first kernel</strong><a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, defined by</p>
+<div class="math notranslate nohighlight">
+\[\bar{F}(x) = \int_0^{1} F\!\left(\frac{x}{\xi}\right) \frac{\xi^2}{\sqrt{1-\xi^2}}\, d\xi.\]</div>
+<p>It can be shown that <span class="math notranslate nohighlight">\(\bar{F}(x)\)</span> has a closed form in terms of the various Bessel
+functions<a class="footnote-reference brackets" href="#footcite-1986a-a-164l-16c" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-1988apj-334l-5g" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[\bar{F}(x)
+=
+\frac{x^2}{2}
+\left[
+    K_{4/3}(x/2)\,K_{1/3}(x/2)
+    -
+    \frac{3x}{10}
+    \left(
+        K_{4/3}^2(x/2) - K_{1/3}^2(x/2)
+    \right)
+\right],\]</div>
+<p>where <span class="math notranslate nohighlight">\(K_\nu\)</span> is the modified Bessel function of the second kind.</p>
+<p>The asymptotic behavior of this averaged kernel is</p>
+<div class="math notranslate nohighlight">
+\[\bar{F}(x)
+\;\approx\;
+\frac{2^{1/3}}{5}\,\Gamma^2\!\left(\frac{1}{3}\right)\,x^{1/3}
+\quad\text{for } x \ll 1,
+\qquad\qquad
+\bar{F}(x)
+\;\approx\;
+\frac{\pi}{2}
+\left[
+    1 - \frac{99}{162x}
+\right]
+e^{-x}
+\quad\text{for } x \gg 1.\]</div>
+<p>An analytic approximation valid over the full domain <span class="math notranslate nohighlight">\(x \in (0,\infty)\)</span>
+was provided by <a class="footnote-reference brackets" href="#footcite-2007a-a-465-695z" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a> and is given by</p>
+<div class="math notranslate nohighlight">
+\[\bar{F}(x)
+\;\approx\;
+\frac{
+    \left[
+        \left(\frac{\pi x}{2}\right)^{s_1/2} + 1
+    \right]^{1/s_1}
+}{
+    \left[
+        (0.893\,x^{1/3})^{-s_2} + 1
+    \right]^{1/s_2}
+}
+e^{-x},\]</div>
+<p>where <span class="math notranslate nohighlight">\(s_1 = 1.430\)</span> and <span class="math notranslate nohighlight">\(s_2 = 2.627\)</span>. This approximation
+reproduces the exact kernel to better than one percent over the full
+range of <span class="math notranslate nohighlight">\(x\)</span>.</p>
+<p>In Trilobite, the exact Bessel-function form is used in the intermediate
+regime, while the asymptotic limits are applied at small and large
+<span class="math notranslate nohighlight">\(x\)</span> to ensure numerical stability and efficiency.</p>
+</section>
+</section>
+<section id="computing-the-emissivity">
+<span id="sec-emissivity"></span><h2><a class="toc-backref" href="#id20" role="doc-backlink">Computing the Emissivity</a><a class="headerlink" href="#computing-the-emissivity" title="Link to this heading">#</a></h2>
+<p>To avoid repeated evaluation of the synchrotron kernels, Trilobite precomputes a table of these values on
+a configurable grid of <span class="math notranslate nohighlight">\(x\)</span> values. Then for any given frequency <span class="math notranslate nohighlight">\(\nu\)</span>, magnetic field strength <span class="math notranslate nohighlight">\(B\)</span>, and pitch angle <span class="math notranslate nohighlight">\(\alpha\)</span>,
+the kernel can be interpolated rapidly to determine the correct value of <span class="math notranslate nohighlight">\(F(x)\)</span> for each electron Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span> in the distribution.</p>
+<p>With the kernel interpolator in hand, the emissivity integral</p>
+<div class="math notranslate nohighlight">
+\[j_\nu = \chi\,B\sin\alpha
+        \int_{\gamma_{\min}}^{\gamma_{\max}} F\!\left(\frac{\nu}{\nu_c}\right)\,N(\gamma)\, d\gamma,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi = \sqrt{3} e^3 / (4\pi m_e c^2)\)</span>. We evaluate this integral by constructing a grid of
+<span class="math notranslate nohighlight">\(\gamma\)</span> values for each <span class="math notranslate nohighlight">\(\nu\)</span>, computing <span class="math notranslate nohighlight">\(x(\nu, \gamma)\)</span>, and then interpolating the kernel
+at each point to build the integrand. The integral
+is evaluated using a
+Riemann sum in <span class="math notranslate nohighlight">\(\ln\gamma\)</span>. On a grid <span class="math notranslate nohighlight">\(\{\gamma_i\}\)</span> the change of variables
+<span class="math notranslate nohighlight">\(d\gamma = \gamma\, d\!\ln\gamma\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[j_\nu \approx \chi\,B\sin\alpha \sum_{i} F\!\left(x_i\right)\,N(\gamma_i)\,\gamma_i\,\Delta\!\ln\gamma_i,\]</div>
+<p>where <span class="math notranslate nohighlight">\(x_i = \nu / (c_{1\gamma}\,B\sin\alpha\,\gamma_i^2)\)</span> and <span class="math notranslate nohighlight">\(\Delta\!\ln\gamma_i\)</span> is the grid
+spacing at point <span class="math notranslate nohighlight">\(i\)</span> (computed via central differences). The product <span class="math notranslate nohighlight">\(w_i \equiv \gamma_i\,\Delta\!\ln\gamma_i\)</span>
+serves as the <strong>quadrature weight</strong> and is precomputed once for a given grid.</p>
+</section>
+<section id="computing-the-absorption-coefficient">
+<span id="sec-absorption"></span><h2><a class="toc-backref" href="#id21" role="doc-backlink">Computing the Absorption Coefficient</a><a class="headerlink" href="#computing-the-absorption-coefficient" title="Link to this heading">#</a></h2>
+<p>The standard expression for the self-absorption coefficient,</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu = -\frac{\sqrt{3}\,e^3 B\sin\alpha}{8\pi m_e^2 c^2 \nu^2}
+             \int_{\gamma_{\min}}^{\gamma_{\max}} F\!\left(\frac{\nu}{\nu_c}\right)\,\gamma^2\,
+             \frac{d}{d\gamma}\!\left(\frac{N(\gamma)}{\gamma^2}\right) d\gamma,\]</div>
+<p>involves the derivative of the quantity <span class="math notranslate nohighlight">\(N(\gamma)/\gamma^2\)</span>. For a numerical distribution <span class="math notranslate nohighlight">\(N(\gamma)\)</span>
+given only on a discrete grid, computing this derivative reliably is awkward and introduces additional numerical
+error. Trilobite avoids this difficulty entirely by applying an <strong>integration by parts</strong> (IBP) to transform the
+integral into one that involves only <span class="math notranslate nohighlight">\(N(\gamma)\)</span> itself and the log-derivative of the kernel.</p>
+<p>Setting <span class="math notranslate nohighlight">\(u = F(x)\)</span> and <span class="math notranslate nohighlight">\(dv = \gamma^2\,\frac{d}{d\gamma}(N/\gamma^2) d\gamma\)</span>, and noting that the
+boundary terms vanish for any physical distribution (since <span class="math notranslate nohighlight">\(N \to 0\)</span> at both <span class="math notranslate nohighlight">\(\gamma_{\min}\)</span> and
+<span class="math notranslate nohighlight">\(\gamma_{\max}\)</span>), the IBP yields</p>
+<div class="math notranslate nohighlight">
+\[\int F(x)\,\gamma^2\,\frac{d}{d\gamma}\!\left(\frac{N}{\gamma^2}\right) d\gamma
+= -\int \frac{N(\gamma)}{\gamma^2}\,\frac{d}{d\gamma}\!\left[\gamma^2 F(x)\right] d\gamma.\]</div>
+<p>The derivative <span class="math notranslate nohighlight">\(d/d\gamma[\gamma^2 F(x)]\)</span> is evaluated by noting that
+<span class="math notranslate nohighlight">\(x = \nu / (c_{1\gamma} B\sin\alpha\,\gamma^2)\)</span>, so <span class="math notranslate nohighlight">\(dx/d\gamma = -2x/\gamma\)</span>, giving</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{d\gamma}\!\left[\gamma^2 F(x)\right]
+= 2\gamma F(x) + \gamma^2 F'(x)\,\frac{dx}{d\gamma}
+= 2\gamma F(x) - 2\gamma\, x F'(x)
+= 2\gamma\bigl(F(x) - x F'(x)\bigr).\]</div>
+<p>Substituting back and converting to <span class="math notranslate nohighlight">\(d\!\ln\gamma\)</span>, the integral becomes</p>
+<div class="math notranslate nohighlight">
+\[\int F(x)\,\gamma^2\,\frac{d}{d\gamma}\!\left(\frac{N}{\gamma^2}\right) d\gamma
+= -2\int_{\gamma_{\min}}^{\gamma_{\max}} \bigl(F(x) - x F'(x)\bigr)\,N(\gamma)\, d\!\ln\gamma.\]</div>
+<p>Inserting this into the expression for <span class="math notranslate nohighlight">\(\alpha_\nu\)</span>, the factor of <span class="math notranslate nohighlight">\(-2\)</span> cancels the overall minus sign
+and converts the <span class="math notranslate nohighlight">\(8\pi\)</span> denominator into <span class="math notranslate nohighlight">\(4\pi\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[|\alpha_\nu| = \frac{\chi}{m_e}\,\frac{B\sin\alpha}{\nu^2}
+               \int_{\gamma_{\min}}^{\gamma_{\max}} \bigl(F(x) - x F'(x)\bigr)\,N(\gamma)\, d\!\ln\gamma.\]</div>
+<p>This form has a crucial property: the integrand is <strong>guaranteed to be non-negative</strong> for any physical distribution
+<span class="math notranslate nohighlight">\(N(\gamma) \geq 0\)</span>. To see this, write</p>
+<div class="math notranslate nohighlight">
+\[F(x) - x F'(x) = F(x)\left(1 - \frac{d\ln F}{d\ln x}\right).\]</div>
+<p>Since <span class="math notranslate nohighlight">\(F(x) &gt; 0\)</span> everywhere, it suffices to show that <span class="math notranslate nohighlight">\(d\ln F/d\ln x &lt; 1\)</span>. This holds because
+<span class="math notranslate nohighlight">\(F(x)\)</span> grows no faster than <span class="math notranslate nohighlight">\(x^{1/3}\)</span> (log-slope <span class="math notranslate nohighlight">\(1/3\)</span>) at small <span class="math notranslate nohighlight">\(x\)</span> and falls
+exponentially (log-slope <span class="math notranslate nohighlight">\(\approx -x \ll 0\)</span>) at large <span class="math notranslate nohighlight">\(x\)</span>, so the log-derivative is bounded above by
+<span class="math notranslate nohighlight">\(1/3 &lt; 1\)</span> across the entire domain. A positive definite integrand means the sum can be evaluated directly in
+log-space via <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a> without any sign-handling — the same strategy used for the emissivity.</p>
+<p>The practical evaluation is identical in structure to the emissivity: one builds the <span class="math notranslate nohighlight">\((n_\nu \times n_\gamma)\)</span>
+matrix of <span class="math notranslate nohighlight">\(x_{ij}\)</span> values, looks up <span class="math notranslate nohighlight">\(\ln F(x_{ij})\)</span> and the derivative <span class="math notranslate nohighlight">\(d\ln F/d\ln x\big|_{x_{ij}}\)</span>
+from their respective splines, computes the IBP kernel</p>
+<div class="math notranslate nohighlight">
+\[\ln\bigl(F(x_{ij}) - x_{ij} F'(x_{ij})\bigr)
+= \ln F(x_{ij}) + \ln\!\left(1 - \frac{d\ln F}{d\ln x}\bigg|_{x_{ij}}\right),\]</div>
+<p>and then sums over <span class="math notranslate nohighlight">\(\gamma\)</span> with <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>. The final result is</p>
+<div class="math notranslate nohighlight">
+\[\ln|\alpha_\nu| = \ln\!\left(\frac{\chi}{m_e}\right) + \ln B + \ln\sin\alpha - 2\ln\nu
+           + \mathrm{logsumexp}_i\!\left[\ln(F - xF')_{\nu i} + n_i + \tilde{w}_i - \ln\gamma_i\right],\]</div>
+<p>where the additional <span class="math notranslate nohighlight">\(-\ln\gamma_i\)</span> converts the quadrature weights <span class="math notranslate nohighlight">\(w_i = \gamma_i\,\Delta\!\ln\gamma_i\)</span>
+into pure <span class="math notranslate nohighlight">\(d\!\ln\gamma\)</span> spacings <span class="math notranslate nohighlight">\(\Delta\!\ln\gamma_i\)</span>, as required by the IBP form of the integral.</p>
+</section>
+<section id="the-radiative-transfer-solution">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">The Radiative Transfer Solution</a><a class="headerlink" href="#the-radiative-transfer-solution" title="Link to this heading">#</a></h2>
+<p>Once the emissivity and absorption coefficient have been evaluated at each frequency, the specific intensity
+emerging from a homogeneous, spherical source is given by the solution to the one-dimensional radiative transfer
+equation:</p>
+<div class="math notranslate nohighlight">
+\[I_\nu = \frac{j_\nu}{\alpha_\nu}\,\bigl(1 - e^{-\tau_\nu}\bigr) = S_\nu\,\bigl(1 - e^{-\tau_\nu}\bigr),\]</div>
+<p>where <span class="math notranslate nohighlight">\(S_\nu = j_\nu / \alpha_\nu\)</span> is the <strong>source function</strong> and <span class="math notranslate nohighlight">\(\tau_\nu = |\alpha_\nu|\,R\)</span> is the
+optical depth through a source of line-of-sight depth <span class="math notranslate nohighlight">\(R\)</span>. This expression interpolates naturally between
+the optically thin limit (<span class="math notranslate nohighlight">\(\tau_\nu \ll 1\)</span>, where <span class="math notranslate nohighlight">\(I_\nu \approx j_\nu R\)</span>) and the optically thick
+Rayleigh-Jeans-like limit (<span class="math notranslate nohighlight">\(\tau_\nu \gg 1\)</span>, where <span class="math notranslate nohighlight">\(I_\nu \approx S_\nu\)</span>).</p>
+<p>In log-space the radiative transfer solution reads</p>
+<div class="math notranslate nohighlight">
+\[\ln I_\nu = \ln j_\nu - \ln|\alpha_\nu| + \ln\!\bigl(1 - e^{-\tau_\nu}\bigr),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\tau_\nu = \exp(\ln|\alpha_\nu| + \ln R)\)</span>. The term <span class="math notranslate nohighlight">\(\ln(1 - e^{-\tau})\)</span> is evaluated using
+<code class="xref py py-func docutils literal notranslate"><span class="pre">numpy.expm1()</span></code> as <span class="math notranslate nohighlight">\(\ln(-\mathrm{expm1}(-\tau))\)</span>, which avoids catastrophic cancellation for small
+<span class="math notranslate nohighlight">\(\tau\)</span> (where <span class="math notranslate nohighlight">\(1 - e^{-\tau} \approx \tau\)</span> and a naive subtraction loses all significant digits). For
+very large optical depths, <span class="math notranslate nohighlight">\(\tau\)</span> is clipped before exponentiation to prevent overflow. The result is a
+numerically stable expression for <span class="math notranslate nohighlight">\(\ln I_\nu\)</span> that is accurate from the deeply optically thin to the deeply
+optically thick regimes.</p>
+</section>
+<section id="relativistic-corrections">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Relativistic Corrections</a><a class="headerlink" href="#relativistic-corrections" title="Link to this heading">#</a></h2>
+<p>The formulas above are all written in the <strong>rest frame of the emitting region</strong>. For astrophysical transients,
+the emitting plasma is frequently moving at relativistic bulk velocities, and the source may also be at a
+cosmological redshift. Both effects must be accounted for before the computed specific intensity can be compared
+with observed data.</p>
+<p>Let <span class="math notranslate nohighlight">\(\beta\)</span> be the bulk velocity of the emitting region as a fraction of <span class="math notranslate nohighlight">\(c\)</span>, let <span class="math notranslate nohighlight">\(\theta\)</span> be
+the angle between the bulk velocity vector and the observer line-of-sight, and let <span class="math notranslate nohighlight">\(z\)</span> be the cosmological
+redshift of the source. The relativistic Doppler factor is</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{D} = \frac{1}{\Gamma_{\rm bulk}\,\bigl(1 + \beta\cos\theta\bigr)},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Gamma_{\rm bulk} = (1 - \beta^2)^{-1/2}\)</span> is the bulk Lorentz factor. The combined
+Doppler-plus-redshift correction factor is</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{C} = \frac{\mathcal{D}}{1 + z} = \frac{1}{\Gamma_{\rm bulk}\,(1+\beta\cos\theta)\,(1+z)}.\]</div>
+<p>The relationship between the <strong>observed</strong> frequency <span class="math notranslate nohighlight">\(\nu_{\rm obs}\)</span> and the <strong>rest-frame</strong> frequency
+<span class="math notranslate nohighlight">\(\nu_{\rm rf}\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[\nu_{\rm rf} = \frac{\nu_{\rm obs}}{\mathcal{C}}.\]</div>
+<p>The rest-frame specific intensity <span class="math notranslate nohighlight">\(I_{\nu_{\rm rf}}\)</span> is computed at this transformed frequency using the
+radiative transfer solution described above. The <strong>observed</strong> specific intensity then follows from the standard
+Lorentz invariance of <span class="math notranslate nohighlight">\(I_\nu / \nu^3\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[I_{\nu_{\rm obs}} = \mathcal{C}^3\,I_{\nu_{\rm rf}}\!\left(\nu_{\rm rf}\right).\]</div>
+<p>In log-space the correction is simply an additive shift:</p>
+<div class="math notranslate nohighlight">
+\[\ln I_{\nu_{\rm obs}} = \ln I_{\nu_{\rm rf}} + 3\ln\mathcal{C}.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>There is <strong>no</strong> Equal Arrival Time Surface (EATS) correction in the current implementation. The source is
+treated as a homogeneous sphere at a single instant in the observer frame; the finite light-travel time across
+the source is not accounted for. For moderately relativistic sources (<span class="math notranslate nohighlight">\(\Gamma \lesssim \mathrm{few}\)</span>)
+this is typically not the dominant source of error, but users modeling highly relativistic jets should
+be aware of this limitation.</p>
+</div>
+<p>Once the observed specific intensity <span class="math notranslate nohighlight">\(I_{\nu_{\rm obs}}\)</span> has been computed, the spectral flux density at
+the observer follows from integrating over the solid angle subtended by the source:</p>
+<div class="math notranslate nohighlight">
+\[F_\nu = \frac{A_{\rm eff}}{D_A^2}\,I_{\nu_{\rm obs}},\]</div>
+<p>where <span class="math notranslate nohighlight">\(A_{\rm eff}\)</span> is the effective projected area of the source on the sky (defaulting to <span class="math notranslate nohighlight">\(\pi R^2\)</span>
+for a sphere) and <span class="math notranslate nohighlight">\(D_A\)</span> is the angular diameter distance to the source. This is the quantity returned by
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_flux_density()</span></code></a>, which
+handles distance resolution (including conversion from luminosity distance, proper distance, or redshift) via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_cosmological_distances()</span></code>.</p>
+<p class="rubric">References</p>
+<div class="docutils container" id="id15">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id5">2</a>,<a role="doc-backlink" href="#id7">3</a>,<a role="doc-backlink" href="#id8">4</a>)</span>
+<p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-lu-2026-18603474" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id4">2</a>,<a role="doc-backlink" href="#id9">3</a>,<a role="doc-backlink" href="#id10">4</a>,<a role="doc-backlink" href="#id11">5</a>)</span>
+<p>Wenbin Lu. <em>Book on Astrophysical Radiation</em>. Zenodo, February 2026. URL: <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">https://doi.org/10.5281/zenodo.18603474</a>, <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">doi:10.5281/zenodo.18603474</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-ghisellini2013radiative" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
+<p>Gabriele Ghisellini. <em>Radiative processes in high energy astrophysics</em>. Springer, 2013.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-1986a-a-164l-16c" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">4</a><span class="fn-bracket">]</span></span>
+<p>A. Crusius and R. Schlickeiser. Synchrotron radiation in random magnetic fields. <em>\aap </em>, 164(2):L16–L18, August 1986.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-1988apj-334l-5g" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">5</a><span class="fn-bracket">]</span></span>
+<p>Gabriele Ghisellini, Paul W. Guilbert, and Roland Svensson. The Synchrotron Boiler. <em>\apjl </em>, 334:L5, November 1988. <a class="reference external" href="https://doi.org/10.1086/185300">doi:10.1086/185300</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2007a-a-465-695z" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">6</a><span class="fn-bracket">]</span></span>
+<p>V. N. Zirakashvili and F. Aharonian. Analytical solutions for energy spectra of electrons accelerated by nonrelativistic shock-waves in shell type supernova remnants. <em>\aap </em>, 465(3):695–702, April 2007. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0612717">arXiv:astro-ph/0612717</a>, <a class="reference external" href="https://doi.org/10.1051/0004-6361:20066494">doi:10.1051/0004-6361:20066494</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="synchrotron_pl_sed_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Methods: Single-Zone Synchrotron SEDs</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="synchrotron_cooling_theory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Theory Note: Electron Populations</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-kernels">Synchrotron Kernels</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-first-kernel">The First Kernel</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-pitch-angle-averaged-kernel">The Pitch-Angle Averaged Kernel</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-emissivity">Computing the Emissivity</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#computing-the-absorption-coefficient">Computing the Absorption Coefficient</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-radiative-transfer-solution">The Radiative Transfer Solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relativistic-corrections">Relativistic Corrections</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_numerical_seds.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

@@ -1,0 +1,1726 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Synchrotron Emission Overview &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_overview';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Core Synchrotron Tools" href="synchrotron_core.html" />
+    <link rel="prev" title="Radiation Processes in Trilobite" href="../overview.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Synchrotron Emission Overview</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="synchrotron-emission-overview">
+<span id="synchrotron-overview"></span><h1>Synchrotron Emission Overview<a class="headerlink" href="#synchrotron-emission-overview" title="Link to this heading">#</a></h1>
+<p>Synchrotron radiation, produced by relativistic electrons spiraling in a magnetic
+field, is the dominant emission process in the radio and X-ray afterglows of many
+astrophysical transients.  It governs the multi-wavelength light curves of
+radio supernovae <a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, gamma-ray burst
+afterglows <a class="footnote-reference brackets" href="#footcite-1998apj-497l-17s" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, and the delayed radio flares of
+tidal disruption events <a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.  Interpreting
+these observations requires a modeling framework that can handle a wide range of
+physical regimes, from non-relativistic shocks to mildly-relativistic ejecta,
+while consistently tracking the microphysical processes that shape the spectrum.</p>
+<p>Trilobite provides an end-to-end synchrotron modeling toolkit: from the fundamental
+single-electron physics through population-averaged emission and radiative cooling,
+up to the broadband one-zone spectral energy distributions (SEDs) used directly in
+multi-wavelength fitting and Bayesian inference.  The infrastructure is intentionally
+layered — each level can be used independently or composed into a full modeling
+pipeline.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For those unfamiliar with the physics of synchrotron radiation, <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a> provides
+a self-contained introduction to the key concepts, equations, and spectral regimes. Additionally,
+Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> is a classic reference for the underlying physics and mathematical formalism.
+Lu<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> provides a more in-depth discussion with several useful results applied here.</p>
+</div>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#module-overview" id="id11">Module Overview</a></p>
+<ul>
+<li><p><a class="reference internal" href="#module-structure" id="id12">Module Structure</a></p></li>
+<li><p><a class="reference internal" href="#useful-external-modules" id="id13">Useful External Modules</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#synchrotron-microphysics" id="id14">Synchrotron Microphysics</a></p>
+<ul>
+<li><p><a class="reference internal" href="#api-summary" id="id15">API Summary</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#generating-synchrotron-seds" id="id16">Generating Synchrotron SEDs</a></p>
+<ul>
+<li><p><a class="reference internal" href="#analytic-seds" id="id17">Analytic SEDs</a></p></li>
+<li><p><a class="reference internal" href="#numerical-seds" id="id18">Numerical SEDs</a></p></li>
+<li><p><a class="reference internal" href="#limitations" id="id19">Limitations</a></p></li>
+<li><p><a class="reference internal" href="#id9" id="id20">API Summary</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#core-synchrotron-quantities" id="id21">Core Synchrotron Quantities</a></p></li>
+<li><p><a class="reference internal" href="#further-reading" id="id22">Further Reading</a></p></li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="module-overview">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Module Overview</a><a class="headerlink" href="#module-overview" title="Link to this heading">#</a></h2>
+<p>In a <em>typical synchrotron problem</em>, the user starts with a physical model of a shock or outflow and must determine
+the synchrotron emission (typically and SED or lightcurve) from that source. This typically involves a few intermediate
+steps:</p>
+<ol class="arabic simple">
+<li><p><strong>The Dynamical Model</strong>: The user understands the dynamics of the emitting region (e.g. the shock speed, and radius,
+the jet opening angle, the density profile of the ambient medium, etc.). This is <strong>not</strong> the responsibility of the
+synchrotron module, but rather of the other physics modules.</p></li>
+<li><p><strong>Microphysical Closure</strong>: The user must then convert the macroscopic shock parameters (e.g. the
+post-shock thermal energy density) into the microphysical parameters
+that govern the electron distribution and magnetic field strength. <em>Various such prescriptions exist in the literature</em>,
+and are implemented in the <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">microphysics</span></code></a> submodule.</p></li>
+<li><p><strong>SED Modeling</strong>: Finally, the user must compute the observable SED from the microphysical parameters.
+This is the responsibility of the <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.html#module-trilobite.radiation.synchrotron.SEDs" title="trilobite.radiation.synchrotron.SEDs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SEDs</span></code></a> submodule. Depending on the
+type of SED model (see details below), this step may have some sub-steps.</p></li>
+</ol>
+<p>The result is a predicted SED that can be compared to observations, used in light curve modeling, or fed into
+a Bayesian inference pipeline to constrain the underlying physical parameters of the source.</p>
+<section id="module-structure">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">Module Structure</a><a class="headerlink" href="#module-structure" title="Link to this heading">#</a></h3>
+<p>The synchrotron module is organized into four submodules, each responsible for a
+distinct layer of the modeling stack.  Users working with high-level SED models
+typically only interact directly with <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.html#module-trilobite.radiation.synchrotron.SEDs" title="trilobite.radiation.synchrotron.SEDs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SEDs</span></code></a>
+and <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">microphysics</span></code></a>; the lower layers are
+used implicitly.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 32.0%" />
+<col style="width: 68.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Responsibility</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.html#module-trilobite.radiation.synchrotron.core" title="trilobite.radiation.synchrotron.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a></p></td>
+<td><p>Fundamental quantities relevant to synchrotron modeling. This module is of primary use
+to developers and domain experts who want to understand or modify the underlying algorithms.
+See <a class="reference internal" href="synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">microphysics</span></code></a></p></td>
+<td><p>Tools for constructing and normalizing electron distribution functions and for connecting
+macroscopic shock parameters to microphysical parameters through closure relations.
+See <a class="reference internal" href="synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.html#module-trilobite.radiation.synchrotron.SEDs" title="trilobite.radiation.synchrotron.SEDs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SEDs</span></code></a></p></td>
+<td><p>SED models for computing the observable spectrum from a given set of physical parameters.
+This is the primary interface for users modeling synchrotron emission from astrophysical sources. It is
+also the deepest, with many options for different physical regimes and levels of complexity.
+See <a class="reference internal" href="synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.cooling.html#module-trilobite.radiation.synchrotron.cooling" title="trilobite.radiation.synchrotron.cooling"><code class="xref py py-mod docutils literal notranslate"><span class="pre">cooling</span></code></a></p></td>
+<td><p>Radiative cooling engines for synchrotron and inverse-Compton losses.
+Each engine exposes the cooling rate <span class="math notranslate nohighlight">\(dE/dt\)</span>, cooling time
+<span class="math notranslate nohighlight">\(t_{\rm cool}\)</span>, and the cooling Lorentz factor <span class="math notranslate nohighlight">\(\gamma_c\)</span>.
+See <a class="reference internal" href="synchrotron_cooling.html#synchrotron-cooling"><span class="std std-ref">Radiative Cooling Engines</span></a>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+<section id="useful-external-modules">
+<h3><a class="toc-backref" href="#id13" role="doc-backlink">Useful External Modules</a><a class="headerlink" href="#useful-external-modules" title="Link to this heading">#</a></h3>
+<p>In addition to the core synchrotron modules, a few other modules from other parts of the codebase are commonly
+used in various synchrotron modeling contexts:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 32.0%" />
+<col style="width: 68.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Module</p></th>
+<th class="head"><p>Use case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.html#module-trilobite.dynamics" title="trilobite.dynamics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">dynamics</span></code></a></p></td>
+<td><p>Provides the dynamical evolution of the shock or outflow, which is a key input to the synchrotron modeling.
+The dynamics determine how the shock parameters (e.g. radius, velocity, thermal energy density) evolve with time,
+which in turn affect the microphysical parameters and the resulting SED.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="synchrotron-microphysics">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">Synchrotron Microphysics</a><a class="headerlink" href="#synchrotron-microphysics" title="Link to this heading">#</a></h2>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a> Describes the detailed API for synchrotron microphysics.
+<a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a> Describes the theory of the synchrotron microphysical closures.</p>
+</div>
+<p>Before generating an SED, the user must usually connect some knowledge of the macroscopic parameters of the
+emitting region (e.g. the post-shock thermal energy density) to the microphysical parameters that govern
+the electron distribution and magnetic field strength. This is typically done through a <strong>closure relation</strong>
+that specifies how the shock energy is partitioned into electrons and magnetic fields.</p>
+<p>A common choice throughout the modern literature (e.g. Margutti <em>et al.</em><a class="footnote-reference brackets" href="#footcite-margutti2019cow" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>6<span class="fn-bracket">]</span></a>,
+DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, Wu <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, etc.) is to introduce
+the parameters <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which represent the fraction of the thermal energy density
+that goes into relativistic electrons and magnetic fields, respectively.</p>
+<p>In this formulation, one then needs to choose that <strong>type of electron distribution</strong> to use for the synchrotron
+emitting electrons. This will be the primary determinant of the resulting SED. Trilobite provides support for
+the following:</p>
+<ul class="simple">
+<li><p><strong>Power-law distributions</strong>: The most common choice in the literature, where the electron number density
+follows a power-law in Lorentz factor <span class="math notranslate nohighlight">\(N(\gamma) \propto \gamma^{-p}\)</span> above some minimum Lorentz factor
+<span class="math notranslate nohighlight">\(\gamma_{\min}\)</span>. This is the default assumption in the one-zone SED models.</p></li>
+<li><p><strong>Thermal distributions</strong>: A Maxwell-Jüttner distribution of electrons, which may be more appropriate for
+highly-relativistic shocks or for the thermal pool of electrons that do not get accelerated but are nonetheless
+thermally relativistic and contribute to the synchrotron emission.</p></li>
+<li><p><strong>Broken power-law distributions</strong>: A power-law distribution with a break at some Lorentz factor, which can be used
+to model cooling breaks or other features in the electron spectrum.</p></li>
+<li><p><strong>Thermal+PL distributions</strong>: A combination of a thermal Maxwell-Jüttner distribution and a
+non-thermal power-law tail, which can be used to model scenarios where there is a significant thermal population
+of electrons in addition to the accelerated non-thermal population.</p></li>
+</ul>
+<p>Combined with the closure relations that connect the macroscopic shock parameters to the microphysical parameters, the choice
+of electron distribution then determines the normalization of the electron spectrum and the magnetic field strength, which
+in turn determine the characteristic frequencies and fluxes of the resulting synchrotron SED.</p>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">microphysics</span></code></a> submodule provides a number of tools for doing these
+sorts of calculations.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: Normalize a Power-Law Electron Distribution</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">This example computes the normalization <span class="math notranslate nohighlight">\(N_0\)</span> of a power-law electron
+distribution under the equipartition closure, given a magnetic field strength
+and microphysical parameters.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_PL_norm_from_magnetic_field</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">3.0</span>
+
+<span class="n">N0</span> <span class="o">=</span> <span class="n">compute_PL_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: Normalize a Combined Thermal + Power-Law Distribution</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">This example computes the normalization of a hybrid electron population consisting
+of a thermal (Maxwell–Jüttner) component and a non-thermal power-law tail, using
+the equipartition closure.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_MJD_and_PL_norm_from_magnetic_field</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">Theta</span> <span class="o">=</span> <span class="mf">200.0</span>      <span class="c1"># dimensionless temperature (kT / m_e c^2)</span>
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">100.0</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.5</span>        <span class="c1"># fraction of energy in thermal component</span>
+
+<span class="n">N_therm</span><span class="p">,</span> <span class="n">N0_pl</span> <span class="o">=</span> <span class="n">compute_MJD_and_PL_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+    <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><section id="api-summary">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">API Summary</a><a class="headerlink" href="#api-summary" title="Link to this heading">#</a></h3>
+<p>A few of the key functions in this module are included below. For a more in-depth introduction to
+this module, see <a class="reference internal" href="synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a>. The full API can be found at
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">microphysics</span></code></a>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">API Summary</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html#trilobite.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field" title="trilobite.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_equipartition_magnetic_field</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the magnetic field strength from the thermal energy density and epsilon_B.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html#trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field" title="trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html#trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field" title="trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the normalization of a broken power-law electron distribution from microphysical parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the normalization of a broken power-law electron distribution from the thermal energy density.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field.html#trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field" title="trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_magnetic_field</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the total number density of a Maxwell-Jüttner electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the total number density of a Maxwell-Jüttner electron distribution from the thermal energy density.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field.html#trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field" title="trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p class="sd-card-text">Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity.html#trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity" title="trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the bolometric synchrotron emissivity from an explicit magnetic field and power-law electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the bolometric synchrotron emissivity assuming full equipartition.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html#trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL" title="trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_BPL</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the bolometric synchrotron emissivity from the magnetic field and a broken power-law electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html#trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density" title="trilobite.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_BPL_from_thermal_energy_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the bolometric synchrotron emissivity for a broken power-law electrondistribution assuming equipartition.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+</section>
+<section id="generating-synchrotron-seds">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Generating Synchrotron SEDs</a><a class="headerlink" href="#generating-synchrotron-seds" title="Link to this heading">#</a></h2>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><a class="reference internal" href="synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a> Describes the detailed API for generating synchrotron SEDs.
+<a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a> Describes the theory of the one-zone synchrotron SED models.
+<a class="reference internal" href="synchrotron_numerical_seds.html#synch-numerical-sed-theory"><span class="std std-ref">Methods: Quadrature Based SEDs</span></a> Describes the theory of numerical synchrotron SEDs.</p>
+</div>
+<p>Synchrotron SEDs are (by virtue of the many physical considerations at play) quite a complex topic, and the
+corresponding <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.html#module-trilobite.radiation.synchrotron.SEDs" title="trilobite.radiation.synchrotron.SEDs"><code class="xref py py-mod docutils literal notranslate"><span class="pre">SEDs</span></code></a> submodule is the most extensive part of the synchrotron
+toolkit. Broadly speaking, SEDs are categorized by the physical processes they include:</p>
+<ul class="simple">
+<li><p><strong>One-Zone vs. Many Zone</strong>: One-zone SEDs assume a single homogeneous emitting region, whereas many-zone SEDs
+can model more structured sources. These are; however, generally more restrictive, and can be quite difficult to
+fit to data due to the large number of free parameters. <em>Trilobite currently only provides one-zone SED models</em>.</p></li>
+<li><p><strong>Analytic vs. Numerical</strong>: Analytic SEDs are built from piecewise power-law segments joined at the characteristic
+break frequencies, while numerical SEDs are computed by numerically integrating the full synchrotron kernel over an
+arbitrary electron distribution. The analytic SEDs are faster to compute and easier to fit, but the numerical
+SEDs can handle more complex electron distributions and physical regimes. They are also more accurate.</p></li>
+<li><p><strong>Physical Content</strong>: SEDs may contain various physical processes such as radiative cooling,
+synchrotron self-absorption, and inverse-Compton scattering.
+The choice of which processes to include depends on the source being modeled and the available data.</p></li>
+<li><p><strong>Relativistic Corrections</strong>: For relativistic sources, the SED must include Doppler boosting and redshift corrections.
+Trilobite SEDs include these corrections by default.</p></li>
+</ul>
+<p>The <em>goal</em> of the Trilobite SED module is to provide a comprehensive suite of these SED scenarios <em>and</em> to ensure
+that domain experts can easily extend the existing modules to generate new SED models as needed. The API is designed to
+be flexible and modular, allowing users to mix and match different physical processes and assumptions as needed for
+their specific modeling scenario.</p>
+<section id="analytic-seds">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Analytic SEDs</a><a class="headerlink" href="#analytic-seds" title="Link to this heading">#</a></h3>
+<p>Analytic synchrotron SED models provide a fast and physically interpretable way to
+compute broadband emission from a given electron population. Rather than evaluating
+the full synchrotron kernel, these models approximate the spectrum as a series of
+piecewise power-law segments joined at a set of characteristic break frequencies.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>A useful feature of analytical SEDs in Trilobite is that they are constructed in a 2-step process:</p>
+<ol class="arabic simple">
+<li><p><strong>Normalization</strong>: Analytical SED classes carry a <code class="docutils literal notranslate"><span class="pre">from_physics_to_params</span></code> method, which converts the physical
+parameters of the source into the phenomenological parameters of the SED
+(e.g. break frequencies, flux normalization, etc.).</p></li>
+<li><p><strong>SED Evaluation</strong>: The <code class="docutils literal notranslate"><span class="pre">sed</span></code> method then takes these phenomenological parameters and assembles the piecewise
+power-law spectrum.</p></li>
+</ol>
+<p>The separation between the two ensures that the <em>microphysical closure</em> (performed in step 1) is decoupled
+from the complex logic of assembling the SED (performed in step 2). Thus, a user may modify their microphysical assumptions
+and skip directly to step 2 without having to re-derive the SED assembly logic. Likewise, analytical SEDs can
+provide a <code class="docutils literal notranslate"><span class="pre">from_params_to_physics</span></code> method that performs the inverse operation, allowing users to start
+with observed SED parameters (e.g. a measured peak frequency and flux) and recover the underlying physical
+parameters of the source.</p>
+</div>
+<p>In practice, there are 3 regimes in which the analytic SEDs can be derived and implemented:</p>
+<ol class="arabic simple">
+<li><p><strong>Power-Law Electron Distributions</strong> (Implemented): The most common scenario in the literature, where the electron
+distribution is a power-law in Lorentz factor. This is the default assumption in the one-zone SED models
+provided by Trilobite. These SEDs can include both cooling and SSA.</p></li>
+<li><p><strong>Thermal Electron Distributions</strong> (In Development): In some scenarios, the electron distribution may be better
+described by a thermal Maxwell-Jüttner distribution.</p></li>
+<li><p><strong>Thermal + PL Electron Distributions</strong> (In Development): A combination of a thermal Maxwell-Jüttner distribution and a
+non-thermal power-law tail, which can be used to model scenarios where there is a significant thermal population
+of electrons in addition to the accelerated non-thermal population.</p></li>
+</ol>
+<p>The following are currently available in Trilobite:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 42.0%" />
+<col style="width: 10.0%" />
+<col style="width: 10.0%" />
+<col style="width: 38.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Class</p></th>
+<th class="head"><p>Cooling</p></th>
+<th class="head"><p>SSA</p></th>
+<th class="head"><p>Use when…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_SynchrotronSED</span></code></a></p></td>
+<td><p>No</p></td>
+<td><p>No</p></td>
+<td><p>Simple optically-thin power-law; no breaks beyond <span class="math notranslate nohighlight">\(\nu_m\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SynchrotronSED</span></code></a></p></td>
+<td><p>Yes</p></td>
+<td><p>No</p></td>
+<td><p>Optically thin emission with a fast- or slow-cooling break</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_SSA_SynchrotronSED</span></code></a></p></td>
+<td><p>No</p></td>
+<td><p>Yes</p></td>
+<td><p>Dense or compact sources with an SSA turnover and negligible cooling</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SSA_SynchrotronSED</span></code></a></p></td>
+<td><p>Yes</p></td>
+<td><p>Yes</p></td>
+<td><p>Full broadband modeling – the most general option</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: A Typical SSA Synchrotron SED</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerLaw_SSA_SynchrotronSED</span>
+
+<span class="c1"># ── Instantiate the SED model ─────────────────────────────────────────────</span>
+<span class="c1"># SED objects are stateless: physical parameters are passed at call time,</span>
+<span class="c1"># not stored on the object.  This makes them safe to reuse in parameter</span>
+<span class="c1"># sweeps and inference loops without hidden state.</span>
+<span class="n">sed</span> <span class="o">=</span> <span class="n">PowerLaw_SSA_SynchrotronSED</span><span class="p">()</span>
+
+<span class="c1"># ── Physical source parameters ────────────────────────────────────────────</span>
+<span class="c1"># These are the quantities a user would typically know from the source model</span>
+<span class="c1"># or shock dynamics:</span>
+<span class="n">B</span>         <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>           <span class="c1"># post-shock magnetic field strength</span>
+<span class="n">R</span>         <span class="o">=</span> <span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>         <span class="c1"># characteristic emitting-region radius</span>
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">100.0</span>               <span class="c1"># minimum electron Lorentz factor</span>
+<span class="n">p</span>         <span class="o">=</span> <span class="mf">3.0</span>                 <span class="c1"># power-law index of the electron distribution</span>
+<span class="n">eps_E</span>     <span class="o">=</span> <span class="mf">0.1</span>                 <span class="c1"># fraction of shock energy in electrons</span>
+<span class="n">eps_B</span>     <span class="o">=</span> <span class="mf">0.1</span>                 <span class="c1"># fraction of shock energy in magnetic field</span>
+<span class="n">D_L</span>       <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span>         <span class="c1"># luminosity distance to the source</span>
+
+<span class="c1"># ── Convert physical parameters to phenomenological SED parameters ────────</span>
+<span class="c1"># from_physics_to_params applies the equipartition closure: given B and R</span>
+<span class="c1"># it computes the injection frequency nu_m, the SSA frequency nu_a, and the</span>
+<span class="c1"># normalization F_norm, together with a solid-angle factor omega.</span>
+<span class="n">params</span> <span class="o">=</span> <span class="n">sed</span><span class="o">.</span><span class="n">from_physics_to_params</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">eps_E</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="o">=</span><span class="n">eps_B</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="o">=</span><span class="n">D_L</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>   <span class="c1"># average over electron pitch angles</span>
+<span class="p">)</span>
+
+<span class="c1"># ── Frequency grid: radio through soft X-ray ─────────────────────────────</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+
+<span class="c1"># ── Evaluate the SED ──────────────────────────────────────────────────────</span>
+<span class="c1"># The sed() method assembles the piecewise power-law spectrum.  Note that</span>
+<span class="c1"># nu_a (the SSA turnover) is determined internally from nu_m, omega, p, and</span>
+<span class="c1"># gamma_m -- it does not need to be supplied explicitly.</span>
+<span class="n">Fnu</span> <span class="o">=</span> <span class="n">sed</span><span class="o">.</span><span class="n">sed</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">,</span>
+    <span class="n">nu_m</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;nu_m&#39;</span><span class="p">],</span>       <span class="c1"># injection break frequency</span>
+    <span class="n">F_norm</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;F_norm&#39;</span><span class="p">],</span>   <span class="c1"># flux normalization at nu_m</span>
+    <span class="n">nu_max</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;nu_max&#39;</span><span class="p">],</span>   <span class="c1"># high-frequency cutoff</span>
+    <span class="n">omega</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;omega&#39;</span><span class="p">],</span>     <span class="c1"># effective solid angle (encodes R and D_L)</span>
+    <span class="n">gamma_m</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>         <span class="c1"># minimum Lorentz factor (sets nu_a position)</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ── Plot ──────────────────────────────────────────────────────────────────</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span>
+    <span class="n">nu</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">Fnu</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">mJy</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Mark the characteristic frequencies returned by from_physics_to_params</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;nu_a&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;firebrick&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu_a$ (SSA turnover)&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span>
+    <span class="n">params</span><span class="p">[</span><span class="s1">&#39;nu_m&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+    <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s1">&#39;$\nu_m$ (injection break)&#39;</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [GHz]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$F_\nu$ [mJy]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="sa">r</span><span class="s1">&#39;One-zone SSA synchrotron SED (no cooling), $D_L = 100$ Mpc&#39;</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../../_downloads/0d9716c457590512c431113cfa9ba4b8/synchrotron_overview-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/ffa3a1f224002408090e9f9cfed51e95/synchrotron_overview-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/d1309aad631ac6c4f5090b8b7e778930/synchrotron_overview-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/37f7016476a26b25eb09ec73a53c0815/synchrotron_overview-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/synchrotron_overview-1.png" class="plot-directive" src="../../../../_images/synchrotron_overview-1.png" />
+</figure>
+</div>
+</details></section>
+<section id="numerical-seds">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Numerical SEDs</a><a class="headerlink" href="#numerical-seds" title="Link to this heading">#</a></h3>
+<p>In addition to the <strong>analytical SEDs</strong> as described above, Trilobite also provides a <strong>numerical SED engine</strong> that
+computes the synchrotron spectrum by numerically integrating the full synchrotron kernel over an arbitrary electron
+distribution. This allows for more complex electron distributions and physical regimes that may not be well-described
+by the piecewise power-law approximations of the analytical SEDs.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The numerical SED engine relies on pre-tabulating synchrotron kernel functions to ensure fast execution of
+the numerical integrals. Some effort has gone into optimizing this algorithm to ensure that numerical SEDs
+can be computed efficiently enough for use in Bayesian inference pipelines, but they will generally be slower to
+compute than the analytical SEDs.</p>
+</div>
+<p>The archetypal numerical SED class is <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a>,
+which provides robust methods for computing the emissivity, absorption coefficients, specific intensities, and
+flux densities. To use these engines, the following steps are generally followed:</p>
+<ol class="arabic simple">
+<li><p><strong>Instantiate the Engine</strong>: Create an instance of the numerical SED engine class.</p></li>
+<li><p><strong>Load the Synchrotron Kernel</strong>: Pre-compute and load the synchrotron kernel (either the pitch-angle-averaged
+or single-pitch-angle version) into the engine. This step is necessary to ensure that the numerical integrals can be performed efficiently.
+This can be done with the <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_avg_first_kernel()</span></code></a> or
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_first_kernel()</span></code></a> methods.</p></li>
+<li><p><strong>Compute the SED</strong>: Use the public API methods to compute the desired radiative quantities (e.g. emissivity, absorption coefficient,
+flux density) for a given set of physical parameters and an arbitrary electron distribution. The flux density
+may be computed with the <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_flux_density()</span></code></a>
+method, which includes Doppler and redshift corrections by default.</p></li>
+</ol>
+<p>See <a class="reference internal" href="synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a> for more details on the API and the physical assumptions built into the numerical SED engine.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: Numerical Synchrotron Emission from Thermal and Non-Thermal Electrons</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">This example computes the synchrotron specific intensity from three electron
+populations: a thermal Maxwell–Jüttner distribution, a non-thermal power-law,
+and their combination. The result illustrates how different components contribute
+to the overall spectrum.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalSynchrotronEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_MJD_and_PL_norm_from_magnetic_field</span><span class="p">,</span>
+    <span class="n">get_maxwell_juttner_distribution</span><span class="p">,</span>
+    <span class="n">get_power_law_distribution</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Initialize synchrotron engine</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">()</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Physical parameters</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">R</span> <span class="o">=</span> <span class="mf">1e17</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+
+<span class="n">epsilon_e</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.99999</span>   <span class="c1"># fraction of energy in thermal component</span>
+
+<span class="c1"># Thermal population</span>
+<span class="n">T</span> <span class="o">=</span> <span class="mf">1e10</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="n">Theta</span> <span class="o">=</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">k_B</span> <span class="o">*</span> <span class="n">T</span> <span class="o">/</span> <span class="p">(</span><span class="n">const</span><span class="o">.</span><span class="n">m_e</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">c</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">decompose</span><span class="p">()</span><span class="o">.</span><span class="n">value</span>
+
+<span class="c1"># Power-law population</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">50.0</span>
+<span class="n">gamma_max</span> <span class="o">=</span> <span class="mf">1e10</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Normalize electron distributions (equipartition closure)</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">N_therm</span><span class="p">,</span> <span class="n">N_pl</span> <span class="o">=</span> <span class="n">compute_MJD_and_PL_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+    <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_e</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">mjd</span> <span class="o">=</span> <span class="n">get_maxwell_juttner_distribution</span><span class="p">(</span><span class="n">Theta</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">N_therm</span><span class="p">)</span>
+<span class="n">pl</span>  <span class="o">=</span> <span class="n">get_power_law_distribution</span><span class="p">(</span><span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">N_pl</span><span class="p">,</span>
+                                 <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Grids</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-2</span><span class="p">,</span> <span class="mf">1e4</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Compute synchrotron specific intensity</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">I_mjd</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_specific_intensity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">mjd</span><span class="p">(</span><span class="n">gamma</span><span class="p">),</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">I_pl</span>  <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_specific_intensity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">pl</span><span class="p">(</span><span class="n">gamma</span><span class="p">),</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">I_tot</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_specific_intensity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span>
+                                          <span class="n">mjd</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span> <span class="o">+</span> <span class="n">pl</span><span class="p">(</span><span class="n">gamma</span><span class="p">),</span> <span class="n">gamma</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Plot</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_mjd</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Thermal (Maxwell–Jüttner)&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_pl</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Power-law&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_tot</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Combined&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [GHz]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$I_\nu$ [erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$ sr$^{-1}$]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Synchrotron emission from thermal and non-thermal electrons&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1e-11</span><span class="p">,</span> <span class="mf">1e-6</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../../_downloads/d0ba8016bff49aafd6212693e991f678/synchrotron_overview-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/0aa653c55ba1e8717e34d4671bbe756f/synchrotron_overview-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/95ad8fe2e226d968b6cafcddd53ea99b/synchrotron_overview-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/905a9c3ce93485aeb691325ae1dca157/synchrotron_overview-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/synchrotron_overview-2.png" class="plot-directive" src="../../../../_images/synchrotron_overview-2.png" />
+</figure>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: Multi-Component Numerical Synchrotron SED</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">This example demonstrates how to construct a synchrotron spectrum from multiple
+emitting components. We combine emission from a simple power-law electron population
+and a broken power-law population with different physical conditions, illustrating
+how complex spectra can arise from superposed regions.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalSynchrotronEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_PL_norm_from_magnetic_field</span><span class="p">,</span>
+    <span class="n">compute_BPL_norm_from_magnetic_field</span><span class="p">,</span>
+    <span class="n">get_power_law_distribution</span><span class="p">,</span>
+    <span class="n">get_broken_power_law_distribution</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Initialize synchrotron engine</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">()</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Physical parameters (two emitting regions)</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">B1</span><span class="p">,</span> <span class="n">R1</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+<span class="n">B2</span><span class="p">,</span> <span class="n">R2</span> <span class="o">=</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="mf">1e13</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+
+<span class="n">epsilon_e</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.01</span>
+
+<span class="c1"># Electron distribution parameters</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">2.5</span>
+<span class="n">gamma_c</span> <span class="o">=</span> <span class="mf">1e2</span>
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="n">gamma_max</span> <span class="o">=</span> <span class="mf">1e10</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Normalize electron distributions (equipartition closure)</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">N0_pl</span> <span class="o">=</span> <span class="n">compute_PL_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B1</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_e</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
+<span class="p">)</span>
+
+<span class="n">N0_bpl</span> <span class="o">=</span> <span class="n">compute_BPL_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B2</span><span class="p">,</span> <span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">gamma_c</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_e</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
+<span class="p">)</span>
+
+<span class="c1"># Distribution functions</span>
+<span class="n">pl</span>  <span class="o">=</span> <span class="n">get_power_law_distribution</span><span class="p">(</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">N0_pl</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
+<span class="p">)</span>
+
+<span class="n">bpl</span> <span class="o">=</span> <span class="n">get_broken_power_law_distribution</span><span class="p">(</span>
+    <span class="o">-</span><span class="n">p</span><span class="p">,</span> <span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mi">1</span><span class="p">),</span> <span class="n">gamma_c</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">N0_bpl</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span>
+<span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Grids</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-1</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+
+<span class="c1"># Evaluate distributions</span>
+<span class="n">N_pl</span>  <span class="o">=</span> <span class="n">pl</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+<span class="n">N_bpl</span> <span class="o">=</span> <span class="n">bpl</span><span class="p">(</span><span class="n">gamma</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Compute synchrotron intensities</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">I_pl</span>  <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_specific_intensity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">R1</span><span class="p">,</span> <span class="n">B1</span><span class="p">,</span> <span class="n">N_pl</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+<span class="n">I_bpl</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_specific_intensity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">R2</span><span class="p">,</span> <span class="n">B2</span><span class="p">,</span> <span class="n">N_bpl</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+
+<span class="n">I_total</span> <span class="o">=</span> <span class="n">I_pl</span> <span class="o">+</span> <span class="n">I_bpl</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Plot</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_pl</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Component 1 (Power-law)&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_bpl</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Component 2 (Broken power-law)&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">I_total</span><span class="p">,</span> <span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Combined&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [GHz]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$I_\nu$ [erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$ sr$^{-1}$]&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Multi-component synchrotron SED&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../../_downloads/825f2cd492965ae93f87b2c425807119/synchrotron_overview-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/ae8a88ce49f1a672bb62ddb46c234c17/synchrotron_overview-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/58c0aaced1aab5e0f14b6e411e72439c/synchrotron_overview-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/bc65811135ed4fe007421c07df80c732/synchrotron_overview-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/synchrotron_overview-3.png" class="plot-directive" src="../../../../_images/synchrotron_overview-3.png" />
+</figure>
+</div>
+</details></section>
+<section id="limitations">
+<h3><a class="toc-backref" href="#id19" role="doc-backlink">Limitations</a><a class="headerlink" href="#limitations" title="Link to this heading">#</a></h3>
+<p>Both analytic and numerical SED models share the <strong>one-zone assumption</strong>: the emitting region is
+treated as a single, homogeneous sphere. Multi-zone or stratified geometries must be handled by
+the user (e.g. by superposing several independent SED calls).</p>
+<p><strong>Analytic SEDs</strong> carry additional restrictions:</p>
+<ul class="simple">
+<li><p><em>Power-law electrons only (currently).</em> Thermal and thermal+PL analytic SEDs are in active
+development but not yet available. For non-power-law distributions, use the numerical engine.</p></li>
+<li><p><em>Piecewise approximation near break frequencies.</em> The real synchrotron spectrum transitions
+smoothly between spectral segments; the piecewise power-law formula introduces errors of order
+unity near the break. For precise fitting of data that straddles a break, the numerical engine
+is more reliable.</p></li>
+<li><p><em>Closed-form closure required.</em> The analytic break-frequency expressions assume standard
+equipartition microphysics. Non-standard closures (e.g. time-evolving <span class="math notranslate nohighlight">\(\epsilon_e\)</span>,
+anisotropic pitch angles) cannot be folded in without modifying the closure.</p></li>
+</ul>
+<p><strong>Numerical SEDs</strong> have complementary limitations:</p>
+<ul class="simple">
+<li><p><em>Static electron distribution.</em> <span class="math notranslate nohighlight">\(N(\gamma)\)</span> is provided at a single instant; the engine
+does not self-consistently evolve the spectrum under cooling. Cooling breaks must be encoded
+in the distribution before it is passed in.</p></li>
+<li><p><em>Grid-dependent accuracy.</em> The numerical integrals are evaluated on the Lorentz-factor grid
+supplied by the user. Results are sensitive to grid resolution and extent — too coarse a grid
+or cutoffs that clip the emitting population will produce inaccurate spectra. As a rule of
+thumb, use at least <span class="math notranslate nohighlight">\(\sim 200\)</span> logarithmically-spaced points spanning the full range of
+contributing Lorentz factors.</p></li>
+<li><p><em>Kernel pre-tabulation required.</em> The synchrotron kernel must be explicitly loaded before any
+radiative quantity can be computed. This one-time setup step is cheap but is not automatic.</p></li>
+<li><p><em>Slower than analytic SEDs.</em> Because the full kernel convolution is evaluated numerically,
+the engine is substantially slower than the piecewise analytic models. For large parameter
+sweeps or MCMC inference, the analytic SEDs are preferred unless the electron distribution
+genuinely cannot be approximated as a power law.</p></li>
+</ul>
+</section>
+<section id="id9">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">API Summary</a><a class="headerlink" href="#id9" title="Link to this heading">#</a></h3>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">API Summary</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text"><strong>Analytic SEDs</strong> (<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.html#module-trilobite.radiation.synchrotron.SEDs.one_zone" title="trilobite.radiation.synchrotron.SEDs.one_zone"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.synchrotron.SEDs.one_zone</span></code></a>)</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw_SynchrotronSED</span></code></a></p></td>
+<td><p class="sd-card-text">The canonical 1-zone power-law synchrotron SED (uncooled, optically thin).</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SynchrotronSED</span></code></a></p></td>
+<td><p class="sd-card-text">Synchrotron SED with cooling but no self-absorption.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw_SSA_SynchrotronSED</span></code></a></p></td>
+<td><p class="sd-card-text">Synchrotron SED with synchrotron self-absorption and no radiative cooling.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.html#trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED" title="trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">PowerLaw_Cooling_SSA_SynchrotronSED</span></code></a></p></td>
+<td><p class="sd-card-text">Synchrotron spectral energy distribution with cooling and self-absorption.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="sd-card-text"><strong>Numerical SED Engine</strong> (<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.html#module-trilobite.radiation.synchrotron.SEDs.numerical" title="trilobite.radiation.synchrotron.SEDs.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.synchrotron.SEDs.numerical</span></code></a>)</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.load_first_kernel</span></code></a></p></td>
+<td><p class="sd-card-text">Build and cache the interpolator for the first synchrotron kernel <span class="math notranslate nohighlight">\(F(x)\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.load_avg_first_kernel</span></code></a></p></td>
+<td><p class="sd-card-text">Build and cache the interpolator for the first synchrotron kernel <span class="math notranslate nohighlight">\(F(x)\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_emissivity</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the comoving-frame synchrotron emissivity <span class="math notranslate nohighlight">\(j_\nu\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_absorption</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the comoving-frame synchrotron self-absorption coefficient <span class="math notranslate nohighlight">\(|\alpha_\nu|\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_source_function</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the comoving-frame synchrotron source function <span class="math notranslate nohighlight">\(S_\nu = j_\nu / \alpha_\nu\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_specific_intensity</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the observer-frame specific intensity including Doppler boost and redshift.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_flux_density</span></code></a></p></td>
+<td><p class="sd-card-text">Compute the observer-frame spectral flux density <span class="math notranslate nohighlight">\(F_\nu\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p class="sd-card-text"><strong>Electron Distribution Factories</strong> (<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.html#module-trilobite.radiation.synchrotron.microphysics" title="trilobite.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.synchrotron.microphysics</span></code></a>)</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution.html#trilobite.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution" title="trilobite.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_maxwell_juttner_distribution</span></code></a></p></td>
+<td><p class="sd-card-text">Return a callable ultra-relativistic Maxwell-Jüttner electron distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.get_power_law_distribution.html#trilobite.radiation.synchrotron.microphysics.get_power_law_distribution" title="trilobite.radiation.synchrotron.microphysics.get_power_law_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_power_law_distribution</span></code></a></p></td>
+<td><p class="sd-card-text">Return a callable power-law electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p class="sd-card-text"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.microphysics.get_broken_power_law_distribution.html#trilobite.radiation.synchrotron.microphysics.get_broken_power_law_distribution" title="trilobite.radiation.synchrotron.microphysics.get_broken_power_law_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_broken_power_law_distribution</span></code></a></p></td>
+<td><p class="sd-card-text">Return a callable broken power-law electron distribution.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</details></section>
+</section>
+<section id="core-synchrotron-quantities">
+<h2><a class="toc-backref" href="#id21" role="doc-backlink">Core Synchrotron Quantities</a><a class="headerlink" href="#core-synchrotron-quantities" title="Link to this heading">#</a></h2>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a> contains the full API documentation for all functions
+described in this section.</p>
+</div>
+<p>At the core of synchrotron modeling are the <strong>gyrofrequency</strong>
+<span class="math notranslate nohighlight">\(\nu_g = eB / (m_e c \gamma)\)</span> and the <strong>critical synchrotron frequency</strong>
+<span class="math notranslate nohighlight">\(\nu_c = 3 e B \gamma^2 / (4\pi m_e c)\)</span>.  Nearly all synchrotron power from
+a single electron is emitted within roughly an order of magnitude of <span class="math notranslate nohighlight">\(\nu_c\)</span>,
+so the critical frequency sets the characteristic scale of the spectrum.</p>
+<p><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.html#module-trilobite.radiation.synchrotron.core" title="trilobite.radiation.synchrotron.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a> provides
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.compute_gyrofrequency.html#trilobite.radiation.synchrotron.core.compute_gyrofrequency" title="trilobite.radiation.synchrotron.core.compute_gyrofrequency"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_gyrofrequency()</span></code></a>,
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.compute_nu_critical.html#trilobite.radiation.synchrotron.core.compute_nu_critical" title="trilobite.radiation.synchrotron.core.compute_nu_critical"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_nu_critical()</span></code></a>,
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.compute_synchrotron_frequency.html#trilobite.radiation.synchrotron.core.compute_synchrotron_frequency" title="trilobite.radiation.synchrotron.core.compute_synchrotron_frequency"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_synchrotron_frequency()</span></code></a>, and
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.core.compute_synchrotron_gamma.html#trilobite.radiation.synchrotron.core.compute_synchrotron_gamma" title="trilobite.radiation.synchrotron.core.compute_synchrotron_gamma"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_synchrotron_gamma()</span></code></a> for these
+frequency conversions.  It also implements the private log-space backends for the
+<strong>first synchrotron kernel</strong> <span class="math notranslate nohighlight">\(F(x) = x\int_x^\infty K_{5/3}(z)\,dz\)</span> and its
+pitch-angle average <span class="math notranslate nohighlight">\(\bar{F}(x)\)</span> that are consumed by
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a>.</p>
+<p>The example below builds a numerical engine, pre-computes the pitch-angle-averaged
+kernel, and evaluates the population-averaged emissivity <span class="math notranslate nohighlight">\(j_\nu\)</span> for a simple
+power-law electron distribution <span class="math notranslate nohighlight">\(N(\gamma) \propto \gamma^{-p}\)</span> at several
+spectral indices, illustrating how the emissivity slope tracks <span class="math notranslate nohighlight">\(p\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">compute_nu_critical</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalSynchrotronEngine</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">gamma_min</span> <span class="o">=</span> <span class="mf">1e2</span>
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">15</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+<span class="n">ps</span> <span class="o">=</span> <span class="p">[</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">3.5</span><span class="p">]</span>
+<span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;steelblue&#39;</span><span class="p">,</span> <span class="s1">&#39;darkorange&#39;</span><span class="p">,</span> <span class="s1">&#39;firebrick&#39;</span><span class="p">]</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">()</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">p</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">ps</span><span class="p">,</span> <span class="n">colors</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">N</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">)</span>
+
+    <span class="n">j_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_emissivity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e8</span><span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">j_nu</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+              <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s1">&#39;$p = </span><span class="si">{</span><span class="n">p</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+
+<span class="n">nu_c_min</span> <span class="o">=</span> <span class="n">compute_nu_critical</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">nu_c_min</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+           <span class="n">label</span><span class="o">=</span><span class="sa">rf</span><span class="s1">&#39;$\nu_c(\gamma_</span><span class="se">{{</span><span class="s1">\min</span><span class="se">}}</span><span class="s1">)$&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Frequency [GHz]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;$j_\nu$ [erg s$^{-1}$ cm$^{-3}$ Hz$^{-1}$ sr$^{-1}$]&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">r</span><span class="s1">&#39;Population-averaged synchrotron emissivity, $B = 1$ G&#39;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">grid</span><span class="p">(</span><span class="kc">True</span><span class="p">,</span> <span class="n">which</span><span class="o">=</span><span class="s1">&#39;both&#39;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.4</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../../_downloads/d7e10855fdd2030d1804e0a69175bd5a/synchrotron_overview-4.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/d8aafa3ccb6231f8962e153b7f26a696/synchrotron_overview-4.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/15217aa46bcc1a51769d8ba9e39cbe0f/synchrotron_overview-4.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/dc7d944302b2ad2afb5b7d88e0226595/synchrotron_overview-4.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/synchrotron_overview-4.png" class="plot-directive" src="../../../../_images/synchrotron_overview-4.png" />
+</figure>
+</section>
+<hr class="docutils" />
+<section id="further-reading">
+<h2><a class="toc-backref" href="#id22" role="doc-backlink">Further Reading</a><a class="headerlink" href="#further-reading" title="Link to this heading">#</a></h2>
+<p>The table below maps common modeling tasks to the relevant documentation:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 50.0%" />
+<col style="width: 50.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>If you want to…</p></th>
+<th class="head"><p>See…</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Understand the physics behind the module</p></td>
+<td><p><a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Work with fundamental quantities (kernels, single-electron spectra)</p></td>
+<td><p><a class="reference internal" href="synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Compute population-averaged emissivities and equipartition quantities</p></td>
+<td><p><a class="reference internal" href="synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Build or fit a broadband SED model</p></td>
+<td><p><a class="reference internal" href="synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Understand the SED spectral-regime derivations</p></td>
+<td><p><a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Model radiative cooling and the cooling break</p></td>
+<td><p><a class="reference internal" href="synchrotron_cooling.html#synchrotron-cooling"><span class="std std-ref">Radiative Cooling Engines</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Learn about stratified synchrotron self-absorption</p></td>
+<td><p><a class="reference internal" href="synchrotron_stratified_absorption.html#stratified-absorption"><span class="std std-ref">Theory Note: Stratified Synchrotron Absorption</span></a></p></td>
+</tr>
+<tr class="row-odd"><td><p>Invert a relativistic synchrotron peak using equipartition (Barniol-Duran)</p></td>
+<td><p><a class="reference internal" href="synchrotron_barniol_duran.html#barnoil-duran"><span class="std std-ref">Theory Note: The Barniol-Duran Formalism</span></a></p></td>
+</tr>
+<tr class="row-even"><td><p>Compute SEDs for arbitrary (non-power-law) electron distributions</p></td>
+<td><p><a class="reference internal" href="synchrotron_numerical_seds.html#synch-numerical-sed-theory"><span class="std std-ref">Methods: Quadrature Based SEDs</span></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="docutils container" id="id10">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-demarchiradioanalysissn2004c2022" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id7">2</a>)</span>
+<p>Lindsay DeMarchi, R. Margutti, J. Dittman, A. Brunthaler, D. Milisavljevic, Michael F. Bietenholz, C. Stauffer, D. Brethauer, D. Coppejans, K. Auchettl, K. D. Alexander, C. D. Kilpatrick, Joe S. Bright, L. Z. Kelley, Michael C. Stroh, and W. V. Jacobson-Galán. Radio Analysis of SN2004C Reveals an Unusual CSM Density Profile as a Harbinger of Core Collapse. <em>The Astrophysical Journal</em>, 938(1):84, October 2022. <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac8c26">doi:10.3847/1538-4357/ac8c26</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-1998apj-497l-17s" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Re’em Sari, Tsvi Piran, and Ramesh Narayan. Spectra and Light Curves of Gamma-Ray Burst Afterglows. <em>\apjl </em>, 497(1):L17–L20, April 1998. <a class="reference external" href="https://arxiv.org/abs/astro-ph/9712005">arXiv:astro-ph/9712005</a>, <a class="reference external" href="https://doi.org/10.1086/311269">doi:10.1086/311269</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-wudelayedradioemission2025" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id8">2</a>)</span>
+<p>Samantha C. Wu, Daichi Tsuna, Brenna Mockler, and Anthony L. Piro. Delayed radio emission in tidal disruption events from collisions of outflows driven by disk instabilities. November 2025. ADS Bibcode: 2025arXiv251114008W. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2025arXiv251114008W">https://ui.adsabs.harvard.edu/abs/2025arXiv251114008W</a> (visited on 2025-11-19).</p>
+</aside>
+<aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">4</a><span class="fn-bracket">]</span></span>
+<p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-lu-2026-18603474" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">5</a><span class="fn-bracket">]</span></span>
+<p>Wenbin Lu. <em>Book on Astrophysical Radiation</em>. Zenodo, February 2026. URL: <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">https://doi.org/10.5281/zenodo.18603474</a>, <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">doi:10.5281/zenodo.18603474</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-margutti2019cow" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id6">6</a><span class="fn-bracket">]</span></span>
+<p>R. Margutti, B. D. Metzger, R. Chornock, I. Vurm, N. Roth, B. W. Grefenstette, V. Savchenko, R. Cartier, J. F. Steiner, G. Terreran, B. Margalit, G. Migliori, D. Milisavljevic, K. D. Alexander, M. Bietenholz, P. K. Blanchard, E. Bozzo, D. Brethauer, I. V. Chilingarian, D. L. Coppejans, L. Ducci, C. Ferrigno, W. Fong, D. Götz, C. Guidorzi, A. Hajela, K. Hurley, E. Kuulkers, P. Laurent, S. Mereghetti, M. Nicholl, D. Patnaude, P. Ubertini, J. Banovetz, N. Bartel, E. Berger, E. R. Coughlin, T. Eftekhari, D. D. Frederiks, A. V. Kozlova, T. Laskar, D. S. Svinkin, M. R. Drout, A. MacFadyen, and K. Paterson. An Embedded X-Ray Source Shines through the Aspherical AT 2018cow: Revealing the Inner Workings of the Most Luminous Fast-evolving Optical Transients. <em>\apj </em>, 872(1):18, February 2019. <a class="reference external" href="https://arxiv.org/abs/1810.10720">arXiv:1810.10720</a>, <a class="reference external" href="https://doi.org/10.3847/1538-4357/aafa01">doi:10.3847/1538-4357/aafa01</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../overview.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Radiation Processes in Trilobite</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="synchrotron_core.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Core Synchrotron Tools</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#module-overview">Module Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#module-structure">Module Structure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#useful-external-modules">Useful External Modules</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-microphysics">Synchrotron Microphysics</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#api-summary">API Summary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-synchrotron-seds">Generating Synchrotron SEDs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#analytic-seds">Analytic SEDs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-seds">Numerical SEDs</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#limitations">Limitations</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">API Summary</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#core-synchrotron-quantities">Core Synchrotron Quantities</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#further-reading">Further Reading</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_overview.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

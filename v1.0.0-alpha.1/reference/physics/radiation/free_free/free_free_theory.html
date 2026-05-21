@@ -1,0 +1,1129 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Free-Free Radiation Theory &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/free_free/free_free_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Opacity Laws" href="../opacity/opacity_user_guide.html" />
+    <link rel="prev" title="Free-Free Emission Tools" href="free_free_emission.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Free-Free Radiation Theory</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="free-free-radiation-theory">
+<span id="free-free-theory"></span><h1>Free-Free Radiation Theory<a class="headerlink" href="#free-free-radiation-theory" title="Link to this heading">#</a></h1>
+<p>Free-free radiation—also called <strong>bremsstrahlung</strong> (“braking radiation” in German)—is the continuum
+emission produced when a free electron is accelerated by the Coulomb field of an ion without being
+captured.  It is one of the most ubiquitous thermal radiation mechanisms in astrophysics and is
+particularly important for modeling the radio and centimeter-wave emission from ionized circumstellar
+media (CSM) around supernovae, HII regions, stellar coronae, and the hot intra-cluster medium.</p>
+<p>In the context of Trilobite, free-free emission is primarily relevant as a <strong>foreground opacity</strong>
+source in front of synchrotron-emitting shock regions and as a direct contributor to the total
+radio flux at early times when the CSM is dense and ionized. It is also relevant to shock-driven
+X-ray emission in many transients.</p>
+<p>In this documentation we summarize the key formulae and conventions used throughout the Trilobite
+free-free module.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>A comprehensive treatment can be found in Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>,
+Chapters 5.2–5.3. Another accessible treatment of the details is described in
+Lu<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>.</p>
+</div>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id16">Overview</a></p></li>
+<li><p><a class="reference internal" href="#thermal-free-free-emission-and-absorption" id="id17">Thermal Free-Free Emission and Absorption</a></p>
+<ul>
+<li><p><a class="reference internal" href="#composition" id="id18">Composition</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#the-gaunt-factor" id="id19">The Gaunt-Factor</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-coulomb-logarithm" id="id20">The Coulomb Logarithm</a></p></li>
+<li><p><a class="reference internal" href="#id10" id="id21">The Gaunt Factor</a></p></li>
+<li><p><a class="reference internal" href="#the-gaunt-factor-in-practice" id="id22">The Gaunt Factor in Practice</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#optical-depth" id="id23">Optical Depth</a></p>
+<ul>
+<li><p><a class="reference internal" href="#csm-density-profiles" id="id24">CSM Density Profiles</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#astrophysical-context" id="id25">Astrophysical Context</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id16" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>When a charged particle is accelerated in the <strong>Coulomb Field</strong> of another particle, it is accelerated,
+producing <strong>bremsstrahlung</strong> or <strong>free-free emission</strong>. This is a common source of very high energy photons
+in ionized plasmas and is the focus of this section. In general, free-free emission occurs between
+electrons and ions in a plasma; in some cases, the plasma is thermalized allowing for
+so-called <strong>thermal bremsstrahlung</strong> to occur.</p>
+<p>It can be shown that the power emitted by a single electron of charge <span class="math notranslate nohighlight">\(e\)</span> and mass <span class="math notranslate nohighlight">\(m_e\)</span>
+accelerated by a Coulomb field of charge <span class="math notranslate nohighlight">\(Ze\)</span> is given by the following formula:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\frac{dW}{d\omega} = \begin{cases}
+\frac{8Z^2e^6}{3\pi c^3 m_e^2 v^2 b^2}, &amp; \text{if } \omega &lt; \frac{v}{b} \\
+0, &amp; \text{if } \omega &gt; \frac{v}{b}
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(v\)</span> is the velocity of the electron and <span class="math notranslate nohighlight">\(b\)</span> is the impact parameter of the collision.
+This formula indicates that the power emitted by a single electron is inversely proportional to the square of
+its velocity and the square of the impact parameter, and it is directly proportional to the square of the
+charge of the ion.</p>
+<p>The modeling of free-free emission therefore comes down to calculating the total power emitted by a population of
+electrons and ions in a plasma, which involves integrating over the distribution of electron velocities and impact
+parameters.</p>
+</section>
+<section id="thermal-free-free-emission-and-absorption">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Thermal Free-Free Emission and Absorption</a><a class="headerlink" href="#thermal-free-free-emission-and-absorption" title="Link to this heading">#</a></h2>
+<p>A detailed calculation (see Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>, Chapter 5.2) of the total power emitted by a
+thermal population of electrons reveals that the emissivity of the plasma can be expressed as
+<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[j_\nu = \frac{16 \sqrt{\pi} e^6}{3\sqrt{3} m_e^2 c^3} \left(\frac{m_e}{2k_B T_e}\right)^{1/2} Z^2
+n_e n_i e^{-h\nu / k_B T_e} g_{\rm ff}( T_e, \nu),\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_e\)</span> and <span class="math notranslate nohighlight">\(n_i\)</span> are the number densities of electrons and ions, respectively, <span class="math notranslate nohighlight">\(T_e\)</span> is the
+electron temperature, and <span class="math notranslate nohighlight">\(g_{\rm ff}\)</span> is the free-free Gaunt factor,
+a dimensionless correction factor that accounts for quantum mechanical effects (see sections below).</p>
+<p>In CGS units, this becomes</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+j_\nu = 6.8 \times 10^{-38} Z^2 n_e n_i T_e^{-1/2}
+e^{-h\nu / k_B T_e} g_{\rm ff}( T_e, \nu) \quad \text{erg s}^{-1} \text{cm}^{-3} \text{Hz}^{-1} \text{sr}^{-1}.
+}\]</div>
+<p>In local thermodynamic equilibrium (LTE), the absorption coefficient can be derived from Kirchhoff’s law, which
+states that the emissivity and absorption coefficient are related by the Planck function:</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu = \frac{j_\nu}{B_\nu(T_e)},\]</div>
+<p>implying that <a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id7" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\alpha_\nu^{\rm ff}
+=
+\frac{4\sqrt{\pi} e^6}{3\sqrt{3} m_e^2 h c}
+\left(\frac{2 m_e}{k_B T_e}\right)^{1/2}
+\frac{n_e}{\nu^3}
+\left(1 - e^{-h\nu/k_B T_e}\right)
+\sum_i g_{{\rm ff},i} Z_i^2 n_i.
+}\]</div>
+<p>which again can be expressed in CGS units as</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\alpha_\nu^{\rm ff} = 3.7 \times 10^8 Z^2 n_e n_i T_e^{-1/2} \nu^{-3}
+\left(1 - e^{-h\nu/k_B T_e}\right) g_{\rm ff}( T_e, \nu) \quad \text{cm}^{-1}.
+}\]</div>
+<p>In the Rayleigh–Jeans limit (where <span class="math notranslate nohighlight">\(h\nu \ll k_B T_e\)</span>), the absorption coefficient simplifies to</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu^{\rm ff} \approx 0.018 Z^2 n_e n_i T_e^{-3/2} \nu^{-2} g_{\rm ff}( T_e, \nu).\]</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>These are the two core equations that govern free-free emission and absorption in a thermal plasma.
+Trilobite implements these formulae in <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.free_free.core.html#module-trilobite.radiation.free_free.core" title="trilobite.radiation.free_free.core"><code class="xref py py-mod docutils literal notranslate"><span class="pre">core</span></code></a>.</p>
+</div>
+<section id="composition">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Composition</a><a class="headerlink" href="#composition" title="Link to this heading">#</a></h3>
+<p>In the discussion above, we have implicitly assumed a single ion species with charge
+<span class="math notranslate nohighlight">\(Z\)</span> and number density <span class="math notranslate nohighlight">\(n_i\)</span>. In realistic astrophysical plasmas, however,
+the gas is composed of multiple ionic species, each contributing independently to the
+free–free emission and absorption.</p>
+<p>The emissivity is therefore obtained by summing over all ion species:</p>
+<div class="math notranslate nohighlight">
+\[j_\nu =
+\frac{16 \sqrt{\pi} e^6}{3\sqrt{3} m_e^2 c^3}
+\left(\frac{m_e}{2k_B T_e}\right)^{1/2}
+n_e
+\sum_i n_i Z_i^2
+e^{-h\nu / k_B T_e}
+g_{{\rm ff},i}( T_e, \nu),\]</div>
+<p>which differs from the single-species expression only through the replacement</p>
+<div class="math notranslate nohighlight">
+\[Z^2 n_i \;\longrightarrow\; \sum_i Z_i^2 n_i.\]</div>
+<p>Similarly, the absorption coefficient becomes</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu^{\rm ff}
+=
+\frac{4\sqrt{\pi} e^6}{3\sqrt{3} m_e^2 h c}
+\left(\frac{2 m_e}{k_B T_e}\right)^{1/2}
+\frac{n_e}{\nu^3}
+\left(1 - e^{-h\nu/k_B T_e}\right)
+\sum_i Z_i^2 n_i\, g_{{\rm ff},i}( T_e, \nu),\]</div>
+<p>which matches the form already written above. :contentReference[oaicite:0]{index=0}</p>
+<p>It is often convenient to express these sums in terms of number fractions
+<span class="math notranslate nohighlight">\(x_i = n_i / n_{\rm ion}\)</span>, where <span class="math notranslate nohighlight">\(n_{\rm ion} = \sum_i n_i\)</span>. In this case,</p>
+<div class="math notranslate nohighlight">
+\[\sum_i Z_i^2 n_i = n_{\rm ion} \sum_i Z_i^2 x_i,\]</div>
+<p>and one may define an effective Gaunt factor</p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff,eff}(T_e, \nu)
+=
+\sum_i Z_i^2 x_i\, g_{{\rm ff},i}(T_e, \nu),\]</div>
+<p>such that the emissivity takes the same form as the single-species expression:</p>
+<div class="math notranslate nohighlight">
+\[j_\nu \propto n_e n_{\rm ion} g_{\rm ff,eff}.\]</div>
+<p>Finally, we note that the electron density itself depends on the composition through</p>
+<div class="math notranslate nohighlight">
+\[n_e = \sum_i Z_i n_i,\]</div>
+<p>so that both the normalization and the effective Gaunt factor are composition-dependent.</p>
+</section>
+</section>
+<section id="the-gaunt-factor">
+<h2><a class="toc-backref" href="#id19" role="doc-backlink">The Gaunt-Factor</a><a class="headerlink" href="#the-gaunt-factor" title="Link to this heading">#</a></h2>
+<p>The Gaunt factor <span class="math notranslate nohighlight">\(g_{\rm ff}( T_e, \nu)\)</span> is a dimensionless correction factor that accounts for
+various quantum mechanical effects in the calculation of free-free emission and absorption.</p>
+<section id="the-coulomb-logarithm">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">The Coulomb Logarithm</a><a class="headerlink" href="#the-coulomb-logarithm" title="Link to this heading">#</a></h3>
+<p>We consider first
+a scenario in which a single electron is accelerated by the Coulomb field of many ions with density <span class="math notranslate nohighlight">\(n_i\)</span>
+and charge <span class="math notranslate nohighlight">\(Ze\)</span>. The emitting spectrum is calculated as <a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id9" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[P_\omega(v) = \int db\;2\pi b n_i v \frac{dW}{d\omega} = \frac{16 Z^2 e^6 n_i}{3m_e^2 c^3 v} \ln \Lambda,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\ln \Lambda\)</span> is the Coulomb logarithm, which accounts for the range of impact parameters
+that contribute to the emission:</p>
+<div class="math notranslate nohighlight">
+\[\ln \Lambda \simeq \ln \left( \frac{b_{\rm max}}{b_{\rm min}} \right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(b_{\rm max}\)</span> and <span class="math notranslate nohighlight">\(b_{\rm min}\)</span> are the maximum and minimum impact parameters, respectively.</p>
+<p>The clear question becomes the following: <em>What are the maximum and minimum impact parameters?</em>.</p>
+<p>If the electron is affected by an ion at <strong>too close an impact parameter</strong>, then the impulse approximation on which
+the above formulae are based breaks down, and the electron’s trajectory is significantly altered. This sets a minimum
+impact parameter of</p>
+<div class="math notranslate nohighlight">
+\[b_{\rm min} \simeq \frac{2|q_1q_2|}{m_1 v^2} = \frac{2 Z e^2}{m_e v^2}.\]</div>
+<p>This is also not the only limit on the minimum impact parameter, however. The velocity of the electron implies
+a quantum mechanical uncertainty in its position</p>
+<div class="math notranslate nohighlight">
+\[b_{\rm min} \simeq \frac{2\hbar}{m_e v},\]</div>
+<p>at which scales the scattering becomes fundamentally quantum mechanical and the classical treatment breaks down. </p>
+<p>If the electron is affected by an ion at <strong>too large an impact parameter</strong>, several effects can come into play. The
+most important is that of <strong>Debye shielding</strong>: the Coulomb field of the ion is screened by the surrounding plasma,
+which sets a maximum impact parameter of</p>
+<div class="math notranslate nohighlight">
+\[b_{\rm max} \simeq \lambda_D = \sqrt{\frac{k_B T_e}{4\pi n_e e^2}}.\]</div>
+<p>In atomic plasmas, the “orbital timescale” of the electron around the ion can also set a maximum impact parameter,
+but this is typically less relevant in astrophysical contexts.</p>
+<p>The details of the Coulomb logarithm have been explored in <strong>great detail</strong> in the literature.</p>
+</section>
+<section id="id10">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">The Gaunt Factor</a><a class="headerlink" href="#id10" title="Link to this heading">#</a></h3>
+<p>Subject to some conventions and approximation, the Gaunt factor is essentially the Coulomb logarithm in the
+context of thermal bremsstrahlung. In the low frequency limit, the Gaunt factor is given by</p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff}(\nu, T_e) \simeq \frac{\sqrt{3}}{\pi} \log \left[\frac{1}{Z}
+\frac{(k_B T_e)^{3/2}}{h\nu \sqrt{\rm Ry}}\min\left(1,Z\sqrt{\frac{\rm Ry}{k_B T}}\right)\right].\]</div>
+<p>In Trilobite, we provide a number of options for actually performing the Gaunt factor calculations,</p>
+</section>
+<section id="the-gaunt-factor-in-practice">
+<h3><a class="toc-backref" href="#id22" role="doc-backlink">The Gaunt Factor in Practice</a><a class="headerlink" href="#the-gaunt-factor-in-practice" title="Link to this heading">#</a></h3>
+<p>In practice, the Gaunt factor is <strong>not evaluated directly from the Coulomb logarithm</strong>, but instead
+computed using a combination of <strong>analytic approximations</strong> and <strong>tabulated data</strong> that incorporate
+the full quantum-mechanical treatment of electron–ion scattering. In Trilobite, we provide a unified
+interface for evaluating <span class="math notranslate nohighlight">\(g_{\rm ff}(Z, T, \nu)\)</span> across a wide range of physical regimes.</p>
+<section id="analytic-approximations">
+<h4>Analytic Approximations<a class="headerlink" href="#analytic-approximations" title="Link to this heading">#</a></h4>
+<p>For performance-critical applications (e.g. MCMC inference), we provide fast analytic
+approximations that capture the correct asymptotic behavior.</p>
+<p>The default implementation is based on the formulation of Lu<a class="footnote-reference brackets" href="#footcite-lu-2026-18603474" id="id11" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>:</p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right),\]</div>
+<p>with</p>
+<div class="math notranslate nohighlight">
+\[Q = 6 - \frac{\sqrt{3}}{\pi} \ln A,\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[A = \frac{\nu_9}{T_4}
+    \max\!\left(0.25,\;\frac{Z}{T_4^{1/2}}\right)^{-1}.\]</div>
+<p>Here <span class="math notranslate nohighlight">\(\nu_9 = \nu / 10^9\,{\rm Hz}\)</span> and <span class="math notranslate nohighlight">\(T_4 = T / 10^4\,{\rm K}\)</span>.</p>
+<p>A few important features:</p>
+<ul class="simple">
+<li><p>The form <span class="math notranslate nohighlight">\(\ln(e + \exp Q)\)</span> ensures <strong>smooth interpolation</strong> between regimes</p></li>
+<li><p>The Gaunt factor remains <strong>positive and well-behaved</strong></p></li>
+<li><p>Numerical stability is enforced using a log-sum-exp formulation</p></li>
+</ul>
+<p>This approximation is accurate to within a few percent over a wide range of
+non-relativistic conditions and is therefore used as the <strong>default</strong>.</p>
+<p>A simpler classical approximation due to Draine<a class="footnote-reference brackets" href="#footcite-draine2011physics" id="id12" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a> is also provided:</p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff} \approx \ln\!\left(e + \exp(Q)\right),\]</div>
+<div class="math notranslate nohighlight">
+\[Q = 5.960 - \frac{\sqrt{3}}{\pi}
+    \ln\!\left(\nu_9 T_4^{-3/2} Z\right).\]</div>
+<p>This expression captures the correct logarithmic scaling but is somewhat less accurate,
+particularly outside the classical regime.</p>
+</section>
+<section id="tabulated-gaunt-factors">
+<h4>Tabulated Gaunt Factors<a class="headerlink" href="#tabulated-gaunt-factors" title="Link to this heading">#</a></h4>
+<p>For higher-precision work, Trilobite includes interpolators based on the
+tabulations of van Hoof <em>et al.</em><a class="footnote-reference brackets" href="#footcite-2014mnras-444-420v" id="id13" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>.</p>
+<p>These are implemented as multidimensional interpolators over the variables
+<span class="math notranslate nohighlight">\((\log_{10} u, \log_{10}\gamma^2)\)</span>:</p>
+<ul>
+<li><p><strong>Non-relativistic tables (2D):</strong></p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff} = g_{\rm ff}(\log_{10} u, \log_{10}\gamma^2)\]</div>
+<p>In this case, the ion charge <span class="math notranslate nohighlight">\(Z\)</span> enters only through the coordinate transform.</p>
+</li>
+<li><p><strong>Relativistic tables (3D):</strong></p>
+<div class="math notranslate nohighlight">
+\[g_{\rm ff} = g_{\rm ff}(Z, \log_{10} u, \log_{10}\gamma^2)\]</div>
+<p>Here, <span class="math notranslate nohighlight">\(Z\)</span> appears explicitly as an interpolation axis, capturing residual
+charge dependence at high temperatures.</p>
+</li>
+</ul>
+<p>These interpolators use bilinear or trilinear interpolation and are <strong>lazy-loaded</strong>
+from HDF5 tables on first use.</p>
+</section>
+</section>
+</section>
+<section id="optical-depth">
+<h2><a class="toc-backref" href="#id23" role="doc-backlink">Optical Depth</a><a class="headerlink" href="#optical-depth" title="Link to this heading">#</a></h2>
+<p>A very common scenario in transient modeling is free-free absorption of synchrotron emission by ionized CSM.  In this
+case, the key quantity is the <strong>free-free optical depth</strong> <span class="math notranslate nohighlight">\(\tau_{\rm ff}\)</span> along the line of sight through
+the absorbing material, which determines the observed spectral energy distribution (SED) and its evolution with time.</p>
+<p>The <strong>free-free optical depth</strong> along a ray of length <span class="math notranslate nohighlight">\(L\)</span> through a uniform medium is</p>
+<div class="math notranslate nohighlight">
+\[\tau_{\rm ff} = \int_0^L \alpha_\nu(l)\,dl \approx \alpha_\nu\,L.\]</div>
+<p>A source with <span class="math notranslate nohighlight">\(\tau_{\rm ff} \gg 1\)</span> is <strong>optically thick</strong> to free-free absorption: the
+observed spectrum approaches the Rayleigh–Jeans tail of a blackbody,
+<span class="math notranslate nohighlight">\(S_\nu \propto \nu^2 T\)</span>, rather than the underlying synchrotron power law.  At the
+<strong>turnover frequency</strong> <span class="math notranslate nohighlight">\(\nu_{\rm ff}\)</span> where <span class="math notranslate nohighlight">\(\tau_{\rm ff} \approx 1\)</span>, the SED
+transitions between these two behaviors.</p>
+<p>In the Rayleigh–Jeans approximation, the turnover frequency scales approximately as</p>
+<div class="math notranslate nohighlight">
+\[\nu_{\rm ff} \propto \bigl(n_e^2\, L\, T^{-3/2}\bigr)^{1/2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(n_e^2 L\)</span> is the <strong>emission measure</strong> (EM).  Measuring <span class="math notranslate nohighlight">\(\nu_{\rm ff}\)</span> from
+multi-frequency radio observations therefore provides a diagnostic of the CSM density and
+temperature.</p>
+<section id="csm-density-profiles">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">CSM Density Profiles</a><a class="headerlink" href="#csm-density-profiles" title="Link to this heading">#</a></h3>
+<p>For a stellar wind or ejecta-interaction scenario, the absorbing material is not uniform.
+Trilobite supports free-free optical depth calculations for several idealized
+circumstellar medium (CSM) density profiles, described fully in the
+<a class="reference internal" href="free_free_emission.html#free-free-emission"><span class="std std-ref">Free-Free Emission Tools</span></a> documentation:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 35.0%" />
+<col style="width: 40.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Profile</p></th>
+<th class="head"><p>Density law</p></th>
+<th class="head"><p>Typical use case</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Uniform shell</p></td>
+<td><p><span class="math notranslate nohighlight">\(\rho = {\rm const}\)</span></p></td>
+<td><p>Thin swept-up shells, HII regions</p></td>
+</tr>
+<tr class="row-odd"><td><p>Stellar wind</p></td>
+<td><p><span class="math notranslate nohighlight">\(\rho \propto r^{-2}\)</span></p></td>
+<td><p>Steady-state mass-loss winds</p></td>
+</tr>
+<tr class="row-even"><td><p>Power law</p></td>
+<td><p><span class="math notranslate nohighlight">\(\rho \propto r^{-p}\)</span> (arbitrary <span class="math notranslate nohighlight">\(p\)</span>)</p></td>
+<td><p>Generalized CSM profiles</p></td>
+</tr>
+<tr class="row-odd"><td><p>Arbitrary quadrature</p></td>
+<td><p>Callable <span class="math notranslate nohighlight">\(\alpha_\nu(r)\)</span>, <span class="math notranslate nohighlight">\(n_e(r)\)</span>, <span class="math notranslate nohighlight">\(n_i(r)\)</span>, <span class="math notranslate nohighlight">\(T(r)\)</span></p></td>
+<td><p>Arbitrary CSM structure, hydrodynamic outputs</p></td>
+</tr>
+<tr class="row-even"><td><p>Array-based</p></td>
+<td><p>Pre-tabulated <span class="math notranslate nohighlight">\(r\)</span>, <span class="math notranslate nohighlight">\(\alpha_\nu\)</span> grids</p></td>
+<td><p>Numerical models, hydrodynamic snapshots</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<section id="astrophysical-context">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">Astrophysical Context</a><a class="headerlink" href="#astrophysical-context" title="Link to this heading">#</a></h2>
+<p>Free-free absorption is observationally most significant in systems with dense, ionized CSM.  In
+radio supernovae, the CSM expelled by the progenitor star before the explosion can be sufficiently
+optically thick to free-free absorption to suppress the early-time radio emission entirely,
+producing a characteristic spectral turnover that moves to lower frequencies as the shock sweeps
+out the CSM
+<a class="footnote-reference brackets" href="#footcite-chevalierfranssonhandbook" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a>.</p>
+<p>The temporal evolution of the optical depth follows directly from the time evolution of the
+shock radius <span class="math notranslate nohighlight">\(R(t)\)</span> and the CSM density profile.  For a steady wind
+(<span class="math notranslate nohighlight">\(\rho_{\rm CSM} \propto r^{-2}\)</span>), the free-free optical depth along the line of sight
+through the unshocked wind decreases as</p>
+<div class="math notranslate nohighlight">
+\[\tau_{\rm ff}(\nu, t) \propto \dot{M}^2\, v_w^{-2}\, R(t)^{-3}\, \nu^{-2}\, T^{-3/2},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span> are the progenitor’s mass-loss rate and wind velocity.
+Fitting this evolution to observed multi-frequency radio light curves constrains the progenitor’s
+mass-loss history.</p>
+<hr class="docutils" />
+<div class="docutils container" id="id15">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id3">2</a>,<a role="doc-backlink" href="#id5">3</a>,<a role="doc-backlink" href="#id7">4</a>,<a role="doc-backlink" href="#id9">5</a>)</span>
+<p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-lu-2026-18603474" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id4">2</a>,<a role="doc-backlink" href="#id6">3</a>,<a role="doc-backlink" href="#id8">4</a>,<a role="doc-backlink" href="#id11">5</a>)</span>
+<p>Wenbin Lu. <em>Book on Astrophysical Radiation</em>. Zenodo, February 2026. URL: <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">https://doi.org/10.5281/zenodo.18603474</a>, <a class="reference external" href="https://doi.org/10.5281/zenodo.18603474">doi:10.5281/zenodo.18603474</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-draine2011physics" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id12">3</a><span class="fn-bracket">]</span></span>
+<p>Bruce T Draine. <em>Physics of the interstellar and intergalactic medium</em>. Volume 19. Princeton University Press, 2011.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2014mnras-444-420v" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">4</a><span class="fn-bracket">]</span></span>
+<p>P. A. M. van Hoof, R. J. R. Williams, K. Volk, M. Chatzikos, G. J. Ferland, M. Lykins, R. L. Porter, and Y. Wang. Accurate determination of the free-free Gaunt factor - I. Non-relativistic Gaunt factors. <em>\mnras </em>, 444(1):420–428, October 2014. <a class="reference external" href="https://arxiv.org/abs/1407.5048">arXiv:1407.5048</a>, <a class="reference external" href="https://doi.org/10.1093/mnras/stu1438">doi:10.1093/mnras/stu1438</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-chevalierfranssonhandbook" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">5</a><span class="fn-bracket">]</span></span>
+<p>Roger A. Chevalier and Claes Fransson. Thermal and nonthermal emission from circumstellar interaction. In Athem W. Alsabti and Paul Murdin, editors, <em>Handbook of supernovae</em>, pages 1–63. Springer International Publishing, Cham, 2017. URL: <a class="reference external" href="https://doi.org/10.1007/978-3-319-20794-0_34-1">https://doi.org/10.1007/978-3-319-20794-0_34-1</a>, <a class="reference external" href="https://doi.org/10.1007/978-3-319-20794-0_34-1">doi:10.1007/978-3-319-20794-0_34-1</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="free_free_emission.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Free-Free Emission Tools</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../opacity/opacity_user_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Opacity Laws</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-free-free-emission-and-absorption">Thermal Free-Free Emission and Absorption</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#composition">Composition</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gaunt-factor">The Gaunt-Factor</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-coulomb-logarithm">The Coulomb Logarithm</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">The Gaunt Factor</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-gaunt-factor-in-practice">The Gaunt Factor in Practice</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#analytic-approximations">Analytic Approximations</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#tabulated-gaunt-factors">Tabulated Gaunt Factors</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#optical-depth">Optical Depth</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#csm-density-profiles">CSM Density Profiles</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#astrophysical-context">Astrophysical Context</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/free_free/free_free_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

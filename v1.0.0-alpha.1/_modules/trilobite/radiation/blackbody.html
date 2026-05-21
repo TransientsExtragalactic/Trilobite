@@ -1,0 +1,1716 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.radiation.blackbody &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/radiation/blackbody';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.radiation.blackbody</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.radiation.blackbody</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Planck (blackbody) radiation functions.</span>
+
+<span class="sd">Provides both high-performance CGS float implementations for use inside</span>
+<span class="sd">MCMC hot loops and unit-aware public wrappers for interactive use.</span>
+
+<span class="sd">The module follows the two-level API convention used throughout Trilobite:</span>
+
+<span class="sd">- ``_*_cgs`` functions accept plain NumPy arrays / Python floats in CGS and</span>
+<span class="sd">  return the same.  They carry no unit overhead and are safe to call inside</span>
+<span class="sd">  MCMC loops.</span>
+<span class="sd">- Public wrappers (no underscore prefix) accept :class:`~astropy.units.Quantity`</span>
+<span class="sd">  objects and return a :class:`~astropy.units.Quantity` with the correct unit.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">cosmology</span> <span class="k">as</span> <span class="n">cosmo</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.physics_utils.cosmology</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_cosmology</span><span class="p">,</span> <span class="n">resolve_cosmological_distances</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">c_cgs</span><span class="p">,</span> <span class="n">h_cgs</span><span class="p">,</span> <span class="n">kB_cgs</span><span class="p">,</span> <span class="n">sigma_sb_cgs</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="c1"># Specific intensity (nu= or lam=)</span>
+    <span class="s2">&quot;planck_B&quot;</span><span class="p">,</span>
+    <span class="c1"># Radiative flux from a blackbody surface (nu= or lam=)</span>
+    <span class="s2">&quot;planck_surface_flux&quot;</span><span class="p">,</span>
+    <span class="c1"># Observed flux density from a spherical source (nu= or lam=, distance)</span>
+    <span class="s2">&quot;planck_flux&quot;</span><span class="p">,</span>
+    <span class="c1"># Specific luminosity of a spherical source (nu= or lam=, R)</span>
+    <span class="s2">&quot;planck_luminosity&quot;</span><span class="p">,</span>
+    <span class="c1"># Bolometric fluxes</span>
+    <span class="s2">&quot;stefan_boltzmann_flux&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;stefan_boltzmann_observed_flux&quot;</span><span class="p">,</span>
+    <span class="c1"># Wien&#39;s displacement law</span>
+    <span class="s2">&quot;wien_peak_frequency&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;wien_peak_wavelength&quot;</span><span class="p">,</span>
+    <span class="c1"># Photospheric quantities</span>
+    <span class="s2">&quot;photospheric_radius&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;photospheric_temperature&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;photospheric_radius_from_flux&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;photospheric_temperature_from_flux&quot;</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_ArrayLike</span><span class="p">,</span> <span class="n">_UnitBearingArrayLike</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Pre-computed CGS coefficients (extracted once for MCMC performance)</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="n">_PLANCK_FNU_PREFACTOR_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">h_cgs</span> <span class="o">/</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">_PLANCK_FLAMBDA_PREFACTOR_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">h_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span><span class="o">**</span><span class="mi">2</span>
+<span class="n">_H_OVER_KB_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">h_cgs</span> <span class="o">/</span> <span class="n">kB_cgs</span>
+<span class="n">_HC_OVER_KB_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">h_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">/</span> <span class="n">kB_cgs</span>
+<span class="n">_WIEN_B_FREQ_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.821439372122079</span> <span class="o">*</span> <span class="n">kB_cgs</span> <span class="o">/</span> <span class="n">h_cgs</span>  <span class="c1"># Hz / K</span>
+<span class="n">_WIEN_B_WAV_CGS</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">_HC_OVER_KB_CGS</span> <span class="o">/</span> <span class="mf">4.965114231744276</span>  <span class="c1"># cm K</span>
+<span class="n">_LOG_4PI_SIGMA</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">sigma_sb_cgs</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------------</span>
+<span class="c1"># Low-Level (Private) Interface</span>
+<span class="c1"># ---------------------------------------------------------------------------</span>
+
+<span class="c1"># --- Specific Intensity Functions --- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span> <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln B_\nu` (Planck function) in CGS units.</span>
+
+<span class="sd">    This is a numerically stable, log-space implementation suitable for use</span>
+<span class="sd">    in performance-critical contexts (e.g., MCMC loops).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of frequency in Hz.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the Planck spectral radiance :math:`B_\nu` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses the identity</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \ln(e^x - 1) = x + \ln(1 - e^{-x})</span>
+
+<span class="sd">    for numerical stability at large :math:`x`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_nu</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># x = h nu / (k_B T)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">_H_OVER_KB_CGS</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_nu</span> <span class="o">-</span> <span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># log(e^x - 1) in stable form</span>
+    <span class="n">log_denom</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_PLANCK_FNU_PREFACTOR_CGS</span><span class="p">)</span> <span class="o">+</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">log_nu</span> <span class="o">-</span> <span class="n">log_denom</span>
+
+    <span class="k">return</span> <span class="n">res</span> <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span> <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln B_\lambda` (Planck function) in CGS units.</span>
+
+<span class="sd">    This is a numerically stable, log-space implementation suitable for use</span>
+<span class="sd">    in performance-critical contexts (e.g., MCMC loops).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_lambda : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of wavelength in cm.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the Planck spectral radiance :math:`B_\lambda` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}\,sr^{-1}}`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Uses the identity</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \ln(e^x - 1) = x + \ln(1 - e^{-x})</span>
+
+<span class="sd">    for numerical stability at large :math:`x`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_lambda</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># Dimensionless exponent: x = hc / (λ k_B T)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">_HC_OVER_KB_CGS</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">log_lambda</span> <span class="o">-</span> <span class="n">log_T</span><span class="p">)</span>
+
+    <span class="c1"># Stable evaluation of log(e^x - 1)</span>
+    <span class="n">log_denom</span> <span class="o">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_PLANCK_FLAMBDA_PREFACTOR_CGS</span><span class="p">)</span> <span class="o">-</span> <span class="mf">5.0</span> <span class="o">*</span> <span class="n">log_lambda</span> <span class="o">-</span> <span class="n">log_denom</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># --- Specific Flux Functions --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_rad_flux_fnu_cgs</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln F_\nu` for a blackbody surface in CGS units.</span>
+
+<span class="sd">    This returns the outward specific flux emitted per unit surface area of an</span>
+<span class="sd">    isotropically emitting blackbody surface:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F_\nu = \pi B_\nu</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of frequency in Hz.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the specific radiative flux :math:`F_\nu` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_flux_fnu_cgs</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_D</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln f_\nu` for a spherical blackbody observed at distance.</span>
+
+<span class="sd">    For zero redshift, this uses</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_\nu = \pi B_\nu \left(\frac{R}{D}\right)^2</span>
+
+<span class="sd">    where :math:`R` is the emitter radius and :math:`D` is the distance.</span>
+
+<span class="sd">    For nonzero redshift, this assumes `log_nu` is observer-frame frequency and</span>
+<span class="sd">    `D` is luminosity distance, so that</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_{\nu,\mathrm{obs}}(\nu_{\mathrm{obs}})</span>
+<span class="sd">        =</span>
+<span class="sd">        \frac{L_{\nu,\mathrm{em}}((1+z)\nu_{\mathrm{obs}})}</span>
+<span class="sd">             {4\pi D_L^2 (1+z)}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of observer-frame frequency in Hz.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of source radius in cm.</span>
+<span class="sd">    log_D : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of luminosity distance in cm.</span>
+<span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
+<span class="sd">        Redshift. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the observed specific flux density :math:`f_\nu` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span> <span class="o">+</span> <span class="n">log1pz</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">))</span>
+        <span class="o">-</span> <span class="n">log1pz</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_rad_flux_flambda_cgs</span><span class="p">(</span>
+    <span class="n">log_lambda</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln F_\lambda` for a blackbody surface in CGS units.</span>
+
+<span class="sd">    This returns the outward specific flux emitted per unit surface area of an</span>
+<span class="sd">    isotropically emitting blackbody surface:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F_\lambda = \pi B_\lambda</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_lambda : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of wavelength in cm.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the specific radiative flux :math:`F_\lambda` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_flux_flambda_cgs</span><span class="p">(</span>
+    <span class="n">log_lambda</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_D</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln f_\lambda` for a spherical blackbody observed at distance.</span>
+
+<span class="sd">    For zero redshift, this uses</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_\lambda = \pi B_\lambda \left(\frac{R}{D}\right)^2</span>
+
+<span class="sd">    where :math:`R` is the emitter radius and :math:`D` is the distance.</span>
+
+<span class="sd">    For nonzero redshift, this assumes `log_lambda` is observer-frame wavelength</span>
+<span class="sd">    and `D` is luminosity distance, so that</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_{\lambda,\mathrm{obs}}(\lambda_{\mathrm{obs}})</span>
+<span class="sd">        =</span>
+<span class="sd">        \frac{L_{\lambda,\mathrm{em}}(\lambda_{\mathrm{obs}}/(1+z))}</span>
+<span class="sd">             {4\pi D_L^2 (1+z)^3}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_lambda : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of observer-frame wavelength in cm.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of source radius in cm.</span>
+<span class="sd">    log_D : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of luminosity distance in cm.</span>
+<span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
+<span class="sd">        Redshift. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the observed specific flux density :math:`f_\lambda` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span> <span class="o">-</span> <span class="n">log1pz</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">))</span>
+        <span class="o">-</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">log1pz</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># --- Specific Luminosity --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_luminosity_fnu_cgs</span><span class="p">(</span>
+    <span class="n">log_nu</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln L_\nu` for a spherical blackbody in CGS units.</span>
+
+<span class="sd">    Uses</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        L_\nu = 4\pi^2 R^2 B_\nu</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_nu : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of frequency in Hz.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of source radius in cm.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the specific luminosity :math:`L_\nu` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_specific_luminosity_flambda_cgs</span><span class="p">(</span>
+    <span class="n">log_lambda</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln L_\lambda` for a spherical blackbody in CGS units.</span>
+
+<span class="sd">    Uses</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        L_\lambda = 4\pi^2 R^2 B_\lambda</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_lambda : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of wavelength in cm.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of source radius in cm.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the specific luminosity :math:`L_\lambda` in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-1}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_lambda</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">4.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">result</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># --- Bolometric Fluxes --- #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_bol_rad_flux_cgs</span><span class="p">(</span><span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln F` (bolometric radiative flux) in CGS units.</span>
+
+<span class="sd">    This is the surface flux emitted by a blackbody:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        F = \sigma_{\rm SB} T^4</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the bolometric radiative flux in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_sb_cgs</span><span class="p">)</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_T</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_bol_flux_cgs</span><span class="p">(</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_D</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln f` (bolometric flux) for a spherical blackbody.</span>
+
+<span class="sd">    For zero redshift:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f = \sigma_{\rm SB} T^4 \left(\frac{R}{D}\right)^2</span>
+
+<span class="sd">    For nonzero redshift (assuming luminosity distance):</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f_{\mathrm{obs}} =</span>
+<span class="sd">        \frac{L}{4\pi D_L^2 (1+z)^2}</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of source radius in cm.</span>
+<span class="sd">    log_D : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of luminosity distance in cm.</span>
+<span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
+<span class="sd">        Redshift. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Logarithm of the observed bolometric flux in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_sb_cgs</span><span class="p">)</span> <span class="o">+</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_T</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_R</span> <span class="o">-</span> <span class="n">log_D</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log1pz</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># --- Wein&#39;s Law --- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_peak_frequency</span><span class="p">(</span><span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln \nu_{\rm peak}` from Wien&#39;s displacement law.</span>
+
+<span class="sd">    The peak frequency of the Planck function :math:`B_\nu` is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \nu_{\rm peak} = b_\nu \, T,</span>
+
+<span class="sd">    where :math:`b_\nu` is the Wien frequency constant.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the peak frequency in Hz.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This corresponds to the maximum of :math:`B_\nu`. The peak of</span>
+<span class="sd">    :math:`B_\lambda` occurs at a different location.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_WIEN_B_FREQ_CGS</span><span class="p">)</span> <span class="o">+</span> <span class="n">log_T</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_peak_wavelength</span><span class="p">(</span><span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Evaluate :math:`\ln \lambda_{\rm peak}` from Wien&#39;s displacement law.</span>
+
+<span class="sd">    The peak wavelength of the Planck function :math:`B_\lambda` is given by</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \lambda_{\rm peak} = \frac{b_\lambda}{T},</span>
+
+<span class="sd">    where :math:`b_\lambda` is the Wien wavelength constant.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the peak wavelength in cm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This corresponds to the maximum of :math:`B_\lambda`. The peak of</span>
+<span class="sd">    :math:`B_\nu` occurs at a different location.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">_WIEN_B_WAV_CGS</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_T</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># --- Photospheric Radius / Temperature / Luminosity --- #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_photospheric_radius</span><span class="p">(</span>
+    <span class="n">log_L</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute :math:`\ln R` from luminosity and temperature.</span>
+
+<span class="sd">    This inverts the Stefan–Boltzmann relation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        L = 4\pi R^2 \sigma_{\rm SB} T^4,</span>
+
+<span class="sd">    to solve for the photospheric radius.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_L : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of bolometric luminosity in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}}`.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photospheric radius in cm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_L</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_L</span> <span class="o">-</span> <span class="n">_LOG_4PI_SIGMA</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_T</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_photospheric_temperature</span><span class="p">(</span>
+    <span class="n">log_L</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute :math:`\ln T` from luminosity and radius.</span>
+
+<span class="sd">    This inverts the Stefan–Boltzmann relation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        L = 4\pi R^2 \sigma_{\rm SB} T^4,</span>
+
+<span class="sd">    to solve for the effective temperature.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_L : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of bolometric luminosity in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}}`.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of photospheric radius in cm.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the effective temperature in K.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_L</span><span class="p">)</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_L</span> <span class="o">-</span> <span class="n">_LOG_4PI_SIGMA</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_R</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_photospheric_radius_from_flux</span><span class="p">(</span>
+    <span class="n">log_F</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_T</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_D</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute :math:`\ln R` from observed flux and temperature.</span>
+
+<span class="sd">    This uses the relation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f = \sigma_{\rm SB} T^4 \left(\frac{R}{D}\right)^2 (1+z)^{-2},</span>
+
+<span class="sd">    where :math:`f` is the observed bolometric flux and :math:`D` is the</span>
+<span class="sd">    luminosity distance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_F : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of observed bolometric flux in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    log_T : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of temperature in K.</span>
+<span class="sd">    log_D : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of luminosity distance in cm.</span>
+<span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
+<span class="sd">        Redshift. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the photospheric radius in cm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Assumes that `D` is the luminosity distance. For nearby sources</span>
+<span class="sd">    (:math:`z \approx 0`), the redshift correction reduces to unity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_F</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_T</span><span class="p">)</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">log_D</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_F</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_sb_cgs</span><span class="p">)</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_T</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log1pz</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_log_photospheric_temperature_from_flux</span><span class="p">(</span>
+    <span class="n">log_F</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_R</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">log_D</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">z</span><span class="p">:</span> <span class="s2">&quot;_ArrayLike&quot;</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;_ArrayLike&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Compute :math:`\ln T` from observed flux and radius.</span>
+
+<span class="sd">    This uses the relation</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        f = \sigma_{\rm SB} T^4 \left(\frac{R}{D}\right)^2 (1+z)^{-2},</span>
+
+<span class="sd">    where :math:`f` is the observed bolometric flux and :math:`D` is the</span>
+<span class="sd">    luminosity distance.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_F : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of observed bolometric flux in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    log_R : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of photospheric radius in cm.</span>
+<span class="sd">    log_D : float, int, or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of luminosity distance in cm.</span>
+<span class="sd">    z : float, int, or ~numpy.ndarray, optional</span>
+<span class="sd">        Redshift. Default is 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float or ~numpy.ndarray</span>
+<span class="sd">        Natural logarithm of the effective temperature in K.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Assumes that `D` is the luminosity distance. For nearby sources</span>
+<span class="sd">    (:math:`z \approx 0`), the redshift correction reduces to unity.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_F</span><span class="p">)</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">log_D</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">log1pz</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="mf">0.25</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_F</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_sb_cgs</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">log_R</span> <span class="o">-</span> <span class="n">log_D</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log1pz</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">result</span> <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="nb">float</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+
+<span class="c1"># ===========================================================================</span>
+<span class="c1"># Public (unit-aware) Interface</span>
+<span class="c1"># ===========================================================================</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Return (log_x_cgs, mode) where mode is &#39;nu&#39; or &#39;lam&#39;.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">nu</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="n">lam</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Exactly one of nu or lam must be provided.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)),</span> <span class="s2">&quot;nu&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">lam</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)),</span> <span class="s2">&quot;lam&quot;</span>
+
+
+<div class="viewcode-block" id="planck_B">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_B.html#trilobite.radiation.blackbody.planck_B">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">planck_B</span><span class="p">(</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lam</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Planck spectral radiance :math:`B_\nu` or :math:`B_\lambda`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+<span class="sd">    nu : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Frequency.  Convertible to Hz.  Mutually exclusive with *lam*.</span>
+<span class="sd">    lam : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Wavelength.  Convertible to cm.  Mutually exclusive with *nu*.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`B_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}` when *nu* is given,</span>
+<span class="sd">        or :math:`B_\lambda` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}\,sr^{-1}}` when *lam* is given.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_x</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 Hz-1 sr-1&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_planck_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 cm-1 sr-1&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="planck_surface_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_surface_flux.html#trilobite.radiation.blackbody.planck_surface_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">planck_surface_flux</span><span class="p">(</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lam</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Outward specific flux :math:`\pi B_\nu` or :math:`\pi B_\lambda` per unit area of a blackbody surface.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+<span class="sd">    nu : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Frequency.  Convertible to Hz.  Mutually exclusive with *lam*.</span>
+<span class="sd">    lam : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Wavelength.  Convertible to cm.  Mutually exclusive with *nu*.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`F_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}` when *nu* is given,</span>
+<span class="sd">        or :math:`F_\lambda` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}` when *lam* is given.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_x</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_rad_flux_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 Hz-1&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_rad_flux_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 cm-1&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="planck_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_flux.html#trilobite.radiation.blackbody.planck_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">planck_flux</span><span class="p">(</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lam</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">proper_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cosmology</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">Cosmology</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Observed specific flux density :math:`f_\nu` or :math:`f_\lambda` from a spherical blackbody.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Blackbody temperature.  Convertible to K.</span>
+<span class="sd">    R : ~astropy.units.Quantity</span>
+<span class="sd">        Source radius.  Convertible to cm.</span>
+<span class="sd">    nu : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Observer-frame frequency.  Convertible to Hz.  Mutually exclusive with *lam*.</span>
+<span class="sd">    lam : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Observer-frame wavelength.  Convertible to cm.  Mutually exclusive with *nu*.</span>
+<span class="sd">    redshift : float, optional</span>
+<span class="sd">        Cosmological redshift of the source.</span>
+<span class="sd">    luminosity_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Luminosity distance to the source.</span>
+<span class="sd">    angular_diameter_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Angular diameter distance to the source.</span>
+<span class="sd">    proper_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Proper (comoving radial) distance to the source.</span>
+<span class="sd">    cosmology : ~astropy.cosmology.Cosmology, optional</span>
+<span class="sd">        Cosmology used to convert between redshift and distance measures.</span>
+<span class="sd">        If not provided, the configured default cosmology is used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`f_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}` when *nu* is given,</span>
+<span class="sd">        or :math:`f_\lambda` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}` when *lam* is given.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Exactly one of *nu* or *lam* and exactly one of *redshift*, *luminosity_distance*,</span>
+<span class="sd">    *angular_diameter_distance*, or *proper_distance* must be provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_x</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+    <span class="n">cosmology</span> <span class="o">=</span> <span class="n">get_cosmology</span><span class="p">(</span><span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">resolve_cosmological_distances</span><span class="p">(</span>
+        <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
+        <span class="n">luminosity_distance</span><span class="o">=</span><span class="n">luminosity_distance</span><span class="p">,</span>
+        <span class="n">angular_diameter_distance</span><span class="o">=</span><span class="n">angular_diameter_distance</span><span class="p">,</span>
+        <span class="n">proper_distance</span><span class="o">=</span><span class="n">proper_distance</span><span class="p">,</span>
+        <span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">]</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">&quot;luminosity_distance&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 Hz-1&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_flux_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2 cm-1&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="planck_luminosity">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.planck_luminosity.html#trilobite.radiation.blackbody.planck_luminosity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">planck_luminosity</span><span class="p">(</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">nu</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">lam</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Specific luminosity :math:`L_\nu = 4\pi^2 R^2 B_\nu` or :math:`L_\lambda = 4\pi^2 R^2 B_\lambda`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+<span class="sd">    R : ~astropy.units.Quantity</span>
+<span class="sd">        Source radius.  Convertible to cm.</span>
+<span class="sd">    nu : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Frequency.  Convertible to Hz.  Mutually exclusive with *lam*.</span>
+<span class="sd">    lam : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Wavelength.  Convertible to cm.  Mutually exclusive with *nu*.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`L_\nu` in :math:`\mathrm{erg\,s^{-1}\,Hz^{-1}}` when *nu* is given,</span>
+<span class="sd">        or :math:`L_\lambda` in :math:`\mathrm{erg\,s^{-1}\,cm^{-1}}` when *lam* is given.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_x</span><span class="p">,</span> <span class="n">mode</span> <span class="o">=</span> <span class="n">_resolve_nu_lam</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">lam</span><span class="p">)</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s2">&quot;nu&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_fnu_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 Hz-1&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_specific_luminosity_flambda_cgs</span><span class="p">(</span><span class="n">log_x</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-1&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="stefan_boltzmann_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.stefan_boltzmann_flux.html#trilobite.radiation.blackbody.stefan_boltzmann_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stefan_boltzmann_flux</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Bolometric radiative flux :math:`F = \sigma_\mathrm{SB} T^4` per unit area of a blackbody surface.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`F` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">T_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_bol_rad_flux_cgs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T_cgs</span><span class="p">)))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="stefan_boltzmann_observed_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.stefan_boltzmann_observed_flux.html#trilobite.radiation.blackbody.stefan_boltzmann_observed_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">stefan_boltzmann_observed_flux</span><span class="p">(</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">proper_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cosmology</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">Cosmology</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Observed bolometric flux from a spherical blackbody.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Blackbody temperature.  Convertible to K.</span>
+<span class="sd">    R : ~astropy.units.Quantity</span>
+<span class="sd">        Source radius.  Convertible to cm.</span>
+<span class="sd">    redshift : float, optional</span>
+<span class="sd">        Cosmological redshift of the source.</span>
+<span class="sd">    luminosity_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Luminosity distance to the source.</span>
+<span class="sd">    angular_diameter_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Angular diameter distance to the source.</span>
+<span class="sd">    proper_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Proper (comoving radial) distance to the source.</span>
+<span class="sd">    cosmology : ~astropy.cosmology.Cosmology, optional</span>
+<span class="sd">        Cosmology used to convert between redshift and distance measures.</span>
+<span class="sd">        If not provided, the configured default cosmology is used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        Observed bolometric flux in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Exactly one of *redshift*, *luminosity_distance*, *angular_diameter_distance*,</span>
+<span class="sd">    or *proper_distance* must be provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cosmology</span> <span class="o">=</span> <span class="n">get_cosmology</span><span class="p">(</span><span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">resolve_cosmological_distances</span><span class="p">(</span>
+        <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
+        <span class="n">luminosity_distance</span><span class="o">=</span><span class="n">luminosity_distance</span><span class="p">,</span>
+        <span class="n">angular_diameter_distance</span><span class="o">=</span><span class="n">angular_diameter_distance</span><span class="p">,</span>
+        <span class="n">proper_distance</span><span class="o">=</span><span class="n">proper_distance</span><span class="p">,</span>
+        <span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">]</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">&quot;luminosity_distance&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_bol_flux_cgs</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="wien_peak_frequency">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.wien_peak_frequency.html#trilobite.radiation.blackbody.wien_peak_frequency">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wien_peak_frequency</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Peak frequency :math:`\nu_\mathrm{peak}` from Wien&#39;s displacement law.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`\nu_\mathrm{peak}` in Hz.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">T_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_peak_frequency</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T_cgs</span><span class="p">)))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span></div>
+
+
+
+<div class="viewcode-block" id="wien_peak_wavelength">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.wien_peak_wavelength.html#trilobite.radiation.blackbody.wien_peak_wavelength">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">wien_peak_wavelength</span><span class="p">(</span><span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Peak wavelength :math:`\lambda_\mathrm{peak}` from Wien&#39;s displacement law.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Temperature.  Convertible to K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        :math:`\lambda_\mathrm{peak}` in cm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">T_cgs</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_peak_wavelength</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">T_cgs</span><span class="p">)))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="photospheric_radius">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.photospheric_radius.html#trilobite.radiation.blackbody.photospheric_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">photospheric_radius</span><span class="p">(</span>
+    <span class="n">L</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Photospheric radius from bolometric luminosity and effective temperature.</span>
+
+<span class="sd">    Inverts :math:`L = 4\pi R^2 \sigma_\mathrm{SB} T^4`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L : ~astropy.units.Quantity</span>
+<span class="sd">        Bolometric luminosity.  Convertible to :math:`\mathrm{erg\,s^{-1}}`.</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Effective temperature.  Convertible to K.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        Photospheric radius in cm.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1&quot;</span><span class="p">)))</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_photospheric_radius</span><span class="p">(</span><span class="n">log_L</span><span class="p">,</span> <span class="n">log_T</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="photospheric_temperature">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.photospheric_temperature.html#trilobite.radiation.blackbody.photospheric_temperature">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">photospheric_temperature</span><span class="p">(</span>
+    <span class="n">L</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Effective temperature from bolometric luminosity and photospheric radius.</span>
+
+<span class="sd">    Inverts :math:`L = 4\pi R^2 \sigma_\mathrm{SB} T^4`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    L : ~astropy.units.Quantity</span>
+<span class="sd">        Bolometric luminosity.  Convertible to :math:`\mathrm{erg\,s^{-1}}`.</span>
+<span class="sd">    R : ~astropy.units.Quantity</span>
+<span class="sd">        Photospheric radius.  Convertible to cm.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        Effective temperature in K.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1&quot;</span><span class="p">)))</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_photospheric_temperature</span><span class="p">(</span><span class="n">log_L</span><span class="p">,</span> <span class="n">log_R</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span></div>
+
+
+
+<div class="viewcode-block" id="photospheric_radius_from_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.photospheric_radius_from_flux.html#trilobite.radiation.blackbody.photospheric_radius_from_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">photospheric_radius_from_flux</span><span class="p">(</span>
+    <span class="n">F</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">T</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">proper_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cosmology</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">Cosmology</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Photospheric radius inferred from observed bolometric flux and temperature.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    F : ~astropy.units.Quantity</span>
+<span class="sd">        Observed bolometric flux.  Convertible to :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    T : ~astropy.units.Quantity</span>
+<span class="sd">        Effective temperature.  Convertible to K.</span>
+<span class="sd">    redshift : float, optional</span>
+<span class="sd">        Cosmological redshift of the source.</span>
+<span class="sd">    luminosity_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Luminosity distance to the source.</span>
+<span class="sd">    angular_diameter_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Angular diameter distance to the source.</span>
+<span class="sd">    proper_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Proper (comoving radial) distance to the source.</span>
+<span class="sd">    cosmology : ~astropy.cosmology.Cosmology, optional</span>
+<span class="sd">        Cosmology used to convert between redshift and distance measures.</span>
+<span class="sd">        If not provided, the configured default cosmology is used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        Photospheric radius in cm.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Exactly one of *redshift*, *luminosity_distance*, *angular_diameter_distance*,</span>
+<span class="sd">    or *proper_distance* must be provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cosmology</span> <span class="o">=</span> <span class="n">get_cosmology</span><span class="p">(</span><span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">resolve_cosmological_distances</span><span class="p">(</span>
+        <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
+        <span class="n">luminosity_distance</span><span class="o">=</span><span class="n">luminosity_distance</span><span class="p">,</span>
+        <span class="n">angular_diameter_distance</span><span class="o">=</span><span class="n">angular_diameter_distance</span><span class="p">,</span>
+        <span class="n">proper_distance</span><span class="o">=</span><span class="n">proper_distance</span><span class="p">,</span>
+        <span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">]</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">&quot;luminosity_distance&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2&quot;</span><span class="p">)))</span>
+    <span class="n">log_T</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_photospheric_radius_from_flux</span><span class="p">(</span><span class="n">log_F</span><span class="p">,</span> <span class="n">log_T</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="photospheric_temperature_from_flux">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.radiation.blackbody.photospheric_temperature_from_flux.html#trilobite.radiation.blackbody.photospheric_temperature_from_flux">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">photospheric_temperature_from_flux</span><span class="p">(</span>
+    <span class="n">F</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">R</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">redshift</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">angular_diameter_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">proper_distance</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">cosmology</span><span class="p">:</span> <span class="n">cosmo</span><span class="o">.</span><span class="n">Cosmology</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;Effective temperature inferred from observed bolometric flux and photospheric radius.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    F : ~astropy.units.Quantity</span>
+<span class="sd">        Observed bolometric flux.  Convertible to :math:`\mathrm{erg\,s^{-1}\,cm^{-2}}`.</span>
+<span class="sd">    R : ~astropy.units.Quantity</span>
+<span class="sd">        Photospheric radius.  Convertible to cm.</span>
+<span class="sd">    redshift : float, optional</span>
+<span class="sd">        Cosmological redshift of the source.</span>
+<span class="sd">    luminosity_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Luminosity distance to the source.</span>
+<span class="sd">    angular_diameter_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Angular diameter distance to the source.</span>
+<span class="sd">    proper_distance : ~astropy.units.Quantity, optional</span>
+<span class="sd">        Proper (comoving radial) distance to the source.</span>
+<span class="sd">    cosmology : ~astropy.cosmology.Cosmology, optional</span>
+<span class="sd">        Cosmology used to convert between redshift and distance measures.</span>
+<span class="sd">        If not provided, the configured default cosmology is used.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ~astropy.units.Quantity</span>
+<span class="sd">        Effective temperature in K.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Exactly one of *redshift*, *luminosity_distance*, *angular_diameter_distance*,</span>
+<span class="sd">    or *proper_distance* must be provided.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cosmology</span> <span class="o">=</span> <span class="n">get_cosmology</span><span class="p">(</span><span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">)</span>
+    <span class="n">distances</span> <span class="o">=</span> <span class="n">resolve_cosmological_distances</span><span class="p">(</span>
+        <span class="n">redshift</span><span class="o">=</span><span class="n">redshift</span><span class="p">,</span>
+        <span class="n">luminosity_distance</span><span class="o">=</span><span class="n">luminosity_distance</span><span class="p">,</span>
+        <span class="n">angular_diameter_distance</span><span class="o">=</span><span class="n">angular_diameter_distance</span><span class="p">,</span>
+        <span class="n">proper_distance</span><span class="o">=</span><span class="n">proper_distance</span><span class="p">,</span>
+        <span class="n">cosmology</span><span class="o">=</span><span class="n">cosmology</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">distances</span><span class="p">[</span><span class="s2">&quot;redshift&quot;</span><span class="p">]</span>
+    <span class="n">log_D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distances</span><span class="p">[</span><span class="s2">&quot;luminosity_distance&quot;</span><span class="p">],</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_F</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Unit</span><span class="p">(</span><span class="s2">&quot;erg s-1 cm-2&quot;</span><span class="p">)))</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_photospheric_temperature_from_flux</span><span class="p">(</span><span class="n">log_F</span><span class="p">,</span> <span class="n">log_R</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">z</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

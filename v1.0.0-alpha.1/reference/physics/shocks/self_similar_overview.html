@@ -1,0 +1,1538 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Self-Similar Shock Engines &#8212; Trilobite v1.0.0-alpha.1 documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=ddcb4fc1"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/self_similar_overview';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'v1.0.0-alpha.1';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Radiation Processes in Trilobite" href="../radiation/overview.html" />
+    <link rel="prev" title="Theory: Numerical Shock Engines" href="numerical_shocks_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="v1.0.0-alpha.1" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Shock Physics in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">trilobite.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">trilobite.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">trilobite.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">trilobite.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">trilobite.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">trilobite.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">trilobite.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">trilobite.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">trilobite.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">trilobite.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">trilobite.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">trilobite.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">trilobite.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">trilobite.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">trilobite.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">trilobite.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="overview.html" class="nav-link">Shock Physics in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Self-Similar Shock Engines</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="self-similar-shock-engines">
+<span id="self-similar-shocks-overview"></span><h1>Self-Similar Shock Engines<a class="headerlink" href="#self-similar-shock-engines" title="Link to this heading">#</a></h1>
+<p>Self-similar shock engines provide fast, analytic prescriptions for shock evolution when
+the ejecta and CSM density profiles take simple power-law forms.  For an overview of all
+available shock engines and guidance on choosing between self-similar and numerical
+approaches, see <a class="reference internal" href="shock_engines_overview.html#shock-engines"><span class="std std-ref">Shock Engines</span></a>.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#non-relativistic-self-similar-shocks" id="id12">Non-Relativistic Self-Similar Shocks</a></p></li>
+<li><p><a class="reference internal" href="#relativistic-self-similar-shocks" id="id13">Relativistic Self-Similar Shocks</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id14">References</a></p></li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="non-relativistic-self-similar-shocks">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Non-Relativistic Self-Similar Shocks</a><a class="headerlink" href="#non-relativistic-self-similar-shocks" title="Link to this heading">#</a></h2>
+<p>The first major class of self-similar shock engines in Trilobite are non-relativistic, based on the
+classical Rankine-Hugoniot jump conditions.  Three engines cover the most common scenarios; the
+table below summarises their applicability.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 42.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Engine</p></th>
+<th class="head"><p>Best For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a></p></td>
+<td><p><strong>Ejecta dominated</strong> supernova evolution; single-surface (contact discontinuity only)
+with analytic thin-shell normalization. Fast, stateless.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code></a></p></td>
+<td><p>Same as above for a <strong>steady-wind CSM</strong> (<span class="math notranslate nohighlight">\(s=2\)</span>); accepts <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span> directly.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierTwoShockSelfSimilarEngine</span></code></a></p></td>
+<td><p><strong>Two-surface</strong> (forward + reverse shock) Chevalier evolution with power-law CSM.
+Uses a tabulated <span class="math notranslate nohighlight">\((n,s)\)</span> grid for accurate normalization and separate
+post-shock conditions at each surface. Recommended when thermodynamics at each
+shock matters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierTwoShockSelfSimilarWindEngine</span></code></a></p></td>
+<td><p>Same as above for a <strong>steady-wind CSM</strong> (<span class="math notranslate nohighlight">\(s=2\)</span>).</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a></p></td>
+<td><p><strong>Sedov-Taylor Phase</strong> of SNe, when the shock is driven by thermal pressure in the ejecta. Requires
+a uniform ambient medium.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<section id="chevalier-self-similar-shock-engines">
+<span id="chevalier-engine"></span><h3>Chevalier Self-Similar Shock Engines<a class="headerlink" href="#chevalier-self-similar-shock-engines" title="Link to this heading">#</a></h3>
+<p>Both Chevalier engines implement the self-similar ejecta–CSM interaction of
+Chevalier<a class="footnote-reference brackets" href="#footcite-chevalierselfsimilarsolutionsinteraction1982" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. This should be used during the
+<strong>early phase</strong> of supernova evolution when the dynamics are <strong>ejecta dominated</strong>.</p>
+<p>The ejecta follow a broken power-law in velocity space,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\rho_{\rm ej}(r,t) = K_{\rm ej}\,t^{-3}
+\begin{cases}
+    v^{-\delta}, &amp; v &lt; v_t, \\
+    v_t^{n-\delta}\,v^{-n}, &amp; v \ge v_t,
+\end{cases}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(v_t\)</span> and <span class="math notranslate nohighlight">\(K_{\rm ej}\)</span> are fixed by the total ejecta energy <span class="math notranslate nohighlight">\(E_{\rm ej}\)</span>
+and mass <span class="math notranslate nohighlight">\(M_{\rm ej}\)</span>.  The CSM follows <span class="math notranslate nohighlight">\(\rho_{\rm CSM}(r) = K_{\rm CSM}\,r^{-s}\)</span>.
+Under these assumptions the shock interface evolves self-similarly,</p>
+<div class="math notranslate nohighlight">
+\[R(t) = \left(\frac{\zeta\,K_{\rm CSM}}{K_{\rm ej}}\right)^{1/(s-n)} t^{(3-n)/(s-n)},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\zeta\)</span> is a dimensionless constant of order unity that depends on <span class="math notranslate nohighlight">\(n\)</span> and
+<span class="math notranslate nohighlight">\(s\)</span>.  For the full derivation see <a class="reference internal" href="chevalier_theory.html#chevalier-theory"><span class="std std-ref">Theory: The Chevalier Self-Similar Solution</span></a>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a> handles
+arbitrary <span class="math notranslate nohighlight">\(s\)</span>.  The
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarWindShockEngine</span></code></a> is a
+convenience specialization for <span class="math notranslate nohighlight">\(s = 2\)</span>: it accepts <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span>
+directly and derives <span class="math notranslate nohighlight">\(K_{\rm CSM} = \dot{M}/(4\pi v_w)\)</span> internally.</p>
+</div>
+<section id="problem-setup">
+<h4>Problem Setup<a class="headerlink" href="#problem-setup" title="Link to this heading">#</a></h4>
+<p>The ejecta profile is parameterized by its total kinetic energy <span class="math notranslate nohighlight">\(E_{\rm ej}\)</span>, total mass
+<span class="math notranslate nohighlight">\(M_{\rm ej}\)</span>, outer velocity index <span class="math notranslate nohighlight">\(n\)</span>, and inner index <span class="math notranslate nohighlight">\(\delta\)</span>.
+Convergence of the self-similar solution requires <span class="math notranslate nohighlight">\(n &gt; 5\)</span> and <span class="math notranslate nohighlight">\(\delta &lt; 3\)</span>; in
+practice <span class="math notranslate nohighlight">\(\delta = 0\)</span> or <span class="math notranslate nohighlight">\(1\)</span> is standard for Type II supernovae.</p>
+<p>The CSM is parameterized by its power-law index <span class="math notranslate nohighlight">\(s\)</span> and the normalization constant
+<span class="math notranslate nohighlight">\(K_{\rm CSM}\)</span>.  The static helper
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.normalize_csm_density.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.normalize_csm_density" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.normalize_csm_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_csm_density()</span></code></a>
+converts a reference density <span class="math notranslate nohighlight">\(\rho_0\)</span> at a reference radius <span class="math notranslate nohighlight">\(r_0\)</span> into
+<span class="math notranslate nohighlight">\(K_{\rm CSM} = \rho_0\,r_0^s\)</span>.  For the wind engine the normalization is derived
+internally from <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span>, so no explicit <span class="math notranslate nohighlight">\(K_{\rm CSM}\)</span> is needed.</p>
+<p>Both engines are stateless: the same instance can be called repeatedly with different parameters
+without re-instantiation.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — general engine setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierSelfSimilarShockEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarShockEngine</span><span class="p">()</span>
+
+<span class="c1"># Ejecta parameters</span>
+<span class="n">E_ej</span>  <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+<span class="n">M_ej</span>  <span class="o">=</span> <span class="mf">5.0</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span>
+<span class="n">n</span>     <span class="o">=</span> <span class="mf">10.0</span>   <span class="c1"># outer ejecta index (must be &gt; 5)</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">1.0</span>    <span class="c1"># inner ejecta index (must be &lt; 3)</span>
+<span class="n">s</span>     <span class="o">=</span> <span class="mf">2.0</span>    <span class="c1"># CSM power-law index</span>
+
+<span class="c1"># CSM normalization from a reference density at a reference radius</span>
+<span class="n">K_csm</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarShockEngine</span><span class="o">.</span><span class="n">normalize_csm_density</span><span class="p">(</span>
+    <span class="n">rho_0</span><span class="o">=</span><span class="mf">1e-20</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">r_0</span><span class="o">=</span><span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="n">s</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — wind engine setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierSelfSimilarWindShockEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarWindShockEngine</span><span class="p">()</span>
+
+<span class="c1"># Ejecta parameters</span>
+<span class="n">E_ej</span>   <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+<span class="n">M_ej</span>   <span class="o">=</span> <span class="mf">5.0</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span>
+<span class="n">n</span>      <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">delta</span>  <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="c1"># Wind parameters — K_csm is derived internally from these</span>
+<span class="n">M_dot</span>  <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+<span class="n">v_wind</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="solving-the-shock-properties">
+<h4>Solving The Shock Properties<a class="headerlink" href="#solving-the-shock-properties" title="Link to this heading">#</a></h4>
+<p>Call
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+with a time array and the physical parameters.  The method returns a
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierShockState.html#trilobite.dynamics.shocks.chevalier.ChevalierShockState" title="trilobite.dynamics.shocks.chevalier.ChevalierShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierShockState</span></code></a> named tuple with six
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code> — the shock contact-discontinuity radius <span class="math notranslate nohighlight">\(R(t)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code> — the contact-discontinuity velocity <span class="math notranslate nohighlight">\(v_{\rm cd}(t) = \dot{R}(t)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_density</span></code> — immediate post-shock density <span class="math notranslate nohighlight">\(\rho_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_pressure</span></code> — immediate post-shock pressure <span class="math notranslate nohighlight">\(p_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_temperature</span></code> — immediate post-shock temperature <span class="math notranslate nohighlight">\(T_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal_energy_density</span></code> — post-shock thermal energy density <span class="math notranslate nohighlight">\(e_{\rm th} = p_s/(\gamma-1)\)</span>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Post-shock thermodynamics are computed via
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.html#trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions" title="trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions"><code class="xref py py-class docutils literal notranslate"><span class="pre">StrongColdShockConditions</span></code></a>
+using <span class="math notranslate nohighlight">\(v_{\rm cd}\)</span> as the shock velocity, following the standard convention in the
+supernova radio-afterglow literature.  The true forward shock outruns the contact
+discontinuity by a factor <span class="math notranslate nohighlight">\(R_{\rm fs}/R_c &gt; 1\)</span> that depends on <span class="math notranslate nohighlight">\(n\)</span> and
+<span class="math notranslate nohighlight">\(s\)</span>; the <a class="reference internal" href="#chevalier-two-shock-engine"><span class="std std-ref">Chevalier Two-Shock Engines</span></a> below resolves both surfaces separately.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — radius and velocity evolution (general engine)</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierSelfSimilarShockEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarShockEngine</span><span class="p">()</span>
+<span class="n">time</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
+
+<span class="n">K_csm</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarShockEngine</span><span class="o">.</span><span class="n">normalize_csm_density</span><span class="p">(</span>
+    <span class="n">rho_0</span><span class="o">=</span><span class="mf">1e-20</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">r_0</span><span class="o">=</span><span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+    <span class="n">E_ej</span><span class="o">=</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="o">=</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+    <span class="n">K_csm</span><span class="o">=</span><span class="n">K_csm</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">set_plot_style</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radius (cm)&quot;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Velocity (km s$^{-1}$)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (days)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../_downloads/1cb3b9e2cc845c5303e6823794d70fae/self_similar_overview-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/e7a3c4cf2417d3513ecf5335934879f1/self_similar_overview-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/ae286646cc345f3aa8e5c9f6f66c3557/self_similar_overview-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/9fda72a06dff1ada5454bd6f667a19b6/self_similar_overview-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/self_similar_overview-1.png" class="plot-directive" src="../../../_images/self_similar_overview-1.png" />
+</figure>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — radius and velocity evolution (wind engine)</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierSelfSimilarWindShockEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierSelfSimilarWindShockEngine</span><span class="p">()</span>
+<span class="n">time</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+    <span class="n">E_ej</span><span class="o">=</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="o">=</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+    <span class="n">M_dot</span><span class="o">=</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span>
+    <span class="n">v_wind</span><span class="o">=</span><span class="mf">100.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">set_plot_style</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radius (cm)&quot;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">),</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Velocity (km s$^{-1}$)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (days)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../_downloads/8f51de550a16e451a71063cbc58ed575/self_similar_overview-2.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/26fa3055aa11f3e6cde73835cc4773a2/self_similar_overview-2.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/a2264d0d63fb03de295c626582278a67/self_similar_overview-2.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/08d1bbaef3551d19a3f99bb48c75f928/self_similar_overview-2.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/self_similar_overview-2.png" class="plot-directive" src="../../../_images/self_similar_overview-2.png" />
+</figure>
+</div>
+</details><hr class="docutils" />
+</section>
+</section>
+<section id="chevalier-two-shock-engines">
+<span id="chevalier-two-shock-engine"></span><h3>Chevalier Two-Shock Engines<a class="headerlink" href="#chevalier-two-shock-engines" title="Link to this heading">#</a></h3>
+<p>The two-shock engines resolve the <strong>forward and reverse shock surfaces separately</strong>,
+rather than treating the shocked interaction region as a single thin shell. This
+gives accurate post-shock thermodynamics at each surface and uses the tabulated
+normalization constant <span class="math notranslate nohighlight">\(A\)</span> from the full ODE solution instead of the thin-shell
+approximation <span class="math notranslate nohighlight">\(\zeta\)</span>.</p>
+<p>At instantiation both engines call
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.compute_self_similar_critical_grid.html#trilobite.dynamics.shocks.chevalier.compute_self_similar_critical_grid" title="trilobite.dynamics.shocks.chevalier.compute_self_similar_critical_grid"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_self_similar_critical_grid()</span></code></a>
+to precompute a table of the three dimensionless self-similar constants</p>
+<div class="math notranslate nohighlight">
+\[A, \qquad \frac{R_{\rm fs}}{R_c}, \qquad \frac{R_{\rm rs}}{R_c},\]</div>
+<p>over a grid of <span class="math notranslate nohighlight">\((n,\,s)\)</span> values. At runtime these constants are bilinearly
+interpolated for the requested <span class="math notranslate nohighlight">\((n, s)\)</span>, so repeated evaluations have
+negligible cost after the initial build. For the theoretical background on the ODE
+system, boundary conditions, and pressure matching that fix <span class="math notranslate nohighlight">\(A\)</span> and the radius
+ratios, see <a class="reference internal" href="chevalier_theory.html#chevalier-theory"><span class="std std-ref">Theory: The Chevalier Self-Similar Solution</span></a>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierTwoShockSelfSimilarEngine</span></code></a>
+handles arbitrary <span class="math notranslate nohighlight">\(s\)</span>. The
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierTwoShockSelfSimilarWindEngine</span></code></a>
+is the <span class="math notranslate nohighlight">\(s=2\)</span> specialization that accepts <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span> directly.</p>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Unlike the single-surface engines, the two-shock engines are <strong>stateful</strong>: the
+<span class="math notranslate nohighlight">\((n,s)\)</span> table is built at instantiation. Building the default 9 × 6 grid
+takes a few seconds on a modern machine. Once constructed, the same instance can
+be evaluated at any <span class="math notranslate nohighlight">\((n, s)\)</span> within the tabulated range with negligible
+overhead.  The <code class="docutils literal notranslate"><span class="pre">n_grid</span></code> and <code class="docutils literal notranslate"><span class="pre">s_grid</span></code> constructor arguments allow the grid to
+be customised; requesting <span class="math notranslate nohighlight">\((n, s)\)</span> outside the grid raises a
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a>.</p>
+</div>
+<section id="id2">
+<h4>Problem Setup<a class="headerlink" href="#id2" title="Link to this heading">#</a></h4>
+<p>The physical inputs are identical to those of
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html#trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine" title="trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierSelfSimilarShockEngine</span></code></a>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — two-shock general engine</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierTwoShockSelfSimilarEngine</span>
+
+<span class="c1"># Table is built once here</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierTwoShockSelfSimilarEngine</span><span class="p">()</span>
+
+<span class="n">E_ej</span>  <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+<span class="n">M_ej</span>  <span class="o">=</span> <span class="mf">5.0</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span>
+<span class="n">n</span>     <span class="o">=</span> <span class="mf">10.0</span>   <span class="c1"># outer ejecta index (must be &gt; 5)</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">1.0</span>    <span class="c1"># inner ejecta index (must be &lt; 3)</span>
+<span class="n">s</span>     <span class="o">=</span> <span class="mf">2.0</span>    <span class="c1"># CSM power-law index</span>
+
+<span class="n">K_csm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5e-16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>  <span class="c1"># K_CSM for s=2</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — two-shock wind engine</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierTwoShockSelfSimilarWindEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierTwoShockSelfSimilarWindEngine</span><span class="p">()</span>
+
+<span class="n">E_ej</span>   <span class="o">=</span> <span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+<span class="n">M_ej</span>   <span class="o">=</span> <span class="mf">5.0</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span>
+<span class="n">n</span>      <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">delta</span>  <span class="o">=</span> <span class="mf">1.0</span>
+
+<span class="c1"># K_csm is derived internally from these</span>
+<span class="n">M_dot</span>  <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+<span class="n">v_wind</span> <span class="o">=</span> <span class="mf">100.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="id3">
+<h4>Solving The Shock Properties<a class="headerlink" href="#id3" title="Link to this heading">#</a></h4>
+<p>Call
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.compute_shock_properties.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.compute_shock_properties" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+with a time array and the physical parameters. The method returns a
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.chevalier.ChevalierTwoShockState.html#trilobite.dynamics.shocks.chevalier.ChevalierTwoShockState" title="trilobite.dynamics.shocks.chevalier.ChevalierTwoShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">ChevalierTwoShockState</span></code></a> named tuple with
+fourteen <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> fields — six kinematic and eight thermodynamic:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">radius_cd</span></code>, <code class="docutils literal notranslate"><span class="pre">radius_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">radius_rs</span></code> — positions of the contact discontinuity,
+forward shock, and reverse shock.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity_cd</span></code>, <code class="docutils literal notranslate"><span class="pre">velocity_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">velocity_rs</span></code> — lab-frame velocities
+<span class="math notranslate nohighlight">\(v = m\,R/t\)</span> for each surface, where <span class="math notranslate nohighlight">\(m = (n-3)/(n-s)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">density_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">density_rs</span></code> — immediate post-shock densities.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">pressure_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">pressure_rs</span></code> — immediate post-shock pressures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">temperature_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">temperature_rs</span></code> — immediate post-shock temperatures.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal_energy_density_fs</span></code>, <code class="docutils literal notranslate"><span class="pre">thermal_energy_density_rs</span></code> — post-shock thermal energy
+densities <span class="math notranslate nohighlight">\(e_{\rm th} = p/(\gamma-1)\)</span>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>At the <strong>forward shock</strong>, the Rankine–Hugoniot conditions are applied using the
+lab-frame shock speed <span class="math notranslate nohighlight">\(v_{\rm fs}\)</span> against stationary CSM at density
+<span class="math notranslate nohighlight">\(K_{\rm CSM}\,R_{\rm fs}^{-s}\)</span>.</p>
+<p>At the <strong>reverse shock</strong>, they are applied in the shock frame using the ejecta
+relative velocity <span class="math notranslate nohighlight">\(v_{\rm rel} = (1-m)\,R_{\rm rs}/t\)</span> against upstream ejecta at
+density <span class="math notranslate nohighlight">\(K_{\rm ej}\,t^{n-3}\,R_{\rm rs}^{-n}\)</span>.  Because the ejecta are denser and
+slower than the surrounding CSM at comparable radii, the reverse shock is typically
+cooler than the forward shock by one to two orders of magnitude.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — two-shock kinematics and temperatures</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">ChevalierTwoShockSelfSimilarEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">ChevalierTwoShockSelfSimilarEngine</span><span class="p">()</span>
+<span class="n">time</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
+
+<span class="n">K_csm</span> <span class="o">=</span> <span class="p">(</span><span class="mf">5e-16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1e15</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+    <span class="n">E_ej</span><span class="o">=</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+    <span class="n">M_ej</span><span class="o">=</span><span class="mf">5.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span><span class="p">,</span>
+    <span class="n">K_csm</span><span class="o">=</span><span class="n">K_csm</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">s</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">set_plot_style</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">t_day</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">radius_fs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$R_{\rm fs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">radius_cd</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$R_{\rm cd}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">radius_rs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$R_{\rm rs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radius (cm)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity_fs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$v_{\rm fs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity_cd</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$v_{\rm cd}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity_rs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$v_{\rm rs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Velocity (km s$^{-1}$)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">temperature_fs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$T_{\rm fs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">temperature_rs</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$T_{\rm rs}$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Post-shock temperature (K)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (days)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../_downloads/70627853b010dd0c87e272996346f7e8/self_similar_overview-3.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/cb61d2e746a66e85ef3730c748188100/self_similar_overview-3.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/89755333587e3e3ff300c359c6bbdd87/self_similar_overview-3.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/72129e15db1e44b02f339e6e69385fff/self_similar_overview-3.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/self_similar_overview-3.png" class="plot-directive" src="../../../_images/self_similar_overview-3.png" />
+</figure>
+</div>
+</details><hr class="docutils" />
+</section>
+</section>
+<section id="sedov-taylor-shock-engine">
+<span id="sedov-taylor-engine"></span><h3>Sedov–Taylor Shock Engine<a class="headerlink" href="#sedov-taylor-shock-engine" title="Link to this heading">#</a></h3>
+<p>The <a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a> implements the
+classic point-explosion blast wave in a uniform ambient medium
+<a class="footnote-reference brackets" href="#footcite-sedov1946propagation" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> <a class="footnote-reference brackets" href="#footcite-taylor1950formation" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>.  The shock radius and
+velocity evolve as</p>
+<div class="math notranslate nohighlight">
+\[R_s(t) = \beta(\gamma)\left(\frac{E\,t^2}{\rho_0}\right)^{1/5}, \qquad
+v_s(t) = \frac{2}{5}\frac{R_s(t)}{t},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta(\gamma)\)</span> is computed once at instantiation by numerically integrating the
+self-similar Sedov profiles.  In addition to the shock kinematics, the engine returns
+immediate post-shock thermodynamic quantities from the strong-shock Rankine–Hugoniot
+conditions,</p>
+<div class="math notranslate nohighlight">
+\[\rho_s = \frac{\gamma+1}{\gamma-1}\,\rho_0, \qquad
+p_s    = \frac{2}{\gamma+1}\,\rho_0\,v_s^2, \qquad
+T_s    = \frac{p_s\,\mu\,m_p}{\rho_s\,k_B}, \qquad
+e_{\rm th} = \frac{p_s}{\gamma - 1}.\]</div>
+<p>For the theoretical background see <a class="reference internal" href="sedov_taylor_theory.html#sedov-taylor-theory"><span class="std std-ref">Theory: Sedov-Taylor Self-Similar Solution</span></a>.</p>
+<section id="id6">
+<h4>Problem Setup<a class="headerlink" href="#id6" title="Link to this heading">#</a></h4>
+<p>Unlike the Chevalier engines, the gas parameters <span class="math notranslate nohighlight">\(\gamma\)</span> (adiabatic index) and
+<span class="math notranslate nohighlight">\(\mu\)</span> (mean molecular weight in units of the proton mass) are fixed at instantiation
+because <span class="math notranslate nohighlight">\(\beta(\gamma)\)</span> is evaluated by numerical quadrature at that point.  The
+explosion energy <span class="math notranslate nohighlight">\(E\)</span> and ambient density <span class="math notranslate nohighlight">\(\rho_0\)</span> are supplied at call time.</p>
+<p>Common choices are <span class="math notranslate nohighlight">\(\gamma = 5/3\)</span> (monatomic ideal gas, the default) and
+<span class="math notranslate nohighlight">\(\gamma = 4/3\)</span> (radiation-dominated).  The default <span class="math notranslate nohighlight">\(\mu = 0.5\)</span> is appropriate for
+a fully ionized hydrogen plasma.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — instantiation</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">SedovTaylorShockEngine</span>
+
+<span class="c1"># Default: monatomic ideal gas, fully ionized hydrogen</span>
+<span class="n">engine</span> <span class="o">=</span> <span class="n">SedovTaylorShockEngine</span><span class="p">()</span>
+
+<span class="c1"># Radiation-dominated gas</span>
+<span class="n">engine_rad</span> <span class="o">=</span> <span class="n">SedovTaylorShockEngine</span><span class="p">(</span><span class="n">gamma</span><span class="o">=</span><span class="mf">4.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="id7">
+<h4>Solving The Shock Properties<a class="headerlink" href="#id7" title="Link to this heading">#</a></h4>
+<p>Call
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+with a time array, an explosion energy, and an ambient density.  The method returns a
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockState.html#trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockState" title="trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockState</span></code></a> named tuple with six
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> fields:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code> — shock radius <span class="math notranslate nohighlight">\(R_s(t)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code> — shock velocity <span class="math notranslate nohighlight">\(v_s(t)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_density</span></code> — immediate post-shock density <span class="math notranslate nohighlight">\(\rho_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_pressure</span></code> — immediate post-shock pressure <span class="math notranslate nohighlight">\(p_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_temperature</span></code> — immediate post-shock temperature <span class="math notranslate nohighlight">\(T_s\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal_energy_density</span></code> — post-shock thermal energy density <span class="math notranslate nohighlight">\(e_{\rm th}\)</span>.</p></li>
+</ul>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — kinematics and post-shock temperature</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">SedovTaylorShockEngine</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">SedovTaylorShockEngine</span><span class="p">()</span>
+<span class="n">time</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+
+<span class="n">state</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span>
+    <span class="n">E</span><span class="o">=</span><span class="mf">1e51</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span><span class="p">,</span>
+    <span class="n">rho_0</span><span class="o">=</span><span class="mf">1.67e-24</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>   <span class="c1"># approximately 1 H atom per cm^3</span>
+<span class="p">)</span>
+
+<span class="n">set_plot_style</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">8</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">t_yr</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_yr</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">pc</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radius (pc)&quot;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_yr</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">velocity</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Velocity (km s$^{-1}$)&quot;</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_yr</span><span class="p">,</span> <span class="n">state</span><span class="o">.</span><span class="n">post_shock_temperature</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">))</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Post-shock temperature (K)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (yr)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../_downloads/ee04ee9c6c76024fecc458d0909f0d8b/self_similar_overview-4.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/6cd75875be7377a000c19021b486eda3/self_similar_overview-4.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/f924f32451c17a67526eccd30b2fdc35/self_similar_overview-4.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/6b26c6031799ee04bf2707610a3d17d9/self_similar_overview-4.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/self_similar_overview-4.png" class="plot-directive" src="../../../_images/self_similar_overview-4.png" />
+</figure>
+</div>
+</details></section>
+</section>
+<section id="weaver-wind-shock-engine">
+<h3>Weaver Wind Shock Engine<a class="headerlink" href="#weaver-wind-shock-engine" title="Link to this heading">#</a></h3>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This engine is not yet implemented.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="relativistic-self-similar-shocks">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Relativistic Self-Similar Shocks</a><a class="headerlink" href="#relativistic-self-similar-shocks" title="Link to this heading">#</a></h2>
+<p>In addition to the non-relativistic shock engines available in Trilobite, we also provide a number of fully
+relativistic self-similar shock engines based on the various known solutions to ultra-relativistic flows. These
+are very useful for things like GRB modeling, jets, etc.</p>
+<section id="blandford-mckee-shock-engine">
+<span id="blandford-mckee-engine"></span><h3>Blandford–McKee Shock Engine<a class="headerlink" href="#blandford-mckee-shock-engine" title="Link to this heading">#</a></h3>
+<p>The Blandford–McKee (BM) engine implements the classic ultra-relativistic
+self-similar blast-wave solution of Blandford and McKee<a class="footnote-reference brackets" href="#footcite-1976phfl-19-1130b" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a> for a
+relativistic explosion of isotropic-equivalent energy <span class="math notranslate nohighlight">\(E\)</span> expanding into an
+external medium with a power-law density profile</p>
+<div class="math notranslate nohighlight">
+\[\rho_{\rm ext}(r) = K r^{-k}.\]</div>
+<p>This is the natural starting point for GRB afterglow modeling and any other scenario
+in which the blast wave is ultra-relativistic (<span class="math notranslate nohighlight">\(\Gamma \gg 1\)</span>).</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 42.0%" />
+<col style="width: 58.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Engine</p></th>
+<th class="head"><p>Best For</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlandfordMcKeeShockEngine</span></code></a></p></td>
+<td><p>Ultra-relativistic blast wave in a <strong>general power-law</strong> external medium
+(<span class="math notranslate nohighlight">\(k &lt; 3\)</span>). All analytic; no ODE integration required.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlandfordMcKeeWindShockEngine</span></code></a></p></td>
+<td><p>Same as above for a <strong>stellar-wind</strong> external medium (<span class="math notranslate nohighlight">\(k = 2\)</span>).
+Accepts <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span> directly rather than <span class="math notranslate nohighlight">\(K\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The core kinematic relation follows from integrating the BM self-similar energy
+density over the shocked shell.  The closed-form profiles</p>
+<div class="math notranslate nohighlight">
+\[g(\chi) = \chi^{-1},
+\qquad
+f(\chi) = \chi^{(4k-17)/[3(4-k)]},
+\qquad
+h(\chi) = \chi^{(2k-7)/(4-k)},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\chi = 1 + 2(m+1)\Gamma^2(1-r/R)\)</span> and <span class="math notranslate nohighlight">\(m = 3-k\)</span>, yield the
+analytic normalization coefficient</p>
+<div class="math notranslate nohighlight">
+\[C_E(k) = \frac{8\pi}{17 - 4k},\]</div>
+<p>so that energy conservation gives the shock Lorentz factor as a function of radius:</p>
+<div class="math notranslate nohighlight">
+\[\Gamma^2(R) = \frac{(17-4k)\,E}{8\pi K c^2 R^{3-k}}.\]</div>
+<p>In the ultra-relativistic limit <span class="math notranslate nohighlight">\(R \approx ct\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[\Gamma(t) \propto t^{-(3-k)/2}.\]</div>
+<p>For the full derivation see <a class="reference internal" href="blandford_mckee_theory.html#blandford-mckee-theory"><span class="std std-ref">Theory: The Blandford–McKee Solution</span></a>.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p><a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlandfordMcKeeShockEngine</span></code></a>
+handles any <span class="math notranslate nohighlight">\(k &lt; 3\)</span>.  The
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlandfordMcKeeWindShockEngine</span></code></a>
+fixes <span class="math notranslate nohighlight">\(k = 2\)</span> and accepts <span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span> directly,
+computing <span class="math notranslate nohighlight">\(K = \dot{M}/(4\pi v_w)\)</span> internally.</p>
+</div>
+<section id="id9">
+<h4>Problem Setup<a class="headerlink" href="#id9" title="Link to this heading">#</a></h4>
+<p>The two physical inputs are the isotropic-equivalent explosion energy <span class="math notranslate nohighlight">\(E\)</span> and
+the external medium normalization <span class="math notranslate nohighlight">\(K\)</span>.  The static helper
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.normalize_csm_density.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.normalize_csm_density" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.normalize_csm_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">normalize_csm_density()</span></code></a>
+converts a reference density <span class="math notranslate nohighlight">\(\rho_0\)</span> at radius <span class="math notranslate nohighlight">\(r_0\)</span> into
+<span class="math notranslate nohighlight">\(K = \rho_0\,r_0^k\)</span>.  For the wind engine, <span class="math notranslate nohighlight">\(K\)</span> is computed internally from
+<span class="math notranslate nohighlight">\(\dot{M}\)</span> and <span class="math notranslate nohighlight">\(v_w\)</span>.</p>
+<p>Two constructor parameters control numerical behavior rather than physics:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">lorentz_warn_threshold</span></code> (default 2.0) — a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeWarning" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">RuntimeWarning</span></code></a> is emitted
+whenever any <span class="math notranslate nohighlight">\(\Gamma(t)\)</span> drops below this value, indicating that the
+ultra-relativistic approximation is breaking down.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">gamma_hat</span></code> (default <span class="math notranslate nohighlight">\(4/3\)</span>) — the adiabatic index used for post-shock
+thermodynamics.</p></li>
+</ul>
+<p>A <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">ValueError</span></code></a> is raised if <span class="math notranslate nohighlight">\(k \geq 3\)</span>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — general engine setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlandfordMcKeeShockEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">BlandfordMcKeeShockEngine</span><span class="p">()</span>
+
+<span class="n">E</span> <span class="o">=</span> <span class="mf">1e52</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>       <span class="c1"># isotropic-equivalent explosion energy</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mf">0.0</span>                <span class="c1"># uniform ISM</span>
+
+<span class="c1"># CSM normalization from a reference density</span>
+<span class="n">K</span> <span class="o">=</span> <span class="n">BlandfordMcKeeShockEngine</span><span class="o">.</span><span class="n">normalize_csm_density</span><span class="p">(</span>
+    <span class="n">rho_0</span><span class="o">=</span><span class="mf">1.67e-24</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>   <span class="c1"># 1 proton per cm^3</span>
+    <span class="n">r_0</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="n">k</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — wind engine setup</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="n">BlandfordMcKeeWindShockEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">BlandfordMcKeeWindShockEngine</span><span class="p">()</span>
+
+<span class="n">E</span>      <span class="o">=</span> <span class="mf">1e52</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+<span class="n">M_dot</span>  <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span>
+<span class="n">v_wind</span> <span class="o">=</span> <span class="mf">1000.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span>   <span class="c1"># K derived internally as M_dot/(4 pi v_wind)</span>
+</pre></div>
+</div>
+</div>
+</details></section>
+<section id="id10">
+<h4>Solving The Shock Properties<a class="headerlink" href="#id10" title="Link to this heading">#</a></h4>
+<p>Call
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.compute_shock_properties.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.compute_shock_properties" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.compute_shock_properties"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_shock_properties()</span></code></a>
+with a time array and the physical parameters.  The method returns a
+<a class="reference internal" href="../../../_as_gen/trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState.html#trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState" title="trilobite.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">BlandfordMcKeeShockState</span></code></a> named tuple
+with eleven fields.  Dimensionless fields are returned as bare arrays; all fields with
+physical dimensions carry <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> units.</p>
+<p><strong>Shock kinematics:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">radius</span></code> — shock radius <span class="math notranslate nohighlight">\(R(t) \approx ct\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">lorentz_factor</span></code> — shock Lorentz factor <span class="math notranslate nohighlight">\(\Gamma(t)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">beta</span></code> — shock speed in units of <span class="math notranslate nohighlight">\(c\)</span>, <span class="math notranslate nohighlight">\(\beta = v/c\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">velocity</span></code> — shock speed <span class="math notranslate nohighlight">\(v = \beta c\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">fluid_lorentz_factor</span></code> — lab-frame Lorentz factor of the immediately post-shock
+fluid, <span class="math notranslate nohighlight">\(\gamma_2 = \Gamma/\sqrt{2}\)</span> (from the BM profile <span class="math notranslate nohighlight">\(g(\chi=1)=1\)</span>).</p></li>
+</ul>
+<p><strong>Post-shock proper (comoving-frame) quantities:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_pressure</span></code> — proper pressure <span class="math notranslate nohighlight">\(p_2 = \tfrac{2}{3}\rho_{\rm ext}c^2\Gamma^2\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_temperature</span></code> — proper temperature <span class="math notranslate nohighlight">\(T_2\)</span> from the
+Maxwell–Jüttner internal-energy inversion.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_comoving_density</span></code> — proper rest-mass density <span class="math notranslate nohighlight">\(\rho_2\)</span>.</p></li>
+</ul>
+<p><strong>Lab-frame quantities:</strong></p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">post_shock_lab_density</span></code> — lab-frame rest-mass density <span class="math notranslate nohighlight">\(\gamma_2\rho_2\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal_energy_density_comoving</span></code> — proper internal (thermal) energy density
+<span class="math notranslate nohighlight">\(U_{\rm int} = p_2/(\hat\gamma-1)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">thermal_energy_density_lab</span></code> — lab-frame energy density
+<span class="math notranslate nohighlight">\(T^{00} = (e_2+p_2)\gamma_2^2-p_2\)</span>.</p></li>
+</ul>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All post-shock quantities are computed analytically from <span class="math notranslate nohighlight">\(\Gamma\)</span> using the
+BM profile values at the shock surface (<span class="math notranslate nohighlight">\(\chi=1\)</span>), bypassing the relativistic
+Rankine–Hugoniot root-finder.  This makes every field exact to floating-point
+precision for any <span class="math notranslate nohighlight">\(\Gamma\)</span>.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example — Lorentz factor and radius evolution</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.dynamics.shocks</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BlandfordMcKeeShockEngine</span><span class="p">,</span>
+    <span class="n">BlandfordMcKeeWindShockEngine</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.plot_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">set_plot_style</span>
+
+<span class="n">set_plot_style</span><span class="p">()</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">time</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">0.1</span><span class="p">,</span> <span class="mi">300</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span>
+<span class="n">E</span>    <span class="o">=</span> <span class="mf">1e52</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span>
+
+<span class="c1"># --- ISM (k = 0) ---</span>
+<span class="n">ism</span> <span class="o">=</span> <span class="n">BlandfordMcKeeShockEngine</span><span class="p">()</span>
+<span class="n">K_ism</span> <span class="o">=</span> <span class="n">BlandfordMcKeeShockEngine</span><span class="o">.</span><span class="n">normalize_csm_density</span><span class="p">(</span>
+    <span class="n">rho_0</span><span class="o">=</span><span class="mf">1.67e-24</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">r_0</span><span class="o">=</span><span class="mf">1.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">k</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">s_ism</span> <span class="o">=</span> <span class="n">ism</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span><span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="n">E</span><span class="p">,</span> <span class="n">K_csm</span><span class="o">=</span><span class="n">K_ism</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mf">0.0</span><span class="p">)</span>
+
+<span class="c1"># --- Wind (k = 2) ---</span>
+<span class="n">wind</span> <span class="o">=</span> <span class="n">BlandfordMcKeeWindShockEngine</span><span class="p">()</span>
+<span class="n">s_wind</span> <span class="o">=</span> <span class="n">wind</span><span class="o">.</span><span class="n">compute_shock_properties</span><span class="p">(</span>
+    <span class="n">time</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">E</span><span class="o">=</span><span class="n">E</span><span class="p">,</span>
+    <span class="n">M_dot</span><span class="o">=</span><span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Msun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">yr</span><span class="p">,</span>
+    <span class="n">v_wind</span><span class="o">=</span><span class="mf">1000.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">km</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">t_day</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">)</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">s_ism</span><span class="o">.</span><span class="n">lorentz_factor</span><span class="p">,</span>  <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;ISM ($k=0$)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">s_wind</span><span class="o">.</span><span class="n">lorentz_factor</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Wind ($k=2$)&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">axhline</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;gray&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;$\Gamma = 2$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Shock Lorentz factor $\Gamma$&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">s_ism</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">),</span>  <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;ISM ($k=0$)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">t_day</span><span class="p">,</span> <span class="n">s_wind</span><span class="o">.</span><span class="n">radius</span><span class="o">.</span><span class="n">to_value</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="sa">r</span><span class="s2">&quot;Wind ($k=2$)&quot;</span><span class="p">,</span> <span class="n">ls</span><span class="o">=</span><span class="s2">&quot;--&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;Radius (cm)&quot;</span><span class="p">)</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Time (days)&quot;</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../_downloads/3a5255c791bdc6fdb397347c80dc210e/self_similar_overview-5.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/201656dfe78d8120d408c1daca69d21e/self_similar_overview-5.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/be564ae256444d20b6ded363d80f4f83/self_similar_overview-5.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../_downloads/afdb4d48453a919063fe9884a3a1f5e5/self_similar_overview-5.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../_images/self_similar_overview-5.png" class="plot-directive" src="../../../_images/self_similar_overview-5.png" />
+</figure>
+</div>
+</details></section>
+</section>
+</section>
+<hr class="docutils" />
+<section id="references">
+<h2><a class="toc-backref" href="#id14" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id11">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-chevalierselfsimilarsolutionsinteraction1982" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
+<p>R. A. Chevalier. Self-similar solutions for the interaction of stellar ejecta with an external medium. <em>The Astrophysical Journal</em>, 258:790–797, July 1982. ADS Bibcode: 1982ApJ…258..790C. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/1982ApJ...258..790C">https://ui.adsabs.harvard.edu/abs/1982ApJ…258..790C</a> (visited on 2025-11-25), <a class="reference external" href="https://doi.org/10.1086/160126">doi:10.1086/160126</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-sedov1946propagation" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id4">2</a><span class="fn-bracket">]</span></span>
+<p>Leonid Ivanovich Sedov. Propagation of strong shock waves. <em>Journal of Applied Mathematics and Mechanics</em>, 10:241–250, 1946.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-taylor1950formation" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id5">3</a><span class="fn-bracket">]</span></span>
+<p>Geoffrey Ingram Taylor. The formation of a blast wave by a very intense explosion.-ii. the atomic explosion of 1945. <em>Proceedings of the Royal Society of London. Series A. Mathematical and Physical Sciences</em>, 201(1065):175–186, 1950.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-1976phfl-19-1130b" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id8">4</a><span class="fn-bracket">]</span></span>
+<p>R. D. Blandford and C. F. McKee. Fluid dynamics of relativistic blast waves. <em>Physics of Fluids</em>, 19:1130–1138, August 1976. <a class="reference external" href="https://doi.org/10.1063/1.861619">doi:10.1063/1.861619</a>.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="numerical_shocks_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Theory: Numerical Shock Engines</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../radiation/overview.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Radiation Processes in Trilobite</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#non-relativistic-self-similar-shocks">Non-Relativistic Self-Similar Shocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chevalier-self-similar-shock-engines">Chevalier Self-Similar Shock Engines</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-setup">Problem Setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#solving-the-shock-properties">Solving The Shock Properties</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#chevalier-two-shock-engines">Chevalier Two-Shock Engines</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Problem Setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Solving The Shock Properties</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sedov-taylor-shock-engine">Sedov–Taylor Shock Engine</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Problem Setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Solving The Shock Properties</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#weaver-wind-shock-engine">Weaver Wind Shock Engine</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relativistic-self-similar-shocks">Relativistic Self-Similar Shocks</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#blandford-mckee-shock-engine">Blandford–McKee Shock Engine</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id9">Problem Setup</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id10">Solving The Shock Properties</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/shocks/self_similar_overview.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
