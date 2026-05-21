@@ -4,16 +4,16 @@
 Radio Photometry
 ============================
 
-Triceratops provides two containers for radio photometric data:
+Trilobite provides two containers for radio photometric data:
 
-- :class:`~triceratops.data.photometry.RadioPhotometryContainer` — multi-epoch,
+- :class:`~trilobite.data.photometry.RadioPhotometryContainer` — multi-epoch,
   multi-frequency radio photometry (the most common case).
-- :class:`~triceratops.data.photometry.RadioPhotometryEpoch` — single-epoch radio
+- :class:`~trilobite.data.photometry.RadioPhotometryEpoch` — single-epoch radio
   SED, where frequency is the independent variable. See :ref:`radio_photometry_epoch`.
 
 Both containers wrap an :class:`astropy.table.Table` with an enforced schema,
 provide unit-aware accessors, and expose a
-:meth:`~triceratops.data.photometry.RadioPhotometryContainer.to_inference_data`
+:meth:`~trilobite.data.photometry.RadioPhotometryContainer.to_inference_data`
 method for direct integration with the inference pipeline.
 
 
@@ -22,7 +22,7 @@ method for direct integration with the inference pipeline.
 RadioPhotometryContainer
 -------------------------
 
-:class:`~triceratops.data.photometry.RadioPhotometryContainer` stores
+:class:`~trilobite.data.photometry.RadioPhotometryContainer` stores
 heterogeneous multi-frequency, multi-epoch radio observations:
 
 .. math::
@@ -124,7 +124,7 @@ From an Astropy Table
     import numpy as np
     from astropy.table import Table
     from astropy import units as u
-    from triceratops.data import RadioPhotometryContainer
+    from trilobite.data import RadioPhotometryContainer
 
     t = Table({
         "time":                np.array([1., 5., 10., 20., 50.]) * u.day,
@@ -276,7 +276,7 @@ Plotting
     import matplotlib.pyplot as plt
     from astropy.table import Table
     from astropy import units as u
-    from triceratops.data import RadioPhotometryContainer
+    from trilobite.data import RadioPhotometryContainer
 
     rng = np.random.default_rng(0)
     n = 24
@@ -319,8 +319,8 @@ Plotting
 Inference Integration
 ^^^^^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.data.photometry.RadioPhotometryContainer.to_inference_data`
-converts the container into an :class:`~triceratops.data.core.InferenceData`
+:meth:`~trilobite.data.photometry.RadioPhotometryContainer.to_inference_data`
+converts the container into an :class:`~trilobite.data.core.InferenceData`
 object ready for likelihood evaluation.
 
 .. code-block:: python
@@ -363,7 +363,7 @@ See :ref:`data_to_inference` for the full step-by-step pipeline guide.
 API Reference
 ^^^^^^^^^^^^^
 
-.. autoclass:: triceratops.data.photometry.RadioPhotometryContainer
+.. autoclass:: trilobite.data.photometry.RadioPhotometryContainer
    :no-index:
    :members:
    :undoc-members:
@@ -378,7 +378,7 @@ RadioPhotometryEpoch
 
 See :ref:`radio_photometry_epoch` for the full reference.
 
-.. autoclass:: triceratops.data.photometry.RadioPhotometryEpoch
+.. autoclass:: trilobite.data.photometry.RadioPhotometryEpoch
    :no-index:
    :members:
    :undoc-members:

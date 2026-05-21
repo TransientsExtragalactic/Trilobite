@@ -12,7 +12,7 @@ numerical approaches, see :ref:`shock_engines`.  For the theoretical derivations
 thin-shell models implemented here, see :ref:`numeric_shocks_theory`.
 
 Upstream density and velocity profiles for these engines are built with the factory
-functions in :mod:`~triceratops.dynamics.shocks.utils`.
+functions in :mod:`~trilobite.dynamics.shocks.utils`.
 
 .. contents::
     :local:
@@ -33,10 +33,10 @@ summarises their applicability and trade-offs.
 
    * - Engine
      - Best For
-   * - :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
      - Problems where only the **shell kinematics** matter and no separate energy budget
        for each shocked layer is needed.  Fastest and simplest numerical engine.
-   * - :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+   * - :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
      - Problems requiring **separate forward and reverse shock tracking**, independent
        internal energies, or optional radiative cooling in each layer.
 
@@ -47,7 +47,7 @@ summarises their applicability and trade-offs.
 Pressure-Driven Thin-Shell Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+The :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 collapses the shocked interaction region to a single thin shell of mass
 :math:`M_{\rm sh}`, radius :math:`R_{\rm sh}`, and velocity :math:`v_{\rm sh}`.  The
 shell acceleration is driven by the net post-shock pressure difference estimated from the
@@ -88,7 +88,7 @@ ratio.
     When the distinction between the forward and reverse shock matters, for example,
     when separate post-shock temperatures or independent radiative losses in each layer
     are needed, use the
-    :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine` instead.
+    :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` instead.
 
 Problem Setup
 ~~~~~~~~~~~~~~
@@ -107,7 +107,7 @@ density and bulk velocity just outside each shock face:
     assumption for young supernova ejecta) all four callables can be assembled from a
     single ejecta kernel :math:`G(v)` and a one-argument CSM density function
     :math:`\rho_{\rm CSM}(r)` using
-    :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`.  Under
+    :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`.  Under
     this approximation the homologous ejecta density follows
 
     .. math::
@@ -117,7 +117,7 @@ density and bulk velocity just outside each shock face:
         u_1(r,t) = \frac{r}{t},
 
     while the CSM is stationary, :math:`u_4 = 0`.  See
-    :mod:`~triceratops.dynamics.shocks.utils` for the full catalogue of available ejecta
+    :mod:`~trilobite.dynamics.shocks.utils` for the full catalogue of available ejecta
     kernels and CSM profile factories.
 
 .. dropdown:: Example — profile and engine setup
@@ -125,7 +125,7 @@ density and bulk velocity just outside each shock face:
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import (
+        from trilobite.dynamics.shocks import (
             PressureDrivenThinShellShockEngine,
             get_bpl_ejecta_kernel,
             get_wind_csm_density_func,
@@ -160,11 +160,11 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
 with a time array, the four source callables, and initial conditions for the shell
 radius :math:`R_0`, velocity :math:`v_0`, mass :math:`M_0`, and start time :math:`t_0`.
 The method returns a
-:class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` named tuple with
+:class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` named tuple with
 seven :class:`~astropy.units.Quantity` fields:
 
 .. dropdown:: Returned Shock Properties
@@ -195,7 +195,7 @@ seven :class:`~astropy.units.Quantity` fields:
             forward shock.
 
 The four post-shock thermodynamic fields are evaluated at every output time step using
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
 with the shell velocity :math:`v_{\rm sh}` as the shock velocity and
 :math:`\rho_4(R_{\rm sh},t)`, :math:`u_4(R_{\rm sh},t)` as the upstream CSM
 conditions.  The mean molecular weight ``mu`` can be changed at instantiation, e.g.
@@ -206,7 +206,7 @@ conditions.  The mean molecular weight ``mu`` can be changed at instantiation, e
     The ODE integrator used internally is :func:`scipy.integrate.solve_ivp` with
     ``method='Radau'`` and ``rtol=1e-10`` by default.  Any extra keyword arguments
     passed to
-    :meth:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
+    :meth:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
     are forwarded directly to
     :func:`~scipy.integrate.solve_ivp`, making it straightforward to tighten tolerances
     or switch integration methods for stiff problems.
@@ -220,13 +220,13 @@ conditions.  The mean molecular weight ``mu`` can be changed at instantiation, e
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import (
+        from trilobite.dynamics.shocks import (
             PressureDrivenThinShellShockEngine,
             get_bpl_ejecta_kernel,
             get_wind_csm_density_func,
             make_homologous_stationary_sources,
         )
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         G_ej    = get_bpl_ejecta_kernel(1e51 * u.erg, 5.0 * u.Msun, n=10.0, delta=1.0)
         rho_csm = get_wind_csm_density_func(1e-5 * u.Msun / u.yr, 100.0 * u.km / u.s)
@@ -269,7 +269,7 @@ conditions.  The mean molecular weight ``mu`` can be changed at instantiation, e
 Mechanical Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine` implements the
+The :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` implements the
 non-relativistic form of the mechanical shock model of
 :footcite:t:`beloborodovMechanicalModelRelativistic2006a`, following the simplifications
 described in :footcite:t:`wangVegasAfterglowHighperformanceFramework2026`.  It
@@ -312,7 +312,7 @@ For the full theoretical derivation see :ref:`mechanical_internal_energy_model`.
 .. hint::
 
     For most supernova modeling the
-    :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+    :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
     is faster and requires fewer setup steps.  Use the mechanical engine when you need
     the forward and reverse shock velocities separately, distinct post-shock temperatures
     in each layer, or independent radiative cooling terms.
@@ -322,15 +322,15 @@ Problem Setup
 
 The profile and source-function setup is identical to the pressure-driven thin-shell
 engine: build an ejecta kernel with
-:func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel` (or
-:func:`~triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel`), build a CSM
-profile with one of the factories in :mod:`~triceratops.dynamics.shocks.utils`, and
+:func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` (or
+:func:`~trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel`), build a CSM
+profile with one of the factories in :mod:`~trilobite.dynamics.shocks.utils`, and
 assemble the four source callables with
-:func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`.
+:func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`.
 
 The additional step specific to this engine is deriving self-consistent **initial
 conditions** for all eight state components.
-:meth:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions`
+:meth:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions`
 computes :math:`(M_{2,0},\,M_{3,0},\,U_{2,0},\,U_{3,0},\,\Delta_{2,0},\,\Delta_{3,0})`
 from the initial contact-discontinuity position :math:`R_{{\rm cd},0}`, velocity
 :math:`v_{{\rm cd},0}`, and start time :math:`t_0`.  Swept-up masses are obtained by
@@ -344,7 +344,7 @@ transient at the first ODE step.
     .. code-block:: python
 
         from astropy import units as u
-        from triceratops.dynamics.shocks import (
+        from trilobite.dynamics.shocks import (
             MechanicalShockEngine,
             get_bpl_ejecta_kernel,
             get_wind_csm_density_func,
@@ -388,10 +388,10 @@ Solving The Shock Properties
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Call
-:meth:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`
+:meth:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`
 with a time array, the four source callables, and the 8-component initial condition
 vector.  The method returns a
-:class:`~triceratops.dynamics.shocks.numerical.MechanicalShockState` named tuple with
+:class:`~trilobite.dynamics.shocks.numerical.MechanicalShockState` named tuple with
 twenty-two :class:`~astropy.units.Quantity` fields:
 
 .. dropdown:: Returned Mechanical Shock Properties
@@ -500,7 +500,7 @@ twenty-two :class:`~astropy.units.Quantity` fields:
 
 The eight post-shock thermodynamic fields are evaluated at every output time step
 using
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`.
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`.
 The forward-shock call uses :math:`D_{\rm fs}` as the shock velocity with upstream
 conditions :math:`(\rho_4,u_4)` evaluated at :math:`R_{\rm fs}`; the reverse-shock
 call uses :math:`D_{\rm rs}` with upstream conditions :math:`(\rho_1,u_1)` evaluated
@@ -510,7 +510,7 @@ engine instantiation, e.g. ``MechanicalShockEngine(mu_2=0.62, mu_3=0.5)``.
 Optional radiative cooling in each layer is enabled by passing ``cooling_2`` and
 ``cooling_3`` callables of the signature
 ``cooling(R_cd, v_cd, M, U, Delta, t) -> dU/dt`` (negative for energy loss) to
-:meth:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`.
+:meth:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine.compute_shock_properties`.
 
 .. dropdown:: Example — forward and reverse shock temperatures
 
@@ -521,13 +521,13 @@ Optional radiative cooling in each layer is enabled by passing ``cooling_2`` and
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.dynamics.shocks import (
+        from trilobite.dynamics.shocks import (
             MechanicalShockEngine,
             get_bpl_ejecta_kernel,
             get_wind_csm_density_func,
             make_homologous_stationary_sources,
         )
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         G_ej    = get_bpl_ejecta_kernel(1e51 * u.erg, 5.0 * u.Msun, n=10.0, delta=1.0)
         rho_csm = get_wind_csm_density_func(1e-5 * u.Msun / u.yr, 100.0 * u.km / u.s)
@@ -578,7 +578,7 @@ Optional radiative cooling in each layer is enabled by passing ``cooling_2`` and
 Momentum-Conserving Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine` will
+The :class:`~trilobite.dynamics.shocks.numerical.MomentumConservingShockEngine` will
 implement a non-relativistic momentum-conserving thin-shell model.
 
 **Not yet implemented — planned for a future release.**
@@ -592,7 +592,7 @@ Relativistic extensions of all three non-relativistic closures are planned.  The
 be necessary for modeling ultra-relativistic outflows such as GRB jets and
 mildly-relativistic TDE-driven shocks, where Lorentz factors :math:`\Gamma \gtrsim 1`
 must be tracked self-consistently.  The class objects exist in
-:mod:`~triceratops.dynamics.shocks.numerical` but raise :exc:`NotImplementedError` if
+:mod:`~trilobite.dynamics.shocks.numerical` but raise :exc:`NotImplementedError` if
 called.
 
 .. _rel_pressure_driven_thin_shell_engine:
@@ -600,7 +600,7 @@ called.
 Relativistic Pressure-Driven Thin-Shell Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
+The :class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
 will extend the pressure-driven thin-shell formulation to the relativistic regime.
 
 **Not yet implemented — planned for a future release.**
@@ -610,7 +610,7 @@ will extend the pressure-driven thin-shell formulation to the relativistic regim
 Relativistic Mechanical Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine` will
+The :class:`~trilobite.dynamics.shocks.numerical.RelMechanicalShockEngine` will
 implement the full relativistic mechanical model of
 :footcite:t:`beloborodovMechanicalModelRelativistic2006a`.
 
@@ -621,7 +621,7 @@ implement the full relativistic mechanical model of
 Relativistic Momentum-Conserving Shock Engine
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The :class:`~triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine` will
+The :class:`~trilobite.dynamics.shocks.numerical.RelMomentumConservingShockEngine` will
 implement a relativistic momentum-conserving shock engine.
 
 **Not yet implemented — planned for a future release.**

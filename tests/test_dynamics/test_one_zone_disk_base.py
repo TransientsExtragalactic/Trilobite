@@ -1,18 +1,18 @@
 """
-Reusable pytest base class for testing :class:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
-subclasses and :class:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult`.
+Reusable pytest base class for testing :class:`~trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
+subclasses and :class:`~trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult`.
 
 Architecture
 ------------
 Tests are split into two parts:
 
 1. :class:`TestOneZoneMetaValidation` — standalone unit tests for the
-   :class:`~triceratops.dynamics.accretion.one_zone.base._OneZoneMeta`
+   :class:`~trilobite.dynamics.accretion.one_zone.base._OneZoneMeta`
    metaclass.  These tests verify that malformed parameter declarations are
    caught at class-definition time, before any instance is created.
 
 2. :class:`BaseTestOneZoneDisk` — a reusable, parameterised base class for
-   testing concrete :class:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
+   testing concrete :class:`~trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
    subclasses.  Concrete test modules inherit from this class, supply the
    required class-level attributes, and may add model-specific assertions.
 
@@ -44,7 +44,7 @@ from astropy import constants as const
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.accretion.one_zone import (
+from trilobite.dynamics.accretion.one_zone import (
     OneZoneAccretionDiskBase,
     OneZoneAccretionResult,
 )
@@ -161,7 +161,7 @@ class TestOneZoneMetaValidation:
 
 
 class BaseTestOneZoneDisk:
-    """Reusable pytest base class for :class:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
+    """Reusable pytest base class for :class:`~trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase`
     subclasses.
 
     All common tests are inherited automatically.  Concrete test classes only
@@ -174,7 +174,7 @@ class BaseTestOneZoneDisk:
     - Runtime-parameter and initial-condition processing
     - The three-step closure pipeline
     - ODE solve and basic result properties
-    - :class:`~triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult`
+    - :class:`~trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult`
       dunder methods, field accessors, plotting utilities, and field
       interaction methods
     - HDF5 round-trip including reconstruction-cache persistence

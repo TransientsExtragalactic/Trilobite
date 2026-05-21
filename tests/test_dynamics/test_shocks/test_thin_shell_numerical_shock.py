@@ -1,7 +1,7 @@
 """
 Unit tests for shock engine dynamics.
 
-This module contains unit tests for the shock engine dynamics in the Triceratops project.
+This module contains unit tests for the shock engine dynamics in the Trilobite project.
 It uses the pytest framework to define and run tests that verify the behavior of the shock engine
 under various conditions.
 """
@@ -11,10 +11,10 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.shocks.numerical import (
+from trilobite.dynamics.shocks.numerical import (
     PressureDrivenThinShellShockEngine,
 )
-from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine
+from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine
 
 
 # ------------------------------------------------------------------- #
@@ -117,7 +117,7 @@ class TestNumericalThinShellShockEngine:
         if diagnostic_plots:
             import matplotlib.pyplot as plt
 
-            from triceratops.utils.plot_utils import set_plot_style
+            from trilobite.utils.plot_utils import set_plot_style
 
             set_plot_style()
 
@@ -253,7 +253,7 @@ class TestNumericalThinShellShockEngine:
         if diagnostic_plots:
             import matplotlib.pyplot as plt
 
-            from triceratops.utils.plot_utils import set_plot_style
+            from trilobite.utils.plot_utils import set_plot_style
 
             set_plot_style()
 

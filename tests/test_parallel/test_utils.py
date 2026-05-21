@@ -1,9 +1,9 @@
-"""Tests for :mod:`triceratops.parallel.utils`."""
+"""Tests for :mod:`trilobite.parallel.utils`."""
 
 import numpy as np
 import pytest
 
-from triceratops.parallel.utils import (
+from trilobite.parallel.utils import (
     _callback_wrapper,
     get_batch_slices,
     split_args_into_batches,

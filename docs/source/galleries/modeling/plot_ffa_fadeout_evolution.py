@@ -39,7 +39,7 @@ evolution from the FFA-dominated to the optically thin regime.
 
 Relevant API
 ------------
-- :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
+- :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
 - :func:`~radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature`
 - :class:`~radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
@@ -52,11 +52,11 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
-from triceratops.radiation.free_free.absorption import compute_ff_RJ_optical_depth_from_quadrature
-from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
-from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.shocks import ChevalierSelfSimilarWindShockEngine
+from trilobite.radiation.free_free.absorption import compute_ff_RJ_optical_depth_from_quadrature
+from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 # set_plot_style()
 # plt.rcParams['text.usetex'] = True

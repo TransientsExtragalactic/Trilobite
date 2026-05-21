@@ -2,8 +2,8 @@ r"""
 Photometric Filters: Construction and Convolution
 ==================================================
 
-This example introduces the :class:`~triceratops.utils.phot_utils.PhotometryFilter` class
-— the fundamental building block of Triceratops's optical photometry system.
+This example introduces the :class:`~trilobite.utils.phot_utils.PhotometryFilter` class
+— the fundamental building block of Trilobite's optical photometry system.
 
 We cover:
 
@@ -16,9 +16,9 @@ We cover:
 
 Relevant API references
 -----------------------
-- :class:`triceratops.utils.phot_utils.PhotometryFilter`
-- :func:`triceratops.utils.phot_utils.load_filter_from_file`
-- :func:`triceratops.utils.phot_utils.load_filter_from_speclite`
+- :class:`trilobite.utils.phot_utils.PhotometryFilter`
+- :func:`trilobite.utils.phot_utils.load_filter_from_file`
+- :func:`trilobite.utils.phot_utils.load_filter_from_speclite`
 """
 
 # %%
@@ -28,8 +28,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 import astropy.units as u
 
-from triceratops.utils.phot_utils import PhotometryFilter
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.phot_utils import PhotometryFilter
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -37,7 +37,7 @@ set_plot_style()
 # Building Filters from Scratch
 # ------------------------------
 #
-# A :class:`~triceratops.utils.phot_utils.PhotometryFilter` accepts:
+# A :class:`~trilobite.utils.phot_utils.PhotometryFilter` accepts:
 #
 # - A wavelength grid as either a bare NumPy array **in cm**, or an
 #   :class:`astropy.units.Quantity` in any compatible unit (Å, nm, μm …).
@@ -110,11 +110,11 @@ print(f"  sum(weights)         : {r_filt.weights.sum():.10f}  (should be 1.0)")
 # We construct a power-law SED resembling an optically-thin synchrotron source
 # and convolve it through each filter.  Three convolution paths are available:
 #
-# - :meth:`~triceratops.utils.phot_utils.PhotometryFilter.apply` —
+# - :meth:`~trilobite.utils.phot_utils.PhotometryFilter.apply` —
 #   fastest, requires ``F_nu`` on the filter's own grid.
-# - :meth:`~triceratops.utils.phot_utils.PhotometryFilter.convolve_nu` —
+# - :meth:`~trilobite.utils.phot_utils.PhotometryFilter.convolve_nu` —
 #   interpolates from any frequency grid (used here).
-# - :meth:`~triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda` —
+# - :meth:`~trilobite.utils.phot_utils.PhotometryFilter.convolve_lambda` —
 #   accepts ``F_lambda`` on a wavelength grid.
 
 # Power-law SED: F_nu ∝ nu^alpha, normalised at 1e14 Hz

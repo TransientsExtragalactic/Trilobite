@@ -8,8 +8,8 @@ bremsstrahlung.  Its value is of order unity but depends weakly on both
 frequency and temperature — well enough to matter when computing optical
 depths or emissivities to better than ~10–20%.
 
-Triceratops provides four approximations, selectable via the ``approx``
-keyword of :func:`~triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor`:
+Trilobite provides four approximations, selectable via the ``approx``
+keyword of :func:`~trilobite.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor`:
 
 - ``"lu"`` — analytic fit from Lu (2000; *ApJS* 131, 499), the default.
 - ``"draine"`` — analytic fit from :footcite:t:`draine2011physics`, accurate
@@ -30,17 +30,17 @@ This example compares all four approximations across frequency and temperature.
 
 Relevant API
 ------------
-- :func:`~triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor`
-- :class:`~triceratops.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
-- :class:`~triceratops.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
+- :func:`~trilobite.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor`
+- :class:`~trilobite.radiation.free_free.gaunt_factor.NonRelativisticGauntFactorInterpolator`
+- :class:`~trilobite.radiation.free_free.gaunt_factor.RelativisticGauntFactorInterpolator`
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.free_free import compute_ff_gaunt_factor
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.free_free import compute_ff_gaunt_factor
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

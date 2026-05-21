@@ -36,13 +36,13 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron import (
+from trilobite.radiation.synchrotron import (
     compute_gyrofrequency,
     compute_nu_critical,
     compute_synchrotron_frequency,
     compute_synchrotron_gamma,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Physical Setup

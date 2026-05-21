@@ -1,7 +1,7 @@
 Spectral Energy Distributions
 ==============================
 
-These examples demonstrate Triceratops' hierarchy of synchrotron SED models — from a simple
+These examples demonstrate Trilobite' hierarchy of synchrotron SED models — from a simple
 uncooled power-law spectrum through models that add radiative cooling and synchrotron
 self-absorption (SSA). Each model class adds physical complexity and produces distinct
 spectral shapes and break-frequency structures.

@@ -10,11 +10,11 @@ population are often included to better match observed spectra (e.g. :footcite:t
 
 .. hint::
 
-    For a detailed discussion of the relevant theory and its implementation in Triceratops, see
+    For a detailed discussion of the relevant theory and its implementation in Trilobite, see
     :ref:`synchrotron_theory`.
 
-In Triceratops, we have implemented the general synchrotron SED including both SSA and cooling
-effects in the class :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`.
+In Trilobite, we have implemented the general synchrotron SED including both SSA and cooling
+effects in the class :class:`~trilobite.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`.
 
 In this example, we're going to simply demonstrate the shapes of the different spectra using
 contrived values of the various break frequencies. In practice, models relying on these
@@ -26,10 +26,10 @@ Setup
 -------
 
 To get started, we'll need to import the
-:class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED` class
-from Triceratops, along with some standard packages for numerical work and plotting.
+:class:`~trilobite.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED` class
+from Trilobite, along with some standard packages for numerical work and plotting.
 
-Synchrotron SEDs (all descended from :class:`~triceratops.radiation.synchrotron.SEDs.SynchrotronSED`) need
+Synchrotron SEDs (all descended from :class:`~trilobite.radiation.synchrotron.SEDs.SynchrotronSED`) need
 to be instantiated before use (so that hyper-parameters and flags for various choices can be set). Once instantiated
 we can define a frequency grid and some fixed phenomenological parameters for the spectra and then evaluate
 the SED for different values of the relevant frequencies.
@@ -39,8 +39,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs import PowerLaw_Cooling_SSA_SynchrotronSED
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.synchrotron.SEDs import PowerLaw_Cooling_SSA_SynchrotronSED
+from trilobite.utils.plot_utils import set_plot_style
 
 # Instantiate the SED.
 sed = PowerLaw_Cooling_SSA_SynchrotronSED()

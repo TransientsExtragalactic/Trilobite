@@ -4,17 +4,17 @@
 OpticalPhotometryEpoch
 ========================
 
-:class:`~triceratops.data.optical_photometry.OpticalPhotometryEpoch` represents
+:class:`~trilobite.data.optical_photometry.OpticalPhotometryEpoch` represents
 a **single-epoch multi-band optical SED**. It stores flux density or AB
 magnitude measurements taken at one snapshot in time across multiple
 photometric bands, making it suitable for broadband optical SED fitting
 where band index is the independent variable.
 
 This is the optical analog of
-:class:`~triceratops.data.photometry.RadioPhotometryEpoch`. The band name
+:class:`~trilobite.data.photometry.RadioPhotometryEpoch`. The band name
 (e.g., ``"g"``, ``"r"``) is stored as a string column and resolved to an
 integer band index at inference time via the model's
-:class:`~triceratops.utils.phot_utils.FilterBundle`.
+:class:`~trilobite.utils.phot_utils.FilterBundle`.
 
 
 Schema
@@ -79,7 +79,7 @@ From an Astropy Table
     import numpy as np
     from astropy.table import Table
     from astropy import units as u
-    from triceratops.data import OpticalPhotometryEpoch
+    from trilobite.data import OpticalPhotometryEpoch
 
     # From flux density columns
     table = Table({
@@ -169,7 +169,7 @@ This call:
 1. Inspects ``model.bundle.filter_names`` (e.g., ``['g', 'r', 'i', 'z']``).
 2. Resolves each string in the ``band_name`` column to an integer index.
 3. Uses the integer ``band_idx`` array as the independent variable.
-4. Returns a validated :class:`~triceratops.data.core.InferenceData` object.
+4. Returns a validated :class:`~trilobite.data.core.InferenceData` object.
 
 Before converting, you can inspect the model's registered bands:
 
@@ -205,7 +205,7 @@ See :ref:`data_to_inference` for the full pipeline walkthrough.
 API Reference
 -------------
 
-.. autoclass:: triceratops.data.optical_photometry.OpticalPhotometryEpoch
+.. autoclass:: trilobite.data.optical_photometry.OpticalPhotometryEpoch
    :no-index:
    :members:
    :undoc-members:

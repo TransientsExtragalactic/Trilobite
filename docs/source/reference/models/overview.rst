@@ -1,10 +1,10 @@
 .. _models_overview:
 
 ====================================
-Triceratops Models
+Trilobite Models
 ====================================
 
-At the heart of every Triceratops workflow is a **model**. At their core, models are a relatively simple concept:
+At the heart of every Trilobite workflow is a **model**. At their core, models are a relatively simple concept:
 They are a mapping :math:`\mathcal{M}` from a set of parameters :math:`\boldsymbol{\Theta}` and a set of variables
 :math:`{\bf x}` to a set of observables :math:`{\bf y}`:
 
@@ -15,12 +15,12 @@ They are a mapping :math:`\mathcal{M}` from a set of parameters :math:`\boldsymb
 That's really all there is to it! The exact nature of the mapping is entirely dependent on the model itself, as are
 the variables, the parameters, and the observables.
 
-The intention of Triceratops is to provide an **extensive backend library of physics and mathematics modules** so that,
+The intention of Trilobite is to provide an **extensive backend library of physics and mathematics modules** so that,
 when it comes time to write your model, you can generate the model with just a few lines of code to patch together
 the different pieces of physics that you need. Once your model is completed, you can use it to generate forward modeled
 synthetic data or to perform inference on real data. This is the principle of **rapid-deployment modeling**.
 
-In this guide, we'll discuss the steps and the nuances to consider when building your own Triceratops models.
+In this guide, we'll discuss the steps and the nuances to consider when building your own Trilobite models.
 
 .. contents::
     :local:
@@ -31,16 +31,16 @@ In this guide, we'll discuss the steps and the nuances to consider when building
 The Model Class
 ----------------
 
-(*source module*: :class:`triceratops.models.core.base.Model`)
+(*source module*: :class:`trilobite.models.core.base.Model`)
 
-In order to explain the model building process, we first need to understand the :class:`triceratops.models.core.base.Model` class,
-which is **the building block for all Triceratops models**. This class provides a basic template for building a model, and
+In order to explain the model building process, we first need to understand the :class:`trilobite.models.core.base.Model` class,
+which is **the building block for all Trilobite models**. This class provides a basic template for building a model, and
 its suggested that you actually look at the source code of the model class while building your own so you can understand
 what the different wrapper methods are doing.
 
 .. note::
 
-    For **any model** you develop in the Triceratops framework, you should do the following basic steps:
+    For **any model** you develop in the Trilobite framework, you should do the following basic steps:
 
     1. **Develop the forward model**: This is the core of your model, where you determine the physics you
        want to represent. (See :ref:`forward_modeling` for more details on this step.)
@@ -50,14 +50,14 @@ what the different wrapper methods are doing.
     This is really all there is to it! In a few cases, specialized modeling patterns have been developed for
     specific types of models (e.g. optical photometry models), but in general, the above two steps are all you need to do to build a new model.
 
-To get started, you can create a new class that inherits from :class:`triceratops.models.core.base.Model` and
+To get started, you can create a new class that inherits from :class:`trilobite.models.core.base.Model` and
 implement the necessary methods and attributes.
 
 .. dropdown:: Example
 
     .. code-block:: python
 
-        from triceratops.models.core.base import Model
+        from trilobite.models.core.base import Model
 
         class MyModel(Model):
             # Step 1: Define the model's parameters and variables as class attributes.
@@ -78,8 +78,8 @@ implement the necessary methods and attributes.
 The Forward Modelling Directive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The most important method in the :class:`triceratops.models.core.base.Model` class is the
-:meth:`triceratops.models.core.base.Model._forward_model` method:
+The most important method in the :class:`trilobite.models.core.base.Model` class is the
+:meth:`trilobite.models.core.base.Model._forward_model` method:
 
 .. code-block:: python
 
@@ -129,7 +129,7 @@ There are a few pieces of advice to be aware of when implementing this method:
 
    .. hint::
 
-        The convention throughout Triceratops is that **numpy broadcasting rules are implicitly assumed** everywhere
+        The convention throughout Trilobite is that **numpy broadcasting rules are implicitly assumed** everywhere
         unless otherwise specified. As an example, consider a function
 
         .. code-block:: python
@@ -153,10 +153,10 @@ There are a few pieces of advice to be aware of when implementing this method:
    - **Vectorization**: Whenever possible, use vectorized operations instead of loops. Numpy and similar libraries
      are optimized for vectorized computations, which can significantly speed up your model evaluations.
    - **No Units**: Units should **never** be coerced within the computational layer. The public-facing method
-     :meth:`triceratops.models.core.base.Model.forward_model` handles all unit conversions before and after calling
-     :meth:`triceratops.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient
+     :meth:`trilobite.models.core.base.Model.forward_model` handles all unit conversions before and after calling
+     :meth:`trilobite.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient
      as possible. The convention for base units is discussed in :ref:`model_parameters`.
-   - **Low-Level Building Blocks**: Whenever possible, leverage low-level building blocks from the Triceratops
+   - **Low-Level Building Blocks**: Whenever possible, leverage low-level building blocks from the Trilobite
      library. These building blocks are designed to be efficient and can help you avoid reinventing the wheel.
    - **Cythonize if Necessary**: If you find that certain parts of your model are still too slow, consider implementing
      those parts in Cython or using other performance optimization techniques.
@@ -168,8 +168,8 @@ There are a few pieces of advice to be aware of when implementing this method:
 Model Parameters and Variables
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-At the top of every :class:`triceratops.models.core.base.Model` class are two important class attributes: the
-:attr:`triceratops.models.core.base.Model.PARAMETERS` and :attr:`triceratops.models.core.base.Model.VARIABLES`.
+At the top of every :class:`trilobite.models.core.base.Model` class are two important class attributes: the
+:attr:`trilobite.models.core.base.Model.PARAMETERS` and :attr:`trilobite.models.core.base.Model.VARIABLES`.
 
 .. code-block:: python
 
@@ -196,12 +196,12 @@ At the top of every :class:`triceratops.models.core.base.Model` class are two im
     """
 
 These two attributes are used to define the parameters and variables that your model will use. Each parameter
-and variable is represented by an instance of the :class:`triceratops.models.core.parameters.ModelParameter` and
-:class:`triceratops.models.core.parameters.ModelVariable` classes, respectively.
+and variable is represented by an instance of the :class:`trilobite.models.core.parameters.ModelParameter` and
+:class:`trilobite.models.core.parameters.ModelVariable` classes, respectively.
 
 When building your own model, you'll need to populate these attributes with the appropriate parameters and
 variables for your model. This will help ensure that your model is well-defined and can be used effectively
-within the Triceratops framework.
+within the Trilobite framework.
 
 For example,
 
@@ -271,14 +271,14 @@ For example,
 The ModelParameter and ModelVariable Classes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Each element of the :attr:`~triceratops.models.core.base.Model.PARAMETERS` and :attr:`~triceratops.models.core.base.Model.VARIABLES` must be
-an instance of the :class:`~triceratops.models.core.parameters.ModelParameter` and :class:`~triceratops.models.core.parameters.ModelVariable` classes, respectively.
+Each element of the :attr:`~trilobite.models.core.base.Model.PARAMETERS` and :attr:`~trilobite.models.core.base.Model.VARIABLES` must be
+an instance of the :class:`~trilobite.models.core.parameters.ModelParameter` and :class:`~trilobite.models.core.parameters.ModelVariable` classes, respectively.
 
 By means of a brief introduction to each of these classes, we can understand how to use them effectively when defining our model's parameters and variables.
 The core idea with these classes is that they provide a simple structure for tracking a parameters / variables name,
 its base units, and other metadata that is useful for documentation and validation.
 
-From the :class:`~triceratops.models.core.parameters.ModelParameter` documentation:
+From the :class:`~trilobite.models.core.parameters.ModelParameter` documentation:
 
 .. code-block:: python
 
@@ -318,8 +318,8 @@ From the :class:`~triceratops.models.core.parameters.ModelParameter` documentati
 
         """
 
-Thus, a :class:`~triceratops.models.core.parameters.ModelParameter` instance requires a name, a default value, and optionally accepts base units, a description,
-a LaTeX representation, and bounds for valid values. Likewise, the :class:`~triceratops.models.core.parameters.ModelVariable` class has a similar structure:
+Thus, a :class:`~trilobite.models.core.parameters.ModelParameter` instance requires a name, a default value, and optionally accepts base units, a description,
+a LaTeX representation, and bounds for valid values. Likewise, the :class:`~trilobite.models.core.parameters.ModelVariable` class has a similar structure:
 
 .. code-block:: python
 
@@ -346,7 +346,7 @@ a LaTeX representation, and bounds for valid values. Likewise, the :class:`~tric
 Parameter Bounds
 ~~~~~~~~~~~~~~~~
 
-One confusing aspect of the :class:`~triceratops.models.core.parameters.ModelParameter` class is the
+One confusing aspect of the :class:`~trilobite.models.core.parameters.ModelParameter` class is the
 ``bounds`` argument. This argument can either be a tuple of ``(min, max)`` values or a callable function that
 takes in a value and returns whether that value is valid. For example, a parameter which must be positive
 could be specified as
@@ -377,8 +377,8 @@ Likewise, a parameter which must be any value except for 2.0 would require a cal
 .. important::
 
     Bounds checking is not performed automatically by ``_forward_model``: this is for performance reasons. Instead,
-    bounds checking is performed at the public-facing method :meth:`triceratops.models.core.base.Model.forward_model`, which
-    handles all unit conversions and validation before and after calling :meth:`triceratops.models.core.base.Model._forward_model`.
+    bounds checking is performed at the public-facing method :meth:`trilobite.models.core.base.Model.forward_model`, which
+    handles all unit conversions and validation before and after calling :meth:`trilobite.models.core.base.Model._forward_model`.
     This ensures that the computational layer remains as efficient as possible.
 
     In inference workflows, it is instead the likelihood object which evaluates the bounds of the parameters during
@@ -389,16 +389,16 @@ Likewise, a parameter which must be any value except for 2.0 would require a cal
 Units
 ~~~~~
 
-Every parameter and variable in Triceratops has associated ``base_units``. These base units are used to ensure that
+Every parameter and variable in Trilobite has associated ``base_units``. These base units are used to ensure that
 the model's computations are performed in a consistent unit system. When building your model, it's important to
 choose appropriate base units for each parameter and variable. The choice of base units can impact the performance and
 accuracy of your model, so it's worth taking the time to consider this carefully.
 
-When implementing the :meth:`triceratops.models.core.base.Model._forward_model` method, you can assume that all inputs are provided
+When implementing the :meth:`trilobite.models.core.base.Model._forward_model` method, you can assume that all inputs are provided
 in their base units. Likewise, the outputs you return from this method should also be in the appropriate base units.
 
-The public facing API method :meth:`triceratops.models.core.base.Model.forward_model` will handle all unit conversions before and after
-calling :meth:`triceratops.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient as possible.
+The public facing API method :meth:`trilobite.models.core.base.Model.forward_model` will handle all unit conversions before and after
+calling :meth:`trilobite.models.core.base.Model._forward_model`. This ensures that the computational layer remains as efficient as possible.
 
 Unitless variables should have ``""`` as their base units.
 
@@ -407,7 +407,7 @@ Unitless variables should have ``""`` as their base units.
 A Simple Example
 -----------------
 
-Let's look at the simple mode :class:`~triceratops.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`,
+Let's look at the simple mode :class:`~trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`,
 which models a synchrotron self-absorbed broken power-law spectral energy distribution (SED).
 
 .. hint::
@@ -510,7 +510,7 @@ We can see this in the ``_forward_model`` method:
         return {"flux_density": result}
 
 That's all there really is to it! Before implementing your own models, its worth spending some time looking through
-the existing models in the Triceratops library to see how they are structured and implemented. Likewise, familiarizing
+the existing models in the Trilobite library to see how they are structured and implemented. Likewise, familiarizing
 yourself with the existing physics toolchains will help you leverage the existing building blocks effectively.
 
 .. _optical_model_pattern:
@@ -520,10 +520,10 @@ yourself with the existing physics toolchains will help you leverage the existin
 Specialized Model Patterns
 ---------------------------
 
-While the :class:`~triceratops.models.core.base.Model` class provides a fully
+While the :class:`~trilobite.models.core.base.Model` class provides a fully
 general interface for defining forward models, many common modeling tasks
 follow recurring structural patterns. To support these use cases,
-Triceratops provides a set of **specialized model base classes** that extend
+Trilobite provides a set of **specialized model base classes** that extend
 the core model interface with additional functionality.
 
 These patterns are designed to:
@@ -535,7 +535,7 @@ These patterns are designed to:
 In practice, users are encouraged to subclass one of these specialized models
 whenever their modeling task aligns with the corresponding pattern, rather than
 re-implementing the same logic within a generic
-:class:`~triceratops.models.core.base.Model`.
+:class:`~trilobite.models.core.base.Model`.
 
 The following sections describe the available specialized model patterns and
 their intended use cases.
@@ -552,7 +552,7 @@ discrete epochs.
     From the user’s perspective, an optical photometry model behaves as follows:
 
     - The model is constructed with a collection of filters (a
-      :class:`~triceratops.utils.phot_utils.FilterBundle`).
+      :class:`~trilobite.utils.phot_utils.FilterBundle`).
     - At evaluation time, the user provides:
 
       - ``band_index`` — specifying which filters to evaluate
@@ -582,13 +582,13 @@ with the filter transmission curves:
 
     F_{\rm band}(t) = \int F_\nu(\nu, t)\, T_{\rm band}(\nu)\, d\nu
 
-Triceratops provides two abstract base classes that implement this workflow:
+Trilobite provides two abstract base classes that implement this workflow:
 
-- :class:`~triceratops.models.core.optical.OpticalModel` — for **time-evolving**
+- :class:`~trilobite.models.core.optical.OpticalModel` — for **time-evolving**
   multi-band observations.
   Variables: ``band_index`` and ``time``.
 
-- :class:`~triceratops.models.core.optical.OpticalEpochModel` — for **single-epoch**
+- :class:`~trilobite.models.core.optical.OpticalEpochModel` — for **single-epoch**
   multi-band SEDs.
   Variable: ``band_index`` only.
 
@@ -605,7 +605,7 @@ The ``_compute_sed`` Contract
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 To define a custom optical model, subclasses implement ``_compute_sed`` rather
-than :meth:`~triceratops.models.core.base.Model._forward_model`.
+than :meth:`~trilobite.models.core.base.Model._forward_model`.
 
 This method evaluates the SED on a shared frequency grid, which is then passed
 to the base class for convolution and output construction.
@@ -633,12 +633,12 @@ linear-space :math:`F_\nu` with units of
 :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
 
 Once computed, the base class applies
-:meth:`~triceratops.utils.phot_utils.FilterBundle.apply` to perform the filter
+:meth:`~trilobite.utils.phot_utils.FilterBundle.apply` to perform the filter
 convolution and assembles the requested outputs.
 
 .. important::
 
-    For :class:`~triceratops.models.core.optical.OpticalModel`, the ``t_unique``
+    For :class:`~trilobite.models.core.optical.OpticalModel`, the ``t_unique``
     array contains only the **unique** times present in the input—not the full
     input array.
 
@@ -650,7 +650,7 @@ The ``band_index`` Variable
 
 Both classes define ``band_index`` as a variable identifying which filters to
 evaluate. It may be provided either as integer indices into the
-:class:`~triceratops.utils.phot_utils.FilterBundle`, or as filter names:
+:class:`~trilobite.utils.phot_utils.FilterBundle`, or as filter names:
 
 .. code-block:: python
 
@@ -665,12 +665,12 @@ evaluate. It may be provided either as integer indices into the
     )
 
 String inputs are automatically resolved during
-:meth:`~triceratops.models.core.base.Model.coerce_model_variables`.
+:meth:`~trilobite.models.core.base.Model.coerce_model_variables`.
 
 FilterBundle Ownership and Mutation
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The :class:`~triceratops.utils.phot_utils.FilterBundle` is provided at construction
+The :class:`~trilobite.utils.phot_utils.FilterBundle` is provided at construction
 time and stored as ``self.bundle``. The associated convolution weights are
 precomputed.
 
@@ -691,13 +691,13 @@ Filters may be modified via:
 .. dropdown:: Full Example
 
     The following skeleton illustrates the minimal implementation of an
-    :class:`~triceratops.models.core.optical.OpticalModel`:
+    :class:`~trilobite.models.core.optical.OpticalModel`:
 
     .. code-block:: python
 
         import numpy as np
-        from triceratops.models.core.optical import OpticalModel
-        from triceratops.models.core.parameters import ModelParameter
+        from trilobite.models.core.optical import OpticalModel
+        from trilobite.models.core.parameters import ModelParameter
 
         class MyOpticalModel(OpticalModel):
             PARAMETERS = (

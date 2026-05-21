@@ -1,10 +1,10 @@
 .. _model_directory:
 
 =========================================
-Triceratops Model Directory
+Trilobite Model Directory
 =========================================
 
-Triceratops provides an ever-expanding collection of forward models
+Trilobite provides an ever-expanding collection of forward models
 designed for astrophysical inference, phenomenological curve fitting,
 and physically motivated transient modeling.
 
@@ -15,7 +15,7 @@ The goal of the model library is twofold:
 
 Models span a range of complexity, from lightweight mathematical
 curve-fitting forms to physically grounded shock and emission models.
-All models share a unified interface through the :class:`~triceratops.models.core.base.Model`
+All models share a unified interface through the :class:`~trilobite.models.core.base.Model`
 base class, ensuring consistent parameter handling, unit support,
 and compatibility with likelihood and inference tools.
 
@@ -103,7 +103,7 @@ building likelihood functions.
 
 .. rubric:: Generic Broken Power Laws
 
-.. currentmodule:: triceratops.models.generic.curves
+.. currentmodule:: trilobite.models.generic.curves
 
 .. autosummary::
    :nosignatures:
@@ -124,7 +124,7 @@ analysis and pulse-shape modeling.
 
 .. rubric:: Generic Light Curve Models
 
-.. currentmodule:: triceratops.models.generic.light_curve
+.. currentmodule:: trilobite.models.generic.light_curve
 
 .. autosummary::
    :nosignatures:
@@ -149,7 +149,7 @@ Models for phenomenological modeling (not tied to specific physical scenarios) t
 
 .. rubric:: Generic SED Evolution
 
-.. currentmodule:: triceratops.models.generic.evolving_seds
+.. currentmodule:: trilobite.models.generic.evolving_seds
 
 .. autosummary::
    :nosignatures:
@@ -170,7 +170,7 @@ scenarios, emission mechanisms, and physical assumptions. These models are ideal
 
 .. rubric:: Synchrotron
 
-.. currentmodule:: triceratops.models.SEDs.synchrotron
+.. currentmodule:: trilobite.models.SEDs.synchrotron
 
 .. autosummary::
    :nosignatures:
@@ -193,7 +193,7 @@ radiation processes, and circumstellar interaction physics.
 
 .. rubric:: Self-Similar Shock Models
 
-.. currentmodule:: triceratops.models.supernovae
+.. currentmodule:: trilobite.models.supernovae
 
 .. autosummary::
    :nosignatures:
@@ -214,7 +214,7 @@ jet and afterglow models.
 
 .. rubric:: Prompt-Emission Spectral Models
 
-.. currentmodule:: triceratops.models.GRBs
+.. currentmodule:: trilobite.models.GRBs
 
 .. autosummary::
    :nosignatures:
@@ -230,16 +230,16 @@ Optical Models
 
 Optical models predict filter-convolved flux densities for multi-band photometric
 observations. They are built on the
-:class:`~triceratops.models.core.optical.OpticalModel` and
-:class:`~triceratops.models.core.optical.OpticalEpochModel` abstract base classes,
-which handle :class:`~triceratops.utils.phot_utils.FilterBundle` convolution,
+:class:`~trilobite.models.core.optical.OpticalModel` and
+:class:`~trilobite.models.core.optical.OpticalEpochModel` abstract base classes,
+which handle :class:`~trilobite.utils.phot_utils.FilterBundle` convolution,
 time deduplication, and band-index resolution automatically.
 
 See :ref:`optical_model_pattern` for a guide to implementing custom optical models.
 
 .. rubric:: Abstract Base Classes
 
-.. currentmodule:: triceratops.models.core.optical
+.. currentmodule:: trilobite.models.core.optical
 
 .. autosummary::
    :nosignatures:
@@ -249,7 +249,7 @@ See :ref:`optical_model_pattern` for a guide to implementing custom optical mode
 
 .. rubric:: Blackbody Models
 
-.. currentmodule:: triceratops.models.SEDs.blackbody_optical
+.. currentmodule:: trilobite.models.SEDs.blackbody_optical
 
 .. autosummary::
    :nosignatures:

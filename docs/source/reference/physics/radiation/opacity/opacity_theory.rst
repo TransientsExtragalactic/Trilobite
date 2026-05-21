@@ -4,16 +4,16 @@
 Opacity Theory
 =================
 
-Opacity quantifies how strongly a medium attenuates radiation.  In Triceratops it appears in a
+Opacity quantifies how strongly a medium attenuates radiation.  In Trilobite it appears in a
 variety of physical contexts: as the Rosseland mean opacity driving radiative diffusion in
 optically thick accretion disks, as a photon-absorption cross-section in spectral-transfer
 calculations, as the column-averaged opacity entering free-free optical-depth estimates for
 supernova CSM, and as a grey effective opacity in single-zone stellar-wind models.  The
-:mod:`triceratops.radiation.opacity` module is deliberately **context-agnostic**: it provides a
+:mod:`trilobite.radiation.opacity` module is deliberately **context-agnostic**: it provides a
 uniform evaluation interface so that the same opacity object can be dropped into any solver that
 needs :math:`\kappa(\rho, T)`, its logarithmic derivatives, or both.
 
-This document reviews the physical basis of the opacity laws currently implemented in Triceratops
+This document reviews the physical basis of the opacity laws currently implemented in Trilobite
 and derives the power-law scalings and partial derivatives that enter iterative thermal solvers.
 
 For usage instructions see :ref:`opacity_user_guide`.  For a guide to implementing new opacity
@@ -86,26 +86,26 @@ Unlike :math:`\kappa_R`, the Planck mean is dominated by the *highest*-opacity c
 it appropriate for optically thin emission and radiative cooling calculations.  By Jensen's
 inequality :math:`\kappa_P \geq \kappa_R` everywhere.
 
-Opacity Laws in Triceratops
+Opacity Laws in Trilobite
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 All currently implemented opacity laws are Rosseland mean and live in
-:mod:`triceratops.radiation.opacity.grey_opacity.rosseland`.  The module structure is:
+:mod:`trilobite.radiation.opacity.grey_opacity.rosseland`.  The module structure is:
 
 .. code-block:: text
 
-    triceratops.radiation.opacity
+    trilobite.radiation.opacity
     └── grey_opacity/          frequency-averaged (grey) opacities
         ├── rosseland/         Rosseland mean — all current implementations
         └── planck/            Planck mean — stub, ready for future work
 
-Each class carries a :attr:`~triceratops.radiation.opacity.base.OpacityLaw.mean_type`
+Each class carries a :attr:`~trilobite.radiation.opacity.base.OpacityLaw.mean_type`
 attribute (``"rosseland"`` for all current laws) so that solvers can distinguish opacity
 types at runtime without inspecting class identity.  Planck mean implementations would
 set ``mean_type = "planck"`` and live in
-:mod:`triceratops.radiation.opacity.grey_opacity.planck`.
+:mod:`trilobite.radiation.opacity.grey_opacity.planck`.
 
-The top-level :func:`~triceratops.radiation.opacity.utils.get_opacity` resolver exposes
+The top-level :func:`~trilobite.radiation.opacity.utils.get_opacity` resolver exposes
 all registered laws by string key regardless of their location in the subpackage hierarchy.
 
 ----
@@ -219,9 +219,9 @@ constant and exact:
     \frac{\partial \ln \kappa_{\rm Kr}}{\partial \ln T} = -3.5.
 
 These values are independent of the normalization constant and hold for
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`,
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`, and
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`.
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`,
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`, and
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`.
 
 ----
 
@@ -276,9 +276,9 @@ Kramers contribution.  Then
     = -3.5\,\frac{\kappa_{\rm Kr}(\rho,T)}{\kappa(\rho,T)}.
 
 These expressions hold for
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`,
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`, and
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`.
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`,
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`, and
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`.
 Note that the two partial derivatives are always related by
 
 .. math::
@@ -316,14 +316,14 @@ The correspondence between physical opacity and log-space representation is
     * - Public API
       - Log-space private method
       - Returns
-    * - :meth:`~triceratops.radiation.opacity.base.OpacityLaw.opacity`
-      - :meth:`~triceratops.radiation.opacity.base.OpacityLaw._log_opacity`
+    * - :meth:`~trilobite.radiation.opacity.base.OpacityLaw.opacity`
+      - :meth:`~trilobite.radiation.opacity.base.OpacityLaw._log_opacity`
       - :math:`\ln\kappa`
-    * - :meth:`~triceratops.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho`
-      - :meth:`~triceratops.radiation.opacity.base.OpacityLaw._dlogkappa_dlogrho`
+    * - :meth:`~trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho`
+      - :meth:`~trilobite.radiation.opacity.base.OpacityLaw._dlogkappa_dlogrho`
       - :math:`\partial\ln\kappa/\partial\ln\rho`
-    * - :meth:`~triceratops.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT`
-      - :meth:`~triceratops.radiation.opacity.base.OpacityLaw._dlogkappa_dlogT`
+    * - :meth:`~trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT`
+      - :meth:`~trilobite.radiation.opacity.base.OpacityLaw._dlogkappa_dlogT`
       - :math:`\partial\ln\kappa/\partial\ln T`
 
 ----
@@ -338,35 +338,35 @@ Summary of Implemented Laws
       - Formula
       - :math:`\partial\ln\kappa/\partial\ln\rho`
       - :math:`\partial\ln\kappa/\partial\ln T`
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`
       - :math:`\kappa_0`
       - 0
       - 0
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`
       - :math:`\kappa_{\rm es}`
       - 0
       - 0
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`
       - :math:`\kappa_{\rm ff,0}\,\rho\,T^{-3.5}`
       - 1
       - −3.5
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`
       - :math:`\kappa_{\rm bf,0}\,\rho\,T^{-3.5}`
       - 1
       - −3.5
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`
       - :math:`\kappa_{\rm Kr,0}\,\rho\,T^{-3.5}`
       - 1
       - −3.5
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`
       - :math:`\kappa_{\rm es} + \kappa_{\rm ff,0}\,\rho\,T^{-3.5}`
       - :math:`(0,\,1)`
       - :math:`(-3.5,\,0)`
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`
       - :math:`\kappa_{\rm es} + \kappa_{\rm bf,0}\,\rho\,T^{-3.5}`
       - :math:`(0,\,1)`
       - :math:`(-3.5,\,0)`
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
       - :math:`\kappa_{\rm es} + \kappa_{\rm Kr,0}\,\rho\,T^{-3.5}`
       - :math:`(0,\,1)`
       - :math:`(-3.5,\,0)`
@@ -374,7 +374,7 @@ Summary of Implemented Laws
 Values in the derivative columns denote the asymptotic limits (ES-dominated, Kramers-dominated)
 for the combined-form laws.
 
-    * - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
+    * - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
       - :math:`\kappa_R(T,\rho)` from bilinear table interpolation
       - :math:`\partial\ln\kappa/\partial\ln\rho` (table-derived)
       - :math:`\partial\ln\kappa/\partial\ln T` (table-derived)
@@ -387,7 +387,7 @@ Table-based Rosseland Mean Opacity (OPAL)
 -----------------------------------------
 
 The OPAL project :footcite:t:`Badnell2005` provides pre-computed Rosseland mean opacities
-for a wide range of stellar compositions.  Triceratops ships a bundled table of 126
+for a wide range of stellar compositions.  Trilobite ships a bundled table of 126
 compositions from the Asplund & Grevesse (2005) solar mixture, covering
 
 .. math::
@@ -414,14 +414,14 @@ The coordinate transformation (applied inside the Cython kernel) is
 
     \log_{10}R = \log_{10}\rho - 3\,(\log_{10}T - 6).
 
-Triceratops also supports tables stored on a direct :math:`(\log_{10}T,\,\log_{10}\rho)` grid
+Trilobite also supports tables stored on a direct :math:`(\log_{10}T,\,\log_{10}\rho)` grid
 via the ``'T_rho'`` coordinate system, in which no transformation is applied.
 
 Bilinear Interpolation
 ~~~~~~~~~~~~~~~~~~~~~~
 
 Within each rectangular cell of the :math:`(\log_{10}T,\,\log_{10}R)` grid, the Cython kernel
-:class:`~triceratops.radiation.opacity.grey_opacity.rosseland._opal_table.C_OPALTableOpacity` applies standard
+:class:`~trilobite.radiation.opacity.grey_opacity.rosseland._opal_table.C_OPALTableOpacity` applies standard
 bilinear interpolation of :math:`\log_{10}\kappa`:
 
 .. math::
@@ -492,18 +492,18 @@ When to Use OPAL vs. Analytic Laws
       - Recommended law
       - Reason
     * - High-:math:`T`, low-:math:`\rho` (accretion disk corona)
-      - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`
+      - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`
       - Constant ES dominates; fast; exact.
     * - Intermediate :math:`T` (disk midplane, :math:`10^5`–:math:`10^7` K)
-      - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
-        or :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
+      - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
+        or :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
       - KramersES is fast and analytic; OPAL captures the iron-group peak and
         non-power-law behaviour.
     * - Stellar interior / full :math:`(T,\rho)` sweep
-      - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
+      - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity`
       - Accurate Rosseland mean including composition dependence.
     * - Parameter-grid studies or MCMC
-      - :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
+      - :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`
       - Analytic evaluation is O(1); OPAL bilinear interpolation is slightly slower.
 
 ----

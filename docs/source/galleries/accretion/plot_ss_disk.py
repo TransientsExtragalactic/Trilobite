@@ -30,27 +30,27 @@ This example shows:
 
 Relevant API
 ------------
-- :class:`~triceratops.dynamics.accretion.AlphaDisk`
-- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute`
-- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_sed`
-- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_effective_temperature`
-- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_bolometric_luminosity`
+- :class:`~trilobite.dynamics.accretion.AlphaDisk`
+- :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute`
+- :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_sed`
+- :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_effective_temperature`
+- :meth:`~trilobite.dynamics.accretion.AlphaDisk.compute_bolometric_luminosity`
 """
 
 # %%
 # Setup
 # -----
 #
-# Import the :class:`~triceratops.dynamics.accretion.AlphaDisk` class together
-# with Astropy units and the Triceratops plot style.
+# Import the :class:`~trilobite.dynamics.accretion.AlphaDisk` class together
+# with Astropy units and the Trilobite plot style.
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion import AlphaDisk
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion import AlphaDisk
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

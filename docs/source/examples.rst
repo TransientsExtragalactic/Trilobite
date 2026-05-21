@@ -36,7 +36,7 @@ Example Gallery
                font-size: 1rem;
                color: #666;
            ">
-               Practical examples to get started with Triceratops.
+               Practical examples to get started with Trilobite.
            </p>
 
            <p style="
@@ -70,7 +70,7 @@ Load and inspect your observations before fitting anything.
       **Load, group, and visualize photometric observations.**
 
       Load radio photometry from FITS files, group observations into temporal epochs,
-      and plot light curves using the :mod:`~triceratops.data` subpackage.
+      and plot light curves using the :mod:`~trilobite.data` subpackage.
 
    .. grid-item-card:: Optical Filters and Photometry
       :link: auto_examples/photometry/index
@@ -78,7 +78,7 @@ Load and inspect your observations before fitting anything.
 
       **Build and convolve optical filters for broadband photometry.**
 
-      Construct filters, assemble a :class:`~triceratops.utils.phot_utils.FilterBundle`
+      Construct filters, assemble a :class:`~trilobite.utils.phot_utils.FilterBundle`
       for MCMC-optimised matrix-multiply convolution, and convert between flux density
       and AB/ST magnitudes.
 
@@ -87,7 +87,7 @@ Load and inspect your observations before fitting anything.
 Understanding the Physics
 ==========================
 
-Learn the radiative and dynamical building blocks that every Triceratops model is built from.
+Learn the radiative and dynamical building blocks that every Trilobite model is built from.
 
 .. grid:: 2
    :gutter: 3
@@ -110,7 +110,7 @@ Learn the radiative and dynamical building blocks that every Triceratops model i
 
       Thermal bremsstrahlung emissivity, flux density, optical depth profiles for wind
       and shell CSM geometries, and FFA attenuation of synchrotron SEDs using
-      :mod:`~triceratops.radiation.free_free`.
+      :mod:`~trilobite.radiation.free_free`.
 
    .. grid-item-card:: Opacity Laws
       :link: auto_examples/opacity/index
@@ -119,7 +119,7 @@ Learn the radiative and dynamical building blocks that every Triceratops model i
       **Evaluate grey and frequency-dependent opacity laws.**
 
       Kramers, electron scattering, and OPAL/TOPS Rosseland mean opacity from the
-      bundled tables using :mod:`~triceratops.radiation.opacity`.
+      bundled tables using :mod:`~trilobite.radiation.opacity`.
 
    .. grid-item-card:: Shock Dynamics
       :link: auto_examples/dynamics/index
@@ -128,7 +128,7 @@ Learn the radiative and dynamical building blocks that every Triceratops model i
       **Step through shock propagation at the integrator level.**
 
       The numerical shock engine, blast-wave evolution in power-law density profiles,
-      and the time-stepping integrator from :mod:`~triceratops.dynamics`.
+      and the time-stepping integrator from :mod:`~trilobite.dynamics`.
 
 ----
 
@@ -156,7 +156,7 @@ Assemble physical components into models that generate synthetic observables.
       **Evolve accretion disks through their thermodynamic phases.**
 
       Thermal S-curves, limit cycles, fallback disks, and advective solutions using
-      the :mod:`~triceratops.dynamics.accretion.one_zone` Cython integrator.
+      the :mod:`~trilobite.dynamics.accretion.one_zone` Cython integrator.
 
 ----
 
@@ -176,7 +176,7 @@ Fit models to data and recover physical parameters from your observations.
 
       End-to-end MCMC workflows — single- and multi-epoch SED fitting, upper-limit
       handling, shock-parameter recovery, and posterior propagation through closure
-      relations. Built on the :mod:`~triceratops.inference` subpackage.
+      relations. Built on the :mod:`~trilobite.inference` subpackage.
 
 .. toctree::
    :hidden:

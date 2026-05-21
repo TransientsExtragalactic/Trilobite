@@ -10,7 +10,7 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data import RadioPhotometryEpoch
+from trilobite.data import RadioPhotometryEpoch
 
 
 # ============================================================
@@ -73,7 +73,7 @@ class TestRename:
         assert RadioPhotometryEpoch.__name__ == "RadioPhotometryEpoch"
 
     def test_deprecated_alias_warns(self):
-        from triceratops.data import RadioPhotometryEpochContainer
+        from trilobite.data import RadioPhotometryEpochContainer
 
         with warnings.catch_warnings(record=True) as w:
             warnings.simplefilter("always")
@@ -81,7 +81,7 @@ class TestRename:
             assert any(issubclass(x.category, DeprecationWarning) for x in w)
 
     def test_deprecated_alias_is_subclass(self):
-        from triceratops.data import RadioPhotometryEpochContainer
+        from trilobite.data import RadioPhotometryEpochContainer
 
         assert issubclass(RadioPhotometryEpochContainer, RadioPhotometryEpoch)
 

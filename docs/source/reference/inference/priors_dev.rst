@@ -7,16 +7,16 @@ Prior Development Guide
 ========================
 
 This document describes how prior distributions are implemented in
-Triceratops and how developers can extend the prior system safely
+Trilobite and how developers can extend the prior system safely
 and consistently.
 
 The reference implementation lives in
-``triceratops/inference/prior.py`` :contentReference[oaicite:0]{index=0}.
+``trilobite/inference/prior.py`` :contentReference[oaicite:0]{index=0}.
 
 Overview
 --------
 
-In Triceratops, priors are lightweight, stateless, callable objects
+In Trilobite, priors are lightweight, stateless, callable objects
 that evaluate the **log-prior probability** of a parameter value in
 physical parameter space. The only quantity required by the inference
 engine is:
@@ -42,7 +42,7 @@ The Prior Base Class
 --------------------
 
 All priors inherit from the abstract base class
-:class:`~triceratops.inference.prior.Prior`.
+:class:`~trilobite.inference.prior.Prior`.
 
 At construction time, a prior stores its defining parameters and
 generates callable evaluation functions:
@@ -190,7 +190,7 @@ as non-reconstructible.
 Support and Stability Guarantees
 --------------------------------
 
-All priors in Triceratops must satisfy the following invariants:
+All priors in Trilobite must satisfy the following invariants:
 
 - They operate on scalar floats in physical units.
 - They are deterministic and side-effect free.
@@ -228,7 +228,7 @@ The prior itself remains unaware of all of these details.
 Final Remarks
 -------------
 
-The prior system in Triceratops is intentionally simple and explicit.
+The prior system in Trilobite is intentionally simple and explicit.
 Its design prioritizes clarity, extensibility, and numerical stability
 over abstraction or implicit behavior.
 

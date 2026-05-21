@@ -18,8 +18,8 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.radiation.constants import h_cgs, kB_cgs
-from triceratops.radiation.free_free.core import (
+from trilobite.radiation.constants import h_cgs, kB_cgs
+from trilobite.radiation.free_free.core import (
     _ff_absorption_coefficient_cgs,
     _ff_emissivity_coefficient_cgs,
     _ff_RJ_absorption_coefficient_cgs,

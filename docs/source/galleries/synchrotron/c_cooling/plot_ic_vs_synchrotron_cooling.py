@@ -46,11 +46,11 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.cooling import (
+from trilobite.radiation.synchrotron.cooling import (
     InverseComptonCoolingEngine,
     SynchrotronRadiativeCoolingEngine,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Engine Instantiation

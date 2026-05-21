@@ -20,7 +20,7 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.radiation.free_free.absorption import (
+from trilobite.radiation.free_free.absorption import (
     compute_ff_RJ_optical_depth_EM,
     compute_ff_RJ_optical_depth_from_arrays,
     compute_ff_RJ_optical_depth_from_quadrature,
@@ -164,7 +164,7 @@ class TestShellAnalytic:
     """tau_shell = alpha_ff * L, where alpha_ff comes from core.py."""
 
     def test_shell_matches_core_absorption(self):
-        from triceratops.radiation.free_free.core import compute_ff_RJ_absorption
+        from trilobite.radiation.free_free.core import compute_ff_RJ_absorption
 
         # Fix g_ff=1.0 in both so the Gaunt-factor defaults don't differ.
         G_FF = 1.0

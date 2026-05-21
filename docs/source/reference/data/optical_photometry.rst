@@ -4,20 +4,20 @@
 Optical Photometry
 ============================
 
-The :class:`~triceratops.data.optical_photometry.OpticalPhotometryContainer` provides a
+The :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer` provides a
 schema-validated, unit-aware interface to optical photometric observations from surveys such
 as ZTF, LSST/Rubin, and DECam.  It is the optical counterpart to
-:class:`~triceratops.data.photometry.RadioPhotometryContainer` and sits at the same tier in
-the Triceratops pipeline: between raw tabular data and the likelihood evaluation layer.
+:class:`~trilobite.data.photometry.RadioPhotometryContainer` and sits at the same tier in
+the Trilobite pipeline: between raw tabular data and the likelihood evaluation layer.
 
 Data may be provided as **AB magnitudes**, as physical **flux densities**
 (F\ :sub:`ν` in erg/s/cm²/Hz), or both.  The container exposes either representation through
 properties that compute the missing form on-the-fly, and always converts to physical flux units
-when building an :class:`~triceratops.data.core.InferenceData` object for inference.
+when building an :class:`~trilobite.data.core.InferenceData` object for inference.
 
 Band identification uses human-readable **band names** (e.g. ``"g"``, ``"r"``, ``"i"``)
-stored directly in the table.  Integer indices — needed by the :class:`~triceratops.utils.phot_utils.FilterBundle`
-inside the model — are resolved at :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
+stored directly in the table.  Integer indices — needed by the :class:`~trilobite.utils.phot_utils.FilterBundle`
+inside the model — are resolved at :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
 time by looking each name up in ``model.bundle.filter_names``.  This keeps the container
 decoupled from any particular model or filter ordering convention.
 
@@ -96,8 +96,8 @@ The following columns are recognised by the container.  At least one y-column gr
 Construction
 ------------
 
-The container is most commonly built via :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.from_table`
-or :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.from_file`.
+The container is most commonly built via :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.from_table`
+or :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.from_file`.
 
 **From a table with flux columns:**
 
@@ -106,7 +106,7 @@ or :meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.from_f
     import numpy as np
     import astropy.units as u
     from astropy.table import Table
-    from triceratops.data import OpticalPhotometryContainer
+    from trilobite.data import OpticalPhotometryContainer
 
     t = Table({
         "time":                [1., 2., 3., 4., 5.] * u.day,
@@ -218,7 +218,7 @@ Epoch Support
 -------------
 
 Observations can be grouped into epochs using the same API as
-:class:`~triceratops.data.photometry.RadioPhotometryContainer`:
+:class:`~trilobite.data.photometry.RadioPhotometryContainer`:
 
 .. code-block:: python
 
@@ -236,8 +236,8 @@ Observations can be grouped into epochs using the same API as
 Connecting to Inference
 -----------------------
 
-:meth:`~triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
-bridges the container to the Triceratops inference pipeline.  It performs three key steps:
+:meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data`
+bridges the container to the Trilobite inference pipeline.  It performs three key steps:
 
 1. **Band mapping** — looks up each ``band_name`` in ``model.bundle.filter_names`` to produce
    the ``band_idx`` array stored in ``InferenceData.x``.
@@ -245,9 +245,9 @@ bridges the container to the Triceratops inference pipeline.  It performs three 
 3. **Error inference** — optionally fills missing uncertainties for non-detections from their
    upper limits (``infer_errors=True``, ``detection_threshold=3.0``).
 
-The resulting :class:`~triceratops.data.core.InferenceData` has
+The resulting :class:`~trilobite.data.core.InferenceData` has
 ``x = {"time": ..., "band_idx": ...}`` and ``y = {"flux_density": ...}``, which is exactly
-what :class:`~triceratops.inference.likelihood.GaussianLikelihood` expects.
+what :class:`~trilobite.inference.likelihood.GaussianLikelihood` expects.
 
 .. code-block:: python
 
@@ -285,7 +285,7 @@ The ``FilterBundle``'s ``filter_names`` list is the single source of truth for t
 API Reference
 -------------
 
-.. autoclass:: triceratops.data.optical_photometry.OpticalPhotometryContainer
+.. autoclass:: trilobite.data.optical_photometry.OpticalPhotometryContainer
    :no-index:
    :members:
    :undoc-members:
@@ -300,7 +300,7 @@ OpticalPhotometryEpoch
 
 See :ref:`optical_photometry_epoch` for the full reference.
 
-.. autoclass:: triceratops.data.optical_photometry.OpticalPhotometryEpoch
+.. autoclass:: trilobite.data.optical_photometry.OpticalPhotometryEpoch
    :no-index:
    :members:
    :undoc-members:

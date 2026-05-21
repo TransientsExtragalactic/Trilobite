@@ -20,16 +20,14 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
-from triceratops.radiation.opacity.utils import get_opacity, load_opal_opacity
+from trilobite.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
+from trilobite.radiation.opacity.utils import get_opacity, load_opal_opacity
 
 # ------------------------------------------------------------------ #
 # Constants                                                           #
 # ------------------------------------------------------------------ #
 
-_BUNDLED_H5 = Path(__file__).parent.parent.parent.parent / (
-    "triceratops/radiation/opacity/tables/asplund_grevesse_05.h5"
-)
+_BUNDLED_H5 = Path(__file__).parent.parent.parent.parent / ("trilobite/radiation/opacity/tables/asplund_grevesse_05.h5")
 
 #: Known values straight from the source text for TABLE #1 (X=0, Y=1, Z=0):
 #  logT=3.75, logR=-7.5 → -4.688
@@ -219,7 +217,7 @@ class TestC_OPALTableOpacity:
     """C-level interpolator: accuracy, derivatives, out-of-bounds."""
 
     def _make_c_obj(self, tables, index=_SOLAR_IDX, oob=0):
-        from triceratops.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
+        from trilobite.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
 
         lk = np.array(tables.opacity[index], dtype=np.float64, order="C")
         return C_OPALTableOpacity(
@@ -444,7 +442,7 @@ class TestC_OPALTableOpacityExtended:
     """Additional C-level tests: multi-point derivatives, OOB coverage, minimal grid."""
 
     def _make_c_obj(self, tables, index=_SOLAR_IDX, oob=2):
-        from triceratops.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
+        from trilobite.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
 
         lk = np.array(tables.opacity[index], dtype=np.float64, order="C")
         return C_OPALTableOpacity(
@@ -564,7 +562,7 @@ class TestC_OPALTableOpacityExtended:
 
     def test_minimal_2x2_grid(self):
         """A 2×2 table is the smallest valid grid; bilinear interpolation works."""
-        from triceratops.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
+        from trilobite.radiation.opacity.grey_opacity.rosseland._opal_table import C_OPALTableOpacity
 
         LN10 = math.log(10)
         g1 = np.array([5.0, 6.0], dtype=np.float64)

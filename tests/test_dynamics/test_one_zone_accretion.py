@@ -10,7 +10,7 @@ import pytest
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import gP_esDisk
+from trilobite.dynamics.accretion.one_zone import gP_esDisk
 
 from test_one_zone_disk_base import BaseTestOneZoneDisk
 

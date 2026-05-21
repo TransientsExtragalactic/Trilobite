@@ -80,7 +80,7 @@ single-electron emissivity is provided in :ref:`synchrotron_theory`.
     The two are related by :math:`E = \gamma m_e c^2`, where :math:`m_e` is the
     electron mass and :math:`c` is the speed of light. All results presented here
     can be straightforwardly translated to :math:`\gamma`-space, and we will do so. In
-    general, Triceratops defaults to the use of the :math:`\gamma`-space distribution; however,
+    general, Trilobite defaults to the use of the :math:`\gamma`-space distribution; however,
     for this discussion of theory, we prefer to work in terms of energy for clarity.
 
 In realistic astrophysical environments, the electron distribution evolves
@@ -393,8 +393,8 @@ factor is
 .. note::
 
     These quantities are implemented in
-    :mod:`triceratops.radiation.synchrotron.cooling` via
-    :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
+    :mod:`trilobite.radiation.synchrotron.cooling` via
+    :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 Inverse Compton Cooling
 ^^^^^^^^^^^^^^^^^^^^^^^
@@ -450,7 +450,7 @@ synchrotron cooling.
     At sufficiently high electron energies, inverse Compton scattering enters
     the **Klein--Nishina regime**, where the scattering cross section is reduced
     and the :math:`\gamma^2` scaling of the cooling rate breaks down.
-    Triceratops currently assumes Thomson-regime IC cooling.
+    Trilobite currently assumes Thomson-regime IC cooling.
 
 Adiabatic Cooling
 ^^^^^^^^^^^^^^^^^

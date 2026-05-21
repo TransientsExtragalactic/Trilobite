@@ -1,5 +1,5 @@
 """
-Tests for triceratops.utils.phot_utils.
+Tests for trilobite.utils.phot_utils.
 
 Covers PhotometryFilter, FilterBundle, magnitude utilities, and loading helpers.
 """
@@ -12,7 +12,7 @@ import astropy.units as u
 import numpy as np
 import pytest
 
-from triceratops.utils.phot_utils import (
+from trilobite.utils.phot_utils import (
     FilterBundle,
     PhotometryFilter,
     ab_mag_to_flux,

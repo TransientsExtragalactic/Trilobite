@@ -6,11 +6,11 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.models.SEDs.blackbody_optical import (
+from trilobite.models.SEDs.blackbody_optical import (
     BlackbodyOpticalEpochModel,
     BlackbodyOpticalModel,
 )
-from triceratops.utils.phot_utils import FilterBundle, PhotometryFilter
+from trilobite.utils.phot_utils import FilterBundle, PhotometryFilter
 
 
 # ---------------------------------------------------------------------------

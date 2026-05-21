@@ -29,9 +29,9 @@ To get started with the one-zone accretion disk module, it is only necessary to 
 steps:
 
 - Choose a model class from the list below and instantiate it with the desired context parameters.
-- Call the :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve` method
+- Call the :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve` method
   with the initial conditions, runtime parameters, and solver options.
-- Access the results through the returned :class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
+- Access the results through the returned :class:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
   object.
 
 Here is the minimal workflow for a compact accretion disk around a stellar-mass black hole:
@@ -42,8 +42,8 @@ Here is the minimal workflow for a compact accretion disk around a stellar-mass 
     import matplotlib.pyplot as plt
     from astropy import constants as const
     from astropy import units as u
-    from triceratops.dynamics.accretion.one_zone import GasPressureDisk
-    from triceratops.utils.plot_utils import set_plot_style
+    from trilobite.dynamics.accretion.one_zone import GasPressureDisk
+    from trilobite.utils.plot_utils import set_plot_style
 
     # 1. Setup Environment
     set_plot_style()
@@ -104,27 +104,27 @@ physical regime.  The list of available models is as follows:
       - Pressure
       - Opacity
       - Temperature solve
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
       - Gas only
       - Electron scattering
       - Analytic (:math:`T_c \propto Q_0^{1/3}`)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`
       - Gas + Radiation
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk` (``fallback=True``)
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk` (``fallback=True``)
       - Gas only + fallback supply
       - Electron scattering
       - Analytic (:math:`T_c \propto Q_0^{1/3}`)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk` (``fallback=True``)
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk` (``fallback=True``)
       - Gas + Radiation + fallback supply
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
       - Gas + Radiation + advection
       - Electron scattering
       - Implicit (Brent's method)
-    * - :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` (``fallback=True``)
+    * - :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk` (``fallback=True``)
       - Gas + Radiation + advection + fallback
       - Electron scattering
       - Implicit (Brent's method)
@@ -133,7 +133,7 @@ All models are importable from the package top-level:
 
 .. code-block:: python
 
-    from triceratops.dynamics.accretion.one_zone import (
+    from trilobite.dynamics.accretion.one_zone import (
         GasPressureDisk,
         FullPressureDisk,
         AdvectiveDisk,
@@ -168,7 +168,7 @@ The various models have several different sets of available context parameters:
 
     .. tab-item:: GasPressureDisk
 
-        *API Doc*: :class:`~triceratops.dynamics.accretion.one_zone.core.GasPressureDisk`
+        *API Doc*: :class:`~trilobite.dynamics.accretion.one_zone.core.GasPressureDisk`
 
         .. list-table::
             :header-rows: 1
@@ -188,7 +188,7 @@ The various models have several different sets of available context parameters:
 
     .. tab-item:: FullPressureDisk
 
-        *API Doc*: :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`
+        *API Doc*: :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`
 
         .. list-table::
             :header-rows: 1
@@ -206,7 +206,7 @@ The various models have several different sets of available context parameters:
 
     .. tab-item:: AdvectiveDisk
 
-        *API Doc*: :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+        *API Doc*: :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
 
         .. list-table::
             :header-rows: 1
@@ -221,7 +221,7 @@ The various models have several different sets of available context parameters:
               - Entropy gradient parameter (dimensionless, :math:`>0`).  Controls
                 the advective fraction :math:`q_{\rm adv}/q_{\rm visc} \propto
                 \xi\,\alpha\,(H/R)^2`.  Setting :math:`\xi \to 0` recovers
-                :class:`~triceratops.dynamics.accretion.one_zone.core.FullPressureDisk`. See
+                :class:`~trilobite.dynamics.accretion.one_zone.core.FullPressureDisk`. See
                 :footcite:t:`wataraiNewAnalyticalFormulae2006`.
               - ``0.5``
 
@@ -231,7 +231,7 @@ The various models have several different sets of available context parameters:
 
     .. tab-item:: AdvectiveDisk (fallback)
 
-        *API Doc*: :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+        *API Doc*: :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
 
         .. list-table::
             :header-rows: 1
@@ -278,7 +278,7 @@ angular momentum :math:`J_{D,0}`.  The simplest approach is to supply them direc
 In many cases the angular momentum is not the natural parameter to specify —
 it is more intuitive to think in terms of an initial disk outer radius
 :math:`R_{D,0}`.  The helper method
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions`
 accepts any two of the three state variables and solves for the third.
 
 .. dropdown:: Example — specifying initial radius instead of angular momentum
@@ -301,7 +301,7 @@ accepts any two of the three state variables and solves for the third.
 Running the Solver
 ^^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 is the primary entry point.  It takes the initial conditions, per-solve physics
 inputs (**runtime parameters**), and a time span, then hands control to the
 compiled Cython integrator:
@@ -403,9 +403,9 @@ Accessing Results
 -----------------
 
 Once you have performed a simulation, the result returned by
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve`
 is an
-:class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
+:class:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult`
 object.  This section covers everything you can do with it: reading raw field
 data, time interpolation, and computing derived physical observables.
 
@@ -413,7 +413,7 @@ The ``data`` Dictionary
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 The primary interface is the
-:attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data`
+:attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.data`
 property, which returns a dictionary of unit-bearing
 :class:`~astropy.units.Quantity` arrays — one value per integration step:
 
@@ -433,7 +433,7 @@ Subscript notation on the result object itself is also supported as a shortcut:
     R_D = result["R_D"]
 
 The following fields are available for all models.
-:class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk` additionally
+:class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk` additionally
 exposes ``Q_adv`` (advective cooling rate, erg cm⁻² s⁻¹):
 
 .. hint::
@@ -514,9 +514,9 @@ result object:
     result.n_steps    # number of stored timesteps N
 
 For a quick sanity check, the
-:attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state`
+:attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.initial_state`
 and
-:attr:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state`
+:attr:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.final_state`
 properties return dictionaries of every field evaluated at the first and last
 timestep:
 
@@ -536,7 +536,7 @@ governed by the local viscous timescale — the step size shrinks when the disk 
 evolving rapidly and grows when it is in a quasi-steady state.  To evaluate any
 field at a uniform or user-specified time grid, use the interpolation utilities.
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.get_field_interpolator`
 builds a :class:`~scipy.interpolate.InterpolatedUnivariateSpline` over the
 integration time axis:
 
@@ -545,7 +545,7 @@ integration time axis:
     interp_Tc   = result.get_field_interpolator("T_c")       # cubic spline (k=3)
     interp_mdot = result.get_field_interpolator("mdot", k=1)  # linear spline
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.interpolate_field`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.interpolate_field`
 evaluates the spline at new times and re-attaches the correct astropy units:
 
 .. code-block:: python
@@ -576,7 +576,7 @@ the one-zone model's single-zone energy balance.
 .. note::
 
     For accurate multi-colour SEDs and radial temperature profiles, use
-    :class:`~triceratops.dynamics.accretion.AlphaDisk`, which solves the full
+    :class:`~trilobite.dynamics.accretion.AlphaDisk`, which solves the full
     Shakura-Sunyaev structure.  See :ref:`thin_disk` for details.
 
 .. note::
@@ -610,7 +610,7 @@ the one-zone model's single-zone energy balance.
 Accretion Luminosity
 *********************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_accretion_luminosity`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_accretion_luminosity`
 evaluates the gravitational power released by viscous dissipation
 (:footcite:t:`frank2002accretion` Eq. 5.22):
 
@@ -638,7 +638,7 @@ evaluates the gravitational power released by viscous dissipation
 Radiative (Bolometric) Luminosity
 ***********************************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_radiative_luminosity`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_radiative_luminosity`
 gives the Stefan-Boltzmann power actually emitted from the disk surface:
 
 .. math::
@@ -660,7 +660,7 @@ power that truly escapes as thermal radiation.
 Spectral Luminosity
 ********************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_spectral_luminosity`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_spectral_luminosity`
 evaluates the monochromatic blackbody luminosity from both disk faces:
 
 .. math::
@@ -686,8 +686,8 @@ Integrating over all frequencies recovers :math:`L_{\rm rad}`.
         from astropy import constants as const
         from astropy import units as u
 
-        from triceratops.dynamics.accretion.one_zone import GasPressureDisk
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.dynamics.accretion.one_zone import GasPressureDisk
+        from trilobite.utils.plot_utils import set_plot_style
 
         # ---------------------------------------------------------------------------
         # Plot styling
@@ -757,7 +757,7 @@ Integrating over all frequencies recovers :math:`L_{\rm rad}`.
 Flux Density
 *************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_flux_density`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_flux_density`
 gives the monochromatic flux received by a distant observer
 (:footcite:t:`frank2002accretion` Eq. 5.45):
 
@@ -780,7 +780,7 @@ gives the monochromatic flux received by a distant observer
 Bolometric Flux
 ****************
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_bolometric_flux`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionResult.compute_bolometric_flux`
 gives the frequency-integrated observed flux:
 
 .. math::
@@ -809,7 +809,7 @@ disk state.
 Single-Step Solve
 ^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_initial_state`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_initial_state`
 runs exactly one integration step and returns the full result object.  This is
 a fast way to inspect the initial thermodynamic state before launching the full
 integration:
@@ -826,7 +826,7 @@ integration:
 Physical Self-Consistency Checks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.test_initial_state`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.test_initial_state`
 runs a battery of physical consistency checks on the initial disk state and
 returns a report dictionary.  Each entry records whether the check passed and
 a diagnostic note:
@@ -870,7 +870,7 @@ The checks performed are:
 Parameter Grid Sweeps
 ---------------------
 
-:meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_parameter_grid`
+:meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve_parameter_grid`
 runs the disk model over the full Cartesian product of a set of parameter values,
 returning a dictionary of results keyed by parameter tuples:
 
@@ -901,9 +901,9 @@ in the project configuration.
 .. note::
 
     Each combination is run sequentially in the current process.  For large grids,
-    wrap individual :meth:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve` calls in a
+    wrap individual :meth:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve` calls in a
     :class:`concurrent.futures.ProcessPoolExecutor` for parallelism. see the
-    :mod:`triceratops.parallel` module for convenience wrappers.
+    :mod:`trilobite.parallel` module for convenience wrappers.
 
 ----
 
@@ -923,7 +923,7 @@ large outputs: it preserves units metadata and loads much faster than plain text
             result.to_hdf5("disk_run.h5", overwrite=True)
 
             # Load
-            from triceratops.dynamics.accretion.one_zone import OneZoneAccretionResult
+            from trilobite.dynamics.accretion.one_zone import OneZoneAccretionResult
             loaded = OneZoneAccretionResult.from_hdf5("disk_run.h5")
 
     .. tab-item:: Astropy QTable
@@ -943,7 +943,7 @@ large outputs: it preserves units metadata and loads much faster than plain text
         .. note::
 
             ``to_dataframe()`` requires ``pandas``, which is not a mandatory
-            dependency of Triceratops.  If not installed, a descriptive
+            dependency of Trilobite.  If not installed, a descriptive
             :exc:`ImportError` is raised.
 
 Disk model instances (not results) can also be serialised to a plain dict and
@@ -967,7 +967,7 @@ API Reference
 Disk Models
 ^^^^^^^^^^^
 
-.. currentmodule:: triceratops.dynamics.accretion.one_zone
+.. currentmodule:: trilobite.dynamics.accretion.one_zone
 
 .. autosummary::
     :toctree: ../../../_as_gen

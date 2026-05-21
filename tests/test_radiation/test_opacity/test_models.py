@@ -1,4 +1,4 @@
-"""Tests for :mod:`triceratops.radiation.opacity.grey_opacity.rosseland.models`.
+"""Tests for :mod:`trilobite.radiation.opacity.grey_opacity.rosseland.models`.
 
 Organisation
 ------------
@@ -20,8 +20,8 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.radiation.opacity.grey_opacity.base import ConstantGreyOpacity, GreyOpacityLaw
-from triceratops.radiation.opacity.grey_opacity.rosseland.models import (
+from trilobite.radiation.opacity.grey_opacity.base import ConstantGreyOpacity, GreyOpacityLaw
+from trilobite.radiation.opacity.grey_opacity.rosseland.models import (
     KAPPA_BF_0,
     KAPPA_FF_0,
     KAPPA_KR_0,
@@ -84,7 +84,7 @@ class TestNormalisationConstants:
 
 
 class TestConstantGreyOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`.
 
     Verifies that the opacity value is fixed, both partial derivatives are
     identically zero, and mean_type is correctly propagated.
@@ -160,7 +160,7 @@ class TestConstantGreyOpacity:
 
 
 class TestElectronScatteringOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.ElectronScatteringOpacity`.
 
     Thomson scattering produces a grey (constant) opacity; the value does
     not depend on rho or T, and both partial derivatives vanish.
@@ -227,7 +227,7 @@ class TestElectronScatteringOpacity:
 
 
 class TestKramersFFOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity`.
 
     The free-free Kramers law obeys kappa = kappa0 rho T^{-3.5}, giving
     d ln kappa / d ln rho = 1 and d ln kappa / d ln T = -3.5 everywhere.
@@ -283,7 +283,7 @@ class TestKramersFFOpacity:
 
 
 class TestKramersBFOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFOpacity`.
 
     Bound-free Kramers: kappa = kappa_bf,0 rho T^{-3.5}.  Same power-law structure
     as the free-free law but with a larger normalisation constant.
@@ -324,7 +324,7 @@ class TestKramersBFOpacity:
 
 
 class TestKramersOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersOpacity`.
 
     Combined (FF + BF) Kramers law: kappa = (kappa_ff,0 + kappa_bf,0) rho T^{-3.5}.
     The shared power-law structure allows the two terms to be combined into
@@ -377,7 +377,7 @@ def _kramers_es_dlogT(kappa_kr, rho_cgs, T_cgs, kappa_es=0.34):
 
 
 class TestKramersFFESOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity`.
 
     kappa = kappa_es + kappa_ff,0 * rho * T^{-3.5}.  Both attributes (kappa0, kappa_es)
     must be stored, and the mixed derivatives must interpolate between the
@@ -438,7 +438,7 @@ class TestKramersFFESOpacity:
 
 
 class TestKramersBFESOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersBFESOpacity`.
 
     kappa = kappa_es + kappa_bf,0 * rho * T^{-3.5}.
     """
@@ -482,7 +482,7 @@ class TestKramersBFESOpacity:
 
 
 class TestKramersESOpacity:
-    """Tests for :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`.
+    """Tests for :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity`.
 
     kappa = kappa_es + (kappa_ff,0 + kappa_bf,0) * rho * T^{-3.5}.  This is the most
     physically complete grey opacity for hot, fully ionised plasma.

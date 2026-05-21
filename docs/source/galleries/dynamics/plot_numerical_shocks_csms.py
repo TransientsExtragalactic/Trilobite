@@ -5,23 +5,23 @@ SNe Shocks In Different CSM Environments
 This example explores how a pressure-driven supernova shock evolves when the
 same ejecta model is launched into several different circumstellar medium
 (CSM) density profiles.  It uses the
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 together with the CSM factory functions in
-:mod:`~triceratops.dynamics.shocks.utils`.
+:mod:`~trilobite.dynamics.shocks.utils`.
 
 The goal is not to fit a specific transient, but to build intuition for how
 density structure imprints itself on the shock dynamics. We compare shocks
 propagating into:
 
-- a low-density uniform ISM (:func:`~triceratops.dynamics.shocks.utils.get_uniform_csm_density_func`),
-- a dense uniform medium (:func:`~triceratops.dynamics.shocks.utils.get_uniform_csm_density_func`),
-- a steady wind (:func:`~triceratops.dynamics.shocks.utils.get_wind_csm_density_func`),
-- a wind with an outer ISM floor (:func:`~triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func`),
-- a sharply truncated wind (:func:`~triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func`),
-- a smoothly truncated wind (:func:`~triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func`),
-- a dense top-hat shell (:func:`~triceratops.dynamics.shocks.utils.get_shell_csm_density_func`),
-- a smooth Gaussian shell (:func:`~triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func`),
-- and a broken power-law CSM (:func:`~triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func`).
+- a low-density uniform ISM (:func:`~trilobite.dynamics.shocks.utils.get_uniform_csm_density_func`),
+- a dense uniform medium (:func:`~trilobite.dynamics.shocks.utils.get_uniform_csm_density_func`),
+- a steady wind (:func:`~trilobite.dynamics.shocks.utils.get_wind_csm_density_func`),
+- a wind with an outer ISM floor (:func:`~trilobite.dynamics.shocks.utils.get_wind_with_floor_csm_density_func`),
+- a sharply truncated wind (:func:`~trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func`),
+- a smoothly truncated wind (:func:`~trilobite.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func`),
+- a dense top-hat shell (:func:`~trilobite.dynamics.shocks.utils.get_shell_csm_density_func`),
+- a smooth Gaussian shell (:func:`~trilobite.dynamics.shocks.utils.get_gaussian_shell_csm_density_func`),
+- and a broken power-law CSM (:func:`~trilobite.dynamics.shocks.utils.get_broken_power_law_csm_density_func`).
 
 All models use the same homologous broken-power-law ejecta profile and the
 same initial shock conditions. This isolates the dynamical effect of the CSM
@@ -43,7 +43,7 @@ structure.
 # Setup
 # -----
 #
-# We begin with the numerical, unit, plotting, and Triceratops imports.
+# We begin with the numerical, unit, plotting, and Trilobite imports.
 
 from dataclasses import dataclass
 
@@ -51,8 +51,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
-from triceratops.dynamics.shocks.utils import (
+from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+from trilobite.dynamics.shocks.utils import (
     get_bpl_ejecta_kernel,
     get_broken_power_law_csm_density_func,
     get_gaussian_shell_csm_density_func,
@@ -64,7 +64,7 @@ from triceratops.dynamics.shocks.utils import (
     get_wind_with_floor_csm_density_func,
     make_homologous_stationary_sources,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 
 # %%
@@ -100,12 +100,12 @@ class CSMScenario:
 #     \rho_{\rm ej}(r,t) = t^{-3} G_{\rm ej}(r/t),
 #
 # with an outer velocity-space slope ``n=10`` and an inner slope ``delta=0``.
-# :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel` computes
+# :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` computes
 # the normalization constants from the explosion energy and ejecta mass and
 # returns a callable :math:`G_{\rm ej}(v)`.
 #
 # A single stateless
-# :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+# :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 # instance is shared across all scenarios; see
 # :ref:`pressure_driven_thin_shell_engine` for the equations it integrates.
 
@@ -134,7 +134,7 @@ M_0 = 1e-4 * u.M_sun
 # -------------------
 #
 # We now define the CSM environments using the factory functions in
-# :mod:`~triceratops.dynamics.shocks.utils`. Each factory accepts physical
+# :mod:`~trilobite.dynamics.shocks.utils`. Each factory accepts physical
 # parameters as :class:`~astropy.units.Quantity` objects, converts units once
 # at call time, and returns a unit-free CGS callable suitable for evaluation
 # inside the ODE integrator. See :ref:`shock_engines` for a complete table of
@@ -295,7 +295,7 @@ plt.show()
 # Compute Shock Evolution
 # -----------------------
 #
-# :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`
+# :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`
 # assembles the four upstream source callables expected by the engine from a
 # single ejecta kernel :math:`G_{\rm ej}` and a one-argument CSM density
 # function:
@@ -311,10 +311,10 @@ plt.show()
 #     u_4(r,t) = 0.
 #
 # We then call
-# :meth:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
+# :meth:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.compute_shock_properties`
 # with the same time grid and initial conditions for every CSM environment.
 # Each call returns a
-# :class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` with
+# :class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` with
 # the shell radius, velocity, mass, and post-shock thermodynamic quantities as
 # :class:`~astropy.units.Quantity` arrays.
 

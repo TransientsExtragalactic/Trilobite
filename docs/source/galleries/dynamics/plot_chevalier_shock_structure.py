@@ -22,9 +22,9 @@ density index. Once the dimensionless profiles are computed for a given
 :math:`(n, s, \gamma)`, physical profiles at any time follow by rescaling
 :math:`\xi = r / R_c(t)`.
 
-We use :func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_functions`
+We use :func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_functions`
 to solve the self-similar ODEs and
-:class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
+:class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine`
 to evaluate the physical shock trajectory for a representative RSG-wind CSM.
 
 .. seealso::
@@ -32,7 +32,7 @@ to evaluate the physical shock trajectory for a representative RSG-wind CSM.
     :ref:`chevalier_theory` — full derivation of the self-similar solution
     including the ODE system, boundary conditions, and physical scalings.
 
-    :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
+    :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
     — generalized engine for arbitrary CSM power-law index :math:`s`.
 """
 
@@ -48,12 +48,12 @@ import numpy as np
 from astropy import units as u
 from matplotlib.lines import Line2D
 
-from triceratops.dynamics.shocks.chevalier import (
+from trilobite.dynamics.shocks.chevalier import (
     ChevalierSelfSimilarWindShockEngine,
     compute_self_similar_functions,
 )
-from triceratops.dynamics.shocks.utils import normalize_bpl_ejecta
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.shocks.utils import normalize_bpl_ejecta
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Model Parameters
@@ -78,14 +78,14 @@ delta = 0.0
 # Solve the Dimensionless Self-Similar Structure
 # ----------------------------------------------
 #
-# :func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_functions`
+# :func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_functions`
 # integrates two ODEs — one inward from the forward shock to the contact
 # discontinuity and one outward from the reverse shock — to obtain the
 # dimensionless velocity :math:`U(\xi)`, density :math:`\Omega(\xi)`, and
 # pressure :math:`P(\xi)` profiles on the global similarity coordinate
 # :math:`\xi = r / R_c`.
 #
-# The returned :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions`
+# The returned :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions`
 # also carries the dimensionless structure constants: :math:`A` (the
 # self-similar normalization), :math:`R_{\rm fs}/R_c`, and :math:`R_{\rm rs}/R_c`.
 
@@ -111,7 +111,7 @@ print(f"Norm. constant A = {ss.A:.6e}")
 #     reverse shock and the contact.  The **outer** region (:math:`\xi > 1`) is
 #     the shocked CSM between the contact and the forward shock.  All quantities
 #     carry the shared normalization described in
-#     :func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_functions`.
+#     :func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_functions`.
 
 set_plot_style()
 
@@ -495,7 +495,7 @@ plt.show()
 # self-similar module:
 #
 # 1. **Solve the dimensionless structure** with
-#    :func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_functions`
+#    :func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_functions`
 #    for a chosen :math:`(n, s, \gamma)`.  The resulting
 #    :math:`(\Omega, U, P)` profiles on the :math:`\xi` grid are universal —
 #    they do not depend on the physical normalization.
@@ -512,17 +512,17 @@ plt.show()
 # The self-similar solution is most appropriate when both the ejecta and CSM
 # are well described by scale-free power laws.  For more complex environments
 # — shells, density breaks, or wind-to-ISM transitions — see the numerical
-# shock engines in :mod:`~triceratops.dynamics.shocks.numerical`.
+# shock engines in :mod:`~trilobite.dynamics.shocks.numerical`.
 #
 # .. seealso::
 #
 #     :ref:`chevalier_theory` — derivation of the self-similar equations and
 #     the physical normalization :math:`A`.
 #
-#     :class:`~triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
+#     :class:`~trilobite.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine`
 #     — generalized engine for arbitrary :math:`s`.
 #
-#     :mod:`~triceratops.dynamics.shocks.numerical` — numerical thin-shell
+#     :mod:`~trilobite.dynamics.shocks.numerical` — numerical thin-shell
 #     engines for non-power-law environments.
 
 # sphinx_gallery_thumbnail_number = 2

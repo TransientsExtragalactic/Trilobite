@@ -3,7 +3,7 @@ import json
 import numpy as np
 import pytest
 
-from triceratops.data.core import InferenceData, Observable
+from trilobite.data.core import InferenceData, Observable
 
 # ======================================================================
 # Fixtures

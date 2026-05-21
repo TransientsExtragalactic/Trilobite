@@ -1,8 +1,8 @@
 .. raw:: html
 
    <div align="center">
-     <img src="docs/source/images/logo.png" width="260" alt="Triceratops"><br/><br/>
-     <h1>TRICERATOPS</h1>
+     <img src="docs/source/images/logo.svg" width="260" alt="Trilobite"><br/><br/>
+     <h1>TRILOBITE</h1>
      <p><em>A Python ecosystem for rapid-deployment modeling of astrophysical transients</em></p>
      <p>
 
@@ -15,11 +15,11 @@
 
 ----
 
-The **TR**\ansient **I**\nteraction **C**\ode for **E**\jecta, **R**\emnants, **A**\nd **T**\ime-domain
-**O**\bservables from **P**\lasma **S**\hocks (**TRICERATOPS**) is a powerful, modular computational
+The **TR**\ansient **I**\nference **L**\ibrary for **O**\bservation, **B**\ayesian **I**\nference, and **T**\ime-domain **E**\xploration
+(**TRILOBITE**) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
-TRICERATOPS bridges the gap between theory and observation by combining shock dynamics, microphysical
+TRILOBITE bridges the gap between theory and observation by combining shock dynamics, microphysical
 prescriptions, and radiative transfer into a unified framework — enabling rapid-deployment modeling of
 **GRBs, TDEs, supernovae**, and other astrophysical transients.
 
@@ -47,7 +47,7 @@ Quick Install
 
 .. code-block:: bash
 
-    pip install triceratops-lib
+    pip install trilobite-lib
 
 Or install from source:
 
@@ -86,11 +86,11 @@ Contributions should follow the established coding, documentation, and
 Citation
 ========
 
-If you use Triceratops in your research, please acknowledge it with:
+If you use Trilobite in your research, please acknowledge it with:
 
-    *We acknowledge the use of the Triceratops software package, written by E. Diggins et al., in this work.*
+    *We acknowledge the use of the Trilobite software package, written by E. Diggins et al., in this work.*
 
-TRICERATOPS is developed and maintained by Eliza Diggins and the
+TRILOBITE is developed and maintained by Eliza Diggins and the
 **Extragalactic Transients Group (TREX)** in the Department of Astronomy at the
 **University of California, Berkeley**.
 

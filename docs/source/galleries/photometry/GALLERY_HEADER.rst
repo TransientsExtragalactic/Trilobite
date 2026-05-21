@@ -4,9 +4,9 @@
 Optical Filters and Photometry
 *******************************
 
-These examples demonstrate the optical photometry system in Triceratops. They cover
+These examples demonstrate the optical photometry system in Trilobite. They cover
 constructing and visualising photometric bandpass filters, assembling them into a
-:class:`~triceratops.utils.phot_utils.FilterBundle` optimised for MCMC hot loops, and
+:class:`~trilobite.utils.phot_utils.FilterBundle` optimised for MCMC hot loops, and
 converting between flux density and standard magnitude systems (AB, ST).
 
 These tools are the bridge between a physical model that predicts a spectral energy
@@ -22,11 +22,11 @@ LSST/Rubin, DECam, and space-based observatories like HST and Kepler.
 
 .. rubric:: API reference
 
-:class:`~triceratops.utils.phot_utils.PhotometryFilter` —
-:class:`~triceratops.utils.phot_utils.FilterBundle` —
-:func:`~triceratops.utils.phot_utils.flux_to_ab_mag` —
-:func:`~triceratops.utils.phot_utils.filter_to_ab_mag` —
-:func:`~triceratops.utils.phot_utils.load_filter_from_speclite` —
-:func:`~triceratops.utils.phot_utils.load_filter_from_svo` —
-:func:`~triceratops.utils.phot_utils.list_svo_filters` —
-:func:`~triceratops.utils.phot_utils.load_filters_from_svo`
+:class:`~trilobite.utils.phot_utils.PhotometryFilter` —
+:class:`~trilobite.utils.phot_utils.FilterBundle` —
+:func:`~trilobite.utils.phot_utils.flux_to_ab_mag` —
+:func:`~trilobite.utils.phot_utils.filter_to_ab_mag` —
+:func:`~trilobite.utils.phot_utils.load_filter_from_speclite` —
+:func:`~trilobite.utils.phot_utils.load_filter_from_svo` —
+:func:`~trilobite.utils.phot_utils.list_svo_filters` —
+:func:`~trilobite.utils.phot_utils.load_filters_from_svo`

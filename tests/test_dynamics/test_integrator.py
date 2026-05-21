@@ -1,5 +1,5 @@
 """
-Tests for :mod:`triceratops.dynamics.accretion.one_zone._integrator`.
+Tests for :mod:`trilobite.dynamics.accretion.one_zone._integrator`.
 
 Coverage
 --------
@@ -33,12 +33,12 @@ import numpy as np
 import pytest
 
 _integrator = pytest.importorskip(
-    "triceratops.dynamics.accretion.one_zone.integrator",
+    "trilobite.dynamics.accretion.one_zone.integrator",
     reason="integrator.pyx not compiled — run `pip install -e '.[dev]'` first.",
 )
 
-from triceratops.dynamics.accretion.one_zone.closure import OneZoneClosure  # noqa: E402
-from triceratops.dynamics.accretion.one_zone.integrator import run_one_zone_model  # noqa: E402
+from trilobite.dynamics.accretion.one_zone.closure import OneZoneClosure  # noqa: E402
+from trilobite.dynamics.accretion.one_zone.integrator import run_one_zone_model  # noqa: E402
 
 # ------------------------------------------------------------------ #
 # Helpers                                                             #
@@ -65,7 +65,7 @@ _INITIAL_STATE = np.array([_M_DISK, _J_DISK], dtype=np.float64)
 
 def _make_closure():
     """Return a ready FullPressureClosure (gas-pressure-only mode) with parameters bound."""
-    from triceratops.dynamics.accretion.one_zone.models._igP import FullPressureClosure
+    from trilobite.dynamics.accretion.one_zone.models._igP import FullPressureClosure
 
     closure = FullPressureClosure(gas_pressure_only=True, mu=_MU)
     closure.bind_runtime_parameters(

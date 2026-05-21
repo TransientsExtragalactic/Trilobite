@@ -4,8 +4,8 @@
 Inference Data Containers
 ================================
 
-The :class:`~triceratops.data.core.InferenceData` class defines the numerical
-interface between the :mod:`triceratops.data` layer and the :mod:`triceratops.inference` layer.
+The :class:`~trilobite.data.core.InferenceData` class defines the numerical
+interface between the :mod:`trilobite.data` layer and the :mod:`trilobite.inference` layer.
 
 It is the only data object recognized by likelihood classes.
 
@@ -126,7 +126,7 @@ observables.
 
 Independent variables are stored as a dictionary mapping variable names
 to NumPy arrays. Observables are stored as
-:class:`~triceratops.data.core.Observable` objects, each of which contains
+:class:`~trilobite.data.core.Observable` objects, each of which contains
 a value array and optional arrays for uncertainties and one-sided limits.
 
 All arrays share the same base shape. This consistency is enforced at
@@ -184,7 +184,7 @@ dump raw array contents.
 describe()
 ^^^^^^^^^^
 
-For a fuller diagnostic, use :meth:`~triceratops.data.core.InferenceData.describe`:
+For a fuller diagnostic, use :meth:`~trilobite.data.core.InferenceData.describe`:
 
 .. code-block:: python
 
@@ -227,9 +227,9 @@ The complete data → inference pipeline in one block:
 
     import numpy as np
     from astropy import units as u
-    from triceratops.data import RadioPhotometryContainer
-    from triceratops.inference.likelihood import GaussianLikelihood
-    from triceratops.inference.problem import InferenceProblem
+    from trilobite.data import RadioPhotometryContainer
+    from trilobite.inference.likelihood import GaussianLikelihood
+    from trilobite.inference.problem import InferenceProblem
 
     # Step 1 — Load data into a container
     container = RadioPhotometryContainer.from_file("photometry.fits")
@@ -278,7 +278,7 @@ and no ambiguity in array shape or ordering.
 API Reference
 -------------
 
-.. autoclass:: triceratops.data.core.InferenceData
+.. autoclass:: trilobite.data.core.InferenceData
    :no-index:
    :members:
    :undoc-members:
@@ -286,7 +286,7 @@ API Reference
 
 ----
 
-.. autoclass:: triceratops.data.core.Observable
+.. autoclass:: trilobite.data.core.Observable
    :no-index:
    :members:
    :undoc-members:

@@ -22,7 +22,7 @@ efficiently while still capturing global viscous spreading, thermodynamic struct
 and accretion onto the central object.
 
 This document describes the theoretical framework underlying the one-zone disk models
-implemented in Triceratops.  For usage instructions see :ref:`one_zone_disk`.
+implemented in Trilobite.  For usage instructions see :ref:`one_zone_disk`.
 
 .. hint::
 
@@ -149,10 +149,10 @@ Thermodynamics
 The above equations would be entirely sufficient to specify the state of the disk were it not for the
 dependence on :math:`t_{\rm visc}`, which depends on the viscosity :math:`\nu` and therefore on the thermodynamic
 state of the disk. Because of this, it becomes **necessary to treat (in some detail) the microphysics of the disk**. Many
-options exist in the literature for how to do this in different scenarios and regimes; however, Triceratops
+options exist in the literature for how to do this in different scenarios and regimes; however, Trilobite
 aims to be as flexible as possible in this regard, and so the thermodynamic closure is implemented as a modular
 component that can be swapped out for different physics choices.  The following sections describe
-the general framework for the thermodynamic closure and the specific closures currently implemented in Triceratops.
+the general framework for the thermodynamic closure and the specific closures currently implemented in Trilobite.
 
 Overview
 ^^^^^^^^
@@ -179,7 +179,7 @@ Once each of these processes has been specified, the thermal structure of the di
 some sense, this is the artful element of constructing these models: the choices made for each of these processes will
 determine the physical regimes that the model can capture and the computational cost of solving for the thermal structure.
 
-In the following sections, we will describe the closures which are included explicitly in Triceratops, which are
+In the following sections, we will describe the closures which are included explicitly in Trilobite, which are
 designed to capture the physics of accretion disks in a variety of regimes while still being computationally efficient.
 We will also describe the general framework for how these closures are implemented
 in the code, and how users can extend this framework to include their own closures if desired.
@@ -188,7 +188,7 @@ Viscosity
 ^^^^^^^^^
 
 The viscous parameterization is generally the first choice to be made when constructing a disk model as it determines
-the set of available relations between various disk properties. By default, Triceratops only provides the **alpha-prescription** for viscosity,
+the set of available relations between various disk properties. By default, Trilobite only provides the **alpha-prescription** for viscosity,
 which assumes that the viscosity can be expressed as
 
 .. math::
@@ -222,7 +222,7 @@ the local Keplerian angular velocity on the basis of vertical hydrostatic equili
 Equation of State
 ^^^^^^^^^^^^^^^^^
 
-By default, Triceratops provides two closures for the equation of state:
+By default, Trilobite provides two closures for the equation of state:
 
 1. **Gas Pressure Only** — assumes that the pressure is dominated by an ideal gas of mean molecular weight :math:`\mu`.
 2. **Gas + Radiation Pressure** — includes both the ideal gas pressure and the radiation pressure.
@@ -388,7 +388,7 @@ Additional Physics
 
 As we have described in the preceding section, there are many modifications which may be made to the canonical
 disk scenarios to implement new physics. In this section, we'll describe the theory behind a few of the common
-modifications that are implemented in Triceratops.
+modifications that are implemented in Trilobite.
 Fallback
 ^^^^^^^^
 
@@ -426,7 +426,7 @@ radius, which we approximate as
 
     \ell_{\rm FB} = \sqrt{G M_\bullet R_{\rm circ}}.
 
-To allow for greater flexibility, Triceratops adopts a generalized parameterization of
+To allow for greater flexibility, Trilobite adopts a generalized parameterization of
 the fallback rate:
 
 .. math::
@@ -600,7 +600,7 @@ parameter that encapsulates the uncertain large-scale geometry of the disk.
 Specific Disk Models
 --------------------
 Having now covered the detailed theoretical framework for constructing one-zone disk models, we can now describe the
-specific disk models that are currently implemented in Triceratops.  Each of these models is designed
+specific disk models that are currently implemented in Trilobite.  Each of these models is designed
 to capture the physics of accretion disks in a particular regime while still being computationally efficient.
 
 Standard Disks

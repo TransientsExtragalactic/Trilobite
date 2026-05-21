@@ -1,11 +1,11 @@
-"""Tests for :mod:`triceratops.parallel.factory` — ``make_pool``."""
+"""Tests for :mod:`trilobite.parallel.factory` — ``make_pool``."""
 
 import pytest
 
-from triceratops.parallel.base import Pool, SerialPool
-from triceratops.parallel.factory import make_pool
-from triceratops.parallel.mp import LikelihoodMPPool
-from triceratops.parallel.mpi import LikelihoodMPIPool
+from trilobite.parallel.base import Pool, SerialPool
+from trilobite.parallel.factory import make_pool
+from trilobite.parallel.mp import LikelihoodMPPool
+from trilobite.parallel.mpi import LikelihoodMPIPool
 
 
 # ================================================================== #

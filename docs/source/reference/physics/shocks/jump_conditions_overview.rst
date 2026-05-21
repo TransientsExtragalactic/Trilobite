@@ -16,9 +16,9 @@ They follow from mass, momentum, and energy conservation applied across the shoc
 and are foundational to modeling astrophysical shock waves in supernovae, stellar winds, and
 jet interactions.
 
-Triceratops implements the jump conditions as a hierarchy of class-method solvers, each
+Trilobite implements the jump conditions as a hierarchy of class-method solvers, each
 targeting a well-defined physical regime. All classes share a unified interface: a single
-:meth:`~triceratops.dynamics.shocks.core.rankine_hugoniot.JumpConditions.solve` class method
+:meth:`~trilobite.dynamics.shocks.core.rankine_hugoniot.JumpConditions.solve` class method
 that accepts physical inputs and returns a named tuple of post- (or pre-) shock quantities
 with attached :class:`~astropy.units.Quantity` units.
 
@@ -38,14 +38,14 @@ with attached :class:`~astropy.units.Quantity` units.
 Quick Start
 -----------
 
-The following example uses :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+The following example uses :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
 — the most common regime in astrophysical modeling — to compute all post-shock quantities from a shock
 propagating into a cold ambient medium:
 
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.dynamics.shocks.core import StrongColdShockConditions
+    from trilobite.dynamics.shocks.core import StrongColdShockConditions
 
     result = StrongColdShockConditions.solve(
         shock_velocity  = 1e9 * u.cm / u.s,   # 10,000 km/s
@@ -89,19 +89,19 @@ Four concrete classes are available, organized along two axes: **shock strength*
      - Regime
      - Upstream
      - Use when...
-   * - :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
      - :math:`\mathcal{M}_1 \gg 1`
      - Cold (:math:`P_1 \approx 0`)
      - Supernova blast waves, fast ejecta into tenuous CSM; no upstream thermal state needed
-   * - :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions`
      - :math:`\mathcal{M}_1 \gg 1`
      - Hot (finite :math:`P_1`)
      - Strong shocks where upstream pressure contributes; requires upstream :math:`P_1` or :math:`T_1`
-   * - :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakColdShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakColdShockConditions`
      - Finite :math:`\mathcal{M}_1`
      - Cold (:math:`P_1 \approx 0`)
      - Moderate Mach-number shocks into cold medium; Mach number must be supplied explicitly
-   * - :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions`
      - Finite :math:`\mathcal{M}_1`
      - Hot (finite :math:`P_1`)
      - Full Rankine-Hugoniot solution at arbitrary Mach number and upstream thermal state
@@ -109,9 +109,9 @@ Four concrete classes are available, organized along two axes: **shock strength*
 .. note::
 
     "Weak shock" here is a naming convention, not a restriction to :math:`\mathcal{M}_1 \lesssim 1`.
-    :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions` evaluates the
+    :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions` evaluates the
     full Mach-number-dependent relations and is valid for any supersonic shock. It reduces to
-    :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions` as
+    :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions` as
     :math:`\mathcal{M}_1 \to \infty`.
 
 ----
@@ -137,7 +137,7 @@ classes in this section exploit that simplification.
 StrongColdShockConditions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions` applies
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions` applies
 when the upstream medium is cold (:math:`P_1 \approx 0`, :math:`T_1 \approx 0`) — the common
 assumption for astrophysical blast waves where the ambient medium is far cooler than the post-shock
 gas. In this limit, the downstream thermodynamics depends on the shock velocity alone, and the
@@ -147,12 +147,12 @@ post-shock temperature becomes density-independent:
 
     T_2 = \frac{\mu m_p}{k_B} \frac{R - 1}{R^2} u_1^2.
 
-Because no upstream thermal state is needed, the :meth:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.solve`
+Because no upstream thermal state is needed, the :meth:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions.solve`
 signature is minimal:
 
 .. code-block:: python
 
-    from triceratops.dynamics.shocks.core import StrongColdShockConditions
+    from trilobite.dynamics.shocks.core import StrongColdShockConditions
     import astropy.units as u
 
     result = StrongColdShockConditions.solve(
@@ -211,7 +211,7 @@ in the cold limit):
 StrongShockConditions
 ^^^^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions` handles the case
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions` handles the case
 where the upstream medium has a non-negligible thermal state. The full momentum jump condition is
 
 .. math::
@@ -223,7 +223,7 @@ supplied (they are mutually exclusive):
 
 .. code-block:: python
 
-    from triceratops.dynamics.shocks.core import StrongShockConditions
+    from trilobite.dynamics.shocks.core import StrongShockConditions
     import astropy.units as u
 
     result = StrongShockConditions.solve(
@@ -239,7 +239,7 @@ supplied (they are mutually exclusive):
         flow_pressure  = 1e-12 * u.dyn / u.cm**2,
     )
 
-The output fields are identical to :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
+The output fields are identical to :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`
 except that the energy density field is named ``post_shock_energy_density`` (not
 ``post_shock_thermal_energy_density``). When ``upstream=True``, the full pre-shock
 thermodynamic state (pressure, temperature, energy density) is also returned.
@@ -249,7 +249,7 @@ thermodynamic state (pressure, temperature, energy density) is also returned.
     Exactly **one** of ``flow_pressure`` and ``flow_temperature`` must be supplied. Providing
     neither — or both — raises a :exc:`ValueError`.
 
-Individual quantities can also be computed without going through :meth:`~triceratops.dynamics.shocks.core.rankine_hugoniot.JumpConditions.solve`
+Individual quantities can also be computed without going through :meth:`~trilobite.dynamics.shocks.core.rankine_hugoniot.JumpConditions.solve`
 using dedicated class methods:
 
 .. code-block:: python
@@ -289,14 +289,14 @@ The classes in this section evaluate the full Rankine-Hugoniot relations without
 WeakColdShockConditions
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakColdShockConditions` combines the
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakColdShockConditions` combines the
 finite Mach number treatment with the cold-upstream assumption. Because the cold limit suppresses the
 upstream sound speed, the Mach number cannot be inferred from the thermodynamic state and must be
 supplied explicitly as ``mach_number``:
 
 .. code-block:: python
 
-    from triceratops.dynamics.shocks.core import WeakColdShockConditions
+    from trilobite.dynamics.shocks.core import WeakColdShockConditions
     import astropy.units as u
 
     result = WeakColdShockConditions.solve(
@@ -315,7 +315,7 @@ The post-shock temperature formula matches the strong-cold case, but with
 
     T_2 = \frac{\mu m_p}{k_B}\,\frac{R(\mathcal{M}_1) - 1}{R(\mathcal{M}_1)^2}\,u_1^2.
 
-As with :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`,
+As with :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongColdShockConditions`,
 thermodynamic inversion (``upstream=True``) is restricted to kinematic quantities — density,
 number density, and velocity — since pre-shock pressure and temperature are undefined in the
 cold limit.
@@ -325,7 +325,7 @@ cold limit.
 WeakShockConditions
 ^^^^^^^^^^^^^^^^^^^^
 
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions` is the most general
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.WeakShockConditions` is the most general
 solver. It evaluates the complete Rankine-Hugoniot relations at finite Mach number with a non-negligible
 upstream thermal state. The Mach number is computed self-consistently from the shock-frame velocity and
 the upstream thermodynamic state:
@@ -339,7 +339,7 @@ is provided:
 
 .. code-block:: python
 
-    from triceratops.dynamics.shocks.core import WeakShockConditions
+    from trilobite.dynamics.shocks.core import WeakShockConditions
     import astropy.units as u
 
     # Sound speed resolved from upstream temperature
@@ -356,7 +356,7 @@ is provided:
         flow_pressure  = 1e-12 * u.dyn / u.cm**2,
     )
 
-The output fields are identical to :class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions`.
+The output fields are identical to :class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.StrongShockConditions`.
 The downstream Mach number is also available via an individual class method:
 
 .. code-block:: python
@@ -385,7 +385,7 @@ outflows, and other high-velocity transients, this approximation breaks down: ma
 momentum, and energy fluxes must be conserved using relativistic velocity addition,
 Lorentz factors, and proper-frame thermodynamic variables.
 
-Triceratops provides a parallel hierarchy of relativistic jump-condition solvers for
+Trilobite provides a parallel hierarchy of relativistic jump-condition solvers for
 this regime. These classes compute the downstream shock-frame velocity, compression
 ratio, proper post-shock density, pressure, temperature, and energy density from a
 lab-frame shock velocity and upstream state.
@@ -397,7 +397,7 @@ lab-frame shock velocity and upstream state.
    * ``shock_velocity`` and ``upstream_velocity`` are **lab-frame velocities**.
    * Density, pressure, temperature, and energy density are **proper comoving-frame
      thermodynamic quantities**.
-   * Internally, Triceratops transforms the upstream flow into the shock frame using
+   * Internally, Trilobite transforms the upstream flow into the shock frame using
      relativistic velocity addition before applying the jump conditions.
 
 Choosing a Relativistic Solver
@@ -417,22 +417,22 @@ The relativistic solvers are organized by two physical choices:
    * - Class
      - Solver type
      - Use when...
-   * - :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions`
      - Analytic, cold upstream
      - You want the canonical GRB-style limit: :math:`\Gamma_1 \gg 1`,
        :math:`P_1 = 0`, and :math:`\hat{\gamma}=4/3`, giving
        :math:`\beta_2 = 1/3`.
-   * - :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticShockConditions`
      - Analytic, warm upstream
      - The shock is ultra-relativistic, but the upstream enthalpy is not negligible.
        The analytic downstream velocity is unchanged, but the reconstructed
        pressure, energy density, and temperature depend on the upstream enthalpy.
-   * - :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions`
      - Numerical, cold upstream
      - The upstream medium is cold, but the shock may be only mildly or moderately
        relativistic. This is the safer cold-upstream solver when
        :math:`\Gamma_1 \gg 1` is not guaranteed.
-   * - :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions`
+   * - :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions`
      - Numerical, warm upstream
      - The most general solver: arbitrary relativistic shock speed with a finite
        upstream pressure or temperature.
@@ -448,7 +448,7 @@ Quick Start: Cold Ultra-Relativistic Shock
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 For a cold upstream medium in the ultra-relativistic limit, use
-:class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions`.
+:class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.UltraRelativisticColdShockConditions`.
 This is the simplest relativistic solver and is often the right starting point for
 GRB-like blast waves:
 
@@ -457,7 +457,7 @@ GRB-like blast waves:
    import astropy.units as u
    import astropy.constants as const
 
-   from triceratops.dynamics.shocks.core import UltraRelativisticColdShockConditions
+   from trilobite.dynamics.shocks.core import UltraRelativisticColdShockConditions
 
    result = UltraRelativisticColdShockConditions.solve(
        shock_velocity   = 0.999 * const.c,
@@ -479,12 +479,12 @@ returned as floats; thermodynamic quantities are returned with
 General Relativistic Shocks
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions`
+Use :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticShockConditions`
 when the upstream medium has a finite pressure or temperature and the shock is not
 assumed to be asymptotically ultra-relativistic.
 
 You may provide either ``upstream_pressure`` or ``upstream_temperature``. If a
-temperature is supplied, Triceratops computes the upstream pressure using the ideal-gas
+temperature is supplied, Trilobite computes the upstream pressure using the ideal-gas
 relation.
 
 .. code-block:: python
@@ -492,7 +492,7 @@ relation.
    import astropy.units as u
    import astropy.constants as const
 
-   from triceratops.dynamics.shocks.core import RelativisticShockConditions
+   from trilobite.dynamics.shocks.core import RelativisticShockConditions
 
    result = RelativisticShockConditions.solve(
        shock_velocity       = 0.8 * const.c,
@@ -519,7 +519,7 @@ Equivalently, pass a pressure directly:
 Cold Upstream at Arbitrary Lorentz Factor
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Use :class:`~triceratops.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions`
+Use :class:`~trilobite.dynamics.shocks.core.relativistic_jump_conditions.RelativisticColdShockConditions`
 when the upstream medium is cold but the shock is not necessarily in the
 ultra-relativistic limit:
 
@@ -528,7 +528,7 @@ ultra-relativistic limit:
    import astropy.units as u
    import astropy.constants as const
 
-   from triceratops.dynamics.shocks.core import RelativisticColdShockConditions
+   from trilobite.dynamics.shocks.core import RelativisticColdShockConditions
 
    result = RelativisticColdShockConditions.solve(
        shock_velocity   = 0.5 * const.c,
@@ -580,7 +580,7 @@ Implementation Notes
 ^^^^^^^^^^^^^^^^^^^^
 
 The relativistic solvers share a common reconstruction step. Once the downstream
-shock-frame velocity :math:`\beta_2` is known, Triceratops reconstructs the downstream
+shock-frame velocity :math:`\beta_2` is known, Trilobite reconstructs the downstream
 state from mass flux conservation and relativistic energy-momentum conservation.
 
 For the numerical solvers, :math:`\beta_2` is found by solving the implicit jump
@@ -606,7 +606,7 @@ is used instead.
 Two-Level API
 --------------
 
-Like all physics submodules in Triceratops, the Rankine-Hugoniot module exposes a private
+Like all physics submodules in Trilobite, the Rankine-Hugoniot module exposes a private
 **CGS backend** and a public **unit-aware interface**. Most users interact only with the public
 interface, but the private layer is available for performance-critical applications such as
 inference hot loops where unit overhead must be minimized.
@@ -646,7 +646,7 @@ Class Hierarchy
 ---------------
 
 The solvers are organized in a two-level hierarchy. The abstract base class
-:class:`~triceratops.dynamics.shocks.core.rankine_hugoniot.JumpConditions` defines the interface;
+:class:`~trilobite.dynamics.shocks.core.rankine_hugoniot.JumpConditions` defines the interface;
 concrete classes implement the physical regime:
 
 .. code-block:: text
@@ -672,7 +672,7 @@ concrete classes implement the physical regime:
                Mach number must be supplied explicitly.
 
 Each class auto-generates a named-tuple type (``StrongColdShockConditionsResult``, etc.)
-from its :attr:`~triceratops.dynamics.shocks.core.rankine_hugoniot.JumpConditions.OUTPUT_FIELDS`
+from its :attr:`~trilobite.dynamics.shocks.core.rankine_hugoniot.JumpConditions.OUTPUT_FIELDS`
 at class creation time. This means new fields can be added by subclasses without any changes to
 the base class.
 
@@ -683,7 +683,7 @@ the base class.
 API Reference
 -------------
 
-.. currentmodule:: triceratops.dynamics.shocks.core.rankine_hugoniot
+.. currentmodule:: trilobite.dynamics.shocks.core.rankine_hugoniot
 
 .. rubric:: Classical Jump Condition Classes
 
@@ -696,7 +696,7 @@ API Reference
    WeakShockConditions
    WeakColdShockConditions
 
-.. currentmodule:: triceratops.dynamics.shocks.core.relativistic_jump_conditions
+.. currentmodule:: trilobite.dynamics.shocks.core.relativistic_jump_conditions
 
 .. rubric:: Relativistic Jump Condition Classes
 

@@ -4,7 +4,7 @@
 Developer Guide: Implementing Opacity Laws
 ==========================================
 
-This guide walks through adding a new opacity law to Triceratops.  It covers the
+This guide walks through adding a new opacity law to Trilobite.  It covers the
 full path from the abstract base class to a compiled Cython extension type, including
 registration in the string resolver and the test conventions you should follow.
 
@@ -25,7 +25,7 @@ Python class hierarchy:
 
 .. code-block:: none
 
-    triceratops.radiation.opacity/
+    trilobite.radiation.opacity/
     ├── base.py              OpacityLaw   (root ABC; mean_type = None by default)
     ├── grey_opacity/        frequency-averaged opacities
     │   ├── base.py          GreyOpacityLaw, ConstantGreyOpacity
@@ -36,19 +36,19 @@ Python class hierarchy:
     └── tables/              bundled opacity data (e.g. asplund_grevesse_05.h5)
 
 **mean_type convention:** Each concrete class sets
-:attr:`~triceratops.radiation.opacity.base.OpacityLaw.mean_type` to the string identifying
+:attr:`~trilobite.radiation.opacity.base.OpacityLaw.mean_type` to the string identifying
 its frequency-averaging convention.  All current Rosseland mean laws set
 ``mean_type = "rosseland"``.  New Planck mean implementations would set
-``mean_type = "planck"`` and live in :mod:`triceratops.radiation.opacity.grey_opacity.planck`.
+``mean_type = "planck"`` and live in :mod:`trilobite.radiation.opacity.grey_opacity.planck`.
 
 **Key design invariants:**
 
 1. All opacity state lives in the Python layer.  Cython objects are constructed once
    in ``__init__`` and are considered read-only after that.
-2. The **public** methods (:meth:`~triceratops.radiation.opacity.base.OpacityLaw.opacity`,
-   :meth:`~triceratops.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho`,
-   :meth:`~triceratops.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT`) are
-   implemented once in :class:`~triceratops.radiation.opacity.base.OpacityLaw` and must
+2. The **public** methods (:meth:`~trilobite.radiation.opacity.base.OpacityLaw.opacity`,
+   :meth:`~trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogrho`,
+   :meth:`~trilobite.radiation.opacity.base.OpacityLaw.dlogkappa_dlogT`) are
+   implemented once in :class:`~trilobite.radiation.opacity.base.OpacityLaw` and must
    **not** be overridden.
 3. Subclasses override only the **private** log-space methods (``_log_opacity``,
    ``_dlogkappa_dlogrho``, ``_dlogkappa_dlogT``) **or** set ``IS_C_BACKED = True``
@@ -75,7 +75,7 @@ Every opacity evaluation eventually calls one of three private methods:
 
 All three receive and return plain ``float`` or ``numpy.ndarray`` values in natural-log
 CGS units — **no** :class:`~astropy.units.Quantity` objects.  The public wrappers in
-:class:`~triceratops.radiation.opacity.base.OpacityLaw` handle unit conversion before
+:class:`~trilobite.radiation.opacity.base.OpacityLaw` handle unit conversion before
 calling these methods and re-attach units to the result.
 
 .. important::
@@ -101,10 +101,10 @@ user-specified exponents).
 
 .. code-block:: python
 
-    # triceratops/radiation/opacity/grey_opacity/rosseland/models.py  (append to file)
+    # trilobite/radiation/opacity/grey_opacity/rosseland/models.py  (append to file)
 
     import numpy as np
-    from triceratops.radiation.opacity.grey_opacity.base import GreyOpacityLaw
+    from trilobite.radiation.opacity.grey_opacity.base import GreyOpacityLaw
 
 
     class PowerLawOpacity(GreyOpacityLaw):
@@ -153,7 +153,7 @@ The base class ``__init__`` accepts ``**parameters`` and passes them to
 
 .. note::
 
-    :class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw` provides default
+    :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` provides default
     implementations of all three private methods that return ``self._LOG_KAPPA`` (for
     ``_log_opacity``) and ``0.0`` (for the derivatives).  For a density- or
     temperature-dependent law you **must** override all three.  Only subclasses where
@@ -175,14 +175,14 @@ Step 1 — Write the Cython Extension
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Create a new ``.pyx`` file in
-``triceratops/radiation/opacity/grey_opacity/rosseland/``.  The extension type must inherit from the base
+``trilobite/radiation/opacity/grey_opacity/rosseland/``.  The extension type must inherit from the base
 C class declared in ``opacity_base.pxd``:
 
 .. code-block:: cython
 
-    # triceratops/radiation/opacity/grey_opacity/rosseland/_my_opacity.pyx
+    # trilobite/radiation/opacity/grey_opacity/rosseland/_my_opacity.pyx
 
-    from triceratops.radiation.opacity.opacity_base cimport C_GreyOpacityBase
+    from trilobite.radiation.opacity.opacity_base cimport C_GreyOpacityBase
 
     cdef class C_MyOpacity(C_GreyOpacityBase):
         """Cython extension for a custom opacity law."""
@@ -224,14 +224,14 @@ C class declared in ``opacity_base.pxd``:
             return np.full(log_T.shape[0], self._b, dtype=np.float64)
 
 The six methods (scalar + array variants for each of the three quantities) are the
-full interface required by :class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw`.
+full interface required by :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw`.
 
 .. important::
 
     Array methods (``*_array``) receive **typed memoryviews** (``double[::1]``), not
     numpy arrays.  Use ``np.ascontiguousarray(arr, dtype=np.float64)`` before calling
     them if your arrays might not be C-contiguous.  The Python-layer
-    :class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw` does this automatically.
+    :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` does this automatically.
 
 Step 2 — Write the Python Class
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -262,7 +262,7 @@ Step 2 — Write the Python Class
             super().__init__(kappa0=kappa0, a=a, b=b)
 
         def _initialize_C_object(self, kappa0, a, b):
-            from triceratops.radiation.opacity.grey_opacity.rosseland._my_opacity import C_MyOpacity
+            from trilobite.radiation.opacity.grey_opacity.rosseland._my_opacity import C_MyOpacity
             return C_MyOpacity(kappa0=kappa0, a=a, b=b)
 
 The keyword arguments passed to ``super().__init__(**kwargs)`` are forwarded verbatim to
@@ -278,8 +278,8 @@ Add the new ``.pyx`` file to the list of Cython extension modules in
 
     # In setup.py or the equivalent build configuration
     Extension(
-        "triceratops.radiation.opacity.grey_opacity.rosseland._my_opacity",
-        sources=["triceratops/radiation/opacity/grey_opacity/rosseland/_my_opacity.pyx"],
+        "trilobite.radiation.opacity.grey_opacity.rosseland._my_opacity",
+        sources=["trilobite/radiation/opacity/grey_opacity/rosseland/_my_opacity.pyx"],
         include_dirs=[np.get_include()],
     ),
 
@@ -295,7 +295,7 @@ Step 4 — Register in ``get_opacity()``
 -----------------------------------------
 
 To expose your new law via the string resolver, add an entry to ``_OPACITY_REGISTRY``
-in ``triceratops/radiation/opacity/utils.py``:
+in ``trilobite/radiation/opacity/utils.py``:
 
 .. code-block:: python
 
@@ -306,7 +306,7 @@ in ``triceratops/radiation/opacity/utils.py``:
     }
 
 The value is the class name as it appears in the appropriate subpackage
-(e.g. ``triceratops.radiation.opacity.grey_opacity.rosseland``).  The resolver imports
+(e.g. ``trilobite.radiation.opacity.grey_opacity.rosseland``).  The resolver imports
 that class lazily (to avoid Cython import overhead at module load time) and calls it
 with no arguments,
 so the class **must** have sensible defaults for all constructor parameters if you want
@@ -316,7 +316,7 @@ After registering, verify that the resolver works:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity.utils import get_opacity
+    from trilobite.radiation.opacity.utils import get_opacity
     kap = get_opacity("my_opacity")
     print(type(kap))   # <class 'MyOpacity'>
 
@@ -329,13 +329,13 @@ Export the new class through the ``__init__.py`` chain:
 
 .. code-block:: python
 
-    # triceratops/radiation/opacity/grey_opacity/rosseland/__init__.py
+    # trilobite/radiation/opacity/grey_opacity/rosseland/__init__.py
     from .models import MyOpacity  # add to the existing import block
 
-    # triceratops/radiation/opacity/grey_opacity/__init__.py
+    # trilobite/radiation/opacity/grey_opacity/__init__.py
     from .rosseland import MyOpacity  # re-export upward
 
-    # triceratops/radiation/opacity/__init__.py
+    # trilobite/radiation/opacity/__init__.py
     from .grey_opacity import MyOpacity  # re-export at top level
     __all__ = [
         # ... existing ...
@@ -445,7 +445,7 @@ Use this checklist when adding a new opacity law:
       - ✓ Always
     * - 2
       - Set ``mean_type`` class attribute: ``"rosseland"``, ``"planck"``, or ``None``
-        (mean-type-agnostic).  See :attr:`~triceratops.radiation.opacity.base.OpacityLaw.mean_type`.
+        (mean-type-agnostic).  See :attr:`~trilobite.radiation.opacity.base.OpacityLaw.mean_type`.
       - ✓ Always
     * - 3
       - Set ``IS_C_BACKED`` correctly

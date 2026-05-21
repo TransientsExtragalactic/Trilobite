@@ -11,28 +11,28 @@ from setuptools import setup
 
 _PYX_SOURCES = [
     # architecture surface
-    "triceratops/dynamics/accretion/one_zone/closure.pyx",
-    "triceratops/dynamics/accretion/one_zone/integrator.pyx",
-    "triceratops/dynamics/accretion/one_zone/_writer.pyx",
-    "triceratops/dynamics/accretion/one_zone/_sources.pyx",
+    "trilobite/dynamics/accretion/one_zone/closure.pyx",
+    "trilobite/dynamics/accretion/one_zone/integrator.pyx",
+    "trilobite/dynamics/accretion/one_zone/_writer.pyx",
+    "trilobite/dynamics/accretion/one_zone/_sources.pyx",
     # physics implementations
-    "triceratops/dynamics/accretion/one_zone/physics/_eos.pyx",
-    "triceratops/dynamics/accretion/one_zone/physics/_viscous.pyx",
-    "triceratops/dynamics/accretion/one_zone/physics/_fallback.pyx",
-    "triceratops/dynamics/accretion/one_zone/physics/_param_wrappers.pyx",
+    "trilobite/dynamics/accretion/one_zone/physics/_eos.pyx",
+    "trilobite/dynamics/accretion/one_zone/physics/_viscous.pyx",
+    "trilobite/dynamics/accretion/one_zone/physics/_fallback.pyx",
+    "trilobite/dynamics/accretion/one_zone/physics/_param_wrappers.pyx",
     # assembled disk closures (generic opacity — new names)
-    "triceratops/dynamics/accretion/one_zone/models/_gP.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP.pyx",
-    "triceratops/dynamics/accretion/one_zone/models/_igP_adv.pyx",
+    "trilobite/dynamics/accretion/one_zone/models/_gP.pyx",
+    "trilobite/dynamics/accretion/one_zone/models/_igP.pyx",
+    "trilobite/dynamics/accretion/one_zone/models/_igP_adv.pyx",
     # math utilities
-    "triceratops/math_utils/_bracket_root_finder.pyx",
+    "trilobite/math_utils/_bracket_root_finder.pyx",
     # opacity infrastructure (radiation/opacity/)
-    "triceratops/radiation/opacity/opacity_base.pyx",
-    "triceratops/radiation/opacity/grey_opacity/rosseland/_electron_scattering.pyx",
-    "triceratops/radiation/opacity/grey_opacity/rosseland/_kramers.pyx",
-    "triceratops/radiation/opacity/grey_opacity/rosseland/_kramers_es.pyx",
-    "triceratops/radiation/opacity/grey_opacity/rosseland/_opal_table.pyx",
-    "triceratops/radiation/opacity/grey_opacity/_tops_table.pyx",
+    "trilobite/radiation/opacity/opacity_base.pyx",
+    "trilobite/radiation/opacity/grey_opacity/rosseland/_electron_scattering.pyx",
+    "trilobite/radiation/opacity/grey_opacity/rosseland/_kramers.pyx",
+    "trilobite/radiation/opacity/grey_opacity/rosseland/_kramers_es.pyx",
+    "trilobite/radiation/opacity/grey_opacity/rosseland/_opal_table.pyx",
+    "trilobite/radiation/opacity/grey_opacity/_tops_table.pyx",
 ]
 
 setup(

@@ -7,7 +7,7 @@ Inference Problem Developer Guide
 ========================================
 
 This document describes how to extend and customize the
-:class:`~triceratops.inference.problem.InferenceProblem` framework.
+:class:`~trilobite.inference.problem.InferenceProblem` framework.
 
 If you are writing new likelihoods, you should read
 :ref:`likelihood_dev` first. This guide focuses specifically on:
@@ -18,7 +18,7 @@ If you are writing new likelihoods, you should read
 - and how to safely subclass :class:`InferenceProblem`.
 
 The reference implementation lives in
-``triceratops/inference/problem.py``.
+``trilobite/inference/problem.py``.
 
 Design Goals
 ------------
@@ -26,8 +26,8 @@ Design Goals
 The :class:`InferenceProblem` class serves as the **statistical glue layer**
 between:
 
-- a physical :class:`~triceratops.models.core.base.Model`,
-- a :class:`~triceratops.inference.likelihood.base.Likelihood`,
+- a physical :class:`~trilobite.models.core.base.Model`,
+- a :class:`~trilobite.inference.likelihood.base.Likelihood`,
 - and external sampling backends.
 
 Its responsibilities are strictly limited to:
@@ -53,11 +53,11 @@ InferenceParameter
 ^^^^^^^^^^^^^^^^^^
 
 Each model parameter is wrapped in an
-:class:`~triceratops.inference.problem.InferenceParameter`.
+:class:`~trilobite.inference.problem.InferenceParameter`.
 
 This dataclass stores:
 
-- the underlying :class:`~triceratops.models.core.parameters.ModelParameter`,
+- the underlying :class:`~trilobite.models.core.parameters.ModelParameter`,
 - freeze status,
 - prior object,
 - optional transforms,
@@ -231,7 +231,7 @@ Inference Problem Developer Guide
 ========================================
 
 This guide describes the internal structure and intended extension points of
-:class:`~triceratops.inference.problem.InferenceProblem`. It is written for
+:class:`~trilobite.inference.problem.InferenceProblem`. It is written for
 developers who wish to customize parameter handling, introduce new inference
 workflows, or build higher-level abstractions on top of the core inference layer.
 
@@ -240,7 +240,7 @@ The likelihood defines *how* data and models are compared. The inference problem
 defines *how parameters are managed and how probabilities are evaluated*.
 
 The reference implementation can be found in
-``triceratops/inference/problem.py`` :contentReference[oaicite:0]{index=0}.
+``trilobite/inference/problem.py`` :contentReference[oaicite:0]{index=0}.
 
 Overview and Philosophy
 -----------------------
@@ -263,12 +263,12 @@ Parameter Wrapping and Internal Representation
 ----------------------------------------------
 
 When an :class:`InferenceProblem` is initialized, it receives a fully
-constructed :class:`~triceratops.inference.likelihood.base.Likelihood`
+constructed :class:`~trilobite.inference.likelihood.base.Likelihood`
 instance. From this likelihood, it extracts the underlying model and reads
 the model's declared parameter definitions.
 
 Each model parameter is wrapped in an
-:class:`~triceratops.inference.problem.InferenceParameter` object. This wrapper
+:class:`~trilobite.inference.problem.InferenceParameter` object. This wrapper
 stores:
 
 - whether the parameter is frozen,

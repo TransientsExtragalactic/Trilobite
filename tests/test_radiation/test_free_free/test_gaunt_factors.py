@@ -8,7 +8,7 @@ and the public __init__.py exports.
 import numpy as np
 import pytest
 
-from triceratops.radiation.free_free.gaunt_factor import (
+from trilobite.radiation.free_free.gaunt_factor import (
     _VAN_HOOF_NON_REL_PATH,
     _VAN_HOOF_REL_PATH,
     GauntFactorInterpolatorBase,
@@ -366,31 +366,31 @@ class TestLuApproximation:
 # ================================================================== #
 class TestPublicExports:
     def test_init_exports_nr_interpolator(self):
-        from triceratops.radiation.free_free import NonRelativisticGauntFactorInterpolator as C
+        from trilobite.radiation.free_free import NonRelativisticGauntFactorInterpolator as C
 
         assert C is NonRelativisticGauntFactorInterpolator
 
     def test_init_exports_rel_interpolator(self):
-        from triceratops.radiation.free_free import RelativisticGauntFactorInterpolator as C
+        from trilobite.radiation.free_free import RelativisticGauntFactorInterpolator as C
 
         assert C is RelativisticGauntFactorInterpolator
 
     def test_init_exports_base(self):
-        from triceratops.radiation.free_free import GauntFactorInterpolatorBase as C
+        from trilobite.radiation.free_free import GauntFactorInterpolatorBase as C
 
         assert C is GauntFactorInterpolatorBase
 
     def test_init_exports_nr_factory(self):
-        from triceratops.radiation.free_free import get_default_gaunt_interpolator as f
+        from trilobite.radiation.free_free import get_default_gaunt_interpolator as f
 
         assert f is get_default_gaunt_interpolator
 
     def test_init_exports_rel_factory(self):
-        from triceratops.radiation.free_free import get_default_relativistic_gaunt_interpolator as f
+        from trilobite.radiation.free_free import get_default_relativistic_gaunt_interpolator as f
 
         assert f is get_default_relativistic_gaunt_interpolator
 
     def test_init_exports_compute_ff_gaunt_factor(self):
-        from triceratops.radiation.free_free import compute_ff_gaunt_factor as f
+        from trilobite.radiation.free_free import compute_ff_gaunt_factor as f
 
         assert f is compute_ff_gaunt_factor

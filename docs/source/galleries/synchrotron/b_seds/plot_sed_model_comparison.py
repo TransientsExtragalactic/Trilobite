@@ -2,20 +2,20 @@ r"""
 Comparing Synchrotron SED Models
 ==================================
 
-Triceratops provides four one-zone phenomenological synchrotron SED classes
+Trilobite provides four one-zone phenomenological synchrotron SED classes
 that cover progressively more complex physical regimes:
 
-1. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+1. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
    — optically thin, uncooled (:math:`\nu_m` break only)
-2. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+2. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
    — optically thin with radiative cooling (:math:`\nu_m`, :math:`\nu_c`)
-3. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+3. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
    — with synchrotron self-absorption, no cooling (:math:`\nu_a`, :math:`\nu_m`)
-4. :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+4. :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
    — full model: cooling + SSA (:math:`\nu_a`, :math:`\nu_m`, :math:`\nu_c`)
 
 All four are evaluated with the same underlying physical parameters using
-:meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params`
 to derive consistent break frequencies and normalizations from :math:`B`, :math:`R`,
 and microphysical fractions.  This makes it easy to see what each successive
 physical ingredient adds to the spectral shape.
@@ -28,23 +28,23 @@ physical ingredient adds to the spectral shape.
 
 Relevant API References
 -----------------------
-- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
-- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
-- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
-- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
 """
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs import (
+from trilobite.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SSA_SynchrotronSED,
     PowerLaw_Cooling_SynchrotronSED,
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Physical Parameters
@@ -77,8 +77,8 @@ nu = np.geomspace(1e7, 1e18, 1000) * u.Hz
 #
 # .. note::
 #
-#     :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED` and
-#     :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED` do not
+#     :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED` and
+#     :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED` do not
 #     include radiative cooling and therefore do not require :math:`\gamma_c`.
 #     The other two classes do require it.
 

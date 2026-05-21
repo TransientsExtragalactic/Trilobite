@@ -20,7 +20,7 @@ import pytest
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import (
+from trilobite.dynamics.accretion.one_zone import (
     igP_esDisk,
     gP_esDisk,
 )
@@ -65,7 +65,7 @@ class TestigP_esDisk(BaseTestOneZoneDisk):
 
     def test_closure_is_full_pressure_type(self):
         """_build_cython_closure() returns a igPClosure."""
-        from triceratops.dynamics.accretion.one_zone.models._igP import (
+        from trilobite.dynamics.accretion.one_zone.models._igP import (
             igPClosure,
         )
 

@@ -1,5 +1,5 @@
 """
-Base tests for the Triceratops Model abstraction.
+Base tests for the Trilobite Model abstraction.
 
 This module verifies:
 
@@ -16,7 +16,7 @@ from typing import NamedTuple
 import pytest
 from astropy import units as u
 
-from triceratops.models.core import Model, ModelParameter, ModelVariable
+from trilobite.models.core import Model, ModelParameter, ModelVariable
 
 
 # ============================================================

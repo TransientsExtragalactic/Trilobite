@@ -10,12 +10,12 @@ captured.  It is one of the most ubiquitous thermal radiation mechanisms in astr
 particularly important for modeling the radio and centimeter-wave emission from ionized circumstellar
 media (CSM) around supernovae, HII regions, stellar coronae, and the hot intra-cluster medium.
 
-In the context of Triceratops, free-free emission is primarily relevant as a **foreground opacity**
+In the context of Trilobite, free-free emission is primarily relevant as a **foreground opacity**
 source in front of synchrotron-emitting shock regions and as a direct contributor to the total
 radio flux at early times when the CSM is dense and ionized. It is also relevant to shock-driven
 X-ray emission in many transients.
 
-In this documentation we summarize the key formulae and conventions used throughout the Triceratops
+In this documentation we summarize the key formulae and conventions used throughout the Trilobite
 free-free module.
 
 .. hint::
@@ -120,7 +120,7 @@ In the Rayleigh–Jeans limit (where :math:`h\nu \ll k_B T_e`), the absorption c
 .. hint::
 
     These are the two core equations that govern free-free emission and absorption in a thermal plasma.
-    Triceratops implements these formulae in :mod:`~triceratops.radiation.free_free.core`.
+    Trilobite implements these formulae in :mod:`~trilobite.radiation.free_free.core`.
 
 Composition
 ^^^^^^^^^^^
@@ -260,14 +260,14 @@ context of thermal bremsstrahlung. In the low frequency limit, the Gaunt factor 
     g_{\rm ff}(\nu, T_e) \simeq \frac{\sqrt{3}}{\pi} \log \left[\frac{1}{Z}
     \frac{(k_B T_e)^{3/2}}{h\nu \sqrt{\rm Ry}}\min\left(1,Z\sqrt{\frac{\rm Ry}{k_B T}}\right)\right].
 
-In Triceratops, we provide a number of options for actually performing the Gaunt factor calculations,
+In Trilobite, we provide a number of options for actually performing the Gaunt factor calculations,
 
 The Gaunt Factor in Practice
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In practice, the Gaunt factor is **not evaluated directly from the Coulomb logarithm**, but instead
 computed using a combination of **analytic approximations** and **tabulated data** that incorporate
-the full quantum-mechanical treatment of electron–ion scattering. In Triceratops, we provide a unified
+the full quantum-mechanical treatment of electron–ion scattering. In Trilobite, we provide a unified
 interface for evaluating :math:`g_{\rm ff}(Z, T, \nu)` across a wide range of physical regimes.
 
 Analytic Approximations
@@ -323,7 +323,7 @@ particularly outside the classical regime.
 Tabulated Gaunt Factors
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-For higher-precision work, Triceratops includes interpolators based on the
+For higher-precision work, Trilobite includes interpolators based on the
 tabulations of :footcite:t:`2014MNRAS.444..420V`.
 
 These are implemented as multidimensional interpolators over the variables
@@ -382,7 +382,7 @@ CSM Density Profiles
 ^^^^^^^^^^^^^^^^^^^^
 
 For a stellar wind or ejecta-interaction scenario, the absorbing material is not uniform.
-Triceratops supports free-free optical depth calculations for several idealized
+Trilobite supports free-free optical depth calculations for several idealized
 circumstellar medium (CSM) density profiles, described fully in the
 :ref:`free_free_emission` documentation:
 

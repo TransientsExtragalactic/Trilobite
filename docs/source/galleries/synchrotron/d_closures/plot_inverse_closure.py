@@ -42,11 +42,11 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs import (
+from trilobite.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

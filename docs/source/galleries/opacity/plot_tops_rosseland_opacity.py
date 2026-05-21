@@ -4,7 +4,7 @@ TOPS Rosseland Mean Opacity: :math:`\kappa(T,\rho)` for Solar Composition
 
 The TOPS opacity code (Los Alamos National Laboratory) provides tables of the
 Rosseland mean opacity :math:`\kappa_R(T,\rho)` for arbitrary mixtures of
-elements.  Triceratops ships a bundled table for solar composition
+elements.  Trilobite ships a bundled table for solar composition
 (:math:`X \approx 0.70,\;Z \approx 0.02`) from which opacity and its
 log-space derivatives are evaluated via bilinear interpolation.
 
@@ -35,8 +35,8 @@ reproducing the characteristic features of stellar-interior opacity:
 
 Relevant API references
 -----------------------
-- :func:`~triceratops.radiation.opacity.utils.load_tops_opacity`
-- :class:`~triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity`
+- :func:`~trilobite.radiation.opacity.utils.load_tops_opacity`
+- :class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity`
 """
 
 import matplotlib.pyplot as plt
@@ -45,14 +45,14 @@ from astropy import units as u
 from matplotlib.cm import ScalarMappable
 from matplotlib.colors import Normalize
 
-from triceratops.radiation.opacity import load_tops_opacity
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.opacity import load_tops_opacity
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Load the Default Solar Opacity
 # ------------------------------
 #
-# :func:`~triceratops.radiation.opacity.utils.load_tops_opacity` loads the
+# :func:`~trilobite.radiation.opacity.utils.load_tops_opacity` loads the
 # bundled ``tops_solar.dat`` file (9-element solar mixture, X = 0.70, Z = 0.02).
 # We use ``out_of_bounds='nan'`` so that points outside the tabulated domain
 # are silently returned as ``NaN`` and appear as gaps in the plot.

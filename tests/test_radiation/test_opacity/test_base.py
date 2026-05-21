@@ -1,4 +1,4 @@
-"""Tests for :mod:`triceratops.radiation.opacity.base`.
+"""Tests for :mod:`trilobite.radiation.opacity.base`.
 
 Organisation
 ------------
@@ -10,8 +10,8 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.radiation.opacity.base import OpacityLaw
-from triceratops.radiation.opacity.grey_opacity.base import GreyOpacityLaw
+from trilobite.radiation.opacity.base import OpacityLaw
+from trilobite.radiation.opacity.grey_opacity.base import GreyOpacityLaw
 
 # ------------------------------------------------------------------ #
 # Shared reference conditions                                         #
@@ -48,7 +48,7 @@ class _UnimplementedLaw(OpacityLaw):
 
 
 class TestOpacityLawInterface:
-    """Contract tests for the :class:`~triceratops.radiation.opacity.base.OpacityLaw` ABC.
+    """Contract tests for the :class:`~trilobite.radiation.opacity.base.OpacityLaw` ABC.
 
     These tests verify that the abstract interface raises
     :exc:`NotImplementedError` when the private log-space methods are not
@@ -93,7 +93,7 @@ class TestOpacityLawInterface:
 
 
 class TestGreyOpacityLawInterface:
-    """Tests for the pure-Python :class:`~triceratops.radiation.opacity.base.GreyOpacityLaw` defaults.
+    """Tests for the pure-Python :class:`~trilobite.radiation.opacity.base.GreyOpacityLaw` defaults.
 
     Uses :class:`_PureGreyLaw` (κ = 0.5 cm² g⁻¹) as a concrete stand-in.
     """

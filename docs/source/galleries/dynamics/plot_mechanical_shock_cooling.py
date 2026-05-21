@@ -6,7 +6,7 @@ Radiative Cooling in the Mechanical Shock Engine
 
    This example adds a :math:`\rho^2`-type radiative cooling term to Region 3
    (the shocked CSM) of the
-   :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine` and
+   :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` and
    shows how varying the cooling coefficient from sub-dominant to strongly
    radiative changes the thermal energy budget, forward-shock speed, and shell
    width of the shocked CSM layer.
@@ -29,7 +29,7 @@ geometrically thin, and the forward shock decelerates.  This transition from
 *adiabatic* to *radiative* shock is critical in dense CSM environments such as
 Type IIn supernovae and luminous radio transients.
 
-The :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+The :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
 exposes this through the ``cooling_3`` keyword argument, which accepts a
 callable with signature
 
@@ -67,12 +67,12 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.shocks import (
+from trilobite.dynamics.shocks import (
     MechanicalShockEngine,
     get_bpl_ejecta_kernel,
     make_homologous_stationary_sources,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 E_ej = 1e51 * u.erg
 M_ej = 5.0 * u.M_sun

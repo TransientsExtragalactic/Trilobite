@@ -5,9 +5,9 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data.light_curve import RadioLightCurveContainer
-from triceratops.data.light_curve import OpticalLightCurveContainer
-from triceratops.data.photometry import RadioPhotometryContainer, RadioPhotometryEpoch, RadioPhotometryEpochContainer
+from trilobite.data.light_curve import RadioLightCurveContainer
+from trilobite.data.light_curve import OpticalLightCurveContainer
+from trilobite.data.photometry import RadioPhotometryContainer, RadioPhotometryEpoch, RadioPhotometryEpochContainer
 
 
 # ======================================================================

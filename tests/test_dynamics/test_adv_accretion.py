@@ -21,7 +21,7 @@ import pytest
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.accretion.one_zone import igP_es_advDisk, igP_es_adv_fbDisk
+from trilobite.dynamics.accretion.one_zone import igP_es_advDisk, igP_es_adv_fbDisk
 
 from test_one_zone_disk_base import BaseTestOneZoneDisk
 
@@ -69,7 +69,7 @@ class TestigP_es_advDisk(BaseTestOneZoneDisk):
 
     def test_closure_is_adv_type(self):
         """_build_cython_closure() returns an igPAdvClosure."""
-        from triceratops.dynamics.accretion.one_zone.models._igP_adv import (
+        from trilobite.dynamics.accretion.one_zone.models._igP_adv import (
             igPAdvClosure,
         )
 
@@ -233,7 +233,7 @@ class TestigP_es_adv_fbDisk:
 
     def test_closure_is_adv_fb_type(self):
         """_build_cython_closure() returns an igPAdvClosure (with fallback)."""
-        from triceratops.dynamics.accretion.one_zone.models._igP_adv import (
+        from trilobite.dynamics.accretion.one_zone.models._igP_adv import (
             igPAdvClosure,
         )
 

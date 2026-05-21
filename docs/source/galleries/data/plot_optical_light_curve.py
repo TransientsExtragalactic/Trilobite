@@ -3,7 +3,7 @@ Optical Light Curve Container
 ==============================
 
 This example demonstrates how to construct an
-:class:`~triceratops.data.light_curve.OpticalLightCurveContainer` from
+:class:`~trilobite.data.light_curve.OpticalLightCurveContainer` from
 tabular data, access its dual flux/magnitude representations, separate
 detections from upper limits, and plot the resulting light curve.
 """
@@ -20,7 +20,7 @@ import numpy as np
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data import OpticalLightCurveContainer
+from trilobite.data import OpticalLightCurveContainer
 
 rng = np.random.default_rng(42)
 n = 20

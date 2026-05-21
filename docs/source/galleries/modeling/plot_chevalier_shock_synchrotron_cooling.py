@@ -21,13 +21,13 @@ processes** into a single, self-consistent workflow.
 .. hint::
 
     For a detailed discussion of the theoretical background and its numerical
-    implementation in Triceratops, see :ref:`synchrotron_theory` and
+    implementation in Trilobite, see :ref:`synchrotron_theory` and
     :ref:`synch_sed_theory`.
 
 Overview
 --------
 
-In this example, we're going to showcase the forward modeling power of the TRICERATOPS
+In this example, we're going to showcase the forward modeling power of the TRILOBITE
 physics backend by combining shock physics with synchrotron emission processes
 to produce a family of evolving SEDs for a supernova shock interacting with a wind-like CSM.
 
@@ -59,7 +59,7 @@ The Model
 
 The modeling pipeline implemented in this example follows a clear separation of
 responsibilities: **dynamics**, **microphysics**, and **radiative processes**.
-Each component is implemented as a modular engine within Triceratops, allowing
+Each component is implemented as a modular engine within Trilobite, allowing
 the full synchrotron SED to be constructed in a transparent and physically
 interpretable way.
 
@@ -74,7 +74,7 @@ This framework assumes:
 - A steady wind CSM with :math:`\rho_{\rm w} \propto r^{-2}`,
 - A strong, non-relativistic forward shock.
 
-In Triceratops, this evolution is handled by
+In Trilobite, this evolution is handled by
 :class:`~dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine`,
 which provides the forward-shock radius and velocity as functions of time. These
 quantities set the geometric scale of the emitting region and determine the
@@ -141,7 +141,7 @@ self-consistently in this pipeline:
 **Synchrotron self-absorption (SSA)**
     At low frequencies, the emitting region becomes optically thick and the
     spectrum turns over near :math:`\nu_a`, defined implicitly by
-    :math:`\tau_\nu \sim 1`. In Triceratops, :math:`\nu_a` is computed inside the
+    :math:`\tau_\nu \sim 1`. In Trilobite, :math:`\nu_a` is computed inside the
     SED implementation by enforcing consistency between the optically thick
     (Rayleigh--Jeans) limit and the optically thin synchrotron spectrum, given
     the emitting geometry (solid angle) and normalization.
@@ -153,7 +153,7 @@ are computed and passed to
 to generate a time series of evolving spectra.
 
 For this example, we neglect free-free absorption, which can be important in very dense CSM environments at low
-frequencies. Triceratops does include a free-free absorption engine that can be easily integrated into this pipeline if
+frequencies. Trilobite does include a free-free absorption engine that can be easily integrated into this pipeline if
 desired. See :mod:`~radiation.free_free`.
 
 Goals of This Example
@@ -181,11 +181,11 @@ import numpy as np
 from astropy import units as u
 from astropy.constants import c, k_B, m_p
 
-from triceratops.dynamics.shocks.chevalier import ChevalierSelfSimilarWindShockEngine
-from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.shocks.chevalier import ChevalierSelfSimilarWindShockEngine
+from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+from trilobite.utils.plot_utils import set_plot_style
 
-# Set the plot style to the standard for TRICERATOPS.
+# Set the plot style to the standard for TRILOBITE.
 set_plot_style()
 
 # Generate the shock engine and the SED engine.
@@ -353,7 +353,7 @@ smoothing = 1
 # - Forward-shock velocity,
 # - Post-shock temperature,
 # - Downstream magnetic field strength.
-from triceratops.dynamics.shocks.core import StrongColdShockConditions
+from trilobite.dynamics.shocks.core import StrongColdShockConditions
 
 # --- Compute the shock evolution ---
 shock_outputs = shock_engine.compute_shock_properties(
@@ -439,13 +439,13 @@ plt.show()
 # power-law distribution. This transition steepens the synchrotron spectrum above
 # the corresponding **cooling break frequency** :math:`\nu_c`.
 #
-# In Triceratops, synchrotron cooling is handled by a dedicated cooling engine that
+# In Trilobite, synchrotron cooling is handled by a dedicated cooling engine that
 # integrates the synchrotron loss rate using the time-dependent magnetic field.
 # Given the downstream magnetic field :math:`B(t)` and the system age, the engine
 # computes :math:`\gamma_c(t)` self-consistently.
 #
 # For this example, we compute the cooling Lorentz factor using
-# :class:`~triceratops.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
+# :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`
 # and visualize its temporal evolution below.
 #
 # The behavior of :math:`\gamma_c(t)` provides immediate physical insight:
@@ -460,7 +460,7 @@ plt.show()
 # This distinction directly controls the ordering of synchrotron break
 # frequencies and determines which spectral branches are active in the final SED.
 
-from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
 
 # Instantiate the cooling engine and compute the cooling Lorentz factor.
 cooling_engine = SynchrotronRadiativeCoolingEngine()

@@ -1,4 +1,4 @@
-"""Tests for :mod:`triceratops.radiation.opacity.utils`.
+"""Tests for :mod:`trilobite.radiation.opacity.utils`.
 
 Organisation
 ------------
@@ -10,8 +10,8 @@ TestGetOpacityErrorCases    — unknown string → ValueError, wrong type → Ty
 
 import pytest
 
-from triceratops.radiation.opacity.grey_opacity.base import ConstantGreyOpacity, GreyOpacityLaw
-from triceratops.radiation.opacity.grey_opacity.rosseland.models import (
+from trilobite.radiation.opacity.grey_opacity.base import ConstantGreyOpacity, GreyOpacityLaw
+from trilobite.radiation.opacity.grey_opacity.rosseland.models import (
     ElectronScatteringOpacity,
     KramersBFESOpacity,
     KramersBFOpacity,
@@ -20,7 +20,7 @@ from triceratops.radiation.opacity.grey_opacity.rosseland.models import (
     KramersFFOpacity,
     KramersOpacity,
 )
-from triceratops.radiation.opacity.utils import _OPACITY_REGISTRY, get_opacity
+from trilobite.radiation.opacity.utils import _OPACITY_REGISTRY, get_opacity
 
 
 # ================================================================== #
@@ -93,7 +93,7 @@ class TestGetOpacityStringInput:
     @pytest.mark.parametrize("name", list(_OPACITY_REGISTRY.keys()))
     def test_all_registered_names_return_opacity_law(self, name):
         """Every string in the registry returns an OpacityLaw instance."""
-        from triceratops.radiation.opacity.base import OpacityLaw
+        from trilobite.radiation.opacity.base import OpacityLaw
 
         result = get_opacity(name)
         assert isinstance(result, OpacityLaw)
@@ -216,14 +216,14 @@ class TestGetOpacityKwargsPassthrough:
 
     def test_opal_out_of_bounds_nan(self):
         """get_opacity passes out_of_bounds='nan' through to OPALOpacity."""
-        from triceratops.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
+        from trilobite.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
 
         result = get_opacity("opal", out_of_bounds="nan")
         assert isinstance(result, OPALOpacity)
 
     def test_opal_composition_kwargs(self):
         """get_opacity passes X/Z composition kwargs through to OPALOpacity.load_default."""
-        from triceratops.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
+        from trilobite.radiation.opacity.grey_opacity.rosseland.models import OPALOpacity
 
         result = get_opacity("opal", X=0.70, Z=0.02)
         assert isinstance(result, OPALOpacity)

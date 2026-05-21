@@ -18,7 +18,7 @@ follows from the kinetic energy and launch velocity:
     M_{\rm ej} = \frac{2 E_{\rm ej}}{v_{\rm init}^2} \approx 1.2 \times 10^{-3}\,M_\odot.
 
 The shock dynamics are computed using
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
 with a uniform-density ISM of :math:`n_{\rm ISM} = 10\,\text{cm}^{-3}`, placing the
 Sedov-Taylor transition at roughly 500 days. The synchrotron emission is then
 computed using the standard forward-closure machinery.
@@ -40,15 +40,15 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
-from triceratops.dynamics.shocks.utils import (
+from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+from trilobite.dynamics.shocks.utils import (
     get_bpl_ejecta_kernel,
     get_uniform_csm_density_func,
     make_homologous_stationary_sources,
 )
-from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
-from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -99,10 +99,10 @@ print(f"Distance        : {D_L}")
 # (:math:`R \propto t^{2/5}`) once the swept-up mass equals the ejecta mass.
 # With these parameters the transition occurs at roughly 500 days.
 #
-# We use :func:`~triceratops.dynamics.shocks.utils.get_uniform_csm_density_func`
-# and :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel` to build
+# We use :func:`~trilobite.dynamics.shocks.utils.get_uniform_csm_density_func`
+# and :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` to build
 # the upstream source callables, then combine them with
-# :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`.
+# :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`.
 
 rho_csm = get_uniform_csm_density_func(rho_ISM)
 G_ej = get_bpl_ejecta_kernel(E_ej, M_ej, n=10, delta=0)
@@ -179,7 +179,7 @@ plt.show()
 #
 # The magnetic field is estimated from equipartition with the post-shock thermal
 # energy density. The
-# :class:`~triceratops.dynamics.shocks.numerical.ThinShellShockState` carries
+# :class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` carries
 # the immediate post-shock pressure at the forward shock from the
 # Rankine--Hugoniot jump conditions, so the thermal energy density is
 #
@@ -208,7 +208,7 @@ print(f"gamma_c range : {gamma_c.min():.1e} - {gamma_c.max():.1e}")
 # --------------------------------
 #
 # We compute the synchrotron SED at each epoch using the
-# :class:`~triceratops.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
+# :class:`~trilobite.radiation.synchrotron.SEDs.PowerLaw_Cooling_SSA_SynchrotronSED`
 # forward closure and evaluate the predicted flux at 1.4, 5, and 15 GHz.
 
 sed = PowerLaw_Cooling_SSA_SynchrotronSED()

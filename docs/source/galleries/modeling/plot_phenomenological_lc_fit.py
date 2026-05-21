@@ -17,8 +17,8 @@ This approach is valuable because:
 - It reveals whether the transient has multiple components, re-brightenings, or
   other complex behavior that would complicate physical modeling.
 
-Triceratops provides several phenomenological light curve models in
-:mod:`~triceratops.models.generic.light_curve`:
+Trilobite provides several phenomenological light curve models in
+:mod:`~trilobite.models.generic.light_curve`:
 
 - :class:`~models.generic.light_curve.FRED`: Fast Rise, Exponential Decay —
   the workhorse model for smooth, single-peaked transients.
@@ -56,14 +56,14 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.models.generic.light_curve import (
+from trilobite.models.generic.light_curve import (
     FRED,
     BrokenPowerLawTime,
     GaussianPulse,
     NorrisPulse,
     SmoothedBrokenPowerLawTime,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -204,11 +204,11 @@ plt.show()
 
 from astropy.table import Table
 
-from triceratops.data import InferenceData
-from triceratops.inference import GaussianCensoredLikelihood
-from triceratops.inference.likelihood.base import GaussianLikelihood
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.data import InferenceData
+from trilobite.inference import GaussianCensoredLikelihood
+from trilobite.inference.likelihood.base import GaussianLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 fit_results = {}
 

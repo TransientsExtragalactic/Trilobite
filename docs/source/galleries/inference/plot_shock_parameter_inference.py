@@ -65,8 +65,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.models.supernovae.chevalier_shock import ChevalierShockModel
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.models.supernovae.chevalier_shock import ChevalierShockModel
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -185,12 +185,12 @@ plt.show()
 
 from astropy.table import Table, vstack
 
-from triceratops.data import InferenceData
-from triceratops.data.photometry import RadioPhotometryEpochContainer
-from triceratops.inference import GaussianCensoredLikelihood
-from triceratops.inference.likelihood.base import GaussianLikelihood
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.data import InferenceData
+from trilobite.data.photometry import RadioPhotometryEpochContainer
+from trilobite.inference import GaussianCensoredLikelihood
+from trilobite.inference.likelihood.base import GaussianLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 # Build a stacked multi-frequency, multi-epoch data table
 tables = []

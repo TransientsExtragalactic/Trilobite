@@ -5,7 +5,7 @@ Theory: Sedov-Taylor Self-Similar Solution
 ===========================================
 
 The Sedov-Taylor blast-wave solution
-(:class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`)
+(:class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`)
 describes the adiabatic expansion of a strong spherical shock driven by a
 point explosion into a uniform ambient medium. Originally derived independently
 by :footcite:t:`sedov1946propagation` and :footcite:t:`taylor1950formation` in
@@ -16,7 +16,7 @@ losses remain unimportant.
 
 This page derives the Sedov-Taylor scalings from first principles and documents
 in full the normalization procedure implemented in
-:func:`~triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta`, including
+:func:`~trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta`, including
 the explicit parametric similarity profiles and the energy integral that fixes
 the normalization coefficient :math:`\beta(\gamma)`.
 
@@ -600,7 +600,7 @@ hence
 
     Some references write :math:`R(t) = (E_0 t^2 / \alpha_{\rm ST} \rho_0)^{1/5}`,
     in which case :math:`\alpha_{\rm ST} = \beta^{-5} = C_E`. Both conventions
-    are in common use; Triceratops uses the :math:`\beta` form.
+    are in common use; Trilobite uses the :math:`\beta` form.
 
 Explicit Parametric Profiles
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -652,7 +652,7 @@ and the five exponents
 .. important::
 
     The formulae above are singular at :math:`\gamma = 2`, where several
-    exponents diverge. Triceratops explicitly rejects this value.
+    exponents diverge. Trilobite explicitly rejects this value.
 
 The explicit parametric profiles are then
 
@@ -757,22 +757,22 @@ and for :math:`\gamma = 7/5 = 1.4` (diatomic ideal gas),
 
 .. note::
 
-    :func:`~triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta` computes
+    :func:`~trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta` computes
     :math:`\beta(\gamma)` once at class instantiation and caches it on the
-    :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`.
+    :class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`.
     The quadrature tolerances and the singularity offset :math:`\varepsilon` are
     all user-controllable via keyword arguments.
 
 Implementation Notes
 --------------------
 
-The derivations above are directly reflected in the Triceratops implementation:
+The derivations above are directly reflected in the Trilobite implementation:
 
-- :func:`~triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta` evaluates
+- :func:`~trilobite.dynamics.shocks.sedov_taylor.sedov_taylor_beta` evaluates
   :math:`C_E(\gamma)` via :func:`scipy.integrate.quad` over the parametric
   :math:`V`-interval and returns :math:`\beta = C_E^{-1/5}`.
 
-- :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
+- :class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
   stores :math:`\beta` and evaluates the shock kinematics
 
   .. math::
@@ -798,7 +798,7 @@ The derivations above are directly reflected in the Triceratops implementation:
 
     - :ref:`jump_conditions_theory` for the Rankine--Hugoniot conditions used
       to set the post-shock boundary values.
-    - :class:`~triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
+    - :class:`~trilobite.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine`
       for the full API reference.
 
 References

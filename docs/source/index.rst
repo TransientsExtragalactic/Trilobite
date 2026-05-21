@@ -3,7 +3,7 @@
    <div class="hero">
        <img src="_images/logo.png" class="hero-logo">
        <div class="hero-text">
-           <h1>TRICERATOPS</h1>
+           <h1>TRILOBITE</h1>
            <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
            <div class="badges">
 
@@ -19,7 +19,7 @@ Overview
 =========
 
 The **TR**\ ansient **I**\ nteraction **C**\ ode for **E**\ jecta, **R**\ emnants, **A**\ and
-**T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRICERATOPS**) is a powerful, modular computational
+**T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRILOBITE**) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
 .. grid:: 2
@@ -52,9 +52,9 @@ library for modeling the interaction of transient astrophysical outflows with th
    .. grid-item-card::
       :class-card: sd-shadow-sm sd-border-1
 
-      **Why use Triceratops?**
+      **Why use Trilobite?**
 
-      TRICERATOPS bridges the gap between theory and observation by combining shock dynamics,
+      TRILOBITE bridges the gap between theory and observation by combining shock dynamics,
       microphysical prescriptions, and radiative transfer into a unified framework.
 
    .. grid-item-card::
@@ -75,7 +75,7 @@ library for modeling the interaction of transient astrophysical outflows with th
 
        .. code-block:: bash
 
-          >>> pip install triceratops-lib
+          >>> pip install trilobite-lib
 
 .. raw:: html
 
@@ -96,7 +96,7 @@ Resources
 
         Quickstart Guide
         ^^^^^^^^^^^^^^^^
-        New to ``Triceratops``? The quickstart guide is the best place to start learning to use all of the
+        New to ``Trilobite``? The quickstart guide is the best place to start learning to use all of the
         tools that we have to offer!
 
         +++
@@ -114,9 +114,9 @@ Resources
 
         Examples
         ^^^^^^^^
-        Have some basic experience with ``Triceratops`` but want to see a guide on how to execute a particular task? Need
+        Have some basic experience with ``Trilobite`` but want to see a guide on how to execute a particular task? Need
         to find some code to copy and paste? The examples page contains a wide variety of use case examples and explanations
-        for all of the various parts of the ``Triceratops`` library.
+        for all of the various parts of the ``Trilobite`` library.
 
         +++
 
@@ -132,7 +132,7 @@ Resources
 
         User References
         ^^^^^^^^^^^^^^^^
-        The user guide contains comprehensive, text-based explanations of the backbone components of the ``Triceratops`` library.
+        The user guide contains comprehensive, text-based explanations of the backbone components of the ``Trilobite`` library.
         If you're looking for information on the underlying code or for more details on particular aspects of the API, this is your best resource.
 
         +++
@@ -204,7 +204,7 @@ Indices and tables
             class="affiliation-logo affiliation-logo-trex">
      </div>
      <p class="affiliation-text">
-       TRICERATOPS is developed and maintained by Eliza Diggins and the
+       TRILOBITE is developed and maintained by Eliza Diggins and the
        <strong>Extragalactic Transients Group (TREX)</strong> in the Department
        of Astronomy at the <strong>University of California, Berkeley</strong>.
        Available under the GNU AGPLv3 license.

@@ -12,7 +12,7 @@ spherical plasma of radius :math:`R` at distance :math:`d` is
 
 where :math:`j_\nu` [erg s\ :sup:`-1` cm\ :sup:`-3` Hz\ :sup:`-1` sr\ :sup:`-1`]
 is the monochromatic bremsstrahlung emissivity returned by
-:func:`~triceratops.radiation.free_free.core.compute_ff_emissivity`.  The factor of
+:func:`~trilobite.radiation.free_free.core.compute_ff_emissivity`.  The factor of
 :math:`4\pi` sr from integrating over the full sphere cancels the :math:`4\pi d^2`
 in the denominator, leaving exactly one steradian to multiply against
 :math:`j_\nu` (which carries sr\ :sup:`-1`).
@@ -24,7 +24,7 @@ the spectrum.
 
 Relevant API
 ------------
-- :func:`~triceratops.radiation.free_free.core.compute_ff_emissivity`
+- :func:`~trilobite.radiation.free_free.core.compute_ff_emissivity`
 """
 
 import matplotlib.pyplot as plt
@@ -32,8 +32,8 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.radiation.free_free import compute_ff_emissivity
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.free_free import compute_ff_emissivity
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

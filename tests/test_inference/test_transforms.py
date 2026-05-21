@@ -3,7 +3,7 @@ import inspect
 import numpy as np
 import pytest
 
-from triceratops.inference.transform import *
+from trilobite.inference.transform import *
 
 # ============================================================================== #
 # Registry and Fixture Creation

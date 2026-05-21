@@ -10,11 +10,11 @@ import numpy as np
 import pytest
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.shocks.chevalier import compute_self_similar_functions
+from trilobite.dynamics.shocks.chevalier import compute_self_similar_functions
 
 
 class TestChevalierSelfSimilarFunctions:
-    """Tests for :func:`~triceratops.dynamics.shocks.chevalier.compute_self_similar_functions`."""
+    """Tests for :func:`~trilobite.dynamics.shocks.chevalier.compute_self_similar_functions`."""
 
     @pytest.fixture(scope="class")
     def solution_n7_s0(self):
@@ -77,7 +77,7 @@ class TestChevalierSelfSimilarFunctions:
 
         import matplotlib.pyplot as plt
 
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
         fig, ax = plt.subplots(figsize=(7.0, 4.5))

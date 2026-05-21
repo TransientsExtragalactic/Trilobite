@@ -1,5 +1,5 @@
 """
-Tests for :mod:`triceratops.parallel.mpi` — ``LikelihoodMPIPool``.
+Tests for :mod:`trilobite.parallel.mpi` — ``LikelihoodMPIPool``.
 
 These tests cover what is verifiable in a standard single-process pytest run:
 
@@ -10,8 +10,8 @@ These tests cover what is verifiable in a standard single-process pytest run:
 - When ``mpi4py`` *is* installed but only one MPI rank is present (the normal case for
   pytest running without ``mpirun``), instantiation raises :exc:`RuntimeError` explaining
   that at least 2 ranks are required.
-- :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.is_master` and
-  :meth:`~triceratops.parallel.mpi.LikelihoodMPIPool.size` are not tested here because
+- :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.is_master` and
+  :meth:`~trilobite.parallel.mpi.LikelihoodMPIPool.size` are not tested here because
   they require a live multi-rank communicator that is only available when launched
   with ``mpirun -n N``.
 
@@ -24,8 +24,8 @@ These tests cover what is verifiable in a standard single-process pytest run:
 
 import pytest
 
-from triceratops.parallel import mpi as mpi_module
-from triceratops.parallel.mpi import LikelihoodMPIPool, _MPI_AVAILABLE
+from trilobite.parallel import mpi as mpi_module
+from trilobite.parallel.mpi import LikelihoodMPIPool, _MPI_AVAILABLE
 
 
 # ================================================================== #
@@ -73,7 +73,7 @@ class TestInstantiationGuards:
         if mpi4py_available:
             pytest.skip("mpi4py is installed; skipping absent-mpi4py guard test.")
 
-        from triceratops.parallel import make_pool
+        from trilobite.parallel import make_pool
 
         with pytest.raises(RuntimeError, match="mpi4py"):
             make_pool("mpi", problem=simple_problem)

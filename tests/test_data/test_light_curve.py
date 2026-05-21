@@ -9,7 +9,7 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data import OpticalLightCurveContainer, RadioLightCurveContainer
+from trilobite.data import OpticalLightCurveContainer, RadioLightCurveContainer
 
 
 # ============================================================

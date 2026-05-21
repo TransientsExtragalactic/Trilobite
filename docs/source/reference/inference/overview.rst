@@ -4,8 +4,8 @@
 Parameter Inference and Model Comparison
 ========================================
 
-Triceratops is designed to seamlessly connect the physical models defined in
-:mod:`triceratops.models` with modern Bayesian inference pipelines. In practice, this means
+Trilobite is designed to seamlessly connect the physical models defined in
+:mod:`trilobite.models` with modern Bayesian inference pipelines. In practice, this means
 you can take any compatible model and:
 
 - perform **parameter estimation** using MCMC or nested sampling,
@@ -13,7 +13,7 @@ you can take any compatible model and:
 - carry out **Bayesian model comparison**,
 - and explore structured parameter spaces with custom priors and constraints.
 
-The :mod:`triceratops.inference` subpackage provides a flexible and modular framework for
+The :mod:`trilobite.inference` subpackage provides a flexible and modular framework for
 constructing and running inference analyses. It supports:
 
 - integration with third-party samplers such as :mod:`emcee`,
@@ -33,7 +33,7 @@ This modular structure allows users to move cleanly from forward modeling
 to statistically rigorous parameter estimation and model comparison,
 without rewriting core logic for each new scientific application.
 
-The Triceratops Inference Pipeline
+The Trilobite Inference Pipeline
 -----------------------------------
 
 .. graphviz:: ../../images/inference/inference_diagram.dot
@@ -42,12 +42,12 @@ The Triceratops Inference Pipeline
 
 As with any robust statistical pipeline, there are a lot of options and configurations that make the inference
 pipeline look more complicated than it actually is. Before introducing any of the specifics about inference,
-its worth taking a step back and looking at the overall structure of the inference pipeline in Triceratops.
-The diagram above provides a high-level overview of the inference pipeline in Triceratops. We'll discuss them
+its worth taking a step back and looking at the overall structure of the inference pipeline in Trilobite.
+The diagram above provides a high-level overview of the inference pipeline in Trilobite. We'll discuss them
 step by step:
 
-1. **The Model**: The first step in any inference pipeline in Triceratops is the model. This can either be
-   a model that's already built into the :mod:`triceratops.models` module, or it can be a custom model. In effect, this provides
+1. **The Model**: The first step in any inference pipeline in Trilobite is the model. This can either be
+   a model that's already built into the :mod:`trilobite.models` module, or it can be a custom model. In effect, this provides
    a mapping from some input variables :math:`{\bf x}` and some set of parameters :math:`\boldsymbol{\Theta}` to
    some set of observables :math:`{\bf y}`:
 
@@ -60,31 +60,31 @@ step by step:
 2. **The Dataset**: With the model in hand, we also need the data we want to fit too. The idea is to find the
    parameters of the model which best predict the dataset. Thus, the dataset provides a set of observed
    :math:`{\bf x}_{\rm obs}` and :math:`{\bf y}_{\rm obs}` values. These are typically loaded using the
-   :mod:`triceratops.data` module.
+   :mod:`trilobite.data` module.
 
 3. **The Likelihood Function**: The likelihood function quantifies how well the model predictions match
-   the observed data for a given set of parameters. In Triceratops, these are :class:`triceratops.inference.likelihood.base.Likelihood`
+   the observed data for a given set of parameters. In Trilobite, these are :class:`trilobite.inference.likelihood.base.Likelihood`
    objects, which provide a function :math:`\mathcal{L}(\boldsymbol{\Theta} | {\bf x}_{\rm obs}, {\bf y}_{\rm obs})` that
-   computes the likelihood of the observed data given the model parameters. Triceratops provides a variety of
+   computes the likelihood of the observed data given the model parameters. Trilobite provides a variety of
    built-in likelihood functions, and users can also define custom likelihoods as needed.
 
 4. **Inference Problems**: The likelihood alone isn't enough to completely specify an inference problem. We also need
-   to provide priors on the model parameters. In Triceratops, an inference problem is defined by a combination of a
+   to provide priors on the model parameters. In Trilobite, an inference problem is defined by a combination of a
    model, a dataset, a likelihood function, and a set of priors. This is encapsulated in the
-   :class:`~triceratops.inference.problem.InferenceProblem`.
+   :class:`~trilobite.inference.problem.InferenceProblem`.
 
 5. **Samplers**: With the inference problem defined, we can now use a sampling algorithm to explore the parameter
-   space and estimate the posterior distribution of the model parameters. Triceratops integrates with several
+   space and estimate the posterior distribution of the model parameters. Trilobite integrates with several
    third-party sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``. Each of these
-   samplers has its own strengths and weaknesses, and Triceratops provides a unified interface for using them through the
-   :class:`~triceratops.inference.sampling.base.Sampler` class and its subclasses.
+   samplers has its own strengths and weaknesses, and Trilobite provides a unified interface for using them through the
+   :class:`~trilobite.inference.sampling.base.Sampler` class and its subclasses.
 
 6. **Results**: After running the sampler, we obtain a set of samples from the posterior distribution of the
    model parameters. These samples can be analyzed to compute summary statistics, generate plots, and perform
-   model comparison. Triceratops provides tools for working with the results of inference analyses, which are specific
+   model comparison. Trilobite provides tools for working with the results of inference analyses, which are specific
    to each sampler used.
 
-This is the standard workflow for performing inference in Triceratops. The following sections will provide more details
+This is the standard workflow for performing inference in Trilobite. The following sections will provide more details
 on each of these components, along with examples of how to use them in practice.
 
 ----
@@ -94,10 +94,10 @@ on each of these components, along with examples of how to use them in practice.
 Likelihoods
 -----------
 
-*Module:* :mod:`triceratops.inference.likelihood`
+*Module:* :mod:`trilobite.inference.likelihood`
 
 The likelihood is where the statistical assumptions of the inference problem are encoded. It defines how well
-the model predictions match the observed data for a given set of parameters. In Triceratops,
+the model predictions match the observed data for a given set of parameters. In Trilobite,
 likelihoods are implemented as structured objects that bind together a model,
 a validated numerical dataset, and a noise/statistical assumption.
 
@@ -109,7 +109,7 @@ The Likelihood Class
         For more information about likelihood development, implementation details,
         and architectural principles, see :ref:`likelihood_dev`.
 
-In Triceratops, **likelihood functions** quantify how well a physical model reproduces a
+In Trilobite, **likelihood functions** quantify how well a physical model reproduces a
 dataset under a particular statistical noise model. Conceptually, a likelihood defines
 
 .. math::
@@ -119,16 +119,16 @@ dataset under a particular statistical noise model. Conceptually, a likelihood d
 the probability of observing the dataset :math:`\mathcal{D}` given model parameters
 :math:`\boldsymbol{\Theta}`.
 
-Rather than treating likelihoods as opaque black boxes, Triceratops implements them as
+Rather than treating likelihoods as opaque black boxes, Trilobite implements them as
 **structured objects** that explicitly bind together:
 
-- a **model** (from :mod:`triceratops.models`),
-- an :class:`~triceratops.data.core.InferenceData` object (from :mod:`triceratops.data`),
+- a **model** (from :mod:`trilobite.models`),
+- an :class:`~trilobite.data.core.InferenceData` object (from :mod:`trilobite.data`),
 - and a **noise/statistical assumption** (implemented by the likelihood subclass).
 
-All likelihoods inherit from :class:`~triceratops.inference.likelihood.base.Likelihood`.
+All likelihoods inherit from :class:`~trilobite.inference.likelihood.base.Likelihood`.
 
-.. currentmodule:: triceratops.inference.likelihood.base
+.. currentmodule:: trilobite.inference.likelihood.base
 
 Creating a Likelihood Object
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -141,9 +141,9 @@ A typical initialization pattern looks like:
 
 .. code-block:: python
 
-    from triceratops.models import MyModel
-    from triceratops.data import InferenceData
-    from triceratops.inference.likelihood import GaussianLikelihood
+    from trilobite.models import MyModel
+    from trilobite.data import InferenceData
+    from trilobite.inference.likelihood import GaussianLikelihood
 
     model = MyModel(...)
 
@@ -250,9 +250,9 @@ Existing Likelihoods
 ^^^^^^^^^^^^^^^^^^^^
 
 In most cases, a likelihood function has already been implemented for your use case.
-Below are the likelihood classes currently available in Triceratops.
+Below are the likelihood classes currently available in Trilobite.
 
-.. currentmodule:: triceratops.inference.likelihood
+.. currentmodule:: trilobite.inference.likelihood
 
 .. autosummary::
     :toctree: ../../_as_gen
@@ -284,8 +284,8 @@ be explored by a sampler. It bundles together:
 - and the **priors, bounds, and transformations** that define the allowed
   parameter space.
 
-In Triceratops, this functionality is encapsulated by the
-:class:`~triceratops.inference.problem.InferenceProblem` class.
+In Trilobite, this functionality is encapsulated by the
+:class:`~trilobite.inference.problem.InferenceProblem` class.
 
 Conceptually, an inference problem defines the posterior distribution
 
@@ -301,34 +301,34 @@ and provides a **standardized interface** for evaluating the log-prior,
 log-likelihood, and log-posterior in a way that is compatible with a wide range
 of sampling algorithms.
 
-A key design principle in Triceratops is that **samplers never interact directly
+A key design principle in Trilobite is that **samplers never interact directly
 with models or data containers**. Instead, they operate exclusively on an
-:class:`~triceratops.inference.problem.InferenceProblem`, which exposes a clean,
+:class:`~trilobite.inference.problem.InferenceProblem`, which exposes a clean,
 validated, and performance-oriented API for statistical evaluation.
 
 The Parts of an Inference Problem
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An inference problem in Triceratops is intentionally designed to be a **single point of
+An inference problem in Trilobite is intentionally designed to be a **single point of
 coordination** for all objects and assumptions required to perform statistical inference.
 Rather than passing models, datasets, priors, and parameter metadata separately to a sampler,
 all of these components are collected and validated in one place.
 
-Specifically, an :class:`~triceratops.inference.problem.InferenceProblem` defines and manages:
+Specifically, an :class:`~trilobite.inference.problem.InferenceProblem` defines and manages:
 
-- **The model** (:attr:`~triceratops.inference.problem.InferenceProblem.model`)
+- **The model** (:attr:`~trilobite.inference.problem.InferenceProblem.model`)
 
   A physical or phenomenological model that maps inputs (e.g., time, frequency)
   and parameters :math:`\boldsymbol{\Theta}` to predicted observables. The model
   determines *what* is being fit.
 
-- **The likelihood** (:attr:`~triceratops.inference.problem.InferenceProblem.likelihood`)
+- **The likelihood** (:attr:`~trilobite.inference.problem.InferenceProblem.likelihood`)
 
-  A :class:`~triceratops.inference.likelihood.base.Likelihood` instance that encodes
+  A :class:`~trilobite.inference.likelihood.base.Likelihood` instance that encodes
   *how* model predictions are compared to the data, including assumptions about
   measurement uncertainties, noise properties, and censoring.
 
-- **The data** (:attr:`~triceratops.inference.problem.InferenceProblem.data`)
+- **The data** (:attr:`~trilobite.inference.problem.InferenceProblem.data`)
 
   The dataset itself, provided indirectly through the likelihood via a validated
   data container (e.g., a light curve or photometry table). The inference problem
@@ -336,7 +336,7 @@ Specifically, an :class:`~triceratops.inference.problem.InferenceProblem` define
   the likelihood.
 
 
-- **The parameters** (:attr:`~triceratops.inference.problem.InferenceProblem.parameters`)
+- **The parameters** (:attr:`~trilobite.inference.problem.InferenceProblem.parameters`)
 
   A structured collection of inference parameters, including:
 
@@ -347,14 +347,14 @@ Specifically, an :class:`~triceratops.inference.problem.InferenceProblem` define
   - optional transformations between *physical* and *sampling* parameter spaces.
 
   These are typically represented internally using
-  :class:`~triceratops.inference.problem.InferenceParameter` objects.
+  :class:`~trilobite.inference.problem.InferenceParameter` objects.
 
 All of these components are defined, validated, and stored within the
-:class:`~triceratops.inference.problem.InferenceProblem` class. This ensures that
+:class:`~trilobite.inference.problem.InferenceProblem` class. This ensures that
 once an inference problem is constructed, it represents a **self-consistent and
 sampler-ready statistical model**.
 
-By centralizing this information, Triceratops enables:
+By centralizing this information, Trilobite enables:
 
 - clean separation between physics, statistics, and numerics,
 - reproducible inference configurations,
@@ -363,8 +363,8 @@ By centralizing this information, Triceratops enables:
 Creating Inference Problems
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-An :class:`~triceratops.inference.problem.InferenceProblem` is typically created
-by supplying a fully constructed likelihood object (:class:`~triceratops.inference.likelihood.base.Likelihood`).
+An :class:`~trilobite.inference.problem.InferenceProblem` is typically created
+by supplying a fully constructed likelihood object (:class:`~trilobite.inference.likelihood.base.Likelihood`).
 In most workflows, this is the *only* required input.
 
 Because the likelihood **already binds together the model, data, and statistical
@@ -375,10 +375,10 @@ A minimal example looks like:
 
 .. code-block:: python
 
-    from triceratops.inference.problem import InferenceProblem
-    from triceratops.inference.likelihood import GaussianLikelihood
-    from triceratops.models import MyModel
-    from triceratops.data import RadioLightCurveContainer
+    from trilobite.inference.problem import InferenceProblem
+    from trilobite.inference.likelihood import GaussianLikelihood
+    from trilobite.models import MyModel
+    from trilobite.data import RadioLightCurveContainer
 
     # Construct model and data
     model = MyModel(...)
@@ -406,8 +406,8 @@ At initialization time, the inference problem performs several tasks:
 
 - The object will **register the likelihood** and pull all the relevant parameters therein
   so that it knows about the data, the model, etc.
-- Using the model (:attr:`~triceratops.models.core.base.Model`), it will **extract parameters** and set
-  up the internal :class:`~triceratops.inference.problem.InferenceParameter` objects for the problem.
+- Using the model (:attr:`~trilobite.models.core.base.Model`), it will **extract parameters** and set
+  up the internal :class:`~trilobite.inference.problem.InferenceParameter` objects for the problem.
 - validates that priors, bounds, and parameter names are consistent,
 - prepares the problem for use by sampling backends.
 
@@ -422,7 +422,7 @@ evaluation, and bookkeeping.
 Inference Parameters
 ^^^^^^^^^^^^^^^^^^^^^
 
-Once an :class:`~triceratops.inference.problem.InferenceProblem` has been created,
+Once an :class:`~trilobite.inference.problem.InferenceProblem` has been created,
 it exposes a unified **parameter interface** that controls how the model is
 evaluated during inference.
 
@@ -441,9 +441,9 @@ Accessing Parameters
 ~~~~~~~~~~~~~~~~~~~~~
 
 Once an inference problem has been created, its parameters can be accessed
-via the :attr:`~triceratops.inference.problem.InferenceProblem.parameters` attribute. For
+via the :attr:`~trilobite.inference.problem.InferenceProblem.parameters` attribute. For
 example, given a model with a ``B`` parameter, we can access the corresponding
-:class:`~triceratops.inference.problem.InferenceParameter` like so:
+:class:`~trilobite.inference.problem.InferenceParameter` like so:
 
 .. code-block::
 
@@ -460,9 +460,9 @@ Likewise, parameters can be accessed by indexing
 Parameters also have :class:`dict`-like methods for iteration, listing keys,
 and checking membership:
 
-- :meth:`~triceratops.inference.problem.InferenceProblem.keys`
-- :meth:`~triceratops.inference.problem.InferenceProblem.values`
-- :meth:`~triceratops.inference.problem.InferenceProblem.items`
+- :meth:`~trilobite.inference.problem.InferenceProblem.keys`
+- :meth:`~trilobite.inference.problem.InferenceProblem.values`
+- :meth:`~trilobite.inference.problem.InferenceProblem.items`
 
 Setting Initial Values
 ~~~~~~~~~~~~~~~~~~~~~~
@@ -472,7 +472,7 @@ determines where the sampler starts exploring the parameter space. By default, t
 are taken from the underlying model at the time the inference problem is created. However, users may wish to override these defaults
 to improve convergence or explore different regions of parameter space.
 
-To see a parameter's initial value, access the :attr:`~triceratops.inference.problem.InferenceParameter.initial_value` attribute:
+To see a parameter's initial value, access the :attr:`~trilobite.inference.problem.InferenceParameter.initial_value` attribute:
 
 .. code-block::
 
@@ -481,9 +481,9 @@ To see a parameter's initial value, access the :attr:`~triceratops.inference.pro
 
 .. hint::
 
-    The :attr:`~triceratops.inference.problem.InferenceParameter.initial_value` attribute is a ``float`` representing the
+    The :attr:`~trilobite.inference.problem.InferenceParameter.initial_value` attribute is a ``float`` representing the
     initial value of the parameter in physical units (i.e., the units used by the model). To see the corresponding
-    unit-bearing quantity, use the :attr:`~triceratops.inference.problem.InferenceParameter.initial_quantity` attribute instead.
+    unit-bearing quantity, use the :attr:`~trilobite.inference.problem.InferenceParameter.initial_quantity` attribute instead.
 
 You can also set a new initial value by assigning to this attribute:
 
@@ -512,8 +512,8 @@ parameter values before considering the data. Before you'll be able to perform i
 **all free parameters** must have a valid prior assigned.
 
 There are a number of ways to assign priors; however, the easiest is to use the
-:class:`~triceratops.inference.problem.InferenceProblem` API directly, which provides the
-:meth:`~triceratops.inference.problem.InferenceProblem.set_prior` method.
+:class:`~trilobite.inference.problem.InferenceProblem` API directly, which provides the
+:meth:`~trilobite.inference.problem.InferenceProblem.set_prior` method.
 
 .. code-block::
 
@@ -531,18 +531,18 @@ using any compatible unit.
 
     This is the **only unit aware method** for setting priors on parameters.
 
-An alternative approach is to simply set the :attr:`~triceratops.inference.problem.InferenceParameter.prior` attribute
+An alternative approach is to simply set the :attr:`~trilobite.inference.problem.InferenceParameter.prior` attribute
 directly. However, when doing so, you are responsible for ensuring that the prior is compatible
 with the parameter (e.g., units, bounds, etc.). For example:
 
 .. code-block::
 
-    from triceratops.inference.priors import UniformPrior
+    from trilobite.inference.priors import UniformPrior
 
     B_param = inf_prob.parameters['B']
     B_param.prior = UniformPrior(lower=0.1, upper=1.0) # In gauss because those are the base units.
 
-All priors are instances of :class:`~triceratops.inference.prior.Prior`, and Triceratops provides a variety of
+All priors are instances of :class:`~trilobite.inference.prior.Prior`, and Trilobite provides a variety of
 built-in prior classes for common distributions (uniform, log-uniform, normal, etc.). It is also
 possible to define custom priors and to implement new prior classes; see :ref:`priors_dev` for more details.
 
@@ -555,14 +555,14 @@ the sampler is allowed to vary them during inference. However, in some cases, yo
 process. This can be useful for testing, debugging, or when certain parameters are known
 to be well-constrained by prior knowledge.
 
-To freeze a parameter, set its :attr:`~triceratops.inference.problem.InferenceParameter.freeze` attribute to ``True``:
+To freeze a parameter, set its :attr:`~trilobite.inference.problem.InferenceParameter.freeze` attribute to ``True``:
 
 .. code-block::
 
     B_param = inf_prob.parameters['B']
     B_param.freeze = True  # Freeze parameter B
 
-Alternatively, you can use the :meth:`~triceratops.inference.problem.InferenceProblem.freeze_parameters`.
+Alternatively, you can use the :meth:`~trilobite.inference.problem.InferenceProblem.freeze_parameters`.
 
 Computing the Prior and Posterior
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -571,7 +571,7 @@ Once an inference problem has been fully specified (i.e., all free parameters
 have priors and initial values), it provides a consistent interface for
 evaluating the **log-prior**, **log-likelihood**, and **log-posterior**.
 
-Triceratops exposes *two complementary APIs* for probability evaluation:
+Trilobite exposes *two complementary APIs* for probability evaluation:
 
 - a **high-level, dictionary-based interface** intended for user interaction
   and debugging,
@@ -623,7 +623,7 @@ parameters are represented.
     .. tab-item:: Vectorized API (Sampler-Facing)
 
         Samplers and optimizers operate most efficiently on **NumPy arrays**.
-        For this reason, :class:`~triceratops.inference.problem.InferenceProblem` provides a low-level API that
+        For this reason, :class:`~trilobite.inference.problem.InferenceProblem` provides a low-level API that
         works directly with parameter vectors.
 
         In this representation:
@@ -658,14 +658,14 @@ Parameter Packing and Unpacking
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To support seamless transitions between user-friendly dictionaries and
-sampler-friendly vectors, :class:`~triceratops.inference.problem.InferenceProblem` provides explicit utilities
+sampler-friendly vectors, :class:`~trilobite.inference.problem.InferenceProblem` provides explicit utilities
 for **packing** and **unpacking** parameters.
 
 Packing Full Parameter Sets
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The methods :meth:`~triceratops.inference.problem.InferenceProblem.pack_parameters` and
-:meth:`~triceratops.inference.problem.InferenceProblem.unpack_parameters` convert between
+The methods :meth:`~trilobite.inference.problem.InferenceProblem.pack_parameters` and
+:meth:`~trilobite.inference.problem.InferenceProblem.unpack_parameters` convert between
 dictionaries and full parameter vectors (including frozen parameters).
 
 .. code-block:: python
@@ -684,8 +684,8 @@ Packing Free Parameters Only
 Samplers operate only on **free parameters**. The inference problem therefore
 provides dedicated helpers:
 
-- :meth:`~triceratops.inference.problem.InferenceProblem.pack_free_parameters`
-- :meth:`~triceratops.inference.problem.InferenceProblem.unpack_free_parameters`
+- :meth:`~trilobite.inference.problem.InferenceProblem.pack_free_parameters`
+- :meth:`~trilobite.inference.problem.InferenceProblem.unpack_free_parameters`
 
 .. code-block:: python
 
@@ -706,7 +706,7 @@ These methods guarantee that:
 
     Samplers should **never** need to reason about frozen parameters,
     unit conversions, or parameter names. All such bookkeeping is handled
-    exclusively by the :class:`triceratops.inference.problem.InferenceProblem`.
+    exclusively by the :class:`trilobite.inference.problem.InferenceProblem`.
 
 Initial Probability Evaluation
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -733,4 +733,4 @@ Samplers
     For more information about sampler development, implementation, and integration, see :ref:`samplers_dev`.
 
 What is a sampler: a way to explore the parameter space and find the minimum of the posterior distribution.
-Triceratops provides interfaces to several popular sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``.
+Trilobite provides interfaces to several popular sampling libraries, including :mod:`emcee`, ``dynesty``, and ``bilby``.

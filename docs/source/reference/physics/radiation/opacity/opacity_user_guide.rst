@@ -9,7 +9,7 @@ Opacity Laws
     For the underlying physics of each opacity law see :ref:`opacity_theory`.
     For instructions on implementing custom laws see :ref:`opacity_dev_guide`.
 
-The :mod:`triceratops.radiation.opacity` module provides opacity laws for astrophysical
+The :mod:`trilobite.radiation.opacity` module provides opacity laws for astrophysical
 plasma modelling.  Every law exposes a uniform interface returning the opacity
 :math:`\kappa` in :math:`\mathrm{cm^2\,g^{-1}}` and its logarithmic derivatives with
 respect to density and temperature. These opacity laws are then incorporated into various physics
@@ -31,14 +31,14 @@ stellar-wind or outflow model, or as a building block in a custom spectral-synth
 Overview
 --------
 
-All of the opacity laws in Triceratops effectively represent a function of the form
+All of the opacity laws in Trilobite effectively represent a function of the form
 
 .. math::
 
     \kappa_\nu(\rho, T)
 
 and (optionally) its derivatives with respect to each of the variables. These are all implemented as
-subclasses of the base class :class:`~triceratops.radiation.opacity.base.OpacityLaw`, which defines the public
+subclasses of the base class :class:`~trilobite.radiation.opacity.base.OpacityLaw`, which defines the public
 interface for opacity evaluation and differentiation.
 
 In addition to the generic base class, there are a number of opacity sub-types which are provided
@@ -48,12 +48,12 @@ their arguments:
 - **General Opacity** functions take the frequency (:math:`\nu`) as an argument and are designed for use
   in more complex / detailed radiative transfer applications.
 - **Grey Opacity** functions are frequency-independent and depend only on density and temperature.  These
-  are the most commonly used opacities in Triceratops and are the only type currently implemented, but the
+  are the most commonly used opacities in Trilobite and are the only type currently implemented, but the
   framework is designed to accommodate more complex frequency-dependent laws in the future.
 
 .. important::
 
-    Currently, there are NO frequency dependent opacity laws implemented in Triceratops.
+    Currently, there are NO frequency dependent opacity laws implemented in Trilobite.
 
 Grey Opacity Subtypes
 ^^^^^^^^^^^^^^^^^^^^^
@@ -89,7 +89,7 @@ used in astrophysical applications, and they differ in the weighting function us
         **When to use**: stellar interiors, accretion disc midplanes, supernova
         ejecta — any regime where the mean free path is short compared to the
         scale of interest and the radiation field is close to isotropic
-        (diffusion approximation).  All currently implemented Triceratops
+        (diffusion approximation).  All currently implemented Trilobite
         opacity laws provide the Rosseland mean.
 
     .. tab-item:: Planck mean
@@ -118,7 +118,7 @@ used in astrophysical applications, and they differ in the weighting function us
 
         .. note::
 
-            :class:`~triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity` provides
+            :class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity` provides
             the Planck mean via ``mean_type="planck"``.  Standalone analytic Planck-mean laws
             (e.g. a Planck-weighted Kramers) are not yet implemented.
 
@@ -142,11 +142,11 @@ Direct instantiation
 
 Opacity laws can be constructed directly by instantiating the desired
 class. All public opacity classes are importable from
-:mod:`triceratops.radiation.opacity`.
+:mod:`trilobite.radiation.opacity`.
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import (
+    from trilobite.radiation.opacity import (
         KramersESOpacity, OPALOpacity, TOPSOpacity,
         load_opal_opacity, load_tops_opacity,
     )
@@ -177,22 +177,22 @@ and available options.
 Using ``get_opacity``
 ^^^^^^^^^^^^^^^^^^^^^^
 
-:func:`~triceratops.radiation.opacity.utils.get_opacity` is the recommended
+:func:`~trilobite.radiation.opacity.utils.get_opacity` is the recommended
 entry point when an opacity specification is passed in from outside (e.g. a
 model parameter).  It accepts a registered string key, a plain float, or an
 existing opacity instance and always returns a
-:class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw`:
+:class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw`:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import get_opacity
+    from trilobite.radiation.opacity import get_opacity
 
     kap = get_opacity("kramers_es")    # string key → KramersESOpacity()
     kap = get_opacity("opal")          # solar OPAL table
     kap = get_opacity(my_kap)          # existing instance returned unchanged
 
 The full table of registered string keys is in the :ref:`API reference <opacity_api>`
-and in :func:`~triceratops.radiation.opacity.utils.get_opacity`.
+and in :func:`~trilobite.radiation.opacity.utils.get_opacity`.
 
 Constant Opacities
 ^^^^^^^^^^^^^^^^^^^
@@ -203,14 +203,14 @@ A flat, state-independent opacity can be constructed from a plain float (in
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.opacity import ConstantGreyOpacity
+    from trilobite.radiation.opacity import ConstantGreyOpacity
 
     kap = ConstantGreyOpacity(0.34)                     # solar electron-scattering value
     kap = ConstantGreyOpacity(0.034 * u.m**2 / u.kg)   # same value via Quantity
     print(kap.kappa)                                    # <Quantity 0.34 cm2 / g>
 
 ``get_opacity`` also accepts a plain float and wraps it in a
-:class:`~triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`
+:class:`~trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity`
 automatically:
 
 .. code-block:: python
@@ -229,7 +229,7 @@ methods are unit-aware: they accept :class:`~astropy.units.Quantity` inputs and 
 
 .. hint::
 
-    Like most elements of the Triceratops API, there are also CGS-only private methods
+    Like most elements of the Trilobite API, there are also CGS-only private methods
     that operate in log-space and are designed for use in performance-critical code paths.
 
     See the section below on the public/private API for details.
@@ -238,7 +238,7 @@ Evaluating the Opacity
 ^^^^^^^^^^^^^^^^^^^^^^^
 
 In all opacity objects the primary entry point is the
-:meth:`~triceratops.radiation.opacity.base.OpacityLaw.opacity` method, which returns the opacity,
+:meth:`~trilobite.radiation.opacity.base.OpacityLaw.opacity` method, which returns the opacity,
 which accepts the density (:math:`\rho`) and temperature (:math:`T`) as well as
 (in frequency dependent laws), the frequency (:math:`\nu`) as arguments.  For grey opacity laws, the frequency
 argument is accepted but silently ignored.  The Law will then evaluate the
@@ -253,7 +253,7 @@ and return the result as a :class:`~astropy.units.Quantity` in :math:`\mathrm{cm
 .. code-block:: python
 
     import astropy.units as u
-    from triceratops.radiation.opacity import get_opacity
+    from trilobite.radiation.opacity import get_opacity
 
     kap = get_opacity("kramers_es")
 
@@ -281,7 +281,7 @@ a grid beforehand:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import OPALOpacity
+    from trilobite.radiation.opacity import OPALOpacity
 
     opal = OPALOpacity.load_default(out_of_bounds="nan")
 
@@ -299,10 +299,10 @@ it straightforward to mask or visualise the valid region of the table.
 .. important::
 
     For grey opacity laws, the ``nu`` argument present on the base class
-    :meth:`~triceratops.radiation.opacity.base.OpacityLaw.opacity` is
+    :meth:`~trilobite.radiation.opacity.base.OpacityLaw.opacity` is
     accepted but silently ignored: grey opacities have no frequency dependence.
     The public method signature for
-    :class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw`
+    :class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw`
     subclasses is therefore simply ``opacity(rho, T)``.
 
 .. dropdown:: Example: Comparing Opacity Families
@@ -315,7 +315,7 @@ it straightforward to mask or visualise the valid region of the table.
         from astropy import units as u
         from mpl_toolkits.axes_grid1.inset_locator import inset_axes
 
-        from triceratops.radiation.opacity import OPALOpacity, KramersOpacity, TOPSOpacity
+        from trilobite.radiation.opacity import OPALOpacity, KramersOpacity, TOPSOpacity
 
         # ---------------------------------------------------------------------
         # Sampling grid
@@ -409,7 +409,7 @@ Opacity Derivatives
 
 All opacity laws expose logarithmic partial derivatives, which are the natural
 quantities for stability analysis, disc structure equations, and stellar envelope
-integrations.  Specifically, Triceratops provides the two dimensionless logarithmic
+integrations.  Specifically, Trilobite provides the two dimensionless logarithmic
 derivatives
 
 .. math::
@@ -425,15 +425,15 @@ Table-based opacities return local finite-difference estimates of these quantiti
 computed in log-space from the bilinearly-interpolated grid.
 
 The derivatives are computed via
-:meth:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho`
+:meth:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho`
 and
-:meth:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT`,
+:meth:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT`,
 which accept the same unit-bearing arguments as
-:meth:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity`:
+:meth:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity`:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import get_opacity
+    from trilobite.radiation.opacity import get_opacity
     import astropy.units as u
 
     kap = get_opacity("kramers_ff")
@@ -448,7 +448,7 @@ numerically from the bilinear interpolant:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import OPALOpacity
+    from trilobite.radiation.opacity import OPALOpacity
 
     opal = OPALOpacity.load_default()
 
@@ -472,7 +472,7 @@ and :math:`\beta`.
 The Public / Private API
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Every opacity class in Triceratops exposes two distinct layers of interface, which
+Every opacity class in Trilobite exposes two distinct layers of interface, which
 serve different audiences.
 
 The **public interface** is unit-aware and designed for interactive use and
@@ -498,7 +498,7 @@ not part of the stable public API and may change without notice.
 .. code-block:: python
 
     import numpy as np
-    from triceratops.radiation.opacity import get_opacity
+    from trilobite.radiation.opacity import get_opacity
 
     kap = get_opacity("kramers_es")
 
@@ -519,7 +519,7 @@ a scalar entry point and a contiguous-array entry point:
 
 .. code-block:: python
 
-    from triceratops.radiation.opacity import OPALOpacity
+    from trilobite.radiation.opacity import OPALOpacity
     import numpy as np
 
     opal = OPALOpacity.load_default()
@@ -541,8 +541,8 @@ and enable direct ``cdef``-level calls:
 
 .. code-block:: cython
 
-    from triceratops.radiation.opacity.grey_opacity.rosseland._opal_table cimport C_OPALTableOpacity
-    from triceratops.radiation.opacity.grey_opacity.rosseland import OPALOpacity
+    from trilobite.radiation.opacity.grey_opacity.rosseland._opal_table cimport C_OPALTableOpacity
+    from trilobite.radiation.opacity.grey_opacity.rosseland import OPALOpacity
 
     cdef C_OPALTableOpacity c_kap = OPALOpacity.load_default()._c_object
 
@@ -560,21 +560,21 @@ Custom Opacity Tables
 ----------------------
 
 In some cases, users may need to work with custom opacity tables, particularly if they are performing
-detailed radiative transfer calculations. Because Triceratops does not fashion itself to be a spectral
+detailed radiative transfer calculations. Because Trilobite does not fashion itself to be a spectral
 synthesis code (and to avoid the bloat of managing large opacity datasets), the set of built-in opacity
 tables is very minimal:
 
-- **OPAL Opacities**: Triceratops bundles the OPAL opacity tables of footcite:t:`2005ASPC..336...25A`, providing
+- **OPAL Opacities**: Trilobite bundles the OPAL opacity tables of footcite:t:`2005ASPC..336...25A`, providing
   opacities over a fairly significant set of compositions. These are accessible via the
-  :class:`~triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity` class and the helper function
-  :func:`~triceratops.radiation.opacity.utils.load_opal_opacity`; however, it should also be noted that these
+  :class:`~trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity` class and the helper function
+  :func:`~trilobite.radiation.opacity.utils.load_opal_opacity`; however, it should also be noted that these
   tables to not cover every :math:`(\rho, T)` regime of interest in many cases.
-- **TOPS Opacities**: Triceratops provides only a single TOPS opacity table with standard solar composition,
-  which is accessible via the :class:`~triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity` class.
+- **TOPS Opacities**: Trilobite provides only a single TOPS opacity table with standard solar composition,
+  which is accessible via the :class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity` class.
 
 In order to work with other custom opacity tables, users may be able to simply download the table and load
 it into the code (for TOPS opacities), or they may need to implement a custom subclass of
-:class:`~triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw` that performs interpolation over
+:class:`~trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw` that performs interpolation over
 the table (for OPAL opacities, which are not provided in a convenient format for direct loading).  The latter
 is more work but also more flexible, and the :ref:`opacity_dev_guide` provides a step-by-step walkthrough of
 how to do this.
@@ -587,10 +587,10 @@ opacity tables for various compositions :footcite:p:`magee1995atomic`. These tab
 web interface are free to use, but they are not designed for programmatic access.
 
 Users may visit `https://aphysics2.lanl.gov/ <https://aphysics2.lanl.gov/>`_ to download custom TOPS tables
-for their desired composition. Once downloaded, these tables can be loaded into Triceratops using the
-:func:`~triceratops.radiation.opacity.opacity_io.read_tops` function, which returns a namespace containing all of the
+for their desired composition. Once downloaded, these tables can be loaded into Trilobite using the
+:func:`~trilobite.radiation.opacity.opacity_io.read_tops` function, which returns a namespace containing all of the
 relevant data extracted from the table text file. This can then be passed to
-:class:`~triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity` to construct an opacity object that can be
+:class:`~trilobite.radiation.opacity.grey_opacity.tops.TOPSOpacity` to construct an opacity object that can be
 used in the same way as any other opacity law.
 
 API Reference
@@ -599,7 +599,7 @@ API Reference
 Resolver
 ~~~~~~~~
 
-.. currentmodule:: triceratops.radiation.opacity
+.. currentmodule:: trilobite.radiation.opacity
 
 .. autosummary::
     :toctree: ../../../../_as_gen
@@ -618,7 +618,7 @@ Base Classes
 Concrete Opacity Laws
 ~~~~~~~~~~~~~~~~~~~~~
 
-.. currentmodule:: triceratops.radiation.opacity
+.. currentmodule:: trilobite.radiation.opacity
 
 .. autosummary::
     :toctree: ../../../../_as_gen
@@ -635,7 +635,7 @@ Concrete Opacity Laws
 Table-based Opacity
 ~~~~~~~~~~~~~~~~~~~
 
-.. currentmodule:: triceratops.radiation.opacity
+.. currentmodule:: trilobite.radiation.opacity
 
 .. autosummary::
     :toctree: ../../../../_as_gen
@@ -646,7 +646,7 @@ Table-based Opacity
 Opacity Tables
 ~~~~~~~~~~~~~~
 
-.. currentmodule:: triceratops.radiation.opacity
+.. currentmodule:: trilobite.radiation.opacity
 
 .. autosummary::
     :toctree: ../../../../_as_gen

@@ -1,0 +1,62 @@
+# ======================================================== #
+# trilobite Default Configuration File                   #
+# ======================================================== #
+# This file provides default settings for trilobite.
+# Users can override these defaults using:
+# - trilobite_CONFIG environment variable
+# - .trilobiterc in the project directory
+# - ~/.config/trilobite/config.yaml
+#
+# Values in this file are safe defaults suitable for most environments.
+
+# ------------------------------- #
+# SYSTEM CONFIGURATION            #
+# ------------------------------- #
+# These settings are used to configure various system-wide aspects of trilobite'
+# behavior. These are things like logging, appearance, etc.
+system:
+
+  # LOGGING
+  # -------
+  logging:
+    # The main logger is the core logger for trilobite that
+    # is used when no other more specialized logger is
+    # relevant.
+    main:
+      level: INFO
+      format: '[trilobite]-%(levelname)s: %(message)s'
+
+  # APPEARANCE
+  # ----------
+  # These settings control the appearance of trilobite in the console.
+  # They can be overridden by the user in their
+  # project-specific or user-specific configurations.
+  appearance:
+    disable_progress_bars: false  # Disable progress bars in the console.
+    progress_bar_format: '{percentage:3.0f}% |{bar}| 🦖 {n_fmt}/{total_fmt} [{elapsed}<{remaining},
+      {rate_fmt}{postfix}]'
+
+# ---------------------------------------------------
+# PHYSICS CONFIGURATION
+# ---------------------------------------------------
+# Physics specific settings and constants that are used throughout trilobite.
+# In some cases, these are copied in model-specific configurations. In that case,
+# either modify the default or override the model-specific configuration.
+physics:
+  default_cosmology: !astropy_cosmology
+                                        # The default cosmology to assume unless overridden.
+    name: Planck18
+  hydrogen_abundance: &default_X_H 0.76  # The default hydrogen abundance to assume unless overridden.
+
+# ---------------------------------------------------
+# PLOTTING CONFIGURATION
+# ---------------------------------------------------
+# Default settings for plotting functions in trilobite.
+plotting:
+  default_figsize: [10, 6]  # Default figure size for plots.
+  dpi: 100                  # Default dots per inch for plots.
+  default_cmap: viridis     # Default colormap for plots.
+  use_tex: false            # Whether to use LaTeX for rendering text in plots. We keep this false so we work out
+                            # of the box, but users can enable it if they have LaTeX installed.
+  latex_preamble:
+    usepackage{graphicx,amsmath,amssymb,amsfonts,algorithmicx,algorithm,algpseudocodex}

@@ -4,14 +4,14 @@
 RadioPhotometryEpoch
 =======================
 
-:class:`~triceratops.data.photometry.RadioPhotometryEpoch` represents a
+:class:`~trilobite.data.photometry.RadioPhotometryEpoch` represents a
 **single-epoch radio spectral energy distribution (SED)**. It stores
 multi-frequency flux density measurements taken at one snapshot in time,
 making it suitable for broadband spectral fitting where frequency is the
 independent variable.
 
 This is the spectral complement to
-:class:`~triceratops.data.light_curve.RadioLightCurveContainer` (which
+:class:`~trilobite.data.light_curve.RadioLightCurveContainer` (which
 fixes frequency and varies time). In a ``RadioPhotometryEpoch``, time is
 fixed metadata (implicitly a single epoch) and frequency is the
 x-axis variable.
@@ -74,7 +74,7 @@ From an Astropy Table
     import numpy as np
     from astropy.table import Table
     from astropy import units as u
-    from triceratops.data import RadioPhotometryEpoch
+    from trilobite.data import RadioPhotometryEpoch
 
     table = Table({
         "freq": [1.4, 5.5, 8.5, 15.0, 22.0] * u.GHz,
@@ -167,7 +167,7 @@ as a deprecated alias:
 .. code-block:: python
 
     # Still works, but emits DeprecationWarning
-    from triceratops.data import RadioPhotometryEpochContainer
+    from trilobite.data import RadioPhotometryEpochContainer
 
     epoch = RadioPhotometryEpochContainer(table)
     # DeprecationWarning: RadioPhotometryEpochContainer is deprecated.
@@ -181,7 +181,7 @@ Update your code to import ``RadioPhotometryEpoch`` directly.
 API Reference
 -------------
 
-.. autoclass:: triceratops.data.photometry.RadioPhotometryEpoch
+.. autoclass:: trilobite.data.photometry.RadioPhotometryEpoch
    :no-index:
    :members:
    :undoc-members:

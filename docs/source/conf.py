@@ -15,11 +15,11 @@ import sys
 
 import matplotlib  # noqa: F401
 
-sys.path.insert(0, os.path.abspath("../../triceratops"))
+sys.path.insert(0, os.path.abspath("../../trilobite"))
 sys.path.insert(0, os.path.abspath("../../"))
 # -- Project information -----------------------------------------------------
 
-project = "Triceratops"
+project = "Trilobite"
 copyright = "2025, Eliza Diggins"
 author = "Eliza Diggins"
 
@@ -71,10 +71,10 @@ html_theme = "pydata_sphinx_theme"
 
 html_theme_options = {
     "logo": {
-        "text": "Triceratops",
-        "image_light": "images/logo.png",
-        "image_dark": "images/logo.png",
-        "alt_text": "Triceratops logo",
+        "text": "Trilobite",
+        "image_light": "images/logo.svg",
+        "image_dark": "images/logo.svg",
+        "alt_text": "Trilobite logo",
     },
     "icon_links": [
         {
@@ -95,7 +95,7 @@ html_theme_options = {
     },
 }
 
-html_favicon = "images/logo.png"
+html_favicon = "images/logo.svg"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -149,12 +149,12 @@ nitpick_ignore_regex = [
     (r"py:class", r"str$"),
     (r"py:class", r".*\]$"),
     # Private methods, functions, attributes, and modules — match both short names
-    # (e.g. _log_opacity) and fully-qualified paths (e.g. triceratops.foo.Bar._method)
+    # (e.g. _log_opacity) and fully-qualified paths (e.g. trilobite.foo.Bar._method)
     (r"py:meth", r"_.*|.*\._.*"),
     (r"py:func", r"_.*|.*\._.*"),
     (r"py:attr", r"_.*|.*\._.*"),
     (r"py:obj", r"_.*|.*\._.*"),
-    (r"py:mod", r".*\._.*|triceratops\..*\._.*"),
+    (r"py:mod", r".*\._.*|trilobite\..*\._.*"),
     # Short-form class names used consistently throughout the codebase
     (r"py:class", r"ModelParameter"),
     (r"py:class", r"ModelVariable"),
@@ -172,7 +172,7 @@ nitpick_ignore_regex = [
     (r"py:class", r"tqdm"),
     (r"py:class", r"dtype=float64"),
     (r"py:class", r"ruamel\.yaml\.nodes\.Node"),
-    (r"py:class", r"triceratops\.parallel\.base\.[RT]"),
+    (r"py:class", r"trilobite\.parallel\.base\.[RT]"),
     # Informal type annotations: not Python objects
     (r"py:class", r"namedtuple"),
     (r"py:class", r"OUTPUTS"),

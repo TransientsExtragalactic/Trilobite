@@ -5,7 +5,7 @@ Developer Guide: Adding One-Zone Disk Closures
 =================================================
 
 This guide walks through every step required to add a new thermodynamic closure to
-Triceratops's one-zone accretion disk framework.  A "closure" is the combination of an
+Trilobite's one-zone accretion disk framework.  A "closure" is the combination of an
 equation of state, an opacity prescription, and heating/cooling terms that closes the
 energy-balance equation and determines the midplane temperature :math:`T_c` at each
 integration step.
@@ -54,7 +54,7 @@ The Metaclass: ``_OneZoneMeta``
 ---------------------------------
 
 All Python model classes are validated at **class-definition time** by
-:class:`~triceratops.dynamics.accretion.one_zone.base._OneZoneMeta`.  You do not
+:class:`~trilobite.dynamics.accretion.one_zone.base._OneZoneMeta`.  You do not
 interact with the metaclass directly, but you must satisfy its constraints: the four
 class-level declaration dicts must be present and well-formed, or a descriptive
 :exc:`TypeError` is raised immediately when the class body is evaluated.
@@ -136,8 +136,8 @@ Step 1 — Write the Cython Closure
 -----------------------------------
 
 The Cython closure is a subclass of
-:class:`~triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure` defined in a
-``.pyx`` file under ``triceratops/dynamics/accretion/one_zone/models/``.
+:class:`~trilobite.dynamics.accretion.one_zone.closure.OneZoneClosure` defined in a
+``.pyx`` file under ``trilobite/dynamics/accretion/one_zone/models/``.
 
 The subclass must supply three C function pointers in its ``__cinit__``:
 
@@ -184,10 +184,10 @@ Minimal Cython Template
 
 .. code-block:: cython
 
-    # triceratops/dynamics/accretion/one_zone/models/_my_closure.pyx
+    # trilobite/dynamics/accretion/one_zone/models/_my_closure.pyx
 
     from libc.math cimport exp, log, sqrt
-    from triceratops.dynamics.accretion.one_zone.closure cimport (
+    from trilobite.dynamics.accretion.one_zone.closure cimport (
         OneZoneClosure, ClosureResult,
         closure_fn_t, derivative_fn_t, writer_fn_t,
     )
@@ -264,7 +264,7 @@ Minimal Cython Template
 .. important::
 
     The C function signatures are declared in
-    :mod:`triceratops.dynamics.accretion.one_zone.closure` (``.pxd``); import them
+    :mod:`trilobite.dynamics.accretion.one_zone.closure` (``.pxd``); import them
     with ``cimport``.  Never call :class:`OneZoneClosure` methods from inside the GIL-free
     functions — only use ``cdef`` functions and C standard-library calls.
 
@@ -273,16 +273,16 @@ Minimal Cython Template
 Step 2 — Declare the Python Model Class
 -----------------------------------------
 
-Subclass :class:`~triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase`
+Subclass :class:`~trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase`
 and declare the four required class-level dicts.  The full template below includes all
 required elements:
 
 .. code-block:: python
 
-    # triceratops/dynamics/accretion/one_zone/core.py  (append or modify)
+    # trilobite/dynamics/accretion/one_zone/core.py  (append or modify)
 
-    from triceratops.dynamics.accretion.one_zone.base import OneZoneAccretionDiskBase
-    from triceratops.dynamics.accretion.one_zone._closure_specs import (
+    from trilobite.dynamics.accretion.one_zone.base import OneZoneAccretionDiskBase
+    from trilobite.dynamics.accretion.one_zone._closure_specs import (
         BASE_RUNTIME_PARAMETERS,
         BASE_INITIAL_CONDITIONS,
         BASE_RESULT_FIELDS,
@@ -376,7 +376,7 @@ required elements:
 
     ``BASE_RUNTIME_PARAMETERS``, ``BASE_INITIAL_CONDITIONS``, ``BASE_RESULT_FIELDS``,
     and ``CYTHON_FIELD_MAP`` are centrally defined in
-    :mod:`triceratops.dynamics.accretion.one_zone._closure_specs` and contain the
+    :mod:`trilobite.dynamics.accretion.one_zone._closure_specs` and contain the
     standard set of parameters and fields shared by all one-zone models.  Reuse them
     unless your closure fundamentally changes the ODE variables or adds extra runtime
     parameters (e.g. fallback rate ``M_fb_0`` and ``t_fb`` for fallback disks).
@@ -390,7 +390,7 @@ mass and angular-momentum evolution equations.  Use
 
 .. code-block:: python
 
-    from triceratops.dynamics.accretion.one_zone._closure_specs import (
+    from trilobite.dynamics.accretion.one_zone._closure_specs import (
         BASE_RUNTIME_PARAMETERS,
         FALLBACK_RUNTIME_PARAMETERS,
     )
@@ -418,7 +418,7 @@ Export from the package ``__init__.py``:
 
 .. code-block:: python
 
-    # triceratops/dynamics/accretion/one_zone/__init__.py
+    # trilobite/dynamics/accretion/one_zone/__init__.py
     from .core import MyDisk, myDisk
 
 ----
@@ -432,8 +432,8 @@ Add the new ``.pyx`` file to the build system in ``setup.py`` (or
 .. code-block:: python
 
     Extension(
-        "triceratops.dynamics.accretion.one_zone.models._my_closure",
-        sources=["triceratops/dynamics/accretion/one_zone/models/_my_closure.pyx"],
+        "trilobite.dynamics.accretion.one_zone.models._my_closure",
+        sources=["trilobite/dynamics/accretion/one_zone/models/_my_closure.pyx"],
         include_dirs=[np.get_include()],
     ),
 
@@ -461,7 +461,7 @@ Inheriting from it is the easiest way to ensure your new model is correct.
     from astropy import constants as const
     from astropy import units as u
 
-    from triceratops.dynamics.accretion.one_zone import MyDisk
+    from trilobite.dynamics.accretion.one_zone import MyDisk
     from test_one_zone_disk_base import BaseTestOneZoneDisk
 
 
@@ -491,7 +491,7 @@ Inheriting from it is the easiest way to ensure your new model is correct.
 
         def test_closure_is_correct_type(self):
             """_build_cython_closure() returns a MyClosureType."""
-            from triceratops.dynamics.accretion.one_zone.models._my_closure import (
+            from trilobite.dynamics.accretion.one_zone.models._my_closure import (
                 MyClosureType,
             )
             assert isinstance(self._disk()._build_cython_closure(), MyClosureType)

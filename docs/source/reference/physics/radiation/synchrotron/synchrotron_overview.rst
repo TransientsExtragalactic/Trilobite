@@ -14,7 +14,7 @@ these observations requires a modeling framework that can handle a wide range of
 physical regimes, from non-relativistic shocks to mildly-relativistic ejecta,
 while consistently tracking the microphysical processes that shape the spectrum.
 
-Triceratops provides an end-to-end synchrotron modeling toolkit: from the fundamental
+Trilobite provides an end-to-end synchrotron modeling toolkit: from the fundamental
 single-electron physics through population-averaged emission and radiative cooling,
 up to the broadband one-zone spectral energy distributions (SEDs) used directly in
 multi-wavelength fitting and Bayesian inference.  The infrastructure is intentionally
@@ -47,9 +47,9 @@ steps:
 2. **Microphysical Closure**: The user must then convert the macroscopic shock parameters (e.g. the
    post-shock thermal energy density) into the microphysical parameters
    that govern the electron distribution and magnetic field strength. *Various such prescriptions exist in the literature*,
-   and are implemented in the :mod:`~triceratops.radiation.synchrotron.microphysics` submodule.
+   and are implemented in the :mod:`~trilobite.radiation.synchrotron.microphysics` submodule.
 3. **SED Modeling**: Finally, the user must compute the observable SED from the microphysical parameters.
-   This is the responsibility of the :mod:`~triceratops.radiation.synchrotron.SEDs` submodule. Depending on the
+   This is the responsibility of the :mod:`~trilobite.radiation.synchrotron.SEDs` submodule. Depending on the
    type of SED model (see details below), this step may have some sub-steps.
 
 The result is a predicted SED that can be compared to observations, used in light curve modeling, or fed into
@@ -60,8 +60,8 @@ Module Structure
 
 The synchrotron module is organized into four submodules, each responsible for a
 distinct layer of the modeling stack.  Users working with high-level SED models
-typically only interact directly with :mod:`~triceratops.radiation.synchrotron.SEDs`
-and :mod:`~triceratops.radiation.synchrotron.microphysics`; the lower layers are
+typically only interact directly with :mod:`~trilobite.radiation.synchrotron.SEDs`
+and :mod:`~trilobite.radiation.synchrotron.microphysics`; the lower layers are
 used implicitly.
 
 .. list-table::
@@ -70,20 +70,20 @@ used implicitly.
 
     * - Module
       - Responsibility
-    * - :mod:`~triceratops.radiation.synchrotron.core`
+    * - :mod:`~trilobite.radiation.synchrotron.core`
       - Fundamental quantities relevant to synchrotron modeling. This module is of primary use
         to developers and domain experts who want to understand or modify the underlying algorithms.
         See :ref:`synchrotron_core`.
-    * - :mod:`~triceratops.radiation.synchrotron.microphysics`
+    * - :mod:`~trilobite.radiation.synchrotron.microphysics`
       - Tools for constructing and normalizing electron distribution functions and for connecting
         macroscopic shock parameters to microphysical parameters through closure relations.
         See :ref:`synchrotron_microphysics`.
-    * - :mod:`~triceratops.radiation.synchrotron.SEDs`
+    * - :mod:`~trilobite.radiation.synchrotron.SEDs`
       - SED models for computing the observable spectrum from a given set of physical parameters.
         This is the primary interface for users modeling synchrotron emission from astrophysical sources. It is
         also the deepest, with many options for different physical regimes and levels of complexity.
         See :ref:`synchrotron_seds`.
-    * - :mod:`~triceratops.radiation.synchrotron.cooling`
+    * - :mod:`~trilobite.radiation.synchrotron.cooling`
       - Radiative cooling engines for synchrotron and inverse-Compton losses.
         Each engine exposes the cooling rate :math:`dE/dt`, cooling time
         :math:`t_{\rm cool}`, and the cooling Lorentz factor :math:`\gamma_c`.
@@ -101,7 +101,7 @@ used in various synchrotron modeling contexts:
 
     * - Module
       - Use case
-    * - :mod:`~triceratops.dynamics`
+    * - :mod:`~trilobite.dynamics`
       - Provides the dynamical evolution of the shock or outflow, which is a key input to the synchrotron modeling.
         The dynamics determine how the shock parameters (e.g. radius, velocity, thermal energy density) evolve with time,
         which in turn affect the microphysical parameters and the resulting SED.
@@ -127,7 +127,7 @@ the parameters :math:`\epsilon_e` and :math:`\epsilon_B`, which represent the fr
 that goes into relativistic electrons and magnetic fields, respectively.
 
 In this formulation, one then needs to choose that **type of electron distribution** to use for the synchrotron
-emitting electrons. This will be the primary determinant of the resulting SED. Triceratops provides support for
+emitting electrons. This will be the primary determinant of the resulting SED. Trilobite provides support for
 the following:
 
 - **Power-law distributions**: The most common choice in the literature, where the electron number density
@@ -146,7 +146,7 @@ Combined with the closure relations that connect the macroscopic shock parameter
 of electron distribution then determines the normalization of the electron spectrum and the magnetic field strength, which
 in turn determine the characteristic frequencies and fluxes of the resulting synchrotron SED.
 
-The :mod:`~triceratops.radiation.synchrotron.microphysics` submodule provides a number of tools for doing these
+The :mod:`~trilobite.radiation.synchrotron.microphysics` submodule provides a number of tools for doing these
 sorts of calculations.
 
 .. dropdown:: Example: Normalize a Power-Law Electron Distribution
@@ -159,7 +159,7 @@ sorts of calculations.
 
         import numpy as np
         import astropy.units as u
-        from triceratops.radiation.synchrotron.microphysics import compute_PL_norm_from_magnetic_field
+        from trilobite.radiation.synchrotron.microphysics import compute_PL_norm_from_magnetic_field
 
         B = 0.5 * u.G
         epsilon_B = 0.1
@@ -186,7 +186,7 @@ sorts of calculations.
 
         import numpy as np
         import astropy.units as u
-        from triceratops.radiation.synchrotron.microphysics import compute_MJD_and_PL_norm_from_magnetic_field
+        from trilobite.radiation.synchrotron.microphysics import compute_MJD_and_PL_norm_from_magnetic_field
 
         B = 0.5 * u.G
         epsilon_B = 0.1
@@ -212,11 +212,11 @@ API Summary
 
 A few of the key functions in this module are included below. For a more in-depth introduction to
 this module, see :ref:`synchrotron_microphysics`. The full API can be found at
-:mod:`~triceratops.radiation.synchrotron.microphysics`.
+:mod:`~trilobite.radiation.synchrotron.microphysics`.
 
 .. dropdown:: API Summary
 
-    .. currentmodule:: triceratops.radiation.synchrotron.microphysics
+    .. currentmodule:: trilobite.radiation.synchrotron.microphysics
     .. autosummary::
        :nosignatures:
 
@@ -244,12 +244,12 @@ Generating Synchrotron SEDs
     :ref:`synch_numerical_sed_theory` Describes the theory of numerical synchrotron SEDs.
 
 Synchrotron SEDs are (by virtue of the many physical considerations at play) quite a complex topic, and the
-corresponding :mod:`~triceratops.radiation.synchrotron.SEDs` submodule is the most extensive part of the synchrotron
+corresponding :mod:`~trilobite.radiation.synchrotron.SEDs` submodule is the most extensive part of the synchrotron
 toolkit. Broadly speaking, SEDs are categorized by the physical processes they include:
 
 - **One-Zone vs. Many Zone**: One-zone SEDs assume a single homogeneous emitting region, whereas many-zone SEDs
   can model more structured sources. These are; however, generally more restrictive, and can be quite difficult to
-  fit to data due to the large number of free parameters. *Triceratops currently only provides one-zone SED models*.
+  fit to data due to the large number of free parameters. *Trilobite currently only provides one-zone SED models*.
 - **Analytic vs. Numerical**: Analytic SEDs are built from piecewise power-law segments joined at the characteristic
   break frequencies, while numerical SEDs are computed by numerically integrating the full synchrotron kernel over an
   arbitrary electron distribution. The analytic SEDs are faster to compute and easier to fit, but the numerical
@@ -258,9 +258,9 @@ toolkit. Broadly speaking, SEDs are categorized by the physical processes they i
   synchrotron self-absorption, and inverse-Compton scattering.
   The choice of which processes to include depends on the source being modeled and the available data.
 - **Relativistic Corrections**: For relativistic sources, the SED must include Doppler boosting and redshift corrections.
-  Triceratops SEDs include these corrections by default.
+  Trilobite SEDs include these corrections by default.
 
-The *goal* of the Triceratops SED module is to provide a comprehensive suite of these SED scenarios *and* to ensure
+The *goal* of the Trilobite SED module is to provide a comprehensive suite of these SED scenarios *and* to ensure
 that domain experts can easily extend the existing modules to generate new SED models as needed. The API is designed to
 be flexible and modular, allowing users to mix and match different physical processes and assumptions as needed for
 their specific modeling scenario.
@@ -275,7 +275,7 @@ piecewise power-law segments joined at a set of characteristic break frequencies
 
 .. important::
 
-    A useful feature of analytical SEDs in Triceratops is that they are constructed in a 2-step process:
+    A useful feature of analytical SEDs in Trilobite is that they are constructed in a 2-step process:
 
     1. **Normalization**: Analytical SED classes carry a ``from_physics_to_params`` method, which converts the physical
        parameters of the source into the phenomenological parameters of the SED
@@ -294,14 +294,14 @@ In practice, there are 3 regimes in which the analytic SEDs can be derived and i
 
 1. **Power-Law Electron Distributions** (Implemented): The most common scenario in the literature, where the electron
    distribution is a power-law in Lorentz factor. This is the default assumption in the one-zone SED models
-   provided by Triceratops. These SEDs can include both cooling and SSA.
+   provided by Trilobite. These SEDs can include both cooling and SSA.
 2. **Thermal Electron Distributions** (In Development): In some scenarios, the electron distribution may be better
    described by a thermal Maxwell-Jüttner distribution.
 3. **Thermal + PL Electron Distributions** (In Development): A combination of a thermal Maxwell-Jüttner distribution and a
    non-thermal power-law tail, which can be used to model scenarios where there is a significant thermal population
    of electrons in addition to the accelerated non-thermal population.
 
-The following are currently available in Triceratops:
+The following are currently available in Trilobite:
 
 .. list-table::
     :header-rows: 1
@@ -311,19 +311,19 @@ The following are currently available in Triceratops:
       - Cooling
       - SSA
       - Use when...
-    * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+    * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
       - No
       - No
       - Simple optically-thin power-law; no breaks beyond :math:`\nu_m`
-    * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+    * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
       - Yes
       - No
       - Optically thin emission with a fast- or slow-cooling break
-    * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+    * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
       - No
       - Yes
       - Dense or compact sources with an SSA turnover and negligible cooling
-    * - :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+    * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
       - Yes
       - Yes
       - Full broadband modeling -- the most general option
@@ -336,7 +336,7 @@ The following are currently available in Triceratops:
        import numpy as np
        import matplotlib.pyplot as plt
        from astropy import units as u
-       from triceratops.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
+       from trilobite.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
 
        # ── Instantiate the SED model ─────────────────────────────────────────────
        # SED objects are stateless: physical parameters are passed at call time,
@@ -418,7 +418,7 @@ The following are currently available in Triceratops:
 Numerical SEDs
 ^^^^^^^^^^^^^^
 
-In addition to the **analytical SEDs** as described above, Triceratops also provides a **numerical SED engine** that
+In addition to the **analytical SEDs** as described above, Trilobite also provides a **numerical SED engine** that
 computes the synchrotron spectrum by numerically integrating the full synchrotron kernel over an arbitrary electron
 distribution. This allows for more complex electron distributions and physical regimes that may not be well-described
 by the piecewise power-law approximations of the analytical SEDs.
@@ -430,18 +430,18 @@ by the piecewise power-law approximations of the analytical SEDs.
     can be computed efficiently enough for use in Bayesian inference pipelines, but they will generally be slower to
     compute than the analytical SEDs.
 
-The archetypal numerical SED class is :class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`,
+The archetypal numerical SED class is :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`,
 which provides robust methods for computing the emissivity, absorption coefficients, specific intensities, and
 flux densities. To use these engines, the following steps are generally followed:
 
 1. **Instantiate the Engine**: Create an instance of the numerical SED engine class.
 2. **Load the Synchrotron Kernel**: Pre-compute and load the synchrotron kernel (either the pitch-angle-averaged
    or single-pitch-angle version) into the engine. This step is necessary to ensure that the numerical integrals can be performed efficiently.
-   This can be done with the :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel` or
-   :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel` methods.
+   This can be done with the :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel` or
+   :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel` methods.
 3. **Compute the SED**: Use the public API methods to compute the desired radiative quantities (e.g. emissivity, absorption coefficient,
    flux density) for a given set of physical parameters and an arbitrary electron distribution. The flux density
-   may be computed with the :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`
+   may be computed with the :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`
    method, which includes Doppler and redshift corrections by default.
 
 See :ref:`synchrotron_seds` for more details on the API and the physical assumptions built into the numerical SED engine.
@@ -461,8 +461,8 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         from astropy import units as u
         from astropy import constants as const
 
-        from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-        from triceratops.radiation.synchrotron.microphysics import (
+        from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+        from trilobite.radiation.synchrotron.microphysics import (
             compute_MJD_and_PL_norm_from_magnetic_field,
             get_maxwell_juttner_distribution,
             get_power_law_distribution,
@@ -559,8 +559,8 @@ See :ref:`synchrotron_seds` for more details on the API and the physical assumpt
         import matplotlib.pyplot as plt
         from astropy import units as u
 
-        from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
-        from triceratops.radiation.synchrotron.microphysics import (
+        from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+        from trilobite.radiation.synchrotron.microphysics import (
             compute_PL_norm_from_magnetic_field,
             compute_BPL_norm_from_magnetic_field,
             get_power_law_distribution,
@@ -695,9 +695,9 @@ API Summary
 
 .. dropdown:: API Summary
 
-    **Analytic SEDs** (:mod:`triceratops.radiation.synchrotron.SEDs.one_zone`)
+    **Analytic SEDs** (:mod:`trilobite.radiation.synchrotron.SEDs.one_zone`)
 
-    .. currentmodule:: triceratops.radiation.synchrotron.SEDs.one_zone
+    .. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone
     .. autosummary::
        :nosignatures:
 
@@ -706,9 +706,9 @@ API Summary
        PowerLaw_SSA_SynchrotronSED
        PowerLaw_Cooling_SSA_SynchrotronSED
 
-    **Numerical SED Engine** (:mod:`triceratops.radiation.synchrotron.SEDs.numerical`)
+    **Numerical SED Engine** (:mod:`trilobite.radiation.synchrotron.SEDs.numerical`)
 
-    .. currentmodule:: triceratops.radiation.synchrotron.SEDs.numerical
+    .. currentmodule:: trilobite.radiation.synchrotron.SEDs.numerical
     .. autosummary::
        :nosignatures:
 
@@ -720,9 +720,9 @@ API Summary
        NumericalSynchrotronEngine.compute_specific_intensity
        NumericalSynchrotronEngine.compute_flux_density
 
-    **Electron Distribution Factories** (:mod:`triceratops.radiation.synchrotron.microphysics`)
+    **Electron Distribution Factories** (:mod:`trilobite.radiation.synchrotron.microphysics`)
 
-    .. currentmodule:: triceratops.radiation.synchrotron.microphysics
+    .. currentmodule:: trilobite.radiation.synchrotron.microphysics
     .. autosummary::
        :nosignatures:
 
@@ -746,15 +746,15 @@ At the core of synchrotron modeling are the **gyrofrequency**
 a single electron is emitted within roughly an order of magnitude of :math:`\nu_c`,
 so the critical frequency sets the characteristic scale of the spectrum.
 
-:mod:`~triceratops.radiation.synchrotron.core` provides
-:func:`~triceratops.radiation.synchrotron.core.compute_gyrofrequency`,
-:func:`~triceratops.radiation.synchrotron.core.compute_nu_critical`,
-:func:`~triceratops.radiation.synchrotron.core.compute_synchrotron_frequency`, and
-:func:`~triceratops.radiation.synchrotron.core.compute_synchrotron_gamma` for these
+:mod:`~trilobite.radiation.synchrotron.core` provides
+:func:`~trilobite.radiation.synchrotron.core.compute_gyrofrequency`,
+:func:`~trilobite.radiation.synchrotron.core.compute_nu_critical`,
+:func:`~trilobite.radiation.synchrotron.core.compute_synchrotron_frequency`, and
+:func:`~trilobite.radiation.synchrotron.core.compute_synchrotron_gamma` for these
 frequency conversions.  It also implements the private log-space backends for the
 **first synchrotron kernel** :math:`F(x) = x\int_x^\infty K_{5/3}(z)\,dz` and its
 pitch-angle average :math:`\bar{F}(x)` that are consumed by
-:class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`.
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`.
 
 The example below builds a numerical engine, pre-computes the pitch-angle-averaged
 kernel, and evaluates the population-averaged emissivity :math:`j_\nu` for a simple
@@ -767,8 +767,8 @@ spectral indices, illustrating how the emissivity slope tracks :math:`p`:
    import numpy as np
    import matplotlib.pyplot as plt
    import astropy.units as u
-   from triceratops.radiation.synchrotron.core import compute_nu_critical
-   from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+   from trilobite.radiation.synchrotron.core import compute_nu_critical
+   from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
 
    B = 1.0 * u.G
    gamma_min = 1e2

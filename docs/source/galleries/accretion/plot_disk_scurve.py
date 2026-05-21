@@ -28,8 +28,8 @@ during the evolution.
 
 Relevant API
 ------------
-- :func:`~triceratops.dynamics.accretion.one_zone.utils.compute_advection_s_curve`
-- :class:`~triceratops.dynamics.accretion.one_zone.core.AdvectiveDisk`
+- :func:`~trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve`
+- :class:`~trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk`
 """
 
 # %%
@@ -43,8 +43,8 @@ from astropy import units as u
 from matplotlib.collections import LineCollection
 from matplotlib.colors import LogNorm
 
-from triceratops.dynamics.accretion.one_zone import AdvectiveDisk, compute_advection_s_curve
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.dynamics.accretion.one_zone import AdvectiveDisk, compute_advection_s_curve
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 

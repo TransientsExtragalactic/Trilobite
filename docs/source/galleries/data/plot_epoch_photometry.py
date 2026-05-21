@@ -4,7 +4,7 @@ Plot Radio Photometry Epochs
 ====================================
 
 This example will demonstrate how to load radio photometry data and separate it into epochs for
-plotting using the Triceratops library. We'll utilize the :class:`data.photometry.RadioPhotometryContainer`
+plotting using the Trilobite library. We'll utilize the :class:`data.photometry.RadioPhotometryContainer`
 to manage and visualize the data.
 """
 
@@ -15,8 +15,8 @@ to manage and visualize the data.
 import matplotlib.pyplot as plt
 from astropy import units as u
 
-from triceratops.data.photometry import RadioPhotometryContainer
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.data.photometry import RadioPhotometryContainer
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # We'll use a set of synthetically generated radio photometry data for this example. The data is

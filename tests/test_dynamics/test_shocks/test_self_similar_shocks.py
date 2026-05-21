@@ -60,8 +60,8 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.shocks import ChevalierSelfSimilarShockEngine, ChevalierSelfSimilarWindShockEngine
-from triceratops.dynamics.shocks.utils import _normalize_BPL_ejecta
+from trilobite.dynamics.shocks import ChevalierSelfSimilarShockEngine, ChevalierSelfSimilarWindShockEngine
+from trilobite.dynamics.shocks.utils import _normalize_BPL_ejecta
 
 # -------------------------------------------------------------------- #
 # Test Fixtures / Data                                                 #
@@ -160,7 +160,7 @@ class TestChevalierSelfSimilarShockEngine:
         if diagnostic_plots:
             import matplotlib.pyplot as plt
 
-            from triceratops.utils.plot_utils import set_plot_style
+            from trilobite.utils.plot_utils import set_plot_style
 
             set_plot_style()
             fig, axes = plt.subplots(2, 1, figsize=(8, 8))

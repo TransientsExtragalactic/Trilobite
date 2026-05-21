@@ -4,13 +4,13 @@
 Shock Dynamics
 *****************************
 
-These examples demonstrate the low-level shock physics machinery in Triceratops. They cover
+These examples demonstrate the low-level shock physics machinery in Trilobite. They cover
 the numerical shock engine that evolves blast-wave radius, velocity, and swept-up mass through
 an arbitrary density profile, using Rankine–Hugoniot jump conditions at each step.
 
-These examples are most useful when working with the :mod:`~triceratops.dynamics` subpackage
+These examples are most useful when working with the :mod:`~trilobite.dynamics` subpackage
 directly (e.g., to implement a new shock model) rather than through the higher-level model
-interface in :mod:`~triceratops.models`.
+interface in :mod:`~trilobite.models`.
 
 .. rubric:: What you'll find here
 
@@ -21,4 +21,4 @@ interface in :mod:`~triceratops.models`.
 
 .. rubric:: API reference
 
-:mod:`triceratops.dynamics.shocks`
+:mod:`trilobite.dynamics.shocks`

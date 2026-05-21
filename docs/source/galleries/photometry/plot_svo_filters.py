@@ -5,9 +5,9 @@ Loading Filters from the SVO Filter Profile Service
 The `Spanish Virtual Observatory (SVO) Filter Profile Service
 <https://svo2.cab.inta-csic.es/svo/theory/fps/>`_ catalogues thousands of
 photometric bandpasses from virtually every major telescope and instrument.
-Triceratops can fetch any of them via ``astroquery.svo_fps`` and wrap them
-directly into a :class:`~triceratops.utils.phot_utils.PhotometryFilter` or a
-:class:`~triceratops.utils.phot_utils.FilterBundle`.
+Trilobite can fetch any of them via ``astroquery.svo_fps`` and wrap them
+directly into a :class:`~trilobite.utils.phot_utils.PhotometryFilter` or a
+:class:`~trilobite.utils.phot_utils.FilterBundle`.
 
 .. note::
 
@@ -17,14 +17,14 @@ directly into a :class:`~triceratops.utils.phot_utils.PhotometryFilter` or a
 
    Install the required optional dependencies with::
 
-       pip install triceratops[optical]
+       pip install trilobite[optical]
 
 Relevant API references
 -----------------------
-- :func:`triceratops.utils.phot_utils.list_svo_filters`
-- :func:`triceratops.utils.phot_utils.load_filter_from_svo`
-- :func:`triceratops.utils.phot_utils.load_filters_from_svo`
-- :class:`triceratops.utils.phot_utils.FilterBundle`
+- :func:`trilobite.utils.phot_utils.list_svo_filters`
+- :func:`trilobite.utils.phot_utils.load_filter_from_svo`
+- :func:`trilobite.utils.phot_utils.load_filters_from_svo`
+- :class:`trilobite.utils.phot_utils.FilterBundle`
 """
 
 # %%
@@ -33,12 +33,12 @@ Relevant API references
 import matplotlib.pyplot as plt
 import numpy as np
 
-from triceratops.utils.phot_utils import (
+from trilobite.utils.phot_utils import (
     FilterBundle,
     load_filter_from_svo,
     list_svo_filters,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -46,7 +46,7 @@ set_plot_style()
 # Browsing Available Filters
 # --------------------------
 #
-# :func:`~triceratops.utils.phot_utils.list_svo_filters` returns a metadata
+# :func:`~trilobite.utils.phot_utils.list_svo_filters` returns a metadata
 # table for every filter registered for a given facility. Passing
 # ``instrument=`` restricts the listing to a single detector/camera — the
 # filtering is applied client-side on the ``filterID`` column, so the function
@@ -63,9 +63,9 @@ print(hst_uvis1["filterID", "WavelengthEff", "FWHM"][:5])
 # Loading a Single Filter
 # -----------------------
 #
-# :func:`~triceratops.utils.phot_utils.load_filter_from_svo` takes any SVO
+# :func:`~trilobite.utils.phot_utils.load_filter_from_svo` takes any SVO
 # filter ID in ``"facility/instrument.band"`` format and returns a
-# :class:`~triceratops.utils.phot_utils.PhotometryFilter` with the
+# :class:`~trilobite.utils.phot_utils.PhotometryFilter` with the
 # transmission curve already normalised into integration weights.
 
 f555w = load_filter_from_svo("HST/WFC3_UVIS1.F555W")
@@ -78,7 +78,7 @@ print(f"  equivalent width     : {f555w.filter_width_lambda * 1e8:.1f} Å")
 # ---------------------------------------------------
 #
 # We load five classic WFC3/UVIS1 broadband filters spanning UV to near-IR
-# and assemble them into a :class:`~triceratops.utils.phot_utils.FilterBundle`.
+# and assemble them into a :class:`~trilobite.utils.phot_utils.FilterBundle`.
 # The bundle merges all individual grids into one common frequency grid and
 # precomputes the weight matrix, so all five filters can be applied to any SED
 # in a single matrix multiplication — the hot-loop method for MCMC.
@@ -120,17 +120,17 @@ plt.show()
 
 # %%
 # Any filter loaded from the SVO is a standard
-# :class:`~triceratops.utils.phot_utils.PhotometryFilter`, so all the usual
-# methods — :meth:`~triceratops.utils.phot_utils.PhotometryFilter.convolve_nu`,
-# :meth:`~triceratops.utils.phot_utils.FilterBundle.apply`,
+# :class:`~trilobite.utils.phot_utils.PhotometryFilter`, so all the usual
+# methods — :meth:`~trilobite.utils.phot_utils.PhotometryFilter.convolve_nu`,
+# :meth:`~trilobite.utils.phot_utils.FilterBundle.apply`,
 # serialisation to HDF5/JSON — work without modification.
 #
 # To load every filter for a facility at once, use
-# :func:`~triceratops.utils.phot_utils.load_filters_from_svo`:
+# :func:`~trilobite.utils.phot_utils.load_filters_from_svo`:
 #
 # .. code-block:: python
 #
-#     from triceratops.utils.phot_utils import load_filters_from_svo, FilterBundle
+#     from trilobite.utils.phot_utils import load_filters_from_svo, FilterBundle
 #     all_hst = load_filters_from_svo("HST", instrument="WFC3_UVIS1")
 #     bundle = FilterBundle(all_hst)
 #

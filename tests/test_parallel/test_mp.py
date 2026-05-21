@@ -1,5 +1,5 @@
 """
-Tests for :mod:`triceratops.parallel.mp` — ``LikelihoodMPPool``.
+Tests for :mod:`trilobite.parallel.mp` — ``LikelihoodMPPool``.
 
 These tests spawn real worker processes.  They exercise the multiprocessing
 backend end-to-end against a simple inference problem to confirm that:
@@ -14,8 +14,8 @@ backend end-to-end against a simple inference problem to confirm that:
 import numpy as np
 import pytest
 
-from triceratops.parallel.base import Pool
-from triceratops.parallel.mp import LikelihoodMPPool
+from trilobite.parallel.base import Pool
+from trilobite.parallel.mp import LikelihoodMPPool
 
 
 # ================================================================== #
@@ -117,8 +117,8 @@ class TestLikelihoodMPPool:
             LikelihoodMPPool(problem=simple_problem, processes=0)
 
     def test_map_against_serial_pool(self, simple_problem):
-        """Results must match :class:`~triceratops.parallel.base.SerialPool`."""
-        from triceratops.parallel.base import SerialPool
+        """Results must match :class:`~trilobite.parallel.base.SerialPool`."""
+        from trilobite.parallel.base import SerialPool
 
         thetas = _make_theta_batch(simple_problem, n=8, seed=7)
         serial_results = list(SerialPool().map(simple_problem._log_free_posterior, thetas))

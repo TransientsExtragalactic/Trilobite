@@ -41,7 +41,7 @@ import pytest
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.shocks import BlandfordMcKeeShockEngine, BlandfordMcKeeWindShockEngine
+from trilobite.dynamics.shocks import BlandfordMcKeeShockEngine, BlandfordMcKeeWindShockEngine
 
 # --------------------------------------------------------------------------- #
 # Module-level constants (CGS)                                                #

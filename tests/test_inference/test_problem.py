@@ -3,10 +3,10 @@ import pathlib
 import numpy as np
 import pytest
 
-from triceratops.data.core import InferenceData, Observable
-from triceratops.inference import GaussianLikelihood, InferenceProblem, UniformPrior
-from triceratops.inference.sampling.mcmc import EmceeSampler
-from triceratops.models.generic.curves import LinearModel
+from trilobite.data.core import InferenceData, Observable
+from trilobite.inference import GaussianLikelihood, InferenceProblem, UniformPrior
+from trilobite.inference.sampling.mcmc import EmceeSampler
+from trilobite.models.generic.curves import LinearModel
 
 np.random.seed(42)
 

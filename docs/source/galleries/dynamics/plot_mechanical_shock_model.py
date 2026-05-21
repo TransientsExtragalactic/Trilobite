@@ -5,7 +5,7 @@ Mechanical Shock Model: Forward and Reverse Shock Evolution
 .. admonition:: What this example does
 
    This example walks through the full setup of the
-   :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine` for a
+   :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine` for a
    canonical core-collapse supernova expanding into a red-supergiant wind.
    It covers ejecta and CSM profile construction, source-function wrapping,
    self-consistent initial conditions, and interpretation of the two-shock
@@ -16,7 +16,7 @@ collapse the shocked region to a thin shell and evolve only its radius and
 velocity. This works well when the shocked ejecta and shocked CSM are in
 pressure balance and the distinction between the two layers is unimportant
 for the observable of interest. The
-:class:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine`
+:class:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine`
 instead tracks the two regions separately:
 
 - **Region 2** — shocked ejecta, bounded by the reverse shock and the
@@ -29,7 +29,7 @@ distinction between forward and reverse shock speeds, lets the CD
 accelerate or decelerate under the pressure difference between the two
 layers, and allows independent radiative cooling terms. The cost is a
 slightly more involved setup compared to
-:class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`.
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`.
 
 .. seealso::
 
@@ -39,7 +39,7 @@ slightly more involved setup compared to
    :ref:`numeric_shocks_theory`
        Overview of all numerical shock closures and when to prefer each one.
 
-   :class:`~triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+   :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
        Simpler thin-shell alternative for when the two-shock structure is
        not needed.
 
@@ -52,18 +52,18 @@ slightly more involved setup compared to
 # -----
 #
 # We import the engine, the ejecta-kernel factory, the source-function helper,
-# and the Triceratops plotting utilities.
+# and the Trilobite plotting utilities.
 
 import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.dynamics.shocks import (
+from trilobite.dynamics.shocks import (
     MechanicalShockEngine,
     get_bpl_ejecta_kernel,
     make_homologous_stationary_sources,
 )
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.utils.plot_utils import set_plot_style
 
 # %%
 # Physical Parameters
@@ -98,12 +98,12 @@ v_ej = np.sqrt(2 * E_ej / M_ej)
 # dependence this way makes the kernel time-independent, which is both
 # conceptually clean and numerically efficient inside ODE right-hand sides.
 #
-# :func:`~triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel` normalises
+# :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel` normalises
 # the Chevalier broken-power-law kernel to the requested mass and energy.
 # For an exponential ejecta profile, use
-# :func:`~triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel`
+# :func:`~trilobite.dynamics.shocks.utils.get_exponential_ejecta_kernel`
 # instead; a velocity-truncated variant is available via
-# :func:`~triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel`.
+# :func:`~trilobite.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel`.
 
 G_ej = get_bpl_ejecta_kernel(E_ej, M_ej, n=10, delta=1)
 
@@ -121,7 +121,7 @@ G_ej = get_bpl_ejecta_kernel(E_ej, M_ej, n=10, delta=1)
 #
 # We define this as a simple one-argument callable.  A ready-made factory for
 # this profile is also provided by
-# :func:`~triceratops.dynamics.shocks.utils.get_wind_csm_density_func`, which
+# :func:`~trilobite.dynamics.shocks.utils.get_wind_csm_density_func`, which
 # additionally handles unit conversion.  Other common profiles (uniform ISM,
 # top-hat shell, smooth-truncated wind) are available in the same module.
 
@@ -145,7 +145,7 @@ def rho_csm(r):
 #
 # For homologous ejecta and a stationary CSM the velocity fields are
 # :math:`u_1 = r/t` and :math:`u_4 = 0`.
-# :func:`~triceratops.dynamics.shocks.utils.make_homologous_stationary_sources`
+# :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`
 # wraps the kernel :math:`G(v)` and the CSM profile into these four
 # two-argument callables automatically.
 
@@ -165,7 +165,7 @@ rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(
 # consistent with the Chevalier :math:`n=10`, :math:`s=2` self-similar
 # solution at that epoch.
 #
-# :meth:`~triceratops.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions`
+# :meth:`~trilobite.dynamics.shocks.numerical.MechanicalShockEngine.generate_initial_conditions`
 # derives the remaining six components self-consistently from these two
 # inputs, eliminating the initial transient that would otherwise arise from
 # an inconsistency between the assumed shock speed and the sound-speed width
@@ -198,7 +198,7 @@ R0, v0, M2_0, M3_0, U2_0, U3_0, Dlt2_0, Dlt3_0 = MechanicalShockEngine.generate_
 # -------------------------
 #
 # We evolve the system over three decades, from 1 to 1000 days.  The engine
-# returns a :class:`~triceratops.dynamics.shocks.numerical.MechanicalShockState`
+# returns a :class:`~trilobite.dynamics.shocks.numerical.MechanicalShockState`
 # named tuple whose fields are :class:`~astropy.units.Quantity` arrays.
 
 time = np.geomspace(1e-1, 1000000, 4000) * u.day

@@ -17,7 +17,7 @@ from astropy import constants as const
 from astropy import units as u
 from numpy.testing import assert_allclose
 
-from triceratops.dynamics.accretion import AlphaDisk
+from trilobite.dynamics.accretion import AlphaDisk
 
 
 # ---------------------------------------------------------------------------
@@ -26,7 +26,7 @@ from triceratops.dynamics.accretion import AlphaDisk
 
 
 class TestAlphaDisk:
-    """Tests for :class:`~triceratops.dynamics.accretion.AlphaDisk`."""
+    """Tests for :class:`~trilobite.dynamics.accretion.AlphaDisk`."""
 
     @pytest.fixture(scope="class")
     def disk(self):

@@ -2,7 +2,7 @@
 Fixtures shared across parallel module tests.
 
 The ``simple_problem`` fixture creates a minimal but complete
-:class:`~triceratops.inference.problem.InferenceProblem` that is JSON-serializable and
+:class:`~trilobite.inference.problem.InferenceProblem` that is JSON-serializable and
 suitable for exercising all pool backends.
 
 The ``mpi4py_available`` fixture exposes whether ``mpi4py`` is installed so that
@@ -12,18 +12,18 @@ individual tests can skip gracefully when the optional dependency is absent.
 import numpy as np
 import pytest
 
-from triceratops.data.core import InferenceData, Observable
-from triceratops.inference import GaussianLikelihood, InferenceProblem
-from triceratops.models.generic.curves import LinearModel
+from trilobite.data.core import InferenceData, Observable
+from trilobite.inference import GaussianLikelihood, InferenceProblem
+from trilobite.models.generic.curves import LinearModel
 
 
 @pytest.fixture(scope="module")
 def simple_problem():
     """
-    Return a fully-configured :class:`~triceratops.inference.problem.InferenceProblem`.
+    Return a fully-configured :class:`~trilobite.inference.problem.InferenceProblem`.
 
-    Uses a :class:`~triceratops.models.generic.curves.LinearModel` (y = m*x + b) with
-    synthetic Gaussian observations.  Both parameters have :class:`~triceratops.inference.prior.UniformPrior`
+    Uses a :class:`~trilobite.models.generic.curves.LinearModel` (y = m*x + b) with
+    synthetic Gaussian observations.  Both parameters have :class:`~trilobite.inference.prior.UniformPrior`
     priors so the problem is immediately ready for likelihood evaluation.
 
     Returns

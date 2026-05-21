@@ -3,18 +3,18 @@ import pytest
 from astropy import units as u
 from astropy.cosmology import Planck18
 
-from triceratops.physics_utils.cosmology import (
+from trilobite.physics_utils.cosmology import (
     get_cosmology,
     resolve_cosmological_distances,
 )
-from triceratops.utils.config import triceratops_config
+from trilobite.utils.config import trilobite_config
 
 
 def test_get_default_cosmology():
     """
     Ensure the default cosmology is correctly fetched from config.
     """
-    triceratops_config["physics.default_cosmology"] = Planck18
+    trilobite_config["physics.default_cosmology"] = Planck18
 
     cosmo = get_cosmology()
 

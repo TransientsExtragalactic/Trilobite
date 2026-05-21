@@ -5,7 +5,7 @@ Fit Censored Radio Photometry to a BPL
 
 In this example, we'll do consider the relatively simple task of fitting a single epoch of
 censored radio photometry data using a broken power-law (BPL) model. This is an excellent
-example of the robust data handling and likelihood construction of the Triceratops library.
+example of the robust data handling and likelihood construction of the Trilobite library.
 
 We'll use the :class:`~models.emission.synchrotron.Synchrotron_SSA_SBPL_SED` model to generate some synthetic
 data with a fixed noise threshold and then we'll invert that data to recover the original parameters using MCMC.
@@ -20,7 +20,7 @@ from astropy import units as u
 # Setup
 # -----
 # First, we need to import the necessary libraries
-from triceratops.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
+from trilobite.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
 
 # %%
 # Now, the :class:`~models.emission.synchrotron.Synchrotron_SSA_SBPL_SED` model produces a synchrotron SED
@@ -134,7 +134,7 @@ plt.show()
 # plus noise would have fallen below that threshold.
 from astropy.table import Table
 
-from triceratops.data.photometry import RadioPhotometryEpochContainer
+from trilobite.data.photometry import RadioPhotometryEpochContainer
 
 # Create an Astropy Table with the synthetic data. We'll have everything happen at the same
 # epoch in this case (dummy time column), and we'll set the upper limits to NaN since we have detections.
@@ -153,14 +153,14 @@ data_table["flux_density_error"][censored_mask] = flux_floor / 3  # dummy error 
 # Create the RadioPhotometryContainer from the table.
 photometry_data = RadioPhotometryEpochContainer(data_table)
 
-from triceratops.data import InferenceData
+from trilobite.data import InferenceData
 
 # %%
 # Now that we have the data container, we can set up the likelihood function. We'll use the
 # :class:`~inference.likelihood.base.GaussianCensoredLikelihood` for this purpose.
 #
 # This likelihood works with single-epoch photometry data and assumes Gaussian errors on the flux densities.
-from triceratops.inference import GaussianCensoredLikelihood
+from trilobite.inference import GaussianCensoredLikelihood
 
 # Create the inference data object.
 inference_data = InferenceData.from_table(
@@ -185,9 +185,9 @@ print(f"Log Likelihood at True Parameters: {log_likelihood_true}")
 # %%
 # Next, we need to define priors for the parameters we want to infer and generate an
 # inference problem (:class:`inference.problem.InferenceProblem`). We'll use uniform priors for simplicity.
-from triceratops.inference.prior import UniformPrior
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.inference.prior import UniformPrior
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 # Generate the inference problem
 problem = InferenceProblem(
@@ -256,7 +256,7 @@ plt.show()
 # %%
 # It's also always good practice to look at some diagnostic plots to ensure that the MCMC
 # chains have converged and that the posterior distributions look reasonable. We'll use the built-in plotting utilities
-# in Triceratops for this.
+# in Trilobite for this.
 #
 # Let's start by looking at the trace plots for the :math:`\nu_{\rm brk}` parameter.
 fig, ax = result.trace_plot("nu_break", burn=1000, thin=5)

@@ -1,5 +1,5 @@
 """
-Tests for triceratops.data.optical_photometry.OpticalPhotometryContainer.
+Tests for trilobite.data.optical_photometry.OpticalPhotometryContainer.
 """
 
 from unittest.mock import MagicMock
@@ -9,8 +9,8 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data.optical_photometry import OpticalPhotometryContainer
-from triceratops.utils.phot_utils import ab_mag_to_flux, flux_to_ab_mag
+from trilobite.data.optical_photometry import OpticalPhotometryContainer
+from trilobite.utils.phot_utils import ab_mag_to_flux, flux_to_ab_mag
 
 # ======================================================================
 # Constants
@@ -454,7 +454,7 @@ class TestToInferenceData:
 # OpticalPhotometryEpoch
 # ======================================================================
 
-from triceratops.data.optical_photometry import OpticalPhotometryEpoch
+from trilobite.data.optical_photometry import OpticalPhotometryEpoch
 
 
 def _epoch_flux_table(n=4, n_upper=1):

@@ -1,8 +1,8 @@
-"""Tests for :mod:`triceratops.parallel.base` — ``Pool`` ABC and ``SerialPool``."""
+"""Tests for :mod:`trilobite.parallel.base` — ``Pool`` ABC and ``SerialPool``."""
 
 import pytest
 
-from triceratops.parallel.base import Pool, SerialPool
+from trilobite.parallel.base import Pool, SerialPool
 
 
 # ================================================================== #

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from scipy.integrate import quad
 
-from triceratops.radiation.synchrotron.microphysics import (
+from trilobite.radiation.synchrotron.microphysics import (
     _opt_compute_BPL_moment,
     _opt_compute_BPL_n_total,
     _opt_compute_PL_moment,

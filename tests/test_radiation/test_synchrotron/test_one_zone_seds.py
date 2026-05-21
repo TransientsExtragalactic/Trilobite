@@ -5,15 +5,15 @@ import numpy as np
 import pytest
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
-from triceratops.radiation.synchrotron.SEDs import (
+from trilobite.radiation.synchrotron.cooling import SynchrotronRadiativeCoolingEngine
+from trilobite.radiation.synchrotron.SEDs import (
     PowerLaw_Cooling_SSA_SynchrotronSED,
     PowerLaw_Cooling_SynchrotronSED,
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
 
-from triceratops.radiation.synchrotron.SEDs.one_zone_closure import (
+from trilobite.radiation.synchrotron.SEDs.one_zone_closure import (
     invert_powerlaw_implicit_cooling_sed,
     invert_powerlaw_implicit_cooling_ssa_sed,
     invert_powerlaw_ssa_sed_demarchi,
@@ -535,7 +535,7 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     and compares the inferred B(t) and R(t) from the two methods.
     """
 
-    from triceratops.radiation.synchrotron.SEDs.one_zone_closure import (
+    from trilobite.radiation.synchrotron.SEDs.one_zone_closure import (
         invert_powerlaw_ssa_sed_demarchi,
     )
 
@@ -658,7 +658,7 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     # ---------------------------------------------------------
 
     if diagnostic_plots:
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
 
@@ -788,7 +788,7 @@ def test_spectrum_7_and_4_convergence(diagnostic_plots, diagnostic_plots_dir):
     # ---------------------------------------------------------
 
     if diagnostic_plots:
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
 
@@ -982,7 +982,7 @@ def test_spectrum_7_and_4_inversion_consistency(diagnostic_plots, diagnostic_plo
     # ---------------------------------------------------------
 
     if diagnostic_plots:
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
 
@@ -1130,7 +1130,7 @@ def test_cooling_transition_continuity(diagnostic_plots, diagnostic_plots_dir):
     # ---------------------------------------------------------
 
     if diagnostic_plots:
-        from triceratops.utils.plot_utils import set_plot_style
+        from trilobite.utils.plot_utils import set_plot_style
 
         set_plot_style()
 
@@ -1512,7 +1512,7 @@ def test_demarchi_round_trip(B, R, d, p, diagnostic_plots, diagnostic_plots_dir)
             -> (B_rec, R_rec)
 
     The DM22 inversion is an independent analytic formula and is only an
-    approximation to the Triceratops closure.  The tolerance is therefore
+    approximation to the Trilobite closure.  The tolerance is therefore
     set to ``rtol=2.0``, consistent with the agreement documented in
     :func:`test_demarchi_equivalence`.
 

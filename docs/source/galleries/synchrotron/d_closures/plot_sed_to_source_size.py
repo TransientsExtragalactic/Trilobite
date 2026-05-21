@@ -44,9 +44,9 @@ import numpy as np
 from astropy import constants as const
 from astropy import units as u
 
-from triceratops.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
-from triceratops.radiation.synchrotron.SEDs import PowerLaw_SSA_SynchrotronSED
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.models.SEDs.synchrotron import Synchrotron_SSA_SBPL_Model
+from trilobite.radiation.synchrotron.SEDs import PowerLaw_SSA_SynchrotronSED
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -125,11 +125,11 @@ plt.show()
 
 from astropy.table import Table
 
-from triceratops.data import InferenceData
-from triceratops.data.photometry import RadioPhotometryEpochContainer
-from triceratops.inference import GaussianCensoredLikelihood
-from triceratops.inference.problem import InferenceProblem
-from triceratops.inference.sampling.mcmc import EmceeSampler
+from trilobite.data import InferenceData
+from trilobite.data.photometry import RadioPhotometryEpochContainer
+from trilobite.inference import GaussianCensoredLikelihood
+from trilobite.inference.problem import InferenceProblem
+from trilobite.inference.sampling.mcmc import EmceeSampler
 
 # Build a data table
 data_table = Table()

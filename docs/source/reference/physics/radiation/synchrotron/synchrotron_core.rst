@@ -8,8 +8,8 @@ Core Synchrotron Tools
 
     See :ref:`synchrotron_theory` for a detailed overview of the theory of synchrotron radiation.
 
-The :mod:`triceratops.radiation.synchrotron.core` module provides the foundational building
-blocks for synchrotron radiation calculations in Triceratops. Unlike higher-level
+The :mod:`trilobite.radiation.synchrotron.core` module provides the foundational building
+blocks for synchrotron radiation calculations in Trilobite. Unlike higher-level
 modules, this module does **not** assume any particular electron distribution,
 microphysical closure, or spectral regime. Instead, it exposes the minimal
 theoretical ingredients needed to construct synchrotron emission models from
@@ -19,20 +19,20 @@ The tools in this module fall into two categories:
 
 1. **Fundamental synchrotron frequencies**: gyrofrequency, critical frequency,
    characteristic emission frequency, and their inverses.
-2. **Synchrotron kernel functions**: :func:`~triceratops.radiation.synchrotron.core.compute_first_synchrotron_kernel`
-   and :func:`~triceratops.radiation.synchrotron.core.compute_averaged_first_synchrotron_kernel` for direct evaluation
+2. **Synchrotron kernel functions**: :func:`~trilobite.radiation.synchrotron.core.compute_first_synchrotron_kernel`
+   and :func:`~trilobite.radiation.synchrotron.core.compute_averaged_first_synchrotron_kernel` for direct evaluation
    of :math:`F(x)` and :math:`\bar{F}(x)`, backed by private log-space
    implementations consumed by
-   :class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`.
+   :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`.
 
 .. note::
 
     Population-averaged emissivities, absorption coefficients, and spectral flux
     densities are not implemented here. Use
-    :class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`
     for those quantities.
 
-.. currentmodule:: triceratops.radiation.synchrotron.core
+.. currentmodule:: trilobite.radiation.synchrotron.core
 
 ----
 
@@ -59,7 +59,7 @@ in a magnetic field of strength :math:`B`:
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.core import compute_gyrofrequency
+            from trilobite.radiation.synchrotron.core import compute_gyrofrequency
             import astropy.units as u
 
             nu_g = compute_gyrofrequency(gamma=100, B=1*u.G)
@@ -68,7 +68,7 @@ in a magnetic field of strength :math:`B`:
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.core import _optimized_compute_nu_gyro
+            from trilobite.radiation.synchrotron.core import _optimized_compute_nu_gyro
 
             nu_g = _optimized_compute_nu_gyro(gamma=100, B=1.0)  # B in Gauss, returns Hz
 
@@ -94,7 +94,7 @@ order of magnitude of :math:`\nu_c`.
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.core import compute_nu_critical
+            from trilobite.radiation.synchrotron.core import compute_nu_critical
             import astropy.units as u
 
             nu_c = compute_nu_critical(gamma=100, B=1*u.G)
@@ -105,7 +105,7 @@ order of magnitude of :math:`\nu_c`.
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.core import _optimized_compute_nu_critical
+            from trilobite.radiation.synchrotron.core import _optimized_compute_nu_critical
 
             nu_c = _optimized_compute_nu_critical(gamma=100, B=1.0, sin_alpha=1.0)
 
@@ -124,7 +124,7 @@ Setting ``pitch_average=True`` (the default) replaces :math:`\sin\alpha` with
         .. code-block:: python
 
             import numpy as np
-            from triceratops.radiation.synchrotron.core import compute_synchrotron_frequency
+            from trilobite.radiation.synchrotron.core import compute_synchrotron_frequency
             import astropy.units as u
 
             # Pitch-angle averaged (default)
@@ -142,7 +142,7 @@ Setting ``pitch_average=True`` (the default) replaces :math:`\sin\alpha` with
 
         .. code-block:: python
 
-            from triceratops.radiation.synchrotron.core import compute_synchrotron_gamma
+            from trilobite.radiation.synchrotron.core import compute_synchrotron_gamma
             import astropy.units as u
 
             gamma = compute_synchrotron_gamma(nu=1e9*u.Hz, B=0.5*u.G)
@@ -178,7 +178,7 @@ quadrature in the interior stitched to asymptotic forms at the domain edges;
 
     import numpy as np
     import matplotlib.pyplot as plt
-    from triceratops.radiation.synchrotron.core import (
+    from trilobite.radiation.synchrotron.core import (
         compute_first_synchrotron_kernel,
         compute_averaged_first_synchrotron_kernel,
     )
@@ -200,9 +200,9 @@ quadrature in the interior stitched to asymptotic forms at the domain edges;
 .. note::
 
     For performance-critical applications such as inference loops, prefer
-    :class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`,
+    :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine`,
     which pre-tabulates the kernel on a spline grid with
-    :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel`
+    :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel`
     and avoids repeated Bessel-function quadrature.
 
 .. rubric:: References

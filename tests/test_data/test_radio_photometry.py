@@ -11,7 +11,7 @@ import pytest
 from astropy import units as u
 from astropy.table import Table
 
-from triceratops.data import RadioPhotometryContainer
+from trilobite.data import RadioPhotometryContainer
 
 
 # ============================================================

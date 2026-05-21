@@ -1,7 +1,7 @@
 import numpy as np
 from test_model_base import BaseModelTest
 
-from triceratops.models import (
+from trilobite.models import (
     Cooling_SynchrotronSEDModel,
     SSA_Cooling_SynchrotronSEDModel,
     SSA_SynchrotronSEDModel,

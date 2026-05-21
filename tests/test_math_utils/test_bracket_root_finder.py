@@ -1,5 +1,5 @@
 """
-Tests for triceratops.math_utils._bracket_root_finder.
+Tests for trilobite.math_utils._bracket_root_finder.
 
 The Cython ``cdef`` functions are exercised via their Python-callable wrappers:
 
@@ -28,14 +28,14 @@ import pytest
 # Module import — skip entire file if the extension has not been compiled yet.
 # ---------------------------------------------------------------------------
 try:
-    from triceratops.math_utils._bracket_root_finder import (
+    from trilobite.math_utils._bracket_root_finder import (
         py_brent_root,
         py_expand_bracket,
         py_find_root,
     )
 except ImportError:
     pytest.skip(
-        "triceratops.math_utils._bracket_root_finder not compiled — run `pip install -e .`",
+        "trilobite.math_utils._bracket_root_finder not compiled — run `pip install -e .`",
         allow_module_level=True,
     )
 

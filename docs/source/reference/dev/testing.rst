@@ -3,5 +3,5 @@
 .. _testing:
 
 ==============================
-Triceratops Testing Structures
+Trilobite Testing Structures
 ==============================

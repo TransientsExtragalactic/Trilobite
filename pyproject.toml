@@ -16,9 +16,9 @@ build-backend = "setuptools.build_meta"
 # ================================== #
 # Configuration for the project details.
 [project]
-name = "triceratops"
+name = "trilobite"
 dynamic = ["version"]
-description = "Transient Radio Interaction Code for Ejecta, Remnants, And Time-domain Observables in Plasma Shocks"
+description = "TRansient Inference Library for Observation, Bayesian Inference, and Time-domain Exploration"
 authors = [
   { name = "Eliza Diggins", email = 'eliza.diggins@berkeley.edu'}
 ]
@@ -103,7 +103,7 @@ test = [
 # Tools                              #
 # ================================== #
 [tool.setuptools]
-packages = { find = { include = ["triceratops*"] } }
+packages = { find = { include = ["trilobite*"] } }
 include-package-data = true
 
 [tool.setuptools_scm]
@@ -111,7 +111,7 @@ include-package-data = true
 # Tags should follow the format `stable_vX.Y.Z` or `dev_vX.Y.Z`.
 # This configuration extracts the version number (X.Y.Z) from the tag.
 
-version_file = "triceratops/_version.py"
+version_file = "trilobite/_version.py"
 local_scheme = "no-local-version"       # Omit local version info (e.g. +gHASH)
 fallback_version = "0.0.0"              # Used if no tag is found
 tag_regex = "^v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-a-zA-Z0-9\\.]+)?)$"
@@ -172,7 +172,7 @@ lint.exclude = [
 
 [tool.coverage.run]
 branch = true
-source = ["triceratops"]
+source = ["trilobite"]
 
 [tool.coverage.report]
 show_missing = true

@@ -313,7 +313,7 @@ solved efficiently with a simple numerical solver. Consider explicit solutions t
 under the condition that :math:`\beta_2 < \beta_1` (i.e. the shock is compressive). This condition is equivalent
 to requiring that the shock is physical and not a rarefaction wave, which would have :math:`\beta_2 > \beta_1`.
 
-In this case, we can solve for :math:`\beta_2` using a root-finding method. For our purposes in Triceratops, we elect
+In this case, we can solve for :math:`\beta_2` using a root-finding method. For our purposes in Trilobite, we elect
 to use the bracketed root-finding method of :footcite:t:`brent2013algorithms`, which is a robust method for this
 type of problem (see also :footcite:t:`2007nras.book.....P` for a pedagogical introduction).
 

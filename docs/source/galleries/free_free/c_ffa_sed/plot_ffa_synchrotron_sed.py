@@ -18,16 +18,16 @@ completely obscure the SSA peak during the first weeks to months after
 explosion.
 
 We build the intrinsic SSA synchrotron SED with
-:class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`,
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`,
 compute the wind optical depth with
-:func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`,
+:func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`,
 and evolve both quantities over a simple power-law expansion to show how
 the double-turnover structure changes with time.
 
 Relevant API
 ------------
-- :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
-- :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`
+- :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+- :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`
 """
 
 import matplotlib.pyplot as plt
@@ -35,9 +35,9 @@ import numpy as np
 from astropy import units as u
 from matplotlib.colors import LogNorm
 
-from triceratops.radiation.free_free import compute_ff_RJ_optical_depth_wind_Mdot
-from triceratops.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.free_free import compute_ff_RJ_optical_depth_wind_Mdot
+from trilobite.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
+from trilobite.utils.plot_utils import set_plot_style
 
 set_plot_style()
 
@@ -45,10 +45,10 @@ set_plot_style()
 # Intrinsic Synchrotron Spectrum
 # ------------------------------
 #
-# :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+# :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
 # maps physical parameters (:math:`B`, :math:`R`, microphysics fractions)
 # to the phenomenological SED parameters required by
-# :meth:`~triceratops.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed`
+# :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED.sed`
 # via a one-zone closure relation.
 
 # Create the frequency grid on which we'll evaluate the SED.
@@ -115,7 +115,7 @@ plt.show()
 #     \rho(r) = \frac{\dot{M}}{4\pi\,r^2\,v_w},
 #
 # which gives :math:`\tau_{\rm ff} \propto \nu^{-2}`.
-# :func:`~triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`
+# :func:`~trilobite.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot`
 # accepts :math:`\dot{M}` and :math:`v_w` directly and converts to
 # number densities at the inner radius internally.
 

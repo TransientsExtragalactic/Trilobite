@@ -6,7 +6,7 @@ From Data to Inference: A Complete Guide
 
 This guide walks through the full chain from raw observational data to a
 sampler-ready inference problem. It is the single document you need if you
-are setting up a new inference analysis in Triceratops.
+are setting up a new inference analysis in Trilobite.
 
 The pipeline has four steps, each with a single responsibility:
 
@@ -19,8 +19,8 @@ The pipeline has four steps, each with a single responsibility:
 Step 1: Load Your Data into a Container
 ---------------------------------------
 
-Every piece of observational data in Triceratops is loaded into a
-:class:`~triceratops.data.core.DataContainer` subclass. The container enforces
+Every piece of observational data in Trilobite is loaded into a
+:class:`~trilobite.data.core.DataContainer` subclass. The container enforces
 a column schema, validates units, and provides domain-specific accessors.
 
 Choose the container that matches your data:
@@ -31,7 +31,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import RadioLightCurveContainer
+            from trilobite.data import RadioLightCurveContainer
 
             container = RadioLightCurveContainer.from_file(
                 "lightcurve.fits",
@@ -45,7 +45,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import RadioPhotometryContainer
+            from trilobite.data import RadioPhotometryContainer
 
             container = RadioPhotometryContainer.from_file("photometry.fits")
 
@@ -55,7 +55,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import OpticalPhotometryContainer
+            from trilobite.data import OpticalPhotometryContainer
 
             container = OpticalPhotometryContainer.from_file("optical.fits")
 
@@ -66,7 +66,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import OpticalLightCurveContainer
+            from trilobite.data import OpticalLightCurveContainer
 
             container = OpticalLightCurveContainer.from_file(
                 "optical_g.fits",
@@ -80,7 +80,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import RadioPhotometryEpoch
+            from trilobite.data import RadioPhotometryEpoch
 
             container = RadioPhotometryEpoch.from_file("epoch_sed.fits")
 
@@ -91,7 +91,7 @@ Choose the container that matches your data:
 
         .. code-block:: python
 
-            from triceratops.data import OpticalPhotometryEpoch
+            from trilobite.data import OpticalPhotometryEpoch
 
             container = OpticalPhotometryEpoch.from_file("optical_epoch.fits")
 
@@ -110,7 +110,7 @@ Once loaded, you can inspect your data:
 Step 2: Understand What Your Model Expects
 ------------------------------------------
 
-Every model in Triceratops declares:
+Every model in Trilobite declares:
 
 - **VARIABLES** — the independent variables it accepts as input (e.g. time, frequency).
 - **PARAMETERS** — the physical parameters that are fitted during inference.
@@ -128,7 +128,7 @@ coerce the container's data. If your container's column names don't match what
 the model expects, you can provide an explicit mapping (see Step 3).
 
 For optical models, the model also exposes a
-:class:`~triceratops.utils.phot_utils.FilterBundle`:
+:class:`~trilobite.utils.phot_utils.FilterBundle`:
 
 .. code-block:: python
 
@@ -218,13 +218,13 @@ provide an explicit mapping:
 Step 4: Wire into Likelihood and InferenceProblem
 --------------------------------------------------
 
-With a valid :class:`~triceratops.data.core.InferenceData` in hand, the
+With a valid :class:`~trilobite.data.core.InferenceData` in hand, the
 remainder of the pipeline is straightforward:
 
 .. code-block:: python
 
-    from triceratops.inference.likelihood import GaussianLikelihood
-    from triceratops.inference.problem import InferenceProblem
+    from trilobite.inference.likelihood import GaussianLikelihood
+    from trilobite.inference.problem import InferenceProblem
     from astropy import units as u
 
     # Build the likelihood — binds model, data, and noise assumption
@@ -246,7 +246,7 @@ Once the inference problem is configured, pass it to a sampler:
 
 .. code-block:: python
 
-    from triceratops.inference.sampling import EmceeSampler
+    from trilobite.inference.sampling import EmceeSampler
 
     sampler = EmceeSampler(problem)
     result = sampler.run(n_walkers=32, n_steps=2000)
@@ -267,7 +267,7 @@ Common Errors and How to Fix Them
      - Pass ``variables={"frequency": "freq"}`` to ``to_inference_data()``
    * - ``AttributeError: Model '...' does not have a 'bundle' attribute``
      - Optical container used with a non-optical model
-     - Ensure your model exposes a :class:`~triceratops.utils.phot_utils.FilterBundle` via ``model.bundle``
+     - Ensure your model exposes a :class:`~trilobite.utils.phot_utils.FilterBundle` via ``model.bundle``
    * - ``KeyError: Band name 'z' is not in the model's FilterBundle``
      - A band name in the container is not registered in the model's filter bundle
      - Check ``model.bundle.filter_names``; ensure band names match exactly
@@ -285,14 +285,14 @@ Common Errors and How to Fix Them
 Building InferenceData Manually (Advanced)
 -------------------------------------------
 
-For synthetic data, testing, or containers not yet covered by Triceratops,
-you can build :class:`~triceratops.data.core.InferenceData` directly from arrays:
+For synthetic data, testing, or containers not yet covered by Trilobite,
+you can build :class:`~trilobite.data.core.InferenceData` directly from arrays:
 
 .. code-block:: python
 
     import numpy as np
     from astropy import units as u
-    from triceratops.data import InferenceData
+    from trilobite.data import InferenceData
 
     inference_data = InferenceData.from_arrays(
         model=model,

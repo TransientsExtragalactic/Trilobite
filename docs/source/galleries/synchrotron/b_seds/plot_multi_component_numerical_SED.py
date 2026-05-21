@@ -11,7 +11,7 @@ accelerated to high Lorentz factors.
 Analytic broken power-law SED approximations are not adequate for this case, because the
 transition between the two components is smooth and does not map cleanly onto a single
 spectral break. The
-:class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
+:class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides a
 fully numerical alternative: given any sampled electron distribution, it directly
 evaluates the synchrotron emissivity integral and solves the radiative transfer equation
 along a line-of-sight depth :math:`R`, without any piecewise approximation.
@@ -41,8 +41,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from astropy import units as u
 
-from triceratops.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
-from triceratops.utils.plot_utils import set_plot_style
+from trilobite.radiation.synchrotron.SEDs.numerical import NonRelativisticSphericalSynchrotronEngine
+from trilobite.utils.plot_utils import set_plot_style
 
 engine = NonRelativisticSphericalSynchrotronEngine()
 engine.load_avg_first_kernel()
@@ -162,7 +162,7 @@ plt.show()
 # ------------------
 #
 # We now pass the sampled distributions to
-# :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
+# :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`.
 # The engine numerically integrates the synchrotron emissivity
 #
 # .. math::

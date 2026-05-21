@@ -1,7 +1,7 @@
 """
 Framework compliance tests for physical models.
 
-All concrete ``Model`` subclasses in Triceratops **must**
+All concrete ``Model`` subclasses in Trilobite **must**
 be accompanied by a compliance test inheriting from
 ``BaseModelTest``. This ensures that every model satisfies
 the core framework contract:
@@ -23,7 +23,7 @@ import numpy as np
 from astropy import units as u
 from test_model_base import BaseModelTest
 
-from triceratops.models.generic.light_curve import (
+from trilobite.models.generic.light_curve import (
     FRED,
     BrokenPowerLawTime,
     ExponentialRisePowerLawDecay,
