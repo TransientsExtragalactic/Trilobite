@@ -1,1 +1,0 @@
-"""Mathematical utilities for Triceratops."""
