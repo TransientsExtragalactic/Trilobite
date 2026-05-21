@@ -1,10 +1,17 @@
-.. image:: docs/source/images/logo.png
-   :width: 260px
-   :align: center
+.. raw:: html
 
-|
+   <div align="center">
+     <img src="docs/source/images/logo.png" width="260" alt="Triceratops"><br/><br/>
+     <h1>TRICERATOPS</h1>
+     <p><em>A Python ecosystem for rapid-deployment modeling of astrophysical transients</em></p>
+     <p>
 
 |Tests| |docs| |docs-stable| |RUFF| |PRE-COMMIT| |ISORT| |NUMPYDOC| |DOCFORMATTER| |COMMITIZEN| |CONVENTIONAL-COMMITS| |ASTROPY| |CONTRIBUTORS| |LAST-COMMIT|
+
+.. raw:: html
+
+     </p>
+   </div>
 
 ----
 
@@ -121,11 +128,11 @@ TRICERATOPS is developed and maintained by Eliza Diggins and the
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Triceratops
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Triceratops?cacheSeconds=86400
    :target: https://github.com/TransientsExtragalactic/Triceratops/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Triceratops
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Triceratops?cacheSeconds=86400
    :target: https://github.com/TransientsExtragalactic/Triceratops
    :alt: Last Commit
 
