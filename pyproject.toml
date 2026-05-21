@@ -7,7 +7,7 @@ requires = [
   "setuptools>=61.2",
   "setuptools_scm[toml]>=6.2",
   "oldest-supported-numpy",
-  "Cython>=0.29",
+  "Cython>=3.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -16,9 +16,9 @@ build-backend = "setuptools.build_meta"
 # ================================== #
 # Configuration for the project details.
 [project]
-name = "triceratops"
+name = "trilobite"
 dynamic = ["version"]
-description = "Transient Radio Interaction Code for Ejecta, Remnants, And Time-domain Observables in Plasma Shocks"
+description = "TRansient Inference Library for Observation, Bayesian Inference, and Time-domain Exploration"
 authors = [
   { name = "Eliza Diggins", email = 'eliza.diggins@berkeley.edu'}
 ]
@@ -27,11 +27,16 @@ readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "numpy>=1.22,<2.0.0", # This ensures we don't have C header issues.
+  "numpy>=1.26",
   "unyt>=2.9",
   "h5py>=3.0",
   "scipy>=1.10",
@@ -39,8 +44,8 @@ dependencies = [
   "tqdm",
   "platformdirs",
   "ruamel.yaml",
-    "emcee",
-    "corner",
+  "emcee",
+  "corner",
   "astropy"
 ]
 
@@ -49,6 +54,13 @@ dependencies = [
 # ================================== #
 # Configuration for the project details.
 [project.optional-dependencies]
+mpi = [
+  "mpi4py>=3.0",
+]
+optical = [
+  "speclite>=0.17",
+  "astroquery>=0.4.6",
+]
 dev = [
   "pytest>=7.0",
   "pytest-cov",
@@ -58,6 +70,7 @@ dev = [
   "jupyter",
 ]
 docs = [
+  'astroquery>=0.4.6',
   'alabaster>=1.0.0',
   'matplotlib>=3.9.2',
   'myst-parser>=4.0.0',
@@ -90,7 +103,7 @@ test = [
 # Tools                              #
 # ================================== #
 [tool.setuptools]
-packages = { find = { include = ["triceratops*"] } }
+packages = { find = { include = ["trilobite*"] } }
 include-package-data = true
 
 [tool.setuptools_scm]
@@ -98,10 +111,10 @@ include-package-data = true
 # Tags should follow the format `stable_vX.Y.Z` or `dev_vX.Y.Z`.
 # This configuration extracts the version number (X.Y.Z) from the tag.
 
-version_file = "triceratops/_version.py"
+version_file = "trilobite/_version.py"
 local_scheme = "no-local-version"       # Omit local version info (e.g. +gHASH)
 fallback_version = "0.0.0"              # Used if no tag is found
-tag_regex = "^(?:stable|dev)_v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-a-zA-Z0-9\\.]+)?)$"
+tag_regex = "^v(?P<version>\\d+\\.\\d+\\.\\d+(?:[-a-zA-Z0-9\\.]+)?)$"
 
 [tool.pytest.ini_options]
 minversion = "6.0"
@@ -113,10 +126,6 @@ testpaths = ["tests"]
 # Linting and Formatting Settings    #
 # ================================== #
 # Configuration for linting, formatting, and type checking tools.
-[tool.black]
-line-length = 120
-target-version = ["py311"]
-
 [tool.ruff]
 line-length = 120
 target-version = "py311"
@@ -151,7 +160,8 @@ lint.ignore = [
   "UP007", # Do not use Union in type annotations (use | instead)
   "UP038", # Use | in isinstance checks (e.g. isinstance(x, int | str))
   "NPY201", # We use Numpy<2.0, so this is not relevant.
-
+  "F403", # Allow wildcard imports in __init__.py to re-export symbols (e.g. from .core import *)
+  "B905", # Allow zip() without kwargs
 ]
 
 # Optional: you can also ignore docstring warnings in examples or test files
@@ -162,7 +172,7 @@ lint.exclude = [
 
 [tool.coverage.run]
 branch = true
-source = ["triceratops"]
+source = ["trilobite"]
 
 [tool.coverage.report]
 show_missing = true

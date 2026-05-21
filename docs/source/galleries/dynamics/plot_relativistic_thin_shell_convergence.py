@@ -1,0 +1,271 @@
+r"""
+Relativistic vs. Non-Relativistic Thin-Shell Convergence
+=========================================================
+
+.. admonition:: What this example does
+
+   This example compares the relativistic thin-shell engine
+   (:class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`)
+   against its non-relativistic counterpart
+   (:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`)
+   across four initial shell momenta spanning
+   :math:`\Gamma_0\beta_0 = 0.5` to :math:`\Gamma_0\beta_0 = 70`.
+   The goal is to show where relativistic corrections become essential — all
+   four cases are genuinely relativistic, so the two engines disagree
+   throughout.
+
+**When the non-relativistic engine is sufficient.** At low velocities
+(:math:`\beta_0 \lesssim 0.01`) the two engines produce nearly identical
+trajectories and the simpler
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+is appropriate.  This example focuses on the regime where that approximation
+breaks down.  As :math:`\beta_0` increases, two relativistic effects that
+the NR engine ignores grow in importance:
+
+- **Relativistic inertia.** The effective inertial mass of the shell is
+  :math:`\Gamma M_{\rm sh}`, not just :math:`M_{\rm sh}`.  The NR engine applies
+  no Lorentz-factor correction to the initial momentum, so it overestimates the
+  early deceleration rate at large :math:`\Gamma_0\beta_0`.
+- **Shock-jump enhancement.** The relativistic engine uses
+  :math:`\Gamma_{u|d}` — the Lorentz factor of the upstream fluid in the shell
+  (downstream) rest frame — to evaluate the post-shock pressure.  This coincides
+  with the non-relativistic closure in the Newtonian limit but diverges at large
+  :math:`\beta`, producing a systematically higher post-shock pressure and a
+  slower deceleration for highly relativistic shells.
+
+**Physical setup.** A cold shell of mass :math:`M_0 = 1\,M_\odot` starts at
+one-fifth of the deceleration radius
+
+.. math::
+
+   R_{\rm dec} = \left(\frac{3\,M_0}{4\pi\,\rho_0}\right)^{1/3}
+
+and sweeps up a uniform, stationary ambient medium of density :math:`\rho_0`.
+There is no ejecta behind the shell (:math:`\rho_1 = 0`).  All four cases share
+the same physical start time :math:`t_0 = 1\,\mathrm{s}` and the same time
+grid, so their trajectories can be compared directly.
+
+.. seealso::
+
+   :ref:`relativistic_pressure_driven_shells`
+       Derivation of the relativistic thin-shell equations of motion.
+
+   :ref:`pressure_driven_thin_shell_model`
+       The non-relativistic thin-shell formulation that this example benchmarks
+       against.
+
+   :ref:`numeric_shocks_theory`
+       Overview of all numerical shock engines and when to prefer each one.
+
+   :class:`~trilobite.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine`
+       API reference for the relativistic thin-shell engine.
+
+----
+
+"""
+
+# %%
+# Setup
+# -----
+#
+# We import both engines and the Trilobite plotting utilities.
+
+import matplotlib.colors as mcolors
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import constants as const
+from astropy import units as u
+from matplotlib.lines import Line2D
+from matplotlib.transforms import blended_transform_factory
+
+from trilobite.dynamics.shocks.numerical import (
+    PressureDrivenThinShellShockEngine,
+    RelPressureDrivenThinShellShockEngine,
+)
+from trilobite.utils.plot_utils import set_plot_style
+
+# %%
+# Physical Parameters
+# -------------------
+#
+# We adopt a shell mass :math:`M_0 = 1\,M_\odot` expanding into a uniform
+# ambient medium of density :math:`\rho_0 = 5\times10^{-16}\,\mathrm{g\,cm^{-3}}`.
+# The deceleration radius :math:`R_{\rm dec}` — the radius at which the swept-up
+# ambient mass equals the shell mass — sets the natural length scale.  We place
+# the shell at :math:`R_0 = R_{\rm dec}/5` so that deceleration occurs well
+# within the simulated time window.
+
+M_0 = 1.0 * u.Msun
+rho_0 = 5e-16 * (u.g / u.cm**3)
+
+R_dec = ((3.0 * M_0 / (4.0 * np.pi * rho_0)) ** (1.0 / 3.0)).to(u.cm)
+R_0 = R_dec / 5.0
+
+print(f"Deceleration radius : {R_dec.to(u.pc):.4f}")
+print(f"Initial shell radius: {R_0.to(u.cm):.2e}")
+
+# %%
+# Source Functions
+# ----------------
+#
+# The engines require callables for the upstream and downstream density and
+# velocity fields.  Here both are trivial: no ejecta behind the shell
+# (:math:`\rho_1 = 0`) and a uniform stationary ambient medium.  The
+# callables receive radius and time in CGS and return CGS values.
+
+rho_0_cgs = rho_0.to_value(u.g / u.cm**3)
+
+
+def _rho_1(r, t):
+    return 0.0
+
+
+def _rho_4(r, t):
+    return rho_0_cgs
+
+
+def _u_1(r, t):
+    return 0.0
+
+
+def _u_4(r, t):
+    return 0.0
+
+
+def _beta_1(r, t):
+    return 0.0
+
+
+def _beta_4(r, t):
+    return 0.0
+
+
+# %%
+# Integrate Both Engines
+# ----------------------
+#
+# All four cases start at :math:`t_0 = 1\,\mathrm{s}` with the shell at
+# :math:`R_0`.  The common time grid runs to
+# :math:`3\times10^{8}\,\mathrm{s}` (:math:`{\approx}\,10\,\mathrm{yr}`),
+# capturing the full deceleration of every scenario.
+#
+# We use an ultra-relativistic adiabatic index :math:`\hat{\gamma} = 4/3`
+# for both engines so that the only difference between them is the relativistic
+# treatment of inertia and shock-jump conditions.
+#
+# Both engines accept :class:`~astropy.units.Quantity` inputs for ``R_0``,
+# ``M_0``, and ``t_0``, so no manual CGS conversion is needed at the call site.
+
+t_0 = 1.0 * u.s
+t_end = 3e8 * u.s
+time = np.geomspace(t_0.value, t_end.value, 600) * u.s
+
+# Four round values of the initial four-velocity Γ₀β₀ spanning the
+# mildly to ultra-relativistic regime.  The corresponding β₀ is recovered
+# via β = Γβ / √(1 + (Γβ)²).
+Gamma_beta_0_values = [0.25, 0.5, 0.75, 0.8, 1, 2.0, 7.0, 70.0, 700, 7000]
+gamma_hat = 4.0 / 3.0
+
+nr_engine = PressureDrivenThinShellShockEngine()
+rel_engine = RelPressureDrivenThinShellShockEngine(gamma_1=gamma_hat, gamma_4=gamma_hat)
+
+nr_states = {}
+rel_states = {}
+
+for gb in Gamma_beta_0_values:
+    beta_0 = gb / np.sqrt(1.0 + gb**2)
+    v_0 = beta_0 * const.c
+
+    nr_states[gb] = nr_engine.compute_shock_properties(
+        time=time,
+        rho_1=_rho_1,
+        rho_4=_rho_4,
+        u_1=_u_1,
+        u_4=_u_4,
+        R_0=R_0,
+        v_0=v_0.to(u.cm / u.s),
+        M_0=M_0,
+        t_0=t_0,
+        gamma=gamma_hat,
+    )
+
+    rel_states[gb] = rel_engine.compute_shock_properties(
+        time=time,
+        rho_1=_rho_1,
+        rho_4=_rho_4,
+        beta_1=_beta_1,
+        beta_4=_beta_4,
+        R_0=R_0,
+        beta_0=beta_0,
+        M_0=M_0,
+        t_0=t_0,
+    )
+
+# %%
+# Visualization
+# -------------
+#
+# **Left panel** — shell velocity :math:`v_{\rm sh}` in :math:`\mathrm{km\,s^{-1}}`
+# vs time in days.  Solid lines are the relativistic engine; dashed lines are the
+# non-relativistic engine.  The horizontal dotted line marks :math:`c`; note that
+# the NR engine has no upper speed limit and simply assigns :math:`v = \beta_0 c`
+# as an ordinary Newtonian velocity.
+#
+# **Right panel** — shell Lorentz factor :math:`\Gamma_{\rm sh}(t)` from the
+# relativistic engine.  The :math:`\Gamma = 1` reference line marks the
+# Newtonian boundary.  Cases with :math:`\Gamma \gg 1` at early times are exactly
+# those for which the NR engine is most inaccurate.
+
+set_plot_style()
+
+cmap = plt.cm.cool
+norm = mcolors.LogNorm(vmin=Gamma_beta_0_values[0], vmax=Gamma_beta_0_values[-1])
+colors = [cmap(norm(gb)) for gb in Gamma_beta_0_values]
+sm = plt.cm.ScalarMappable(cmap=cmap, norm=norm)
+sm.set_array([])
+
+t_days = time.to_value(u.day)
+c_km_s = const.c.to_value(u.km / u.s)
+
+fig, (ax_v, ax_g) = plt.subplots(2, 1, figsize=(6, 9), sharex=True)
+
+for gb, color in zip(Gamma_beta_0_values, colors):
+    nr_st = nr_states[gb]
+    rel_st = rel_states[gb]
+
+    nr_v = nr_st.velocity.to_value(u.km / u.s)
+    rel_v = rel_st.beta_sh * c_km_s
+
+    kw = dict(color=color, lw=1.8)
+
+    ax_v.loglog(t_days, nr_v, ls="--", **kw)
+    ax_v.loglog(t_days, rel_v, ls="-", **kw)
+
+    ax_g.loglog(t_days, rel_st.Gamma_sh, ls="-", **kw)
+
+ax_v.axhline(c_km_s, color="0.4", lw=1.0, ls=":")
+trans_v = blended_transform_factory(ax_v.transAxes, ax_v.transData)
+ax_v.text(0.02, c_km_s * 1.01, r"$c$", transform=trans_v, fontsize=12, color="0.4", va="bottom")
+
+ax_g.axhline(1.0, color="0.4", lw=1.0, ls=":")
+trans_g = blended_transform_factory(ax_g.transAxes, ax_g.transData)
+ax_g.text(0.02, 1.3, r"$\Gamma = 1$", transform=trans_g, fontsize=12, color="0.4", va="bottom")
+
+ax_v.set_ylabel(r"$v_{\rm sh}\ (\mathrm{km\,s^{-1}})$")
+ax_v.set_ylim([1e4, 4e5])
+
+ax_g.set_xlabel("Time (days)")
+ax_g.set_ylabel(r"$\Gamma_{\rm sh}$")
+ax_g.set_xlim([1e-3, 1e3])
+
+style_handles = [
+    Line2D([0], [0], color="k", ls="-", lw=1.8, label="Relativistic"),
+    Line2D([0], [0], color="k", ls="--", lw=1.8, label="Non-relativistic"),
+]
+ax_v.legend(handles=style_handles, fontsize=9, loc="lower left")
+
+cbar = fig.colorbar(sm, ax=[ax_v, ax_g], pad=0.12, fraction=0.04, location="bottom")
+cbar.set_label(r"$\Gamma_0\beta_0$", fontsize=11)
+
+plt.show()
+# sphinx_gallery_thumbnail_number = -1

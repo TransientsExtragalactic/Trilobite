@@ -1,0 +1,222 @@
+"""
+Numerical Thin-Shell Shock Evolution
+==========================================
+
+This example demonstrates how to use the
+:class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`
+to model the evolution of a supernova shock expanding into a **non-uniform
+circumstellar medium (CSM)**.
+
+Unlike self-similar shock solutions, which rely on idealized power-law density
+profiles, the numerical thin-shell engine allows for **arbitrary ejecta and CSM
+density structures**. This makes it well-suited for modeling realistic progenitor
+environments, such as winds with termination shocks or multi-phase media.
+
+In this example, we consider:
+
+- Supernova ejecta with a **broken power-law density profile** in velocity space.
+- A circumstellar medium consisting of:
+
+  - a **wind-like** :math:`\\rho \\propto r^{-2}` profile close to the progenitor
+  - a transition to a uniform-density interstellar medium (ISM) at larger radii
+
+We then compute and visualize the shock velocity as a function of time,
+highlighting the deceleration onset as the shock transitions from the stellar
+wind into the denser ambient ISM.
+"""
+
+# %%
+# Setup
+# -----
+#
+# We begin by importing the relevant numerical, plotting, and Trilobite
+# utilities needed for this example.
+
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import units as u
+
+from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
+from trilobite.dynamics.shocks.utils import (
+    get_bpl_ejecta_kernel,
+    get_truncated_wind_csm_density_func,
+    make_homologous_stationary_sources,
+)
+from trilobite.utils.plot_utils import set_plot_style
+
+# %%
+#
+# We now define the physical parameters of the system. These values are chosen
+# to be broadly representative of a core-collapse supernova interacting with
+# its surrounding environment.
+
+
+M_dot = 1e-5 * u.M_sun / u.yr  # Mass-loss rate of the progenitor wind
+v_wind = 100 * u.km / u.s  # Wind velocity
+t_wind = 1e2 * u.yr  # Duration of the wind phase prior to explosion
+
+rho_ism = 1e-24 * u.g / u.cm**3  # Density of the ambient ISM
+
+E_ej = 1e50 * u.erg  # Ejecta energy
+M_ej = 5 * u.M_sun  # Ejecta mass
+
+# Compute the wind termination radius, where the wind transitions to the ISM.
+R_wind = v_wind * t_wind
+
+print(f"Wind termination radius: {R_wind.to(u.pc):.2f}")
+
+# %%
+# Circumstellar Medium Density Profile
+# -------------------------------------
+#
+# The numerical thin-shell engine requires the CSM density profile to be provided
+# as a **callable function** returning the density in CGS units.
+#
+# Here we use :func:`~trilobite.dynamics.shocks.utils.get_truncated_wind_csm_density_func`
+# to construct a broken profile:
+#
+# - For :math:`r \le R_{\rm wind}`: a steady wind with :math:`\rho \propto r^{-2}`
+# - For :math:`r > R_{\rm wind}`: a uniform ISM floor density
+
+rho_csm = get_truncated_wind_csm_density_func(
+    mass_loss_rate=M_dot,
+    wind_velocity=v_wind,
+    r_max=R_wind,
+    density_floor=rho_ism,
+)
+
+# %%
+# Let's now plot that CSM density profile to verify that it has the expected structure.
+
+set_plot_style()
+
+r = np.geomspace(1e15, 1e20, 500) * u.cm
+rho_vals = rho_csm(r)
+r_wind_cm = R_wind.to_value(u.cm)
+
+fig, ax = plt.subplots(figsize=(8, 4))
+ax.loglog(r.to_value(u.cm), rho_vals, "k-")
+ax.axvline(r_wind_cm, ls="--", color="tomato", alpha=0.8, lw=1.5)
+ax.text(r_wind_cm * 0.07, rho_vals[0] * 0.8, r"Wind ($\rho \propto r^{-2}$)", fontsize=10)
+ax.text(r_wind_cm * 3, rho_ism.to_value(u.g / u.cm**3) * 3, "ISM floor", fontsize=10)
+ax.set_xlabel("Radius (cm)")
+ax.set_ylabel(r"Density ($\mathrm{g\,cm^{-3}}$)")
+plt.tight_layout()
+plt.show()
+
+# %%
+# Ejecta Density Profile
+# ----------------------
+#
+# For homologously expanding ejecta, the density takes the form
+#
+# .. math::
+#
+#     \rho_{\rm ej}(r, t) = t^{-3} G_{\rm ej}(r / t)
+#
+# Rather than specifying :math:`\rho(r, t)` directly, the thin-shell engine
+# requires the kernel function :math:`G_{\rm ej}(v)`.
+#
+# Trilobite provides helper functions for constructing commonly used ejecta
+# profiles. Here we adopt a Chevalier-style broken power-law profile via
+# :func:`~trilobite.dynamics.shocks.utils.get_bpl_ejecta_kernel`.
+
+G_ej = get_bpl_ejecta_kernel(
+    E_ej=E_ej,
+    M_ej=M_ej,
+    n=10,
+    delta=0,
+)
+
+# %%
+# Upstream Source Functions
+# -------------------------
+#
+# The numerical shock engine expects four two-argument callables,
+# ``(rho_1, u_1, rho_4, u_4)``, representing the upstream ejecta density,
+# ejecta velocity, CSM density, and CSM velocity respectively. For the standard
+# case of homologous ejecta running into a stationary CSM,
+# :func:`~trilobite.dynamics.shocks.utils.make_homologous_stationary_sources`
+# builds all four from the kernel and the CSM profile:
+#
+# .. math::
+#
+#     \rho_1(r, t) = t^{-3} G_{\rm ej}(r/t), \quad
+#     u_1(r, t) = r/t, \quad
+#     \rho_4(r, t) = \rho_{\rm CSM}(r), \quad
+#     u_4(r, t) = 0.
+
+rho_1, u_1, rho_4, u_4 = make_homologous_stationary_sources(
+    G_ej=G_ej,
+    rho_csm=rho_csm,
+)
+
+# %%
+# Shock Engine Initialization
+# ---------------------------
+#
+# The shock engine itself is stateless. All physical information is passed in
+# at evaluation time.
+
+engine = PressureDrivenThinShellShockEngine()
+
+# %%
+# Time Grid
+# ---------
+#
+# We evaluate the shock evolution over several orders of magnitude in time.
+
+time = np.geomspace(1e-1, 10000, 500) * u.day
+
+# %%
+# Shock Evolution
+# ---------------
+#
+# We now compute the shock properties using the high-level API, which handles
+# unit conversion and validation internally. The result is a
+# :class:`~trilobite.dynamics.shocks.numerical.ThinShellShockState` named
+# tuple carrying all shock diagnostics as unit-bearing
+# :class:`~astropy.units.Quantity` arrays.
+
+state = engine.compute_shock_properties(
+    time=time,
+    rho_1=rho_1,
+    rho_4=rho_4,
+    u_1=u_1,
+    u_4=u_4,
+    R_0=1e10 * u.cm,
+    v_0=1e9 * u.cm / u.s,
+    t_0=1e1 * u.s,
+    M_0=1e-4 * u.M_sun,
+)
+
+# %%
+# Visualization
+# -------------
+#
+# We plot shock velocity versus time. The blue and red shaded regions mark the
+# wind-dominated and ISM-dominated phases respectively; the dashed line shows
+# the initial free-expansion velocity for reference. The abrupt deceleration
+# when the forward shock crosses :math:`R_\mathrm{wind}` is clearly visible.
+
+# Locate the wind–ISM crossing time
+i_cross = np.searchsorted(state.radius.to_value(u.cm), R_wind.to_value(u.cm))
+t_cross_day = time[i_cross].to_value(u.day)
+
+t_vals = time.to_value(u.day)
+v_vals = state.velocity.to_value(u.km / u.s)
+v0_kms = (1e9 * u.cm / u.s).to_value(u.km / u.s)
+
+fig, ax = plt.subplots(figsize=(8, 5))
+
+ax.loglog(t_vals, v_vals, "k", lw=2, label="Shock velocity")
+ax.axhline(v0_kms, ls="--", color="gray", lw=1.5, label=r"Free expansion ($v_0$)")
+ax.axvspan(t_vals[0], t_cross_day, alpha=0.10, color="steelblue", label="Wind phase")
+ax.axvspan(t_cross_day, t_vals[-1], alpha=0.10, color="tomato", label="ISM phase")
+
+ax.set_xlabel("Time (days)")
+ax.set_ylabel(r"Shock Velocity ($\mathrm{km\,s^{-1}}$)")
+ax.legend(loc="lower left")
+plt.tight_layout()
+plt.show()
+# sphinx_gallery_thumbnail_number = -1

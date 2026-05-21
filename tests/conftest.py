@@ -1,8 +1,8 @@
 """
-Test configuration for the Triceratops project.
+Test configuration for the Trilobite project.
 
 This module sets up fixtures and configurations for running tests
-using the pytest framework for the Triceratops project. Please read the documentation and
+using the pytest framework for the Trilobite project. Please read the documentation and
 associated comments for more details on how to use and extend these configurations.
 """
 

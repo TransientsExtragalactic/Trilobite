@@ -1,0 +1,3044 @@
+"""Generic / core data container structures for Trilobite.
+
+These containers form the backbone of data handling in Trilobite, providing
+a structured, validated interface to observational and synthetic datasets.
+They enforce schema compliance, unit consistency, and immutability, ensuring
+robustness and reproducibility throughout the modeling and inference pipeline.
+"""
+
+from abc import ABC, abstractmethod
+from dataclasses import dataclass
+from importlib.metadata import PackageNotFoundError, version
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Optional, Union
+
+import numpy as np
+from astropy import units as u
+from astropy.table import Table
+
+from trilobite.utils.log import trilobite_logger
+
+# ============================================================= #
+# Package versioning and Type checking
+# ============================================================= #=
+try:
+    __pkg_version__ = version("trilobite")
+except PackageNotFoundError:
+    __pkg_version__ = "unknown"
+
+if TYPE_CHECKING:
+    from trilobite.models.core.base import Model  # noqa: F401
+
+
+__all__ = ["InferenceData", "DataContainer", "Observable", "XYDataContainer"]
+
+
+# ====================================================================== #
+# Base Data Container
+# ====================================================================== #
+class DataContainer(ABC):
+    """
+    Abstract base class for validated, immutable data containers in Trilobite.
+
+    A :class:`~trilobite.data.core.DataContainer` provides a **structured, unit-aware, read-only interface**
+    to observational or synthetic datasets used throughout the Trilobite modeling
+    and inference pipeline. It acts as a *boundary object* between raw input data
+    (typically stored as :class:`astropy.table.Table` instances) and downstream
+    numerical, statistical, and physical modeling components.
+
+    The core responsibilities of a DataContainer are to:
+
+    - enforce a **well-defined schema** via the class-level :attr:`COLUMNS` specification,
+    - validate column presence, dtypes, and physical units,
+    - provide safe, immutable access to the underlying data,
+    - and support conversion to NumPy arrays for performance-critical backends
+      such as likelihood evaluation and samplers.
+
+    Unlike raw Astropy tables, DataContainer instances are **immutable by design**: all
+    accessors return copies of the underlying data to prevent accidental modification
+    during analysis or inference. This design choice ensures reproducibility and avoids
+    subtle bugs in long-running sampling workflows.
+
+    Subclasses must define a concrete schema by overriding the :attr:`COLUMNS` class
+    attribute and implement the :meth:`from_table` constructor to handle any
+    domain-specific preprocessing (e.g., detection logic, epoch grouping, masking,
+    or derived quantities).
+
+    Design principles
+    -----------------
+    - **Schema-driven**:
+      Each subclass declares a formal column schema describing required and optional
+      columns, expected dtypes, and physical units. Validation occurs eagerly at
+      construction time.
+
+    - **Unit-aware**:
+      Physical quantities are validated and exposed using Astropy units. Missing but
+      expected units are assigned with a warning; incompatible units raise errors.
+
+    - **Immutable**:
+      The underlying table cannot be modified in place. All slicing and accessors
+      return copies.
+
+    - **Inference-friendly**:
+      Containers support NumPy coercion (``np.asarray(container)``) and explicit CGS
+      conversion via :meth:`to_cgs_array` for efficient numerical evaluation.
+
+    Role in the Trilobite pipeline
+    --------------------------------
+    DataContainer objects are typically consumed by likelihood classes, which
+    define how model predictions are statistically compared to data. Models and
+    samplers **never interact with raw tables directly**—all data access flows
+    through a validated container.
+
+    This abstraction allows Trilobite to support a wide range of data modalities
+    (e.g., photometry, spectra, time series, generic ``(x, y)`` datasets) while
+    maintaining a consistent and robust inference API.
+
+    Notes
+    -----
+    - This class is abstract and cannot be instantiated directly.
+    - Subclasses should call ``super().__init__`` to ensure schema validation.
+    - Equality comparisons compare the underlying tables.
+    - This class deliberately does **not** subclass :class:`astropy.table.Table`
+      in order to strictly control mutability and invariants.
+
+    See Also
+    --------
+    trilobite.inference.likelihood.base.Likelihood
+        Likelihood classes that consume DataContainer instances.
+    astropy.table.Table
+        Underlying data structure used for storage.
+    """
+
+    # ========================= SCHEMA DEFINITION ========================= #
+    # This ``COLUMNS`` dictionary contains the core schema requirements for the input
+    # table in order to ensure that the radio photometry input is valid. This is then
+    # enforced in ``_validate_table``.
+    #
+    # DEVELOPERS: YOU NEED TO OVERWRITE THIS!
+    COLUMNS = [
+        {
+            "name": "COLUMN_NAME",
+            "dtype": str,
+            "description": "Description of the column.",
+            "unit": None,
+            "required": True,
+        }
+    ]
+
+    # ========================= SPECIAL COLUMNS =========================== #
+    # In subclasses in this module, it is common to see this section filled by
+    # declarations about certain special columns (i.e. X_COL = ..., Y_COL = ...).
+    # This is to facilitate easy access to these columns in downstream code.
+    #
+    # In this base class, we do not define any special columns.
+
+    # ====================================================================== #
+    # Initialization and validation methods
+    # ====================================================================== #
+    def __init__(self, table: Table, **kwargs):
+        """
+        Instantiate the data container.
+
+        This method should be overridden in subclasses to ensure proper behavior
+        downstream. The core responsibilities of this class are to
+
+        1. Assign the ``self.__table__`` attribute to a :class:`~astropy.table.Table` instance.
+        2. Validate that the table is consistent with the schema.
+        3. Any additional configuration / setup required by the subclass.
+
+        In the default implementation, we assign the table and offload to the
+        ``self._validate_table`` method for validation. New implementations should
+        call ``super().__init__()`` to ensure these responsibilities are fulfilled and
+        then add any additional setup required.
+
+        Parameters
+        ----------
+        table: ~astropy.table.Table
+            The data table to be contained. This must conform to the schema defined in the
+            :attr:`COLUMNS`` class attribute.
+        kwargs:
+            Additional keyword arguments for subclass-specific configuration.
+        """
+        # Assign the table to the data class.
+        if not isinstance(table, Table):
+            raise TypeError("The 'table' parameter must be an instance of astropy.table.Table.")
+
+        # Hand off to the validation method. DEVELOPERS: you should modify validation by
+        # intercepting in your subclass's ``_validate_table`` method.
+        self.__table__: Table = self._validate_table(table.copy())
+
+        # Proceed with any additional management.
+
+    def _validate_table(self, table: Table) -> Table:
+        """
+        Validate that the provided table conforms to the schema defined in the :attr:`COLUMNS` class attribute.
+
+        This method should be overridden in subclasses to implement specific validation
+        logic. The default implementation checks for the presence of required columns.
+
+        Parameters
+        ----------
+        table: ~astropy.table.Table
+            The data table to validate.
+
+        Returns
+        -------
+        ~astropy.table.Table
+            The validated data table.
+
+        Raises
+        ------
+        ValueError
+            If the table does not conform to the schema.
+        """
+        for column in self.__class__.COLUMNS:
+            # Extract necessary fields.
+            name = column["name"]
+            required = column.get("required", False)
+
+            # Check for required columns.
+            if required and name not in table.colnames:
+                raise ValueError(f"Missing required column '{name}' in input table.")
+
+            # If this column just isn't in the table, we can break
+            # out now. This can happen for non-required columns.
+            if name not in table.colnames:
+                continue
+
+            # Now ensure that we can coerce to the correct dtype
+            # before we proceed
+            expected_dtype = column.get("dtype", None)
+            if expected_dtype is not None:
+                try:
+                    table[name] = table[name].astype(expected_dtype)
+                except Exception as e:
+                    raise ValueError(
+                        f"Column '{name}' cannot be coerced to expected dtype '{expected_dtype}': {e}"
+                    ) from e
+
+            # Now handle the units. For units, a "" is a specifically dimensionless unit,
+            # while "None" means we just don't care what unit is on the data.
+            expected_unit = column.get("unit", None)
+            if expected_unit is not None:
+                # We have an expected unit that we're now going to check
+                # for compatibility with the underlying data.
+                expected_unit = u.Unit(expected_unit)
+
+                col = table[name]
+                if col.unit is None:
+                    trilobite_logger.warning(f"Column '{name}' has no unit. Assigning expected unit '{expected_unit}'.")
+                    col.unit = expected_unit
+                elif not col.unit.is_equivalent(expected_unit):
+                    raise u.UnitsError(
+                        f"Column '{name}' has unit '{col.unit}', "
+                        f"which is not compatible with expected unit '{expected_unit}'."
+                    )
+
+                # We have no reason to believe the conversion will fail. Attempt
+                # to execute the conversion.
+                try:
+                    table[name] = table[name].to(expected_unit)
+                except Exception as e:
+                    raise ValueError(f"Column '{name}' cannot be assigned expected unit '{expected_unit}': {e}") from e
+
+        return table
+
+    # ====================================================================== #
+    # Dunder Methods / Specialty Methods
+    # ====================================================================== #
+    # The scheme for dunder implementation in this class is as follows:
+    #
+    # - Effectively, we delegate everything to the underlying Astropy Table, this
+    #   ensures users are not caught off-guard by missing functionality.
+    # - However, we need to set a high __array_priority__ to ensure that
+    #   operations involving both RadioPhotometryContainer and numpy arrays
+    #   defer to the container's methods.
+    # - We also implement __eq__ to allow for equality comparisons between
+    #   two RadioPhotometryContainer instances.
+    # - Finally, we are now an immutable container, so we do not implement
+    #   any methods that would allow mutation of the underlying table.
+    __array_priority__ = 1000
+
+    def __len__(self):
+        return self.__table__.__len__()
+
+    def __getitem__(self, item):
+        result = self.__table__.__getitem__(item)
+        if isinstance(result, Table):
+            return result.copy()
+        else:
+            return result.copy()
+
+    def __iter__(self):
+        return iter(self.__table__.copy())
+
+    def __str__(self):
+        return str(self.__table__)
+
+    def __repr__(self):
+        return f"<{self.__class__.__name__} n_obs={len(self)}>"
+
+    def __contains__(self, item):
+        return self.__table__.__contains__(item)
+
+    def __bool__(self):
+        return len(self) > 0
+
+    def __eq__(self, other):
+        if not isinstance(other, self.__class__):
+            return NotImplemented
+        return self.__table__ == other.__table__
+
+    def __array__(self):
+        """
+        Convert the container to a NumPy structured array.
+
+        This method is invoked by NumPy when coercing the container via
+        ``np.asarray(container)``. Only columns marked as ``required=True`` in the
+        schema and having numerical dtypes are included. Values are returned in the
+        units specified by the schema (i.e. *not* automatically converted to CGS).
+
+        The returned array is a copy and does not share writable memory with the
+        internal table.
+
+        Returns
+        -------
+        numpy.ndarray
+            Structured NumPy array containing required numerical columns in schema
+            units.
+        """
+        # Allocate a list to store each of the subarrays as we process them.
+        _array_items = []
+
+        # For each column in the dataset, we're going to go and
+        # process it to a numerical array if it's required.
+        for colspec in self.__class__.COLUMNS:
+            if not colspec.get("required", False):
+                continue
+
+            name = colspec["name"]
+            dtype = colspec["dtype"]
+
+            # Skip non-numerical required columns (e.g. strings, identifiers)
+            if not np.issubdtype(np.dtype(dtype), np.number):
+                continue
+
+            col = self.__table__[name]
+
+            if col.unit is not None:
+                values = col.quantity.to_value(col.unit)
+            else:
+                values = np.asarray(col)
+
+            _array_items.append(values)
+
+        return np.stack(_array_items, axis=-1)
+
+    # ====================================================================== #
+    # Properties
+    # ====================================================================== #
+    @property
+    def table(self) -> Table:
+        """
+        Return a copy of the underlying Astropy table.
+
+        This prevents mutation of the internal container state.
+        """
+        return self.__table__.copy()
+
+    @property
+    def size(self) -> int:
+        """int: The number of observations in the container."""
+        return len(self)
+
+    # ====================================================================== #
+    # Utility Methods
+    # ====================================================================== #
+    def _copy_kwargs(self) -> dict:
+        """Return extra keyword arguments needed to reconstruct this container.
+
+        Subclasses that store metadata outside the table (e.g. an observing
+        frequency) should override this method and return those arguments as a
+        dict.  The returned value is unpacked into :meth:`from_table` by both
+        :meth:`copy` and :meth:`apply_mask`.
+        """
+        return {}
+
+    def copy(self):
+        """Create a copy of this container."""
+        return self.__class__.from_table(self.__table__.copy(), **self._copy_kwargs())
+
+    def apply_mask(self, mask) -> "DataContainer":
+        """Return a new container containing only the rows selected by *mask*.
+
+        Parameters
+        ----------
+        mask : array-like of bool or int
+            Boolean array of the same length as this container, or an integer
+            index array.  Passed directly to the underlying Astropy table for
+            row selection.
+
+        Returns
+        -------
+        DataContainer
+            A new instance of the same class containing only the selected rows,
+            with full schema validation re-applied.
+
+        Examples
+        --------
+        Select only detections::
+
+            det_container = container.apply_mask(
+                container.detection_mask
+            )
+
+        Select rows at frequencies above 5 GHz::
+
+            mask = container.freq > 5 * u.GHz
+            hi_freq = container.apply_mask(mask)
+        """
+        sliced = self.table[mask]
+        return self.__class__.from_table(sliced, **self._copy_kwargs())
+
+    def to_cgs_array(self):
+        """
+        Convert the container to a NumPy array, converted to CGS base units.
+
+        This method mirrors ``__array__`` but explicitly converts all unit-bearing
+        columns to their CGS equivalents. The output is intended for numerical backends such as
+        likelihood evaluation and samplers.
+
+        The returned array is a copy and does not share writable memory with the
+        internal table.
+
+        Returns
+        -------
+        numpy.ndarray
+            Dense NumPy array of shape (n_obs, n_required_numeric_columns) with all
+            values expressed in CGS base units.
+        """
+        _array_items = []
+
+        for colspec in self.__class__.COLUMNS:
+            if not colspec.get("required", False):
+                continue
+
+            name = colspec["name"]
+            dtype = colspec["dtype"]
+
+            # Skip non-numerical required columns
+            if not np.issubdtype(np.dtype(dtype), np.number):
+                continue
+
+            col = self.__table__[name]
+
+            if col.unit is not None:
+                # Convert to CGS base units
+                values = col.quantity.to(u.Unit(col.unit).cgs).value
+            else:
+                values = np.asarray(col)
+
+            _array_items.append(np.asarray(values))
+
+        return np.stack(_array_items, axis=-1)
+
+    @classmethod
+    @abstractmethod
+    def from_table(cls, table: Table, **kwargs):
+        """
+        Create a DataContainer from an Astropy Table.
+
+        This is an abstract method that must be implemented by subclasses.
+
+        Parameters
+        ----------
+        table : ~astropy.table.Table
+            The input table containing the data.
+        kwargs:
+            Additional keyword arguments for subclass-specific configuration.
+
+        Returns
+        -------
+        DataContainer
+            An instance of the subclass containing the data from the table.
+        """
+        pass
+
+    @classmethod
+    def from_file(cls, path: Union[str, Path], read_kws: dict = None, **kwargs):
+        """
+        Create a DataContainer from a FITS file.
+
+        Parameters
+        ----------
+        path : str or pathlib.Path
+            The file path to the FITS file containing the data.
+        read_kws : dict
+            Additional keyword arguments to pass to ``astropy.table.Table.read()``.
+        kwargs:
+            Additional keyword arguments to pass to :meth:`from_table`.
+
+        Returns
+        -------
+        DataContainer
+            An instance of the subclass containing the data from the FITS file.
+        """
+        # Coerce the read kwargs.
+        if read_kws is None:
+            read_kws = {}
+
+        # Read the table from the file.
+        table = Table.read(path, **read_kws)
+        return cls.from_table(table, **kwargs)
+
+    def to_file(self, path: Union[str, Path], write_kws: dict = None, **_):
+        """
+        Write the RadioPhotometryContainer's table to a file.
+
+        Parameters
+        ----------
+        path : str or pathlib.Path
+            The file path where the FITS file will be saved.
+        write_kws : dict
+            Additional keyword arguments to pass to ``astropy.table.Table.write()``.
+        **kwargs:
+            Additional keyword arguments to be used in subclasses.
+        """
+        if write_kws is None:
+            write_kws = {}
+        self.__table__.write(path, **write_kws)
+
+    # ====================================================================== #
+    # Converter Methods
+    # ====================================================================== #
+    def to_inference_data(
+        self,
+        model: "Model",
+        variables: Optional[dict[str, tuple[str, ...]]] = None,
+        observables: Optional[dict[str, tuple[str, ...]]] = None,
+        **_,
+    ) -> "InferenceData":
+        """
+        Convert this :class:`~trilobite.data.core.DataContainer` into :class:`~trilobite.data.core.InferenceData`.
+
+        This method provides a high-level interface for preparing data for use
+        in the inference pipeline. Internally, it delegates all validation,
+        column resolution, and unit coercion to
+        :meth:`~trilobite.data.core.InferenceData.from_table`.
+
+        The conversion process is guided entirely by the provided ``model``:
+
+        - Model-declared variable names determine required independent variables.
+        - Model-declared output names determine required observables.
+        - Model-declared units are used for automatic unit coercion.
+        - Column names are matched by default using exact name equality.
+
+        Optional overrides may be supplied to manually map model variables
+        or observables to specific table columns.
+
+        Parameters
+        ----------
+        model : ~trilobite.models.core.base.Model
+            The model against which inference will be performed.
+            This determines:
+
+            - Required independent variable names
+            - Required observable names
+            - Expected units for each quantity
+
+        variables : dict[str, tuple[str, ...]] or str, optional
+            Manual overrides for independent variable column resolution.
+
+            Keys must match model variable names.
+
+            Each value may be specified as:
+
+            - ``"column_name"``
+            - ``("column", "error")``
+            - ``("column", "error", "upper", "lower")``
+
+            If not provided, default column names are assumed to match
+            the model variable names directly.
+
+        observables : dict[str, tuple[str, ...]] or str, optional
+            Manual overrides for observable column resolution.
+
+            Keys must match model observable names.
+
+            Same tuple formats as ``variables``.
+
+        Returns
+        -------
+        InferenceData
+            A fully validated, immutable, inference-ready dataset.
+
+        Raises
+        ------
+        ValueError
+            If required columns are missing or shapes are inconsistent.
+
+        UnitsError
+            If table column units cannot be coerced to model-declared units.
+
+        Notes
+        -----
+        - No transformations (e.g., log-scaling) are applied.
+        - No statistical assumptions are imposed.
+        - All validation logic is centralized in :class:`InferenceData`.
+        - This method is intentionally thin and deterministic.
+
+        See Also
+        --------
+        InferenceData.from_table :
+            Lower-level table ingestion logic.
+        InferenceData.from_arrays :
+            Direct array-based ingestion.
+        """
+        return InferenceData.from_table(
+            model=model,
+            table=self.table,
+            variables=variables,
+            observables=observables,
+        )
+
+
+# ====================================================================== #
+# Inference Data Structures
+# ====================================================================== #
+@dataclass(frozen=True)
+class Observable:
+    """
+    Immutable numerical representation of a single dependent variable used in statistical inference.
+
+    An :class:`Observable` encapsulates a measured quantity (e.g. flux,
+    magnitude, polarization) along with optional uncertainty and
+    censoring information. This object is tied into a single
+    :class:`InferenceData` instance, which may contain multiple named observables
+    (e.g., flux and polarization) that are jointly modeled.
+
+    This object is *purely numerical* and contains no units or
+    domain-specific semantics. All unit conversion and validation
+    should be performed upstream in reference to the generating
+    model or data container. This allows likelihood implementations to
+    interpret the data according to the needs of the problem at hand while
+    being agnostic about the physical meaning of the observable.
+
+    Parameters
+    ----------
+    value : np.ndarray
+        Measured values of the observable. This should be provided
+        as a ``(n,)`` array where ``n`` is the number of observations.
+    error : np.ndarray, optional
+        Symmetric 1-sigma uncertainties. Must be finite. Should be
+        the same shape as ``value``. Use ``None`` if not provided.
+    upper : np.ndarray, optional
+        Upper limit values. Use NaN where not applicable.
+    lower : np.ndarray, optional
+        Lower limit values. Use NaN where not applicable.
+
+    Notes
+    -----
+    - To indicate non-detections, provide finite values in the ``upper`` column
+      and NaN in the ``value`` column. The likelihood can then interpret
+      these as upper limits. Likewise, detections should be represented as
+      finite values in the ``value`` column and NaN in the ``upper`` column.
+    """
+
+    value: np.ndarray
+    error: Optional[np.ndarray] = None
+    upper: Optional[np.ndarray] = None
+    lower: Optional[np.ndarray] = None
+
+    # ------------------------------------------------------------------
+    # Initialization / Validation
+    # ------------------------------------------------------------------
+    # At this stage, we simply need to ensure that the
+    # resulting object is correctly generated and does not
+    # have any foundational issues.
+    def __post_init__(self):
+        # Coerce the input object to an array so that we
+        # are guaranteed to have a consistent interface for the rest of the code.
+        value = np.asarray(self.value)
+        object.__setattr__(self, "value", value)
+
+        # Compute the shape of ``value`` and use it to coerce
+        # the shapes of the other arrays. This ensures that we have a consistent shape across all
+        # arrays and that we can easily check for consistency.
+        shape = value.shape
+
+        if self.error is not None:
+            err = np.asarray(self.error)
+            if err.shape != shape:
+                raise ValueError(f"error must have shape {shape}, got {err.shape}")
+
+            object.__setattr__(self, "error", err)
+
+        if self.upper is not None:
+            upper = np.asarray(self.upper)
+            if upper.shape != shape:
+                raise ValueError(f"upper must have shape {shape}, got {upper.shape}")
+            object.__setattr__(self, "upper", upper)
+
+        if self.lower is not None:
+            lower = np.asarray(self.lower)
+            if lower.shape != shape:
+                raise ValueError(f"lower must have shape {shape}, got {lower.shape}")
+            object.__setattr__(self, "lower", lower)
+
+        # Ensure that logical consistency is maintained throughout the
+        # dataset. This includes checking for detection / non-detection overlap
+        # and ensuring that upper limits do not exceed lower limits.
+
+        # Check for upper limit and lower limit overlap
+        if self.upper is not None:
+            if np.any(~np.isnan(self.upper) & ~np.isnan(self.value)):
+                raise ValueError(
+                    "Upper limits cannot be finite where values are finite. Use NaN in the upper column for detections."
+                )
+        elif self.lower is not None:
+            if np.any(~np.isnan(self.lower) & ~np.isnan(self.value)):
+                raise ValueError(
+                    "Lower limits cannot be finite where values are finite. Use NaN in the lower column for detections."
+                )
+
+        # Check that the upper and lower limits do not exceed one
+        # another.
+        if self.upper is not None and self.lower is not None:
+            both = np.isfinite(self.upper) & np.isfinite(self.lower)
+            if np.any(both & (self.lower > self.upper)):
+                raise ValueError("Lower limit cannot exceed upper limit.")
+
+    # ------------------------------------------------------------------
+    # Dunder Methods
+    # ------------------------------------------------------------------
+    __array_priority__ = 1000  # ensure numpy defers properly
+
+    def __repr__(self) -> str:
+        return f"<Observable shape={self.shape} error={self.has_error} censoring={self.has_censoring}>"
+
+    def __str__(self) -> str:
+        return (
+            f"Observable(n={self.size}, "
+            f"error={self.has_error}, "
+            f"upper_limits={self.has_upper_limits}, "
+            f"lower_limits={self.has_lower_limits})"
+        )
+
+    def __len__(self) -> int:
+        return self.size
+
+    def __bool__(self) -> bool:
+        """Truthiness defined as non-empty."""
+        return self.size > 0
+
+    def __array__(self, dtype=None) -> np.ndarray:
+        """
+        NumPy coercion returns the observable values.
+
+        This allows:
+            np.asarray(observable)
+        """
+        if dtype is not None:
+            return np.asarray(self.value, dtype=dtype)
+        return np.asarray(self.value)
+
+    def __iter__(self):
+        """Iterate over values."""
+        return iter(self.value)
+
+    def __getitem__(self, item):
+        """
+        Return a sliced Observable.
+
+        This preserves error and censoring information.
+        """
+        return Observable(
+            value=self.value[item],
+            error=None if self.error is None else self.error[item],
+            upper=None if self.upper is None else self.upper[item],
+            lower=None if self.lower is None else self.lower[item],
+        )
+
+    def __eq__(self, other) -> bool:
+        if not isinstance(other, Observable):
+            return NotImplemented
+
+        def _arr_equal(a, b):
+            if a is None and b is None:
+                return True
+            if a is None or b is None:
+                return False
+            return np.array_equal(a, b, equal_nan=True)
+
+        return (
+            _arr_equal(self.value, other.value)
+            and _arr_equal(self.error, other.error)
+            and _arr_equal(self.upper, other.upper)
+            and _arr_equal(self.lower, other.lower)
+        )
+
+    # ------------------------------------------------------------------
+    # Derived Masks
+    # ------------------------------------------------------------------
+    @property
+    def upper_mask(self) -> Optional[np.ndarray]:
+        """Boolean mask of upper-censored points."""
+        if self.upper is None:
+            return None
+        return np.isfinite(self.upper)
+
+    @property
+    def lower_mask(self) -> Optional[np.ndarray]:
+        """Boolean mask of lower-censored points."""
+        if self.lower is None:
+            return None
+        return np.isfinite(self.lower)
+
+    # ------------------------------------------------------------------
+    # Convenience Properties
+    # ------------------------------------------------------------------
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """Shape of the observable."""
+        return self.value.shape
+
+    @property
+    def size(self) -> int:
+        """Number of observations."""
+        return self.value.size
+
+    @property
+    def has_error(self) -> bool:
+        """True if uncertainties are provided."""
+        return self.error is not None
+
+    @property
+    def has_upper_limits(self) -> bool:
+        """True if any upper-censored points exist."""
+        return self.upper is not None and np.any(self.upper_mask)
+
+    @property
+    def has_lower_limits(self) -> bool:
+        """True if any lower-censored points exist."""
+        return self.lower is not None and np.any(self.lower_mask)
+
+    @property
+    def has_censoring(self) -> bool:
+        """True if any censoring exists."""
+        return self.has_upper_limits or self.has_lower_limits
+
+
+@dataclass(frozen=True)
+class InferenceData:
+    """
+    Immutable, validated numerical dataset for use in the inference pipeline.
+
+    The :class:`InferenceData` class is the **canonical numerical representation**
+    consumed by likelihood objects in Trilobite. It defines the contract between
+    the :mod:`trilobite.data` layer (which performs column resolution and unit coercion)
+    and the :mod:`trilobite.inference` layer (which performs statistical evaluation).
+
+    In a typical workflow:
+
+    1. Observational data are loaded into a data container.
+    2. The container resolves column names, performs unit coercion,
+       and validates structural consistency.
+    3. An :class:`InferenceData` object is created.
+    4. Likelihood objects operate exclusively on this standardized
+       numerical representation.
+
+    Once constructed, an :class:`InferenceData` instance is **immutable**.
+    It contains only NumPy arrays and lightweight metadata required for
+    statistical evaluation. No unit handling, column interpretation, or
+    structural reshaping occurs at likelihood evaluation time.
+
+    .. rubric:: Structure
+
+    An :class:`InferenceData` object contains:
+
+    - Independent variables stored in :attr:`x`
+    - Dependent variables stored in :attr:`observables`
+    - Optional uncertainties and censoring information
+
+    All arrays share a common *base shape*. This base shape defines the
+    dimensional structure of the dataset (for example ``(N,)`` for a
+    one-dimensional dataset or ``(N, M)`` for a grid). Likelihoods may
+    derive stacked views from this base shape but do not modify it.
+
+    Parameters
+    ----------
+    x : dict of str to numpy.ndarray
+        Mapping from model variable names to arrays.
+
+        - Keys must match the model's declared variable names.
+        - All arrays must share identical shape.
+        - Arrays must already be expressed in the model’s base units.
+        - No unit coercion is performed during initialization.
+
+    observables : dict of str to Observable
+        Mapping from observable names to :class:`Observable` objects.
+
+        Each :class:`Observable` contains:
+
+        - ``value`` : :class:`numpy.ndarray`
+            Observed dependent-variable values.
+        - ``error`` : :class:`numpy.ndarray` or ``None``
+            Symmetric 1-sigma uncertainties.
+        - ``upper`` : :class:`numpy.ndarray` or ``None``
+            Upper limits (NaN where not applicable).
+        - ``lower`` : :class:`numpy.ndarray` or ``None``
+            Lower limits (NaN where not applicable).
+
+        All observable arrays must match the shape of the independent variables.
+
+    x_error : dict of str to numpy.ndarray, optional
+        Symmetric uncertainties on independent variables.
+
+        - Must contain entries for *all* independent variables if provided.
+        - Arrays must match the base shape of ``x``.
+
+    x_upper : dict of str to numpy.ndarray, optional
+        Upper limits on independent variables.
+        Missing entries are interpreted as no censoring.
+
+    x_lower : dict of str to numpy.ndarray, optional
+        Lower limits on independent variables.
+        Missing entries are interpreted as no censoring.
+
+    Notes
+    -----
+    - This class performs **no statistical interpretation**.
+    - All arrays must already be expressed in consistent base units.
+    - Shape validation is strict and enforced at construction time.
+    - The object is immutable once created to guarantee inference reproducibility.
+    - Not all likelihoods support all optional features (e.g., independent-variable
+      uncertainties or censoring).
+
+    Examples
+    --------
+    Constructing directly from arrays:
+
+    .. code-block:: python
+
+        import numpy as np
+        from trilobite.data.core import (
+            InferenceData,
+            Observable,
+        )
+
+        x = {"time": np.linspace(0.0, 10.0, 100)}
+
+        flux = np.random.normal(0.0, 1.0, 100)
+
+        observables = {
+            "flux_density": Observable(
+                value=flux,
+                error=np.full_like(flux, 0.1),
+                upper=None,
+                lower=None,
+            )
+        }
+
+        data = InferenceData(
+            x=x,
+            observables=observables,
+        )
+
+    Constructing from an Astropy table:
+
+    .. code-block:: python
+
+        data = InferenceData.from_table(
+            model=model,
+            table=photometry_table,
+            variables={"time": "time"},
+            observables={
+                "flux_density": (
+                    "flux_density",
+                    "flux_density_error",
+                    "flux_upper_limit",
+                    None,
+                )
+            },
+        )
+
+    See Also
+    --------
+    :class:`trilobite.data.core.DataContainer`
+        High-level data ingestion and column resolution.
+
+    :class:`trilobite.inference.likelihood.base.Likelihood`
+        Statistical layer that consumes :class:`InferenceData`.
+
+    :class:`Observable`
+        Lightweight container representing a single dependent variable.
+    """
+
+    # ----------------------------------------------------------------
+    # Parameters
+    # ----------------------------------------------------------------
+    x: dict[str, np.ndarray]
+    observables: dict[str, Observable]
+    x_error: Optional[dict[str, np.ndarray]] = None
+    x_upper: Optional[dict[str, np.ndarray]] = None
+    x_lower: Optional[dict[str, np.ndarray]] = None
+
+    # ------------------------------------------------------------------
+    # Initialization / Validation
+    # ------------------------------------------------------------------
+    def __post_init__(self):
+        # Validate the independent variable exists and is in the
+        # correct format before doing anything else.
+        if not isinstance(self.observables, dict):
+            raise TypeError(f"Parameter `x` of InferenceData must be a dictionary, not type {type(self.x)}.")
+        elif len(self.observables) < 1:
+            raise ValueError("InferenceData must contain at least one independent variable in the `x` parameter.")
+
+        # Coerce all of the x-arrays so that they are guaranteed to be numpy arrays and have a consistent shape.
+        # This also allows us to easily check for consistency across the different x-arrays and ensure that they all
+        # have the same shape, which is a requirement for the inference process to work properly.
+        x_clean = {}
+        shapes = []
+
+        for name, arr in self.x.items():
+            arr = np.asarray(arr)
+            x_clean[name] = arr
+            shapes.append(arr.shape)
+
+        # Check that everything is the same shape.
+        if len(set(shapes)) > 1:
+            raise ValueError(f"All independent variable arrays in `x` must have the same shape. Found shapes: {shapes}")
+        base_shape = shapes[0]
+
+        # We now validate that the x_err, x_lower, and x_upper are properly managed
+        # and are all the same shape.
+        # Validate optional x_error
+        if self.x_error is not None:
+            x_error_clean = {}
+            for name, arr in self.x_error.items():
+                arr = np.asarray(arr)
+
+                if name not in x_clean:
+                    raise ValueError(f"x_error provided for unknown variable '{name}'.")
+
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_error for '{name}' must have shape {base_shape}.")
+
+                x_error_clean[name] = arr
+        else:
+            x_error_clean = None
+
+        # Validate optional x_upper
+        if self.x_upper is not None:
+            x_upper_clean = {}
+            for name, arr in self.x_upper.items():
+                arr = np.asarray(arr)
+
+                if name not in x_clean:
+                    raise ValueError(f"x_upper provided for unknown variable '{name}'.")
+
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_upper for '{name}' must have shape {base_shape}.")
+
+                x_upper_clean[name] = arr
+        else:
+            x_upper_clean = None
+
+        # Validate optional x_lower
+        if self.x_lower is not None:
+            x_lower_clean = {}
+            for name, arr in self.x_lower.items():
+                arr = np.asarray(arr)
+
+                if name not in x_clean:
+                    raise ValueError(f"x_lower provided for unknown variable '{name}'.")
+
+                if arr.shape != base_shape:
+                    raise ValueError(f"x_lower for '{name}' must have shape {base_shape}.")
+
+                x_lower_clean[name] = arr
+        else:
+            x_lower_clean = None
+
+        # Set all the attributes
+        object.__setattr__(self, "x", x_clean)
+        object.__setattr__(self, "x_error", None if x_error_clean is None else x_error_clean)
+        object.__setattr__(self, "x_upper", None if x_upper_clean is None else x_upper_clean)
+        object.__setattr__(self, "x_lower", None if x_lower_clean is None else x_lower_clean)
+
+        # Ensure that the observables are all in the correct format. These must all be Observable
+        # objects and we require that their shape matches that of the base shape.
+        if not self.observables:
+            raise ValueError("InferenceData must contain at least one observable.")
+
+        obs_clean = {}
+
+        for name, obs in self.observables.items():
+            if not isinstance(obs, Observable):
+                raise TypeError(f"Observable '{name}' must be an Observable instance.")
+
+            if obs.shape != base_shape:
+                raise ValueError(
+                    f"Observable '{name}' shape {obs.shape} does not match independent variable shape {base_shape}."
+                )
+
+            obs_clean[name] = obs
+
+        # Replace internal state with read-only versions
+        object.__setattr__(self, "observables", obs_clean)
+
+    # ------------------------------------------------------------------
+    # Dunder Methods
+    # ------------------------------------------------------------------
+    def __repr__(self) -> str:
+        has_x_err = self.x_error is not None
+        any_censored = any(obs.upper is not None or obs.lower is not None for obs in self.observables.values())
+        parts = [
+            f"  n_obs        = {self.size}",
+            f"  x            = {list(self.x.keys())}",
+            f"  observables  = {list(self.observables.keys())}",
+            f"  censored     = {any_censored}",
+            f"  x_error      = {list(self.x_error.keys()) if has_x_err else None}",
+        ]
+        return "InferenceData(\n" + "\n".join(parts) + "\n)"
+
+    def __str__(self) -> str:
+        return self.__repr__()
+
+    def describe(self) -> str:
+        """
+        Return a human-readable summary of this :class:`InferenceData` object.
+
+        The summary includes per-variable value ranges and per-observable
+        detection/censoring statistics. Use this after calling
+        :meth:`DataContainer.to_inference_data` to verify the conversion
+        produced the expected result before wiring into a likelihood.
+
+        Returns
+        -------
+        str
+            Multi-line summary string (also printed via ``print()``).
+
+        Examples
+        --------
+        >>> print(inference_data.describe())
+        InferenceData — 32 observations
+        ────────────────────────────────────────────────
+        Independent Variables
+          time   : min=0.10  max=1200.00  (shape=(32,))
+          freq   : min=1.40  max=22.00    (shape=(32,))
+        ────────────────────────────────────────────────
+        Observables
+          flux_density
+            detections    : 28
+            upper limits  : 4
+            lower limits  : 0
+            value range   : 1.23e-28 … 8.45e-26
+            error present : True
+        """
+        lines = [
+            f"InferenceData — {self.size} observations",
+            "─" * 50,
+            "Independent Variables",
+        ]
+        for name, arr in self.x.items():
+            finite = arr[np.isfinite(arr)]
+            if len(finite) > 0:
+                lines.append(f"  {name:<12}: min={finite.min():.4g}  max={finite.max():.4g}  (shape={arr.shape})")
+            else:
+                lines.append(f"  {name:<12}: all NaN  (shape={arr.shape})")
+
+        if self.x_error is not None:
+            lines.append("  [x_error present for: " + ", ".join(self.x_error.keys()) + "]")
+
+        lines += ["─" * 50, "Observables"]
+        for name, obs in self.observables.items():
+            n_upper = int(np.sum(np.isfinite(obs.upper))) if obs.upper is not None else 0
+            n_lower = int(np.sum(np.isfinite(obs.lower))) if obs.lower is not None else 0
+            n_det = self.size - n_upper
+            val_finite = obs.value[np.isfinite(obs.value)]
+            val_range = f"{val_finite.min():.3e} … {val_finite.max():.3e}" if len(val_finite) > 0 else "all NaN"
+            lines += [
+                f"  {name}",
+                f"    detections    : {n_det}",
+                f"    upper limits  : {n_upper}",
+                f"    lower limits  : {n_lower}",
+                f"    value range   : {val_range}",
+                f"    error present : {obs.error is not None}",
+            ]
+
+        result = "\n".join(lines)
+        print(result)
+        return result
+
+    def __len__(self) -> int:
+        return self.size
+
+    def __eq__(self, other):
+        if not isinstance(other, InferenceData):
+            return NotImplemented
+
+        # -------------------------------------------------
+        # Helper: compare dict[str, ndarray] or None
+        # -------------------------------------------------
+        def _dict_array_equal(d1, d2):
+            if d1 is None and d2 is None:
+                return True
+            if d1 is None or d2 is None:
+                return False
+            if set(d1.keys()) != set(d2.keys()):
+                return False
+            for k in d1:
+                if not np.array_equal(d1[k], d2[k], equal_nan=True):
+                    return False
+            return True
+
+        # -------------------------------------------------
+        # Independent variables
+        # -------------------------------------------------
+        if not _dict_array_equal(self.x, other.x):
+            return False
+
+        if not _dict_array_equal(self.x_error, other.x_error):
+            return False
+
+        if not _dict_array_equal(self.x_upper, other.x_upper):
+            return False
+
+        if not _dict_array_equal(self.x_lower, other.x_lower):
+            return False
+
+        # -------------------------------------------------
+        # Observables
+        # -------------------------------------------------
+        if set(self.observables.keys()) != set(other.observables.keys()):
+            return False
+
+        for name in self.observables:
+            if self.observables[name] != other.observables[name]:
+                return False
+
+        return True
+
+    # ------------------------------------------------------------------
+    # Convenience Properties
+    # ------------------------------------------------------------------
+    @property
+    def shape(self) -> tuple[int, ...]:
+        """Shape of the dataset."""
+        return next(iter(self.x.values())).shape
+
+    @property
+    def size(self) -> int:
+        """Total number of data points."""
+        return int(np.prod(self.shape))
+
+    @property
+    def variable_names(self) -> list[str]:
+        """List of independent variable names."""
+        return list(self.x.keys())
+
+    @property
+    def observable_names(self) -> list[str]:
+        """List of observable names."""
+        return list(self.observables.keys())
+
+    @property
+    def n_observables(self) -> int:
+        """Number of dependent variables."""
+        return len(self.observables)
+
+    # ------------------------------------------------------------------
+    # Helper Methods
+    # ------------------------------------------------------------------
+    def get_observable(self, name: str) -> Observable:
+        """Return a specific observable by name."""
+        try:
+            return self.observables[name]
+        except KeyError as exp:
+            raise KeyError(f"Observable '{name}' not found.") from exp
+
+    def has_x_uncertainty(self) -> bool:
+        """
+        Determine if independent variable uncertainties are provided.
+
+        Returns
+        -------
+        bool
+            True if independent variable uncertainties are provided, False otherwise.
+        """
+        return self.x_error is not None
+
+    def get_x_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked independent-variable values.
+
+        This method stacks all independent-variable arrays stored in
+        :attr:`x` into a single NumPy array.
+
+        The stacking order follows :attr:`variable_names`, which must
+        match the model's expected input ordering.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), returns array with shape
+            ``(*base_shape, n_variables)``.
+            If True, reshapes to ``(n_points, n_variables)``
+            where ``n_points = product(base_shape)``.
+
+        Returns
+        -------
+        np.ndarray
+            Stacked independent-variable array.
+
+        Notes
+        -----
+        - Always returns a numeric array.
+        - Raises if any required variable is missing.
+        - No unit conversion is performed.
+        """
+        arrays = [self.x[name] for name in self.variable_names]
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked observable values.
+
+        All observable values are required and must be numeric.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), returns ``(*base_shape, n_observables)``.
+            If True, reshapes to ``(n_points, n_observables)``.
+
+        Returns
+        -------
+        np.ndarray
+            Stacked observable array.
+
+        Notes
+        -----
+        - NaN values are preserved.
+        - Observable order matches :attr:`observable_names`.
+        """
+        arrays = [self.observables[name].value for name in self.observable_names]
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_error_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked observable uncertainties.
+
+        All observables must define symmetric uncertainties.
+        Raises if any observable lacks uncertainty information.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_y_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Stacked uncertainty array.
+
+        Raises
+        ------
+        ValueError
+            If any observable lacks uncertainties.
+        """
+        arrays = []
+
+        for name in self.observable_names:
+            err = self.observables[name].error
+            if err is None:
+                raise ValueError(f"Observable '{name}' lacks uncertainty.")
+            arrays.append(err)
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_lower_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked observable lower limits.
+
+        Missing lower limits are represented as np.nan.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_y_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Lower-limit array.
+        """
+        base_shape = self.get_y_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.observable_names:
+            lower = self.observables[name].lower
+            if lower is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(lower)
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_y_upper_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked observable upper limits.
+
+        Missing upper limits are represented as np.nan.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_y_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Upper-limit array.
+        """
+        base_shape = self.get_y_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.observable_names:
+            upper = self.observables[name].upper
+            if upper is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(upper)
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_error_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked independent-variable uncertainties.
+
+        All independent variables must define symmetric uncertainties.
+        If any variable lacks uncertainty information, a ValueError is raised.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            If False (default), returns shape ``(*base_shape, n_variables)``.
+            If True, reshapes to ``(n_points, n_variables)``.
+
+        Returns
+        -------
+        np.ndarray
+            Stacked uncertainty array.
+
+        Raises
+        ------
+        ValueError
+            If uncertainties are not defined for all variables.
+        """
+        if self.x_error is None:
+            raise ValueError("Independent-variable uncertainties are not defined.")
+
+        arrays = []
+
+        for name in self.variable_names:
+            if name not in self.x_error or self.x_error[name] is None:
+                raise ValueError(f"Independent-variable '{name}' lacks uncertainty.")
+            arrays.append(self.x_error[name])
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_upper_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked independent-variable upper limits.
+
+        Missing upper limits are represented as np.nan.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_x_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Upper-limit array with shape ``(*base_shape, n_variables)``.
+        """
+        base_shape = self.get_x_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.variable_names:
+            if self.x_upper is None or name not in self.x_upper or self.x_upper[name] is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(self.x_upper[name])
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    def get_x_lower_array(self, flatten: bool = False) -> np.ndarray:
+        """
+        Return stacked independent-variable lower limits.
+
+        Missing lower limits are represented as np.nan.
+
+        Parameters
+        ----------
+        flatten : bool, optional
+            Same reshaping semantics as :meth:`get_x_array`.
+
+        Returns
+        -------
+        np.ndarray
+            Lower-limit array.
+        """
+        base_shape = self.get_x_array(flatten=False).shape[:-1]
+
+        arrays = []
+
+        for name in self.variable_names:
+            if self.x_lower is None or name not in self.x_lower or self.x_lower[name] is None:
+                arrays.append(np.full(base_shape, np.nan))
+            else:
+                arrays.append(self.x_lower[name])
+
+        stacked = np.stack(arrays, axis=-1)
+
+        if flatten:
+            stacked = stacked.reshape(-1, stacked.shape[-1])
+
+        return stacked
+
+    # ------------------------------------------------------------------
+    # Initialization
+    # ------------------------------------------------------------------
+    @classmethod
+    def from_arrays(
+        cls,
+        model: "Model",
+        x: dict[str, Union[np.ndarray, u.Quantity]],
+        y: dict[str, Union[np.ndarray, u.Quantity]],
+        y_err: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        y_upper: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        y_lower: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_err: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_upper: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+        x_lower: Optional[dict[str, Union[np.ndarray, u.Quantity]]] = None,
+    ):
+        """
+        Construct an :class:`InferenceData` instance directly from raw array inputs.
+
+        This is a convenience constructor for workflows where data are already
+        available as numerical arrays (or `astropy.units.Quantity` objects)
+        and are intended to be used directly for inference against a given model.
+
+        The method performs:
+
+        1. **Name validation** — all model-declared variables and observables
+           must be present; extra keys are ignored; missing required entries
+           raise immediately.
+
+        2. **Unit coercion** — if a value is provided as a ``Quantity`` it is
+           converted to the units declared by the model; plain NumPy arrays are
+           assumed to already be in model-expected units; incompatible units
+           raise a ``ValueError``.
+
+        3. **Shape validation** — all independent variables must share
+           identical shape; all observables must match; optional
+           uncertainty/limit arrays must match the same shape.
+
+        4. **Construction** — observable objects are created internally and the
+           resulting :class:`InferenceData` instance is fully validated and
+           immutable.
+
+        Parameters
+        ----------
+        model : Model
+            The model defining:
+
+            - Required independent variable names
+            - Required observable names
+            - Expected base units for each variable and observable
+
+        x : dict[str, np.ndarray or Quantity]
+            Mapping from model variable names to arrays.
+            All arrays must share the same shape.
+
+        y : dict[str, np.ndarray or Quantity]
+            Mapping from model observable names to arrays.
+            All arrays must match the shape of `x`.
+
+        y_err : dict[str, np.ndarray or Quantity], optional
+            Symmetric uncertainties for observables.
+            Must match observable shape.
+
+        y_upper : dict[str, np.ndarray or Quantity], optional
+            Upper limits for observables.
+            Must match observable shape.
+
+        y_lower : dict[str, np.ndarray or Quantity], optional
+            Lower limits for observables.
+            Must match observable shape.
+
+        x_err : dict[str, np.ndarray or Quantity], optional
+            Symmetric uncertainties for independent variables.
+            Must match independent-variable shape.
+
+        x_upper : dict[str, np.ndarray or Quantity], optional
+            Upper limits for independent variables.
+
+        x_lower : dict[str, np.ndarray or Quantity], optional
+            Lower limits for independent variables.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable inference-ready dataset.
+
+        Raises
+        ------
+        ValueError
+            If:
+            - Required variables or observables are missing
+            - Shapes are inconsistent
+            - Units cannot be coerced to model-declared units
+
+        Notes
+        -----
+        - No statistical interpretation is applied.
+        - No transformations (e.g., log-space conversions) are performed.
+        - All arrays must already represent physical values in model units.
+        - This method is intended for low-level or programmatic data ingestion.
+        - For table-based workflows with automatic unit coercion and column
+          resolution, use :meth:`DataContainer.to_inference_data` instead.
+
+        Examples
+        --------
+
+        .. code-block:: python
+
+            x = {"time": np.linspace(0, 10, 100)}
+            y = {"flux": np.random.normal(0, 1, 100)}
+            data = InferenceData.from_arrays(model, x=x, y=y)
+
+        Using quantities:
+
+        .. code-block:: python
+
+            x = {"time": np.linspace(0, 10, 100) * u.day}
+            y = {"flux": np.random.normal(0, 1, 100) * u.mJy}
+            data = InferenceData.from_arrays(model, x=x, y=y)
+        """
+        variable_names = model.variable_names
+        observable_names = list(model.OUTPUTS._fields)
+
+        variable_units = {v.name: v.base_units for v in model.VARIABLES}
+        observable_units = {o: getattr(model.UNITS, o) for o in observable_names}
+
+        # -------------------------------------------------
+        # Pre-flight: helpful key-mismatch errors
+        # -------------------------------------------------
+        if x is not None:
+            missing_vars = [n for n in variable_names if n not in x]
+            if missing_vars:
+                import difflib
+
+                suggestions = {}
+                for mv in missing_vars:
+                    close = difflib.get_close_matches(mv, list(x.keys()), n=1, cutoff=0.6)
+                    suggestions[mv] = close[0] if close else None
+                hint_lines = []
+                for mv, sug in suggestions.items():
+                    line = f"  missing '{mv}'"
+                    if sug:
+                        line += f" (did you mean '{sug}'?)"
+                    hint_lines.append(line)
+                raise ValueError(
+                    f"Model declares variables {variable_names} but x has keys {list(x.keys())}.\n"
+                    + "\n".join(hint_lines)
+                    + f"\n  Model VARIABLES: {variable_names}"
+                )
+
+        if y is not None:
+            missing_obs = [n for n in observable_names if n not in y]
+            if missing_obs:
+                import difflib
+
+                suggestions = {}
+                for mo in missing_obs:
+                    close = difflib.get_close_matches(mo, list(y.keys()), n=1, cutoff=0.6)
+                    suggestions[mo] = close[0] if close else None
+                hint_lines = []
+                for mo, sug in suggestions.items():
+                    line = f"  missing '{mo}'"
+                    if sug:
+                        line += f" (did you mean '{sug}'?)"
+                    hint_lines.append(line)
+                raise ValueError(
+                    f"Model declares observables {observable_names} but y has keys {list(y.keys())}.\n"
+                    + "\n".join(hint_lines)
+                    + f"\n  Model OBSERVABLES: {observable_names}"
+                )
+
+        # -------------------------------------------------
+        # Helper: validate dictionary of arrays
+        # -------------------------------------------------
+        def _validate_group(
+            data_dict,
+            expected_names,
+            unit_map,
+            group_name,
+            required=True,
+            expected_shape=None,
+        ):
+            # Check if the data object is required.
+            if data_dict is None:
+                if required:
+                    raise ValueError(f"{group_name} must be provided.")
+                return None
+
+            # Begin the validation loop.
+            validated = {}
+            shapes = []
+
+            for name in expected_names:
+                if name not in data_dict:
+                    raise ValueError(f"{group_name} missing required entry '{name}'.")
+
+                unit = unit_map[name]
+
+                try:
+                    value = data_dict[name]
+                    if isinstance(value, u.Quantity):
+                        arr = np.asarray(value.to_value(unit))
+                    else:
+                        arr = np.asarray(value)
+                except Exception as exc:
+                    raise ValueError(f"Error converting '{name}' in {group_name} to expected unit '{unit}'.") from exc
+
+                validated[name] = arr
+                shapes.append(arr.shape)
+
+            # All shapes must match
+            if len(set(shapes)) > 1:
+                raise ValueError(f"All arrays in {group_name} must share shape. Found shapes: {shapes}")
+
+            _base_shape = shapes[0]
+
+            if expected_shape is not None and _base_shape != expected_shape:
+                raise ValueError(f"{group_name} must have shape {expected_shape}, got {_base_shape}")
+
+            return validated
+
+        # -------------------------------------------------
+        # Validate required groups
+        # -------------------------------------------------
+        validated_x = _validate_group(
+            x,
+            variable_names,
+            variable_units,
+            "x",
+            required=True,
+        )
+
+        base_shape = next(iter(validated_x.values())).shape
+
+        validated_y = _validate_group(
+            y,
+            observable_names,
+            observable_units,
+            "y",
+            required=True,
+            expected_shape=base_shape,
+        )
+
+        # -------------------------------------------------
+        # Validate optional groups
+        # -------------------------------------------------
+        validated_x_err = _validate_group(
+            x_err,
+            variable_names,
+            variable_units,
+            "x_err",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_x_upper = _validate_group(
+            x_upper,
+            variable_names,
+            variable_units,
+            "x_upper",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_x_lower = _validate_group(
+            x_lower,
+            variable_names,
+            variable_units,
+            "x_lower",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_err = _validate_group(
+            y_err,
+            observable_names,
+            observable_units,
+            "y_err",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_upper = _validate_group(
+            y_upper,
+            observable_names,
+            observable_units,
+            "y_upper",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        validated_y_lower = _validate_group(
+            y_lower,
+            observable_names,
+            observable_units,
+            "y_lower",
+            required=False,
+            expected_shape=base_shape,
+        )
+
+        # -------------------------------------------------
+        # Build Observable objects
+        # -------------------------------------------------
+        observables = {
+            name: Observable(
+                value=validated_y[name],
+                error=None if validated_y_err is None else validated_y_err[name],
+                upper=None if validated_y_upper is None else validated_y_upper[name],
+                lower=None if validated_y_lower is None else validated_y_lower[name],
+            )
+            for name in observable_names
+        }
+
+        # -------------------------------------------------
+        # Construct InferenceData
+        # -------------------------------------------------
+        return cls(
+            x=validated_x,
+            observables=observables,
+            x_error=validated_x_err,
+            x_upper=validated_x_upper,
+            x_lower=validated_x_lower,
+        )
+
+    @classmethod
+    def from_table(
+        cls,
+        model: "Model",
+        table,
+        variables: Optional[dict[str, tuple[str, ...]]] = None,
+        observables: Optional[dict[str, tuple[str, ...]]] = None,
+    ):
+        """
+        Construct an :class:`InferenceData` object from an Astropy Table.
+
+        This method extracts columns from a table, performs name resolution
+        and unit coercion, and delegates validation to
+        :meth:`~trilobite.data.core.InferenceData.from_arrays`.
+
+        Parameters
+        ----------
+        model : Model
+            Model defining required variable and observable names and units.
+
+        table : astropy.table.Table
+            Input data table.
+
+        variables : dict[str, tuple or str], optional
+            Manual column specifications for independent variables.
+
+            Each key is a model variable name.
+
+            Values may be:
+            - "column_name"
+            - ("column", "error")
+            - ("column", "error", "upper", "lower")
+
+        observables : dict[str, tuple or str], optional
+            Manual column specifications for observables.
+            Same format as `variables`.
+
+        Returns
+        -------
+        InferenceData
+
+        Raises
+        ------
+        ValueError
+            If required columns are missing or incompatible.
+
+        Notes
+        -----
+        - Column names default to model names if not overridden.
+        - Columns must contain Quantity data or unit-compatible values.
+        - All unit conversion and shape validation is handled by
+          :meth:`from_arrays`.
+        """
+        variables = variables or {}
+        observables = observables or {}
+
+        variable_names = model.variable_names
+        observable_names = list(model.OUTPUTS._fields)
+
+        # ---------------------------------------------
+        # Helper: normalize column specification
+        # ---------------------------------------------
+        def _coerce_spec(spec):
+            if isinstance(spec, str):
+                return spec, None, None, None
+            elif isinstance(spec, tuple):
+                if len(spec) == 2:
+                    return spec[0], spec[1], None, None
+                elif len(spec) == 4:
+                    return spec
+            raise ValueError(f"Invalid column specification: {spec}. Expected str, 2-tuple, or 4-tuple.")
+
+        # ---------------------------------------------
+        # Extract X columns
+        # ---------------------------------------------
+        x = {}
+        x_err = {}
+        x_upper = {}
+        x_lower = {}
+
+        for name in variable_names:
+            col, err, upper, lower = _coerce_spec(
+                variables.get(
+                    name,
+                    (name, f"{name}_err", f"{name}_upper", f"{name}_lower"),
+                )
+            )
+
+            if col not in table.colnames:
+                raise ValueError(f"Column '{col}' not found for variable '{name}'.")
+
+            x[name] = table[col].quantity if hasattr(table[col], "quantity") else table[col]
+
+            if err and err in table.colnames:
+                x_err[name] = table[err].quantity if hasattr(table[err], "quantity") else table[err]
+
+            if upper and upper in table.colnames:
+                x_upper[name] = table[upper].quantity if hasattr(table[upper], "quantity") else table[upper]
+
+            if lower and lower in table.colnames:
+                x_lower[name] = table[lower].quantity if hasattr(table[lower], "quantity") else table[lower]
+
+        # ---------------------------------------------
+        # Extract Y columns
+        # ---------------------------------------------
+        y = {}
+        y_err = {}
+        y_upper = {}
+        y_lower = {}
+
+        for name in observable_names:
+            col, err, upper, lower = _coerce_spec(
+                observables.get(
+                    name,
+                    (name, f"{name}_err", f"{name}_upper", f"{name}_lower"),
+                )
+            )
+
+            if col not in table.colnames:
+                raise ValueError(f"Column '{col}' not found for observable '{name}'.")
+
+            y[name] = table[col].quantity if hasattr(table[col], "quantity") else table[col]
+
+            if err and err in table.colnames:
+                y_err[name] = table[err].quantity if hasattr(table[err], "quantity") else table[err]
+
+            if upper and upper in table.colnames:
+                y_upper[name] = table[upper].quantity if hasattr(table[upper], "quantity") else table[upper]
+
+            if lower and lower in table.colnames:
+                y_lower[name] = table[lower].quantity if hasattr(table[lower], "quantity") else table[lower]
+
+        # ---------------------------------------------
+        # Delegate to canonical constructor
+        # ---------------------------------------------
+        return cls.from_arrays(
+            model=model,
+            x=x,
+            y=y,
+            x_err=x_err or None,
+            x_upper=x_upper or None,
+            x_lower=x_lower or None,
+            y_err=y_err or None,
+            y_upper=y_upper or None,
+            y_lower=y_lower or None,
+        )
+
+    # ====================================================================== #
+    # External IO / Serialization                                            #
+    # ====================================================================== #
+    # Because these objects will end up crossing process boundaries, they need
+    # to be handled with care in regard to IO processes. We want to ensure that
+    # the object can read / write to HDF5 as a standard format and that we can
+    # serialize to something like JSON.
+    def to_dict(self, **metadata) -> dict:
+        """
+        Convert this instance to a JSON-serializable dictionary.
+
+        This method converts the :class:`InferenceData` object into a fully
+        JSON-safe representation composed only of native Python types
+        (``dict``, ``list``, ``str``, ``float``, ``int``, ``None``). NumPy
+        arrays are converted to nested lists via ``.tolist()``.
+
+        The resulting dictionary is suitable for:
+
+        - JSON serialization (``json.dumps``),
+        - writing to disk,
+        - transmission across process boundaries (e.g. MPI),
+        - caching or checkpointing inference state.
+
+        Additional keyword arguments are inserted into the ``attrs`` block
+        and may be used to store provenance or contextual metadata
+        (e.g. run identifiers, dataset names, timestamps).
+
+        Parameters
+        ----------
+        **metadata :
+            Additional metadata to include under the ``attrs`` key.
+
+        Returns
+        -------
+        dict
+            JSON-safe dictionary representation of this
+            :class:`InferenceData` instance.
+
+        Notes
+        -----
+        The dictionary structure has the following canonical form:
+
+        .. code-block:: text
+
+            {
+              "attrs": {
+                "format": "InferenceData",
+                "version": "x.y.z",
+                "...": "additional metadata"
+              },
+
+              "x": {
+                "time": [ ... ],
+                "frequency": [ ... ]
+              },
+
+              "x_error": {                 // Optional
+                "time": [ ... ]
+              },
+
+              "x_upper": { ... },          // Optional
+              "x_lower": { ... },          // Optional
+
+              "observables": {
+                "flux": {
+                  "value": [ ... ],
+                  "error": [ ... ],        // Optional
+                  "upper": [ ... ],        // Optional
+                  "lower": [ ... ]         // Optional
+                }
+              }
+            }
+
+        - All arrays are converted to Python lists.
+        - Optional groups (``x_error``, ``x_upper``, ``x_lower``) are only
+          included if present.
+        - Optional observable fields (``error``, ``upper``, ``lower``)
+          are only included when defined.
+
+        See Also
+        --------
+        from_dict :
+            Reconstruct an :class:`InferenceData` instance from a dictionary.
+        json.dumps :
+            Serialize dictionary to JSON.
+        """
+        # Construct the scaffold dictionary for the eventual serialized array.
+        out: dict[str, Any] = {
+            "attrs": {
+                "format": "InferenceData",
+                "version": __pkg_version__,
+                **metadata,
+            },
+            "x": {},
+            "observables": {},
+        }
+
+        # Dump the independent variable arrays.
+        for name, arr in self.x.items():
+            out["x"][name] = np.asarray(arr).tolist()
+        if self.x_error is not None:
+            out["x_error"] = {name: np.asarray(arr).tolist() for name, arr in self.x_error.items()}
+        if self.x_upper is not None:
+            out["x_upper"] = {name: np.asarray(arr).tolist() for name, arr in self.x_upper.items()}
+        if self.x_lower is not None:
+            out["x_lower"] = {name: np.asarray(arr).tolist() for name, arr in self.x_lower.items()}
+
+        # Dump the dependent variable arrays and their associated metadata.
+        for name, obs in self.observables.items():
+            obs_dict: dict[str, Any] = {"value": np.asarray(obs.value).tolist()}
+            if obs.error is not None:
+                obs_dict["error"] = np.asarray(obs.error).tolist()
+            if obs.upper is not None:
+                obs_dict["upper"] = np.asarray(obs.upper).tolist()
+            if obs.lower is not None:
+                obs_dict["lower"] = np.asarray(obs.lower).tolist()
+            out["observables"][name] = obs_dict
+
+        return out
+
+    @classmethod
+    def from_dict(cls, data: dict) -> "InferenceData":
+        """
+        Reconstruct an :class:`InferenceData` instance from a dictionary.
+
+        This method is the inverse of :meth:`to_dict`. It restores NumPy
+        arrays and :class:`Observable` objects from a JSON-deserialized
+        dictionary representation.
+
+        Parameters
+        ----------
+        data : dict
+            Dictionary representation produced by :meth:`to_dict`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable :class:`InferenceData` instance.
+
+        Raises
+        ------
+        ValueError
+            If the dictionary does not represent a valid
+            :class:`InferenceData` structure.
+        """
+        # -------------------------------------------------
+        # Basic structure validation
+        # -------------------------------------------------
+        if not isinstance(data, dict):
+            raise TypeError("Input must be a dictionary.")
+
+        attrs = data.get("attrs", {})
+        if attrs.get("format") != "InferenceData":
+            raise ValueError("Dictionary does not represent InferenceData.")
+
+        # -------------------------------------------------
+        # Independent variables
+        # -------------------------------------------------
+        if "x" not in data:
+            raise ValueError("Missing 'x' block in InferenceData dictionary.")
+
+        x = {name: np.asarray(arr) for name, arr in data["x"].items()}
+
+        # Optional groups
+        x_error = None
+        if "x_error" in data:
+            x_error = {name: np.asarray(arr) for name, arr in data["x_error"].items()}
+
+        x_upper = None
+        if "x_upper" in data:
+            x_upper = {name: np.asarray(arr) for name, arr in data["x_upper"].items()}
+
+        x_lower = None
+        if "x_lower" in data:
+            x_lower = {name: np.asarray(arr) for name, arr in data["x_lower"].items()}
+
+        # -------------------------------------------------
+        # Observables
+        # -------------------------------------------------
+        if "observables" not in data:
+            raise ValueError("Missing 'observables' block in InferenceData dictionary.")
+
+        observables = {}
+
+        for name, obs_dict in data["observables"].items():
+            if "value" not in obs_dict:
+                raise ValueError(f"Observable '{name}' missing required 'value' field.")
+
+            observables[name] = Observable(
+                value=np.asarray(obs_dict["value"]),
+                error=None if "error" not in obs_dict else np.asarray(obs_dict["error"]),
+                upper=None if "upper" not in obs_dict else np.asarray(obs_dict["upper"]),
+                lower=None if "lower" not in obs_dict else np.asarray(obs_dict["lower"]),
+            )
+
+        # -------------------------------------------------
+        # Construct validated instance
+        # -------------------------------------------------
+        return cls(
+            x=x,
+            observables=observables,
+            x_error=x_error,
+            x_upper=x_upper,
+            x_lower=x_lower,
+        )
+
+    def to_json(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to a JSON file.
+
+        The object is first converted to its canonical dictionary
+        representation via :meth:`to_dict`, then written to disk using
+        ``json.dump`` with pretty formatting (``indent=2``).
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination JSON file path.
+        overwrite : bool, optional
+            If ``False`` (default) and the file already exists,
+            a :class:`FileExistsError` is raised.
+        **metadata :
+            Additional metadata forwarded to :meth:`to_dict` and
+            stored in the ``attrs`` block of the serialized file.
+
+        Raises
+        ------
+        FileExistsError
+            If the file exists and ``overwrite=False``.
+
+        Notes
+        -----
+        - Output is fully JSON-safe (pure Python types only).
+        - NumPy arrays are stored as nested lists.
+        - NaN values are preserved according to Python's JSON encoding rules.
+        - The resulting file is human-readable.
+        - This method does not modify the object state.
+
+        See Also
+        --------
+        from_json :
+            Inverse operation.
+        to_dict :
+            Canonical serialization backend.
+        """
+        import json
+
+        path = Path(filename)
+
+        if path.exists() and not overwrite:
+            raise FileExistsError(f"File '{path}' already exists.")
+
+        data = self.to_dict(**metadata)
+
+        with open(path, "w") as f:
+            json.dump(data, f, indent=2)
+
+    @classmethod
+    def from_json(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Deserialize an :class:`InferenceData` instance from a JSON file.
+
+        This method reads the JSON file, reconstructs the canonical
+        dictionary representation, and delegates object construction
+        to :meth:`from_dict`.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to a JSON file produced by :meth:`to_json`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        ValueError
+            If the file contents are not a valid InferenceData structure.
+
+        Notes
+        -----
+        - All arrays are restored as NumPy arrays.
+        - Shape and structural validation occur during object construction.
+        - Metadata stored in the ``attrs`` block is not automatically
+          attached to the returned object but remains available in the file.
+
+        See Also
+        --------
+        to_json :
+            JSON serialization method.
+        from_dict :
+            Canonical reconstruction backend.
+        """
+        import json
+
+        path = Path(filename)
+
+        if not path.exists():
+            raise FileNotFoundError(f"File '{path}' not found.")
+
+        with open(path) as f:
+            data = json.load(f)
+
+        return cls.from_dict(data)
+
+    def to_hdf5(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to an HDF5 file.
+
+        The HDF5 layout mirrors the canonical dictionary structure,
+        with independent variables and observables stored in hierarchical
+        groups.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination HDF5 file path.
+        overwrite : bool, optional
+            If ``False`` (default) and the file already exists,
+            a :class:`FileExistsError` is raised.
+        **metadata :
+            Additional metadata stored as root-level HDF5 attributes.
+
+        Raises
+        ------
+        FileExistsError
+            If the file exists and ``overwrite=False``.
+
+        Notes
+        -----
+        - Independent variables are stored under ``/x``.
+        - Optional groups (``x_error``, ``x_upper``, ``x_lower``)
+          are created only if present.
+        - Observables are stored under ``/observables/<name>/``.
+        - Root attributes include ``format`` and ``version``.
+        - Arrays are written in native NumPy format (no conversion to lists).
+        - This method is suitable for large datasets and high-performance workflows.
+
+        See Also
+        --------
+        from_hdf5 :
+            Inverse operation.
+        to_dict :
+            JSON serialization backend.
+        """
+        import h5py
+
+        path = Path(filename)
+
+        if path.exists() and not overwrite:
+            raise FileExistsError(f"File '{path}' already exists.")
+
+        mode = "w" if overwrite else "x"
+
+        with h5py.File(path, mode) as f:
+            # Root attributes
+            f.attrs["format"] = "InferenceData"
+            f.attrs["version"] = __pkg_version__
+
+            for key, value in metadata.items():
+                f.attrs[key] = value
+
+            # -------------------------
+            # Independent variables
+            # -------------------------
+            grp_x = f.create_group("x")
+            for name, arr in self.x.items():
+                grp_x.create_dataset(name, data=arr)
+
+            def _write_optional_group(group_name, data_dict):
+                if data_dict is None:
+                    return
+                grp = f.create_group(group_name)
+                for _name, _arr in data_dict.items():
+                    grp.create_dataset(_name, data=_arr)
+
+            _write_optional_group("x_error", self.x_error)
+            _write_optional_group("x_upper", self.x_upper)
+            _write_optional_group("x_lower", self.x_lower)
+
+            # -------------------------
+            # Observables
+            # -------------------------
+            grp_obs = f.create_group("observables")
+
+            for name, obs in self.observables.items():
+                subgrp = grp_obs.create_group(name)
+                subgrp.create_dataset("value", data=obs.value)
+
+                if obs.error is not None:
+                    subgrp.create_dataset("error", data=obs.error)
+
+                if obs.upper is not None:
+                    subgrp.create_dataset("upper", data=obs.upper)
+
+                if obs.lower is not None:
+                    subgrp.create_dataset("lower", data=obs.lower)
+
+    @classmethod
+    def from_hdf5(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Deserialize an :class:`InferenceData` instance from an HDF5 file.
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to an HDF5 file produced by :meth:`to_hdf5`.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        FileNotFoundError
+            If the file does not exist.
+        ValueError
+            If the file does not conform to the expected format.
+
+        Notes
+        -----
+        - The file must contain a root attribute ``format="InferenceData"``.
+        - Arrays are loaded directly as NumPy arrays.
+        - Structural validation occurs during object construction.
+        - Metadata stored in HDF5 attributes is not automatically
+          attached to the returned object.
+
+        See Also
+        --------
+        to_hdf5 :
+            HDF5 serialization method.
+        """
+        import h5py
+
+        path = Path(filename)
+
+        if not path.exists():
+            raise FileNotFoundError(f"File '{path}' not found.")
+
+        with h5py.File(path, "r") as f:
+            if f.attrs.get("format") != "InferenceData":
+                raise ValueError("Invalid HDF5 file for InferenceData.")
+
+            # -------------------------
+            # Independent variables
+            # -------------------------
+            x = {name: f["x"][name][...] for name in f["x"].keys()}
+
+            def _read_optional_group(group_name):
+                if group_name not in f:
+                    return None
+                return {name: f[group_name][name][...] for name in f[group_name].keys()}
+
+            x_error = _read_optional_group("x_error")
+            x_upper = _read_optional_group("x_upper")
+            x_lower = _read_optional_group("x_lower")
+
+            # -------------------------
+            # Observables
+            # -------------------------
+            observables = {}
+
+            for name in f["observables"].keys():
+                grp = f["observables"][name]
+
+                observables[name] = Observable(
+                    value=grp["value"][...],
+                    error=grp["error"][...] if "error" in grp else None,
+                    upper=grp["upper"][...] if "upper" in grp else None,
+                    lower=grp["lower"][...] if "lower" in grp else None,
+                )
+
+        return cls(
+            x=x,
+            observables=observables,
+            x_error=x_error,
+            x_upper=x_upper,
+            x_lower=x_lower,
+        )
+
+    def to_file(
+        self,
+        filename: Union[str, Path],
+        overwrite: bool = False,
+        **metadata,
+    ):
+        """
+        Serialize this :class:`InferenceData` instance to disk.
+
+        The output format is determined automatically from the file
+        extension.
+
+        .. rubric:: Supported Formats
+
+        - ``.json``
+        - ``.h5``
+        - ``.hdf5``
+
+        Parameters
+        ----------
+        filename : str or Path
+            Destination file path.
+        overwrite : bool, optional
+            If ``False`` and the file exists, raise :class:`FileExistsError`.
+        **metadata :
+            Additional metadata passed to the underlying serializer.
+
+        Raises
+        ------
+        ValueError
+            If the file extension is unsupported.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`to_json`
+        and :meth:`to_hdf5`.
+
+        See Also
+        --------
+        from_file :
+            Inverse operation.
+        """
+        path = Path(filename)
+        suffix = path.suffix.lower()
+
+        if suffix == ".json":
+            self.to_json(path, overwrite=overwrite, **metadata)
+
+        elif suffix in {".h5", ".hdf5"}:
+            self.to_hdf5(path, overwrite=overwrite, **metadata)
+
+        else:
+            raise ValueError(f"Unsupported file extension '{suffix}'.")
+
+    @classmethod
+    def from_file(cls, filename: Union[str, Path]) -> "InferenceData":
+        """
+        Load an :class:`InferenceData` instance from disk.
+
+        The input format is inferred from the file extension.
+
+        .. rubric:: Supported Formats
+
+        - ``.json``
+        - ``.h5``
+        - ``.hdf5``
+
+        Parameters
+        ----------
+        filename : str or Path
+            Path to serialized file.
+
+        Returns
+        -------
+        InferenceData
+            Fully validated, immutable instance.
+
+        Raises
+        ------
+        ValueError
+            If the file extension is unsupported.
+
+        Notes
+        -----
+        This is a convenience wrapper around :meth:`from_json`
+        and :meth:`from_hdf5`.
+
+        See Also
+        --------
+        to_file :
+            Generic serialization method.
+        """
+        path = Path(filename)
+        suffix = path.suffix.lower()
+
+        if suffix == ".json":
+            return cls.from_json(path)
+
+        elif suffix in {".h5", ".hdf5"}:
+            return cls.from_hdf5(path)
+
+        else:
+            raise ValueError(f"Unsupported file extension '{suffix}'.")
+
+
+# ====================================================================== #
+# Generic Containers for (x, y) Data
+# ====================================================================== #
+class XYDataContainer(DataContainer, ABC):
+    """
+    Abstract base class for two-dimensional ``(x, y)`` datasets with optional uncertainties and censoring.
+
+    An :class:`~trilobite.data.core.XYDataContainer` represents observational or synthetic data that
+    can be expressed as pairs of an independent variable ``x`` and a dependent
+    variable ``y``. This abstraction is intended to support a wide range of
+    inference problems, including curve fitting, spectral modeling, and
+    phenomenological regression, while remaining agnostic about the specific
+    physical meaning of the axes.
+
+    In addition to core ``(x, y)`` values, this container supports optional:
+
+    - uncertainties on ``x`` and/or ``y``,
+    - upper and lower limits (censoring) on either axis,
+    - detection and non-detection masking derived from limit columns.
+
+    All axis semantics are defined *declaratively* via class-level column
+    attributes (e.g., :attr:`X_COLUMN`, :attr:`Y_ERROR_COLUMN`), allowing
+    subclasses to specialize behavior without modifying downstream likelihood
+    logic.
+
+    This class does **not** define how uncertainties or limits are treated
+    statistically; it only exposes them in a standardized, unit-aware form.
+    Interpretation of errors and censoring is entirely delegated to likelihood
+    implementations.
+
+    Key features
+    ------------
+    - **Axis abstraction**:
+      Independent and dependent variables are identified via class attributes
+      rather than hard-coded column names.
+
+    - **Optional uncertainties**:
+      Support for symmetric uncertainties on ``x`` and/or ``y`` without
+      imposing a statistical model.
+
+    - **Censoring-aware**:
+      Upper and lower limits on either axis are detected automatically and
+      exposed through boolean masks.
+
+    - **Unit-safe**:
+      All values are validated and returned as Astropy quantities.
+
+    - **Immutable**:
+      Like all :class:`~trilobite.data.core.DataContainer` subclasses, this container is read-only.
+
+    Detection and censoring model
+    -----------------------------
+    Censoring is inferred purely from the presence of *finite values* in
+    declared limit columns:
+
+    - Upper limits correspond to finite values in ``*_UPPER_LIMIT_COLUMN``.
+    - Lower limits correspond to finite values in ``*_LOWER_LIMIT_COLUMN``.
+
+    The container constructs independent boolean masks for:
+
+    - x-axis upper limits,
+    - x-axis lower limits,
+    - y-axis upper limits,
+    - y-axis lower limits,
+
+    as well as composite masks indicating whether any limit applies to a given
+    observation.
+
+    No assumptions are made about how these limits should enter a likelihood
+    (e.g., one-sided Gaussian, survival analysis, hard truncation).
+
+    Intended use
+    ------------
+    :class:`~trilobite.data.core.XYDataContainer` is intended to serve as a *common interface* between
+    diverse data products and inference machinery, including:
+
+    - spectral energy distributions,
+    - light curve slices at fixed frequency,
+    - generic ``(x, y)`` curve-fitting problems,
+    - censored regression with upper or lower limits.
+
+    Subclasses should specialize this container by:
+
+    - defining a concrete :attr:`COLUMNS` schema,
+    - setting axis column attributes (``X_COLUMN``, ``Y_COLUMN``, etc.),
+    - adding domain-specific convenience properties if needed.
+
+    Notes
+    -----
+    - This class is abstract and cannot be instantiated directly.
+    - Axis uncertainties are assumed to be symmetric unless otherwise
+    interpreted by the likelihood.
+    - If both upper and lower limits are present for the same axis and
+    observation, the data point is considered interval-censored.
+
+    See Also
+    --------
+    DataContainer
+     Base class providing schema validation and immutability.
+    trilobite.inference.likelihood.base.Likelihood
+     Likelihood classes that interpret uncertainties and censoring.
+    """
+
+    # ========================= SCHEMA DEFINITION ========================= #
+    # This ``COLUMNS`` dictionary contains the core schema requirements for the input
+    # table in order to ensure that the radio photometry input is valid. This is then
+    # enforced in ``_validate_table``.
+    #
+    # DEVELOPERS: YOU NEED TO OVERWRITE THIS!
+    COLUMNS = [
+        {
+            "name": "COLUMN_NAME",
+            "dtype": str,
+            "description": "Description of the column.",
+            "unit": None,
+            "required": True,
+        }
+    ]
+
+    # ========================= SPECIAL COLUMNS =========================== #
+    # In subclasses in this module, it is common to see this section filled by
+    # declarations about certain special columns (i.e. X_COL = ..., Y_COL = ...).
+    # This is to facilitate easy access to these columns in downstream code.
+    #
+    # In this base class, we do not define any special columns.
+    X_COLUMN = None
+    """str: Name of the x-axis column.
+
+    For :class:`~trilobite.data.core.XYDataContainer` subclasses, this should be overridden to specify
+    the name of the column representing the x-axis data. In upstream processing,
+    this is how the independent variable is identified.
+    """
+    Y_COLUMN = None
+    """str: Name of the y-axis column.
+
+    For :class:`~trilobite.data.core.XYDataContainer` subclasses, this should be overridden to specify
+    the name of the column representing the y-axis data. In upstream processing,
+    this is how the dependent variable is identified.
+    """
+    Y_ERROR_COLUMN = None
+    """str: Name of the y-axis error column.
+
+    This should be overridden to specify the name of the column representing
+    the y-axis error data. This is generally the 1-sigma error, but that is
+    left for the Likelihood function. If ``None``, then it is assumed that
+    no y-axis errors are provided.
+    """
+    X_ERROR_COLUMN = None
+    """str: Name of the x-axis error column.
+
+    This should be overridden to specify the name of the column representing
+    the x-axis error data. This is generally the 1-sigma error, but that is
+    left for the Likelihood function. If ``None``, then it is assumed that
+    no y-axis errors are provided.
+    """
+    Y_UPPER_LIMIT_COLUMN = None
+    """str: Name of the y-axis upper limit column.
+
+    This should be overridden to specify the name of the column representing
+    the y-axis upper limit data. This is generally used to indicate non-detections.
+    """
+    Y_LOWER_LIMIT_COLUMN = None
+    """str: Name of the y-axis lower limit column.
+
+    This should be overridden to specify the name of the column representing
+    the y-axis lower limit data. This is generally used to indicate non-detections.
+    """
+    X_UPPER_LIMIT_COLUMN = None
+    """str: Name of the x-axis upper limit column.
+
+    This should be overridden to specify the name of the column representing
+    the x-axis upper limit data. This is generally used to indicate non-detections.
+    """
+    X_LOWER_LIMIT_COLUMN = None
+    """str: Name of the x-axis lower limit column.
+
+    This should be overridden to specify the name of the column representing
+    the x-axis lower limit data. This is generally used to indicate non-detections.
+    """
+
+    # ====================================================================== #
+    # Initialization and validation methods
+    # ====================================================================== #
+    def __init__(self, table: Table, **kwargs):
+        """
+        Instantiate the data container.
+
+        This method should be overridden in subclasses to ensure proper behavior
+        downstream. The core responsibilities of this class are to
+
+        1. Assign the ``self.__table__`` attribute to a :class:`~astropy.table.Table` instance.
+        2. Validate that the table is consistent with the schema.
+        3. Generate limit masks.
+        4. Any additional configuration / setup required by the subclass.
+
+        In the default implementation, we assign the table and offload to the
+        ``self._validate_table`` method for validation. New implementations should
+        call ``super().__init__()`` to ensure these responsibilities are fulfilled and
+        then add any additional setup required.
+
+        Parameters
+        ----------
+        table: ~astropy.table.Table
+            The data table to be contained. This must conform to the schema defined in the
+            :attr:`COLUMNS`` class attribute.
+        kwargs:
+            Additional keyword arguments for subclass-specific configuration.
+        """
+        # Pass off to the super class to instantiate the
+        # core data container functionality.
+        super().__init__(table, **kwargs)
+
+        # Now address the potential detection / non-detection logic.
+        # This is done by checking for upper limit columns.
+        (
+            self.__x_ul_mask__,
+            self.__x_ll_mask__,
+            self.__y_ul_mask__,
+            self.__y_ll_mask__,
+        ) = self._construct_detection_mask()
+
+    def _construct_detection_mask(self) -> np.ndarray:
+        """
+        Construct the detection mask based on upper limit columns.
+
+        Returns
+        -------
+        numpy.ndarray
+            Boolean array where True indicates a detection and False indicates
+            a non-detection.
+
+        Notes
+        -----
+        For each of X and Y, we first (a) check if we even have a column for the upper
+        limit defined. If we do, we (b) check if that column is in the table. If it is, we (c)
+        check if the value is finite. If it is finite, that indicates a non-detection
+        in that axis. We combine the non-detection masks for both axes to get the final
+        detection mask.
+        """
+        n_obs = len(self)
+        _xumask, _xlmask, _yumask, _ylmask = (
+            np.zeros(n_obs, dtype=bool),
+            np.zeros(n_obs, dtype=bool),
+            np.zeros(n_obs, dtype=bool),
+            np.zeros(n_obs, dtype=bool),
+        )
+
+        # For each of the potential upper limit columns, we need to
+        # check if they are defined and present in the table.
+        if self.X_UPPER_LIMIT_COLUMN is not None:
+            if self.X_UPPER_LIMIT_COLUMN in self.__table__.colnames:
+                x_ul_col = self.__table__[self.X_UPPER_LIMIT_COLUMN]
+                _xumask = np.isfinite(x_ul_col)
+
+        if self.X_LOWER_LIMIT_COLUMN is not None:
+            if self.X_LOWER_LIMIT_COLUMN in self.__table__.colnames:
+                x_ll_col = self.__table__[self.X_LOWER_LIMIT_COLUMN]
+                _xlmask = np.isfinite(x_ll_col)
+
+        if self.Y_UPPER_LIMIT_COLUMN is not None:
+            if self.Y_UPPER_LIMIT_COLUMN in self.__table__.colnames:
+                y_ul_col = self.__table__[self.Y_UPPER_LIMIT_COLUMN]
+                _yumask = np.isfinite(y_ul_col)
+
+        if self.Y_LOWER_LIMIT_COLUMN is not None:
+            if self.Y_LOWER_LIMIT_COLUMN in self.__table__.colnames:
+                y_ll_col = self.__table__[self.Y_LOWER_LIMIT_COLUMN]
+                _ylmask = np.isfinite(y_ll_col)
+
+        return _xumask, _xlmask, _yumask, _ylmask
+
+    # ====================================================================== #
+    # Properties
+    # ====================================================================== #
+    @property
+    def x(self) -> u.Quantity:
+        """astropy.units.Quantity: The x-axis data."""
+        if self.X_COLUMN is None:
+            raise NotImplementedError(f"X_COLUMN is not defined in {self.__class__.__name__}.")
+
+        col = self.__table__[self.X_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def y(self) -> u.Quantity:
+        """astropy.units.Quantity: The y-axis data."""
+        if self.Y_COLUMN is None:
+            raise NotImplementedError(f"Y_COLUMN is not defined in {self.__class__.__name__}.")
+
+        col = self.__table__[self.Y_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def y_error(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The y-axis error data, if provided."""
+        if self.Y_ERROR_COLUMN is None:
+            return None
+
+        col = self.__table__[self.Y_ERROR_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def y_upper_limit(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The y-axis upper limit data, if provided."""
+        if self.Y_UPPER_LIMIT_COLUMN is None:
+            return None
+
+        col = self.__table__[self.Y_UPPER_LIMIT_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def y_lower_limit(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The y-axis lower limit data, if provided."""
+        if self.Y_LOWER_LIMIT_COLUMN is None:
+            return None
+
+        col = self.__table__[self.Y_LOWER_LIMIT_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def x_error(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The x-axis error data, if provided."""
+        if self.X_ERROR_COLUMN is None:
+            return None
+
+        col = self.__table__[self.X_ERROR_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def x_upper_limit(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The x-axis upper limit data, if provided."""
+        if self.X_UPPER_LIMIT_COLUMN is None:
+            return None
+
+        col = self.__table__[self.X_UPPER_LIMIT_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def x_lower_limit(self) -> Union[u.Quantity, None]:
+        """astropy.units.Quantity or None: The x-axis lower limit data, if provided."""
+        if self.X_LOWER_LIMIT_COLUMN is None:
+            return None
+
+        col = self.__table__[self.X_LOWER_LIMIT_COLUMN]
+        return col.quantity.copy()
+
+    @property
+    def x_upper_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating x-axis upper limits."""
+        return self.__x_ul_mask__.copy()
+
+    @property
+    def x_lower_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating x-axis lower limits."""
+        return self.__x_ll_mask__.copy()
+
+    @property
+    def x_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating x-axis limits."""
+        return self.__x_ul_mask__.copy() | self.__x_ll_mask__.copy()
+
+    @property
+    def y_upper_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating y-axis upper limits."""
+        return self.__y_ul_mask__.copy()
+
+    @property
+    def y_lower_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating y-axis lower limits."""
+        return self.__y_ll_mask__.copy()
+
+    @property
+    def y_lim_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating y-axis limits."""
+        return self.__y_ul_mask__.copy() | self.__y_ll_mask__.copy()
+
+    @property
+    def limit_mask(self) -> np.ndarray:
+        """numpy.ndarray: Boolean mask indicating any limits."""
+        return (
+            self.__x_ul_mask__.copy()
+            | self.__x_ll_mask__.copy()
+            | self.__y_ul_mask__.copy()
+            | self.__y_ll_mask__.copy()
+        )
+
+    # ====================================================================== #
+    # Utility Functions
+    # ====================================================================== #
+    @classmethod
+    def class_has_x_column(cls) -> bool:
+        """Check if the class defines an x-axis column."""
+        return cls.X_COLUMN is not None
+
+    @classmethod
+    def class_has_y_column(cls) -> bool:
+        """Check if the class defines a y-axis column."""
+        return cls.Y_COLUMN is not None
+
+    @classmethod
+    def class_has_y_error_column(cls) -> bool:
+        """Check if the class defines a y-axis error column."""
+        return cls.Y_ERROR_COLUMN is not None
+
+    @classmethod
+    def class_has_y_upper_limit_column(cls) -> bool:
+        """Check if the class defines a y-axis upper limit column."""
+        return cls.Y_UPPER_LIMIT_COLUMN is not None
+
+    @classmethod
+    def class_has_x_error_column(cls) -> bool:
+        """Check if the class defines an x-axis error column."""
+        return cls.X_ERROR_COLUMN is not None
+
+    @classmethod
+    def class_has_x_upper_limit_column(cls) -> bool:
+        """Check if the class defines an x-axis upper limit column."""
+        return cls.X_UPPER_LIMIT_COLUMN is not None
+
+    # ===================================================================== #
+    # Conversion Functions
+    # ===================================================================== #

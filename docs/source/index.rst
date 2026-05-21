@@ -1,36 +1,88 @@
-.. image:: ./images/logo.png
-   :width: 200px
-   :align: center
+.. raw:: html
 
-
-Triceratops
-============
+   <div class="hero">
+       <img src="_images/logo.png" class="hero-logo">
+       <div class="hero-text">
+           <h1>TRILOBITE</h1>
+           <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
+           <div class="badges">
 
 |RUFF| |PRE-COMMIT| |NUMPYDOC| |COMMITIZEN| |CONVENTIONAL-COMMITS| |LAST-COMMIT| |CONTRIBUTORS| |DOCS| |ASTROPY|
 
+.. raw:: html
+
+           </div>
+       </div>
+   </div>
+
+Overview
+=========
+
 The **TR**\ ansient **I**\ nteraction **C**\ ode for **E**\ jecta, **R**\ emnants, **A**\ and
-**T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRICERATOPS**) is a powerful, modular computational
+**T**\ ime-domain **O**\ bservables from **P**\ lasma **S**\ hocks (**TRILOBITE**) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
-TRICERATOPS is designed to simulate the coupled dynamics, radiation processes, and observational signatures that arise
-when ejecta-driven shocks propagate through ambient media. It enables researchers to model plasma shocks, ejecta
-dynamics, and broadband time-domain observables in a physically self-consistent way, with particular emphasis on radio
-and millimeter transients.
+.. grid:: 2
+   :gutter: 3
 
-The library supports both **forward modeling** and **parameter inference**, allowing users to connect physically
-motivated shock models directly to observational data from modern radio telescopes. By combining shock dynamics,
-microphysical prescriptions, and radiative transfer into a unified framework, TRICERATOPS helps bridge the gap between
-theory and observation in time-domain astrophysics.
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
 
-Built with flexibility and extensibility in mind, TRICERATOPS is suitable for a wide range of users; from newcomers
-exploring transient shock physics to experienced researchers developing custom models or extending the codebase.
-Its modular architecture makes it straightforward to swap in alternative physical prescriptions, add new radiation
-processes, or integrate with external inference and analysis tools.
+      **What does it do?**
 
+      - Provides **customizable models** of astrophysical transients (GRBs, TDEs, SNe, etc.)
+      - **Modular physics** components (dynamics, radiation, opacity, etc.) for generating new transient models.
+      - **Flexible inference tools** for fitting models to observational data and constraining physical parameters.
+      - Seamless **integration with external analysis tools** and libraries.
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Core capabilities**
+
+      - Fast, Efficient, and Detailed **radiative processes** and **dynamics engines** for modeling emission from shocks,
+        disks, ejecta, and more.
+      - Flexible model construction tools for building **custom transient models** from modular physics components.
+      - Comprehensive inference pipelines for fitting models to data and **performing parameter estimation**.
+      - **Extensive documentation**, examples, and user guides to help you get started and make the most of the library.
+
+.. grid:: 2
+   :gutter: 3
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Why use Trilobite?**
+
+      TRILOBITE bridges the gap between theory and observation by combining shock dynamics,
+      microphysical prescriptions, and radiative transfer into a unified framework.
+
+   .. grid-item-card::
+      :class-card: sd-shadow-sm sd-border-1
+
+      **Who is it for?**
+
+      - Researchers modeling transient shock physics
+      - Users building custom astrophysical models
+      - Developers extending simulation frameworks
+
+.. container:: install-block
+
+    .. card::
+       :class-card: sd-shadow-md sd-border-primary sd-p-3 install-card
+
+       **Get started in seconds!**
+
+       .. code-block:: bash
+
+          >>> pip install trilobite-lib
 
 .. raw:: html
 
    <hr style="color:black">
+
+
+
 
 Resources
 =========
@@ -44,12 +96,13 @@ Resources
 
         Quickstart Guide
         ^^^^^^^^^^^^^^^^
-        New to ``Triceratops``? The quickstart guide is the best place to start learning to use all of the
+        New to ``Trilobite``? The quickstart guide is the best place to start learning to use all of the
         tools that we have to offer!
 
         +++
 
         .. button-ref:: getting_started
+            :ref-type: doc
             :expand:
             :color: secondary
             :click-parent:
@@ -61,13 +114,13 @@ Resources
 
         Examples
         ^^^^^^^^
-        Have some basic experience with ``Triceratops`` but want to see a guide on how to execute a particular task? Need
+        Have some basic experience with ``Trilobite`` but want to see a guide on how to execute a particular task? Need
         to find some code to copy and paste? The examples page contains a wide variety of use case examples and explanations
-        for all of the various parts of the ``Triceratops`` library.
+        for all of the various parts of the ``Trilobite`` library.
 
         +++
 
-        .. button-ref:: auto_examples/index
+        .. button-ref:: examples
             :expand:
             :color: secondary
             :click-parent:
@@ -79,7 +132,7 @@ Resources
 
         User References
         ^^^^^^^^^^^^^^^^
-        The user guide contains comprehensive, text-based explanations of the backbone components of the ``Triceratops`` library.
+        The user guide contains comprehensive, text-based explanations of the backbone components of the ``Trilobite`` library.
         If you're looking for information on the underlying code or for more details on particular aspects of the API, this is your best resource.
 
         +++
@@ -103,6 +156,7 @@ Resources
         +++
 
         .. button-ref:: api
+            :ref-type: doc
             :expand:
             :color: secondary
             :click-parent:
@@ -120,7 +174,7 @@ Contents
 
    api
    reference/user_guide
-   auto_examples/index
+   examples
    getting_started
 
 Indices and tables
@@ -135,9 +189,31 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+.. raw:: html
+
+   <div class="affiliation-footer">
+     <p class="affiliation-label">Developed at</p>
+     <div class="affiliation-logos">
+       <a href="https://www.berkeley.edu" target="_blank" rel="noopener noreferrer">
+         <img src="_static/berkeley_logo.svg"
+              alt="University of California, Berkeley"
+              class="affiliation-logo">
+       </a>
+       <img src="_static/trex_logo.png"
+            alt="Extragalactic Transients Group (TREX)"
+            class="affiliation-logo affiliation-logo-trex">
+     </div>
+     <p class="affiliation-text">
+       TRILOBITE is developed and maintained by Eliza Diggins and the
+       <strong>Extragalactic Transients Group (TREX)</strong> in the Department
+       of Astronomy at the <strong>University of California, Berkeley</strong>.
+       Available under the GNU AGPLv3 license.
+     </p>
+   </div>
+
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://eliza-diggins.github.io/Triceratops
+   :target: https://transientsextragalactic.github.io/Trilobite
    :alt: Latest Docs
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
@@ -160,12 +236,12 @@ Indices and tables
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/eliza-diggins/Triceratops
-   :target: https://github.com/eliza-diggins/Triceratops/graphs/contributors
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Trilobite
+   :target: https://github.com/TransientsExtragalactic/Trilobite/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/eliza-diggins/Triceratops
-   :target: https://github.com/eliza-diggins/Triceratops
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Trilobite
+   :target: https://github.com/TransientsExtragalactic/Trilobite
    :alt: Last Commit
 
 .. |ASTROPY| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat

@@ -32,17 +32,6 @@ repos:
       - id: ruff
         name: "🔍 Lint with Ruff"
         args: ["--fix"]
-
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-        name: "📚 Sort imports (Python)"
-        args: ["--profile", "black"]
-      - id: isort
-        name: "📚 Sort imports (Cython)"
-        types: [cython]
-
   # 4. Typo Checking
   - repo: https://github.com/crate-ci/typos
     rev: v1.34.0

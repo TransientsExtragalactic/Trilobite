@@ -1,0 +1,93 @@
+"""
+Framework compliance tests for physical models.
+
+All concrete ``Model`` subclasses in Trilobite **must**
+be accompanied by a compliance test inheriting from
+``BaseModelTest``. This ensures that every model satisfies
+the core framework contract:
+
+- The model initializes successfully.
+- The forward evaluation executes without error.
+- The returned outputs match the declared ``OUTPUTS``.
+- Units are handled consistently and correctly.
+- Optional diagnostic plots can be generated.
+
+This test module may contain multiple model-specific
+test classes, each inheriting from ``BaseModelTest``.
+
+No new model implementation should be merged into the
+codebase without a corresponding compliance test here.
+"""
+
+import numpy as np
+from astropy import units as u
+from test_model_base import BaseModelTest
+
+from trilobite.models.generic.evolving_seds import (
+    BPL_Evolving_SBPL_Model,
+    PL_Evolving_SBPL_Model,
+    TripleBPL_Evolving_SBPL_Model,
+)
+
+
+# ============================================================
+# Individual Model Tests
+# ============================================================
+class TestPL_Evolving_SSA_SED_Model(BaseModelTest):
+    MODEL = PL_Evolving_SBPL_Model
+    VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
+    PARAMETERS = {
+        "alpha_1": 5 / 2,  # self-absorbed slope
+        "alpha_2": -1.0,  # optically thin slope
+        "beta": 1.0,  # nu_brk evolution
+        "gamma": 0.0,  # F_brk evolution
+        "nu_brk_0": 1e10 * u.Hz,
+        "F_brk_0": 1.0 * u.Jy,
+        "t_0": 10 * u.day,
+        "s": 0.3,
+    }
+    LOG_X = True
+    LOG_Y = True
+
+
+class TestBPL_Evolving_SSA_SED_Model(BaseModelTest):
+    MODEL = BPL_Evolving_SBPL_Model
+    VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
+    PARAMETERS = {
+        "alpha_11": 5 / 2,  # self-absorbed slope
+        "alpha_12": 0.0,  # intermediate slope
+        "alpha_21": 0.0,  # intermediate slope
+        "alpha_22": -1.0,  # optically thin slope
+        "beta_1": 1.0,  # nu_brk_1 evolution
+        "beta_2": 0.5,  # nu_brk_2 evolution
+        "gamma_1": 0.0,  # F_brk_1 evolution
+        "gamma_2": 0.0,  # F_brk_2 evolution
+        "nu_brk_0": 1e10 * u.Hz,
+        "F_brk_0": 1.0 * u.Jy,
+        "t_0": 10 * u.day,
+        "s": 0.3,
+    }
+    LOG_X = True
+    LOG_Y = True
+
+
+def TestTBPL_Evolving_SSA_SED_Model(BaseModelTest):
+    MODEL = TripleBPL_Evolving_SBPL_Model
+    VARIABLES = {"frequency": np.logspace(8, 11, 200) * u.Hz, "time": 10 * u.day}
+    PARAMETERS = {
+        "alpha_11": 5 / 2,  # self-absorbed slope
+        "alpha_12": 0.0,  # intermediate slope
+        "alpha_13": -1.0,  # optically thin slope
+        "alpha_21": 0.0,  # intermediate slope
+        "alpha_22": -1.0,  # optically thin slope
+        "beta_1": 1.0,  # nu_brk_1 evolution
+        "beta_2": 0.5,  # nu_brk_2 evolution
+        "gamma_1": 0.0,  # F_brk_1 evolution
+        "gamma_2": 0.0,  # F_brk_2 evolution
+        "nu_brk_0": 1e10 * u.Hz,
+        "F_brk_0": 1.0 * u.Jy,
+        "t_0": 10 * u.day,
+        "s": 0.3,
+    }
+    LOG_X = True
+    LOG_Y = True

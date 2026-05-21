@@ -1,34 +1,37 @@
+:orphan:
+
 .. _developer_guide:
+
 ===========================
-Triceratops Developer Guide
+Trilobite Developer Guide
 ===========================
 
-Welcome to the **Triceratops Developer Guide**! This section is intended for contributors, maintainers, and advanced users
-who want to understand the internal architecture of Triceratops, develop new features, or contribute improvements to the
+Welcome to the **Trilobite Developer Guide**! This section is intended for contributors, maintainers, and advanced users
+who want to understand the internal architecture of Trilobite, develop new features, or contribute improvements to the
 codebase.
 
 Development Structure
 ---------------------
-Before diving into the specifics of contributing to Triceratops, it's important to understand the overall structure of the git repository
+Before diving into the specifics of contributing to Trilobite, it's important to understand the overall structure of the git repository
 and how development is organized.
 
-Triceratops uses a dual versioning system to manage both stable releases and ongoing development. There are three types
+Trilobite uses a dual versioning system to manage both stable releases and ongoing development. There are three types
 of branches to be familiar with in the repository:
 
-- ``main``: This is the primary branch that contains the latest stable release of Triceratops.
+- ``main``: This is the primary branch that contains the latest stable release of Trilobite.
   Each release is tagged in ``main`` with a version number following the `Semantic Versioning <https://semver.org/>`__ scheme.
 
   For example, a stable release might be tagged as ``v1.2.0``.
-- ``dev_vX.Y.Z``: This is the active development branch for the next version of Triceratops.
+- ``dev_vX.Y.Z``: This is the active development branch for the next version of Trilobite.
   There is only one active development branch at a time, which corresponds to the next version to be released. This is
   the branch where active development should occur and where pull requests for new features or bug fixes should be directed.
 - ``stable_vX.Y.Z``: On each release of the code, a static branch is also generated from ``main`` at the point of
-  the tag so that there is also a stable branch for each version of Triceratops.
+  the tag so that there is also a stable branch for each version of Trilobite.
 
 In the case of a hotfix to a release, branches should be made from the stable version tag and named ``hotfix_...``.
 
 Version Tagging Workflow
-````````````````````````
+^^^^^^^^^^^^^^^^^^^^^^^^
 
 1. New development should occur on a branch / fork of the bleeding edge development branch. There
    is only one active development branch at a time, which is ``dev_vX.Y.Z``. This is the next version
@@ -43,25 +46,25 @@ Version Tagging Workflow
 
 Setting Up the Development Environment
 --------------------------------------
-In order to successfully contribute to Triceratops, you will need to set up a development environment that allows you to run the code,
+In order to successfully contribute to Trilobite, you will need to set up a development environment that allows you to run the code,
 test changes, and build documentation. This section provides a step-by-step guide to getting started. Note that
 this will require some external tools to be installed on your system to provide linting, testing, etc.
 
 Cloning the Repository
 ^^^^^^^^^^^^^^^^^^^^^^^
 
-To get started, you will need to clone the Triceratops repository from GitHub. You can do this using the following command:
+To get started, you will need to clone the Trilobite repository from GitHub. You can do this using the following command:
 
 .. code-block:: bash
 
-    git clone https://github.com/eliza-diggins/Triceratops
+    git clone https://github.com/TransientsExtragalactic/Trilobite
 
-This will create a local copy of the Triceratops repository on your machine. To get a particular branch you will need to
+This will create a local copy of the Trilobite repository on your machine. To get a particular branch you will need to
 checkout the branch you want to work on:
 
 .. code-block:: bash
 
-    cd Triceratops
+    cd Trilobite
     git checkout dev_vX.Y.Z  # Replace with the desired development version
 
 .. hint::
@@ -75,7 +78,7 @@ checkout the branch you want to work on:
 Installing Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^
 
-A number of dependencies are required to run Triceratops and to develop it effectively. In addition to the basic
+A number of dependencies are required to run Trilobite and to develop it effectively. In addition to the basic
 requirements of the library, you will also need to install some development tools to help with linting, testing, and documentation generation.
 These are all managed through the ``pyproject.toml`` file. To install the package and all of its development dependencies,
 run the following command in the root directory of the cloned repository:
@@ -84,7 +87,7 @@ run the following command in the root directory of the cloned repository:
 
     pip install -e .[dev]
 
-This will install Triceratops in editable mode, allowing you to make changes to the code and see them reflected immediately. Additionally,
+This will install Trilobite in editable mode, allowing you to make changes to the code and see them reflected immediately. Additionally,
 it will install all the development dependencies required for testing, linting, and documentation generation. Before proceeding,
 ensure that hooks are installed by running:
 
@@ -110,7 +113,7 @@ linting checks. The following sections provide detailed information on how to co
 Commit Messages and Changelogs
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Triceratops uses the `Commitizen <https://commitizen-tools.github.io/commitizen/>`__ tool to enforce structured commit messages
+Trilobite uses the `Commitizen <https://commitizen-tools.github.io/commitizen/>`__ tool to enforce structured commit messages
 following the `Conventional Commits <https://www.conventionalcommits.org/en/v1.0.0/>`__ standard. This system enables
 automatic changelog generation and helps keep versioning consistent and predictable.
 
@@ -174,14 +177,14 @@ merging it into the development branch.
 Github Actions will be used to automatically run tests and check your PR formatting and linting. If any of these checks fail,
 you will need to address the issues before your PR can be merged.
 
-Triceratops Standards, Conventions, and Structures
-----------------------------------------------
+Trilobite Standards, Conventions, and Structures
+---------------------------------------------------
 
-Triceratops is developed with the explicit intention of allowing easy extensibility and maintainability. A big part of this
+Trilobite is developed with the explicit intention of allowing easy extensibility and maintainability. A big part of this
 is the modular style of various parts of the codebase with the use of well-defined interfaces and abstract base classes.
 While the details of these APIs is not relevant for the user, as developers, it is important to understand the
 structure and conventions used throughout the codebase. This section provides an overview of the key standards and
-conventions used in Triceratops development.
+conventions used in Trilobite development.
 
 .. toctree::
     :maxdepth: 1
@@ -190,14 +193,14 @@ conventions used in Triceratops development.
 Linting and Formatting
 -----------------------
 
-To ensure a consistent code style and reduce potential errors, Triceratops enforces a set of linting and formatting rules
+To ensure a consistent code style and reduce potential errors, Trilobite enforces a set of linting and formatting rules
 across the entire codebase. These tools are automatically run in continuous integration and should also be run locally
 before submitting any pull requests.
 
 Formatting: ``black``
 ^^^^^^^^^^^^^^^^^^^^^^
 
-Triceratops uses `black <https://black.readthedocs.io/en/stable/>`__ as the standard code formatter. ``black`` automatically
+Trilobite uses `black <https://black.readthedocs.io/en/stable/>`__ as the standard code formatter. ``black`` automatically
 rewrites Python code to follow a consistent style.
 
 To apply formatting:
@@ -214,7 +217,7 @@ Key configuration options (set in ``pyproject.toml``):
 Linting: ``ruff``
 ^^^^^^^^^^^^^^^^^
 
-For fast and comprehensive linting, Triceratops uses `ruff <https://docs.astral.sh/ruff/>`__. Ruff checks for unused imports,
+For fast and comprehensive linting, Trilobite uses `ruff <https://docs.astral.sh/ruff/>`__. Ruff checks for unused imports,
 undefined variables, formatting errors, docstring issues, and more.
 
 To run ruff manually:
@@ -234,11 +237,11 @@ Configuration is handled in ``pyproject.toml``. For example, to ignore specific 
 Documentation
 -------------
 
-See :ref:`documentation` for details on how to contribute to the Triceratops documentation, including
+See :ref:`documentation` for details on how to contribute to the Trilobite documentation, including
 docstring standards, building the documentation, and contributing examples.
 
 Testing
 -------
 
-See :ref:`testing` for details on how to contribute to Triceratops testing, including
+See :ref:`testing` for details on how to contribute to Trilobite testing, including
 test structure, writing new tests, and running tests locally.

@@ -1,16 +1,17 @@
 .. _synchrotron_theory:
+
 ===================================
 Synchrotron Radiation Theory
 ===================================
 
 Synchrotron radiation is one of the most fundamental radiative processes in the world of transient astrophysics. It is
 responsible for a wide variety of observed phenomena, from the radio afterglows of gamma-ray bursts (GRBs) to the emission from
-active galactic nuclei (AGN) jets. Because Triceratops is so heavily reliant on synchrotron radiation for modeling
+active galactic nuclei (AGN) jets. Because Trilobite is so heavily reliant on synchrotron radiation for modeling
 transient sources, it is important to have a solid understanding of the theory; particularly the conventions and
-terminology used throughout the Triceratops documentation.
+terminology used throughout the Trilobite documentation.
 
 In this documentation, we seek to provide a concise overview of the topics one needs to understand to begin using
-Triceratops for synchrotron modeling. We cannot hope to provide a comprehensive review of synchrotron radiation theory;
+Trilobite for synchrotron modeling. We cannot hope to provide a comprehensive review of synchrotron radiation theory;
 however, we provide references throughout to more detailed treatments of the subject and the relevant literature
 for various results.
 
@@ -21,7 +22,7 @@ for various results.
 Synchrotron From a Single Electron
 ----------------------------------
 
-To describe, from first principles, the relevant synchrotron theory used in Triceratops, we first need to develop
+To describe, from first principles, the relevant synchrotron theory used in Trilobite, we first need to develop
 the emission of a single relativistic electron spiraling in a magnetic field. With that in hand, it will be a
 relatively straightforward process to extend to a population of electrons with some distribution function.
 
@@ -38,7 +39,7 @@ The Cyclotron Frequency
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 In the classical case, we consider a magnetic field :math:`{\bf B} = B_0 \hat{\bf z}` and a particle of
-charge :math:`q` bound to the :math:`x-y`plane. The **Lorentz Force** dictates that
+charge :math:`q` bound to the :math:`x-y` plane. The **Lorentz Force** dictates that
 
 .. math::
 
@@ -225,7 +226,7 @@ band.
 
 .. dropdown:: Pitch-Angle Averaging
 
-    Throughout Triceratops, we provide two standard options for handing the pitch angle dependence of synchrotron
+    Throughout Trilobite, we provide two standard options for handing the pitch angle dependence of synchrotron
     emission: (a) assume a fixed pitch angle, or (b) perform a pitch-angle average assuming an isotropic
     distribution of pitch angles.
 
@@ -530,11 +531,12 @@ where :math:`\nu_c` is the characteristic synchrotron frequency defined previous
 
 .. important::
 
-    In Triceratops, :math:`F(x)` is referred to as the **first synchrotron kernel** and :math:`G(x)` as
+    In Trilobite, :math:`F(x)` is referred to as the **first synchrotron kernel** and :math:`G(x)` as
     the **second synchrotron kernel**.
 
 
 .. _synch_theory_populations:
+
 Synchrotron From A Population of Electrons
 ------------------------------------------
 
@@ -552,7 +554,7 @@ emission from a population of electrons. There are generally two ways to define 
 
 .. note::
 
-    In Triceratops, we offer implementations and support for the use of *both approaches*; however, the
+    In Trilobite, we offer implementations and support for the use of *both approaches*; however, the
     Lorentz factor approach is the **standard convention** unless the documentation clearly indicates otherwise.
 
     In this documentation, we will always write the Lorentz factor distribution as :math:`\frac{dN}{d\gamma}`,
@@ -574,7 +576,7 @@ are some scenarios which are of particular relevance to astrophysical sources wh
 .. note::
 
     Support for performing these integrations numerically for arbitrary distribution functions is a planned
-    feature of Triceratops, but not currently implemented.
+    feature of Trilobite, but not currently implemented.
 
 The Spectrum of a Power-Law Distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -610,7 +612,7 @@ Given the normalization in one parameterization, the other normalization can be 
 
 .. important::
 
-    In Triceratops, we strive to fully support both such parameterizations; however, the Lorentz factor
+    In Trilobite, we strive to fully support both such parameterizations; however, the Lorentz factor
     parameterization is the **standard convention** unless the documentation clearly indicates otherwise.
 
 Now, given a power-law distribution in Lorentz factor:
@@ -808,6 +810,107 @@ the angle-averaged emissivity for an isotropic distribution of pitch angles is
             \left(B\right)^{(p+1)/2}
             \left(\frac{\nu}{2c_1}\right)^{-(p-1)/2}.
 
+Thermal Electrons
+^^^^^^^^^^^^^^^^^
+
+In some scenarios, thermal electrons may also contribute to the synchrotron emission spectrum. In order to do so,
+these electrons must be **relativistic**; meaning that these scenarios are only relevant in very extreme circumstances when
+fluid temperatures are sufficiently high to produce a significant population of relativistic, thermal electrons.
+
+In this case, we use the so-called **Maxwell-Juttner distribution** to describe the distribution of electrons:
+
+.. math::
+
+    \frac{d N_e}{d\gamma} = N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),
+
+where :math:`\Theta = k_B T / (m_e c^2)` is the dimensionless temperature, :math:`K_2` is the modified Bessel function
+of the second kind, and :math:`N_0` is a normalization constant.
+
+.. hint::
+
+    The Maxwell-Juttner distribution is broadly peaked around :math:`\gamma \sim \Theta`, meaning that
+    the thermal electrons will only contribute to synchrotron emission if :math:`\gamma \sim \Theta \gtrsim 1`,
+    implying a temperature of :math:`T \sim 5.9 \times 10^9\;{\rm K} \sim 511 {\rm keV}` or higher. We are therefore
+    always able to invoke the assumption that :math:`\Theta \gtrsim 1` when considering the contribution of thermal
+    electrons to synchrotron emission.
+
+As before, the total emitting power is
+
+.. math::
+
+    \begin{aligned}
+    P(\nu) &= \frac{\sqrt{3} q^3 B \sin \alpha}{m_ec^2} \int_{1}^{\infty}
+    \frac{dN}{d\gamma} F\left(\frac{\nu}{\nu_c(\gamma)}\right)\;d\gamma, \\
+    P(\nu) &= \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{m_e c^2 \Theta K_2(1/\Theta)}
+             \int_{1}^{\infty} \gamma^2 \beta \exp\!\left(-\frac{\gamma}{\Theta}\right)
+    F\left(\frac{\nu}{\nu_c(\gamma)}\right)\;d\gamma.
+    \end{aligned}
+
+It has been shown (see :footcite:t:`1996ApJ...465..327M`) that this integral has the form (for :math:`\Theta \gtrsim 1`,
+and :math:`\beta \simeq 1`)
+
+.. math::
+
+    P(\nu) = \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{2 m_e c^2} f(\Theta) x
+             I\left(x\right),\;\; x=\frac{4\pi m_e c}{3 q B \sin \alpha} \frac{\nu}{\Theta^2} = \frac{\nu}{\nu_\Theta},
+
+where :math:`f(\Theta) = 2\Theta^2/K_2(1/\Theta)` is a correction term relevant in non-relativistic scenarios,
+:math:`\nu_\Theta` is the characteristic synchrotron frequency for thermal electrons,
+and the integral kernel :math:`I(x)` is well approximated\ :footcite:p:`1996ApJ...465..327M` by
+
+.. math::
+
+    I(z) \approx 2.5651 \left[1 + 1.92 z^{-1/3} + 0.9977z^{-2/3}\right]\exp\left(-1.8899 (x')^{1/3}\right), \;\;\Theta \gg 1.
+
+The above solution is dependent on the specific electron pitch angle :math:`\sin \alpha`. It is often the case that
+one wants to consider an isotropic pitch-angle distribution for the thermal electrons, which modifies the above solution such
+that
+
+.. math::
+
+    \left<P(\nu)\right>_\alpha = \frac{\sqrt{3} q^3 N_0 B }{2 m_e c^2} f(\Theta) x'
+             I'\left(x'\right),\;\; x'=\frac{4\pi m_e c}{3 q B} \frac{\nu}{\Theta^2},
+
+and the kernel is modified to\ :footcite:p:`1996ApJ...465..327M`
+
+.. math::
+
+    I'(x') \approx 4.0505(x')^{-1/6} \left[1 + 0.4 (x')^{-1/4} + 0.532 (x')^{-1/2}\right]\exp\left(-1.8899 (x')^{1/3}\right), \;\;\Theta \gg 1,
+
+
+.. note::
+
+    Formally, :math:`I(z)` as provided here is valid only for :math:`\Theta \gg 1`, and
+    :footcite:t:`1996ApJ...465..327M` provide approximations in the low-energy regime as well; however,
+    it is generally the case that :math:`x\gg 1`, in which case the above approximation is accurate
+    regardless\ :footcite:p:`margalitThermalElectronsMildlyrelativistic2021`. For
+    very low frequency scenarios, some care should be taken to ensure that the approximation is valid.
+
+
+Emissivity
+~~~~~~~~~~
+
+The **emissivity** (power radiated per unit frequency per unit volume per unit solid angle) is derived from our
+expressions for the power as
+
+.. tab-set::
+
+    .. tab-item:: Pitch-Angle Emissivity
+
+        .. math::
+
+            \boxed{
+            j_\nu = \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{8 \pi m_e c^2} f(\Theta) x I\left(x\right)
+            }
+
+    .. tab-item:: Isotropic Emissivity
+
+        .. math::
+
+            \boxed{
+            \left<j_\nu\right>_\alpha = \frac{\sqrt{3} q^3 N_0 B}{8 \pi m_e c^2} f(\Theta) x' I'\left(x'\right)
+            }
+
 
 Conventions in the Literature
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -826,11 +929,12 @@ of order unity.
 
 .. note::
 
-    Triceratops supports **both** approaches. The low-level API exposes the
+    Trilobite supports **both** approaches. The low-level API exposes the
     pitch-angle–dependent emissivity :math:`j_\nu(\alpha)`, while the high-level
     routines return the angle-averaged emissivity using the isotropic assumption.
 
 .. _synch_equipartition_theory:
+
 Microphysical Closures and Equipartition
 ----------------------------------------
 
@@ -911,13 +1015,13 @@ Outside this range, the distribution is assumed to vanish.
 
         \frac{dN}{dE} = N_{E,0} E^{-p}.
 
-    Triceratops adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
-    implemented in the relevant API (see :mod:`radiation.synchrotron.microphysics`).
+    Trilobite adopts the **Lorentz factor** formulation as the **canonical standard**; however, both are
+    implemented in the relevant API (see :mod:`trilobite.radiation.synchrotron.microphysics`).
 
 .. note::
 
     :math:`N` may be either the total number of electrons or the number density of electrons, depending on context.
-    Triceratops generally works with number densities to facilitate coupling with hydrodynamical quantities. The
+    Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
     conversion between the two is just a division by the relevant volume.
 
 Equipartition for Power-Law Distributions
@@ -925,7 +1029,7 @@ Equipartition for Power-Law Distributions
 
 .. hint::
 
-    The relevant API in Triceratops is in the :mod:`radiation.synchrotron.microphysics` module. See
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
     :ref:`synchrotron_microphysics` for details on use.
 
 Assuming a power-law distribution of electrons, we can derive normalization of the distribution
@@ -986,8 +1090,8 @@ In terms of the magnetic field, we also have
 
 .. important::
 
-    This is the canonical way to convert dynamics into synchrotron emission in Triceratops when assuming
-    equipartition and a power-law distribution of electrons. See :mod:`radiation.synchrotron.microphysics`
+    This is the canonical way to convert dynamics into synchrotron emission in Trilobite when assuming
+    equipartition and a power-law distribution of electrons. See :mod:`trilobite.radiation.synchrotron.microphysics`
     for the relevant API.
 
 Another useful computation which is made possible with equipartition is the **total emitted power** from synchrotron.
@@ -1023,14 +1127,125 @@ From equipartition, we know :math:`N_0` in terms of :math:`U_{\rm thermal}` and 
 
         P_{\rm total} = \frac{4}{3} \sigma_T c U_B N_{\rm eff}.
 
+Thermal Electron Distributions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+In the rare cases where thermal electrons contribute to the synchrotron emission, we can also derive the normalization of the
+distribution from equipartition. The procedure is similar to that described above for power-law distributions,
+but with the **Maxwell-Juttner** distribution instead.
+
+We write the electron distribution function as
+
+.. math::
+
+    \frac{dN}{d\gamma} = N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),
+
+where :math:`\Theta = k_B T / (m_e c^2)` is the dimensionless temperature, :math:`K_2` is the modified Bessel function
+of the second kind, and :math:`N_0` is a normalization constant.
+
+.. note::
+
+    :math:`N` may be either the total number of electrons or the number density of electrons, depending on context.
+    Trilobite generally works with number densities to facilitate coupling with hydrodynamical quantities. The
+    conversion between the two is just a division by the relevant volume.
+
+Equipartition for Thermal Electron Distributions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. hint::
+
+    The relevant API in Trilobite is in the :mod:`trilobite.radiation.synchrotron.microphysics` module. See
+    :ref:`synchrotron_microphysics` for details on use.
+
+Given a thermal energy density :math:`U_{\rm thermal}`, the energy density in relativistic electrons is (by
+equipartition)
+
+.. math::
+
+    U_e = \epsilon_e U_{\rm thermal}.
+
+The total energy density of the electron population is
+
+.. math::
+
+    U_e = m_e c^2 N_0 \int_{0}^{\infty} \frac{\gamma^3 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right), d\gamma
+
+This integral is\ :footcite:p:`1998ApJ...498..313G, 2000ApJ...541..234O, chandrasekhar1957introduction`
+
+.. math::
+
+    U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} -1 \right],
+
+which, in turn, is well approximated by\ :footcite:p:`1998ApJ...498..313G`
+
+.. math::
+
+    U_e \approx N_0 m_e c^2 \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right)
+
+Solving for :math:`N_0`, we find
+
+.. math::
+
+    \boxed{
+    N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right).
+    }
+
+In terms of the magnetic field, we also have
+
+.. math::
+
+    B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 =\frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\epsilon_e}{\epsilon_B}
+    \left(\frac{4+5\Theta}{6+15\Theta}\right).
+
+.. hint::
+
+    This form of the equipartition closure relies on the thermal electrons being the only contributors to the energy
+    density. One may also introduce the scenario where :math:`\epsilon_e U_{\rm thermal}` goes to **all electrons**, of
+    which, only :math:`\delta \epsilon_e U_{\rm thermal}` goes to the thermal electrons, and
+    :math:`(1-\delta) \epsilon_e U_{\rm thermal}` goes to a non-thermal population of electrons. In this case,
+    the normalization of the thermal electron distribution is modified by a factor of :math:`\delta`.
+
+Mixed Distributions
+~~~~~~~~~~~~~~~~~~~
+
+In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
+made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
+a free parameter. We therefore introduce the :math:`\delta` parameter to represent the fraction of the electron
+energy in the **thermal** population. In this case,
+
+.. math::
+
+    U_{\rm e,\;thermal} = \delta \epsilon_e U_{\rm thermal}, \;\; U_{\rm e,\;non-thermal} = (1-\delta) \epsilon_e U_{\rm thermal}.
+
+In this case, the normalization of the thermal and non-thermal electron distributions are given by
+
+.. math::
+
+    \begin{aligned}
+    N_{0,\;thermal} &= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+    N_{0,\;non-thermal} &= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+    \end{aligned}
+
+and, in terms of the :math:`B` field,
+
+.. math::
+
+    \begin{aligned}
+    N_{0,\;thermal} &= \frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+    N_{0,\;non-thermal} &= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
+    \end{aligned}
+
+----
+
 .. _electron_cooling:
+
 Cooling of Electrons
 ^^^^^^^^^^^^^^^^^^^^
 
 .. hint::
 
     For a much more detailed discussion of electron cooling, including all of the relevant theory which
-    is applied in Triceratops, see :ref:`synchrotron_cooling_theory`.
+    is applied in Trilobite, see :ref:`synchrotron_cooling_theory`.
 
 As a population, relativistic electrons will cool and thereby evolve away from their injected energy distribution.
 This evolution can imprint additional spectral breaks and modify the normalization of the synchrotron emission.
@@ -1099,7 +1314,8 @@ The corresponding synchrotron frequency is
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.frequencies` module!
+    This is implemented in the :mod:`trilobite.radiation.synchrotron.cooling` module via
+    :class:`~trilobite.radiation.synchrotron.cooling.SynchrotronRadiativeCoolingEngine`.
 
 
 IC Cooling
@@ -1187,15 +1403,15 @@ within a dynamical time, while lower-energy electrons remain effectively uncoole
 
     At sufficiently high electron energies, inverse Compton scattering enters the
     **Klein–Nishina regime**, where the scattering cross section is reduced and the
-    :math:`\gamma^2` scaling of the cooling rate breaks down. Triceratops currently assumes
+    :math:`\gamma^2` scaling of the cooling rate breaks down. Trilobite currently assumes
     Thomson-regime IC cooling; Klein–Nishina corrections are not yet implemented.
 
 .. hint::
 
-    This is implemented in the :mod:`radiation.synchrotron.frequencies` module! See
-    :func:`~radiation.synchrotron.frequencies.compute_IC_cooling_gamma`,
-    :func:`~radiation.synchrotron.frequencies.compute_IC_cooling_frequency`, and the
-    associated low-level API.
+    This is implemented in the :mod:`trilobite.radiation.synchrotron.cooling` module. See
+    :class:`~trilobite.radiation.synchrotron.cooling.InverseComptonCoolingEngine` and its
+    :meth:`~trilobite.radiation.synchrotron.cooling.InverseComptonCoolingEngine.compute_cooling_gamma`
+    method for the associated API.
 
 Absorption Processes in Synchrotron Radiation
 ---------------------------------------------
@@ -1207,6 +1423,7 @@ processes that can affect synchrotron radiation are synchrotron self-absorption 
 In this section, we'll discuss both processes and derive the critical results.
 
 .. _ssa:
+
 Synchrotron Self-Absorption
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -1251,7 +1468,7 @@ coefficient is
     N(\gamma)\,B(\gamma,\nu)\,d\gamma.
 
 At first glance, :math:`B(\gamma,\nu)` appears to be an independent and complicated quantity.
-However, it may be related directly to the emissivity using `**detailed balance** <https://en.wikipedia.org/wiki/Detailed_balance>`__.
+However, it may be related directly to the emissivity using `detailed balance <https://en.wikipedia.org/wiki/Detailed_balance>`__.
 For synchrotron radiation, electrons occupy a continuum of energies rather than discrete levels.
 Nevertheless, the logic of Einstein coefficients still applies if we treat each infinitesimal
 energy interval as an effective “state.”
@@ -1270,6 +1487,7 @@ coefficient to be written *entirely* in terms of the synchrotron emission power
 (see :footcite:t:`RybickiLightman`, Chapter 6):
 
 .. math::
+    :label: eq:alpha_nu
 
     \boxed{
     \alpha_\nu
@@ -1530,6 +1748,63 @@ The details of how :math:`\ell` should be determined are a matter of dynamics an
     It is worth emphasizing that the SSA frequency depends on the properties of the electron population. Thus, for
     any set of assumptions about the behavior of the underlying electrons, the corresponding SSA frequency may be quite
     different.
+
+SSA In Thermal Electron Distributions
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+For a thermal distribution of electrons (Maxwell-Juttner), the absorption coefficient may be obtained using the same
+integral forms as used in the emissivity case. Formally, we return to equation :eq:`eq:alpha_nu` and substitute
+the Maxwell-Juttner distribution to compute :math:`\alpha_\nu`:
+
+.. math::
+
+    \alpha_\nu
+    =
+    -\frac{1}{8\pi m_e \nu^2}
+    \int_0^\infty
+    P(\nu,\gamma)\,
+    \gamma^2
+    \frac{\partial}{\partial\gamma}
+    \left[
+        \frac{1}{\gamma^2}
+        N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} e^{-\gamma/\Theta}
+    \right]
+    d\gamma.
+
+In the ultra-relativistic limit (:math:`\Theta \gg 1`, and :math:`\beta \sim 1`), the absorption coefficient
+simplifies to\ :footcite:p:`margalitThermalElectronsMildlyrelativistic2021`
+
+.. math::
+
+    \alpha_\nu = \frac{\pi}{3^{3/2}} \frac{q N_0}{\Theta^5 B \sin \alpha} f(\Theta) x^{-1} I(x),
+
+and
+
+.. math::
+
+    x = \frac{\nu}{\nu_\Theta} = \frac{4\pi m_e c \nu}{3 e B \sin\alpha \Theta^2}.
+
+As before, the pitch-angle averaged absorption coefficient is
+
+.. math::
+
+    \langle\alpha_\nu\rangle_\alpha = \frac{\pi}{3^{3/2}} \frac{q N_0}{\Theta^5 B } f(\Theta) \left(x'\right)^{-1} I'(x'),
+
+where
+
+.. math::
+
+    x' = \frac{\nu}{\nu'_\Theta} = \frac{4\pi m_e c \nu}{3 e B \Theta^2}.
+
+Unlike the non-thermal distribution case, in which we had to explicitly calculate the source function, we may
+instead invoke Kirchhoff's law to determine the source function for a thermal distribution of electrons. Since the
+electrons are in thermal equilibrium, the source function must be the Planck function:
+
+.. math::
+
+    S_\nu = B_\nu(T) = \frac{2 h \nu^3}{c^2} \frac{1}{e^{h\nu/k_B T} - 1}.
+
+The calculation of the SSA frequency and resulting specific intensity then follow as before.
 
 Approximate Methods
 ~~~~~~~~~~~~~~~~~~~

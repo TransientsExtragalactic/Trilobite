@@ -1,553 +1,847 @@
 .. _synchrotron_seds:
+
 =========================================
 Synchrotron Spectral Energy Distributions
 =========================================
 
-Synchrotron radiation is a core emission mechanism in Triceratops and underpins
-the modeling of a wide range of transient astrophysical sources, including
-gamma-ray bursts, supernovae, tidal disruption events, and fast radio bursts.
-
-The **synchrotron spectral energy distribution (SED)** depends on the ordering of
-several characteristic frequencies—most notably the injection frequency
-:math:`\nu_m`, cooling frequency :math:`\nu_c`, self-absorption frequency
-:math:`\nu_a`, and maximum synchrotron frequency :math:`\nu_{\max}`.
-The theoretical basis for these spectra is described in detail in
-:ref:`synchrotron_theory`, with a comprehensive catalog of spectral regimes and
-derivations provided in :ref:`synch_sed_theory`.
-
-This document describes **how Triceratops implements synchrotron SEDs**, how the
-various abstractions fit together, and how to use them effectively in practice.
-
-.. important::
-
-    This guide assumes familiarity with the physics of synchrotron emission.
-    Users are strongly encouraged to read :ref:`synchrotron_theory` and
-    :ref:`synch_sed_theory` before working with the SED API.
+Trilobite models synchrotron SEDs as log-space compositions of scale-free spectral segments,
+enabling numerically stable broadband spectra for astrophysical transients (GRBs, supernovae,
+TDEs). Each spectrum is parameterized by the ordering of characteristic break frequencies—the
+injection frequency :math:`\nu_m`, cooling frequency :math:`\nu_c`, self-absorption frequency
+:math:`\nu_a`, and maximum frequency :math:`\nu_{\max}`. For background on the underlying physics
+see :ref:`synchrotron_theory`; for derivations of individual spectral regimes see
+:ref:`synch_sed_theory`.
 
 .. contents::
-    :local:
-    :depth: 2
+   :local:
+   :depth: 2
 
-Overview
---------
+----
 
-At its core, Triceratops treats synchrotron SEDs as **log-space compositions of
-scale-free spectral segments**. Each SED is built by:
+.. _sed_quick_start:
 
-1. Identifying the **global spectral regime** from the ordering of break frequencies,
-2. Selecting the corresponding **asymptotic spectral slopes**,
-3. Connecting those slopes using **smoothed broken power laws (SBPLs)**,
-4. Applying a physically motivated **normalization**.
+Quick Start
+-----------
 
-This approach, referred to internally as **log-space SED surgery**, ensures that
-all spectra are:
-
-- Numerically stable across many decades in frequency,
-- Continuous and differentiable,
-- Faithful to analytic synchrotron asymptotes,
-- Easy to extend to new physical regimes.
-
-To support both flexibility and usability, Triceratops exposes **two complementary
-interfaces** to synchrotron SEDs:
-
-- A **high-level, object-oriented interface** for most users,
-- A **low-level functional interface** for advanced use cases and custom modeling.
-
-The High-Level Interface
------------------------
-
-Most users should interact with synchrotron spectra through the **SED classes**
-defined in :mod:`radiation.synchrotron.SEDs`. These classes provide a
-**structured, declarative interface** for evaluating physically consistent
-synchrotron spectral energy distributions without requiring users to manually
-assemble broken power laws or reason about regime selection.
-
-Each SED class represents a **specific physical model** (e.g. cooling only,
-SSA only, cooling + SSA) and is responsible for orchestrating all steps required
-to compute a spectrum from a minimal set of inputs.
-
-
-The Synchrotron SED Class
-^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-All of the synchrotron SEDs in Triceratops inherit from the base
-:class:`~radiation.synchrotron.SEDs.SynchrotronSED` class. This class
-defines the **minimal, uniform interface** that all synchrotron SED
-implementations must satisfy, independent of the physical processes included
-(e.g. cooling, self-absorption).
-
-The purpose of this base class is *not* to encode synchrotron physics directly,
-but to provide a consistent and predictable framework for evaluating spectra,
-handling units, and (optionally) linking phenomenological parameters to physical
-models.
-
-In principle, a synchrotron SED could be represented as a standalone function
-mapping frequency to flux density. In practice, however, even the simplest
-realistic synchrotron spectrum involves more than a single formula. The shape
-of the spectrum depends on the relative ordering of multiple characteristic
-frequencies, may include optional physical effects such as radiative cooling or
-synchrotron self-absorption, and must remain numerically stable across many
-orders of magnitude in frequency.
-
-Encapsulating SEDs in classes allows Triceratops to manage this complexity in a
-clean and transparent way. Each class is responsible for determining the
-appropriate spectral regime, computing any internally derived quantities
-(such as the self-absorption frequency :math:`\nu_a`), selecting the correct
-scale-free spectral shape, and applying the appropriate normalization.
-
-From the user’s perspective, this design has an important consequence: you
-specify *what physics you want included*, not *how to assemble the spectrum by
-hand*. The details of regime logic, break ordering, and normalization are handled
-internally and consistently.
-
-Instantiating SED Objects
-##########################
-
-SED objects in Triceratops are intentionally lightweight. In most cases,
-instantiating an SED class requires **no physical parameters at all**:
-
-.. code-block:: python
-
-    from triceratops.radiation.synchrotron import PowerLaw_Cooling_SynchrotronSED
-
-    sed = PowerLaw_Cooling_SynchrotronSED()
-
-This reflects an important design principle: SED instances do **not** store
-model parameters. Break frequencies, peak fluxes, and other physical quantities
-are supplied at *evaluation time*, not at initialization.
-
-This makes SED objects safe to reuse in parameter sweeps, inference loops, and
-population modeling without worrying about hidden state.
-
-In a small number of cases, an SED class may accept configuration flags at
-initialization (for example, selecting between alternative numerical kernels or
-enabling optional corrections). When present, such flags control *how* the SED
-is evaluated, not *what physical system* is being modeled.
-
-SED Calculation
-###############
-
-.. currentmodule:: radiation.synchrotron.SEDs
-
-The primary interface for evaluating a synchrotron spectrum is the
-:meth:`SynchrotronSED.sed` method. Given an array of frequencies and the required physical or
-phenomenological parameters, this method returns the corresponding flux
-density:
-
-.. code-block:: python
-
-    import numpy as np
-    from astropy import units as u
-    from triceratops.radiation.synchrotron.SEDs import PowerLaw_SSA_SynchrotronSED
-    sed = PowerLaw_SSA_SynchrotronSED()
-
-    nu = np.logspace(9, 18, 500) * u.Hz
-
-    Fnu = sed.sed(
-        nu,
-        nu_m=1e12 * u.Hz,
-        F_peak=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
-        p=2.5,
-    )
-
-Internally, the SED class performs the following steps:
-
-1. Validate and coerce input units,
-2. Convert inputs to logarithmic CGS form,
-3. Determine the global spectral regime,
-4. Compute any derived break frequencies,
-5. Dispatch to a regime-specific optimized kernel,
-6. Apply the overall normalization.
-
-For convenience, most SED classes also support direct call syntax, making the
-following equivalent:
-
-.. code-block:: python
-
-    Fnu = sed(nu, nu_m=..., nu_c=..., F_peak=...)
-
-This allows SED objects to be used interchangeably with ordinary callable
-functions in modeling pipelines.
-
-A typical synchrotron spectrum produced by one of these classes looks like:
+The following end-to-end example instantiates the most general SED class, converts physical
+source parameters to phenomenological SED parameters, and plots the resulting spectrum:
 
 .. plot::
    :include-source: True
 
     import numpy as np
     from astropy import units as u
-    from triceratops.radiation.synchrotron.SEDs import PowerLaw_Cooling_SynchrotronSED
+    import matplotlib.pyplot as plt
+    from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
 
-    sed = PowerLaw_Cooling_SynchrotronSED()
-    nu = np.logspace(9, 18, 500) * u.Hz
+    sed = PowerLaw_Cooling_SSA_SynchrotronSED()
+    nu = np.logspace(8, 18, 500) * u.Hz
 
-    Fnu = sed.sed(
-        nu,
-        nu_m=1e12 * u.Hz,
-        nu_c=1e15 * u.Hz,
-        F_peak=1e-26 * u.erg / (u.s * u.cm ** 2 * u.Hz),
+    # Convert physical parameters to SED parameters
+    D_L = 100 * u.Mpc
+    parameters = dict(
+        B=0.5 * u.G,
+        R=1e16 * u.cm,
+        gamma_min=100.0,
+        gamma_c=1e4,
+        gamma_max=1e7,
         p=2.5,
+        f_V=1.0,
+        f_A=1.0,
+        epsilon_E=0.1,
+        epsilon_B=0.1,
+        luminosity_distance=D_L,
+        pitch_average=True,
     )
 
-    import matplotlib.pyplot as plt
+    norm = sed.from_physics_to_params(**parameters)
 
+    # Evaluate and plot
+    Fnu = sed.sed(nu, nu_m=norm['nu_m'],
+                  nu_c=norm['nu_c'],
+                  F_norm=norm['F_norm'],
+                  nu_max=norm['nu_max'],
+                  p=parameters['p'],
+                  omega=norm['omega'],
+                  gamma_m=parameters['gamma_min'])
     plt.loglog(nu, Fnu)
     plt.xlabel("Frequency [Hz]")
-    plt.ylabel(r"$F_\nu$")
+    plt.ylabel(r"$F_\nu$ [erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$]")
     plt.tight_layout()
     plt.show()
 
+----
 
-SED Normalization
-#################
+.. _sed_choosing:
 
-All synchrotron SEDs in Triceratops are normalized using the **peak flux density**
-:math:`F_{\rm peak}`. This choice is made consistently across *all* physical
-scenarios—whether or not the spectrum includes radiative cooling, synchrotron
-self-absorption, or additional structure—so that phenomenological modeling
-always uses the same normalization convention.
+Choosing a SED Model
+--------------------
 
-Normalizing at the spectral peak has two key advantages. First, it provides a
-stable and intuitive anchor for fitting and inference, since the peak flux is
-often the best-constrained observable in broadband data. Second, it cleanly
-separates the **shape** of the spectrum (which depends on frequency ordering and
-included physics) from its **overall amplitude**, which is treated
-phenomenologically by default.
+Trilobite provides four physically motivated SED classes and one phenomenological option.
+Choose based on which physical processes are important for your source:
 
-Each SED class is responsible for applying the correct normalization internally.
-The location of the peak frequency and the spectral slopes surrounding it depend
-on the physical processes included (e.g. cooling, SSA) and on the ordering of
-characteristic break frequencies. These details are handled entirely inside the
-class; the user only supplies the value of :math:`F_{\rm peak}` at evaluation
-time. Peak flux values are never stored on the SED object itself.
+.. list-table::
+   :widths: 40 10 10 40
+   :header-rows: 1
 
-In some cases, an SED class also supports *physical normalization* and parameter
-inversion through the optional methods
-:meth:`SynchrotronSED.from_params_to_physics` and :meth:`SynchrotronSED.from_physics_to_params`. These methods
-attempt to relate phenomenological SED parameters—such as
-:math:`F_{\rm peak}`, :math:`\nu_m`, or :math:`\nu_c`—to underlying physical
-quantities like magnetic field strength, emitting radius, or energy density.
+   * - Model
+     - Cooling
+     - SSA
+     - Use when…
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`
+     - ✗
+     - ✗
+     - Simple power-law spectra; no breaks beyond :math:`\nu_m`
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`
+     - ✓
+     - ✗
+     - Optically thin emission with a fast- or slow-cooling break
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`
+     - ✗
+     - ✓
+     - Compact or dense sources with an SSA turnover; electrons do not cool appreciably
+   * - :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`
+     - ✓
+     - ✓
+     - Full broadband modeling (GRBs, SNe, TDEs); up to 8 spectral regimes
 
-Such mappings necessarily rely on analytic approximations and closure relations,
-most commonly equipartition assumptions (see :ref:`synchrotron_theory`). As a
-result, they should be viewed as *model-dependent conveniences* rather than
-fundamental identities.
-
-Not all SED classes support physical normalization or parameter inversion.
-Users should consult the documentation for each specific SED class to determine
-whether these capabilities are available and what assumptions they encode.
-
-Available SED Classes
-^^^^^^^^^^^^^^^^^^^^^
-
-Triceratops provides four high-level synchrotron SED classes, each corresponding
-to a different combination of physical effects. All classes share the same
-conceptual interface and normalization strategy; they differ only in which
-physical processes are included internally.
-
-For a detailed derivation of the spectral slopes, break orderings, and regime
-definitions referenced below, see :ref:`synch_sed_theory`.
-
-Power Law + Cooling SED
-#######################
-
-The **Power Law + Cooling SED** includes radiative cooling but neglects
-synchrotron self-absorption. It is appropriate for optically thin sources where
-electron cooling modifies the high-energy spectrum.
-
-Depending on the ordering of :math:`\nu_m`, :math:`\nu_c`, and
-:math:`\nu_{\max}`, the spectrum automatically transitions between:
-
-- Fast-cooling,
-- Slow-cooling,
-- Effectively non-cooling regimes.
-
-The correct regime is selected internally based solely on the supplied break
-frequencies.
-
-.. dropdown:: Example
-
-    .. plot::
-        :include-source: True
-
-        from triceratops.radiation.synchrotron import PowerLaw_Cooling_SynchrotronSED
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-
-        sed = PowerLaw_Cooling_SynchrotronSED()
-
-        nu = np.logspace(8, 20, 500) * u.Hz
-
-        Fnu = sed.sed(
-            nu,
-            nu_m=1e12 * u.Hz,
-            nu_c=1e15 * u.Hz,
-            nu_max=1e19 * u.Hz,
-            F_peak=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
-            p=2.5,
-            s=-0.05,
-        )
-
-        plt.loglog(nu, Fnu)
-        plt.xlabel("Frequency [Hz]")
-        plt.ylabel(r"$F_\nu$")
-        plt.show()
-
-For the explicit spectral slopes corresponding to each cooling regime, see
-:ref:`synch_sed_theory`.
-
-
-Power Law + SSA SED
-####################
-
-The **Power Law + SSA SED** includes synchrotron self-absorption but neglects
-radiative cooling. This is appropriate for compact or dense emission regions
-where the low-frequency spectrum is optically thick, but electrons do not cool
-appreciably.
-
-Unlike simple textbook treatments, Triceratops computes the self-absorption
-frequency :math:`\nu_a` **self-consistently** from the supplied normalization and
-microphysical parameters, rather than requiring it as a user input.
-
-The spectrum automatically transitions between optically thick and thin regimes
-based on the internally derived :math:`\nu_a`.
-
-.. dropdown:: Example
-
-    .. plot::
-        :include-source: True
-
-        from triceratops.radiation.synchrotron import PowerLaw_SSA_SynchrotronSED
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-
-        sed = PowerLaw_SSA_SynchrotronSED()
-
-        nu = np.logspace(7, 18, 500) * u.Hz
-
-        Fnu = sed.sed(
-            nu,
-            nu_m=1e11 * u.Hz,
-            F_peak=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
-            omega=4 * np.pi,
-            gamma_m=300,
-            p=2.5,
-        )
-
-        plt.loglog(nu, Fnu)
-        plt.xlabel("Frequency [Hz]")
-        plt.ylabel(r"$F_\nu$")
-        plt.show()
-
-For the analytic scalings used to compute :math:`\nu_a`, see
-:ref:`synch_sed_theory`.
-
-
-Power Law + Cooling + SSA SED
-##############################
-
-The **Power Law + Cooling + SSA SED** is the most general synchrotron model
-implemented in Triceratops. It includes:
-
-- Radiative cooling,
-- Synchrotron self-absorption,
-- Stratified SSA corrections where applicable,
-- A high-frequency exponential cutoff.
-
-This class automatically handles all allowed orderings of
-:math:`\nu_m`, :math:`\nu_c`, :math:`\nu_a`, and :math:`\nu_{\max}`, selecting the
-appropriate spectral shape internally.
-
-It is the recommended choice when modeling broadband synchrotron emission from
-transient shocks, GRB afterglows, radio supernovae, or similar systems.
-
-.. dropdown:: Example
-
-    .. plot::
-        :include-source: True
-
-        from triceratops.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
-        import numpy as np
-        import matplotlib.pyplot as plt
-        from astropy import units as u
-
-        sed = PowerLaw_Cooling_SSA_SynchrotronSED()
-
-        nu = np.logspace(7, 20, 600) * u.Hz
-
-        Fnu = sed.sed(
-            nu,
-            nu_m=1e12 * u.Hz,
-            nu_c=1e15 * u.Hz,
-            nu_max=1e19 * u.Hz,
-            F_peak=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
-            omega=4 * np.pi,
-            gamma_m=300,
-            p=2.5,
-            s=-0.05,
-        )
-
-        plt.loglog(nu, Fnu)
-        plt.xlabel("Frequency [Hz]")
-        plt.ylabel(r"$F_\nu$")
-        plt.show()
-
-Because of the large number of possible spectral orderings, users are strongly
-encouraged to consult :ref:`synch_sed_theory` when interpreting the resulting
-spectral shapes.
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw` is a phenomenological
+alternative where the break frequency is supplied directly by the user rather than derived from
+microphysics, following the closure of :footcite:t:`demarchiRadioAnalysisSN2004C2022`. Use it
+when you prefer to fit the SSA turnover without invoking any closure assumptions.
 
 ----
 
-The Low-Level Interface
-------------------------
+.. _sed_evaluation:
 
-While most users will interact with synchrotron spectra through the high-level
-SED classes, Triceratops also exposes a comprehensive **low-level interface**
-that provides direct access to the numerical and conceptual building blocks from
-which those SEDs are constructed.
+Evaluating a Spectrum
+---------------------
 
-This interface is intentionally more granular and assumes familiarity with both
-synchrotron theory and the internal structure of the SED system. It is primarily
-intended for advanced use cases, including:
+.. _sed_instantiation:
 
-- Defining **custom synchrotron SEDs** not covered by the built-in classes,
-- Implementing or testing **new physical regimes** or closure relations,
-- Inspecting and validating the **numerical components** underlying the
-  high-level API,
-- Reproducing analytic results from the literature at the level of individual
-  spectral segments,
-- Debugging or benchmarking normalization and regime-selection logic.
-
-The low-level interface reflects the internal architecture of the synchrotron
-SED system: complex spectra are assembled from small, scale-free components
-whose behavior is well-defined in logarithmic space. These components are then
-combined, ordered, and normalized by the high-level SED classes.
-
-Conceptually, the low-level interface is organized into four categories:
-
-1. **Shape functions**, which define smooth, scale-free spectral transitions,
-2. **SED functions**, which encode complete synchrotron spectra for specific
-   physical regimes,
-3. **Normalization utilities**, which connect scale-free spectra to physical
-   flux densities,
-4. **Regime-determination logic**, which selects the globally consistent spectral
-   configuration.
-
-Together, these form the substrate from which all high-level synchrotron SEDs
-in Triceratops are built.
-
-Shape Functions
-^^^^^^^^^^^^^^^
-
-Shape functions define the **mathematical form of spectral transitions**
-independently of any specific physical scenario. They operate entirely in
-logarithmic space and are designed to remain numerically stable across many
-decades in frequency.
-
-These functions do *not* encode synchrotron physics themselves. Instead, they
-provide reusable, scale-free primitives that are composed into physical SEDs
-elsewhere in the codebase.
-
-The most important shape functions are:
-
-.. currentmodule:: radiation.synchrotron.SEDs
-
-.. rubric:: Shape Function API
-.. autosummary::
-    :toctree: ../../../../_as_gen
-    :nosignatures:
-
-    log_smoothed_SFBPL
-    log_exp_cutoff_sed
-
-In brief:
-
-- ``log_smoothed_SFBPL`` implements a scale-free smoothed broken power law,
-  allowing multiple spectral breaks to be connected smoothly while preserving
-  asymptotic power-law behavior.
-- ``log_exp_cutoff_sed`` applies a smooth exponential truncation at high
-  frequencies and is used to model finite maximum electron energies.
-
-These functions return **unnormalized spectral shapes in log-space** and are
-not intended to be used directly in most workflows.
-
-SED Functions
+Instantiation
 ^^^^^^^^^^^^^
 
-SED functions encode **complete synchrotron spectral shapes** corresponding to
-specific physical scenarios and frequency orderings. Each function implements
-a single, well-defined spectrum as derived in :ref:`synch_sed_theory`.
+SED objects in Trilobite are intentionally lightweight. Instantiating an SED class requires
+**no physical parameters**:
 
-For example, a power-law electron population with radiative cooling and
-synchrotron self-absorption can produce multiple distinct spectral shapes
-depending on the ordering of :math:`\nu_m`, :math:`\nu_c`, :math:`\nu_a`, and
-:math:`\nu_{\max}`. Each of these possibilities is implemented as a separate
-low-level SED function.
-To keep this manageable and explicit, Triceratops adopts a standardized naming
-convention for low-level SED functions:
+.. code-block:: python
+
+   from trilobite.radiation.synchrotron import PowerLaw_Cooling_SynchrotronSED
+
+   sed = PowerLaw_Cooling_SynchrotronSED()
+
+SED instances do **not** store model parameters. Break frequencies, peak fluxes, and other
+physical quantities are supplied at *evaluation time*, not at initialization. This makes SED
+objects safe to reuse in parameter sweeps, inference loops, and population modeling without
+hidden state.
+
+.. _sed_calling:
+
+Calling ``sed()``
+^^^^^^^^^^^^^^^^^
+
+The primary interface for evaluating a synchrotron spectrum is :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`.
+Supply a frequency array and the phenomenological parameters:
+
+.. code-block:: python
+
+   import numpy as np
+   from astropy import units as u
+
+   nu = np.logspace(9, 18, 500) * u.Hz
+
+   Fnu = sed.sed(
+       nu,
+       F_norm=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
+       nu_m=1e12 * u.Hz,
+       nu_c=1e15 * u.Hz,
+       nu_max=1e19 * u.Hz,
+       p=2.5,
+   )
+
+All SED classes also support **direct call syntax**:
+
+.. code-block:: python
+
+   Fnu = sed(nu, F_norm=..., nu_m=..., nu_c=..., nu_max=..., p=2.5)
+
+The following example shows a slow-cooling spectrum with annotated break frequencies:
+
+.. plot::
+   :include-source: True
+
+   import numpy as np
+   from astropy import units as u
+   import matplotlib.pyplot as plt
+   from trilobite.radiation.synchrotron import PowerLaw_Cooling_SynchrotronSED
+
+   sed = PowerLaw_Cooling_SynchrotronSED()
+   nu = np.logspace(9, 18, 500) * u.Hz
+
+   nu_m = 1e12 * u.Hz
+   nu_c = 1e15 * u.Hz
+   nu_max = 1e19 * u.Hz
+
+   Fnu = sed.sed(
+       nu,
+       F_norm=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
+       nu_m=nu_m,
+       nu_c=nu_c,
+       nu_max=nu_max,
+       p=2.5,
+   )
+
+   plt.loglog(nu, Fnu)
+   plt.axvline(nu_m.value, color="C1", ls="--", label=r"$\nu_m$")
+   plt.axvline(nu_c.value, color="C2", ls="--", label=r"$\nu_c$")
+   plt.axvline(nu_max.value, color="C3", ls="--", label=r"$\nu_{\max}$")
+   plt.xlabel("Frequency [Hz]")
+   plt.ylabel(r"$F_\nu$ [erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$]")
+   plt.legend()
+   plt.tight_layout()
+   plt.show()
+
+.. note::
+
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SynchrotronSED`,
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SSA_SynchrotronSED`, and
+   :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED` use
+   keyword-only arguments after ``nu``; supplying parameters positionally will raise a
+   ``TypeError``.
+
+----
+
+.. _sed_forward_closure:
+
+Normalizing from Physical Parameters
+-------------------------------------
+
+If you have physical source parameters (magnetic field :math:`B`, radius :math:`R`,
+energy partition fractions :math:`\varepsilon_E`, :math:`\varepsilon_B`, …) rather than
+phenomenological ones, use :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params`
+to compute all required SED inputs in one step.
+
+.. code-block:: python
+
+   import numpy as np
+   from astropy import units as u
+   from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+
+   sed = PowerLaw_Cooling_SSA_SynchrotronSED()
+
+   params = sed.from_physics_to_params(
+       B=0.5 * u.G,
+       R=1e16 * u.cm,
+       gamma_min=100.0,
+       gamma_c=1e4,
+       gamma_max=1e7,
+       p=2.5,
+       f_V=1.0,
+       f_A=1.0,
+       epsilon_E=0.1,
+       epsilon_B=0.1,
+       redshift=0.01,
+       pitch_average=True,
+   )
+   # params contains: F_norm, nu_m, nu_c, nu_a, nu_max, nu_peak, F_peak, regime (all with units)
+
+Pass the result directly to :meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed`:
+
+.. code-block:: python
+
+   nu = np.logspace(8, 18, 500) * u.Hz
+   Fnu = sed.sed(nu, **params, p=2.5)
+
+.. important::
+
+   :math:`F_{\nu,\mathrm{norm}}` is **not necessarily the peak of the observed spectrum**.
+   In the presence of synchrotron self-absorption the actual peak flux (at :math:`\nu_a`) will
+   differ from :math:`F_{\nu,\mathrm{norm}}`. The normalization is always defined in the
+   optically thin limit, regardless of absorption.
+
+   This convention ensures that the normalization parameter has a unique, physically transparent
+   meaning across *all* SED types and spectral regimes. The **peak flux**
+   :math:`F_{\nu,\mathrm{peak}}` (the maximum of the observed SED) is computed internally from
+   :math:`F_{\nu,\mathrm{norm}}` and returned as ``F_peak`` in the output dictionary. For a
+   detailed derivation of these mappings see :ref:`single_zone_sed_normalization`.
+
+.. rubric:: Distance Options
+
+The method accepts several equivalent ways to specify the cosmological distance:
+
+.. code-block:: python
+
+   # Redshift (luminosity distance resolved from default cosmology)
+   params = sed.from_physics_to_params(..., redshift=0.01)
+
+   # Explicit luminosity distance
+   params = sed.from_physics_to_params(..., luminosity_distance=150 * u.Mpc)
+
+   # Explicit angular diameter distance
+   params = sed.from_physics_to_params(..., angular_diameter_distance=148 * u.Mpc)
+
+   # Custom astropy cosmology
+   from astropy.cosmology import Planck18
+   params = sed.from_physics_to_params(..., redshift=0.01, cosmology=Planck18)
+
+----
+
+.. _sed_inverse_closure:
+
+Inverting the SED
+-----------------
+
+Given observed peak flux and peak frequency, you can recover physical source parameters
+(radius :math:`R`, magnetic field :math:`B`) using
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics`:
+
+.. code-block:: python
+
+   from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+   import astropy.units as u
+
+   sed = PowerLaw_Cooling_SSA_SynchrotronSED()
+
+   physics = sed.from_params_to_physics(
+       regime=params["regime"],
+       F_peak=params["F_peak"],
+       nu_peak=params["nu_peak"],
+       gamma_min=100.0,
+       gamma_c=1e4,
+       p=2.5,
+       epsilon_E=0.1,
+       epsilon_B=0.1,
+       f_V=1.0,
+       f_A=1.0,
+       redshift=0.01,
+       pitch_average=True,
+   )
+   print(f"R = {physics['R']:.2e},  B = {physics['B']:.2e}")
+
+.. note::
+
+   The cooling and SSA classes require an explicit ``regime`` argument because multiple distinct
+   spectral orderings can produce identical peak quantities. When chaining
+   ``from_physics_to_params`` → ``from_params_to_physics``, pass ``params["regime"]`` directly
+   to guarantee a round-trip consistent inversion.
+
+.. warning::
+
+   The inverse closure provides a **default physical interpretation**, not a unique truth. The theory
+    documentation (:ref:`synch_sed_theory`) details the assumptions and limitations of the closure relations
+    implemented in Trilobite. It is sometimes the case that a user needs a specific inversion which is not
+    implemented currently.
+
+.. _sed_standalone_closures:
+
+Standalone Closure Functions
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+All closure logic is also available as standalone functions in
+:mod:`~radiation.synchrotron.SEDs.one_zone_closure`. These are useful when the SED class
+interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
+inversions) that are not exposed through any SED class method.
+
+For **relativistic sources in the coasting phase**, the
+:func:`~trilobite.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting`
+function implements the :footcite:t:`duran2013radius` equipartition inversion, which
+simultaneously solves for the radius :math:`R`, bulk Lorentz factor :math:`\Gamma`,
+equipartition energy :math:`E`, and the derived microphysical quantities
+:math:`\gamma_e`, :math:`N_e`, and :math:`B`.  See :ref:`barnoil_duran` for the
+theoretical background.
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone_closure
+
+.. rubric:: Public Inversion Functions
+
+.. autosummary::
+   :nosignatures:
+
+   invert_powerlaw_sed
+   invert_powerlaw_cooling_sed
+   invert_powerlaw_ssa_sed
+   invert_powerlaw_cooling_ssa_sed
+   invert_powerlaw_implicit_cooling_sed
+   invert_powerlaw_implicit_cooling_ssa_sed
+   invert_powerlaw_ssa_sed_demarchi
+   invert_barniol_duran_coasting
+
+.. rubric:: Private (Low-Level) Inversion Functions
+
+The following private functions expose the same inversions without unit handling or cosmological
+distance resolution. They operate on logarithmic CGS inputs and are intended for inference
+routines where unit overhead must be minimized.
+
+.. autosummary::
+   :nosignatures:
+
+   _invert_powerlaw_sed
+   _invert_powerlaw_cooling_sed
+   _invert_powerlaw_ssa_sed
+   _invert_powerlaw_cooling_ssa_sed
+   _invert_powerlaw_implicit_cooling_sed
+   _invert_powerlaw_implicit_cooling_ssa_sed
+   _invert_powerlaw_ssa_sed_demarchi
+   _invert_barniol_duran_coasting
+
+----
+
+.. _sed_regime_introspection:
+
+Inspecting the Spectral Regime
+-------------------------------
+
+For :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` subclasses, you
+can query which spectral regime was selected for a given set of parameters via
+:meth:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime`:
+
+.. code-block:: python
+
+   from trilobite.radiation.synchrotron import PowerLaw_Cooling_SSA_SynchrotronSED
+   import astropy.units as u
+   import numpy as np
+
+   sed = PowerLaw_Cooling_SSA_SynchrotronSED()
+
+   regime = sed.determine_sed_regime(
+       F_norm=1e-26 * u.erg / (u.s * u.cm**2 * u.Hz),
+       nu_m=1e12 * u.Hz,
+       nu_c=1e15 * u.Hz,
+       nu_max=1e19 * u.Hz,
+       omega=4 * np.pi,
+       gamma_m=300,
+       p=2.5,
+   )
+   print(regime)  # e.g. "Spectrum3"
+
+The returned identifier is a string of the form ``Spectrum1`` … ``Spectrum8``, corresponding to
+the spectral orderings catalogued in :ref:`synch_sed_theory`. The mapping from regime name to
+frequency ordering is also recorded in the class-level ``SPECTRUM_FUNCTIONS`` attribute.
+
+This is useful for diagnosing which branch of the SED is being evaluated, particularly when
+debugging or verifying physical parameter ranges.
+
+----
+
+.. _synch_numerical_sed:
+
+Quadrature SEDs
+------------------
+
+.. seealso::
+
+    - :ref:`synch_numerical_theory` for the mathematics underlying the quadrature algorithm,
+      including kernel tabulation, the integration-by-parts form of the absorption coefficient,
+      and the radiative transfer solution.
+    - The gallery example :ref:`sphx_glr_galleries_synchrotron_b_seds_plot_multi_component_numerical_SED.py`
+      for a worked example with a mixed thermal and power-law electron distribution.
+
+The analytical SED classes described above are highly efficient, but they rest on the assumption that the
+injected electron distribution is a power law. That assumption breaks down in a number of physically
+important scenarios: thermal or quasi-thermal distributions near a shock front, particle spectra evolved
+numerically through cooling and adiabatic expansion, or any multi-component population that cannot be
+described by a single spectral index. In these cases the only reliable approach is direct numerical
+integration of the synchrotron emissivity over the full distribution.
+
+The :class:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides this
+capability. Given any electron distribution — supplied either as a callable function or a pre-sampled
+array — it evaluates the emissivity integral and the self-absorption coefficient on a log-uniform
+:math:`(\nu, \gamma)` grid, solves the radiative transfer equation for a homogeneous source slab, and
+applies relativistic Doppler and cosmological redshift corrections to produce an observed flux density.
+The entire computation is performed in log-space using :func:`~scipy.special.logsumexp`, which keeps it
+numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
+in inference hot loops.
+
+Unlike the stateless :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` subclasses,
+the engine is **stateful**: it pre-tabulates the synchrotron kernel on a grid and caches the resulting
+spline interpolator. This one-time setup cost is paid when the kernel is loaded; subsequent SED
+evaluations are fast lookups against that table.
+
+.. _num_sed_quick_start:
+
+Quick Start
+^^^^^^^^^^^
+
+The minimum workflow is to create the engine, load a kernel, define an electron distribution, and call
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`:
+
+.. code-block:: python
+
+    import numpy as np
+    from astropy import units as u
+    from trilobite.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+
+    engine = NumericalSynchrotronEngine()
+    engine.load_avg_first_kernel()          # isotropic pitch-angle distribution
+
+    def N(gamma):
+        """Simple power-law electron distribution in cm^{-3}."""
+        return (1e4 * u.cm**-3) * (gamma / 100.0) ** (-2.5)
+
+    nu = np.geomspace(1e8, 1e18, 300) * u.Hz
+
+    F_nu = engine.compute_flux_density(
+        nu,
+        R=1e16 * u.cm,
+        B=0.5 * u.G,
+        N=N,
+        gamma_min=10.0,
+        gamma_max=1e7,
+        n_gamma=200,
+        luminosity_distance=100 * u.Mpc,
+    )
+
+.. _num_sed_kernels:
+
+Kernels and Initialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The first step is always to load a synchrotron kernel. The engine maintains two independent
+interpolators: one for the **fixed pitch-angle** kernel :math:`F(x)` and one for the
+**pitch-angle-averaged** kernel :math:`\bar{F}(x)`. The choice between them determines how the
+electron pitch-angle distribution is treated at evaluation time:
+
+- Call :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel`
+  when the electron pitch angles are isotropically distributed — the appropriate default for most
+  astrophysical environments. No pitch-angle argument is required at evaluation time, and the engine
+  integrates against :math:`\bar{F}(x)` automatically.
+- Call :meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel`
+  when a specific, fixed pitch angle :math:`\alpha` will be supplied at evaluation time. The engine
+  then integrates against :math:`F(x)`.
+
+Either or both interpolators can be loaded on the same engine instance, and calling a load method a
+second time simply overwrites the existing grid — useful for changing the tabulation resolution without
+constructing a new object. Both methods accept keyword arguments that control the grid:
+
+.. code-block:: python
+
+    # Finer grid over a wider domain — useful for extreme distributions.
+    engine.load_avg_first_kernel(x_min=1e-6, x_max=1e3, num_points=2000)
+
+    # Supply an explicit grid.
+    engine.load_avg_first_kernel(x=np.geomspace(1e-6, 1e3, 2000))
+
+The loaded status of each interpolator can be queried via
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_first_kernel_loaded`
+and
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_avg_first_kernel_loaded`.
+Calling a compute method before the required kernel has been loaded raises a :exc:`RuntimeError`.
+
+.. _num_sed_distribution:
+
+Defining the Electron Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Every compute method accepts ``N``, the electron number density :math:`dN/d\gamma`, as either a
+callable or an array.
+
+**Callable form.** If ``N`` is a callable, the engine evaluates it on the quadrature :math:`\gamma`
+grid it builds internally from ``gamma_min``, ``gamma_max``, and ``n_gamma``. The callable receives a
+bare :obj:`numpy.ndarray` of Lorentz factors and must return the distribution as an
+:class:`~astropy.units.Quantity` in :math:`\mathrm{cm}^{-3}`, or a bare array interpreted in those
+units:
+
+.. code-block:: python
+
+    def N(gamma):
+        N0 = 1e4 * u.cm**-3
+        return N0 * (gamma / 100.0) ** (-2.5)
+
+    F_nu = engine.compute_flux_density(nu, B=B, R=R, N=N,
+                                        gamma_min=100.0, gamma_max=1e7, n_gamma=300, ...)
+
+**Pre-sampled array form.** If ``N`` is an array, supply the corresponding :math:`\gamma` values via
+the ``gamma`` keyword. This form is useful when the distribution has been computed externally — for
+example from a numerical ODE solver or a PIC simulation — and the quadrature grid is already fixed:
+
+.. code-block:: python
+
+    gamma_array = np.geomspace(1.0, 1e8, 500)
+    N_array = compute_my_distribution(gamma_array)   # Quantity in cm^{-3}
+
+    F_nu = engine.compute_flux_density(nu, B=B, R=R, N=N_array, gamma=gamma_array, ...)
+
+Multi-component distributions — such as a thermal pool plus a non-thermal tail — can be handled either
+by summing the distribution functions before passing them to the engine, or by evaluating the engine
+separately for each component and summing the resulting **intensities**. The former is more efficient;
+the latter is useful for isolating the spectral contribution of each component.
+
+.. _num_sed_radiative:
+
+Radiative Quantities and Radiative Transfer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The engine exposes the individual stages of the SED computation as separate methods, which are useful
+for diagnostics and for building custom pipelines. The key quantities are the **emissivity**
+:math:`j_\nu`, the **self-absorption coefficient** :math:`\alpha_\nu`, the **source function**
+:math:`S_\nu = j_\nu / \alpha_\nu`, and the **specific intensity** :math:`I_\nu`.
+
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity`
+returns :math:`j_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}`;
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption`
+returns :math:`|\alpha_\nu|` in :math:`\mathrm{cm^{-1}}`;
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function`
+returns :math:`S_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`. All three accept the
+same ``N``, ``gamma``, ``gamma_min``, ``gamma_max``, and ``n_gamma`` arguments.
+
+When a fixed pitch angle is required, pass it via the ``alpha`` keyword. Passing ``alpha=None`` (the
+default) selects the pitch-angle-averaged path:
+
+.. code-block:: python
+
+    # Isotropic distribution (averaged kernel).
+    j_nu = engine.compute_emissivity(nu, B=0.5*u.G, N=N, gamma_min=100, gamma_max=1e7)
+
+    # Fixed pitch angle (requires load_first_kernel to have been called).
+    j_nu = engine.compute_emissivity(nu, B=0.5*u.G, N=N, alpha=np.pi/4 * u.rad,
+                                     gamma_min=100, gamma_max=1e7)
+
+The radiative transfer equation for a homogeneous source of line-of-sight depth :math:`R` is solved by
+
+.. math::
+
+    I_\nu = S_\nu \bigl(1 - e^{-\tau_\nu}\bigr), \qquad \tau_\nu = |\alpha_\nu|\,R.
+
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity`
+implements this directly and returns :math:`I_\nu` in the rest frame of the source. The
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`
+variant additionally applies bulk Doppler and cosmological redshift corrections before returning the
+observed specific intensity.
+
+.. _num_sed_flux:
+
+Observed Flux Density
+^^^^^^^^^^^^^^^^^^^^^^
+
+:meth:`~trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`
+is the primary end-user method. It applies the full chain — emissivity quadrature, absorption
+coefficient, radiative transfer, Doppler/redshift boost — and returns the observed spectral flux density
+:math:`F_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+
+For sources with bulk motion, three parameters describe the relativistic state:
+
+.. code-block:: python
+
+    F_nu = engine.compute_flux_density(
+        nu, R=1e16*u.cm, B=0.5*u.G, N=N,
+        z=0.01,             # cosmological redshift
+        beta=0.5,           # bulk speed as fraction of c
+        theta=0.0*u.rad,    # angle between bulk velocity and line of sight
+        luminosity_distance=100*u.Mpc,
+    )
+
+For non-relativistic sources the defaults ``beta=0``, ``theta=0``, ``z=0`` reduce the Doppler factor
+to unity. The distance can be supplied in any of the same forms accepted by the analytical SED classes:
+``luminosity_distance``, ``angular_diameter_distance``, ``proper_distance``, or a redshift ``z``
+combined with an optional ``cosmology`` argument. By default the projected source area is :math:`\pi
+R^2`; pass ``A_eff`` to override this for non-spherical geometries.
+
+----
+
+
+.. _sed_api_reference:
+
+API Reference
+-------------
+
+.. rubric:: Analytical SED Classes
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone
+
+.. autosummary::
+   :nosignatures:
+
+   SynchrotronSED
+   MultiSpectrumSynchrotronSED
+   PowerLaw_SynchrotronSED
+   PowerLaw_Cooling_SynchrotronSED
+   PowerLaw_SSA_SynchrotronSED
+   PowerLaw_Cooling_SSA_SynchrotronSED
+   SSA_SED_PowerLaw
+
+.. rubric:: Numerical SED Engine
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs.numerical
+
+.. autosummary::
+   :nosignatures:
+
+   NumericalSynchrotronEngine
+   NumericalSynchrotronEngine.load_first_kernel
+   NumericalSynchrotronEngine.load_avg_first_kernel
+   NumericalSynchrotronEngine.compute_emissivity
+   NumericalSynchrotronEngine.compute_absorption
+   NumericalSynchrotronEngine.compute_source_function
+   NumericalSynchrotronEngine.compute_rest_frame_specific_intensity
+   NumericalSynchrotronEngine.compute_specific_intensity
+   NumericalSynchrotronEngine.compute_flux_density
+
+----
+
+.. _sed_developer_notes:
+
+Implementation and Developer Notes
+------------------------------------
+
+.. note::
+
+   This section is for developers extending or debugging the SED system.
+
+.. _sed_class_hierarchy:
+
+Class Hierarchy
+^^^^^^^^^^^^^^^
+
+The synchrotron SED system is organized around a two-level abstract class hierarchy that
+separates **interface** from **regime dispatch logic**:
 
 .. code-block:: text
 
-    _log_<electron_pop>_<sed_type>_sed_<physics tags>_<spectrum number>
+   SynchrotronSED  (ABC)
+   │   The minimal interface every SED must satisfy.
+   │   Methods: sed(), _log_opt_sed(), from_physics_to_params(),
+   │            from_params_to_physics(), _opt_from_physics_to_params(),
+   │            _opt_from_params_to_physics()
+   │
+   ├── PowerLaw_SynchrotronSED
+   │       Optically thin, uncooled power-law SED (single regime).
+   │
+   ├── SSA_SED_PowerLaw
+   │       Phenomenological SSA broken power-law SED (De Marchi closure).
+   │
+   └── MultiSpectrumSynchrotronSED  (ABC)
+           Adds automatic regime selection and dispatch.
+           Methods: determine_sed_regime(), _compute_sed_regime(),
+                    _log_opt_sed_from_regime()
+           Attribute: SPECTRUM_FUNCTIONS
+           │
+           ├── PowerLaw_Cooling_SynchrotronSED
+           │       Optically thin SED with radiative cooling (2 regimes).
+           │
+           ├── PowerLaw_SSA_SynchrotronSED
+           │       Non-cooling SED with SSA (2 regimes).
+           │
+           └── PowerLaw_Cooling_SSA_SynchrotronSED
+                   Full SED: cooling + SSA (up to 8 regimes).
 
-In practice, this expands to names such as:
+The key design principle is that **SED objects are stateless**: no physical parameters are stored
+at instantiation. All parameters are supplied at call time, making objects safe to reuse across
+parameter sweeps or inference loops.
+
+.. _sed_low_level:
+
+Low-Level Interface
+^^^^^^^^^^^^^^^^^^^^
+
+While most users will interact with synchrotron spectra through the high-level SED classes,
+Trilobite also exposes a **low-level interface** that provides direct access to the building
+blocks from which those SEDs are constructed. It is primarily intended for:
+
+- Defining custom synchrotron SEDs not covered by the built-in classes,
+- Implementing or testing new physical regimes or closure relations,
+- Inspecting and validating the numerical components underlying the high-level API,
+- Debugging or benchmarking normalization and regime-selection logic.
+
+The low-level interface is organized into three categories: **shape functions**,
+**SED functions**, and **SSA utilities**.
+
+.. _low_level_shape_functions:
+
+Shape Functions
+"""""""""""""""
+
+Shape functions define the mathematical form of spectral transitions independently of any
+specific physical scenario. They operate entirely in logarithmic space.
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs._one_zone_functions
+
+.. rubric:: Shape Function API
+
+.. autosummary::
+   :nosignatures:
+
+   log_smoothed_SFBPL
+   log_exp_cutoff_sed
+   smoothed_BPL
+
+- :func:`log_smoothed_SFBPL` — the core scale-free smoothed broken power-law (SFBPL) factor.
+  Multiple breaks are composed by adding SFBPL factors in log-space.
+- :func:`log_exp_cutoff_sed` — smooth exponential truncation at high frequencies
+  (the :math:`\nu_{\max}` cutoff).
+- :func:`smoothed_BPL` — un-logged smoothed broken power law, used by
+  :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SSA_SED_PowerLaw`.
+
+.. rubric:: Log-Space SED Composition Example
+
+.. code-block:: python
+
+   import numpy as np
+   from trilobite.radiation.synchrotron.SEDs._one_zone_functions import (
+       log_smoothed_SFBPL,
+       log_exp_cutoff_sed,
+   )
+
+   log_nu = np.linspace(np.log(1e9), np.log(1e20), 500)
+   log_nu_m = np.log(1e12)
+   log_nu_c = np.log(1e15)
+   log_nu_max = np.log(1e19)
+   p = 2.5
+
+   # Baseline power law: F ~ nu^(1/3)
+   log_sed = (1.0 / 3.0) * log_nu
+
+   # Break at nu_m: slope 1/3 → -(p-1)/2
+   log_sed += log_smoothed_SFBPL(log_nu - log_nu_m, 1.0 / 3.0, -(p - 1) / 2.0, -0.5)
+
+   # Break at nu_c: slope -(p-1)/2 → -p/2
+   log_sed += log_smoothed_SFBPL(log_nu - log_nu_c, -(p - 1) / 2.0, -p / 2.0, -0.5)
+
+   # High-frequency exponential cutoff
+   log_sed += log_exp_cutoff_sed(log_nu - log_nu_max)
+
+.. _low_level_sed_functions:
+
+SED Functions
+"""""""""""""
+
+SED functions encode complete synchrotron spectral shapes for specific physical scenarios and
+frequency orderings, as derived in :ref:`synch_sed_theory`. Each function operates entirely in
+logarithmic space, assumes all inputs are already validated and dimensionless, and returns the
+logarithm of the scale-free spectral shape with *no normalization*.
+
+Naming convention:
 
 .. code-block:: text
 
-    _log_powerlaw_sbpl_sed_cool_4
-    _log_powerlaw_sbpl_sed_ssa_2
-    _log_powerlaw_sbpl_sed_cool_ssa_7
+   _log_<electron_pop>_<sed_type>_sed_<physics tags>_<spectrum number>
 
-where:
-
-- ``<electron_pop>`` indicates the assumed electron distribution
-  (currently always ``powerlaw``),
-- ``<sed_type>`` specifies the mathematical representation of the spectrum:
-  ``bpl`` for a sharp broken power law or ``sbpl`` for a smoothed broken power law,
-- ``<physics tags>`` indicate which physical processes are included, in
-  **order-independent form** (e.g. ``cool``, ``ssa``, or ``cool_ssa``),
-- ``<spectrum number>`` labels the specific frequency ordering as defined in
-  :ref:`synch_sed_theory`.
-
-Each SED function:
-
-- Operates entirely in **logarithmic space**,
-- Assumes all inputs are already validated and dimensionless,
-- Returns the **logarithm of the scale-free spectral shape**,
-- Applies *no normalization*.
-
-These functions are selected and composed automatically by the high-level SED
-classes and are rarely called directly by users.
+For example: ``_log_powerlaw_sbpl_sed_ssa_cool_7``
 
 .. dropdown:: Available Low-Level SED Functions
 
    The following low-level SED functions are implemented in
-   :mod:`radiation.synchrotron.SEDs`. Each corresponds to a unique spectral
-   regime defined in :ref:`synch_sed_theory`.
+   :mod:`trilobite.radiation.synchrotron.SEDs._one_zone_functions`. Each corresponds
+   to a unique spectral regime defined in :ref:`synch_sed_theory`.
 
    .. rubric:: Power Law (No Cooling, No SSA)
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
-        _log_powerlaw_sbpl_sed
+      _log_powerlaw_sbpl_sed
 
    .. rubric:: Power Law + Cooling
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
-      _log_powerlaw_sbpl_sed_cool_2
       _log_powerlaw_sbpl_sed_cool_1
+      _log_powerlaw_sbpl_sed_cool_2
 
    .. rubric:: Power Law + SSA
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed_ssa_1
@@ -556,7 +850,6 @@ classes and are rarely called directly by users.
    .. rubric:: Power Law + Cooling + SSA
 
    .. autosummary::
-      :toctree: ../../../../_as_gen
       :nosignatures:
 
       _log_powerlaw_sbpl_sed_ssa_cool_3
@@ -564,17 +857,118 @@ classes and are rarely called directly by users.
       _log_powerlaw_sbpl_sed_ssa_cool_5
       _log_powerlaw_sbpl_sed_ssa_cool_6
       _log_powerlaw_sbpl_sed_ssa_cool_7
+      _log_powerlaw_sbpl_sed_ssa_cool_8
+
+.. _low_level_ssa_utilities:
+
+SSA Utilities
+"""""""""""""
+
+SSA utilities compute the self-absorption frequency :math:`\nu_a` and select the physically
+consistent SSA regime for a given set of input parameters.
+
+.. currentmodule:: trilobite.radiation.synchrotron.SEDs._one_zone_ssa
+
+.. rubric:: SSA Utility API
+
+.. autosummary::
+   :nosignatures:
+
+   compute_ssa_frequencies_without_cooling
+   compute_ssa_frequencies_with_cooling
+   select_ssa_sed_regime_from_candidates_without_cooling
+   select_ssa_sed_regime_from_candidates_with_cooling
+
+.. _sed_extending:
+
+Extending the SED System
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Adding a new synchrotron SED model is straightforward. The system is designed so that new
+regimes or physical processes can be incorporated without modifying existing code.
+
+**Step 1: Implement any new low-level SED functions**
+
+If the new SED requires spectral shapes not already provided, add them to
+:mod:`trilobite.radiation.synchrotron.SEDs._one_zone_functions` following the established naming
+convention. Each function should:
+
+- Accept ``log_nu`` (natural log of frequency in Hz) and regime-specific break frequencies in
+  the same log form,
+- Return the **natural logarithm of the scale-free spectral shape** (no normalization),
+- Be fast and branch-free.
+
+**Step 2: Subclass the appropriate base class**
+
+For a **single-regime SED** (like :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_SynchrotronSED`),
+subclass :class:`~trilobite.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` and implement:
+
+- ``_log_opt_sed(self, log_nu, **params)`` — the log-space kernel,
+- ``sed(self, nu, **params)`` — the unit-aware public interface.
+
+For a **multi-regime SED** (like
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.PowerLaw_Cooling_SSA_SynchrotronSED`), subclass
+:class:`~trilobite.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED` and implement:
+
+- ``_compute_sed_regime(self, **params) -> (regime, derived)`` — regime logic,
+- ``determine_sed_regime(self, **params) -> regime`` — unit-aware public wrapper,
+- ``_log_opt_sed_from_regime(self, log_nu, regime, **params)`` — regime dispatch kernel,
+- ``SPECTRUM_FUNCTIONS`` — class attribute mapping regime identifiers to functions.
+
+The inherited ``_log_opt_sed`` orchestrates regime determination and dispatch automatically;
+subclasses should not override it.
+
+**Step 3: Implement closure relations (optional)**
+
+If physical inversion is needed, implement:
+
+- ``_opt_from_physics_to_params(self, log_B, log_R, ...)`` — log-space forward closure,
+- ``from_physics_to_params(self, B, R, ...)`` — unit-aware public wrapper,
+- ``_opt_from_params_to_physics(self, log_F_peak, ...)`` — log-space inversion,
+- ``from_params_to_physics(self, F_peak, ...)`` — unit-aware public wrapper.
+
+**Step 4: Register and export**
+
+Add the new class to ``__all__`` in :mod:`trilobite.radiation.synchrotron.SEDs.one_zone` and to the
+parent :mod:`trilobite.radiation.synchrotron.SEDs.__init__` re-exports.
+
+.. rubric:: Minimal SED Skeleton
+
+.. code-block:: python
+
+   import numpy as np
+   import astropy.units as u
+   from trilobite.radiation.synchrotron.SEDs.one_zone import SynchrotronSED
+   from trilobite.utils.misc_utils import ensure_in_units
 
 
+   class MySynchrotronSED(SynchrotronSED):
+       """Custom synchrotron SED."""
 
+       def _log_opt_sed(self, log_nu, log_F_norm, log_nu_0, alpha):
+           # All inputs are dimensionless CGS log-values.
+           # Spectral shape: F ~ (nu/nu_0)^alpha
+           return log_F_norm + alpha * (log_nu - log_nu_0)
 
-Relationship to the High-Level Interface
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+       def sed(self, nu, F_norm, nu_0, alpha):
+           nu = ensure_in_units(nu, "Hz")
+           F_norm = ensure_in_units(F_norm, "erg cm^-2 s^-1 Hz^-1")
+           nu_0 = ensure_in_units(nu_0, "Hz")
 
-The low-level interface should be viewed as the **implementation layer** of the
-synchrotron SED system. High-level SED classes orchestrate these components to
-provide a stable, physically meaningful, and easy-to-use user-facing API.
+           log_F = self._log_opt_sed(
+               np.log(nu), np.log(F_norm), np.log(nu_0), alpha
+           )
+           return np.exp(log_F) * u.erg / (u.cm**2 * u.s * u.Hz)
 
-Most users will never need to interact with the low-level functions directly.
-However, they are fully documented and exposed to support transparency,
-extensibility, and rigorous validation of synchrotron spectral models.
+The low-level interface should be viewed as the **implementation layer** of the synchrotron SED
+system. High-level SED classes orchestrate these components to provide a stable, physically
+meaningful, and easy-to-use user-facing API. Most users will never need to interact with the
+low-level functions directly. However, they are fully documented and exposed to support
+transparency, extensibility, and rigorous validation of synchrotron spectral models.
+
+----
+
+References
+----------
+
+.. footbibliography::

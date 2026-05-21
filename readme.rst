@@ -1,94 +1,116 @@
-.. image:: docs/source/images/logo.png
-   :width: 200px
-   :align: center
+.. raw:: html
 
-Triceratops
-===========
+   <div align="center">
+     <img src="docs/source/images/logo.svg" width="260" alt="Trilobite"><br/><br/>
+     <h1>TRILOBITE</h1>
+     <p><em>A Python ecosystem for rapid-deployment modeling of astrophysical transients</em></p>
+     <p>
 
-+-------------------+----------------------------------------------------------+
-| **Code**          | |RUFF| |PRE-COMMIT| |ASTROPY| |ISORT|                    |
-+-------------------+----------------------------------------------------------+
-| **Documentation** | |docs| |docs-stable| |numpydoc| |docformatter|           |
-+-------------------+----------------------------------------------------------+
-| **GitHub**        | |CONTRIBUTORS| |LAST-COMMIT| |Tests|                     |
-|                   | |COMMITIZEN| |CONVENTIONAL-COMMITS|                      |
-+-------------------+----------------------------------------------------------+
-| **PyPi**          | Coming Soon                                              |
-+-------------------+----------------------------------------------------------+
+|Tests| |docs| |docs-stable| |RUFF| |PRE-COMMIT| |ISORT| |NUMPYDOC| |DOCFORMATTER| |COMMITIZEN| |CONVENTIONAL-COMMITS| |ASTROPY| |CONTRIBUTORS| |LAST-COMMIT|
 
-Welcome to **Triceratops** — the **T**\ransient **R**\adio **I**\nteraction **C**\ode for **E**\jecta,
-**R**\emnants, **A**\nd **T**\ime-domain **O**\bservables from **P**\lasma **S**\hocks.
+.. raw:: html
 
-Triceratops is a computational framework for modeling the dynamical and radiative evolution of
-astrophysical transients interacting with their environments. The package is designed to
-simulate plasma shocks, ejecta dynamics, and their resulting time-domain observables, with a
-particular focus on radio emission from transient outflows.
+     </p>
+   </div>
 
-The software enables forward modeling and parameter inference for radio observations of
-explosive and eruptive phenomena, allowing theoretical models to be directly confronted with
-data from modern radio facilities. Triceratops emphasizes physical transparency, modular
-design, and numerical robustness, making it suitable for both exploratory modeling and
-production-level analysis.
+----
 
-Getting Started
----------------
+The **TR**\ansient **I**\nference **L**\ibrary for **O**\bservation, **B**\ayesian **I**\nference, and **T**\ime-domain **E**\xploration
+(**TRILOBITE**) is a powerful, modular computational
+library for modeling the interaction of transient astrophysical outflows with their surrounding environments.
 
-To install the package using ``pip`` (not yet available on PyPI):
+TRILOBITE bridges the gap between theory and observation by combining shock dynamics, microphysical
+prescriptions, and radiative transfer into a unified framework — enabling rapid-deployment modeling of
+**GRBs, TDEs, supernovae**, and other astrophysical transients.
+
+
+Overview
+========
+
+**What can it do?**
+
+- **Customizable transient models** — Pre-built models for GRBs, TDEs, and supernovae, fully configurable for your science case.
+- **Modular physics components** — Mix-and-match dynamics, radiation, and opacity modules to build novel transient models from scratch.
+- **Flexible Bayesian inference** — End-to-end parameter estimation pipelines for fitting models to radio and multi-wavelength data.
+- **Ecosystem integration** — Native compatibility with ``astropy``, ``emcee``, and modern radio data formats.
+
+**Who is it for?**
+
+- Researchers modeling transient shock physics and radio emission
+- Scientists building custom astrophysical forward models
+- Observers looking to constrain explosion parameters from data
+
+----
+
+Quick Install
+=============
 
 .. code-block:: bash
 
-    pip install triceratops  # NOT YET IMPLEMENTED
+    pip install trilobite-lib
 
-Alternatively, you can install directly from the GitHub repository:
+Or install from source:
 
 .. code-block:: bash
 
-    git clone https://www.github.com/Eliza-Diggins/Triceratops
-    cd Triceratops
-    pip install .
+    git clone https://github.com/TransientsExtragalactic/Trilobite
+    cd Trilobite
+    pip install -e .
 
-For detailed setup instructions, see the
-`Installation Guide <https://Eliza-Diggins.github.io/Triceratops/getting_started/installation.html>`_.
+For full setup instructions, see the
+`Installation Guide <https://transientsextragalactic.github.io/Trilobite/getting_started/installation.html>`_.
+
+----
 
 Documentation
--------------
+=============
 
-The full documentation is available at
-`https://Eliza-Diggins.github.io/Triceratops <https://Eliza-Diggins.github.io/Triceratops>`_.
+The full documentation — user guides, API references, worked examples, and theory background — is available at:
 
-This includes conceptual overviews, user guides, API references, and worked examples.
+    `https://transientsextragalactic.github.io/Trilobite <https://transientsextragalactic.github.io/Trilobite>`_
+
+----
 
 Contributing
-------------
+============
 
 Development takes place on
-`GitHub <https://www.github.com/Eliza-Diggins/Triceratops>`_.
+`GitHub <https://github.com/TransientsExtragalactic/Trilobite>`_.
 
 Bug reports, feature requests, and documentation improvements are welcome via the issue tracker.
-Contributions should follow the established coding, documentation, and commit-style guidelines
-indicated above.
+Contributions should follow the established coding, documentation, and
+`Conventional Commits <https://www.conventionalcommits.org/en/v1.0.0/>`_ style guidelines.
 
-Attribution
------------
+----
 
-If you use Triceratops in your research, please cite or acknowledge it with text similar to:
+Citation
+========
 
-    We acknowledge the use of the Triceratops software package, written by E. Diggins et al., in this work.
+If you use Trilobite in your research, please acknowledge it with:
 
+    *We acknowledge the use of the Trilobite software package, written by E. Diggins et al., in this work.*
 
-.. |Tests| image:: https://github.com/eliza-diggins/Triceratops/actions/workflows/run_tests.yml/badge.svg
+TRILOBITE is developed and maintained by Eliza Diggins and the
+**Extragalactic Transients Group (TREX)** in the Department of Astronomy at the
+**University of California, Berkeley**.
+
+----
+
+.. |Tests| image:: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml/badge.svg
+   :target: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml
+   :alt: Tests
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
-   :target: https://Eliza-Diggins.github.io/Triceratops
+   :target: https://transientsextragalactic.github.io/Trilobite
    :alt: Latest Docs
 
 .. |docs-stable| image:: https://img.shields.io/badge/docs-stable-brightgreen.svg
-   :target: https://Eliza-Diggins.github.io/Triceratop/stable
-   :alt: Latest Docs
+   :target: https://transientsextragalactic.github.io/Trilobite/stable
+   :alt: Stable Docs
 
 .. |ruff| image:: https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json
-    :target: https://github.com/astral-sh/ruff
-    :alt: Ruff
+   :target: https://github.com/astral-sh/ruff
+   :alt: Ruff
 
 .. |pre-commit| image:: https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit
    :target: https://github.com/pre-commit/pre-commit
@@ -106,12 +128,12 @@ If you use Triceratops in your research, please cite or acknowledge it with text
    :target: https://www.conventionalcommits.org/en/v1.0.0/
    :alt: Commit style: Conventional Commits
 
-.. |contributors| image:: https://img.shields.io/github/contributors/eliza-diggins/Triceratops
-   :target: https://github.com/Eliza-Diggins/Triceratop/graphs/contributors
+.. |contributors| image:: https://img.shields.io/github/contributors/TransientsExtragalactic/Trilobite?cacheSeconds=86400
+   :target: https://github.com/TransientsExtragalactic/Trilobite/graphs/contributors
    :alt: GitHub Contributors
 
-.. |last-commit| image:: https://img.shields.io/github/last-commit/eliza-diggins/Triceratop
-   :target: https://github.com/Eliza-Diggins/Triceratop
+.. |last-commit| image:: https://img.shields.io/github/last-commit/TransientsExtragalactic/Trilobite?cacheSeconds=86400
+   :target: https://github.com/TransientsExtragalactic/Trilobite
    :alt: Last Commit
 
 .. |ASTROPY| image:: http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat
@@ -119,7 +141,9 @@ If you use Triceratops in your research, please cite or acknowledge it with text
    :alt: Powered by Astropy
 
 .. |docformatter| image:: https://img.shields.io/badge/%20formatter-docformatter-fedcba
-    :target: https://github.com/PyCQA/docformatter
+   :target: https://github.com/PyCQA/docformatter
+   :alt: docformatter
 
 .. |isort| image:: https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336
    :target: https://pycqa.github.io/isort/
+   :alt: isort

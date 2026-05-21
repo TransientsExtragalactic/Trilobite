@@ -1,4 +1,5 @@
 .. _stratified_absorption:
+
 ==============================================
 Theory Note: Stratified Synchrotron Absorption
 ==============================================

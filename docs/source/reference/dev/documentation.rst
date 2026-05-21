@@ -1,10 +1,13 @@
+:orphan:
+
 .. _documentation:
+
 ====================
 Documentation Guide
 ====================
 
-Triceratops maintains a high standard of documentation to ensure clarity, accessibility, and reproducibility.
-This guide is intended for developers and contributors who want to understand or contribute to the Triceratops documentation system.
+Trilobite maintains a high standard of documentation to ensure clarity, accessibility, and reproducibility.
+This guide is intended for developers and contributors who want to understand or contribute to the Trilobite documentation system.
 
 Documentation Structure
 ------------------------
@@ -13,9 +16,9 @@ The documentation is organized using `Sphinx <https://www.sphinx-doc.org/>`__ an
 
 - **Quickstart / Getting Started**: An entry-level guide for new users covering installation,
   basic usage, and common workflows.
-- **User Guide**: High-level conceptual overviews of each part of Triceratops, including models,
+- **User Guide**: High-level conceptual overviews of each part of Trilobite, including models,
   configuration, and usage patterns. Best for users who want to understand
-  what Triceratops does and how to use it effectively.
+  what Trilobite does and how to use it effectively.
 - **Examples Gallery**: A gallery of runnable Python scripts showing common tasks, use cases,
   and visualizations. These examples are auto-generated using `sphinx-gallery`.
 - **API Reference**: Automatically generated from docstrings in the codebase.
@@ -51,7 +54,7 @@ If you only want to test whether documentation builds without rendering:
 Docstring Standards
 --------------------
 
-Triceratops follows the `numpydoc <https://numpydoc.readthedocs.io/en/latest/format.html>`__ format for all
+Trilobite follows the `numpydoc <https://numpydoc.readthedocs.io/en/latest/format.html>`__ format for all
 docstrings. This format is required for compatibility with `sphinx.ext.napoleon`.
 
 Each function, class, and module must be documented with:
@@ -66,7 +69,7 @@ Each function, class, and module must be documented with:
 Example Gallery (sphinx-gallery)
 ----------------------------------
 
-Triceratops uses `sphinx-gallery <https://sphinx-gallery.github.io/>`__ to automatically
+Trilobite uses `sphinx-gallery <https://sphinx-gallery.github.io/>`__ to automatically
 generate an example gallery from scripts in ``docs/source/galleries/examples``. The galleries
 are broken down by subject area and can be extended to include new examples as needed. See the
 documentation for `sphinx-gallery <https://sphinx-gallery.github.io/stable/index.html>`__ for more details on
@@ -77,7 +80,7 @@ These examples will be automatically built into the ``auto_examples`` section of
 Autodoc and Intersphinx
 ------------------------
 
-Triceratops uses the following Sphinx extensions for API documentation:
+Trilobite uses the following Sphinx extensions for API documentation:
 
 - ``sphinx.ext.autodoc``: Automatically generates documentation from docstrings.
 - ``sphinx.ext.intersphinx``: Enables linking to external projects like NumPy, Astropy, and SymPy.
@@ -129,6 +132,6 @@ You can verify the build with:
 Summary
 -------
 
-Triceratops treats documentation as a first-class component of development. All contributors
+Trilobite treats documentation as a first-class component of development. All contributors
 are expected to maintain and extend documentation as part of their changes. Keeping
 the docs up-to-date ensures accessibility for users and maintainability for future developers.
