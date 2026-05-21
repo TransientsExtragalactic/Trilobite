@@ -22,6 +22,7 @@ from triceratops.radiation.constants import h_cgs, kB_cgs
 from triceratops.radiation.free_free.core import (
     _ff_absorption_coefficient_cgs,
     _ff_emissivity_coefficient_cgs,
+    _ff_RJ_absorption_coefficient_cgs,
     _log_ff_absorption,
     _log_ff_emissivity,
     _log_ff_RJ_absorption,
@@ -256,7 +257,7 @@ class TestPrivateRJAbsorption:
 
     def test_matches_formula(self):
         expected = (
-            np.log(_ff_absorption_coefficient_cgs)
+            np.log(_ff_RJ_absorption_coefficient_cgs)
             + 2 * _LOG_Z
             + _LOG_NE
             + _LOG_NI
