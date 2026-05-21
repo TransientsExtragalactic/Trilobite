@@ -121,8 +121,8 @@ shock_params = {
 }
 
 shock_outputs = shock_engine.compute_shock_properties(times, **shock_params)
-r_sh = shock_outputs["radius"].to(u.cm)
-v_sh = shock_outputs["velocity"].to(u.cm / u.s)
+r_sh = shock_outputs.radius.to(u.cm)
+v_sh = shock_outputs.velocity.to(u.cm / u.s)
 
 # Upstream wind density at the shock radius
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
@@ -373,8 +373,8 @@ fig, ax = plt.subplots(figsize=(9, 5))
 for Mdot, label, color in zip(Mdot_values, Mdot_labels, Mdot_colors):
     sp = {**shock_params, "M_dot": Mdot}
     so = shock_engine.compute_shock_properties(times, **sp)
-    r_i = so["radius"].to(u.cm)
-    v_i = so["velocity"].to(u.cm / u.s)
+    r_i = so.radius.to(u.cm)
+    v_i = so.velocity.to(u.cm / u.s)
     rho_i = (Mdot / (4 * np.pi * r_i**2 * v_wind)).to(u.g / u.cm**3)
     _U_i = 1.5 * (_R - 1) / _R**2 * rho_i.to_value(u.g / u.cm**3) * v_i.to_value(u.cm / u.s) ** 2
     B_i = np.sqrt(8 * np.pi * epsilon_B * _U_i) * u.G

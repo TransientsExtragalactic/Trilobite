@@ -376,7 +376,13 @@ def _log_ff_RJ_absorption(
     _log_ff_RJ_emissivity : Matching RJ emissivity.
     """
     return (
-        _log_ff_absorption_coefficient_cgs + 2 * np.log(Z) + log_n_e + log_n_i - 1.5 * log_T - 2 * log_nu + np.log(g_ff)
+        _log_ff_RJ_absorption_coefficient_cgs
+        + 2 * np.log(Z)
+        + log_n_e
+        + log_n_i
+        - 1.5 * log_T
+        - 2 * log_nu
+        + np.log(g_ff)
     )
 
 

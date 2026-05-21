@@ -73,11 +73,11 @@ E_ej = 1.0e51 * u.erg
 M_ej = 3.0 * u.Msun
 n = 10
 M_dot = 3.0e-5 * u.Msun / u.yr  # Moderate mass-loss rate
-v_wind = 50.0 * u.km / u.s
+v_wind = 300.0 * u.km / u.s
 
 # Microphysics
 epsilon_e = 0.1
-epsilon_B = 0.1
+epsilon_B = 0.01
 p = 3.0
 gamma_min = 1.0
 gamma_max = 1e8
@@ -90,10 +90,10 @@ D_L = 30.0 * u.Mpc
 T_wind = 1.0e4 * u.K  # Ionized wind temperature
 
 # SED frequencies (dense coverage for smooth spectrum)
-freqs_sed = np.geomspace(0.3, 100.0, 300) * u.GHz
+freqs_sed = np.geomspace(1e-2, 100.0, 500) * u.GHz
 
 # Epoch sequence covering all three spectral regimes
-epochs = u.Quantity([10.0, 30.0, 70.0, 150.0, 300.0, 600.0], u.day)
+epochs = u.Quantity([10.0, 30.0, 70.0, 150.0, 300.0, 600.0, 1200], u.day)
 
 print("=== FFA Fade-out Model ===")
 print(f"  M_dot = {M_dot:.2e}")
@@ -149,8 +149,8 @@ r_max_cm = 1e19  # cm
 # 4. The observed SED: :math:`F_\nu^{\rm obs} = F_\nu^{\rm synch} \cdot e^{-\tau_{\rm ff}}`.
 
 shock_outputs = shock_engine.compute_shock_properties(epochs, **shock_params)
-r_sh = shock_outputs["radius"].to(u.cm)
-v_sh = shock_outputs["velocity"].to(u.cm / u.s)
+r_sh = shock_outputs.radius.to(u.cm)
+v_sh = shock_outputs.velocity.to(u.cm / u.s)
 rho_up = (M_dot / (4 * np.pi * r_sh**2 * v_wind)).to(u.g / u.cm**3)
 _R = 4.0  # compression ratio for strong cold shock (gamma=5/3)
 _U = 1.5 * (_R - 1) / _R**2 * rho_up.to_value(u.g / u.cm**3) * v_sh.to_value(u.cm / u.s) ** 2
