@@ -7,7 +7,7 @@
            <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
            <div class="badges">
 
-|RUFF| |PRE-COMMIT| |NUMPYDOC| |COMMITIZEN| |CONVENTIONAL-COMMITS| |LAST-COMMIT| |CONTRIBUTORS| |DOCS| |ASTROPY|
+|PYPI| |PYPI-PYTHON| |RUFF| |PRE-COMMIT| |NUMPYDOC| |COMMITIZEN| |CONVENTIONAL-COMMITS| |LAST-COMMIT| |CONTRIBUTORS| |DOCS| |ASTROPY|
 
 .. raw:: html
 
@@ -217,6 +217,14 @@ Indices and tables
      </p>
    </div>
 
+
+.. |PYPI| image:: https://img.shields.io/pypi/v/trilobite
+   :target: https://pypi.org/project/trilobite/
+   :alt: PyPI version
+
+.. |PYPI-PYTHON| image:: https://img.shields.io/pypi/pyversions/trilobite
+   :target: https://pypi.org/project/trilobite/
+   :alt: Supported Python versions
 
 .. |docs| image:: https://img.shields.io/badge/docs-latest-brightgreen.svg
    :target: https://transientsextragalactic.github.io/Trilobite

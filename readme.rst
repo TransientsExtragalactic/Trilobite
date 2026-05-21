@@ -3,7 +3,7 @@
    :align: center
    :alt: Trilobite
 
-|Tests| |docs| |docs-stable| |RUFF| |PRE-COMMIT| |ISORT| |NUMPYDOC| |DOCFORMATTER| |COMMITIZEN| |CONVENTIONAL-COMMITS| |ASTROPY| |CONTRIBUTORS| |LAST-COMMIT|
+|PYPI| |PYPI-PYTHON| |Tests| |docs| |docs-stable| |RUFF| |PRE-COMMIT| |ISORT| |NUMPYDOC| |DOCFORMATTER| |COMMITIZEN| |CONVENTIONAL-COMMITS| |ASTROPY| |CONTRIBUTORS| |LAST-COMMIT|
 
 ----
 
@@ -89,6 +89,14 @@ TRILOBITE is developed and maintained by Eliza Diggins and the
 **University of California, Berkeley**.
 
 ----
+
+.. |PYPI| image:: https://img.shields.io/pypi/v/trilobite
+   :target: https://pypi.org/project/trilobite/
+   :alt: PyPI version
+
+.. |PYPI-PYTHON| image:: https://img.shields.io/pypi/pyversions/trilobite
+   :target: https://pypi.org/project/trilobite/
+   :alt: Supported Python versions
 
 .. |Tests| image:: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml/badge.svg
    :target: https://github.com/TransientsExtragalactic/Trilobite/actions/workflows/run_tests.yml
