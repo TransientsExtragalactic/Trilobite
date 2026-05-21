@@ -27,62 +27,71 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/overview';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../../genindex.html" />
     <link rel="search" title="Search" href="../../../search.html" />
-    <link rel="next" title="Core Synchrotron Tools" href="synchrotron/synchrotron_core.html" />
-    <link rel="prev" title="Shocks in Triceratops" href="../shocks/overview.html" />
+    <link rel="next" title="Synchrotron Emission Overview" href="synchrotron/synchrotron_overview.html" />
+    <link rel="prev" title="Self-Similar Shock Engines" href="../shocks/self_similar_overview.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +117,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -167,8 +176,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -200,11 +209,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -237,8 +253,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -374,18 +395,31 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
@@ -411,33 +445,113 @@
 </details></li>
 </ul>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -502,79 +616,204 @@
                   
   <section id="radiation-processes-in-triceratops">
 <span id="radiation-overview"></span><h1>Radiation Processes in Triceratops<a class="headerlink" href="#radiation-processes-in-triceratops" title="Link to this heading">#</a></h1>
-<p>Foundational to any model of radio emission from an astrophysical source are the radiation processes driving
-the emission. The vast majority of the models implemented in Triceratops rely on a number of core radiation
-processes which, along with the underlying dynamics of their systems, determine the observed emission. This guide
-discusses the various radiative processes implemented in Triceratops, how to use them, and provides references and
-readings on the theory behind them wherever possible.</p>
+<p>Foundational to any model of emission from an astrophysical source are the radiation
+processes driving it.  The vast majority of models in Triceratops rely on a small set
+of core radiation processes which, together with the underlying source dynamics,
+determine the observed emission.  This page provides an entry point to each of those
+processes.  Each section starts with an overview that introduces the physical context,
+maps out the module structure, and provides minimal working examples.  The usage
+references and theory documents linked from it go into the full API detail and
+derivations.</p>
+<hr class="docutils" />
 <section id="synchrotron-radiation">
 <h2>Synchrotron Radiation<a class="headerlink" href="#synchrotron-radiation" title="Link to this heading">#</a></h2>
-<p>The most foundational radiation process implemented in Triceratops is synchrotron radiation. Synchrotron radiation
-is emitted by relativistic charged particles (typically electrons) spiraling around magnetic field lines. This
-process is responsible for a wide range of astrophysical phenomena, from radio emission in supernova remnants
-to the jets of active galactic nuclei.</p>
-<p>Most importantly, synchrotron emission is the dominant radiation mechanism in a variety of astrophysical transients
-such as gamma-ray bursts (GRBs) and tidal disruption events (TDEs).</p>
-<p>Because of its relevance to so many astrophysical systems, Triceratops provides a comprehensive suite of tools for
-modeling synchrotron radiation. This includes modules for calculating synchrotron spectra, light curves, and
-polarization, as well as tools for incorporating synchrotron self-absorption and cooling effects. The documents below
-are designed to provide a thorough description of the available tools and their implementation; however, we recognize
-that the theory of synchrotron radiation can be complex. Therefore, we also provide a detailed overview of the underlying
-theory in the <a class="reference internal" href="synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a> section of the documentation.</p>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Synchrotron Radiation Topics</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<p>Synchrotron radiation is emitted by relativistic charged particles (typically
+electrons) spiraling around magnetic field lines.  This process is responsible for a
+wide range of astrophysical phenomena, from radio emission in supernova remnants to
+the jets of active galactic nuclei.  Most importantly for Triceratops, synchrotron
+emission is the dominant radiation mechanism in a variety of astrophysical transients
+such as gamma-ray bursts (GRBs) and radio outflows in TDEs.</p>
+<p><strong>Triceratops provides a comprehensive suite of tools for modeling synchrotron radiation</strong>, covering
+the full hierarchy of physical processes from the single-electron emission to the integrated SEDs of
+complex sources. The guides below will introduce the core modules and their structure. Theory notes and
+methods documents are provided for domain experts and developers interested in the inner workings of
+the various algorithms.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-1 sd-row-cols-lg-1 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Overview</div>
+<p class="sd-card-text"><strong>Start here.</strong> Introduces the module structure, provides physical context,
+and includes minimal worked examples for each layer of the synchrotron stack.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="synchrotron/synchrotron_overview.html#synchrotron-overview"><span class="std std-ref">Synchrotron Emission Overview</span></a></div>
+</div>
+</div>
+</div>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Usage Reference</div>
+<ul class="simple">
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_core.html#synchrotron-core"><span class="std std-ref">Core Synchrotron Tools</span></a> – kernel functions, single-electron spectra</p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a> – distributions, equipartition closure</p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_seds.html#synchrotron-seds"><span class="std std-ref">Synchrotron Spectral Energy Distributions</span></a> – one-zone SED models and spectrum inversion</p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_cooling.html#synchrotron-cooling"><span class="std std-ref">Radiative Cooling Engines</span></a> – radiative cooling engines</p></li>
 </ul>
 </div>
-<p>Additionally, there are a few additional theory documents which provide further context for the implementation of
-synchrotron radiation in Triceratops:</p>
-<div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Synchrotron Theory References</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
-<li class="toctree-l1"><a class="reference internal" href="synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Theory</div>
+<ul class="simple">
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_numerical_seds.html#synch-numerical-sed-theory"><span class="std std-ref">Methods: Quadrature Based SEDs</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_cooling_theory.html#synchrotron-cooling-theory"><span class="std std-ref">Theory Note: Electron Populations</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_cooling_closure.html#synchrotron-cooling-closure"><span class="std std-ref">Theory Note: Synchrotron Cooling Closure</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_stratified_absorption.html#stratified-absorption"><span class="std std-ref">Theory Note: Stratified Synchrotron Absorption</span></a></p></li>
+<li><p class="sd-card-text"><a class="reference internal" href="synchrotron/synchrotron_barniol_duran.html#barnoil-duran"><span class="std std-ref">Theory Note: The Barniol-Duran Formalism</span></a></p></li>
 </ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="toctree-wrapper compound">
 </div>
 </section>
+<hr class="docutils" />
 <section id="free-free-radiation">
 <h2>Free-Free Radiation<a class="headerlink" href="#free-free-radiation" title="Link to this heading">#</a></h2>
-<p>Thermal free-free (bremsstrahlung) emission and absorption from ionized plasmas.  This is the
-primary opacity source in radio supernova CSM and HII regions modeled by Triceratops.</p>
-<div class="toctree-wrapper compound">
+<p>Thermal free-free (bremsstrahlung) emission and absorption from ionized plasmas.
+This is the primary opacity source in radio supernova CSM and HII regions modeled by
+Triceratops.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Usage Guide</div>
+<p class="sd-card-text">Tools for computing free-free emission and absorption coefficients, Gaunt
+factors, and optical depths in ionized plasma.</p>
 </div>
-<p>Additionally, a dedicated theory reference covers the physics in detail:</p>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="free_free/free_free_emission.html#free-free-emission"><span class="std std-ref">Free-Free Emission Tools</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Theory</div>
+<p class="sd-card-text">Derivation of the free-free emissivity, the Gaunt factor approximations
+used in Triceratops, and their range of validity.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="free_free/free_free_theory.html#free-free-theory"><span class="std std-ref">Free-Free Radiation Theory</span></a></div>
+</div>
+</div>
+</div>
 <div class="toctree-wrapper compound">
-<p aria-level="2" class="caption" role="heading"><span class="caption-text">Free-Free Theory References</span></p>
-<ul>
-<li class="toctree-l1"><a class="reference internal" href="free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
-</ul>
 </div>
 </section>
-<section id="grey-opacity-laws">
-<h2>Grey Opacity Laws<a class="headerlink" href="#grey-opacity-laws" title="Link to this heading">#</a></h2>
-<p>The <a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.html#module-triceratops.radiation.opacity" title="triceratops.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.opacity</span></code></a> module provides a set of grey (frequency-independent)
-opacity laws for use across Triceratops: as the Rosseland mean opacity driving radiative
-diffusion in accretion disks, as an effective photon-absorption cross-section in CSM
-optical-depth calculations, and as a building block in any custom thermal solver.  The module
-exposes a uniform interface for evaluating <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span> and its logarithmic
-derivatives, and is designed to be context-agnostic so the same opacity object can be dropped
-into any part of the codebase that needs it.</p>
-<p>Implemented laws include constant (grey), electron-scattering (Thomson), free-free and
-bound-free Kramers power laws, and combined Kramers + electron-scattering forms.</p>
-<div class="toctree-wrapper compound">
+<hr class="docutils" />
+<section id="blackbody-radiation">
+<h2>Blackbody Radiation<a class="headerlink" href="#blackbody-radiation" title="Link to this heading">#</a></h2>
+<p>Thermal emission from a blackbody in local thermodynamic equilibrium.
+The <a class="reference internal" href="../../../_as_gen/triceratops.radiation.blackbody.html#module-triceratops.radiation.blackbody" title="triceratops.radiation.blackbody"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.blackbody</span></code></a> module provides the Planck
+function (per unit frequency and per unit wavelength), the Wien displacement
+laws, and the Stefan-Boltzmann bolometric flux, all following the standard
+Triceratops two-level API so the same functions work in interactive analysis
+and in MCMC hot loops.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Usage Guide</div>
+<p class="sd-card-text">Evaluate <span class="math notranslate nohighlight">\(B_\nu\)</span>, <span class="math notranslate nohighlight">\(B_\lambda\)</span>, Wien peak frequency and
+wavelength, and bolometric flux.  Includes notes on using the fast
+CGS kernels directly in performance-critical code.</p>
 </div>
-<p>Additionally, a dedicated theory document covers the physics of each law in detail, and a
-developer guide explains how to implement new opacity laws:</p>
+<span class="sd-stretched-link sd-hide-link-text">blackbody_user_guide</span></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Theory</div>
+<p class="sd-card-text">Derivations of the Planck function, the Wien displacement law, and
+the Stefan-Boltzmann relation, with notes on numerical stability.</p>
+</div>
+<span class="sd-stretched-link sd-hide-link-text">blackbody_theory</span></div>
+</div>
+</div>
+</div>
 <div class="toctree-wrapper compound">
 </div>
 </section>
+<hr class="docutils" />
+<section id="opacity-laws">
+<h2>Opacity Laws<a class="headerlink" href="#opacity-laws" title="Link to this heading">#</a></h2>
+<p>The <a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.html#module-triceratops.radiation.opacity" title="triceratops.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.opacity</span></code></a> module provides opacity laws for use across
+Triceratops. This includes common analytic forms for the Rosseland and Planck mean opacities as
+well as numerical tables for various purposes. In many cases, these are implemented at the C-level to
+ensure seamless performance in hot loops.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently, all of the available opacity laws are gray (frequency-independent), Rosseland means
+or Planck means.  Future work will expand this to include frequency-dependent opacities and
+potentially more specialized forms (e.g. line opacities for specific ions); however, current
+implementations are sufficient for the majority of applications in Triceratops.</p>
+<p>Triceratops is <strong>not</strong> a spectral synthesis code, so we do not implement detailed
+frequency-dependent opacities.</p>
+</div>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-1 sd-row-cols-xs-1 sd-row-cols-sm-1 sd-row-cols-md-3 sd-row-cols-lg-3 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Usage Guide</div>
+<p class="sd-card-text">How to instantiate opacity laws, evaluate <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span>, compute
+logarithmic derivatives, and load OPAL numerical tables.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="opacity/opacity_user_guide.html#opacity-user-guide"><span class="std std-ref">Opacity Laws</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Theory</div>
+<p class="sd-card-text">Derivations of each implemented opacity law and discussion of the physical
+regimes in which each applies.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="opacity/opacity_theory.html#opacity-theory"><span class="std std-ref">Opacity Theory</span></a></div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-card-hover docutils">
+<div class="sd-card-body docutils">
+<div class="sd-card-title sd-font-weight-bold docutils">
+Developer Guide</div>
+<p class="sd-card-text">How to implement a new opacity law and plug it into the Triceratops opacity
+registry.</p>
+</div>
+<a class="sd-stretched-link sd-hide-link-text reference internal" href="opacity/opacity_dev_guide.html#opacity-dev-guide"><span class="std std-ref">Developer Guide: Implementing Opacity Laws</span></a></div>
+</div>
+</div>
+</div>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+<hr class="docutils" />
 <section id="inverse-compton-scattering">
 <h2>Inverse Compton Scattering<a class="headerlink" href="#inverse-compton-scattering" title="Link to this heading">#</a></h2>
 <div class="admonition important">
@@ -595,20 +834,20 @@ developer guide explains how to implement new opacity laws:</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="../shocks/overview.html"
+       href="../shocks/self_similar_overview.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Shocks in Triceratops</p>
+        <p class="prev-next-title">Self-Similar Shock Engines</p>
       </div>
     </a>
     <a class="right-next"
-       href="synchrotron/synchrotron_core.html"
+       href="synchrotron/synchrotron_overview.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Core Synchrotron Tools</p>
+        <p class="prev-next-title">Synchrotron Emission Overview</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -629,29 +868,24 @@ developer guide explains how to implement new opacity laws:</p>
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-radiation">Synchrotron Radiation</a><ul class="nav section-nav flex-column">
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-free-radiation">Free-Free Radiation</a><ul class="nav section-nav flex-column">
-</ul>
-</li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#grey-opacity-laws">Grey Opacity Laws</a><ul class="nav section-nav flex-column">
-</ul>
-</li>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-radiation">Synchrotron Radiation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-free-radiation">Free-Free Radiation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#blackbody-radiation">Blackbody Radiation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#opacity-laws">Opacity Laws</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inverse-compton-scattering">Inverse Compton Scattering</a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../_sources/reference/physics/radiation/overview.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/radiation/overview.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -666,8 +900,8 @@ developer guide explains how to implement new opacity laws:</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -701,7 +935,7 @@ developer guide explains how to implement new opacity laws:</p>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

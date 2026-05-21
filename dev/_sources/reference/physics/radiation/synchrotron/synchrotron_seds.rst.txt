@@ -343,6 +343,14 @@ All closure logic is also available as standalone functions in
 interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
 inversions) that are not exposed through any SED class method.
 
+For **relativistic sources in the coasting phase**, the
+:func:`~triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting`
+function implements the :footcite:t:`duran2013radius` equipartition inversion, which
+simultaneously solves for the radius :math:`R`, bulk Lorentz factor :math:`\Gamma`,
+equipartition energy :math:`E`, and the derived microphysical quantities
+:math:`\gamma_e`, :math:`N_e`, and :math:`B`.  See :ref:`barnoil_duran` for the
+theoretical background.
+
 .. currentmodule:: triceratops.radiation.synchrotron.SEDs.one_zone_closure
 
 .. rubric:: Public Inversion Functions
@@ -357,6 +365,7 @@ inversions) that are not exposed through any SED class method.
    invert_powerlaw_implicit_cooling_sed
    invert_powerlaw_implicit_cooling_ssa_sed
    invert_powerlaw_ssa_sed_demarchi
+   invert_barniol_duran_coasting
 
 .. rubric:: Private (Low-Level) Inversion Functions
 
@@ -374,6 +383,7 @@ routines where unit overhead must be minimized.
    _invert_powerlaw_implicit_cooling_sed
    _invert_powerlaw_implicit_cooling_ssa_sed
    _invert_powerlaw_ssa_sed_demarchi
+   _invert_barniol_duran_coasting
 
 ----
 
@@ -414,10 +424,228 @@ debugging or verifying physical parameter ranges.
 
 ----
 
+.. _synch_numerical_sed:
+
+Quadrature SEDs
+------------------
+
+.. seealso::
+
+    - :ref:`synch_numerical_theory` for the mathematics underlying the quadrature algorithm,
+      including kernel tabulation, the integration-by-parts form of the absorption coefficient,
+      and the radiative transfer solution.
+    - The gallery example :ref:`sphx_glr_galleries_synchrotron_b_seds_plot_multi_component_numerical_SED.py`
+      for a worked example with a mixed thermal and power-law electron distribution.
+
+The analytical SED classes described above are highly efficient, but they rest on the assumption that the
+injected electron distribution is a power law. That assumption breaks down in a number of physically
+important scenarios: thermal or quasi-thermal distributions near a shock front, particle spectra evolved
+numerically through cooling and adiabatic expansion, or any multi-component population that cannot be
+described by a single spectral index. In these cases the only reliable approach is direct numerical
+integration of the synchrotron emissivity over the full distribution.
+
+The :class:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine` provides this
+capability. Given any electron distribution — supplied either as a callable function or a pre-sampled
+array — it evaluates the emissivity integral and the self-absorption coefficient on a log-uniform
+:math:`(\nu, \gamma)` grid, solves the radiative transfer equation for a homogeneous source slab, and
+applies relativistic Doppler and cosmological redshift corrections to produce an observed flux density.
+The entire computation is performed in log-space using :func:`~scipy.special.logsumexp`, which keeps it
+numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
+in inference hot loops.
+
+Unlike the stateless :class:`~triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED` subclasses,
+the engine is **stateful**: it pre-tabulates the synchrotron kernel on a grid and caches the resulting
+spline interpolator. This one-time setup cost is paid when the kernel is loaded; subsequent SED
+evaluations are fast lookups against that table.
+
+.. _num_sed_quick_start:
+
+Quick Start
+^^^^^^^^^^^
+
+The minimum workflow is to create the engine, load a kernel, define an electron distribution, and call
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`:
+
+.. code-block:: python
+
+    import numpy as np
+    from astropy import units as u
+    from triceratops.radiation.synchrotron.SEDs.numerical import NumericalSynchrotronEngine
+
+    engine = NumericalSynchrotronEngine()
+    engine.load_avg_first_kernel()          # isotropic pitch-angle distribution
+
+    def N(gamma):
+        """Simple power-law electron distribution in cm^{-3}."""
+        return (1e4 * u.cm**-3) * (gamma / 100.0) ** (-2.5)
+
+    nu = np.geomspace(1e8, 1e18, 300) * u.Hz
+
+    F_nu = engine.compute_flux_density(
+        nu,
+        R=1e16 * u.cm,
+        B=0.5 * u.G,
+        N=N,
+        gamma_min=10.0,
+        gamma_max=1e7,
+        n_gamma=200,
+        luminosity_distance=100 * u.Mpc,
+    )
+
+.. _num_sed_kernels:
+
+Kernels and Initialization
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The first step is always to load a synchrotron kernel. The engine maintains two independent
+interpolators: one for the **fixed pitch-angle** kernel :math:`F(x)` and one for the
+**pitch-angle-averaged** kernel :math:`\bar{F}(x)`. The choice between them determines how the
+electron pitch-angle distribution is treated at evaluation time:
+
+- Call :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel`
+  when the electron pitch angles are isotropically distributed — the appropriate default for most
+  astrophysical environments. No pitch-angle argument is required at evaluation time, and the engine
+  integrates against :math:`\bar{F}(x)` automatically.
+- Call :meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel`
+  when a specific, fixed pitch angle :math:`\alpha` will be supplied at evaluation time. The engine
+  then integrates against :math:`F(x)`.
+
+Either or both interpolators can be loaded on the same engine instance, and calling a load method a
+second time simply overwrites the existing grid — useful for changing the tabulation resolution without
+constructing a new object. Both methods accept keyword arguments that control the grid:
+
+.. code-block:: python
+
+    # Finer grid over a wider domain — useful for extreme distributions.
+    engine.load_avg_first_kernel(x_min=1e-6, x_max=1e3, num_points=2000)
+
+    # Supply an explicit grid.
+    engine.load_avg_first_kernel(x=np.geomspace(1e-6, 1e3, 2000))
+
+The loaded status of each interpolator can be queried via
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_first_kernel_loaded`
+and
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_avg_first_kernel_loaded`.
+Calling a compute method before the required kernel has been loaded raises a :exc:`RuntimeError`.
+
+.. _num_sed_distribution:
+
+Defining the Electron Distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Every compute method accepts ``N``, the electron number density :math:`dN/d\gamma`, as either a
+callable or an array.
+
+**Callable form.** If ``N`` is a callable, the engine evaluates it on the quadrature :math:`\gamma`
+grid it builds internally from ``gamma_min``, ``gamma_max``, and ``n_gamma``. The callable receives a
+bare :obj:`numpy.ndarray` of Lorentz factors and must return the distribution as an
+:class:`~astropy.units.Quantity` in :math:`\mathrm{cm}^{-3}`, or a bare array interpreted in those
+units:
+
+.. code-block:: python
+
+    def N(gamma):
+        N0 = 1e4 * u.cm**-3
+        return N0 * (gamma / 100.0) ** (-2.5)
+
+    F_nu = engine.compute_flux_density(nu, B=B, R=R, N=N,
+                                        gamma_min=100.0, gamma_max=1e7, n_gamma=300, ...)
+
+**Pre-sampled array form.** If ``N`` is an array, supply the corresponding :math:`\gamma` values via
+the ``gamma`` keyword. This form is useful when the distribution has been computed externally — for
+example from a numerical ODE solver or a PIC simulation — and the quadrature grid is already fixed:
+
+.. code-block:: python
+
+    gamma_array = np.geomspace(1.0, 1e8, 500)
+    N_array = compute_my_distribution(gamma_array)   # Quantity in cm^{-3}
+
+    F_nu = engine.compute_flux_density(nu, B=B, R=R, N=N_array, gamma=gamma_array, ...)
+
+Multi-component distributions — such as a thermal pool plus a non-thermal tail — can be handled either
+by summing the distribution functions before passing them to the engine, or by evaluating the engine
+separately for each component and summing the resulting **intensities**. The former is more efficient;
+the latter is useful for isolating the spectral contribution of each component.
+
+.. _num_sed_radiative:
+
+Radiative Quantities and Radiative Transfer
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The engine exposes the individual stages of the SED computation as separate methods, which are useful
+for diagnostics and for building custom pipelines. The key quantities are the **emissivity**
+:math:`j_\nu`, the **self-absorption coefficient** :math:`\alpha_\nu`, the **source function**
+:math:`S_\nu = j_\nu / \alpha_\nu`, and the **specific intensity** :math:`I_\nu`.
+
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity`
+returns :math:`j_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}`;
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption`
+returns :math:`|\alpha_\nu|` in :math:`\mathrm{cm^{-1}}`;
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function`
+returns :math:`S_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}`. All three accept the
+same ``N``, ``gamma``, ``gamma_min``, ``gamma_max``, and ``n_gamma`` arguments.
+
+When a fixed pitch angle is required, pass it via the ``alpha`` keyword. Passing ``alpha=None`` (the
+default) selects the pitch-angle-averaged path:
+
+.. code-block:: python
+
+    # Isotropic distribution (averaged kernel).
+    j_nu = engine.compute_emissivity(nu, B=0.5*u.G, N=N, gamma_min=100, gamma_max=1e7)
+
+    # Fixed pitch angle (requires load_first_kernel to have been called).
+    j_nu = engine.compute_emissivity(nu, B=0.5*u.G, N=N, alpha=np.pi/4 * u.rad,
+                                     gamma_min=100, gamma_max=1e7)
+
+The radiative transfer equation for a homogeneous source of line-of-sight depth :math:`R` is solved by
+
+.. math::
+
+    I_\nu = S_\nu \bigl(1 - e^{-\tau_\nu}\bigr), \qquad \tau_\nu = |\alpha_\nu|\,R.
+
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity`
+implements this directly and returns :math:`I_\nu` in the rest frame of the source. The
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity`
+variant additionally applies bulk Doppler and cosmological redshift corrections before returning the
+observed specific intensity.
+
+.. _num_sed_flux:
+
+Observed Flux Density
+^^^^^^^^^^^^^^^^^^^^^^
+
+:meth:`~triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density`
+is the primary end-user method. It applies the full chain — emissivity quadrature, absorption
+coefficient, radiative transfer, Doppler/redshift boost — and returns the observed spectral flux density
+:math:`F_\nu` in :math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+
+For sources with bulk motion, three parameters describe the relativistic state:
+
+.. code-block:: python
+
+    F_nu = engine.compute_flux_density(
+        nu, R=1e16*u.cm, B=0.5*u.G, N=N,
+        z=0.01,             # cosmological redshift
+        beta=0.5,           # bulk speed as fraction of c
+        theta=0.0*u.rad,    # angle between bulk velocity and line of sight
+        luminosity_distance=100*u.Mpc,
+    )
+
+For non-relativistic sources the defaults ``beta=0``, ``theta=0``, ``z=0`` reduce the Doppler factor
+to unity. The distance can be supplied in any of the same forms accepted by the analytical SED classes:
+``luminosity_distance``, ``angular_diameter_distance``, ``proper_distance``, or a redshift ``z``
+combined with an optional ``cosmology`` argument. By default the projected source area is :math:`\pi
+R^2`; pass ``A_eff`` to override this for non-spherical geometries.
+
+----
+
+
 .. _sed_api_reference:
 
 API Reference
 -------------
+
+.. rubric:: Analytical SED Classes
 
 .. currentmodule:: triceratops.radiation.synchrotron.SEDs.one_zone
 
@@ -431,6 +659,23 @@ API Reference
    PowerLaw_SSA_SynchrotronSED
    PowerLaw_Cooling_SSA_SynchrotronSED
    SSA_SED_PowerLaw
+
+.. rubric:: Numerical SED Engine
+
+.. currentmodule:: triceratops.radiation.synchrotron.SEDs.numerical
+
+.. autosummary::
+   :nosignatures:
+
+   NumericalSynchrotronEngine
+   NumericalSynchrotronEngine.load_first_kernel
+   NumericalSynchrotronEngine.load_avg_first_kernel
+   NumericalSynchrotronEngine.compute_emissivity
+   NumericalSynchrotronEngine.compute_absorption
+   NumericalSynchrotronEngine.compute_source_function
+   NumericalSynchrotronEngine.compute_rest_frame_specific_intensity
+   NumericalSynchrotronEngine.compute_specific_intensity
+   NumericalSynchrotronEngine.compute_flux_density
 
 ----
 

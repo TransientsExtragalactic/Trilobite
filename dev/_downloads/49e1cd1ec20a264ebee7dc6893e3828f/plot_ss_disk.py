@@ -1,0 +1,266 @@
+r"""
+Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED
+=========================================================
+
+The Sunyaev-Shakura (SS73) alpha-disk is the canonical steady-state model for
+geometrically thin, optically thick accretion disks.  Viscosity is parameterised
+by a single dimensionless number :math:`\alpha \in (0, 1]`, and the disk
+structure at radius :math:`R` follows simple power-law scalings (in the limit
+:math:`R \gg R_{\rm in}`):
+
+.. math::
+
+    \Sigma \propto R^{-3/4}, \quad
+    T_c \propto R^{-3/4}, \quad
+    H \propto R^{9/8}, \quad
+    \rho \propto R^{-15/8}.
+
+Because each annulus is optically thick, it radiates locally as a blackbody at
+its effective surface temperature :math:`T_{\rm eff}(r)`, leading to a
+characteristic *multi-colour blackbody* spectrum that peaks in the UV/X-ray for
+stellar-mass black holes and in the UV/optical for supermassive ones.
+
+This example shows:
+
+1. The radial disk structure on log-log axes, illustrating the SS73 slopes.
+2. The sensitivity of the surface-density profile to :math:`\alpha` and
+   :math:`\dot{M}`.
+3. The broadband multi-colour blackbody SED computed by integrating the Planck
+   function over all annuli.
+
+Relevant API
+------------
+- :class:`~triceratops.dynamics.accretion.AlphaDisk`
+- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute`
+- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_sed`
+- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_effective_temperature`
+- :meth:`~triceratops.dynamics.accretion.AlphaDisk.compute_bolometric_luminosity`
+"""
+
+# %%
+# Setup
+# -----
+#
+# Import the :class:`~triceratops.dynamics.accretion.AlphaDisk` class together
+# with Astropy units and the Triceratops plot style.
+
+import matplotlib.pyplot as plt
+import numpy as np
+from astropy import constants as const
+from astropy import units as u
+
+from triceratops.dynamics.accretion import AlphaDisk
+from triceratops.utils.plot_utils import set_plot_style
+
+set_plot_style()
+
+# %%
+# Fiducial Parameters
+# -------------------
+#
+# We adopt a stellar-mass black hole typical of an X-ray binary.
+# The inner truncation radius is set to the Schwarzschild ISCO (6 Rg).
+
+M_BH = 10.0 * const.M_sun  # black-hole mass
+mdot = 1.0e16 * u.g / u.s  # accretion rate (≈ 10% of Eddington for 10 M_sun)
+alpha = 0.1  # Shakura-Sunyaev viscosity parameter
+R_g = (const.G * M_BH / const.c**2).to(u.cm)  # gravitational radius
+R_in = (6.0 * R_g).to(u.cm)  # Schwarzschild ISCO
+
+print(f"M_BH   = {M_BH.to(u.Msun):.1f}")
+print(f"mdot   = {mdot:.2e}")
+print(f"alpha  = {alpha}")
+print(f"R_g    = {R_g:.3e}")
+print(f"R_in   = {R_in:.3e}  (= 6 R_g)")
+
+# Radius grid from just outside R_in to 10^4 R_in
+R_grid = np.geomspace(1.01, 1e4, 400) * R_in
+
+disk = AlphaDisk(alpha=alpha)
+
+# %%
+# Radial Disk Structure
+# ---------------------
+#
+# We evaluate :math:`\Sigma`, :math:`T_c`, :math:`H`, and :math:`\rho` as
+# functions of radius and plot the results on log-log axes.  In the far-field
+# limit (:math:`R \gg R_{\rm in}`) each quantity follows a pure power law whose
+# slope matches the SS73 prediction.
+
+result = disk.compute(R_grid, M_BH, mdot, R_in)
+T_eff = disk.compute_effective_temperature(R_grid, M_BH, mdot, R_in)
+
+R_norm = R_grid.to_value(u.cm) / R_in.to_value(u.cm)  # R / R_in
+
+# Reference power laws at R = 100 R_in (anchor to data)
+R_ref = 100.0
+anchor_idx = np.argmin(np.abs(R_norm - R_ref))
+
+fig, axes = plt.subplots(2, 2, figsize=(11, 8), sharex=True)
+ax_Sigma, ax_Tc, ax_H, ax_rho = axes.flat
+
+panel_data = [
+    (ax_Sigma, result["Sigma"].to_value(u.g / u.cm**2), r"$\Sigma$ [g cm$^{-2}$]", -3 / 4, "C0"),
+    (ax_Tc, result["T_c"].to_value(u.K), r"$T_c$ [K]", -3 / 4, "C1"),
+    (ax_H, result["H"].to_value(u.cm) / R_in.to_value(u.cm), r"$H / R_{\rm in}$", 9 / 8, "C2"),
+    (ax_rho, result["rho"].to_value(u.g / u.cm**3), r"$\rho$ [g cm$^{-3}$]", -15 / 8, "C3"),
+]
+
+for ax, vals, ylabel, slope, color in panel_data:
+    ax.loglog(R_norm, vals, color=color, lw=2, label="AlphaDisk")
+
+    # Power-law reference line anchored at R_ref
+    ref_val = vals[anchor_idx]
+    R_pl = np.array([30.0, 3000.0])
+    ax.loglog(
+        R_pl,
+        ref_val * (R_pl / R_ref) ** slope,
+        color="k",
+        ls="--",
+        lw=1.0,
+        label=rf"$\propto R^{{{slope:.3g}}}$",
+    )
+
+    ax.set_ylabel(ylabel)
+    ax.legend(fontsize=8)
+    ax.grid(True, which="both", ls=":", alpha=0.4)
+
+for ax in axes[1]:
+    ax.set_xlabel(r"$R / R_{\rm in}$")
+
+fig.suptitle(
+    rf"SS73 Alpha-Disk Radial Structure  "
+    rf"($M_{{\rm BH}} = 10\,M_\odot$, $\dot{{M}} = 10^{{16}}\,\mathrm{{g\,s^{{-1}}}}$, $\alpha = {alpha}$)",
+    fontsize=11,
+)
+plt.tight_layout()
+plt.show()
+
+# %%
+# Sensitivity to Alpha and Accretion Rate
+# ----------------------------------------
+#
+# The surface density responds most strongly to :math:`\alpha`.  Here we vary
+# :math:`\alpha \in \{0.01, 0.1, 0.3\}` and
+# :math:`\dot{M}_{16} \in \{0.1, 1, 10\}` to show how :math:`\Sigma(R)` shifts
+# (amplitude only — the slope :math:`\propto R^{-3/4}` is universal).
+
+fig, (ax_a, ax_m) = plt.subplots(1, 2, figsize=(11, 5), sharex=True)
+
+# --- vary alpha ---
+for a, ls in zip([0.01, 0.1, 0.3], ["-", "--", ":"]):
+    d = AlphaDisk(alpha=a)
+    Sigma = d.compute(R_grid, M_BH, mdot, R_in)["Sigma"].to_value(u.g / u.cm**2)
+    ax_a.loglog(R_norm, Sigma, ls=ls, lw=2, label=rf"$\alpha = {a}$")
+
+ax_a.set_xlabel(r"$R / R_{\rm in}$")
+ax_a.set_ylabel(r"$\Sigma$ [g cm$^{-2}$]")
+ax_a.set_title(r"Varying $\alpha$  ($\dot{M} = 10^{16}$ g s$^{-1}$)")
+ax_a.legend(fontsize=9)
+ax_a.grid(True, which="both", ls=":", alpha=0.4)
+
+# --- vary mdot ---
+cmap_m = plt.cm.viridis
+mdot_vals = [0.1e16, 1.0e16, 10.0e16]
+for i, m in enumerate(mdot_vals):
+    d = AlphaDisk(alpha=0.1)
+    Sigma = d.compute(R_grid, M_BH, m * u.g / u.s, R_in)["Sigma"].to_value(u.g / u.cm**2)
+    label = rf"$\dot{{M}}_{{\rm 16}} = {m / 1e16:.1g}$"
+    ax_m.loglog(R_norm, Sigma, lw=2, color=cmap_m(i / (len(mdot_vals) - 1)), label=label)
+
+ax_m.set_xlabel(r"$R / R_{\rm in}$")
+ax_m.set_ylabel(r"$\Sigma$ [g cm$^{-2}$]")
+ax_m.set_title(r"Varying $\dot{M}$  ($\alpha = 0.1$)")
+ax_m.legend(fontsize=9)
+ax_m.grid(True, which="both", ls=":", alpha=0.4)
+
+fig.suptitle(r"Surface Density Profile: Parameter Sensitivity", fontsize=11)
+plt.tight_layout()
+plt.show()
+
+# %%
+# Multi-Colour Blackbody SED
+# --------------------------
+#
+# Each annulus radiates as a blackbody at its local effective temperature
+# :math:`T_{\rm eff}(r)`.  Integrating over all annuli gives the observed
+# multi-colour spectrum, which is harder than a single-temperature blackbody
+# but softer than a power law.
+#
+# We compute SEDs for three accretion rates at fixed :math:`\alpha = 0.1` and
+# compare the Wien peak of each single-temperature blackbody (evaluated at the
+# peak :math:`T_{\rm eff}`) to the actual SED peak.
+
+nu = np.geomspace(1e13, 1e19, 500) * u.Hz
+D_L = 10.0 * u.kpc  # fiducial distance
+R_out = 1e4 * R_in  # outer disk boundary
+
+cmap_sed = plt.cm.plasma
+mdot_sed = [0.1e16, 1.0e16, 10.0e16]
+
+fig, (ax_sed, ax_Teff) = plt.subplots(1, 2, figsize=(12, 5))
+
+for i, m_val in enumerate(mdot_sed):
+    m = m_val * u.g / u.s
+    color = cmap_sed((i + 0.5) / len(mdot_sed))
+
+    sed = disk.compute_sed(nu, M_BH, m, R_in, R_out, D_L=D_L)
+    F_mJy = sed["F_nu"].to(u.mJy).value
+
+    L_bol = disk.compute_bolometric_luminosity(M_BH, m, R_in)
+
+    label = rf"$\dot{{M}}_{{16}} = {m_val / 1e16:.1g}$,  $L_{{\rm bol}} = {L_bol.to(u.erg / u.s).value:.1e}$ erg/s"
+    ax_sed.loglog(nu.to_value(u.Hz), F_mJy, color=color, lw=2, label=label)
+
+    # Wien peak from T_eff at r_peak = (49/36) R_in
+    r_peak = (49.0 / 36.0) * R_in
+    T_peak = disk.compute_effective_temperature(r_peak, M_BH, m, R_in)
+    nu_wien = (2.82 * const.k_B * T_peak / const.h).to(u.Hz)
+    ax_sed.axvline(nu_wien.value, color=color, ls=":", lw=1.0, alpha=0.8)
+
+# Band reference lines
+BANDS = {"IR": 3e13, "Optical": 5.5e14, "UV": 1e15, "X-ray": 2.4e17}
+for band, nu_b in BANDS.items():
+    ax_sed.axvline(nu_b, color="grey", ls="--", lw=0.7, alpha=0.5)
+    ax_sed.text(
+        nu_b * 1.15,
+        ax_sed.get_ylim()[0] if ax_sed.get_ylim()[0] > 0 else 1e-12,
+        band,
+        fontsize=7,
+        color="grey",
+        va="bottom",
+        rotation=90,
+    )
+
+ax_sed.set_xlabel(r"Frequency $\nu$ [Hz]")
+ax_sed.set_ylabel(r"Flux density $F_\nu$ [mJy]")
+ax_sed.set_title(rf"Multi-colour BB SED  ($\alpha={alpha}$, $D = {D_L}$)")
+ax_sed.legend(fontsize=7, loc="lower left")
+ax_sed.grid(True, which="both", ls=":", alpha=0.3)
+
+# --- T_eff(r) profile ---
+for i, m_val in enumerate(mdot_sed):
+    m = m_val * u.g / u.s
+    color = cmap_sed((i + 0.5) / len(mdot_sed))
+    T_eff_profile = disk.compute_effective_temperature(R_grid, M_BH, m, R_in)
+    ax_Teff.loglog(
+        R_norm,
+        T_eff_profile.to_value(u.K),
+        color=color,
+        lw=2,
+        label=rf"$\dot{{M}}_{{16}} = {m_val / 1e16:.1g}$",
+    )
+
+ax_Teff.set_xlabel(r"$R / R_{\rm in}$")
+ax_Teff.set_ylabel(r"$T_{\rm eff}$ [K]")
+ax_Teff.set_title(r"Effective Temperature Profile")
+ax_Teff.legend(fontsize=9)
+ax_Teff.grid(True, which="both", ls=":", alpha=0.4)
+
+fig.suptitle(
+    rf"SS73 Alpha-Disk SED  ($M_{{\rm BH}} = 10\,M_\odot$, $\alpha = {alpha}$)",
+    fontsize=11,
+)
+plt.tight_layout()
+# sphinx_gallery_thumbnail_number = -1
+plt.show()

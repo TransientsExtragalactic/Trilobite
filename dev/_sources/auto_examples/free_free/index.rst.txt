@@ -1,0 +1,217 @@
+:orphan:
+
+.. _free_free_gallery:
+
+****************************
+Free-Free Emission Examples
+****************************
+
+These examples cover thermal bremsstrahlung (free-free) radiation in Triceratops — from the
+Gaunt factor corrections that shape the spectrum, through flux prediction for a free-free
+emitting plasma, to the free-free absorption that modifies synchrotron SEDs at low frequencies.
+
+Examples are grouped into three sections:
+
+- **Gaunt Factors** — comparing the analytic and tabulated approximations across frequency and temperature
+- **Free-Free Emission** — computing the flux density and spectrum from a thermal plasma
+- **Free-Free Absorption and Synchrotron** — applying a free-free absorbing screen to a synchrotron SED
+
+.. rubric:: Theory and API
+
+For the underlying physics and derivations, see :ref:`free_free_theory`.
+For the full API reference, see :ref:`free_free_emission`.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Gaunt Factors
+=============
+
+The free-free Gaunt factor :math:`g_{\rm ff}(\nu, T)` is the quantum-mechanical correction
+to the classical bremsstrahlung cross-section. These examples compare the four approximations
+available in Triceratops — two analytic fits and two tabulated interpolators — and show where
+they agree or diverge across the radio-to-X-ray frequency range and over many decades of
+temperature.
+
+**Theory:** :ref:`free_free_theory`
+
+**API:** :ref:`free_free_emission`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The free-free Gaunt factor g_{\rm ff}(\nu, T) is a dimensionless quantum-mechanical correction to the classical Larmor formula for bremsstrahlung.  Its value is of order unity but depends weakly on both frequency and temperature — well enough to matter when computing optical depths or emissivities to better than ~10–20%.">
+
+.. only:: html
+
+  .. image:: /auto_examples/free_free/a_gaunt_factors/images/thumb/sphx_glr_plot_gaunt_factor_comparison_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/free_free/a_gaunt_factors/plot_gaunt_factor_comparison`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparing Free-Free Gaunt Factor Approximations</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Free-Free Emission and Flux Prediction
+=======================================
+
+These examples demonstrate how to compute the observed flux density from a thermal
+free-free emitting plasma.  Starting from the optical depth profile, they build up to
+the full radiative transfer solution and show how the characteristic
+:math:`F_\nu \propto \nu^2` (optically thick) to :math:`F_\nu \propto \nu^{-0.1}`
+(optically thin) transition depends on the emission measure and plasma temperature.
+
+**Theory:** :ref:`free_free_theory`
+
+**API:** :ref:`free_free_emission`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In the optically-thin limit the observed flux density from a homogeneous spherical plasma of radius R at distance d is">
+
+.. only:: html
+
+  .. image:: /auto_examples/free_free/b_emission/images/thumb/sphx_glr_plot_ff_flux_prediction_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/free_free/b_emission/plot_ff_flux_prediction`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Free-Free Flux Density from a Hot Optically-Thin Plasma</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Free-Free Absorption of Synchrotron Emission
+=============================================
+
+When a synchrotron-emitting source is surrounded by ionized gas — as in a radio supernova
+embedded in a dense stellar wind — free-free absorption (FFA) creates a low-frequency
+turnover that is distinct from synchrotron self-absorption (SSA).  Unlike the
+:math:`F_\nu \propto \nu^{5/2}` SSA rise, the FFA-absorbed spectrum rises steeply
+as :math:`F_\nu \propto \nu^2` below the absorption turnover.
+
+These examples show how to construct an FFA-attenuated synchrotron SED using the
+wind optical depth functions from :mod:`triceratops.radiation.free_free.absorption`.
+
+**Theory:** :ref:`free_free_theory`, :ref:`synch_sed_theory`
+
+**API:** :ref:`free_free_emission`, :ref:`synchrotron_seds`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In radio supernovae and GRB afterglows, the synchrotron-emitting shock is often surrounded by ionized circumstellar material (CSM) shed by the progenitor star. This CSM produces free-free absorption (FFA), which attenuates the low-frequency synchrotron emission:">
+
+.. only:: html
+
+  .. image:: /auto_examples/free_free/c_ffa_sed/images/thumb/sphx_glr_plot_ffa_synchrotron_sed_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/free_free/c_ffa_sed/plot_ffa_synchrotron_sed`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Free-Free Absorption of a Synchrotron SED</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+
+   /auto_examples/free_free/a_gaunt_factors/index.rst
+   /auto_examples/free_free/b_emission/index.rst
+   /auto_examples/free_free/c_ffa_sed/index.rst
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: free_free_python.zip </auto_examples/free_free/free_free_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: free_free_jupyter.zip </auto_examples/free_free/free_free_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

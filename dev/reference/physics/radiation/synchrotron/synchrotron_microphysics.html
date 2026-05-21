@@ -27,40 +27,43 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_microphysics';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -69,20 +72,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +117,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -167,8 +176,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -200,11 +209,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -237,8 +253,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -374,18 +395,31 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
@@ -411,33 +445,113 @@
 </details></li>
 </ul>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_overview.html">Synchrotron Emission Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Synchrotron Microphysics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -520,27 +634,28 @@ and normalizing them.</p></li>
 </ol>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#electron-distributions" id="id5">Electron Distributions</a></p>
+<li><p><a class="reference internal" href="#electron-distributions" id="id6">Electron Distributions</a></p>
 <ul>
-<li><p><a class="reference internal" href="#power-law-electron-distributions" id="id6">Power-Law Electron Distributions</a></p></li>
-<li><p><a class="reference internal" href="#broken-power-law-electron-distributions" id="id7">Broken Power-Law Electron Distributions</a></p></li>
+<li><p><a class="reference internal" href="#power-law-electron-distributions" id="id7">Power-Law Electron Distributions</a></p></li>
+<li><p><a class="reference internal" href="#broken-power-law-electron-distributions" id="id8">Broken Power-Law Electron Distributions</a></p></li>
+<li><p><a class="reference internal" href="#maxwell-juttner-distributions" id="id9">Maxwell-Jüttner Distributions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#equipartition-closure" id="id8">Equipartition Closure</a></p></li>
+<li><p><a class="reference internal" href="#equipartition-closure" id="id10">Equipartition Closure</a></p></li>
 </ul>
 </nav>
 <section id="electron-distributions">
-<h2><a class="toc-backref" href="#id5" role="doc-backlink">Electron Distributions</a><a class="headerlink" href="#electron-distributions" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Electron Distributions</a><a class="headerlink" href="#electron-distributions" title="Link to this heading">#</a></h2>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>See <a class="reference internal" href="synchrotron_theory.html#synch-theory-populations"><span class="std std-ref">Synchrotron From A Population of Electrons</span></a> for the corresponding documentation on synchrotron theory.</p>
 </div>
 <p>While it is possible to compute synchrotron emission from an arbitrary population of electrons, in practice, one
-often selects a specific distribution function for their electron population. At current, Triceratops only provides
-explicit support for <strong>power-law electron distributions</strong>; however, the modular nature of the mode makes it a
-straightforward exercise to implement additional distributions in the future.</p>
+often selects a specific distribution function for their electron population. Triceratops provides explicit support
+for three electron distributions: <strong>power-law</strong>, <strong>broken power-law</strong>, and <strong>Maxwell-Jüttner</strong> (thermal). Mixed
+thermal-plus-nonthermal (Maxwell-Jüttner + power-law) populations are also supported.</p>
 <section id="power-law-electron-distributions">
-<h3><a class="toc-backref" href="#id6" role="doc-backlink">Power-Law Electron Distributions</a><a class="headerlink" href="#power-law-electron-distributions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Power-Law Electron Distributions</a><a class="headerlink" href="#power-law-electron-distributions" title="Link to this heading">#</a></h3>
 <p>The most commonly used electron distribution in astrophysical synchrotron modeling is the power-law distribution.
 In this framework, the number density of electrons per unit Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span> is given by:</p>
 <div class="math notranslate nohighlight">
@@ -669,7 +784,7 @@ corresponding Lorentz factor normalization, one could use the following code:</p
 </div>
 </section>
 <section id="broken-power-law-electron-distributions">
-<h3><a class="toc-backref" href="#id7" role="doc-backlink">Broken Power-Law Electron Distributions</a><a class="headerlink" href="#broken-power-law-electron-distributions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Broken Power-Law Electron Distributions</a><a class="headerlink" href="#broken-power-law-electron-distributions" title="Link to this heading">#</a></h3>
 <p>In many astrophysical environments, a single power-law electron distribution is insufficient to
 accurately describe the non-thermal particle population. In such cases, a <strong>broken power-law (BPL)</strong>
 distribution provides a more flexible and physically motivated model.</p>
@@ -814,10 +929,185 @@ power-law distribution with normalization <span class="math notranslate nohighli
 </pre></div>
 </div>
 </section>
+<section id="maxwell-juttner-distributions">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Maxwell-Jüttner Distributions</a><a class="headerlink" href="#maxwell-juttner-distributions" title="Link to this heading">#</a></h3>
+<p>A <strong>Maxwell-Jüttner distribution</strong> is the relativistic thermal equilibrium distribution.
+In the ultra-relativistic limit it takes the form</p>
+<div class="math notranslate nohighlight">
+\[N(\gamma) = \frac{N_{\rm therm}}{2\Theta^3}\,\gamma^2\,e^{-\gamma/\Theta},\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\Theta = kT / (m_e c^2)\)</span> is the dimensionless electron temperature,</p></li>
+<li><p><span class="math notranslate nohighlight">\(N_{\rm therm}\)</span> is the normalization (total number density of thermal electrons).</p></li>
+</ul>
+<p>This distribution is appropriate for modeling thermalized electron populations, such as
+shock-heated plasmas or dense radiative environments where electrons equilibrate to a
+well-defined temperature.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>As with the power-law and broken power-law cases, Triceratops consistently treats the
+Lorentz factor <span class="math notranslate nohighlight">\(\gamma\)</span> as the independent variable. The Maxwell-Jüttner
+distribution is fully specified by <span class="math notranslate nohighlight">\(\Theta\)</span> and its normalization
+<span class="math notranslate nohighlight">\(N_{\rm therm}\)</span>.</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>From a modeling perspective, the Maxwell-Jüttner distribution is fundamentally different
+from power-law distributions in that its shape is fixed by the temperature. As a result,
+synchrotron observables depend only on the normalization and temperature, rather than on
+higher-order moments of a free functional form.</p>
+</div>
+<p>The mean energy density of the Maxwell-Jüttner population is approximated by
+<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[U_e \approx N_{\rm therm}\,m_e c^2\,\Theta\,\frac{6 + 15\Theta}{4 + 5\Theta},\]</div>
+<p>which smoothly interpolates between the non-relativistic and ultra-relativistic limits.</p>
+<section id="mixed-thermal-non-thermal-populations">
+<h4>Mixed Thermal + Non-thermal Populations<a class="headerlink" href="#mixed-thermal-non-thermal-populations" title="Link to this heading">#</a></h4>
+<p>Many astrophysical sources are best described by a <strong>mixed</strong> population containing both
+a thermalized component and a non-thermal power-law tail. Triceratops parameterizes this
+split with a single parameter <span class="math notranslate nohighlight">\(\delta \in [0,1]\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\varepsilon_{E,\rm therm} = \delta\,\varepsilon_E,
+\qquad
+\varepsilon_{E,\rm PL} = (1 - \delta)\,\varepsilon_E.\]</div>
+<p>Each component’s normalization is then computed independently via equipartition.
+Setting <span class="math notranslate nohighlight">\(\delta = 1\)</span> recovers a pure thermal population; <span class="math notranslate nohighlight">\(\delta = 0\)</span>
+recovers the standard power-law-only case.
+.. rubric:: API Reference</p>
+<p><em>current module</em>: <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.html#module-triceratops.radiation.synchrotron.microphysics" title="triceratops.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.synchrotron.microphysics</span></code></a></p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+High-Level API</label><div class="sd-tab-content docutils">
+<p>The following high-level helper functions are provided for working with
+Maxwell-Jüttner and mixed thermal + non-thermal electron populations:</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_MJD_moment.html#triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_MJD_moment" title="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_MJD_moment"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_electron_gamma_MJD_moment</span></code></a></p></td>
+<td><p>Compute the shape factor for the <code class="docutils literal notranslate"><span class="pre">order</span></code>-th moment of the ultra-relativistic Maxwell-Jüttner distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_MJD.html#triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_MJD" title="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_MJD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mean_gamma_MJD</span></code></a></p></td>
+<td><p>Compute the mean Lorentz factor of a Maxwell-Jüttner electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_mean_energy_MJD.html#triceratops.radiation.synchrotron.microphysics.compute_mean_energy_MJD" title="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_MJD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_mean_energy_MJD</span></code></a></p></td>
+<td><p>Compute the mean electron energy of a Maxwell-Jüttner distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_total_number_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_total_number_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_total_number_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_total_number_density</span></code></a></p></td>
+<td><p>Return the total number density of a Maxwell-Jüttner electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_effective_number_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_effective_number_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_effective_number_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_effective_number_density</span></code></a></p></td>
+<td><p>Compute the effective radiating electron number density for a Maxwell-Jüttner distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute the total number density of a Maxwell-Jüttner electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the total number density of a Maxwell-Jüttner electron distribution from the thermal energy density.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_MJD</span></code></a></p></td>
+<td><p>Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner electron distribution.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_MJD_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the bolometric synchrotron emissivity for a Maxwell-Jüttner electron distribution assuming equipartition.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution.html#triceratops.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution" title="triceratops.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_maxwell_juttner_distribution</span></code></a></p></td>
+<td><p>Return a callable ultra-relativistic Maxwell-Jüttner electron distribution.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Low-Level API</label><div class="sd-tab-content docutils">
+<p>Mirroring the high-level interface, the following low-level functions are provided
+for Maxwell-Jüttner distributions and mixed populations:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_compute_MJD_moment</span></code>, which computes the closed-form Maxwell-Jüttner
+moment shape factor <span class="math notranslate nohighlight">\(S^{(\ell)}(\Theta)\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_compute_MJD_n_eff</span></code>, which computes the effective radiating number
+density <span class="math notranslate nohighlight">\(n_{\rm eff} = \int \gamma^2 N(\gamma)\,d\gamma\)</span>.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_normalize_MJD_from_magnetic_field</span></code>, which computes the normalization
+<span class="math notranslate nohighlight">\(N_{\rm therm}\)</span> given a magnetic field strength and equipartition parameters.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_normalize_MJD_from_thermal_energy_density</span></code>, which computes
+<span class="math notranslate nohighlight">\(N_{\rm therm}\)</span> directly from a thermal energy density.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_normalize_MJD_and_PL_from_magnetic_field</span></code>, which computes both
+<span class="math notranslate nohighlight">\(N_{\rm therm}\)</span> and the power-law normalization for mixed populations.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_normalize_MJD_and_PL_from_thermal_energy_density</span></code>, which performs the
+same calculation using the thermal energy density as input.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_compute_bol_emiss_MJD_from_magnetic_field</span></code>, which computes the
+bolometric synchrotron emissivity for a Maxwell-Jüttner population from
+an explicit magnetic field and thermal normalization.</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">_opt_compute_bol_emiss_MJD_from_thermal_energy_density_full</span></code>, which computes
+the bolometric synchrotron emissivity for a Maxwell-Jüttner population using
+the full equipartition closure.</p></li>
+</ul>
+</div>
+</div>
+<p class="rubric">Examples</p>
+<p>As with the power-law and broken power-law cases, these functions are primarily intended
+for use by higher-level modeling routines, but can also be used directly.</p>
+<p>For example, to compute the normalization of a Maxwell-Jüttner distribution from a magnetic
+field strength:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_MJD_norm_from_magnetic_field</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">B</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span>
+<span class="n">Theta</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">epsilon_B</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">N_therm</span> <span class="o">=</span> <span class="n">compute_MJD_norm_from_magnetic_field</span><span class="p">(</span>
+    <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span>
+    <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Thermal number density: </span><span class="si">{</span><span class="n">N_therm</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Similarly, to compute the normalization of a mixed thermal + power-law population:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.microphysics</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">compute_MJD_and_PL_norm_from_thermal_energy_density</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">u_therm</span> <span class="o">=</span> <span class="mf">1e-2</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">erg</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">Theta</span> <span class="o">=</span> <span class="mf">10.0</span>
+<span class="n">p</span> <span class="o">=</span> <span class="mf">3.0</span>
+<span class="n">delta</span> <span class="o">=</span> <span class="mf">0.3</span>
+<span class="n">epsilon_E</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+<span class="n">N_therm</span><span class="p">,</span> <span class="n">N0_pl</span> <span class="o">=</span> <span class="n">compute_MJD_and_PL_norm_from_thermal_energy_density</span><span class="p">(</span>
+    <span class="n">u_therm</span><span class="o">=</span><span class="n">u_therm</span><span class="p">,</span>
+    <span class="n">Theta</span><span class="o">=</span><span class="n">Theta</span><span class="p">,</span>
+    <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+    <span class="n">delta</span><span class="o">=</span><span class="n">delta</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e8</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Thermal density: </span><span class="si">{</span><span class="n">N_therm</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;PL normalization: </span><span class="si">{</span><span class="n">N0_pl</span><span class="si">:</span><span class="s2">.3e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+</section>
 </section>
 <hr class="docutils" />
 <section id="equipartition-closure">
-<h2><a class="toc-backref" href="#id8" role="doc-backlink">Equipartition Closure</a><a class="headerlink" href="#equipartition-closure" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Equipartition Closure</a><a class="headerlink" href="#equipartition-closure" title="Link to this heading">#</a></h2>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>See <a class="reference internal" href="synchrotron_theory.html#synch-equipartition-theory"><span class="std std-ref">Microphysical Closures and Equipartition</span></a> for the corresponding documentation on synchrotron theory.</p>
@@ -833,26 +1123,44 @@ dimensionless parameters:</p>
 <p>As a result, we can (given knowledge of the shock dynamics) compute the normalization of the electron
 distribution and the magnetic field strength directly from the macrophysical quantities. This approach
 has been widely used in the literature to model synchrotron emission from a variety of astrophysical
-sources (e.g. Margutti <em>et al.</em><a class="footnote-reference brackets" href="#footcite-margutti2019cow" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>,
-DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, Wu <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, etc.)</p>
+sources (e.g. Margutti <em>et al.</em><a class="footnote-reference brackets" href="#footcite-margutti2019cow" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>,
+DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, Wu <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>, etc.)</p>
 <p>In Triceratops, the helper functions for performing equipartition closure are provided in the
 <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.html#module-triceratops.radiation.synchrotron.microphysics" title="triceratops.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.synchrotron.microphysics</span></code></a> module. Before highlighting some of these functions, we’ll provide
 the API in the tab-set below:</p>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-4">
+<input checked="checked" id="sd-tab-item-6" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-6">
 High-Level API</label><div class="sd-tab-content docutils">
 <p>The following high-level helper functions are provided for performing equipartition closure:</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_magnetic_field</span></code></a></p></td>
-<td><p>Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_thermal_energy_density</span></code></a></p></td>
-<td><p>Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
-</tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_equipartition_magnetic_field</span></code></a></p></td>
 <td><p>Compute the magnetic field strength from the thermal energy density and epsilon_B.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_PL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the normalization of a power-law electron distribution from microphysical energy-partition parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute the normalization of a broken power-law electron distribution from microphysical parameters.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the normalization of a broken power-law electron distribution from the thermal energy density.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute the total number density of a Maxwell-Jüttner electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the total number density of a Maxwell-Jüttner electron distribution from the thermal energy density.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_magnetic_field</span></code></a></p></td>
+<td><p>Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution from the magnetic field.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_MJD_and_PL_norm_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute normalizations for a mixed Maxwell-Jüttner plus power-law electron distribution.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity</span></code></a></p></td>
 <td><p>Compute the bolometric synchrotron emissivity from an explicit magnetic field and power-law electron distribution.</p></td>
@@ -860,24 +1168,18 @@ High-Level API</label><div class="sd-tab-content docutils">
 <tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_from_thermal_energy_density</span></code></a></p></td>
 <td><p>Compute the bolometric synchrotron emissivity assuming full equipartition.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_BPL_from_thermal_energy_density</span></code></a></p></td>
-<td><p>Compute the bolometric synchrotron emissivity for a broken power-law electrondistribution assuming equipartition.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_thermal_energy_density</span></code></a></p></td>
-<td><p>Compute the normalization of a broken power-law electron distribution from the thermal energy density.</p></td>
-</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_BPL</span></code></a></p></td>
 <td><p>Compute the bolometric synchrotron emissivity from the magnetic field and a broken power-law electron distribution.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html#triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field" title="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_BPL_norm_from_magnetic_field</span></code></a></p></td>
-<td><p>Compute the normalization of a broken power-law electron distribution from microphysical parameters.</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html#triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density" title="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">compute_bol_emissivity_BPL_from_thermal_energy_density</span></code></a></p></td>
+<td><p>Compute the bolometric synchrotron emissivity for a broken power-law electrondistribution assuming equipartition.</p></td>
 </tr>
 </tbody>
 </table>
 </div>
 </div>
-<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-5">
+<input id="sd-tab-item-7" name="sd-tab-set-3" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-7">
 Low-Level API</label><div class="sd-tab-content docutils">
 <p>Mirroring the high-level functions, the following low-level functions are provided for
 performing equipartition closure:</p>
@@ -1011,11 +1313,15 @@ we can use the following code:</p>
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#electron-distributions">Electron Distributions</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#power-law-electron-distributions">Power-Law Electron Distributions</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#broken-power-law-electron-distributions">Broken Power-Law Electron Distributions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#maxwell-juttner-distributions">Maxwell-Jüttner Distributions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-thermal-non-thermal-populations">Mixed Thermal + Non-thermal Populations</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#equipartition-closure">Equipartition Closure</a></li>
@@ -1023,13 +1329,13 @@ we can use the following code:</p>
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_microphysics.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_microphysics.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -1044,8 +1350,8 @@ we can use the following code:</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1079,7 +1385,7 @@ we can use the following code:</p>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

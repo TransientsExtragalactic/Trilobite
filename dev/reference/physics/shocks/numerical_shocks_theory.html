@@ -1,0 +1,2232 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Theory: Numerical Shock Engines &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/numerical_shocks_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Self-Similar Shock Engines" href="self_similar_overview.html" />
+    <link rel="prev" title="Theory: Sedov-Taylor Self-Similar Solution" href="sedov_taylor_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html">triceratops.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Shock Physics in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="overview.html" class="nav-link">Shock Physics in Triceratops</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory: Numerical Shock Engines</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="theory-numerical-shock-engines">
+<span id="numeric-shocks-theory"></span><h1>Theory: Numerical Shock Engines<a class="headerlink" href="#theory-numerical-shock-engines" title="Link to this heading">#</a></h1>
+<p>In many transient applications, the shock evolution is not well approximated by
+a self-similar solution. Self-similar models are extremely useful when the
+ejecta and circumstellar medium (CSM) have simple power-law structures, but real
+systems may have arbitrary ejecta profiles, structured winds, finite shells,
+density jumps, or other environmental features.</p>
+<p>The numerical shock engines evolve
+reduced, low-dimensional models for the shock dynamics by integrating a small set
+of ordinary differential equations. They do not resolve the full hydrodynamic
+structure of the shocked gas; instead, they replace the shocked interaction region
+by a compact set of global variables whose evolution is governed by conservation
+laws and closure assumptions.</p>
+<p>This page develops the theory behind the numerical shock models implemented in
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.html#module-triceratops.dynamics.shocks.numerical" title="triceratops.dynamics.shocks.numerical"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.dynamics.shocks.numerical</span></code></a>, organized into non-relativistic
+and relativistic families.</p>
+<p><strong>Non-relativistic models</strong> (<span class="math notranslate nohighlight">\(v \ll c\)</span>):</p>
+<ol class="arabic simple">
+<li><p>the <a class="reference internal" href="#conservative-snowplow-model"><span class="std std-ref">conservative snowplow model</span></a>
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine.html#triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine" title="triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MomentumConservingShockEngine</span></code></a>);</p></li>
+<li><p>the <a class="reference internal" href="#pressure-driven-thin-shell-model"><span class="std std-ref">pressure-driven thin-shell model</span></a>
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>);</p></li>
+<li><p>the <a class="reference internal" href="#mechanical-internal-energy-model"><span class="std std-ref">mechanical internal-energy model</span></a>
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a>).</p></li>
+</ol>
+<p><strong>Relativistic models</strong> (arbitrary <span class="math notranslate nohighlight">\(\beta\)</span>, Lorentz-invariant jump conditions):</p>
+<ol class="arabic simple">
+<li><p>the <a class="reference internal" href="#relativistic-pressure-driven-shells"><span class="std std-ref">relativistic pressure-driven thin-shell model</span></a>
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelPressureDrivenThinShellShockEngine</span></code></a>).</p></li>
+</ol>
+<p>Each model makes different assumptions about the relevant physics and is
+applicable in different regimes.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id9">Overview</a></p>
+<ul>
+<li><p><a class="reference internal" href="#geometry" id="id10">Geometry</a></p></li>
+<li><p><a class="reference internal" href="#equations-of-motion" id="id11">Equations of Motion</a></p>
+<ul>
+<li><p><a class="reference internal" href="#the-conservation-equation" id="id12">The Conservation Equation</a></p></li>
+<li><p><a class="reference internal" href="#the-momentum-equation" id="id13">The Momentum Equation</a></p></li>
+<li><p><a class="reference internal" href="#the-energy-equation" id="id14">The Energy Equation</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#closure-assumptions" id="id15">Closure Assumptions</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#momentum-conserving-snowplow" id="id16">Momentum-Conserving Snowplow</a></p>
+<ul>
+<li><p><a class="reference internal" href="#assumptions" id="id17">Assumptions</a></p></li>
+<li><p><a class="reference internal" href="#model-equations" id="id18">Model Equations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#pressure-driven-thin-shell-model" id="id19">Pressure-Driven Thin-Shell Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id2" id="id20">Assumptions</a></p></li>
+<li><p><a class="reference internal" href="#id3" id="id21">Model Equations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#mechanical-internal-energy-model" id="id22">Mechanical Internal-Energy Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id5" id="id23">Assumptions</a></p></li>
+<li><p><a class="reference internal" href="#id6" id="id24">Model Equations</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#relativistic-models" id="id25">Relativistic Models</a></p></li>
+<li><p><a class="reference internal" href="#relativistic-pressure-driven-thin-shell-model" id="id26">Relativistic Pressure-Driven Thin-Shell Model</a></p>
+<ul>
+<li><p><a class="reference internal" href="#id7" id="id27">Assumptions</a></p></li>
+<li><p><a class="reference internal" href="#dynamical-state" id="id28">Dynamical State</a></p></li>
+<li><p><a class="reference internal" href="#shock-closure-and-jump-conditions" id="id29">Shock Closure and Jump Conditions</a></p></li>
+<li><p><a class="reference internal" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure" id="id30">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a></p></li>
+<li><p><a class="reference internal" href="#rest-mass-fluxes" id="id31">Rest-Mass Fluxes</a></p></li>
+<li><p><a class="reference internal" href="#id8" id="id32">Equations of Motion</a></p></li>
+<li><p><a class="reference internal" href="#initial-conditions" id="id33">Initial Conditions</a></p></li>
+</ul>
+</li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>While each of the closures described in this document differ in their physics, assumptions,
+and implementations, they share a common derivation starting point: conservation
+laws integrated over a moving spherical control volume. Below we establish the
+geometry and derive the mass, momentum, and energy equations that serve as the
+common foundation for all three models.</p>
+<section id="geometry">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Geometry</a><a class="headerlink" href="#geometry" title="Link to this heading">#</a></h3>
+<p>In establishing these models, we treat the typical geometry of a shock driven by
+an expanding spherical outflow into an ambient medium.
+We use the standard four-region notation for a supernova–CSM interaction:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+    1 &amp;: \text{unshocked ejecta},\\
+    2 &amp;: \text{shocked ejecta},\\
+    3 &amp;: \text{shocked CSM},\\
+    4 &amp;: \text{unshocked CSM}.
+\end{aligned}\end{split}\]</div>
+<p>The reverse shock, contact discontinuity, and forward shock are located at</p>
+<div class="math notranslate nohighlight">
+\[R_{\rm rs}(t)
+&lt;
+R_{\rm cd}(t)
+&lt;
+R_{\rm fs}(t),\]</div>
+<p>with speeds</p>
+<div class="math notranslate nohighlight">
+\[D_{\rm rs} = \dot R_{\rm rs},
+\qquad
+v_{\rm cd} = \dot R_{\rm cd},
+\qquad
+D_{\rm fs} = \dot R_{\rm fs}.\]</div>
+<p>The upstream ejecta and CSM are prescribed by</p>
+<div class="math notranslate nohighlight">
+\[\rho_1(r,t),\qquad u_1(r,t),
+\qquad
+\rho_4(r,t),\qquad u_4(r,t).\]</div>
+<p>Unless stated otherwise, the upstream media are assumed to be cold,</p>
+<div class="math notranslate nohighlight">
+\[P_1 \simeq 0,
+\qquad
+P_4 \simeq 0.\]</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For homologously expanding ejecta,</p>
+<div class="math notranslate nohighlight">
+\[u_1(r,t) = \frac{r}{t},\]</div>
+<p>and the ejecta density can be written as</p>
+<div class="math notranslate nohighlight">
+\[\rho_1(r,t)
+=
+t^{-3}G\!\left(\frac{r}{t}\right).\]</div>
+<p>Equivalently, if the ejecta mass distribution in velocity space is</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_{\rm ej}}{dv}=f(v),\]</div>
+<p>then</p>
+<div class="math notranslate nohighlight">
+\[G(v)
+=
+\frac{f(v)}{4\pi v^2}.\]</div>
+</div>
+</section>
+<section id="equations-of-motion">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Equations of Motion</a><a class="headerlink" href="#equations-of-motion" title="Link to this heading">#</a></h3>
+<section id="the-conservation-equation">
+<h4><a class="toc-backref" href="#id12" role="doc-backlink">The Conservation Equation</a><a class="headerlink" href="#the-conservation-equation" title="Link to this heading">#</a></h4>
+<p>The continuity equation in spherical symmetry is</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial\rho}{\partial t}
++
+\frac{1}{r^2}
+\frac{\partial}{\partial r}
+\left(r^2\rho u\right)
+=
+0.\]</div>
+<p>Define the mass in the moving control volume <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[M_{[a,b]}
+=
+4\pi
+\int_{a(t)}^{b(t)}
+\rho r^2\,dr.\]</div>
+<p>Multiplying the continuity equation by <span class="math notranslate nohighlight">\(4\pi r^2\)</span> and integrating over
+<span class="math notranslate nohighlight">\([a,b]\)</span> using the Leibniz rule gives the moving-control-volume mass equation,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{dM_{[a,b]}}{dt}
+=
+4\pi a^2
+\left[
+    \rho(u-\dot a)
+\right]_{r=a}
+-
+4\pi b^2
+\left[
+    \rho(u-\dot b)
+\right]_{r=b}.
+}\]</div>
+<p>Each term represents the net mass flux through a moving boundary: mass entering
+from the inner face at <span class="math notranslate nohighlight">\(r=a\)</span> with relative inflow velocity <span class="math notranslate nohighlight">\(u-\dot a\)</span>,
+and leaving through the outer face at <span class="math notranslate nohighlight">\(r=b\)</span> with relative outflow
+velocity <span class="math notranslate nohighlight">\(u-\dot b\)</span>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: moving-boundary mass equation</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Multiplying the continuity equation by <span class="math notranslate nohighlight">\(4\pi r^2\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial}{\partial t}\left(4\pi r^2\rho\right)
++
+\frac{\partial}{\partial r}\left(4\pi r^2\rho u\right)
+=
+0.\]</div>
+<p class="sd-card-text">Integrating over <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\int_a^b
+\frac{\partial}{\partial t}
+\left(4\pi r^2\rho\right)\,dr
++
+\left[
+    4\pi r^2\rho u
+\right]_a^b
+=
+0.\]</div>
+<p class="sd-card-text">By the Leibniz rule,</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{dt}
+\int_a^b 4\pi r^2\rho\,dr
+=
+\int_a^b
+\frac{\partial}{\partial t}
+\left(4\pi r^2\rho\right)\,dr
++
+4\pi b^2\rho|_b\,\dot b
+-
+4\pi a^2\rho|_a\,\dot a.\]</div>
+<p class="sd-card-text">Substituting and rearranging gives</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_{[a,b]}}{dt}
+=
+4\pi a^2
+\left[
+    \rho(u-\dot a)
+\right]_{r=a}
+-
+4\pi b^2
+\left[
+    \rho(u-\dot b)
+\right]_{r=b}.\]</div>
+</div>
+</details></section>
+<section id="the-momentum-equation">
+<h4><a class="toc-backref" href="#id13" role="doc-backlink">The Momentum Equation</a><a class="headerlink" href="#the-momentum-equation" title="Link to this heading">#</a></h4>
+<p>The non-relativistic radial momentum equation in spherical symmetry is</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial(\rho u)}{\partial t}
++
+\frac{1}{r^2}
+\frac{\partial}{\partial r}
+\left[
+    r^2(\rho u^2+P)
+\right]
+=
+\frac{2P}{r}.\]</div>
+<p>Define the momentum in the control volume <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\Pi_{[a,b]}
+=
+4\pi
+\int_{a(t)}^{b(t)}
+\rho u r^2\,dr.\]</div>
+<p>The moving-control-volume momentum equation is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+\frac{d\Pi_{[a,b]}}{dt}
+&amp;=
+4\pi a^2
+\left[
+    \rho u(u-\dot a)+P
+\right]_{r=a}
+-
+4\pi b^2
+\left[
+    \rho u(u-\dot b)+P
+\right]_{r=b}
+\\[4pt]
+&amp;\qquad
++
+8\pi
+\int_a^b
+P r\,dr.
+\end{aligned}
+}\end{split}\]</div>
+<p>The first two terms are boundary momentum fluxes plus boundary pressure forces;
+the last term is the spherical-geometry pressure contribution that
+vanishes in the plane-parallel limit.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: moving-boundary momentum equation</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Multiplying the momentum equation by <span class="math notranslate nohighlight">\(4\pi r^2\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial}{\partial t}
+\left(4\pi r^2\rho u\right)
++
+\frac{\partial}{\partial r}
+\left[
+    4\pi r^2(\rho u^2+P)
+\right]
+=
+8\pi rP.\]</div>
+<p class="sd-card-text">Integrating over <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\int_a^b
+\frac{\partial}{\partial t}
+\left(4\pi r^2\rho u\right)\,dr
++
+\left[
+    4\pi r^2(\rho u^2+P)
+\right]_a^b
+=
+8\pi\int_a^b Pr\,dr.\]</div>
+<p class="sd-card-text">By the Leibniz rule,</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{dt}
+\int_a^b 4\pi r^2\rho u\,dr
+=
+\int_a^b
+\frac{\partial}{\partial t}
+\left(4\pi r^2\rho u\right)\,dr
++
+4\pi b^2\rho u|_b\,\dot b
+-
+4\pi a^2\rho u|_a\,\dot a.\]</div>
+<p class="sd-card-text">Rearranging gives</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\Pi_{[a,b]}}{dt}
+=
+4\pi a^2
+\left[
+    \rho u(u-\dot a)+P
+\right]_a
+-
+4\pi b^2
+\left[
+    \rho u(u-\dot b)+P
+\right]_b
++
+8\pi
+\int_a^b Pr\,dr.\]</div>
+</div>
+</details></section>
+<section id="the-energy-equation">
+<h4><a class="toc-backref" href="#id14" role="doc-backlink">The Energy Equation</a><a class="headerlink" href="#the-energy-equation" title="Link to this heading">#</a></h4>
+<p>Define the total energy density as</p>
+<div class="math notranslate nohighlight">
+\[E = \frac{1}{2}\rho u^2 + \rho\epsilon,\]</div>
+<p>where <span class="math notranslate nohighlight">\(\epsilon\)</span> is the specific internal energy. In inviscid spherical flow
+with a volumetric source term <span class="math notranslate nohighlight">\(\dot{q}\)</span> (e.g., radiative cooling),</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial E}{\partial t}
++
+\frac{1}{r^2}
+\frac{\partial}{\partial r}
+\left[r^2(E+P)u\right]
+=
+\dot{q}.\]</div>
+<p>Define the total energy in the control volume <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span> as</p>
+<div class="math notranslate nohighlight">
+\[\mathcal{E}_{[a,b]}
+=
+4\pi\int_{a(t)}^{b(t)}
+E r^2\,dr.\]</div>
+<p>The moving-control-volume energy equation is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{d\mathcal{E}_{[a,b]}}{dt}
+=
+4\pi a^2
+\left[
+    (E+P)(u-\dot a)
+\right]_{r=a}
+-
+4\pi b^2
+\left[
+    (E+P)(u-\dot b)
+\right]_{r=b}
++
+\mathcal{Q}_{[a,b]},
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mathcal{Q}_{[a,b]} = 4\pi\int_a^b \dot{q}\,r^2\,dr\)</span> is the net
+volumetric source integrated over the control volume. The energy flux through each
+boundary involves the enthalpy <span class="math notranslate nohighlight">\(E + P\)</span> rather than the internal energy alone,
+reflecting the <span class="math notranslate nohighlight">\(P\,dV\)</span> work done as mass crosses each face.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The three numerical models treat the energy equation differently:</p>
+<ul class="simple">
+<li><p>The <a class="reference internal" href="#conservative-snowplow-model"><span class="std std-ref">conservative snowplow model</span></a> discards
+the energy equation entirely; shock-generated thermal energy is assumed to be
+radiated away immediately and no internal energy is retained.</p></li>
+<li><p>The <a class="reference internal" href="#pressure-driven-thin-shell-model"><span class="std std-ref">pressure-driven thin-shell model</span></a>
+replaces the energy equation with algebraic Rankine–Hugoniot expressions for
+the post-shock pressures; no internal energy is evolved.</p></li>
+<li><p>The <a class="reference internal" href="#mechanical-internal-energy-model"><span class="std std-ref">mechanical model</span></a> evolves separate
+internal energies <span class="math notranslate nohighlight">\(U_2\)</span> and <span class="math notranslate nohighlight">\(U_3\)</span> for the shocked ejecta and
+shocked CSM as independent ODEs.</p></li>
+</ul>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: moving-boundary energy equation</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Multiplying the energy equation by <span class="math notranslate nohighlight">\(4\pi r^2\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial}{\partial t}\left(4\pi r^2 E\right)
++
+\frac{\partial}{\partial r}\left[4\pi r^2(E+P)u\right]
+=
+4\pi r^2\dot{q}.\]</div>
+<p class="sd-card-text">Integrating over <span class="math notranslate nohighlight">\(a(t)&lt;r&lt;b(t)\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\int_a^b
+\frac{\partial}{\partial t}\left(4\pi r^2 E\right)\,dr
++
+\left[4\pi r^2(E+P)u\right]_a^b
+=
+\mathcal{Q}_{[a,b]}.\]</div>
+<p class="sd-card-text">By the Leibniz rule,</p>
+<div class="math notranslate nohighlight">
+\[\frac{d}{dt}
+\int_a^b 4\pi r^2 E\,dr
+=
+\int_a^b
+\frac{\partial}{\partial t}\left(4\pi r^2 E\right)\,dr
++
+4\pi b^2 E|_b\,\dot b
+-
+4\pi a^2 E|_a\,\dot a.\]</div>
+<p class="sd-card-text">Rearranging gives</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\mathcal{E}_{[a,b]}}{dt}
+=
+4\pi a^2
+\left[
+    (E+P)(u-\dot a)
+\right]_{r=a}
+-
+4\pi b^2
+\left[
+    (E+P)(u-\dot b)
+\right]_{r=b}
++
+\mathcal{Q}_{[a,b]}.\]</div>
+</div>
+</details></section>
+</section>
+<section id="closure-assumptions">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Closure Assumptions</a><a class="headerlink" href="#closure-assumptions" title="Link to this heading">#</a></h3>
+<p>All three models describe the same physical interaction: freely expanding ejecta
+collide with an external medium, generating a reverse shock, a contact
+discontinuity, and a forward shock. The distinction between the models lies not in
+the upstream physics, but in the closure used for the shocked region. The table
+below summarizes the key properties of each closure.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 22.0%" />
+<col style="width: 26.0%" />
+<col style="width: 26.0%" />
+<col style="width: 26.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Property</p></th>
+<th class="head"><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine.html#triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine" title="triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MomentumConservingShockEngine</span></code></a></p></th>
+<th class="head"><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a></p></th>
+<th class="head"><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Geometry</p></td>
+<td><p>Razor-thin single shell; <span class="math notranslate nohighlight">\(R_{\rm rs}\approx R_{\rm cd}\approx R_{\rm fs}\)</span></p></td>
+<td><p>Thin single shell; <span class="math notranslate nohighlight">\(R_{\rm rs}\approx R_{\rm cd}\approx R_{\rm fs}\)</span></p></td>
+<td><p>Two finite-width layers separated by <span class="math notranslate nohighlight">\(R_{\rm cd}\)</span></p></td>
+</tr>
+<tr class="row-odd"><td><p>State variables</p></td>
+<td><p><span class="math notranslate nohighlight">\(R_{\rm sh},\;M_{\rm sh},\;\Pi_{\rm sh}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(R_{\rm sh},\;v_{\rm sh},\;M_{\rm sh}\)</span></p></td>
+<td><p><span class="math notranslate nohighlight">\(R_{\rm cd},\;v_{\rm cd},\;M_2,\;M_3,\;U_2,\;U_3,\;\Delta_2,\;\Delta_3\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Shell acceleration</p></td>
+<td><p>Advective momentum fluxes from upstream</p></td>
+<td><p>Pressure difference <span class="math notranslate nohighlight">\(P_2-P_3\)</span> (Rankine–Hugoniot)</p></td>
+<td><p>Pressure difference <span class="math notranslate nohighlight">\(P_2-P_3\)</span> (layer-averaged)</p></td>
+</tr>
+<tr class="row-odd"><td><p>Pressure model</p></td>
+<td><p>None; thermal energy is discarded</p></td>
+<td><p>Instantaneous post-shock Rankine–Hugoniot</p></td>
+<td><p>Layer-averaged from evolved internal energies <span class="math notranslate nohighlight">\(U_i\)</span></p></td>
+</tr>
+<tr class="row-even"><td><p>Internal energy</p></td>
+<td><p>Discarded (fully radiative limit)</p></td>
+<td><p>Not evolved; algebraic</p></td>
+<td><p>Evolved as independent ODEs</p></td>
+</tr>
+<tr class="row-odd"><td><p>Radiative losses</p></td>
+<td><p>Implicit (all shock energy radiated immediately)</p></td>
+<td><p>Optional source term</p></td>
+<td><p>Explicit <span class="math notranslate nohighlight">\(\dot{U}_{{\rm rad},i}\)</span> per layer</p></td>
+</tr>
+<tr class="row-even"><td><p>Best suited for</p></td>
+<td><p>Radiative snowplow; late-time remnants</p></td>
+<td><p>Intermediate regime; semi-analytic pressure balance</p></td>
+<td><p>Adiabatic or partially radiative shocked gas</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="momentum-conserving-snowplow">
+<span id="conservative-snowplow-model"></span><h2><a class="toc-backref" href="#id16" role="doc-backlink">Momentum-Conserving Snowplow</a><a class="headerlink" href="#momentum-conserving-snowplow" title="Link to this heading">#</a></h2>
+<p>The momentum-conserving snowplow
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine.html#triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine" title="triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MomentumConservingShockEngine</span></code></a>)
+is the simplest of the three numerical closures. It collapses the entire shocked
+interaction region into a single razor-thin shell of mass <span class="math notranslate nohighlight">\(M_{\rm sh}\)</span> and
+evolves that shell purely through conservation of mass and momentum. No internal
+energy is retained: shock-generated thermal energy is assumed to be radiated away
+immediately, so the shell remains cold and its only dynamical degree of freedom is
+its bulk momentum.</p>
+<p>This closure is the natural description of a <strong>radiative snowplow</strong> — the phase of
+shock evolution in which cooling is so efficient that the post-shock gas cannot
+remain hot and instead accumulates in a thin, dense, cold slab.</p>
+<section id="assumptions">
+<h3><a class="toc-backref" href="#id17" role="doc-backlink">Assumptions</a><a class="headerlink" href="#assumptions" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The shocked region (<span class="math notranslate nohighlight">\(R_{\rm rs} &lt; r &lt; R_{\rm fs}\)</span>) collapses to a
+razor-thin shell at a single radius <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span>, so that
+<span class="math notranslate nohighlight">\(R_{\rm rs}\simeq R_{\rm cd}\simeq R_{\rm fs}\equiv R_{\rm sh}\)</span>.</p></li>
+<li><p>The shell velocity equals the contact-discontinuity velocity:
+<span class="math notranslate nohighlight">\(D_{\rm rs}\simeq v_{\rm cd}\simeq D_{\rm fs}\equiv v_{\rm sh}\)</span>.</p></li>
+<li><p>Shock-generated thermal energy is radiated instantly; no pressure reservoir is
+retained.</p></li>
+<li><p>Mass and momentum are conserved; the energy equation is discarded.</p></li>
+<li><p>The upstream media are cold: <span class="math notranslate nohighlight">\(P_1 \simeq P_4 \simeq 0\)</span>.</p></li>
+</ul>
+</section>
+<section id="model-equations">
+<h3><a class="toc-backref" href="#id18" role="doc-backlink">Model Equations</a><a class="headerlink" href="#model-equations" title="Link to this heading">#</a></h3>
+<p>Taking <span class="math notranslate nohighlight">\(a=R_{\rm rs}\)</span> and <span class="math notranslate nohighlight">\(b=R_{\rm fs}\)</span> in the momentum equation
+and collapsing to the razor-thin limit, the geometric pressure integral is
+smaller than the boundary terms by a factor of order the fractional shell
+thickness and is neglected. Applying the Rankine–Hugoniot momentum condition at
+each shock front replaces the downstream flux-plus-pressure terms by upstream
+momentum fluxes, so that for cold upstreams,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{d\Pi_{\rm sh}}{dt}
+=
+4\pi R_{\rm sh}^2
+\rho_1(R_{\rm sh},t)\,u_1(R_{\rm sh},t)\bigl[u_1(R_{\rm sh},t)-v_{\rm sh}\bigr]
+-
+4\pi R_{\rm sh}^2
+\rho_4(R_{\rm sh},t)\,u_4(R_{\rm sh},t)\bigl[v_{\rm sh}-u_4(R_{\rm sh},t)\bigr].
+}\]</div>
+<p>The mass-loading rates at each shock are</p>
+<div class="math notranslate nohighlight">
+\[\dot M_1
+=
+4\pi R_{\rm sh}^2
+\rho_1(R_{\rm sh},t)
+\left[
+    u_1(R_{\rm sh},t)-v_{\rm sh}
+\right],
+\qquad
+\dot M_4
+=
+4\pi R_{\rm sh}^2
+\rho_4(R_{\rm sh},t)
+\left[
+    v_{\rm sh}-u_4(R_{\rm sh},t)
+\right].\]</div>
+<p>The complete conservative snowplow system is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm sh}}{dt}
+    &amp;=
+    v_{\rm sh},
+    \\[4pt]
+    \frac{dM_{\rm sh}}{dt}
+    &amp;=
+    \dot M_1+\dot M_4,
+    \\[4pt]
+    \frac{d\Pi_{\rm sh}}{dt}
+    &amp;=
+    u_{1,\rm sh}\dot M_1
+    +
+    u_{4,\rm sh}\dot M_4,
+    \\[4pt]
+    v_{\rm sh}
+    &amp;=
+    \frac{\Pi_{\rm sh}}{M_{\rm sh}},
+\end{aligned}
+}\end{split}\]</div>
+<p>where
+<span class="math notranslate nohighlight">\(u_{1,\rm sh}=u_1(R_{\rm sh},t)\)</span> and <span class="math notranslate nohighlight">\(u_{4,\rm sh}=u_4(R_{\rm sh},t)\)</span>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: acceleration form</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">Since <span class="math notranslate nohighlight">\(\Pi_{\rm sh}=M_{\rm sh}v_{\rm sh}\)</span>, the product rule gives</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\Pi_{\rm sh}}{dt}
+=
+M_{\rm sh}\frac{dv_{\rm sh}}{dt}
++
+v_{\rm sh}\frac{dM_{\rm sh}}{dt}.\]</div>
+<p class="sd-card-text">Substituting the mass-loading rates,</p>
+<div class="math notranslate nohighlight">
+\[M_{\rm sh}\frac{dv_{\rm sh}}{dt}
+=
+(u_{1,\rm sh}-v_{\rm sh})\dot M_1
++
+(u_{4,\rm sh}-v_{\rm sh})\dot M_4.\]</div>
+<p class="sd-card-text">Expanding,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+M_{\rm sh}\frac{dv_{\rm sh}}{dt}
+=
+4\pi R_{\rm sh}^2
+\left[
+    \rho_{1,\rm sh}
+    (u_{1,\rm sh}-v_{\rm sh})^2
+    -
+    \rho_{4,\rm sh}
+    (v_{\rm sh}-u_{4,\rm sh})^2
+\right].
+}\]</div>
+<p class="sd-card-text">This form makes the physics explicit: faster ejecta overtaking the shell from
+behind accelerates it, while swept-up CSM ahead of the shell decelerates it.</p>
+</div>
+</details><p>For <strong>homologous ejecta</strong> (<span class="math notranslate nohighlight">\(u_1 = r/t\)</span>) and <strong>stationary CSM</strong>
+(<span class="math notranslate nohighlight">\(u_4 = 0\)</span>), the system reduces to</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm sh}}{dt}
+    &amp;=
+    v_{\rm sh},
+    \\[4pt]
+    \frac{dM_{\rm sh}}{dt}
+    &amp;=
+    4\pi R_{\rm sh}^2
+    \left[
+        \rho_1(R_{\rm sh},t)
+        \left(
+            \frac{R_{\rm sh}}{t}-v_{\rm sh}
+        \right)
+        +
+        \rho_4(R_{\rm sh},t)\,v_{\rm sh}
+    \right],
+    \\[4pt]
+    \frac{d\Pi_{\rm sh}}{dt}
+    &amp;=
+    4\pi R_{\rm sh}^2
+    \rho_1(R_{\rm sh},t)
+    \frac{R_{\rm sh}}{t}
+    \left(
+        \frac{R_{\rm sh}}{t}-v_{\rm sh}
+    \right),
+    \\[4pt]
+    v_{\rm sh}
+    &amp;=
+    \frac{\Pi_{\rm sh}}{M_{\rm sh}}.
+\end{aligned}
+}\end{split}\]</div>
+<hr class="docutils" />
+</section>
+</section>
+<section id="pressure-driven-thin-shell-model">
+<span id="id1"></span><h2><a class="toc-backref" href="#id19" role="doc-backlink">Pressure-Driven Thin-Shell Model</a><a class="headerlink" href="#pressure-driven-thin-shell-model" title="Link to this heading">#</a></h2>
+<p>The pressure-driven thin-shell model
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">PressureDrivenThinShellShockEngine</span></code></a>)
+also collapses the shocked interaction region into a single thin shell of mass
+<span class="math notranslate nohighlight">\(M_{\rm sh}=M_2+M_3\)</span>, radius <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span>, and velocity
+<span class="math notranslate nohighlight">\(v_{\rm sh}\)</span>. However, rather than driving the shell with advective momentum
+fluxes, it estimates the immediate post-shock pressures from the Rankine–Hugoniot
+jump conditions and uses their net difference to accelerate the shell.</p>
+<p>This closure is intermediate in complexity: it incorporates pressure physics
+without requiring the evolution of separate internal-energy variables for each
+shocked layer. It is particularly well suited to scenarios where one wants a
+pressure-balance approximation without the additional overhead of the full
+mechanical model.</p>
+<section id="id2">
+<h3><a class="toc-backref" href="#id20" role="doc-backlink">Assumptions</a><a class="headerlink" href="#id2" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>The shocked region collapses to a thin shell at <span class="math notranslate nohighlight">\(R_{\rm sh}\)</span>, so that
+<span class="math notranslate nohighlight">\(R_{\rm rs}\simeq R_{\rm cd}\simeq R_{\rm fs}\equiv R_{\rm sh}\)</span>.</p></li>
+<li><p>The shell is accelerated by the pressure difference
+<span class="math notranslate nohighlight">\(P_2 - P_3\)</span> across the contact discontinuity.</p></li>
+<li><p>The pressures <span class="math notranslate nohighlight">\(P_2\)</span> and <span class="math notranslate nohighlight">\(P_3\)</span> are evaluated algebraically from the
+instantaneous Rankine–Hugoniot jump conditions; no internal energy is evolved.</p></li>
+<li><p>The upstream media are cold: <span class="math notranslate nohighlight">\(P_1 \simeq P_4 \simeq 0\)</span>.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The pressures <span class="math notranslate nohighlight">\(P_2\)</span> and <span class="math notranslate nohighlight">\(P_3\)</span> in this model are <strong>instantaneous</strong>
+algebraic functions of the upstream state and the shell velocity — they are not
+evolved as thermodynamic quantities.</p>
+</div>
+</section>
+<section id="id3">
+<h3><a class="toc-backref" href="#id21" role="doc-backlink">Model Equations</a><a class="headerlink" href="#id3" title="Link to this heading">#</a></h3>
+<p>The shell acceleration is closed by the net post-shock pressure force,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+M_{\rm sh}
+\frac{dv_{\rm sh}}{dt}
+=
+4\pi R_{\rm sh}^2
+\left(P_2-P_3\right).
+}\]</div>
+<p>For a cold, strong, non-relativistic shock with compression ratio
+<span class="math notranslate nohighlight">\(\chi = (\hat\gamma+1)/(\hat\gamma-1)\)</span>, the downstream pressure is</p>
+<div class="math notranslate nohighlight">
+\[P_d
+=
+\rho_u v_{\rm rel}^2
+\left(
+    1-\frac{1}{\chi}
+\right).\]</div>
+<p>Defining the ejecta–shell velocity lag <span class="math notranslate nohighlight">\(\Delta \equiv u_1(R_{\rm sh},t) - v_{\rm sh}\)</span>,
+the post-shock pressures are</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+P_2
+=
+\rho_1(R_{\rm sh},t)
+\,\Delta^2
+\left(
+    1-\frac{1}{\chi}
+\right),
+\qquad
+P_3
+=
+\rho_4(R_{\rm sh},t)
+\left[
+    v_{\rm sh}-u_4(R_{\rm sh},t)
+\right]^2
+\left(
+    1-\frac{1}{\chi}
+\right).
+}\]</div>
+<p>The shell mass evolves through mass loading at both shock fronts:</p>
+<div class="math notranslate nohighlight">
+\[\frac{dM_2}{dt}
+=
+4\pi R_{\rm sh}^2\,
+\rho_1(R_{\rm sh},t)\,\Delta,
+\qquad
+\frac{dM_3}{dt}
+=
+4\pi R_{\rm sh}^2\,
+\rho_4(R_{\rm sh},t)
+\left[
+    v_{\rm sh}-u_4(R_{\rm sh},t)
+\right].\]</div>
+<p>The complete pressure-driven thin-shell system is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm sh}}{dt}
+    &amp;=
+    v_{\rm sh},
+    \\[6pt]
+    \frac{dv_{\rm sh}}{dt}
+    &amp;=
+    \frac{4\pi R_{\rm sh}^2}{M_{\rm sh}}
+    \left(
+        1-\frac{1}{\chi}
+    \right)
+    \left[
+        \rho_1(R_{\rm sh},t)\,\Delta^2
+        -
+        \rho_4(R_{\rm sh},t)
+        \left(v_{\rm sh}-u_4(R_{\rm sh},t)\right)^2
+    \right],
+    \\[6pt]
+    \frac{dM_{\rm sh}}{dt}
+    &amp;=
+    4\pi R_{\rm sh}^2
+    \left[
+        \rho_1(R_{\rm sh},t)\,\Delta
+        +
+        \rho_4(R_{\rm sh},t)
+        \left(v_{\rm sh}-u_4(R_{\rm sh},t)\right)
+    \right],
+\end{aligned}
+}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta \equiv u_1(R_{\rm sh},t) - v_{\rm sh}\)</span>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: post-shock pressure from Rankine–Hugoniot</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In the shock rest frame, momentum conservation across a non-relativistic shock is</p>
+<div class="math notranslate nohighlight">
+\[P_u+\rho_u v_u^2
+=
+P_d+\rho_d v_d^2.\]</div>
+<p class="sd-card-text">For a cold upstream (<span class="math notranslate nohighlight">\(P_u\simeq 0\)</span>) with compression ratio
+<span class="math notranslate nohighlight">\(\chi=\rho_d/\rho_u\)</span>, mass conservation gives <span class="math notranslate nohighlight">\(v_d = v_u/\chi\)</span>, so</p>
+<div class="math notranslate nohighlight">
+\[\rho_u v_u^2
+=
+P_d+\rho_u\frac{v_u^2}{\chi}.\]</div>
+<p class="sd-card-text">Hence</p>
+<div class="math notranslate nohighlight">
+\[P_d
+=
+\rho_u v_u^2
+\left(1-\frac{1}{\chi}\right).\]</div>
+<p class="sd-card-text">For the reverse shock, <span class="math notranslate nohighlight">\(v_u=\Delta\equiv u_1(R_{\rm sh},t)-v_{\rm sh}\)</span>;
+for the forward shock, <span class="math notranslate nohighlight">\(v_u=v_{\rm sh}-u_4(R_{\rm sh},t)\)</span>.</p>
+</div>
+</details><p>For <strong>homologous ejecta</strong> (<span class="math notranslate nohighlight">\(u_1 = r/t\)</span>) and <strong>stationary CSM</strong>
+(<span class="math notranslate nohighlight">\(u_4 = 0\)</span>), the velocity lag simplifies to
+<span class="math notranslate nohighlight">\(\Delta = R_{\rm sh}/t - v_{\rm sh}\)</span> and the system reduces to</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm sh}}{dt}
+    &amp;=
+    v_{\rm sh},
+    \\[6pt]
+    \frac{dv_{\rm sh}}{dt}
+    &amp;=
+    \frac{4\pi R_{\rm sh}^2}{M_{\rm sh}}
+    \left(
+        1-\frac{1}{\chi}
+    \right)
+    \left[
+        \rho_1(R_{\rm sh},t)\,\Delta^2
+        -
+        \rho_4(R_{\rm sh},t)\,v_{\rm sh}^2
+    \right],
+    \\[6pt]
+    \frac{dM_{\rm sh}}{dt}
+    &amp;=
+    4\pi R_{\rm sh}^2
+    \left[
+        \rho_1(R_{\rm sh},t)\,\Delta
+        +
+        \rho_4(R_{\rm sh},t)\,v_{\rm sh}
+    \right],
+\end{aligned}
+}\end{split}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Delta = R_{\rm sh}/t - v_{\rm sh}\)</span>.</p>
+<hr class="docutils" />
+</section>
+</section>
+<section id="mechanical-internal-energy-model">
+<span id="id4"></span><h2><a class="toc-backref" href="#id22" role="doc-backlink">Mechanical Internal-Energy Model</a><a class="headerlink" href="#mechanical-internal-energy-model" title="Link to this heading">#</a></h2>
+<p>The mechanical model
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html#triceratops.dynamics.shocks.numerical.MechanicalShockEngine" title="triceratops.dynamics.shocks.numerical.MechanicalShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">MechanicalShockEngine</span></code></a>)
+is the most physically complete of the three numerical closures. Rather than
+collapsing the shocked region into a single shell, it assigns separate masses,
+internal energies, and effective volumes to the shocked ejecta (Region 2) and
+shocked CSM (Region 3), and evolves all of them as coupled ODEs.</p>
+<p>This closure is appropriate when the shocked gas stores thermal energy that
+continues to provide pressure support over dynamical timescales — the regime
+relevant to adiabatic or partially radiative shocks early in the evolution of a
+remnant.</p>
+<section id="id5">
+<h3><a class="toc-backref" href="#id23" role="doc-backlink">Assumptions</a><a class="headerlink" href="#id5" title="Link to this heading">#</a></h3>
+<ul>
+<li><p>The contact discontinuity at <span class="math notranslate nohighlight">\(R_{\rm cd}\)</span> separates two finite-width
+shocked layers:</p>
+<div class="math notranslate nohighlight">
+\[R_{\rm rs} = R_{\rm cd} - \Delta_2,
+\qquad
+R_{\rm fs} = R_{\rm cd} + \Delta_3.\]</div>
+</li>
+<li><p>The shock speeds are <span class="math notranslate nohighlight">\(D_{\rm rs} = v_{\rm cd} - \dot\Delta_2\)</span> and
+<span class="math notranslate nohighlight">\(D_{\rm fs} = v_{\rm cd} + \dot\Delta_3\)</span>.</p></li>
+<li><p>The volumes of the shocked layers are approximated by thin-slab expressions,</p>
+<div class="math notranslate nohighlight">
+\[V_2 \simeq 4\pi R_{\rm cd}^2\Delta_2,
+\qquad
+V_3 \simeq 4\pi R_{\rm cd}^2\Delta_3.\]</div>
+</li>
+<li><p>The layer-averaged pressures are thermodynamic functions of the evolved internal
+energies:</p>
+<div class="math notranslate nohighlight">
+\[P_i = (\hat\gamma_i-1)\frac{U_i}{V_i}.\]</div>
+</li>
+<li><p>The contact discontinuity is accelerated by the net pressure force with effective
+mass <span class="math notranslate nohighlight">\(M_{\rm eff}=M_2+M_3\)</span>.</p></li>
+<li><p>The upstream media are cold: <span class="math notranslate nohighlight">\(P_1\simeq P_4\simeq 0\)</span>.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>In this model, <span class="math notranslate nohighlight">\(P_2\)</span> and <span class="math notranslate nohighlight">\(P_3\)</span> are <strong>not</strong> instantaneous
+Rankine–Hugoniot pressures. They are layer-averaged pressures obtained from
+the internal-energy budget of each shocked region, and they evolve continuously
+as mass is swept up and work is done by expansion.</p>
+</div>
+</section>
+<section id="id6">
+<h3><a class="toc-backref" href="#id24" role="doc-backlink">Model Equations</a><a class="headerlink" href="#id6" title="Link to this heading">#</a></h3>
+<p>The full state vector is</p>
+<div class="math notranslate nohighlight">
+\[{\bf y}
+=
+\left(
+    R_{\rm cd},\;
+    v_{\rm cd},\;
+    M_2,\;
+    M_3,\;
+    U_2,\;
+    U_3,\;
+    \Delta_2,\;
+    \Delta_3
+\right).\]</div>
+<p>The mass-loading equations are</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{dM_2}{dt}
+=
+4\pi R_{\rm rs}^2
+\rho_1(R_{\rm rs},t)
+\left[
+    u_1(R_{\rm rs},t)-D_{\rm rs}
+\right],
+\qquad
+\frac{dM_3}{dt}
+=
+4\pi R_{\rm fs}^2
+\rho_4(R_{\rm fs},t)
+\left[
+    D_{\rm fs}-u_4(R_{\rm fs},t)
+\right].
+}\]</div>
+<p>The contact-discontinuity equation of motion is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+(M_2+M_3)
+\frac{dv_{\rm cd}}{dt}
+=
+4\pi R_{\rm cd}^2(P_2-P_3).
+}\]</div>
+<p>The internal energies evolve according to</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\frac{dU_i}{dt}
+=
+\dot U_{{\rm sh},i}
++
+\dot U_{{\rm ad},i}
++
+\dot U_{{\rm rad},i},
+\qquad
+i\in\{2,3\},
+}\]</div>
+<p>with the shock-heating term</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\dot U_{{\rm sh},i}
+=
+\frac{1}{\hat\gamma_i-1}
+\left(
+    \frac{\chi_i-1}{\chi_i^2}
+\right)
+v_{{\rm rel},i}^2
+\frac{dM_i}{dt},
+}\]</div>
+<p>where
+<span class="math notranslate nohighlight">\(v_{{\rm rel},2}=u_1(R_{\rm rs},t)-D_{\rm rs}\)</span> and
+<span class="math notranslate nohighlight">\(v_{{\rm rel},3}=D_{\rm fs}-u_4(R_{\rm fs},t)\)</span>,
+the adiabatic expansion term</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\dot U_{{\rm ad},i}
+=
+-(\hat\gamma_i-1)U_i
+\left(
+    2\frac{v_{\rm cd}}{R_{\rm cd}}
+    +
+    \frac{\dot\Delta_i}{\Delta_i}
+\right),
+}\]</div>
+<p>and <span class="math notranslate nohighlight">\(\dot U_{{\rm rad},i}\)</span> an external radiative loss to be specified by the
+user. The layer widths are closed by the layer sound speed,</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\dot\Delta_i\simeq c_{s,i},
+\qquad
+c_{s,i}^2
+\simeq
+\hat\gamma_i\frac{P_i V_i}{M_i}.
+}\]</div>
+<p>Collecting all equations, the minimal mechanical model is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm cd}}{dt}
+    &amp;=
+    v_{\rm cd},
+    \\[6pt]
+    \frac{dM_2}{dt}
+    &amp;=
+    4\pi R_{\rm rs}^2
+    \rho_1(R_{\rm rs},t)
+    \left[
+        u_1(R_{\rm rs},t)-D_{\rm rs}
+    \right],
+    \\[6pt]
+    \frac{dM_3}{dt}
+    &amp;=
+    4\pi R_{\rm fs}^2
+    \rho_4(R_{\rm fs},t)
+    \left[
+        D_{\rm fs}-u_4(R_{\rm fs},t)
+    \right],
+    \\[6pt]
+    (M_2+M_3)
+    \frac{dv_{\rm cd}}{dt}
+    &amp;=
+    4\pi R_{\rm cd}^2(P_2-P_3),
+    \\[6pt]
+    \frac{dU_i}{dt}
+    &amp;=
+    \dot U_{{\rm sh},i}
+    +
+    \dot U_{{\rm ad},i}
+    +
+    \dot U_{{\rm rad},i},
+    \\[6pt]
+    \dot\Delta_i
+    &amp;\simeq
+    c_{s,i}.
+\end{aligned}
+}\end{split}\]</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: shock-heating source term</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">For a cold, strong, non-relativistic shock, the compression ratio is</p>
+<div class="math notranslate nohighlight">
+\[\chi_i
+=
+\frac{\hat\gamma_i+1}{\hat\gamma_i-1}.\]</div>
+<p class="sd-card-text">The downstream pressure generated by upstream relative velocity <span class="math notranslate nohighlight">\(v_{\rm rel}\)</span> is</p>
+<div class="math notranslate nohighlight">
+\[P_d
+=
+\rho_u v_{\rm rel}^2
+\left(1-\frac{1}{\chi_i}\right).\]</div>
+<p class="sd-card-text">Since <span class="math notranslate nohighlight">\(\rho_d=\chi_i\rho_u\)</span>, the downstream specific internal energy is</p>
+<div class="math notranslate nohighlight">
+\[\varepsilon_{{\rm int},d}
+=
+\frac{1}{\hat\gamma_i-1}
+\frac{P_d}{\rho_d}
+=
+\frac{1}{\hat\gamma_i-1}
+\left(
+    \frac{\chi_i-1}{\chi_i^2}
+\right)
+v_{\rm rel}^2.\]</div>
+<p class="sd-card-text">Multiplying by the mass-loading rate gives the shock-heating source
+<span class="math notranslate nohighlight">\(\dot U_{{\rm sh},i} = \varepsilon_{{\rm int},i}\,dM_i/dt\)</span>.</p>
+</div>
+</details><details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: adiabatic energy loss</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">The adiabatic term follows from <span class="math notranslate nohighlight">\(P\,dV\)</span> work:</p>
+<div class="math notranslate nohighlight">
+\[\dot U_{{\rm ad},i}
+=
+-P_i\frac{dV_i}{dt}
+=
+-(\hat\gamma_i-1)U_i
+\frac{d\ln V_i}{dt}.\]</div>
+<p class="sd-card-text">With <span class="math notranslate nohighlight">\(V_i\simeq4\pi R_{\rm cd}^2\Delta_i\)</span>,</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\ln V_i}{dt}
+=
+2\frac{v_{\rm cd}}{R_{\rm cd}}
++
+\frac{\dot\Delta_i}{\Delta_i},\]</div>
+<p class="sd-card-text">giving the boxed expression for <span class="math notranslate nohighlight">\(\dot U_{{\rm ad},i}\)</span>.</p>
+</div>
+</details></section>
+</section>
+<section id="relativistic-models">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">Relativistic Models</a><a class="headerlink" href="#relativistic-models" title="Link to this heading">#</a></h2>
+<p>We now generalize to the relativistic regime. The geometry remains the standard
+four-region structure, but the dynamics and shock jump conditions are governed by
+special relativity. The upstream media are specified by their <strong>comoving
+rest-mass densities</strong> and <strong>lab-frame velocities</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\rho_1(r,t),\;\beta_1(r,t)
+\qquad\text{(unshocked ejecta)},\]</div>
+<div class="math notranslate nohighlight">
+\[\rho_4(r,t),\;\beta_4(r,t)
+\qquad\text{(unshocked CSM)}.\]</div>
+<p>The lab-frame Lorentz factors are <span class="math notranslate nohighlight">\(\Gamma_i = 1/\!\sqrt{1-\beta_i^2}\)</span>.
+At the shell radius we write <span class="math notranslate nohighlight">\(\rho_{i,\rm sh}\equiv\rho_i(R_{\rm sh},t)\)</span>,
+<span class="math notranslate nohighlight">\(\beta_{i,\rm sh}\equiv\beta_i(R_{\rm sh},t)\)</span>, and
+<span class="math notranslate nohighlight">\(\Gamma_{i,\rm sh}\equiv(1-\beta_{i,\rm sh}^2)^{-1/2}\)</span>.</p>
+<hr class="docutils" />
+</section>
+<section id="relativistic-pressure-driven-thin-shell-model">
+<span id="relativistic-pressure-driven-shells"></span><h2><a class="toc-backref" href="#id26" role="doc-backlink">Relativistic Pressure-Driven Thin-Shell Model</a><a class="headerlink" href="#relativistic-pressure-driven-thin-shell-model" title="Link to this heading">#</a></h2>
+<p>The relativistic pressure-driven thin-shell model
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine.html#triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine" title="triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelPressureDrivenThinShellShockEngine</span></code></a>)
+is the relativistic analogue of the
+<a class="reference internal" href="#pressure-driven-thin-shell-model"><span class="std std-ref">non-relativistic pressure-driven thin-shell model</span></a>.
+The shocked region is collapsed to a geometrically thin shell at a single radius
+<span class="math notranslate nohighlight">\(R_{\rm sh}\)</span>, and the shell dynamics are governed by the net post-shock
+pressure difference across the contact discontinuity, evaluated from the
+relativistic Rankine–Hugoniot jump conditions.</p>
+<section id="id7">
+<h3><a class="toc-backref" href="#id27" role="doc-backlink">Assumptions</a><a class="headerlink" href="#id7" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p>Thin-shell geometry:
+<span class="math notranslate nohighlight">\(R_{\rm rs}\simeq R_{\rm cd}\simeq R_{\rm fs}\equiv R_{\rm sh}\)</span>.</p></li>
+<li><p>The shell moves at the contact-discontinuity speed:
+<span class="math notranslate nohighlight">\(dR_{\rm sh}/dt = c\beta_{\rm sh}\)</span>.</p></li>
+<li><p>Shell momentum is driven by the net pressure force
+<span class="math notranslate nohighlight">\(4\pi R_{\rm sh}^2(P_2-P_3)\)</span> across the contact discontinuity.</p></li>
+<li><p>Upstream media are cold: <span class="math notranslate nohighlight">\(P_1\simeq P_4\simeq 0\)</span>.</p></li>
+<li><p>The model is adiabatic; no radiative losses are included.</p></li>
+</ul>
+</section>
+<section id="dynamical-state">
+<h3><a class="toc-backref" href="#id28" role="doc-backlink">Dynamical State</a><a class="headerlink" href="#dynamical-state" title="Link to this heading">#</a></h3>
+<p>In the relativistic case, shocked internal energy contributes to the shell
+inertia alongside the baryonic rest mass, so the shell is described by its
+<strong>lab-frame four-momentum</strong>. The dynamical state vector is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\mathbf{y}(t)
+=
+\bigl(
+    R_{\rm sh},\;
+    M_{\rm sh},\;
+    E_{\rm sh},\;
+    \Pi_{\rm sh}
+\bigr),
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(M_{\rm sh}\)</span> is the <strong>swept baryonic rest mass</strong>, <span class="math notranslate nohighlight">\(E_{\rm sh}\)</span>
+is the <strong>lab-frame total energy</strong>, and <span class="math notranslate nohighlight">\(\Pi_{\rm sh}\)</span> is the <strong>lab-frame
+radial momentum</strong> of the shocked shell.</p>
+<p>The shell velocity follows algebraically from the four-momentum ratio,</p>
+<div class="math notranslate nohighlight" id="equation-rel-pd-beta-from-energy-momentum">
+<span class="eqno">(1)<a class="headerlink" href="#equation-rel-pd-beta-from-energy-momentum" title="Link to this equation">#</a></span>\[\boxed{
+\beta_{\rm sh}
+=
+\frac{\Pi_{\rm sh}\,c}{E_{\rm sh}},
+\qquad
+\Gamma_{\rm sh}
+=
+\frac{1}{\sqrt{1-\beta_{\rm sh}^2}},
+\qquad
+w_{\rm sh}
+=
+\Gamma_{\rm sh}\beta_{\rm sh}.
+}\]</div>
+<p>Here <span class="math notranslate nohighlight">\(w_{\rm sh} = \Gamma_{\rm sh}\beta_{\rm sh}\)</span> is the <strong>proper
+velocity</strong> of the shell, the spatial component of the four-velocity. This
+parametrization remains well behaved as <span class="math notranslate nohighlight">\(\beta_{\rm sh}\to 1\)</span>.</p>
+<p>The shell-frame energy is the Lorentz-invariant norm of the four-momentum,</p>
+<div class="math notranslate nohighlight" id="equation-rel-pd-shell-frame-energy">
+<span class="eqno">(2)<a class="headerlink" href="#equation-rel-pd-shell-frame-energy" title="Link to this equation">#</a></span>\[E'_{\rm sh}
+=
+\sqrt{E_{\rm sh}^2 - \Pi_{\rm sh}^2\,c^2},\]</div>
+<p>so the effective inertial mass <span class="math notranslate nohighlight">\(\mathcal{M}_{\rm sh}=E'_{\rm sh}/c^2\)</span>
+needs no independent evolution.</p>
+</section>
+<section id="shock-closure-and-jump-conditions">
+<h3><a class="toc-backref" href="#id29" role="doc-backlink">Shock Closure and Jump Conditions</a><a class="headerlink" href="#shock-closure-and-jump-conditions" title="Link to this heading">#</a></h3>
+<p>In the thin-shell approximation, both shocks travel at the shell speed
+<span class="math notranslate nohighlight">\(\beta_{\rm sh}\)</span>. The upstream speed in the shell (downstream) frame
+follows from relativistic velocity addition:</p>
+<div class="math notranslate nohighlight">
+\[\beta_{\rm rel,2}
+=
+\left|
+    \frac{\beta_{1,\rm sh}-\beta_{\rm sh}}
+    {1-\beta_{1,\rm sh}\,\beta_{\rm sh}}
+\right|,
+\qquad
+\beta_{\rm rel,3}
+=
+\left|
+    \frac{\beta_{\rm sh}-\beta_{4,\rm sh}}
+    {1-\beta_{\rm sh}\,\beta_{4,\rm sh}}
+\right|,\]</div>
+<p>with Lorentz factors
+<span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}=(1-\beta_{\rm rel,i}^2)^{-1/2}\)</span>.</p>
+<p>For a cold upstream and ideal-gas downstream with adiabatic index
+<span class="math notranslate nohighlight">\(\hat\gamma\)</span>, the relativistic Rankine–Hugoniot conditions give the
+post-shock pressure and energy-loading coefficient:</p>
+<div class="math notranslate nohighlight">
+\[P_d^{({\rm RH})}
+=
+\rho_u\,c^2
+(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1),
+\qquad
+\eta_d
+=
+\frac{e_d}{\rho_d\,c^2}
+=
+\Gamma_{\rm rel},\]</div>
+<p>where <span class="math notranslate nohighlight">\(e_d = \rho_d c^2 + u_d\)</span> is the downstream comoving total energy
+density. The coefficient <span class="math notranslate nohighlight">\(\eta_d c^2\)</span> is the shell-frame energy injected
+per unit swept rest mass.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: relativistic Rankine–Hugoniot jump conditions</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">For a cold upstream (<span class="math notranslate nohighlight">\(P_u=0\)</span>, <span class="math notranslate nohighlight">\(e_u=\rho_u c^2\)</span>) and a
+relativistic ideal gas downstream, the Taub adiabat and the
+Rankine–Hugoniot conservation laws give (in the shock rest frame, with
+upstream Lorentz factor <span class="math notranslate nohighlight">\(\Gamma_{\rm rel}\)</span>):</p>
+<p class="sd-card-text"><strong>Compression ratio:</strong></p>
+<div class="math notranslate nohighlight">
+\[\frac{\rho_d}{\rho_u}
+=
+\frac{\hat\gamma\Gamma_{\rm rel}+1}{\hat\gamma-1}.\]</div>
+<p class="sd-card-text"><strong>Downstream pressure:</strong></p>
+<div class="math notranslate nohighlight">
+\[P_d
+=
+\rho_u c^2(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1).\]</div>
+<p class="sd-card-text"><strong>Energy-loading coefficient</strong> <span class="math notranslate nohighlight">\(\eta_d\)</span>:
+using <span class="math notranslate nohighlight">\(e_d = \rho_d c^2 + P_d/(\hat\gamma-1)\)</span> and the compression ratio,</p>
+<div class="math notranslate nohighlight">
+\[\eta_d
+=
+\frac{e_d}{\rho_d c^2}
+=
+1 + \frac{P_d}{(\hat\gamma-1)\,\rho_d c^2}
+=
+1 + \frac{(\Gamma_{\rm rel}-1)(\hat\gamma\Gamma_{\rm rel}+1)}
+         {(\hat\gamma\Gamma_{\rm rel}+1)}
+=
+\Gamma_{\rm rel}.\]</div>
+</div>
+</details></section>
+<section id="numerical-implementation-pre-tabulation-and-exact-pressure-closure">
+<h3><a class="toc-backref" href="#id30" role="doc-backlink">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a><a class="headerlink" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure" title="Link to this heading">#</a></h3>
+<p>The engine does not evaluate the ODE pressures directly from
+<span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span>.  Instead it uses the <em>exact</em> Rankine–Hugoniot
+result derived by combining baryon conservation, energy conservation, and
+momentum conservation in the shock frame.</p>
+<p><strong>Pre-tabulation.</strong>  At initialisation the engine solves the full cold-upstream
+relativistic implicit equation</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{\hat\gamma-1}{\hat\gamma}\right)
+\frac{\Gamma_{1s}\beta_{1s}}{\Gamma_{2s}\beta_{2s}}
+\left[\frac{\Gamma_{1s}}{\Gamma_{2s}} - 1\right]
+=
+\Gamma_{1s}^2\beta_{1s}^2
+\left(1 - \frac{\beta_{2s}}{\beta_{1s}}\right)\]</div>
+<p>numerically for <span class="math notranslate nohighlight">\(\beta_{2s}(\beta_{1s})\)</span> at each node of a fine
+<span class="math notranslate nohighlight">\(\beta_{1s}\)</span> grid.  Separate tables are built for the adiabatic
+indices <span class="math notranslate nohighlight">\(\hat\gamma_1\)</span> (reverse shock) and <span class="math notranslate nohighlight">\(\hat\gamma_4\)</span>
+(forward shock).  During ODE integration the downstream shock-frame
+speeds <span class="math notranslate nohighlight">\(\beta_{2s}\)</span> and <span class="math notranslate nohighlight">\(\beta_{3s}\)</span> are obtained by linear
+interpolation from these tables, avoiding a root-find at every function
+evaluation.</p>
+<p><strong>Post-shock quantities.</strong>  Given the upstream shock-frame speed
+<span class="math notranslate nohighlight">\(\beta_{is}\)</span> and the interpolated downstream speed <span class="math notranslate nohighlight">\(\beta_{ds}\)</span>
+at each face, the post-shock state used in the ODE is:</p>
+<p><em>Compression ratio</em> (baryon-number conservation in the shock frame):</p>
+<div class="math notranslate nohighlight">
+\[R_i
+=
+\frac{\rho_{d,i}}{\rho_{u,i}}
+=
+\frac{\Gamma_{is}\,\beta_{is}}{\Gamma_{ds}\,\beta_{ds}}.\]</div>
+<p><em>Post-shock density</em>:</p>
+<div class="math notranslate nohighlight">
+\[\rho_{d,i} = R_i\,\rho_{u,i}.\]</div>
+<p><em>Post-shock pressure</em> (combining energy and momentum conservation in the
+shock frame for a cold upstream <span class="math notranslate nohighlight">\(P_u=0\)</span>):</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+P_i
+=
+\rho_{u,i}\,c^2\,\Gamma_{is}^2\,\beta_{is}^2
+\!\left(1 - \frac{\beta_{ds}}{\beta_{is}}\right).
+}\]</div>
+<p>This is the <em>exact</em> result from the relativistic jump conditions; no
+additional correction factor is required.  In the non-relativistic limit
+<span class="math notranslate nohighlight">\(\beta_{is}\ll 1\)</span> it reduces to the correct strong-shock Hugoniot
+pressure <span class="math notranslate nohighlight">\((1-1/\chi)\,\rho_u v_{\rm rel}^2\)</span>.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: exact pressure from conservation laws</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">In the shock rest frame, for a cold upstream (<span class="math notranslate nohighlight">\(P_u=0\)</span>,
+<span class="math notranslate nohighlight">\(e_u=\rho_u c^2\)</span>), the three conservation conditions are:</p>
+<p class="sd-card-text"><em>Baryon conservation</em> (mass flux):</p>
+<div class="math notranslate nohighlight">
+\[\rho_u\,\Gamma_{us}\,\beta_{us}
+=
+\rho_d\,\Gamma_{ds}\,\beta_{ds}.\]</div>
+<p class="sd-card-text"><em>Energy conservation</em> (energy flux):</p>
+<div class="math notranslate nohighlight">
+\[\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}
+=
+(e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}.\]</div>
+<p class="sd-card-text"><em>Momentum conservation</em> (momentum flux):</p>
+<div class="math notranslate nohighlight">
+\[\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+=
+(e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}^2
++
+P_d.\]</div>
+<p class="sd-card-text">Dividing the energy equation by <span class="math notranslate nohighlight">\(\beta_{us}\)</span> gives</p>
+<div class="math notranslate nohighlight">
+\[(e_d+P_d)\,\Gamma_{ds}^2\,\beta_{ds}
+=
+\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}.\]</div>
+<p class="sd-card-text">Substituting into the momentum equation:</p>
+<div class="math notranslate nohighlight">
+\[\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+=
+\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}\,\beta_{ds}
++
+P_d.\]</div>
+<p class="sd-card-text">Rearranging gives the boxed formula:</p>
+<div class="math notranslate nohighlight">
+\[P_d
+=
+\rho_u\,c^2\,\Gamma_{us}^2\,\beta_{us}^2
+\!\left(1-\frac{\beta_{ds}}{\beta_{us}}\right).\]</div>
+</div>
+</details><p><em>Energy-loading coefficient</em> (from the ideal-gas equation of state applied
+to the reconstructed downstream state):</p>
+<div class="math notranslate nohighlight">
+\[\eta_i
+=
+1 + \frac{P_i}{(\hat\gamma-1)\,\rho_{d,i}\,c^2}.\]</div>
+<p>When <span class="math notranslate nohighlight">\(\beta_{ds}\)</span> is the exact solution of the implicit equation,
+<span class="math notranslate nohighlight">\(\eta_i\)</span> is numerically equal to <span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span> from
+the standard jump-condition result.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The diagnostic pressures stored in
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.numerical.RelThinShellShockState.html#triceratops.dynamics.shocks.numerical.RelThinShellShockState" title="triceratops.dynamics.shocks.numerical.RelThinShellShockState"><code class="xref py py-class docutils literal notranslate"><span class="pre">RelThinShellShockState</span></code></a>
+are the <strong>simplified</strong> Hugoniot pressures
+<span class="math notranslate nohighlight">\(P_d^{({\rm RH})}=\rho_u\,c^2(\Gamma_{\rm rel}-1)(\hat\gamma\,\Gamma_{\rm rel}+1)\)</span>,
+evaluated with <span class="math notranslate nohighlight">\(\Gamma_{\rm rel}\)</span> from the lab-frame velocity-addition
+formula.  The ODE integration uses the exact momentum-flux pressures
+<span class="math notranslate nohighlight">\(P_i\)</span> defined above.</p>
+</div>
+</section>
+<section id="rest-mass-fluxes">
+<h3><a class="toc-backref" href="#id31" role="doc-backlink">Rest-Mass Fluxes</a><a class="headerlink" href="#rest-mass-fluxes" title="Link to this heading">#</a></h3>
+<p>The baryonic rest mass swept into the shell per unit time follows from the
+comoving-frame baryon-flux condition at each shock face:</p>
+<div class="math notranslate nohighlight" id="equation-rel-pd-mdot-reverse-shell-speed">
+<span class="eqno">(3)<a class="headerlink" href="#equation-rel-pd-mdot-reverse-shell-speed" title="Link to this equation">#</a></span>\[\boxed{
+\dot{M}_2
+=
+4\pi R_{\rm sh}^2\,\rho_{1,\rm sh}\,\Gamma_{1,\rm sh}\,c
+\left(\beta_{1,\rm sh}-\beta_{\rm sh}\right),
+}\]</div>
+<div class="math notranslate nohighlight" id="equation-rel-pd-mdot-forward-shell-speed">
+<span class="eqno">(4)<a class="headerlink" href="#equation-rel-pd-mdot-forward-shell-speed" title="Link to this equation">#</a></span>\[\boxed{
+\dot{M}_3
+=
+4\pi R_{\rm sh}^2\,\rho_{4,\rm sh}\,\Gamma_{4,\rm sh}\,c
+\left(\beta_{\rm sh}-\beta_{4,\rm sh}\right),
+}\]</div>
+<p>clamped to be non-negative.</p>
+</section>
+<section id="id8">
+<h3><a class="toc-backref" href="#id32" role="doc-backlink">Equations of Motion</a><a class="headerlink" href="#id8" title="Link to this heading">#</a></h3>
+<p>Combining baryon conservation, energy loading, and the pressure-driven momentum
+source gives the closed adiabatic system:</p>
+<div class="math notranslate nohighlight" id="equation-rel-pd-closed-energy-momentum-system">
+<span class="eqno">(5)<a class="headerlink" href="#equation-rel-pd-closed-energy-momentum-system" title="Link to this equation">#</a></span>\[\begin{split}\boxed{
+\begin{aligned}
+    \frac{dR_{\rm sh}}{dt}
+    &amp;=
+    c\,\beta_{\rm sh},
+    \\[6pt]
+    \frac{dM_{\rm sh}}{dt}
+    &amp;=
+    \dot{M}_2+\dot{M}_3,
+    \\[6pt]
+    \frac{dE_{\rm sh}}{dt}
+    &amp;=
+    \Gamma_{\rm sh}\,c^2
+    \!\left(
+        \Gamma_{\rm rel,2}\,\dot{M}_2
+        +
+        \Gamma_{\rm rel,3}\,\dot{M}_3
+    \right),
+    \\[6pt]
+    \frac{d\Pi_{\rm sh}}{dt}
+    &amp;=
+    w_{\rm sh}\,c
+    \!\left(
+        \Gamma_{\rm rel,2}\,\dot{M}_2
+        +
+        \Gamma_{\rm rel,3}\,\dot{M}_3
+    \right)
+    +
+    4\pi R_{\rm sh}^2
+    \!\left(P_2-P_3\right),
+    \\[6pt]
+    \beta_{\rm sh}
+    &amp;=
+    \frac{\Pi_{\rm sh}\,c}{E_{\rm sh}}.
+\end{aligned}
+}\end{split}\]</div>
+<p>The <span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\)</span> factors in the energy and momentum equations are
+the energy-loading coefficients <span class="math notranslate nohighlight">\(\eta_i=\Gamma_{\rm rel,i}\)</span> from the
+Rankine–Hugoniot solution. The pressures <span class="math notranslate nohighlight">\(P_2\)</span> and <span class="math notranslate nohighlight">\(P_3\)</span> are the
+exact momentum-flux pressures defined in the pre-tabulation section above.</p>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Derivation: energy and momentum loading</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<p class="sd-card-text">When newly shocked material is incorporated into the thin shell, it is
+boosted from the upstream frame to the shell rest frame, depositing
+shell-frame energy at the rate</p>
+<div class="math notranslate nohighlight">
+\[\dot{E}'_{\rm load}
+=
+c^2
+\!\left(
+    \eta_2\,\dot{M}_2
+    +
+    \eta_3\,\dot{M}_3
+\right)
+=
+c^2
+\!\left(
+    \Gamma_{\rm rel,2}\,\dot{M}_2
+    +
+    \Gamma_{\rm rel,3}\,\dot{M}_3
+\right).\]</div>
+<p class="sd-card-text">Since the newly shocked material is at rest in the shell frame, its
+contribution to the lab-frame four-momentum is parallel to the shell
+four-velocity <span class="math notranslate nohighlight">\(U^\mu_{\rm sh}\propto(\Gamma_{\rm sh},\,w_{\rm sh})\)</span>.
+Boosting to the lab frame:</p>
+<div class="math notranslate nohighlight">
+\[\dot{E}_{\rm load}
+=
+\Gamma_{\rm sh}\,\dot{E}'_{\rm load},
+\qquad
+\dot{\Pi}_{\rm load}
+=
+\frac{w_{\rm sh}}{c}\,\dot{E}'_{\rm load},\]</div>
+<p class="sd-card-text">which are the source terms appearing in the ODE system above.</p>
+<p class="sd-card-text">In the non-relativistic limit <span class="math notranslate nohighlight">\(w_{\rm sh}\,c\to v_{\rm sh}\)</span> and
+<span class="math notranslate nohighlight">\(\Gamma_{\rm rel,i}\to 1\)</span>, giving
+<span class="math notranslate nohighlight">\(\dot{\Pi}_{\rm load}\to v_{\rm sh}(\dot{M}_2+\dot{M}_3)\)</span> — the
+familiar variable-mass momentum term.</p>
+<p class="sd-card-text">The pressure-driven term <span class="math notranslate nohighlight">\(4\pi R_{\rm sh}^2(P_2-P_3)\)</span> is the net
+relativistic pressure force on the contact discontinuity. It is not added
+on top of a snowplow momentum-flux term; it is the sole dynamical source
+beyond mass loading, defining the pressure-driven approximation.</p>
+</div>
+</details></section>
+<section id="initial-conditions">
+<h3><a class="toc-backref" href="#id33" role="doc-backlink">Initial Conditions</a><a class="headerlink" href="#initial-conditions" title="Link to this heading">#</a></h3>
+<p>The initial state is specified by the triple <span class="math notranslate nohighlight">\((R_0,\,\beta_0,\,M_0)\)</span> at
+time <span class="math notranslate nohighlight">\(t_0\)</span>. Assuming a cold shell,</p>
+<div class="math notranslate nohighlight">
+\[E_0 = M_0\,c^2\,\Gamma_0,
+\qquad
+\Pi_0 = M_0\,c\,\Gamma_0\,\beta_0,
+\qquad
+\Gamma_0 = \frac{1}{\sqrt{1-\beta_0^2}}.\]</div>
+</section>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="sedov_taylor_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Theory: Sedov-Taylor Self-Similar Solution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="self_similar_overview.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Self-Similar Shock Engines</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#geometry">Geometry</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equations-of-motion">Equations of Motion</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-conservation-equation">The Conservation Equation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-momentum-equation">The Momentum Equation</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#the-energy-equation">The Energy Equation</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#closure-assumptions">Closure Assumptions</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#momentum-conserving-snowplow">Momentum-Conserving Snowplow</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#assumptions">Assumptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#model-equations">Model Equations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#pressure-driven-thin-shell-model">Pressure-Driven Thin-Shell Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id2">Assumptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id3">Model Equations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mechanical-internal-energy-model">Mechanical Internal-Energy Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id5">Assumptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id6">Model Equations</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relativistic-models">Relativistic Models</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#relativistic-pressure-driven-thin-shell-model">Relativistic Pressure-Driven Thin-Shell Model</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id7">Assumptions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#dynamical-state">Dynamical State</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#shock-closure-and-jump-conditions">Shock Closure and Jump Conditions</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#numerical-implementation-pre-tabulation-and-exact-pressure-closure">Numerical Implementation: Pre-tabulation and Exact Pressure Closure</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#rest-mass-fluxes">Rest-Mass Fluxes</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#id8">Equations of Motion</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#initial-conditions">Initial Conditions</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/shocks/numerical_shocks_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

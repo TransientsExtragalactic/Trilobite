@@ -27,40 +27,43 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_seds';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
@@ -69,20 +72,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +117,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -167,8 +176,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -200,11 +209,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -237,8 +253,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -374,18 +395,31 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
@@ -411,33 +445,113 @@
 </details></li>
 </ul>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_overview.html">Synchrotron Emission Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Synchrotron Spectral Energy Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -511,38 +625,47 @@ TDEs). Each spectrum is parameterized by the ordering of characteristic break fr
 injection frequency <span class="math notranslate nohighlight">\(\nu_m\)</span>, cooling frequency <span class="math notranslate nohighlight">\(\nu_c\)</span>, self-absorption frequency
 <span class="math notranslate nohighlight">\(\nu_a\)</span>, and maximum frequency <span class="math notranslate nohighlight">\(\nu_{\max}\)</span>. For background on the underlying physics
 see <a class="reference internal" href="synchrotron_theory.html#synchrotron-theory"><span class="std std-ref">Synchrotron Radiation Theory</span></a>; for derivations of individual spectral regimes see
-<a class="reference internal" href="synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>.</p>
+<a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#quick-start" id="id3">Quick Start</a></p></li>
-<li><p><a class="reference internal" href="#choosing-a-sed-model" id="id4">Choosing a SED Model</a></p></li>
-<li><p><a class="reference internal" href="#evaluating-a-spectrum" id="id5">Evaluating a Spectrum</a></p>
+<li><p><a class="reference internal" href="#quick-start" id="id5">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#choosing-a-sed-model" id="id6">Choosing a SED Model</a></p></li>
+<li><p><a class="reference internal" href="#evaluating-a-spectrum" id="id7">Evaluating a Spectrum</a></p>
 <ul>
-<li><p><a class="reference internal" href="#instantiation" id="id6">Instantiation</a></p></li>
-<li><p><a class="reference internal" href="#calling-sed" id="id7">Calling <code class="docutils literal notranslate"><span class="pre">sed()</span></code></a></p></li>
+<li><p><a class="reference internal" href="#instantiation" id="id8">Instantiation</a></p></li>
+<li><p><a class="reference internal" href="#calling-sed" id="id9">Calling <code class="docutils literal notranslate"><span class="pre">sed()</span></code></a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#normalizing-from-physical-parameters" id="id8">Normalizing from Physical Parameters</a></p></li>
-<li><p><a class="reference internal" href="#inverting-the-sed" id="id9">Inverting the SED</a></p>
+<li><p><a class="reference internal" href="#normalizing-from-physical-parameters" id="id10">Normalizing from Physical Parameters</a></p></li>
+<li><p><a class="reference internal" href="#inverting-the-sed" id="id11">Inverting the SED</a></p>
 <ul>
-<li><p><a class="reference internal" href="#standalone-closure-functions" id="id10">Standalone Closure Functions</a></p></li>
+<li><p><a class="reference internal" href="#standalone-closure-functions" id="id12">Standalone Closure Functions</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#inspecting-the-spectral-regime" id="id11">Inspecting the Spectral Regime</a></p></li>
-<li><p><a class="reference internal" href="#api-reference" id="id12">API Reference</a></p></li>
-<li><p><a class="reference internal" href="#implementation-and-developer-notes" id="id13">Implementation and Developer Notes</a></p>
+<li><p><a class="reference internal" href="#inspecting-the-spectral-regime" id="id13">Inspecting the Spectral Regime</a></p></li>
+<li><p><a class="reference internal" href="#quadrature-seds" id="id14">Quadrature SEDs</a></p>
 <ul>
-<li><p><a class="reference internal" href="#class-hierarchy" id="id14">Class Hierarchy</a></p></li>
-<li><p><a class="reference internal" href="#low-level-interface" id="id15">Low-Level Interface</a></p></li>
-<li><p><a class="reference internal" href="#extending-the-sed-system" id="id16">Extending the SED System</a></p></li>
+<li><p><a class="reference internal" href="#num-sed-quick-start" id="id15">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#kernels-and-initialization" id="id16">Kernels and Initialization</a></p></li>
+<li><p><a class="reference internal" href="#defining-the-electron-distribution" id="id17">Defining the Electron Distribution</a></p></li>
+<li><p><a class="reference internal" href="#radiative-quantities-and-radiative-transfer" id="id18">Radiative Quantities and Radiative Transfer</a></p></li>
+<li><p><a class="reference internal" href="#observed-flux-density" id="id19">Observed Flux Density</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references" id="id17">References</a></p></li>
+<li><p><a class="reference internal" href="#api-reference" id="id20">API Reference</a></p></li>
+<li><p><a class="reference internal" href="#implementation-and-developer-notes" id="id21">Implementation and Developer Notes</a></p>
+<ul>
+<li><p><a class="reference internal" href="#class-hierarchy" id="id22">Class Hierarchy</a></p></li>
+<li><p><a class="reference internal" href="#low-level-interface" id="id23">Low-Level Interface</a></p></li>
+<li><p><a class="reference internal" href="#extending-the-sed-system" id="id24">Extending the SED System</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#references" id="id25">References</a></p></li>
 </ul>
 </nav>
 <hr class="docutils" />
 <section id="quick-start">
-<span id="sed-quick-start"></span><h2><a class="toc-backref" href="#id3" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<span id="sed-quick-start"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
 <p>The following end-to-end example instantiates the most general SED class, converts physical
 source parameters to phenomenological SED parameters, and plots the resulting spectrum:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -594,7 +717,7 @@ source parameters to phenomenological SED parameters, and plots the resulting sp
 <hr class="docutils" />
 </section>
 <section id="choosing-a-sed-model">
-<span id="sed-choosing"></span><h2><a class="toc-backref" href="#id4" role="doc-backlink">Choosing a SED Model</a><a class="headerlink" href="#choosing-a-sed-model" title="Link to this heading">#</a></h2>
+<span id="sed-choosing"></span><h2><a class="toc-backref" href="#id6" role="doc-backlink">Choosing a SED Model</a><a class="headerlink" href="#choosing-a-sed-model" title="Link to this heading">#</a></h2>
 <p>Triceratops provides four physically motivated SED classes and one phenomenological option.
 Choose based on which physical processes are important for your source:</p>
 <div class="pst-scrollable-table-container"><table class="table">
@@ -642,9 +765,9 @@ when you prefer to fit the SSA turnover without invoking any closure assumptions
 <hr class="docutils" />
 </section>
 <section id="evaluating-a-spectrum">
-<span id="sed-evaluation"></span><h2><a class="toc-backref" href="#id5" role="doc-backlink">Evaluating a Spectrum</a><a class="headerlink" href="#evaluating-a-spectrum" title="Link to this heading">#</a></h2>
+<span id="sed-evaluation"></span><h2><a class="toc-backref" href="#id7" role="doc-backlink">Evaluating a Spectrum</a><a class="headerlink" href="#evaluating-a-spectrum" title="Link to this heading">#</a></h2>
 <section id="instantiation">
-<span id="sed-instantiation"></span><h3><a class="toc-backref" href="#id6" role="doc-backlink">Instantiation</a><a class="headerlink" href="#instantiation" title="Link to this heading">#</a></h3>
+<span id="sed-instantiation"></span><h3><a class="toc-backref" href="#id8" role="doc-backlink">Instantiation</a><a class="headerlink" href="#instantiation" title="Link to this heading">#</a></h3>
 <p>SED objects in Triceratops are intentionally lightweight. Instantiating an SED class requires
 <strong>no physical parameters</strong>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron</span><span class="w"> </span><span class="kn">import</span> <span class="n">PowerLaw_Cooling_SynchrotronSED</span>
@@ -658,7 +781,7 @@ objects safe to reuse in parameter sweeps, inference loops, and population model
 hidden state.</p>
 </section>
 <section id="calling-sed">
-<span id="sed-calling"></span><h3><a class="toc-backref" href="#id7" role="doc-backlink">Calling <code class="docutils literal notranslate"><span class="pre">sed()</span></code></a><a class="headerlink" href="#calling-sed" title="Link to this heading">#</a></h3>
+<span id="sed-calling"></span><h3><a class="toc-backref" href="#id9" role="doc-backlink">Calling <code class="docutils literal notranslate"><span class="pre">sed()</span></code></a><a class="headerlink" href="#calling-sed" title="Link to this heading">#</a></h3>
 <p>The primary interface for evaluating a synchrotron spectrum is <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed.html#triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed" title="triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.sed"><code class="xref py py-meth docutils literal notranslate"><span class="pre">sed()</span></code></a>.
 Supply a frequency array and the phenomenological parameters:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -729,7 +852,7 @@ keyword-only arguments after <code class="docutils literal notranslate"><span cl
 </section>
 </section>
 <section id="normalizing-from-physical-parameters">
-<span id="sed-forward-closure"></span><h2><a class="toc-backref" href="#id8" role="doc-backlink">Normalizing from Physical Parameters</a><a class="headerlink" href="#normalizing-from-physical-parameters" title="Link to this heading">#</a></h2>
+<span id="sed-forward-closure"></span><h2><a class="toc-backref" href="#id10" role="doc-backlink">Normalizing from Physical Parameters</a><a class="headerlink" href="#normalizing-from-physical-parameters" title="Link to this heading">#</a></h2>
 <p>If you have physical source parameters (magnetic field <span class="math notranslate nohighlight">\(B\)</span>, radius <span class="math notranslate nohighlight">\(R\)</span>,
 energy partition fractions <span class="math notranslate nohighlight">\(\varepsilon_E\)</span>, <span class="math notranslate nohighlight">\(\varepsilon_B\)</span>, …) rather than
 phenomenological ones, use <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params.html#triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params" title="triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_physics_to_params"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_physics_to_params()</span></code></a>
@@ -772,7 +895,7 @@ optically thin limit, regardless of absorption.</p>
 meaning across <em>all</em> SED types and spectral regimes. The <strong>peak flux</strong>
 <span class="math notranslate nohighlight">\(F_{\nu,\mathrm{peak}}\)</span> (the maximum of the observed SED) is computed internally from
 <span class="math notranslate nohighlight">\(F_{\nu,\mathrm{norm}}\)</span> and returned as <code class="docutils literal notranslate"><span class="pre">F_peak</span></code> in the output dictionary. For a
-detailed derivation of these mappings see <a class="reference internal" href="synchrotron_sed_theory.html#single-zone-sed-normalization"><span class="std std-ref">SED Normalization</span></a>.</p>
+detailed derivation of these mappings see <a class="reference internal" href="synchrotron_pl_sed_theory.html#single-zone-sed-normalization"><span class="std std-ref">SED Normalization</span></a>.</p>
 </div>
 <p class="rubric">Distance Options</p>
 <p>The method accepts several equivalent ways to specify the cosmological distance:</p>
@@ -793,7 +916,7 @@ detailed derivation of these mappings see <a class="reference internal" href="sy
 <hr class="docutils" />
 </section>
 <section id="inverting-the-sed">
-<span id="sed-inverse-closure"></span><h2><a class="toc-backref" href="#id9" role="doc-backlink">Inverting the SED</a><a class="headerlink" href="#inverting-the-sed" title="Link to this heading">#</a></h2>
+<span id="sed-inverse-closure"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">Inverting the SED</a><a class="headerlink" href="#inverting-the-sed" title="Link to this heading">#</a></h2>
 <p>Given observed peak flux and peak frequency, you can recover physical source parameters
 (radius <span class="math notranslate nohighlight">\(R\)</span>, magnetic field <span class="math notranslate nohighlight">\(B\)</span>) using
 <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics.html#triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics" title="triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.from_params_to_physics"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_params_to_physics()</span></code></a>:</p>
@@ -829,18 +952,25 @@ to guarantee a round-trip consistent inversion.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <dl class="simple">
-<dt>The inverse closure provides a <strong>default physical interpretation</strong>, not a unique truth. The theory</dt><dd><p>documentation (<a class="reference internal" href="synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>) details the assumptions and limitations of the closure relations
+<dt>The inverse closure provides a <strong>default physical interpretation</strong>, not a unique truth. The theory</dt><dd><p>documentation (<a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>) details the assumptions and limitations of the closure relations
 implemented in Triceratops. It is sometimes the case that a user needs a specific inversion which is not
 implemented currently.</p>
 </dd>
 </dl>
 </div>
 <section id="standalone-closure-functions">
-<span id="sed-standalone-closures"></span><h3><a class="toc-backref" href="#id10" role="doc-backlink">Standalone Closure Functions</a><a class="headerlink" href="#standalone-closure-functions" title="Link to this heading">#</a></h3>
+<span id="sed-standalone-closures"></span><h3><a class="toc-backref" href="#id12" role="doc-backlink">Standalone Closure Functions</a><a class="headerlink" href="#standalone-closure-functions" title="Link to this heading">#</a></h3>
 <p>All closure logic is also available as standalone functions in
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">one_zone_closure</span></code>. These are useful when the SED class
 interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
 inversions) that are not exposed through any SED class method.</p>
+<p>For <strong>relativistic sources in the coasting phase</strong>, the
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting.html#triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting" title="triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting"><code class="xref py py-func docutils literal notranslate"><span class="pre">invert_barniol_duran_coasting()</span></code></a>
+function implements the Duran <em>et al.</em><a class="footnote-reference brackets" href="#footcite-duran2013radius" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> equipartition inversion, which
+simultaneously solves for the radius <span class="math notranslate nohighlight">\(R\)</span>, bulk Lorentz factor <span class="math notranslate nohighlight">\(\Gamma\)</span>,
+equipartition energy <span class="math notranslate nohighlight">\(E\)</span>, and the derived microphysical quantities
+<span class="math notranslate nohighlight">\(\gamma_e\)</span>, <span class="math notranslate nohighlight">\(N_e\)</span>, and <span class="math notranslate nohighlight">\(B\)</span>.  See <a class="reference internal" href="synchrotron_barniol_duran.html#barnoil-duran"><span class="std std-ref">Theory Note: The Barniol-Duran Formalism</span></a> for the
+theoretical background.</p>
 <p class="rubric">Public Inversion Functions</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -864,6 +994,9 @@ inversions) that are not exposed through any SED class method.</p>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi.html#triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi" title="triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_powerlaw_ssa_sed_demarchi"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_powerlaw_ssa_sed_demarchi</span></code></a></p></td>
 <td><p>Invert an SSA turnover using the DeMarchi et al. (2022) analytic formulae.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting.html#triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting" title="triceratops.radiation.synchrotron.SEDs.one_zone_closure.invert_barniol_duran_coasting"><code class="xref py py-obj docutils literal notranslate"><span class="pre">invert_barniol_duran_coasting</span></code></a></p></td>
+<td><p>Invert a synchrotron peak using the Barniol-Duran coasting-phase equipartition closure.</p></td>
 </tr>
 </tbody>
 </table>
@@ -895,6 +1028,9 @@ routines where unit overhead must be minimized.</p>
 <tr class="row-odd"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_invert_powerlaw_ssa_sed_demarchi</span></code></p></td>
 <td><p>Invert an SSA turnover using the DeMarchi et al. (2022) analytic closure.</p></td>
 </tr>
+<tr class="row-even"><td><p><code class="xref py py-obj docutils literal notranslate"><span class="pre">_invert_barniol_duran_coasting</span></code></p></td>
+<td><p>Invert a synchrotron peak using the Barniol-Duran coasting-phase equipartition closure.</p></td>
+</tr>
 </tbody>
 </table>
 </div>
@@ -902,7 +1038,7 @@ routines where unit overhead must be minimized.</p>
 </section>
 </section>
 <section id="inspecting-the-spectral-regime">
-<span id="sed-regime-introspection"></span><h2><a class="toc-backref" href="#id11" role="doc-backlink">Inspecting the Spectral Regime</a><a class="headerlink" href="#inspecting-the-spectral-regime" title="Link to this heading">#</a></h2>
+<span id="sed-regime-introspection"></span><h2><a class="toc-backref" href="#id13" role="doc-backlink">Inspecting the Spectral Regime</a><a class="headerlink" href="#inspecting-the-spectral-regime" title="Link to this heading">#</a></h2>
 <p>For <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.html#triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED" title="triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">MultiSpectrumSynchrotronSED</span></code></a> subclasses, you
 can query which spectral regime was selected for a given set of parameters via
 <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime.html#triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime" title="triceratops.radiation.synchrotron.SEDs.one_zone.MultiSpectrumSynchrotronSED.determine_sed_regime"><code class="xref py py-meth docutils literal notranslate"><span class="pre">determine_sed_regime()</span></code></a>:</p>
@@ -925,14 +1061,193 @@ can query which spectral regime was selected for a given set of parameters via
 </pre></div>
 </div>
 <p>The returned identifier is a string of the form <code class="docutils literal notranslate"><span class="pre">Spectrum1</span></code> … <code class="docutils literal notranslate"><span class="pre">Spectrum8</span></code>, corresponding to
-the spectral orderings catalogued in <a class="reference internal" href="synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>. The mapping from regime name to
+the spectral orderings catalogued in <a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>. The mapping from regime name to
 frequency ordering is also recorded in the class-level <code class="docutils literal notranslate"><span class="pre">SPECTRUM_FUNCTIONS</span></code> attribute.</p>
 <p>This is useful for diagnosing which branch of the SED is being evaluated, particularly when
 debugging or verifying physical parameter ranges.</p>
 <hr class="docutils" />
 </section>
+<section id="quadrature-seds">
+<span id="synch-numerical-sed"></span><h2><a class="toc-backref" href="#id14" role="doc-backlink">Quadrature SEDs</a><a class="headerlink" href="#quadrature-seds" title="Link to this heading">#</a></h2>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><span class="xref std std-ref">synch_numerical_theory</span> for the mathematics underlying the quadrature algorithm,
+including kernel tabulation, the integration-by-parts form of the absorption coefficient,
+and the radiative transfer solution.</p></li>
+<li><p>The gallery example <span class="xref std std-ref">sphx_glr_galleries_synchrotron_b_seds_plot_multi_component_numerical_SED.py</span>
+for a worked example with a mixed thermal and power-law electron distribution.</p></li>
+</ul>
+</div>
+<p>The analytical SED classes described above are highly efficient, but they rest on the assumption that the
+injected electron distribution is a power law. That assumption breaks down in a number of physically
+important scenarios: thermal or quasi-thermal distributions near a shock front, particle spectra evolved
+numerically through cooling and adiabatic expansion, or any multi-component population that cannot be
+described by a single spectral index. In these cases the only reliable approach is direct numerical
+integration of the synchrotron emissivity over the full distribution.</p>
+<p>The <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a> provides this
+capability. Given any electron distribution — supplied either as a callable function or a pre-sampled
+array — it evaluates the emissivity integral and the self-absorption coefficient on a log-uniform
+<span class="math notranslate nohighlight">\((\nu, \gamma)\)</span> grid, solves the radiative transfer equation for a homogeneous source slab, and
+applies relativistic Doppler and cosmological redshift corrections to produce an observed flux density.
+The entire computation is performed in log-space using <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.special.logsumexp.html#scipy.special.logsumexp" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">logsumexp()</span></code></a>, which keeps it
+numerically stable across the large dynamic range typical of synchrotron spectra and fast enough for use
+in inference hot loops.</p>
+<p>Unlike the stateless <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.html#triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED" title="triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED"><code class="xref py py-class docutils literal notranslate"><span class="pre">SynchrotronSED</span></code></a> subclasses,
+the engine is <strong>stateful</strong>: it pre-tabulates the synchrotron kernel on a grid and caches the resulting
+spline interpolator. This one-time setup cost is paid when the kernel is loaded; subsequent SED
+evaluations are fast lookups against that table.</p>
+<section id="num-sed-quick-start">
+<span id="id3"></span><h3><a class="toc-backref" href="#id15" role="doc-backlink">Quick Start</a><a class="headerlink" href="#num-sed-quick-start" title="Link to this heading">#</a></h3>
+<p>The minimum workflow is to create the engine, load a kernel, define an electron distribution, and call
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_flux_density()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.synchrotron.SEDs.numerical</span><span class="w"> </span><span class="kn">import</span> <span class="n">NumericalSynchrotronEngine</span>
+
+<span class="n">engine</span> <span class="o">=</span> <span class="n">NumericalSynchrotronEngine</span><span class="p">()</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">()</span>          <span class="c1"># isotropic pitch-angle distribution</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">N</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Simple power-law electron distribution in cm^{-3}.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">)</span>
+
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e8</span><span class="p">,</span> <span class="mf">1e18</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+
+<span class="n">F_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_flux_density</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">,</span>
+    <span class="n">R</span><span class="o">=</span><span class="mf">1e16</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+    <span class="n">B</span><span class="o">=</span><span class="mf">0.5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+    <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="o">=</span><span class="mf">10.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span>
+    <span class="n">n_gamma</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span>
+    <span class="n">luminosity_distance</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="kernels-and-initialization">
+<span id="num-sed-kernels"></span><h3><a class="toc-backref" href="#id16" role="doc-backlink">Kernels and Initialization</a><a class="headerlink" href="#kernels-and-initialization" title="Link to this heading">#</a></h3>
+<p>The first step is always to load a synchrotron kernel. The engine maintains two independent
+interpolators: one for the <strong>fixed pitch-angle</strong> kernel <span class="math notranslate nohighlight">\(F(x)\)</span> and one for the
+<strong>pitch-angle-averaged</strong> kernel <span class="math notranslate nohighlight">\(\bar{F}(x)\)</span>. The choice between them determines how the
+electron pitch-angle distribution is treated at evaluation time:</p>
+<ul class="simple">
+<li><p>Call <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_avg_first_kernel()</span></code></a>
+when the electron pitch angles are isotropically distributed — the appropriate default for most
+astrophysical environments. No pitch-angle argument is required at evaluation time, and the engine
+integrates against <span class="math notranslate nohighlight">\(\bar{F}(x)\)</span> automatically.</p></li>
+<li><p>Call <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel"><code class="xref py py-meth docutils literal notranslate"><span class="pre">load_first_kernel()</span></code></a>
+when a specific, fixed pitch angle <span class="math notranslate nohighlight">\(\alpha\)</span> will be supplied at evaluation time. The engine
+then integrates against <span class="math notranslate nohighlight">\(F(x)\)</span>.</p></li>
+</ul>
+<p>Either or both interpolators can be loaded on the same engine instance, and calling a load method a
+second time simply overwrites the existing grid — useful for changing the tabulation resolution without
+constructing a new object. Both methods accept keyword arguments that control the grid:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Finer grid over a wider domain — useful for extreme distributions.</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">(</span><span class="n">x_min</span><span class="o">=</span><span class="mf">1e-6</span><span class="p">,</span> <span class="n">x_max</span><span class="o">=</span><span class="mf">1e3</span><span class="p">,</span> <span class="n">num_points</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+
+<span class="c1"># Supply an explicit grid.</span>
+<span class="n">engine</span><span class="o">.</span><span class="n">load_avg_first_kernel</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e3</span><span class="p">,</span> <span class="mi">2000</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The loaded status of each interpolator can be queried via
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_first_kernel_loaded.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_first_kernel_loaded" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_first_kernel_loaded"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_first_kernel_loaded()</span></code></a>
+and
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_avg_first_kernel_loaded.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_avg_first_kernel_loaded" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.is_avg_first_kernel_loaded"><code class="xref py py-meth docutils literal notranslate"><span class="pre">is_avg_first_kernel_loaded()</span></code></a>.
+Calling a compute method before the required kernel has been loaded raises a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#RuntimeError" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">RuntimeError</span></code></a>.</p>
+</section>
+<section id="defining-the-electron-distribution">
+<span id="num-sed-distribution"></span><h3><a class="toc-backref" href="#id17" role="doc-backlink">Defining the Electron Distribution</a><a class="headerlink" href="#defining-the-electron-distribution" title="Link to this heading">#</a></h3>
+<p>Every compute method accepts <code class="docutils literal notranslate"><span class="pre">N</span></code>, the electron number density <span class="math notranslate nohighlight">\(dN/d\gamma\)</span>, as either a
+callable or an array.</p>
+<p><strong>Callable form.</strong> If <code class="docutils literal notranslate"><span class="pre">N</span></code> is a callable, the engine evaluates it on the quadrature <span class="math notranslate nohighlight">\(\gamma\)</span>
+grid it builds internally from <code class="docutils literal notranslate"><span class="pre">gamma_min</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_gamma</span></code>. The callable receives a
+bare <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> of Lorentz factors and must return the distribution as an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> in <span class="math notranslate nohighlight">\(\mathrm{cm}^{-3}\)</span>, or a bare array interpreted in those
+units:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">N</span><span class="p">(</span><span class="n">gamma</span><span class="p">):</span>
+    <span class="n">N0</span> <span class="o">=</span> <span class="mf">1e4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**-</span><span class="mi">3</span>
+    <span class="k">return</span> <span class="n">N0</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">/</span> <span class="mf">100.0</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="mf">2.5</span><span class="p">)</span>
+
+<span class="n">F_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_flux_density</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
+                                    <span class="n">gamma_min</span><span class="o">=</span><span class="mf">100.0</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e7</span><span class="p">,</span> <span class="n">n_gamma</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Pre-sampled array form.</strong> If <code class="docutils literal notranslate"><span class="pre">N</span></code> is an array, supply the corresponding <span class="math notranslate nohighlight">\(\gamma\)</span> values via
+the <code class="docutils literal notranslate"><span class="pre">gamma</span></code> keyword. This form is useful when the distribution has been computed externally — for
+example from a numerical ODE solver or a PIC simulation — and the quadrature grid is already fixed:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">gamma_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span>
+<span class="n">N_array</span> <span class="o">=</span> <span class="n">compute_my_distribution</span><span class="p">(</span><span class="n">gamma_array</span><span class="p">)</span>   <span class="c1"># Quantity in cm^{-3}</span>
+
+<span class="n">F_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_flux_density</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N_array</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="n">gamma_array</span><span class="p">,</span> <span class="o">...</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Multi-component distributions — such as a thermal pool plus a non-thermal tail — can be handled either
+by summing the distribution functions before passing them to the engine, or by evaluating the engine
+separately for each component and summing the resulting <strong>intensities</strong>. The former is more efficient;
+the latter is useful for isolating the spectral contribution of each component.</p>
+</section>
+<section id="radiative-quantities-and-radiative-transfer">
+<span id="num-sed-radiative"></span><h3><a class="toc-backref" href="#id18" role="doc-backlink">Radiative Quantities and Radiative Transfer</a><a class="headerlink" href="#radiative-quantities-and-radiative-transfer" title="Link to this heading">#</a></h3>
+<p>The engine exposes the individual stages of the SED computation as separate methods, which are useful
+for diagnostics and for building custom pipelines. The key quantities are the <strong>emissivity</strong>
+<span class="math notranslate nohighlight">\(j_\nu\)</span>, the <strong>self-absorption coefficient</strong> <span class="math notranslate nohighlight">\(\alpha_\nu\)</span>, the <strong>source function</strong>
+<span class="math notranslate nohighlight">\(S_\nu = j_\nu / \alpha_\nu\)</span>, and the <strong>specific intensity</strong> <span class="math notranslate nohighlight">\(I_\nu\)</span>.</p>
+<p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_emissivity()</span></code></a>
+returns <span class="math notranslate nohighlight">\(j_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-3}\,Hz^{-1}\,sr^{-1}}\)</span>;
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_absorption()</span></code></a>
+returns <span class="math notranslate nohighlight">\(|\alpha_\nu|\)</span> in <span class="math notranslate nohighlight">\(\mathrm{cm^{-1}}\)</span>;
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_source_function()</span></code></a>
+returns <span class="math notranslate nohighlight">\(S_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}\)</span>. All three accept the
+same <code class="docutils literal notranslate"><span class="pre">N</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_min</span></code>, <code class="docutils literal notranslate"><span class="pre">gamma_max</span></code>, and <code class="docutils literal notranslate"><span class="pre">n_gamma</span></code> arguments.</p>
+<p>When a fixed pitch angle is required, pass it via the <code class="docutils literal notranslate"><span class="pre">alpha</span></code> keyword. Passing <code class="docutils literal notranslate"><span class="pre">alpha=None</span></code> (the
+default) selects the pitch-angle-averaged path:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Isotropic distribution (averaged kernel).</span>
+<span class="n">j_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_emissivity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">gamma_min</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e7</span><span class="p">)</span>
+
+<span class="c1"># Fixed pitch angle (requires load_first_kernel to have been called).</span>
+<span class="n">j_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_emissivity</span><span class="p">(</span><span class="n">nu</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mi">4</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>
+                                 <span class="n">gamma_min</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">gamma_max</span><span class="o">=</span><span class="mf">1e7</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The radiative transfer equation for a homogeneous source of line-of-sight depth <span class="math notranslate nohighlight">\(R\)</span> is solved by</p>
+<div class="math notranslate nohighlight">
+\[I_\nu = S_\nu \bigl(1 - e^{-\tau_\nu}\bigr), \qquad \tau_\nu = |\alpha_\nu|\,R.\]</div>
+<p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_rest_frame_specific_intensity()</span></code></a>
+implements this directly and returns <span class="math notranslate nohighlight">\(I_\nu\)</span> in the rest frame of the source. The
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_specific_intensity()</span></code></a>
+variant additionally applies bulk Doppler and cosmological redshift corrections before returning the
+observed specific intensity.</p>
+</section>
+<section id="observed-flux-density">
+<span id="num-sed-flux"></span><h3><a class="toc-backref" href="#id19" role="doc-backlink">Observed Flux Density</a><a class="headerlink" href="#observed-flux-density" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-meth docutils literal notranslate"><span class="pre">compute_flux_density()</span></code></a>
+is the primary end-user method. It applies the full chain — emissivity quadrature, absorption
+coefficient, radiative transfer, Doppler/redshift boost — and returns the observed spectral flux density
+<span class="math notranslate nohighlight">\(F_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}\)</span>.</p>
+<p>For sources with bulk motion, three parameters describe the relativistic state:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">F_nu</span> <span class="o">=</span> <span class="n">engine</span><span class="o">.</span><span class="n">compute_flux_density</span><span class="p">(</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">R</span><span class="o">=</span><span class="mf">1e16</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="n">B</span><span class="o">=</span><span class="mf">0.5</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">N</span><span class="o">=</span><span class="n">N</span><span class="p">,</span>
+    <span class="n">z</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>             <span class="c1"># cosmological redshift</span>
+    <span class="n">beta</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>           <span class="c1"># bulk speed as fraction of c</span>
+    <span class="n">theta</span><span class="o">=</span><span class="mf">0.0</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">rad</span><span class="p">,</span>    <span class="c1"># angle between bulk velocity and line of sight</span>
+    <span class="n">luminosity_distance</span><span class="o">=</span><span class="mi">100</span><span class="o">*</span><span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For non-relativistic sources the defaults <code class="docutils literal notranslate"><span class="pre">beta=0</span></code>, <code class="docutils literal notranslate"><span class="pre">theta=0</span></code>, <code class="docutils literal notranslate"><span class="pre">z=0</span></code> reduce the Doppler factor
+to unity. The distance can be supplied in any of the same forms accepted by the analytical SED classes:
+<code class="docutils literal notranslate"><span class="pre">luminosity_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">angular_diameter_distance</span></code>, <code class="docutils literal notranslate"><span class="pre">proper_distance</span></code>, or a redshift <code class="docutils literal notranslate"><span class="pre">z</span></code>
+combined with an optional <code class="docutils literal notranslate"><span class="pre">cosmology</span></code> argument. By default the projected source area is <span class="math notranslate nohighlight">\(\pi
+R^2\)</span>; pass <code class="docutils literal notranslate"><span class="pre">A_eff</span></code> to override this for non-spherical geometries.</p>
+<hr class="docutils" />
+</section>
+</section>
 <section id="api-reference">
-<span id="sed-api-reference"></span><h2><a class="toc-backref" href="#id12" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<span id="sed-api-reference"></span><h2><a class="toc-backref" href="#id20" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<p class="rubric">Analytical SED Classes</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED.html#triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED" title="triceratops.radiation.synchrotron.SEDs.one_zone.SynchrotronSED"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SynchrotronSED</span></code></a></p></td>
@@ -959,16 +1274,49 @@ debugging or verifying physical parameter ranges.</p>
 </tbody>
 </table>
 </div>
+<p class="rubric">Numerical SED Engine</p>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine</span></code></a></p></td>
+<td><p>Numerical synchrotron engine base class.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.load_first_kernel</span></code></a></p></td>
+<td><p>Build and cache the interpolator for the first synchrotron kernel <span class="math notranslate nohighlight">\(F(x)\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.load_avg_first_kernel</span></code></a></p></td>
+<td><p>Build and cache the interpolator for the first synchrotron kernel <span class="math notranslate nohighlight">\(F(x)\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_emissivity</span></code></a></p></td>
+<td><p>Compute the comoving-frame synchrotron emissivity <span class="math notranslate nohighlight">\(j_\nu\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_absorption</span></code></a></p></td>
+<td><p>Compute the comoving-frame synchrotron self-absorption coefficient <span class="math notranslate nohighlight">\(|\alpha_\nu|\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_source_function</span></code></a></p></td>
+<td><p>Compute the comoving-frame synchrotron source function <span class="math notranslate nohighlight">\(S_\nu = j_\nu / \alpha_\nu\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_rest_frame_specific_intensity</span></code></a></p></td>
+<td><p>Compute the comoving-frame specific intensity <span class="math notranslate nohighlight">\(I'_{\nu'} = S'_{\nu'}(1 - e^{-\tau'_{\nu'}})\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_specific_intensity</span></code></a></p></td>
+<td><p>Compute the observer-frame specific intensity including Doppler boost and redshift.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html#triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density" title="triceratops.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density"><code class="xref py py-obj docutils literal notranslate"><span class="pre">NumericalSynchrotronEngine.compute_flux_density</span></code></a></p></td>
+<td><p>Compute the observer-frame spectral flux density <span class="math notranslate nohighlight">\(F_\nu\)</span>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
 <hr class="docutils" />
 </section>
 <section id="implementation-and-developer-notes">
-<span id="sed-developer-notes"></span><h2><a class="toc-backref" href="#id13" role="doc-backlink">Implementation and Developer Notes</a><a class="headerlink" href="#implementation-and-developer-notes" title="Link to this heading">#</a></h2>
+<span id="sed-developer-notes"></span><h2><a class="toc-backref" href="#id21" role="doc-backlink">Implementation and Developer Notes</a><a class="headerlink" href="#implementation-and-developer-notes" title="Link to this heading">#</a></h2>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>This section is for developers extending or debugging the SED system.</p>
 </div>
 <section id="class-hierarchy">
-<span id="sed-class-hierarchy"></span><h3><a class="toc-backref" href="#id14" role="doc-backlink">Class Hierarchy</a><a class="headerlink" href="#class-hierarchy" title="Link to this heading">#</a></h3>
+<span id="sed-class-hierarchy"></span><h3><a class="toc-backref" href="#id22" role="doc-backlink">Class Hierarchy</a><a class="headerlink" href="#class-hierarchy" title="Link to this heading">#</a></h3>
 <p>The synchrotron SED system is organized around a two-level abstract class hierarchy that
 separates <strong>interface</strong> from <strong>regime dispatch logic</strong>:</p>
 <div class="highlight-text notranslate"><div class="highlight"><pre><span></span>SynchrotronSED  (ABC)
@@ -1004,7 +1352,7 @@ at instantiation. All parameters are supplied at call time, making objects safe 
 parameter sweeps or inference loops.</p>
 </section>
 <section id="low-level-interface">
-<span id="sed-low-level"></span><h3><a class="toc-backref" href="#id15" role="doc-backlink">Low-Level Interface</a><a class="headerlink" href="#low-level-interface" title="Link to this heading">#</a></h3>
+<span id="sed-low-level"></span><h3><a class="toc-backref" href="#id23" role="doc-backlink">Low-Level Interface</a><a class="headerlink" href="#low-level-interface" title="Link to this heading">#</a></h3>
 <p>While most users will interact with synchrotron spectra through the high-level SED classes,
 Triceratops also exposes a <strong>low-level interface</strong> that provides direct access to the building
 blocks from which those SEDs are constructed. It is primarily intended for:</p>
@@ -1073,7 +1421,7 @@ Multiple breaks are composed by adding SFBPL factors in log-space.</p></li>
 <section id="sed-functions">
 <span id="low-level-sed-functions"></span><h4>SED Functions<a class="headerlink" href="#sed-functions" title="Link to this heading">#</a></h4>
 <p>SED functions encode complete synchrotron spectral shapes for specific physical scenarios and
-frequency orderings, as derived in <a class="reference internal" href="synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>. Each function operates entirely in
+frequency orderings, as derived in <a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>. Each function operates entirely in
 logarithmic space, assumes all inputs are already validated and dimensionless, and returns the
 logarithm of the scale-free spectral shape with <em>no normalization</em>.</p>
 <p>Naming convention:</p>
@@ -1086,7 +1434,7 @@ logarithm of the scale-free spectral shape with <em>no normalization</em>.</p>
 <span class="sd-summary-text">Available Low-Level SED Functions</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
 <p class="sd-card-text">The following low-level SED functions are implemented in
 <code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.synchrotron.SEDs._one_zone_functions</span></code>. Each corresponds
-to a unique spectral regime defined in <a class="reference internal" href="synchrotron_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>.</p>
+to a unique spectral regime defined in <a class="reference internal" href="synchrotron_pl_sed_theory.html#synch-sed-theory"><span class="std std-ref">Methods: Single-Zone Synchrotron SEDs</span></a>.</p>
 <p class="rubric">Power Law (No Cooling, No SSA)</p>
 <div class="pst-scrollable-table-container"><table class="autosummary longtable table">
 <tbody>
@@ -1171,7 +1519,7 @@ consistent SSA regime for a given set of input parameters.</p>
 </section>
 </section>
 <section id="extending-the-sed-system">
-<span id="sed-extending"></span><h3><a class="toc-backref" href="#id16" role="doc-backlink">Extending the SED System</a><a class="headerlink" href="#extending-the-sed-system" title="Link to this heading">#</a></h3>
+<span id="sed-extending"></span><h3><a class="toc-backref" href="#id24" role="doc-backlink">Extending the SED System</a><a class="headerlink" href="#extending-the-sed-system" title="Link to this heading">#</a></h3>
 <p>Adding a new synchrotron SED model is straightforward. The system is designed so that new
 regimes or physical processes can be incorporated without modifying existing code.</p>
 <p><strong>Step 1: Implement any new low-level SED functions</strong></p>
@@ -1248,12 +1596,16 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
 </section>
 <hr class="docutils" />
 <section id="references">
-<h2><a class="toc-backref" href="#id17" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<div class="docutils container" id="id2">
+<h2><a class="toc-backref" href="#id25" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id4">
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="footcite-demarchiradioanalysissn2004c2022" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id1">1</a><span class="fn-bracket">]</span></span>
 <p>Lindsay DeMarchi, R. Margutti, J. Dittman, A. Brunthaler, D. Milisavljevic, Michael F. Bietenholz, C. Stauffer, D. Brethauer, D. Coppejans, K. Auchettl, K. D. Alexander, C. D. Kilpatrick, Joe S. Bright, L. Z. Kelley, Michael C. Stroh, and W. V. Jacobson-Galán. Radio Analysis of SN2004C Reveals an Unusual CSM Density Profile as a Harbinger of Core Collapse. <em>The Astrophysical Journal</em>, 938(1):84, October 2022. <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac8c26">doi:10.3847/1538-4357/ac8c26</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-duran2013radius" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Rodolfo Barniol Duran, Ehud Nakar, and Tsvi Piran. Radius constraints and minimal equipartition energy of relativistically moving synchrotron sources. <em>The Astrophysical Journal</em>, 772(1):78, 2013.</p>
 </aside>
 </aside>
 </div>
@@ -1305,8 +1657,8 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#choosing-a-sed-model">Choosing a SED Model</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-a-spectrum">Evaluating a Spectrum</a><ul class="nav section-nav flex-column">
@@ -1320,6 +1672,14 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-the-spectral-regime">Inspecting the Spectral Regime</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadrature-seds">Quadrature SEDs</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#num-sed-quick-start">Quick Start</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#kernels-and-initialization">Kernels and Initialization</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#defining-the-electron-distribution">Defining the Electron Distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#radiative-quantities-and-radiative-transfer">Radiative Quantities and Radiative Transfer</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#observed-flux-density">Observed Flux Density</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-and-developer-notes">Implementation and Developer Notes</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#class-hierarchy">Class Hierarchy</a></li>
@@ -1337,13 +1697,13 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_seds.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_seds.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -1358,8 +1718,8 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1393,7 +1753,7 @@ transparency, extensibility, and rigorous validation of synchrotron spectral mod
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

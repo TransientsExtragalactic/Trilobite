@@ -1,0 +1,227 @@
+:orphan:
+
+.. _accretion_gallery:
+
+*****************************
+Accretion Disk Models
+*****************************
+
+These examples cover both steady-state and time-dependent accretion disk models in Triceratops.
+
+**Steady-state thin disks** (:class:`~triceratops.dynamics.accretion.AlphaDisk`) evaluate the
+Shakura-Sunyaev (SS73) radial structure and multi-colour blackbody SED at a fixed accretion
+rate — useful for spectral fitting and structural validation.
+
+**One-zone time-dependent disks** evolve disk mass and angular momentum through the viscous
+timescale using a compiled Cython explicit-Euler solver, supporting a range of equations of
+state and external mass-supply terms (e.g., fallback accretion from a TDE).
+
+Examples progress from the steady-state SS73 scalings through physical regime comparisons
+(gas-pressure vs. radiation-pressure dominated, advective disks), thermal instability S-curves,
+and observationally motivated TDE disk scenarios.
+
+.. rubric:: What you'll find here
+
+- Sunyaev-Shakura alpha-disk: radial structure, scalings, and multi-colour SED
+- Late-time broadband SED evolution of a TDE accretion disk
+- Quickstart: running the one-zone disk integrator
+- Comparing equations of state (gas-pressure vs. radiation-pressure dominated)
+- Mapping the thermal S-curve and limit-cycle behavior
+- Modeling a fallback accretion disk after a TDE
+- Advection-dominated disk solutions
+- Generating observable light curves from disk evolution
+
+.. rubric:: Theory and API reference
+
+:ref:`thin_disk` — steady-state thin-disk user guide and API
+
+:ref:`one_zone_disk_theory` — one-zone theoretical background
+
+:ref:`one_zone_disk` — one-zone user guide and API
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="At any instant the disk temperature is set by thermal equilibrium — the condition that viscous heating equals radiative plus advective cooling:">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_disk_scurve_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_disk_scurve`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Disk Thermal Equilibrium: The S-curve</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Viscously heated accretion disks do not always radiate all of their dissipated energy locally.  When the accretion rate is high (or the disk is geometrically thick) a substantial fraction of the viscous heating can be carried inward with the accreting gas rather than radiated away, a process called advective cooling.">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_adv_disk_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_adv_disk`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Advective Cooling in One-Zone Accretion Disks</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example introduces the one-zone accretion disk framework in Triceratops. It walks through the minimal workflow end-to-end: constructing a disk model, generating physically consistent initial conditions, running the Cython integrator, and visualising the time evolution of the key disk observables.">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_one_zone_disk_quickstart_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_one_zone_disk_quickstart`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">One-Zone Accretion Disk — Quickstart</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In a tidal disruption event (TDE), a star is torn apart by the tidal field of a supermassive black hole.  The stellar debris falls back onto the nucleus at a rate set by the orbital energy spread of the disrupted material, initially far exceeding the Eddington limit and driving a geometrically thick, radiation-pressure-dominated accretion disk.">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_tde_disk_observables_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_tde_disk_observables`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">TDE Disk Evolution and Observable Signatures</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Triceratops provides two one-zone disk closures that differ only in the treatment of the equation of state (EOS):">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_disk_eos_comparison_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_disk_eos_comparison`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="After a tidal disruption event (TDE), the half of the stellar debris that remains bound to the black hole circularises into an accretion disk at roughly twice the tidal radius:">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_disk_broadband_sed_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_disk_broadband_sed`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Late-Time Broadband SED Evolution of a TDE Accretion Disk</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The Sunyaev-Shakura (SS73) alpha-disk is the canonical steady-state model for geometrically thin, optically thick accretion disks.  Viscosity is parameterised by a single dimensionless number \alpha \in (0, 1], and the disk structure at radius R follows simple power-law scalings (in the limit R \gg R_{\rm in}):">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_ss_disk_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_ss_disk`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In many astrophysical transients — tidal disruption events (TDEs), collapsars, and compact binary mergers — the accretion disk does not simply drain passively.  A fallback debris stream continuously replenishes the disk at a rate that declines as a power law in time:">
+
+.. only:: html
+
+  .. image:: /auto_examples/accretion/images/thumb/sphx_glr_plot_fallback_disk_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/accretion/plot_fallback_disk`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Accretion Disk with Fallback Mass Supply</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/accretion/plot_disk_scurve
+   /auto_examples/accretion/plot_adv_disk
+   /auto_examples/accretion/plot_one_zone_disk_quickstart
+   /auto_examples/accretion/plot_tde_disk_observables
+   /auto_examples/accretion/plot_disk_eos_comparison
+   /auto_examples/accretion/plot_disk_broadband_sed
+   /auto_examples/accretion/plot_ss_disk
+   /auto_examples/accretion/plot_fallback_disk
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: accretion_python.zip </auto_examples/accretion/accretion_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: accretion_jupyter.zip </auto_examples/accretion/accretion_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

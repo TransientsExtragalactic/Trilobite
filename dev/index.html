@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Triceratops &#8212; Triceratops dev documentation</title>
+    <title>Overview &#8212; Triceratops dev documentation</title>
   
   
   
@@ -27,39 +27,42 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
     <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="_static/copybutton.js?v=f281be69"></script>
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'index';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="_static/logo.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
@@ -67,20 +70,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="_static/searchtools.js"></script>
+    <script src="_static/language_data.js"></script>
+    <script src="searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -106,7 +115,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -165,8 +174,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -198,11 +207,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -235,8 +251,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -401,26 +422,85 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <a class="reference internal image-reference" href="_images/logo.png"><img alt="_images/logo.png" class="align-center" src="_images/logo.png" style="width: 200px;" />
-</a>
-<section id="triceratops">
-<h1>Triceratops<a class="headerlink" href="#triceratops" title="Link to this heading">#</a></h1>
-<p><a class="reference external" href="https://github.com/astral-sh/ruff"><img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" /></a> <a class="reference external" href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit" /></a> <a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/"><img alt="Docstring style: numpydoc" src="https://img.shields.io/badge/docstyle-numpydoc-459db9" /></a> <a class="reference external" href="https://commitizen-tools.github.io/commitizen/"><img alt="Commit style: Conventional + Gitmoji" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg" /></a> <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/"><img alt="Commit style: Conventional Commits" src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&amp;logoColor=white" /></a> <a class="reference external" href="https://github.com/eliza-diggins/Triceratops"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/eliza-diggins/Triceratops" /></a> <a class="reference external" href="https://github.com/eliza-diggins/Triceratops/graphs/contributors"><img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/eliza-diggins/Triceratops" /></a> <a class="reference external" href="https://eliza-diggins.github.io/Triceratops"><img alt="Latest Docs" src="https://img.shields.io/badge/docs-latest-brightgreen.svg" /></a> <a class="reference external" href="http://www.astropy.org/"><img alt="Powered by Astropy" src="http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat" /></a></p>
+  <div class="hero">
+    <img src="_images/logo.png" class="hero-logo">
+    <div class="hero-text">
+        <h1>TRICERATOPS</h1>
+        <p> A python ecosystem for rapid-deployment modeling of astrophysical transients</p>
+        <div class="badges"><p><a class="reference external" href="https://github.com/astral-sh/ruff"><img alt="Ruff" src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json" /></a> <a class="reference external" href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit" /></a> <a class="reference external" href="https://numpydoc.readthedocs.io/en/latest/"><img alt="Docstring style: numpydoc" src="https://img.shields.io/badge/docstyle-numpydoc-459db9" /></a> <a class="reference external" href="https://commitizen-tools.github.io/commitizen/"><img alt="Commit style: Conventional + Gitmoji" src="https://img.shields.io/badge/commitizen-friendly-brightgreen.svg" /></a> <a class="reference external" href="https://www.conventionalcommits.org/en/v1.0.0/"><img alt="Commit style: Conventional Commits" src="https://img.shields.io/badge/Conventional%20Commits-1.0.0-%23FE5196?logo=conventionalcommits&amp;logoColor=white" /></a> <a class="reference external" href="https://github.com/eliza-diggins/Triceratops"><img alt="Last Commit" src="https://img.shields.io/github/last-commit/eliza-diggins/Triceratops" /></a> <a class="reference external" href="https://github.com/eliza-diggins/Triceratops/graphs/contributors"><img alt="GitHub Contributors" src="https://img.shields.io/github/contributors/eliza-diggins/Triceratops" /></a> <a class="reference external" href="https://eliza-diggins.github.io/Triceratops"><img alt="Latest Docs" src="https://img.shields.io/badge/docs-latest-brightgreen.svg" /></a> <a class="reference external" href="http://www.astropy.org/"><img alt="Powered by Astropy" src="http://img.shields.io/badge/powered%20by-AstroPy-orange.svg?style=flat" /></a></p>
+        </div>
+    </div>
+</div><section id="overview">
+<h1>Overview<a class="headerlink" href="#overview" title="Link to this heading">#</a></h1>
 <p>The <strong>TR</strong>ansient <strong>I</strong>nteraction <strong>C</strong>ode for <strong>E</strong>jecta, <strong>R</strong>emnants, <strong>A</strong>and
 <strong>T</strong>ime-domain <strong>O</strong>bservables from <strong>P</strong>lasma <strong>S</strong>hocks (<strong>TRICERATOPS</strong>) is a powerful, modular computational
 library for modeling the interaction of transient astrophysical outflows with their surrounding environments.</p>
-<p>TRICERATOPS is designed to simulate the coupled dynamics, radiation processes, and observational signatures that arise
-when ejecta-driven shocks propagate through ambient media. It enables researchers to model plasma shocks, ejecta
-dynamics, and broadband time-domain observables in a physically self-consistent way, with particular emphasis on radio
-and millimeter transients.</p>
-<p>The library supports both <strong>forward modeling</strong> and <strong>parameter inference</strong>, allowing users to connect physically
-motivated shock models directly to observational data from modern radio telescopes. By combining shock dynamics,
-microphysical prescriptions, and radiative transfer into a unified framework, TRICERATOPS helps bridge the gap between
-theory and observation in time-domain astrophysics.</p>
-<p>Built with flexibility and extensibility in mind, TRICERATOPS is suitable for a wide range of users; from newcomers
-exploring transient shock physics to experienced researchers developing custom models or extending the codebase.
-Its modular architecture makes it straightforward to swap in alternative physical prescriptions, add new radiation
-processes, or integrate with external inference and analysis tools.</p>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-border-1 docutils">
+<div class="sd-card-body docutils">
+<p class="sd-card-text"><strong>What does it do?</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text">Provides <strong>customizable models</strong> of astrophysical transients (GRBs, TDEs, SNe, etc.)</p></li>
+<li><p class="sd-card-text"><strong>Modular physics</strong> components (dynamics, radiation, opacity, etc.) for generating new transient models.</p></li>
+<li><p class="sd-card-text"><strong>Flexible inference tools</strong> for fitting models to observational data and constraining physical parameters.</p></li>
+<li><p class="sd-card-text">Seamless <strong>integration with external analysis tools</strong> and libraries.</p></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-border-1 docutils">
+<div class="sd-card-body docutils">
+<p class="sd-card-text"><strong>Core capabilities</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text">Fast, Efficient, and Detailed <strong>radiative processes</strong> and <strong>dynamics engines</strong> for modeling emission from shocks,
+disks, ejecta, and more.</p></li>
+<li><p class="sd-card-text">Flexible model construction tools for building <strong>custom transient models</strong> from modular physics components.</p></li>
+<li><p class="sd-card-text">Comprehensive inference pipelines for fitting models to data and <strong>performing parameter estimation</strong>.</p></li>
+<li><p class="sd-card-text"><strong>Extensive documentation</strong>, examples, and user guides to help you get started and make the most of the library.</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sd-container-fluid sd-sphinx-override sd-mb-4 docutils">
+<div class="sd-row sd-row-cols-2 sd-row-cols-xs-2 sd-row-cols-sm-2 sd-row-cols-md-2 sd-row-cols-lg-2 sd-g-3 sd-g-xs-3 sd-g-sm-3 sd-g-md-3 sd-g-lg-3 docutils">
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-border-1 docutils">
+<div class="sd-card-body docutils">
+<p class="sd-card-text"><strong>Why use Triceratops?</strong></p>
+<p class="sd-card-text">TRICERATOPS bridges the gap between theory and observation by combining shock dynamics,
+microphysical prescriptions, and radiative transfer into a unified framework.</p>
+</div>
+</div>
+</div>
+<div class="sd-col sd-d-flex-row docutils">
+<div class="sd-card sd-sphinx-override sd-w-100 sd-shadow-sm sd-border-1 docutils">
+<div class="sd-card-body docutils">
+<p class="sd-card-text"><strong>Who is it for?</strong></p>
+<ul class="simple">
+<li><p class="sd-card-text">Researchers modeling transient shock physics</p></li>
+<li><p class="sd-card-text">Users building custom astrophysical models</p></li>
+<li><p class="sd-card-text">Developers extending simulation frameworks</p></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="install-block docutils container">
+<div class="sd-card sd-sphinx-override sd-mb-3 sd-shadow-sm sd-shadow-md sd-border-primary sd-p-3 install-card docutils">
+<div class="sd-card-body docutils">
+<p class="sd-card-text"><strong>Get started in seconds!</strong></p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>&gt;&gt;&gt;<span class="w"> </span>pip<span class="w"> </span>install<span class="w"> </span>triceratops-lib
+</pre></div>
+</div>
+</div>
+</div>
+</div>
 <hr style="color:black"></section>
 <section id="resources">
 <h1>Resources<a class="headerlink" href="#resources" title="Link to this heading">#</a></h1>
@@ -453,7 +533,7 @@ to find some code to copy and paste? The examples page contains a wide variety o
 for all of the various parts of the <code class="docutils literal notranslate"><span class="pre">Triceratops</span></code> library.</p>
 </div>
 <div class="sd-card-footer docutils">
-<p class="sd-card-text"><span class="sd-d-grid"><a class="sd-sphinx-override sd-btn sd-text-wrap sd-btn-secondary sd-stretched-link reference internal" href="auto_examples/index.html"><span class="doc">To the Examples Page</span></a></span></p>
+<p class="sd-card-text"><span class="sd-d-grid"><a class="sd-sphinx-override sd-btn sd-text-wrap sd-btn-secondary sd-stretched-link reference internal" href="examples.html"><span class="doc">To the Examples Page</span></a></span></p>
 </div>
 </div>
 </div>
@@ -496,7 +576,7 @@ complete with source code and type hinting so that you can find every detail you
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="api.html">API</a></li>
 <li class="toctree-l1"><a class="reference internal" href="reference/user_guide.html">Triceratops User Guide</a></li>
-<li class="toctree-l1"><a class="reference internal" href="auto_examples/index.html">Triceratops Example Gallery</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Example Gallery</a></li>
 <li class="toctree-l1"><a class="reference internal" href="getting_started.html">Quickstart Guide</a></li>
 </ul>
 </div>
@@ -508,7 +588,25 @@ complete with source code and type hinting so that you can find every detail you
 <li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
 <li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
 </ul>
-</section>
+<div class="affiliation-footer">
+  <p class="affiliation-label">Developed at</p>
+  <div class="affiliation-logos">
+    <a href="https://www.berkeley.edu" target="_blank" rel="noopener noreferrer">
+      <img src="_static/berkeley_logo.svg"
+           alt="University of California, Berkeley"
+           class="affiliation-logo">
+    </a>
+    <img src="_static/trex_logo.png"
+         alt="Extragalactic Transients Group (TREX)"
+         class="affiliation-logo affiliation-logo-trex">
+  </div>
+  <p class="affiliation-text">
+    TRICERATOPS is developed and maintained by Eliza Diggins and the
+    <strong>Extragalactic Transients Group (TREX)</strong> in the Department
+    of Astronomy at the <strong>University of California, Berkeley</strong>.
+    Available under the GNU AGPLv3 license.
+  </p>
+</div></section>
 
 
                 </article>
@@ -546,9 +644,9 @@ complete with source code and type hinting so that you can find every detail you
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
-<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Triceratops</a></li>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#">Overview</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#resources">Resources</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#contents">Contents</a></li>
 <li class="toc-h1 nav-item toc-entry"><a class="reference internal nav-link" href="#indices-and-tables">Indices and tables</a></li>
@@ -557,13 +655,13 @@ complete with source code and type hinting so that you can find every detail you
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="_sources/index.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="_sources/index.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -578,8 +676,8 @@ complete with source code and type hinting so that you can find every detail you
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -613,7 +711,7 @@ complete with source code and type hinting so that you can find every detail you
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

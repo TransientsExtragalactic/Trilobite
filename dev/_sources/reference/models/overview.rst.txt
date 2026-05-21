@@ -15,21 +15,66 @@ They are a mapping :math:`\mathcal{M}` from a set of parameters :math:`\boldsymb
 That's really all there is to it! The exact nature of the mapping is entirely dependent on the model itself, as are
 the variables, the parameters, and the observables.
 
-The intention of Triceratops is to provide an extensive backend library of physics and mathematics modules so that,
+The intention of Triceratops is to provide an **extensive backend library of physics and mathematics modules** so that,
 when it comes time to write your model, you can generate the model with just a few lines of code to patch together
 the different pieces of physics that you need. Once your model is completed, you can use it to generate forward modeled
-synthetic data or to perform inference on real data.
+synthetic data or to perform inference on real data. This is the principle of **rapid-deployment modeling**.
 
-In this guide, we'll discuss the steps and the nuances to consider when building your own Triceratops model.
+In this guide, we'll discuss the steps and the nuances to consider when building your own Triceratops models.
+
+.. contents::
+    :local:
+    :depth: 2
+
+----
 
 The Model Class
 ----------------
 
+(*source module*: :class:`triceratops.models.core.base.Model`)
+
 In order to explain the model building process, we first need to understand the :class:`triceratops.models.core.base.Model` class,
-which is the building block for all Triceratops models. This class provides a basic template for building a model, and
+which is **the building block for all Triceratops models**. This class provides a basic template for building a model, and
 its suggested that you actually look at the source code of the model class while building your own so you can understand
 what the different wrapper methods are doing.
 
+.. note::
+
+    For **any model** you develop in the Triceratops framework, you should do the following basic steps:
+
+    1. **Develop the forward model**: This is the core of your model, where you determine the physics you
+       want to represent. (See :ref:`forward_modeling` for more details on this step.)
+    2. **Define the model's parameters and variables**: This is where you specify the parameters and variables that
+       your model will use, along with their base units and other metadata. (See :ref:`model_parameters` for more details on this step.)
+
+    This is really all there is to it! In a few cases, specialized modeling patterns have been developed for
+    specific types of models (e.g. optical photometry models), but in general, the above two steps are all you need to do to build a new model.
+
+To get started, you can create a new class that inherits from :class:`triceratops.models.core.base.Model` and
+implement the necessary methods and attributes.
+
+.. dropdown:: Example
+
+    .. code-block:: python
+
+        from triceratops.models.core.base import Model
+
+        class MyModel(Model):
+            # Step 1: Define the model's parameters and variables as class attributes.
+            PARAMETERS = (
+                # ... define your parameters here ...
+            )
+            VARIABLES = (
+                # ... define your variables here ...
+            )
+
+            # Step 2: Implement the forward model method to compute the outputs based on the inputs.
+            def _forward_model(self, variables, parameters):
+                # ... implement your model's physics here ...
+                return outputs
+
+
+.. _forward_modeling:
 The Forward Modelling Directive
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -357,11 +402,17 @@ calling :meth:`triceratops.models.core.base.Model._forward_model`. This ensures 
 
 Unitless variables should have ``""`` as their base units.
 
+----
+
 A Simple Example
 -----------------
 
-Let's look at the simple mode :class:`~triceratops.models.emission.synchrotron.Synchrotron_SSA_SBPL_SED`,
+Let's look at the simple mode :class:`~triceratops.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model`,
 which models a synchrotron self-absorbed broken power-law spectral energy distribution (SED).
+
+.. hint::
+
+    You can read more about this model and other synchrotron SED models in :ref:`synchrotron_overview`.
 
 Looking at the source code, the variables and parameters are
 
@@ -461,3 +512,207 @@ We can see this in the ``_forward_model`` method:
 That's all there really is to it! Before implementing your own models, its worth spending some time looking through
 the existing models in the Triceratops library to see how they are structured and implemented. Likewise, familiarizing
 yourself with the existing physics toolchains will help you leverage the existing building blocks effectively.
+
+.. _optical_model_pattern:
+
+----
+
+Specialized Model Patterns
+---------------------------
+
+While the :class:`~triceratops.models.core.base.Model` class provides a fully
+general interface for defining forward models, many common modeling tasks
+follow recurring structural patterns. To support these use cases,
+Triceratops provides a set of **specialized model base classes** that extend
+the core model interface with additional functionality.
+
+These patterns are designed to:
+
+- Encapsulate common workflows (e.g., filter convolution for photometric data),
+- Reduce boilerplate in model implementations,
+- Provide clearer and more constrained interfaces for specific problem domains.
+
+In practice, users are encouraged to subclass one of these specialized models
+whenever their modeling task aligns with the corresponding pattern, rather than
+re-implementing the same logic within a generic
+:class:`~triceratops.models.core.base.Model`.
+
+The following sections describe the available specialized model patterns and
+their intended use cases.
+
+Optical Photometry Models
+^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+A very common scenario in transient modeling is the need to predict **broadband
+photometric observations**—that is, fluxes measured through a set of filters at
+discrete epochs.
+
+.. hint::
+
+    From the user’s perspective, an optical photometry model behaves as follows:
+
+    - The model is constructed with a collection of filters (a
+      :class:`~triceratops.utils.phot_utils.FilterBundle`).
+    - At evaluation time, the user provides:
+
+      - ``band_index`` — specifying which filters to evaluate
+      - ``time`` (for time-dependent models)
+
+    - The model returns fluxes corresponding to those filters and epochs.
+
+For example:
+
+.. code-block:: python
+
+    model = MyOpticalModel(bundle)
+
+    flux = model.forward_model(
+        {"band_index": ["V", "R", "V"], "time": [1e5, 1e5, 2e5]},
+        params,
+    )
+
+In this interface, the user never explicitly performs filter convolution—the
+model takes care of this internally.
+
+Conceptually, this process is implemented by constructing an underlying
+spectral energy distribution (SED), :math:`F_\nu(\nu, t)`, and convolving it
+with the filter transmission curves:
+
+.. math::
+
+    F_{\rm band}(t) = \int F_\nu(\nu, t)\, T_{\rm band}(\nu)\, d\nu
+
+Triceratops provides two abstract base classes that implement this workflow:
+
+- :class:`~triceratops.models.core.optical.OpticalModel` — for **time-evolving**
+  multi-band observations.
+  Variables: ``band_index`` and ``time``.
+
+- :class:`~triceratops.models.core.optical.OpticalEpochModel` — for **single-epoch**
+  multi-band SEDs.
+  Variable: ``band_index`` only.
+
+These classes manage:
+
+- Filter convolution
+- Band selection via ``band_index``
+- Output assembly and broadcasting
+
+As a result, model implementations can focus entirely on computing the
+underlying SED.
+
+The ``_compute_sed`` Contract
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To define a custom optical model, subclasses implement ``_compute_sed`` rather
+than :meth:`~triceratops.models.core.base.Model._forward_model`.
+
+This method evaluates the SED on a shared frequency grid, which is then passed
+to the base class for convolution and output construction.
+
+.. code-block:: python
+
+    # For OpticalModel (time-evolving):
+    def _compute_sed(
+        self,
+        nu_grid: np.ndarray,    # shape (N_nu,), Hz
+        t_unique: np.ndarray,   # shape (N_t,), seconds — deduplicated
+        parameters: dict,
+    ) -> np.ndarray:            # shape (N_t, N_nu), erg/s/cm²/Hz
+
+    # For OpticalEpochModel (single epoch):
+    def _compute_sed(
+        self,
+        nu_grid: np.ndarray,    # shape (N_nu,), Hz
+        parameters: dict,
+    ) -> np.ndarray:            # shape (N_nu,), erg/s/cm²/Hz
+
+The ``nu_grid`` argument is always ``self.bundle.frequency_grid``, constructed
+from the union of all filter transmission curves. The returned SED must be in
+linear-space :math:`F_\nu` with units of
+:math:`\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}`.
+
+Once computed, the base class applies
+:meth:`~triceratops.utils.phot_utils.FilterBundle.apply` to perform the filter
+convolution and assembles the requested outputs.
+
+.. important::
+
+    For :class:`~triceratops.models.core.optical.OpticalModel`, the ``t_unique``
+    array contains only the **unique** times present in the input—not the full
+    input array.
+
+    This ensures that expensive computations are performed only once per epoch,
+    even if multiple filters are evaluated at that time.
+
+The ``band_index`` Variable
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Both classes define ``band_index`` as a variable identifying which filters to
+evaluate. It may be provided either as integer indices into the
+:class:`~triceratops.utils.phot_utils.FilterBundle`, or as filter names:
+
+.. code-block:: python
+
+    model.forward_model(
+        {"band_index": [0, 1, 0], "time": [1e5, 1e5, 2e5]},
+        params,
+    )
+
+    model.forward_model(
+        {"band_index": ["V", "R", "V"], "time": [1e5, 1e5, 2e5]},
+        params,
+    )
+
+String inputs are automatically resolved during
+:meth:`~triceratops.models.core.base.Model.coerce_model_variables`.
+
+FilterBundle Ownership and Mutation
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+The :class:`~triceratops.utils.phot_utils.FilterBundle` is provided at construction
+time and stored as ``self.bundle``. The associated convolution weights are
+precomputed.
+
+Filters may be modified via:
+
+.. code-block:: python
+
+    model.add_filter("B", b_filter)
+    model.remove_filter("V")
+
+.. warning::
+
+    Modifying the filter bundle rebuilds the convolution weights and must be
+    done **before** any inference run. Changing filters mid-inference will
+    invalidate previously computed results.
+
+
+.. dropdown:: Full Example
+
+    The following skeleton illustrates the minimal implementation of an
+    :class:`~triceratops.models.core.optical.OpticalModel`:
+
+    .. code-block:: python
+
+        import numpy as np
+        from triceratops.models.core.optical import OpticalModel
+        from triceratops.models.core.parameters import ModelParameter
+
+        class MyOpticalModel(OpticalModel):
+            PARAMETERS = (
+                ModelParameter("T", 1e4, base_units="K", bounds=(0, None)),
+            )
+
+            DESCRIPTION = "My custom optical photometry model."
+
+            def __init__(self, bundle):
+                super().__init__(bundle)
+
+            def _compute_sed(self, nu_grid, t_unique, parameters):
+                # nu_grid: (N_nu,) Hz
+                # t_unique: (N_t,) s
+                T = parameters["T"]
+
+                # ... compute SED ...
+                return f_nu  # shape (N_t, N_nu)

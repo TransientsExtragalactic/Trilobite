@@ -1,0 +1,412 @@
+:orphan:
+
+.. _synchrotron_gallery:
+
+*****************************
+Synchrotron Emission Examples
+*****************************
+
+This gallery covers the full chain of synchrotron physics in Triceratops — from the fundamental
+kernel functions that describe single-electron emission, through spectral energy distribution
+models with cooling and self-absorption, to the closure relations that connect observed SED
+parameters back to physical source properties.
+
+Examples are grouped into four progressive sections:
+
+- **Fundamentals** — kernel functions, the ν–γ–B relation, and single-electron spectra
+- **Spectral Energy Distributions** — SED model hierarchy, spectral regimes, and SSA
+- **Electron Cooling** — synchrotron and inverse Compton cooling physics
+- **Closures and Equipartition** — forward/inverse closure, emissivity scaling, and equipartition analysis
+
+.. rubric:: Theory and API
+
+For the underlying physics, see :ref:`synchrotron_theory` and :ref:`synch_sed_theory`.
+For cooling theory, see :ref:`synchrotron_cooling_theory` and :ref:`electron_cooling`.
+For the API, see :ref:`synchrotron_core`, :ref:`synchrotron_microphysics`, :ref:`synchrotron_seds`,
+and :ref:`synchrotron_cooling`.
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Synchrotron Fundamentals
+========================
+
+These examples explore the foundational building blocks of synchrotron radiation:
+the kernel functions :math:`F(x)` and :math:`G(x)` that describe single-electron emission,
+the central :math:`\nu \propto \gamma^2 B` frequency relation, and how a power-law electron
+population produces a power-law radio spectrum.
+
+These examples are the right starting point if you want to understand *why* synchrotron spectra
+look the way they do before working with the higher-level SED classes.
+
+**Theory:** :ref:`synchrotron_theory`
+
+**API:** :ref:`synchrotron_core`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Every synchrotron emitting electron radiates near its characteristic synchrotron frequency \nu_m, which depends on the electron Lorentz factor \gamma and the local magnetic field B:">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/a_fundamentals/images/thumb/sphx_glr_plot_frequency_gamma_relation_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/a_fundamentals/plot_frequency_gamma_relation`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">The ν–γ–B Relation and Pitch-Angle Effects</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Spectral Energy Distributions
+==============================
+
+These examples demonstrate Triceratops' hierarchy of synchrotron SED models — from a simple
+uncooled power-law spectrum through models that add radiative cooling and synchrotron
+self-absorption (SSA). Each model class adds physical complexity and produces distinct
+spectral shapes and break-frequency structures.
+
+Use these examples to decide which SED class is appropriate for a given source and observing
+configuration, and to understand how spectral slopes change across different regimes.
+
+**Theory:** :ref:`synch_sed_theory`, :ref:`ssa`
+
+**API:** :ref:`synchrotron_seds`, :ref:`synchrotron_microphysics`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The synchrotron spectra of astrophysical transients are often modelled with a simple power-law electron distribution, but more complete shock-acceleration models (e.g. :footcite2011ApJ...741...40T) predict a two-component population: a thermal (Maxwell-Jüttner) pool near the shock, and a non-thermal power-law tail accelerated to high Lorentz factors.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/b_seds/images/thumb/sphx_glr_plot_multi_component_numerical_SED_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/b_seds/plot_multi_component_numerical_SED`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Multi-Component Synchrotron SEDs with the Numerical Engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Most synchrotron models treat the emitting region as a single homogeneous zone. The OnAxisAsymmetricSynchrotronEngine generalizes this picture by assigning independent physical conditions to each polar-angle sightline \theta \in [0,\pi/2].">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/b_seds/images/thumb/sphx_glr_plot_on_axis_numerical_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/b_seds/plot_on_axis_numerical`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">On-Axis Asymmetric Synchrotron SEDs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Triceratops provides four one-zone phenomenological synchrotron SED classes that cover progressively more complex physical regimes:">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/b_seds/images/thumb/sphx_glr_plot_sed_model_comparison_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/b_seds/plot_sed_model_comparison`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Comparing Synchrotron SED Models</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In practice, synchrotron spectra are made much more complex than the idealized scenarios often presented in textbooks (e.g. :footciteRybickiLightman or :footcite1970ranp.book.....P). In the modern literature of supernova and GRB synchrotron modeling, the effect of synchrotron self absorption (SSA) and radiative cooling of the electron population are often included to better match observed spectra (e.g. :footciteGranotSari2002SpectralBreaks).">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/b_seds/images/thumb/sphx_glr_plot_SSA_cooling_SED_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/b_seds/plot_SSA_cooling_SED`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Synchrotron Spectra With Cooling and SSA</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Electron Cooling
+================
+
+These examples cover the radiative cooling of relativistic electrons in Triceratops:
+synchrotron cooling rates, the time-evolving cooling Lorentz factor :math:`\gamma_c`,
+the transition between fast- and slow-cooling regimes, and the role of inverse Compton
+losses (quantified by the Compton :math:`Y` parameter) relative to synchrotron losses.
+
+These examples are most relevant when modeling sources at late times (where cooling can
+reshape the electron distribution) or when IC losses are non-negligible.
+
+**Theory:** :ref:`synchrotron_cooling_theory`, :ref:`electron_cooling`
+
+**API:** :ref:`synchrotron_cooling`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="When relativistic electrons gyrate in a magnetic field they lose energy through synchrotron radiation at the rate">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/c_cooling/images/thumb/sphx_glr_plot_synchrotron_cooling_engine_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/c_cooling/plot_synchrotron_cooling_engine`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Electron Cooling — the Synchrotron Radiative Cooling Engine</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In the presence of an external radiation field relativistic electrons lose energy not only through synchrotron radiation but also through inverse Compton (IC) scattering — up-scattering photons to higher energies.  In the Thomson regime the IC cooling rate has the same \gamma^2 dependence as synchrotron cooling, but the energy density driving it is the radiation energy density u_{\rm rad} rather than the magnetic energy density u_B = B^2/(8\pi):">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/c_cooling/images/thumb/sphx_glr_plot_ic_vs_synchrotron_cooling_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Synchrotron vs Inverse Compton Cooling</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+Closures and Equipartition
+===========================
+
+These examples demonstrate the *closure relations* that bridge the gap between observed SED
+parameters (:math:`F_\mathrm{pk}`, :math:`\nu_\mathrm{pk}`) and the physical properties of
+the emitting region (radius :math:`R`, magnetic field :math:`B`, electron density :math:`n_e`).
+
+The **forward closure** maps physical parameters onto observables; the **inverse closure** does
+the reverse. Together they enable a complete equipartition analysis: given a measured SED,
+recover the source size, magnetic field, and energy content — and propagate measurement
+uncertainties through to physical posteriors via MCMC.
+
+**Theory:** :ref:`sed_forward_closure`, :ref:`sed_inverse_closure`, :ref:`synch_equipartition_theory`
+
+**API:** :ref:`synchrotron_microphysics`, :ref:`synchrotron_seds`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The equipartition analysis is the standard first-pass method for extracting physical parameters from a synchrotron radio SED. It was popularized by :footcitereadheadEquipartitionBrightnessTemperature1994 and is now used routinely in the analysis of radio supernovae, GRBs, and TDEs.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_equipartition_analysis_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_equipartition_analysis`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Equipartition Analysis from a Radio SED</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The bolometric synchrotron emissivity is the total radiated power per unit volume integrated over all frequencies. For a power-law electron distribution">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_bolometric_emissivity_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_bolometric_emissivity`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Bolometric Synchrotron Emissivity and Equipartition</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The inverse closure maps observed SED parameters — peak flux F_{\rm peak}, peak frequency \nu_{\rm peak}, and spectral regime — back to the physical properties of the emitting region: magnetic field B, emitting radius R, and electron distribution parameters.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_inverse_closure_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_inverse_closure`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Recovering Physical Parameters from an Observed SED: the Inverse Closure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The forward closure maps physical parameters of a synchrotron-emitting region — magnetic field B, emitting radius R, microphysical energy fractions \epsilon_E and \epsilon_B, and the electron energy distribution — onto the phenomenological spectral parameters that are directly measured from broadband observations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_forward_closure_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_forward_closure`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">From Physical Parameters to SED Parameters: the Forward Closure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Radio astronomers often measure a synchrotron SED with uncertainties and want to estimate the source radius, magnetic field, and minimum energy without direct angular resolution (e.g. no VLBI size measurement). This workflow — fitting the SED and propagating the fit uncertainties through the inverse closure — is the standard approach in the literature.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_sed_to_source_size_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_sed_to_source_size`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">From SED to Source Size: The Inverse Closure Workflow</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+   :includehidden:
+
+
+   /auto_examples/synchrotron/a_fundamentals/index.rst
+   /auto_examples/synchrotron/b_seds/index.rst
+   /auto_examples/synchrotron/c_cooling/index.rst
+   /auto_examples/synchrotron/d_closures/index.rst
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: synchrotron_python.zip </auto_examples/synchrotron/synchrotron_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: synchrotron_jupyter.zip </auto_examples/synchrotron/synchrotron_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

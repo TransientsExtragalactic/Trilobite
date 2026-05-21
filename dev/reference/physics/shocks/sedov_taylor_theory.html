@@ -1,0 +1,1379 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Theory: Sedov-Taylor Self-Similar Solution &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/shocks/sedov_taylor_theory';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Theory: Numerical Shock Engines" href="numerical_shocks_theory.html" />
+    <link rel="prev" title="Theory: The Chevalier Self-Similar Solution" href="chevalier_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html">triceratops.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Shock Physics in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="overview.html" class="nav-link">Shock Physics in Triceratops</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Theory: Sedov-Taylor Self-Similar Solution</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="theory-sedov-taylor-self-similar-solution">
+<span id="sedov-taylor-theory"></span><h1>Theory: Sedov-Taylor Self-Similar Solution<a class="headerlink" href="#theory-sedov-taylor-self-similar-solution" title="Link to this heading">#</a></h1>
+<p>The Sedov-Taylor blast-wave solution
+(<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a>)
+describes the adiabatic expansion of a strong spherical shock driven by a
+point explosion into a uniform ambient medium. Originally derived independently
+by Sedov<a class="footnote-reference brackets" href="#footcite-sedov1946propagation" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and Taylor<a class="footnote-reference brackets" href="#footcite-taylor1950formation" id="id2" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> in
+the context of nuclear blasts, the solution has since become a foundational
+framework for the <strong>adiabatic phase</strong> of supernova remnant evolution—the epoch
+during which the swept-up mass exceeds the initial ejecta mass but radiative
+losses remain unimportant.</p>
+<p>This page derives the Sedov-Taylor scalings from first principles and documents
+in full the normalization procedure implemented in
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta.html#triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta" title="triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta"><code class="xref py py-func docutils literal notranslate"><span class="pre">sedov_taylor_beta()</span></code></a>, including
+the explicit parametric similarity profiles and the energy integral that fixes
+the normalization coefficient <span class="math notranslate nohighlight">\(\beta(\gamma)\)</span>.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id8">Overview</a></p></li>
+<li><p><a class="reference internal" href="#thin-shell-estimate" id="id9">Thin-Shell Estimate</a></p></li>
+<li><p><a class="reference internal" href="#dimensional-derivation" id="id10">Dimensional Derivation</a></p></li>
+<li><p><a class="reference internal" href="#post-shock-jump-conditions" id="id11">Post-Shock Jump Conditions</a></p></li>
+<li><p><a class="reference internal" href="#similarity-solution" id="id12">Similarity Solution</a></p></li>
+<li><p><a class="reference internal" href="#normalization-coefficient" id="id13">Normalization Coefficient</a></p>
+<ul>
+<li><p><a class="reference internal" href="#energy-normalization-condition" id="id14">Energy Normalization Condition</a></p></li>
+<li><p><a class="reference internal" href="#explicit-parametric-profiles" id="id15">Explicit Parametric Profiles</a></p></li>
+<li><p><a class="reference internal" href="#change-of-variable-for-numerical-integration" id="id16">Change of Variable for Numerical Integration</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#implementation-notes" id="id17">Implementation Notes</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id18">References</a></p></li>
+</ul>
+</nav>
+<section id="overview">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>We consider the idealized problem of an instantaneous explosion in a cold,
+uniform, initially static medium of density <span class="math notranslate nohighlight">\(\rho_0\)</span>. The ambient
+pressure is taken to be negligible,</p>
+<div class="math notranslate nohighlight">
+\[p_0 \simeq 0,\]</div>
+<p>and the deposited energy <span class="math notranslate nohighlight">\(E_0\)</span> is assumed to be conserved during the
+phase of interest. In supernova remnants, this <strong>Sedov–Taylor phase</strong> typically
+begins after the freely expanding ejecta have swept up a mass comparable to
+their own and can last for hundreds to thousands of years before cooling becomes
+important.</p>
+<p>The assumptions of the Sedov–Taylor problem are therefore:</p>
+<ol class="arabic simple">
+<li><p>the explosion is effectively instantaneous;</p></li>
+<li><p>the ambient medium is uniform, cold, and initially at rest;</p></li>
+<li><p>the shock is strong, so the upstream Mach number is large;</p></li>
+<li><p>the evolution is adiabatic and energy conserving;</p></li>
+<li><p>gravity, radiative cooling, and continued energy injection are negligible.</p></li>
+</ol>
+<p>We denote upstream, unshocked quantities by subscript <span class="math notranslate nohighlight">\(0\)</span> and downstream,
+post-shock quantities by subscript <span class="math notranslate nohighlight">\(1\)</span>. The shock radius is <span class="math notranslate nohighlight">\(R(t)\)</span>,
+and its velocity in the lab frame is</p>
+<div class="math notranslate nohighlight">
+\[\dot{R} \equiv \frac{dR}{dt}.\]</div>
+</section>
+<section id="thin-shell-estimate">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Thin-Shell Estimate</a><a class="headerlink" href="#thin-shell-estimate" title="Link to this heading">#</a></h2>
+<p>Before deriving the similarity solution, it is useful to obtain the basic
+scaling behavior using an approximate thin-shell argument. Since the shock is
+strong, the Rankine–Hugoniot jump conditions give the density contrast</p>
+<div class="math notranslate nohighlight">
+\[\frac{\rho_1}{\rho_0}
+=
+\frac{\gamma + 1}{\gamma - 1},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\gamma\)</span> is the adiabatic index.</p>
+<p>If the swept-up mass is concentrated into a thin shell of radius <span class="math notranslate nohighlight">\(R\)</span> and
+thickness <span class="math notranslate nohighlight">\(D\)</span>, then mass conservation gives</p>
+<div class="math notranslate nohighlight">
+\[4 \pi R^2 D \rho_1
+=
+\frac{4\pi}{3} R^3 \rho_0.\]</div>
+<p>Therefore,</p>
+<div class="math notranslate nohighlight">
+\[D
+=
+\frac{R}{3}\frac{\rho_0}{\rho_1}
+=
+\frac{R}{3}
+\frac{\gamma - 1}{\gamma + 1}.\]</div>
+<p>Thus, for ordinary gases with <span class="math notranslate nohighlight">\(\gamma\)</span> of order unity, the shell is
+geometrically thin compared to its radius.</p>
+<p>In the shock frame, the upstream gas flows into the shock with speed
+<span class="math notranslate nohighlight">\(u_0\)</span> and the downstream gas exits with speed <span class="math notranslate nohighlight">\(u_1\)</span>. Mass
+conservation across the shock implies</p>
+<div class="math notranslate nohighlight">
+\[\rho_0 u_0 = \rho_1 u_1,\]</div>
+<p>so</p>
+<div class="math notranslate nohighlight">
+\[u_1
+=
+\frac{\rho_0}{\rho_1}u_0
+=
+\frac{\gamma - 1}{\gamma + 1}u_0.\]</div>
+<p>The shock speed in the lab frame is the difference between the upstream and
+downstream velocities in the shock frame:</p>
+<div class="math notranslate nohighlight">
+\[\dot{R}
+=
+u_0 - u_1
+=
+\frac{2}{\gamma + 1}u_0.\]</div>
+<p>Equivalently,</p>
+<div class="math notranslate nohighlight">
+\[u_0
+=
+\frac{\gamma + 1}{2}\dot{R}.\]</div>
+<p>The momentum carried by the swept-up shell is approximately</p>
+<div class="math notranslate nohighlight">
+\[p_{\rm shell}
+=
+\left(4\pi R^2D\right)\rho_1\dot{R}
+=
+\frac{4\pi}{3}R^3\rho_0\dot{R}.\]</div>
+<p>Since the shell sweeps up more material as it expands, its momentum increases.
+This requires a pressure force from the hot interior. We parameterize the
+interior pressure by</p>
+<div class="math notranslate nohighlight">
+\[P_{\rm in} = \alpha p_1,\]</div>
+<p>where <span class="math notranslate nohighlight">\(p_1\)</span> is the immediate post-shock pressure and <span class="math notranslate nohighlight">\(\alpha\)</span> is a
+dimensionless constant to be fixed by energy conservation.</p>
+<p>For a strong adiabatic shock with negligible upstream pressure,</p>
+<div class="math notranslate nohighlight">
+\[p_1
+=
+\frac{2}{\gamma+1}\rho_0 u_0^2.\]</div>
+<p>The outward pressure force on the shell is then</p>
+<div class="math notranslate nohighlight">
+\[F
+=
+4\pi R^2 P_{\rm in}
+=
+4\pi R^2 \alpha p_1.\]</div>
+<p>Using the expression for <span class="math notranslate nohighlight">\(p_1\)</span>, and writing the shell momentum in terms
+of <span class="math notranslate nohighlight">\(u_0\)</span>, one obtains the approximate equation of motion</p>
+<div class="math notranslate nohighlight">
+\[3\alpha R^2 u_0^2
+=
+\frac{d}{dt}\left(u_0R^3\right).\]</div>
+<p>Taking <span class="math notranslate nohighlight">\(u_0 \sim \dot{R}\)</span> for the purpose of determining the scaling,
+this gives</p>
+<div class="math notranslate nohighlight">
+\[3\alpha R^2 \dot{R}^2
+=
+\frac{d}{dt}\left(R^3\dot{R}\right)
+=
+3R^2\dot{R}^2 + R^3\ddot{R}.\]</div>
+<p>Now assume a power-law solution,</p>
+<div class="math notranslate nohighlight">
+\[R(t) \propto t^\beta.\]</div>
+<p>Substitution gives</p>
+<div class="math notranslate nohighlight">
+\[\beta
+=
+\frac{1}{4 - 3\alpha}.\]</div>
+<p>Therefore,</p>
+<div class="math notranslate nohighlight">
+\[R(t) \propto t^{1/(4-3\alpha)}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\dot{R}(t) \propto t^{(3\alpha - 3)/(4-3\alpha)}.\]</div>
+<p>To determine <span class="math notranslate nohighlight">\(\alpha\)</span>, we impose energy conservation. The kinetic energy
+of the swept-up shell scales as</p>
+<div class="math notranslate nohighlight">
+\[K
+\sim
+\rho_0 R^3 \dot{R}^2.\]</div>
+<p>The internal energy of the hot post-shock gas is</p>
+<div class="math notranslate nohighlight">
+\[U
+=
+\frac{1}{\gamma - 1}
+\int p\,dV.\]</div>
+<p>In the thin-shell approximation, this also scales as</p>
+<div class="math notranslate nohighlight">
+\[U
+\sim
+R^3 P_{\rm in}
+\sim
+R^3 \rho_0 \dot{R}^2.\]</div>
+<p>Thus the total energy scales as</p>
+<div class="math notranslate nohighlight">
+\[E_0
+\sim
+\rho_0 R^3 \dot{R}^2.\]</div>
+<p>Since <span class="math notranslate nohighlight">\(E_0\)</span> is conserved,</p>
+<div class="math notranslate nohighlight">
+\[R^3\dot{R}^2 = \text{constant}.\]</div>
+<p>For <span class="math notranslate nohighlight">\(R \propto t^\beta\)</span>, this implies</p>
+<div class="math notranslate nohighlight">
+\[t^{5\beta - 2} = \text{constant},\]</div>
+<p>and therefore</p>
+<div class="math notranslate nohighlight">
+\[\beta = \frac{2}{5}.\]</div>
+<p>Hence the characteristic Sedov–Taylor scalings are</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+R(t) \propto t^{2/5}
+}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\dot{R}(t) \propto t^{-3/5}
+}.\]</div>
+<p>Since the post-shock pressure scales as</p>
+<div class="math notranslate nohighlight">
+\[p_1 \sim \rho_0 \dot{R}^2,\]</div>
+<p>we also have</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+p_1(t) \propto t^{-6/5}
+}.\]</div>
+</section>
+<section id="dimensional-derivation">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Dimensional Derivation</a><a class="headerlink" href="#dimensional-derivation" title="Link to this heading">#</a></h2>
+<p>The same result follows immediately from dimensional analysis. During the
+energy-conserving phase, the only dimensional quantities controlling the shock
+radius are</p>
+<div class="math notranslate nohighlight">
+\[E_0, \qquad \rho_0, \qquad t.\]</div>
+<p>Their dimensions are</p>
+<div class="math notranslate nohighlight">
+\[[E_0] = M L^2 T^{-2},
+\qquad
+[\rho_0] = M L^{-3},
+\qquad
+[t] = T.\]</div>
+<p>The unique combination with dimensions of length is</p>
+<div class="math notranslate nohighlight">
+\[\left(\frac{E_0 t^2}{\rho_0}\right)^{1/5}.\]</div>
+<p>Therefore the blast-wave radius must take the form</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+R(t)
+=
+\beta(\gamma)
+\left(\frac{E_0 t^2}{\rho_0}\right)^{1/5}
+}\]</div>
+<p>where <span class="math notranslate nohighlight">\(\beta(\gamma)\)</span> is a dimensionless constant determined by the full
+similarity solution and depends only on <span class="math notranslate nohighlight">\(\gamma\)</span>. The shock velocity is
+then</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\dot{R}(t)
+=
+\frac{2}{5}\frac{R}{t}
+}.\]</div>
+</section>
+<section id="post-shock-jump-conditions">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Post-Shock Jump Conditions</a><a class="headerlink" href="#post-shock-jump-conditions" title="Link to this heading">#</a></h2>
+<p>Immediately behind the shock, the Rankine–Hugoniot conditions for a strong
+shock give</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\rho_1
+=
+\rho_0
+\frac{\gamma + 1}{\gamma - 1}
+}\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+p_1
+=
+\frac{2}{\gamma + 1}
+\rho_0 \dot{R}^2
+}.\]</div>
+<p>The downstream gas velocity in the lab frame is</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+v_1
+=
+\frac{2}{\gamma + 1}\dot{R}
+}.\]</div>
+<p>These provide the boundary conditions for the self-similar flow just behind the
+shock.</p>
+</section>
+<section id="similarity-solution">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Similarity Solution</a><a class="headerlink" href="#similarity-solution" title="Link to this heading">#</a></h2>
+<p>The full Sedov–Taylor solution resolves the spatial structure of the shocked
+gas behind the blast wave. In spherical symmetry, the adiabatic Euler equations
+are</p>
+<div class="math notranslate nohighlight">
+\[\frac{\partial v}{\partial t}
++
+v\frac{\partial v}{\partial r}
+=
+-\frac{1}{\rho}\frac{\partial p}{\partial r},\]</div>
+<div class="math notranslate nohighlight">
+\[\frac{\partial \rho}{\partial t}
++
+\frac{1}{r^2}
+\frac{\partial}{\partial r}
+\left(r^2\rho v\right)
+=
+0,\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\left(
+\frac{\partial}{\partial t}
++
+v\frac{\partial}{\partial r}
+\right)
+\log\left(\frac{p}{\rho^\gamma}\right)
+=
+0.\]</div>
+<p>The last equation expresses adiabatic entropy conservation along streamlines
+behind the shock.</p>
+<p>Because the problem contains no intrinsic length scale, the flow variables must
+depend on radius and time through the dimensionless similarity coordinate</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\xi
+=
+\frac{r}{R(t)}
+}.\]</div>
+<p>The shock front is located at <span class="math notranslate nohighlight">\(\xi = 1\)</span> and the center of the explosion
+at <span class="math notranslate nohighlight">\(\xi = 0\)</span>. We write the hydrodynamic variables in self-similar form as</p>
+<div class="math notranslate nohighlight">
+\[v(r,t)
+=
+\dot{R}(t) V(\xi),\]</div>
+<div class="math notranslate nohighlight">
+\[\rho(r,t)
+=
+\rho_0 G(\xi),\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[p(r,t)
+=
+\rho_0 \dot{R}^2(t) P(\xi).\]</div>
+<p>The functions <span class="math notranslate nohighlight">\(V(\xi)\)</span>, <span class="math notranslate nohighlight">\(G(\xi)\)</span>, and <span class="math notranslate nohighlight">\(P(\xi)\)</span> describe the
+dimensionless velocity, density, and pressure profiles inside the blast wave.
+At the shock, the Rankine–Hugoniot conditions impose the boundary conditions</p>
+<div class="math notranslate nohighlight">
+\[V(1)
+=
+\frac{2}{\gamma+1},
+\qquad
+G(1)
+=
+\frac{\gamma+1}{\gamma-1},
+\qquad
+P(1)
+=
+\frac{2}{\gamma+1}.\]</div>
+<p>Substituting the similarity ansatz into the Euler equations reduces the
+original partial differential equations to a coupled system of ordinary
+differential equations in <span class="math notranslate nohighlight">\(\xi\)</span>. These ODEs are integrable in closed form
+for general <span class="math notranslate nohighlight">\(\gamma\)</span> (see Landau and Lifshitz<a class="footnote-reference brackets" href="#footcite-landau1987fluid" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, §106;
+Sedov<a class="footnote-reference brackets" href="#footcite-sedov1946propagation" id="id4" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>), yielding the explicit parametric solution
+described in the following section.</p>
+</section>
+<section id="normalization-coefficient">
+<span id="sedov-taylor-normalization"></span><h2><a class="toc-backref" href="#id13" role="doc-backlink">Normalization Coefficient</a><a class="headerlink" href="#normalization-coefficient" title="Link to this heading">#</a></h2>
+<p>The normalization <span class="math notranslate nohighlight">\(\beta(\gamma)\)</span> is not fixed by self-similarity alone;
+it is determined by requiring that the total energy contained within the blast
+equals the injected energy <span class="math notranslate nohighlight">\(E_0\)</span>. This section derives the energy
+integral and documents the explicit similarity profiles used in its evaluation.</p>
+<section id="energy-normalization-condition">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Energy Normalization Condition</a><a class="headerlink" href="#energy-normalization-condition" title="Link to this heading">#</a></h3>
+<p>The total kinetic plus thermal energy inside the shock is</p>
+<div class="math notranslate nohighlight">
+\[E_0
+=
+4\pi
+\int_0^{R(t)}
+\left[
+    \frac{1}{2}\rho v^2
+    +
+    \frac{p}{\gamma - 1}
+\right]
+r^2\,dr.\]</div>
+<p>Substituting the similarity ansatz and changing the integration variable from
+<span class="math notranslate nohighlight">\(r\)</span> to <span class="math notranslate nohighlight">\(\xi = r/R\)</span>, this becomes</p>
+<div class="math notranslate nohighlight">
+\[E_0
+=
+4\pi \rho_0 \dot{R}^2 R^3
+\int_0^1
+\left[
+    \frac{1}{2}G(\xi)V^2(\xi)
+    +
+    \frac{P(\xi)}{\gamma - 1}
+\right]
+\xi^2\,d\xi.\]</div>
+<p>Using the conventional notation from the similarity solution, it is more
+natural to replace the pressure profile <span class="math notranslate nohighlight">\(P(\xi)\)</span> with the dimensionless
+squared sound speed <span class="math notranslate nohighlight">\(Z(\xi)\)</span>, defined by</p>
+<div class="math notranslate nohighlight">
+\[c_s^2
+=
+\frac{\gamma p}{\rho}
+\equiv
+\left(\frac{2r}{5t}\right)^2 Z(\xi),\]</div>
+<p>so that <span class="math notranslate nohighlight">\(P(\xi) = G(\xi) V(\xi)^2 Z(\xi) / \gamma\)</span>. The energy integral
+then reads</p>
+<div class="math notranslate nohighlight">
+\[E_0
+=
+\frac{16\pi}{25}
+\rho_0 \dot{R}^2 R^3
+\underbrace{
+\int_0^1
+G(\xi)
+\left[
+    \frac{V(\xi)^2}{2}
+    +
+    \frac{Z(\xi)}{\gamma(\gamma-1)}
+\right]
+\xi^4\,d\xi
+}_{C_E(\gamma)/({16\pi}/{25})}.\]</div>
+<p>Since <span class="math notranslate nohighlight">\(\dot{R}^2 R^3 = (2R/5t)^2 R^3 = (4/25) R^5/t^2\)</span>, and
+<span class="math notranslate nohighlight">\(R^5/t^2 = \beta^5 E_0/\rho_0\)</span>, the energy conservation condition
+reduces to</p>
+<div class="math notranslate nohighlight">
+\[1 = \beta^5 C_E(\gamma),\]</div>
+<p>hence</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+\beta(\gamma)
+=
+C_E(\gamma)^{-1/5},
+\qquad
+C_E(\gamma)
+=
+\frac{16\pi}{25}
+\int_0^1
+G(\xi)
+\left[
+    \frac{V(\xi)^2}{2}
+    +
+    \frac{Z(\xi)}{\gamma(\gamma-1)}
+\right]
+\xi^4\,d\xi.
+}\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Some references write <span class="math notranslate nohighlight">\(R(t) = (E_0 t^2 / \alpha_{\rm ST} \rho_0)^{1/5}\)</span>,
+in which case <span class="math notranslate nohighlight">\(\alpha_{\rm ST} = \beta^{-5} = C_E\)</span>. Both conventions
+are in common use; Triceratops uses the <span class="math notranslate nohighlight">\(\beta\)</span> form.</p>
+</div>
+</section>
+<section id="explicit-parametric-profiles">
+<h3><a class="toc-backref" href="#id15" role="doc-backlink">Explicit Parametric Profiles</a><a class="headerlink" href="#explicit-parametric-profiles" title="Link to this heading">#</a></h3>
+<p>The similarity ODEs for <span class="math notranslate nohighlight">\(V\)</span>, <span class="math notranslate nohighlight">\(G\)</span>, and <span class="math notranslate nohighlight">\(Z\)</span> as functions of
+<span class="math notranslate nohighlight">\(\xi\)</span> are integrable in closed form. Following
+Sedov<a class="footnote-reference brackets" href="#footcite-sedov1946propagation" id="id5" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a> and Landau and Lifshitz<a class="footnote-reference brackets" href="#footcite-landau1987fluid" id="id6" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, the
+explicit solution uses the <strong>dimensionless velocity</strong> <span class="math notranslate nohighlight">\(V\)</span> as a
+parametric variable in place of <span class="math notranslate nohighlight">\(\xi\)</span>. Define the auxiliary combinations</p>
+<div class="math notranslate nohighlight">
+\[A \;=\; \tfrac{\gamma+1}{2}\,V,
+\qquad
+B \;=\; \frac{\gamma+1}{7-\gamma}\bigl[5 - (3\gamma-1)V\bigr],\]</div>
+<div class="math notranslate nohighlight">
+\[C \;=\; \frac{\gamma+1}{\gamma-1}\,({\gamma V - 1}),
+\qquad
+D \;=\; \frac{\gamma+1}{\gamma-1}\,(1 - V),\]</div>
+<p>and the five exponents</p>
+<div class="math notranslate nohighlight">
+\[\nu_1
+=
+-\frac{13\gamma^2 - 7\gamma + 12}{(3\gamma-1)(2\gamma+1)},
+\qquad
+\nu_2
+=
+\frac{5(\gamma-1)}{2\gamma+1},
+\qquad
+\nu_3
+=
+\frac{3}{2\gamma+1},\]</div>
+<div class="math notranslate nohighlight">
+\[\nu_4
+=
+-\frac{\nu_1}{2-\gamma},
+\qquad
+\nu_5
+=
+-\frac{2}{2-\gamma}.\]</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The formulae above are singular at <span class="math notranslate nohighlight">\(\gamma = 2\)</span>, where several
+exponents diverge. Triceratops explicitly rejects this value.</p>
+</div>
+<p>The explicit parametric profiles are then</p>
+<div class="math notranslate nohighlight">
+\[\xi(V)
+=
+\left(A^{-2} B^{\nu_1} C^{\nu_2}\right)^{1/5},\]</div>
+<div class="math notranslate nohighlight">
+\[G(V)
+=
+\frac{\gamma+1}{\gamma-1}\,C^{\nu_3} B^{\nu_4} D^{\nu_5},\]</div>
+<div class="math notranslate nohighlight">
+\[Z(V)
+=
+\frac{\gamma(\gamma-1)(1-V)\,V^2}{2(\gamma V - 1)}.\]</div>
+<p>The parameter <span class="math notranslate nohighlight">\(V\)</span> ranges from</p>
+<div class="math notranslate nohighlight">
+\[V_0 = \frac{1}{\gamma}
+\qquad\text{(origin,}\ \xi = 0\text{)}\]</div>
+<p>to</p>
+<div class="math notranslate nohighlight">
+\[V_s = \frac{2}{\gamma+1}
+\qquad\text{(shock,}\ \xi = 1\text{)}.\]</div>
+<p>The lower endpoint <span class="math notranslate nohighlight">\(V_0\)</span> is numerically singular (several powers of
+<span class="math notranslate nohighlight">\(C\)</span> and <span class="math notranslate nohighlight">\(D\)</span> vanish there), and the integration begins at
+<span class="math notranslate nohighlight">\(V_0 + \varepsilon\,\Delta V\)</span> with a small offset <span class="math notranslate nohighlight">\(\varepsilon\)</span>
+to avoid the singularity.</p>
+</section>
+<section id="change-of-variable-for-numerical-integration">
+<h3><a class="toc-backref" href="#id16" role="doc-backlink">Change of Variable for Numerical Integration</a><a class="headerlink" href="#change-of-variable-for-numerical-integration" title="Link to this heading">#</a></h3>
+<p>Because the similarity profiles are expressed parametrically in <span class="math notranslate nohighlight">\(V\)</span>, the
+energy integral is evaluated by changing the integration variable from
+<span class="math notranslate nohighlight">\(\xi\)</span> to <span class="math notranslate nohighlight">\(V\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[C_E(\gamma)
+=
+\frac{16\pi}{25}
+\int_{V_0}^{V_s}
+G(V)
+\left[
+    \frac{V^2}{2}
+    +
+    \frac{Z(V)}{\gamma(\gamma-1)}
+\right]
+\xi(V)^4
+\frac{d\xi}{dV}\,dV.\]</div>
+<p>The Jacobian is obtained by differentiating <span class="math notranslate nohighlight">\(\log\xi(V)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d\xi}{dV}
+=
+\xi(V)
+\times
+\frac{1}{5}
+\left[
+    -\frac{2}{V}
+    \;-\;
+    \frac{\nu_1(3\gamma-1)}{5-(3\gamma-1)V}
+    \;+\;
+    \frac{\nu_2\,\gamma}{\gamma V - 1}
+\right].\]</div>
+<p>The integral is then evaluated numerically using
+<a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.quad.html#scipy.integrate.quad" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code></a>. For <span class="math notranslate nohighlight">\(\gamma = 5/3\)</span> (monatomic ideal gas),</p>
+<div class="math notranslate nohighlight">
+\[\beta\!\left(\tfrac{5}{3}\right)
+\approx 1.1517,
+\qquad
+C_E\!\left(\tfrac{5}{3}\right)
+=
+\beta^{-5}
+\approx 2.026,\]</div>
+<p>and for <span class="math notranslate nohighlight">\(\gamma = 7/5 = 1.4\)</span> (diatomic ideal gas),</p>
+<div class="math notranslate nohighlight">
+\[\beta(1.4)
+\approx 1.033,
+\qquad
+C_E(1.4)
+\approx 1.18.\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta.html#triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta" title="triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta"><code class="xref py py-func docutils literal notranslate"><span class="pre">sedov_taylor_beta()</span></code></a> computes
+<span class="math notranslate nohighlight">\(\beta(\gamma)\)</span> once at class instantiation and caches it on the
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a>.
+The quadrature tolerances and the singularity offset <span class="math notranslate nohighlight">\(\varepsilon\)</span> are
+all user-controllable via keyword arguments.</p>
+</div>
+</section>
+</section>
+<section id="implementation-notes">
+<h2><a class="toc-backref" href="#id17" role="doc-backlink">Implementation Notes</a><a class="headerlink" href="#implementation-notes" title="Link to this heading">#</a></h2>
+<p>The derivations above are directly reflected in the Triceratops implementation:</p>
+<ul>
+<li><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta.html#triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta" title="triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta"><code class="xref py py-func docutils literal notranslate"><span class="pre">sedov_taylor_beta()</span></code></a> evaluates
+<span class="math notranslate nohighlight">\(C_E(\gamma)\)</span> via <a class="reference external" href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.quad.html#scipy.integrate.quad" title="(in SciPy v1.17.0)"><code class="xref py py-func docutils literal notranslate"><span class="pre">scipy.integrate.quad()</span></code></a> over the parametric
+<span class="math notranslate nohighlight">\(V\)</span>-interval and returns <span class="math notranslate nohighlight">\(\beta = C_E^{-1/5}\)</span>.</p></li>
+<li><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a>
+stores <span class="math notranslate nohighlight">\(\beta\)</span> and evaluates the shock kinematics</p>
+<div class="math notranslate nohighlight">
+\[R_s(t) = \beta\!\left(\frac{E_0\,t^2}{\rho_0}\right)^{1/5},
+\qquad
+v_s(t) = \frac{2}{5}\frac{R_s}{t},\]</div>
+<p>together with the immediate post-shock thermodynamics from the
+strong-shock Rankine–Hugoniot conditions.</p>
+</li>
+<li><p>Post-shock temperature is computed from the ideal-gas relation</p>
+<div class="math notranslate nohighlight">
+\[T_s = \frac{p_s\,\mu\,m_p}{\rho_s\,k_B},\]</div>
+<p>where <span class="math notranslate nohighlight">\(\mu\)</span> is the mean molecular weight (in units of the proton mass
+<span class="math notranslate nohighlight">\(m_p\)</span>) and <span class="math notranslate nohighlight">\(k_B\)</span> is Boltzmann’s constant. For a fully ionized
+hydrogen plasma, <span class="math notranslate nohighlight">\(\mu = 0.5\)</span>.</p>
+</li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><span class="xref std std-ref">jump_conditions_theory</span> for the Rankine–Hugoniot conditions used
+to set the post-shock boundary values.</p></li>
+<li><p><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html#triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine" title="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine"><code class="xref py py-class docutils literal notranslate"><span class="pre">SedovTaylorShockEngine</span></code></a>
+for the full API reference.</p></li>
+</ul>
+</div>
+</section>
+<section id="references">
+<h2><a class="toc-backref" href="#id18" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id7">
+<aside class="footnote-list brackets">
+<aside class="footnote brackets" id="footcite-sedov1946propagation" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id1">1</a>,<a role="doc-backlink" href="#id4">2</a>,<a role="doc-backlink" href="#id5">3</a>)</span>
+<p>Leonid Ivanovich Sedov. Propagation of strong shock waves. <em>Journal of Applied Mathematics and Mechanics</em>, 10:241–250, 1946.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-taylor1950formation" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id2">2</a><span class="fn-bracket">]</span></span>
+<p>Geoffrey Ingram Taylor. The formation of a blast wave by a very intense explosion.-ii. the atomic explosion of 1945. <em>Proceedings of the Royal Society of London. Series A. Mathematical and Physical Sciences</em>, 201(1065):175–186, 1950.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-landau1987fluid" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id3">1</a>,<a role="doc-backlink" href="#id6">2</a>)</span>
+<p>Lev Davidovich Landau and Evgeny Mikhailovich Lifshitz. <em>Fluid Mechanics: Volume 6</em>. Volume 6. Elsevier, 1987.</p>
+</aside>
+</aside>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="chevalier_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Theory: The Chevalier Self-Similar Solution</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="numerical_shocks_theory.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Theory: Numerical Shock Engines</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thin-shell-estimate">Thin-Shell Estimate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dimensional-derivation">Dimensional Derivation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#post-shock-jump-conditions">Post-Shock Jump Conditions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#similarity-solution">Similarity Solution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#normalization-coefficient">Normalization Coefficient</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#energy-normalization-condition">Energy Normalization Condition</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#explicit-parametric-profiles">Explicit Parametric Profiles</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#change-of-variable-for-numerical-integration">Change of Variable for Numerical Integration</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#implementation-notes">Implementation Notes</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#references">References</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/shocks/sedov_taylor_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

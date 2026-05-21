@@ -1,7 +1,7 @@
 .. _synchrotron_cooling_theory:
 
 ==========================================
-Theory of Synchrotron Electron Populations
+Theory Note: Electron Populations
 ==========================================
 
 Synchrotron emission from astrophysical sources is determined not only by the

@@ -1,0 +1,1176 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>RadioPhotometryEpoch &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data/radio_photometry_epoch';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Optical Photometry" href="optical_photometry.html" />
+    <link rel="prev" title="Radio Photometry" href="photometry.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Data Loading, Handling, and Visualization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html">triceratops.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="overview.html" class="nav-link">Data Loading, Handling, and Visualization</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">RadioPhotometryEpoch</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="radiophotometryepoch">
+<span id="radio-photometry-epoch"></span><h1>RadioPhotometryEpoch<a class="headerlink" href="#radiophotometryepoch" title="Link to this heading">#</a></h1>
+<p><a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpoch.html#triceratops.data.photometry.RadioPhotometryEpoch" title="triceratops.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> represents a
+<strong>single-epoch radio spectral energy distribution (SED)</strong>. It stores
+multi-frequency flux density measurements taken at one snapshot in time,
+making it suitable for broadband spectral fitting where frequency is the
+independent variable.</p>
+<p>This is the spectral complement to
+<a class="reference internal" href="../../_as_gen/triceratops.data.light_curve.RadioLightCurveContainer.html#triceratops.data.light_curve.RadioLightCurveContainer" title="triceratops.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a> (which
+fixes frequency and varies time). In a <code class="docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code>, time is
+fixed metadata (implicitly a single epoch) and frequency is the
+x-axis variable.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This class was previously named <code class="docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code>.
+The old name is still importable but will emit a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#DeprecationWarning" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">DeprecationWarning</span></code></a>.
+Update your code to use <code class="docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code>.</p>
+</div>
+<section id="schema">
+<h2>Schema<a class="headerlink" href="#schema" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 25.0%" />
+<col style="width: 45.0%" />
+<col style="width: 15.0%" />
+<col style="width: 15.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Column Name</p></th>
+<th class="head"><p>Description</p></th>
+<th class="head"><p>Default Unit</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">freq</span></code></p></td>
+<td><p>Central observing frequency</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">GHz</span></code></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flux_density</span></code></p></td>
+<td><p>Measured flux density (detections; NaN for upper limits)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Jy</span></code></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">flux_density_error</span></code></p></td>
+<td><p>1σ uncertainty on flux density</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Jy</span></code></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code></p></td>
+<td><p>Upper limit for non-detections (NaN for detections)</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">Jy</span></code></p></td>
+<td><p>Yes</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">obs_name</span></code></p></td>
+<td><p>Optional observation identifier</p></td>
+<td><p>None</p></td>
+<td><p>No</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">comments</span></code></p></td>
+<td><p>Optional free-form metadata</p></td>
+<td><p>None</p></td>
+<td><p>No</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Detection convention</strong>: An observation is a detection if <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code>
+is NaN. It is a non-detection (upper limit) if <code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code> is finite.</p>
+</section>
+<section id="construction">
+<h2>Construction<a class="headerlink" href="#construction" title="Link to this heading">#</a></h2>
+<section id="from-an-astropy-table">
+<h3>From an Astropy Table<a class="headerlink" href="#from-an-astropy-table" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <span class="n">Table</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryEpoch</span>
+
+<span class="n">table</span> <span class="o">=</span> <span class="n">Table</span><span class="p">({</span>
+    <span class="s2">&quot;freq&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.4</span><span class="p">,</span> <span class="mf">5.5</span><span class="p">,</span> <span class="mf">8.5</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">22.0</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">,</span>
+    <span class="s2">&quot;flux_density&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">1.2</span><span class="p">,</span> <span class="mf">1.8</span><span class="p">,</span> <span class="mf">1.6</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Jy</span><span class="p">,</span>
+    <span class="s2">&quot;flux_density_error&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Jy</span><span class="p">,</span>
+    <span class="s2">&quot;flux_upper_limit&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Jy</span><span class="p">,</span>
+<span class="p">})</span>
+
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">RadioPhotometryEpoch</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A <code class="xref py py-meth docutils literal notranslate"><span class="pre">from_table()</span></code> classmethod with column renaming is also available:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="o">=</span> <span class="n">RadioPhotometryEpoch</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">column_map</span><span class="o">=</span><span class="p">{</span>
+    <span class="s2">&quot;frequency&quot;</span><span class="p">:</span> <span class="s2">&quot;freq&quot;</span><span class="p">,</span>
+    <span class="s2">&quot;flux&quot;</span><span class="p">:</span>      <span class="s2">&quot;flux_density&quot;</span><span class="p">,</span>
+<span class="p">})</span>
+</pre></div>
+</div>
+</section>
+<section id="from-a-file">
+<h3>From a File<a class="headerlink" href="#from-a-file" title="Link to this heading">#</a></h3>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span> <span class="o">=</span> <span class="n">RadioPhotometryEpoch</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;sed_epoch1.fits&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Any format supported by <code class="xref py py-meth docutils literal notranslate"><span class="pre">astropy.table.Table.read()</span></code> is accepted.</p>
+</section>
+</section>
+<section id="data-access">
+<h2>Data Access<a class="headerlink" href="#data-access" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">epoch</span><span class="o">.</span><span class="n">freq</span>                    <span class="c1"># astropy.Quantity in GHz</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">flux_density</span>            <span class="c1"># astropy.Quantity in Jy</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">flux_density_error</span>      <span class="c1"># astropy.Quantity in Jy</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">flux_upper_limit</span>        <span class="c1"># astropy.Quantity in Jy</span>
+
+<span class="n">epoch</span><span class="o">.</span><span class="n">n_obs</span>                   <span class="c1"># total number of rows</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">n_detections</span>            <span class="c1"># rows with finite flux_density</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">n_non_detections</span>        <span class="c1"># rows with finite flux_upper_limit</span>
+
+<span class="n">epoch</span><span class="o">.</span><span class="n">detection_mask</span>          <span class="c1"># boolean array, True = detection</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">non_detection_mask</span>      <span class="c1"># boolean array, True = upper limit</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">detection_table</span>         <span class="c1"># sub-table of detections only</span>
+<span class="n">epoch</span><span class="o">.</span><span class="n">non_detection_table</span>     <span class="c1"># sub-table of upper limits only</span>
+
+<span class="n">epoch</span><span class="o">.</span><span class="n">apply_mask</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>        <span class="c1"># returns a new RadioPhotometryEpoch</span>
+</pre></div>
+</div>
+</section>
+<section id="inference-integration">
+<h2>Inference Integration<a class="headerlink" href="#inference-integration" title="Link to this heading">#</a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inference_data</span> <span class="o">=</span> <span class="n">epoch</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>This call maps the <code class="docutils literal notranslate"><span class="pre">freq</span></code> column to the model variable automatically.
+Both <code class="docutils literal notranslate"><span class="pre">&quot;freq&quot;</span></code> and <code class="docutils literal notranslate"><span class="pre">&quot;frequency&quot;</span></code> are recognized as the container’s
+frequency column name; the actual model variable name must be one of these
+two strings.</p>
+<p>Optional parameters:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">inference_data</span> <span class="o">=</span> <span class="n">epoch</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">infer_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>          <span class="c1"># infer 1σ errors from upper limits</span>
+    <span class="n">detection_threshold</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>    <span class="c1"># N-sigma assumed for upper limits</span>
+    <span class="n">mask</span><span class="o">=</span><span class="n">some_boolean_array</span><span class="p">,</span>    <span class="c1"># select a subset of rows</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>After conversion, inspect the result:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">inference_data</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="data_to_inference.html#data-to-inference"><span class="std std-ref">From Data to Inference: A Complete Guide</span></a> for the full pipeline walkthrough.</p>
+</section>
+<section id="deprecated-alias">
+<h2>Deprecated Alias<a class="headerlink" href="#deprecated-alias" title="Link to this heading">#</a></h2>
+<p>For backward compatibility, <code class="docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code> is available
+as a deprecated alias:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Still works, but emits DeprecationWarning</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryEpochContainer</span>
+
+<span class="n">epoch</span> <span class="o">=</span> <span class="n">RadioPhotometryEpochContainer</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+<span class="c1"># DeprecationWarning: RadioPhotometryEpochContainer is deprecated.</span>
+<span class="c1"># Use RadioPhotometryEpoch instead.</span>
+</pre></div>
+</div>
+<p>Update your code to import <code class="docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code> directly.</p>
+</section>
+<hr class="docutils" />
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triceratops.data.photometry.</span></span><span class="sig-name descname"><span class="pre">RadioPhotometryEpoch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><span class="pre">Table</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/photometry.html#RadioPhotometryEpoch"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference internal" href="../../_as_gen/triceratops.data.core.XYDataContainer.html#triceratops.data.core.XYDataContainer" title="triceratops.data.core.XYDataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">XYDataContainer</span></code></a></p>
+<p>Container for single-epoch, multi-frequency radio photometry.</p>
+<p>A <a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpochContainer.html#triceratops.data.photometry.RadioPhotometryEpochContainer" title="triceratops.data.photometry.RadioPhotometryEpochContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code></a> represents a collection of radio
+flux density measurements taken at a <em>single epoch in time</em> but potentially
+across multiple observing frequencies or bands. Each row corresponds to one
+frequency-channel measurement and may represent either a detection or a
+non-detection (upper limit).</p>
+<p>This container is designed to support <strong>spectral modeling and inference</strong>
+(e.g., fitting synchrotron spectra, SEDs, or phenomenological spectral models)
+where frequency is treated as the independent variable and flux density as
+the dependent variable.</p>
+<p>The container inherits from <a class="reference internal" href="../../_as_gen/triceratops.data.core.XYDataContainer.html#triceratops.data.core.XYDataContainer" title="triceratops.data.core.XYDataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">XYDataContainer</span></code></a>, exposing a standardized
+<code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> interface with optional uncertainties and censoring while retaining
+domain-specific column semantics relevant to radio astronomy.</p>
+<section id="key-features">
+<h3>Key features<a class="headerlink" href="#key-features" title="Link to this heading">#</a></h3>
+<ul class="simple">
+<li><p><strong>Frequency-domain data</strong>:
+The independent variable is observing frequency (<code class="docutils literal notranslate"><span class="pre">freq</span></code>), exposed via
+the <a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpoch.x.html#triceratops.data.photometry.RadioPhotometryEpoch.x" title="triceratops.data.photometry.RadioPhotometryEpoch.x"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x</span></code></a> and <code class="xref py py-attr docutils literal notranslate"><span class="pre">frequency</span></code> properties.</p></li>
+<li><p><strong>Detection-aware</strong>:
+Non-detections are represented via a flux density upper-limit column
+(<code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code>). Detection and non-detection masks are computed
+automatically and exposed through convenience properties.</p></li>
+<li><p><strong>Unit-aware and validated</strong>:
+All physical quantities are validated and stored with Astropy units at
+construction time.</p></li>
+<li><p><strong>Immutable by design</strong>:
+The underlying data table cannot be modified in place. All accessors return
+copies to ensure reproducibility during inference.</p></li>
+</ul>
+</section>
+<section id="intended-use">
+<h3>Intended use<a class="headerlink" href="#intended-use" title="Link to this heading">#</a></h3>
+<p>This container is intended to be consumed by likelihood classes that compare
+model-predicted spectra to observed radio photometry, including:</p>
+<ul class="simple">
+<li><p>synchrotron spectral energy distribution (SED) fitting,</p></li>
+<li><p>broadband spectral index estimation,</p></li>
+<li><p>forward modeling of physical emission models,</p></li>
+<li><p>inference with censored data (upper limits).</p></li>
+</ul>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All rows are assumed to correspond to the same observing epoch.
+Time information, if needed, should be handled by a higher-level container
+(e.g., a light curve or epoch-grouping container).</p></li>
+<li><p>Detection status is inferred from finite values in
+<code class="docutils literal notranslate"><span class="pre">flux_upper_limit</span></code>; rows with finite upper limits are treated as
+non-detections.</p></li>
+<li><p>This class makes no assumptions about the statistical treatment of
+detections or upper limits; such logic is handled entirely by the
+corresponding likelihood.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">XYDataContainer</span></code></dt><dd><p>Base class providing generic <code class="docutils literal notranslate"><span class="pre">(x,</span> <span class="pre">y)</span></code> data access and censoring logic.</p>
+</dd>
+<dt><code class="xref py py-obj docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></dt><dd><p>Container for single-frequency, time-domain radio observations.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.html#module-triceratops.inference.likelihood" title="triceratops.inference.likelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">triceratops.inference.likelihood</span></code></a></dt><dd><p>Likelihood implementations that operate on photometry containers.</p>
+</dd>
+</dl>
+</div>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">COLUMNS</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">[{'description':</span> <span class="pre">'Observation</span> <span class="pre">identifier</span> <span class="pre">(e.g.</span> <span class="pre">telescope</span> <span class="pre">+</span> <span class="pre">epoch).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'obs_name',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Measured</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'1-Sigma</span> <span class="pre">uncertainty</span> <span class="pre">on</span> <span class="pre">``flux_density``.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_density_error',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Upper</span> <span class="pre">limit</span> <span class="pre">on</span> <span class="pre">flux</span> <span class="pre">density</span> <span class="pre">for</span> <span class="pre">non-detections.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'flux_upper_limit',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;Jy&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Central</span> <span class="pre">observing</span> <span class="pre">frequency.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'float'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'freq',</span> <span class="pre">'required':</span> <span class="pre">True,</span> <span class="pre">'unit':</span> <span class="pre">Unit(&quot;GHz&quot;)},</span> <span class="pre">{'description':</span> <span class="pre">'Integer</span> <span class="pre">band</span> <span class="pre">identifier</span> <span class="pre">(instrument-specific).',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'int'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'band',</span> <span class="pre">'required':</span> <span class="pre">False},</span> <span class="pre">{'description':</span> <span class="pre">'Free-form</span> <span class="pre">comments</span> <span class="pre">or</span> <span class="pre">metadata.',</span> <span class="pre">'dtype':</span> <span class="pre">&lt;class</span> <span class="pre">'str'&gt;,</span> <span class="pre">'name':</span> <span class="pre">'comments',</span> <span class="pre">'required':</span> <span class="pre">False}]</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">X_COLUMN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'freq'</span></span></dt>
+<dd><p>Name of the x-axis column.</p>
+<p>For <a class="reference internal" href="../../_as_gen/triceratops.data.core.XYDataContainer.html#triceratops.data.core.XYDataContainer" title="triceratops.data.core.XYDataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">XYDataContainer</span></code></a> subclasses, this should be overridden to specify
+the name of the column representing the x-axis data. In upstream processing,
+this is how the independent variable is identified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Y_COLUMN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'flux_density'</span></span></dt>
+<dd><p>Name of the y-axis column.</p>
+<p>For <a class="reference internal" href="../../_as_gen/triceratops.data.core.XYDataContainer.html#triceratops.data.core.XYDataContainer" title="triceratops.data.core.XYDataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">XYDataContainer</span></code></a> subclasses, this should be overridden to specify
+the name of the column representing the y-axis data. In upstream processing,
+this is how the dependent variable is identified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Y_ERROR_COLUMN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'flux_density_error'</span></span></dt>
+<dd><p>Name of the y-axis error column.</p>
+<p>This should be overridden to specify the name of the column representing
+the y-axis error data. This is generally the 1-sigma error, but that is
+left for the Likelihood function. If <code class="docutils literal notranslate"><span class="pre">None</span></code>, then it is assumed that
+no y-axis errors are provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">Y_UPPER_LIMIT_COLUMN</span></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'flux_upper_limit'</span></span></dt>
+<dd><p>Name of the y-axis upper limit column.</p>
+<p>This should be overridden to specify the name of the column representing
+the y-axis upper limit data. This is generally used to indicate non-detections.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)">str</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></dt>
+<dd><p>Boolean mask selecting detections.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><span class="pre">Table</span></a></span></dt>
+<dd><p>Return a table containing only detections.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>
+<dd><p>Flux density measurements.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>
+<dd><p>Flux density uncertainties.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_upper_limit</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>
+<dd><p>Flux density upper limits.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">freq</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>
+<dd><p>Observing frequency of the light curve.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">path</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/photometry.html#RadioPhotometryEpoch.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Construct a <a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpoch.html#triceratops.data.photometry.RadioPhotometryEpoch" title="triceratops.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> from a file on disk.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">table</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><span class="pre">Table</span></a></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">column_map</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/photometry.html#RadioPhotometryEpoch.from_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Construct a <a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpoch.html#triceratops.data.photometry.RadioPhotometryEpoch" title="triceratops.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> from an Astropy table.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Return the number of detections.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_non_detections</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Return the number of non-detections (upper limits).</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_obs</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Number of observations.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></dt>
+<dd><p>Boolean mask selecting upper limits.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">non_detection_table</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><span class="pre">Table</span></a></span></dt>
+<dd><p>Return a table containing only non-detections (upper limits).</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">axes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">label</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">show_upper_limits</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper_limit_style</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/photometry.html#RadioPhotometryEpoch.plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Plot this photometry epoch onto an existing axes.</p>
+<p>This method plots detections and (optionally) upper limits for a given
+epoch using a single color and adds a single legend entry.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fig</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="(in Matplotlib v3.10.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.figure.Figure</span></code></a>, <em>optional</em>) – Figure to plot on.</p></li>
+<li><p><strong>axes</strong> (<a class="reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="(in Matplotlib v3.10.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">matplotlib.axes.Axes</span></code></a>, <em>optional</em>) – Axes to plot on.</p></li>
+<li><p><strong>label</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <em>optional</em>) – Label for the legend entry corresponding to this epoch.</p></li>
+<li><p><strong>color</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>, <em>optional</em>) – Color to use for this epoch. If None, Matplotlib will assign one.</p></li>
+<li><p><strong>show_upper_limits</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Whether to plot upper limits.</p></li>
+<li><p><strong>detection_style</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Matplotlib style kwargs for detections.</p></li>
+<li><p><strong>upper_limit_style</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Matplotlib style kwargs for upper limits.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">to_inference_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">infer_errors</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detection_threshold</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mask</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/photometry.html#RadioPhotometryEpoch.to_inference_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Convert this <a class="reference internal" href="../../_as_gen/triceratops.data.photometry.RadioPhotometryEpoch.html#triceratops.data.photometry.RadioPhotometryEpoch" title="triceratops.data.photometry.RadioPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpoch</span></code></a> into an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object.</p>
+<p>For a single-epoch SED container, frequency is the independent variable
+and flux density is the observable. The default mapping is:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">variables</span></code>: <code class="docutils literal notranslate"><span class="pre">{&quot;freq&quot;:</span> <span class="pre">&quot;freq&quot;}</span></code> (or the model’s declared frequency variable)</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">observables</span></code>: the single model output mapped to the radio flux tuple</p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – The model instance. Its <code class="docutils literal notranslate"><span class="pre">variable_names</span></code> and <code class="docutils literal notranslate"><span class="pre">output_names</span></code> are
+used to determine default mappings.</p></li>
+<li><p><strong>variables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Override the default variable mapping.</p></li>
+<li><p><strong>observables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Override the default observable mapping.</p></li>
+<li><p><strong>infer_errors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>default</em> <a class="reference external" href="https://docs.python.org/3/library/constants.html#True" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">True</span></code></a>) – If True, infer 1-sigma uncertainties for non-detections from their
+upper limits: <span class="math notranslate nohighlight">\(\sigma = F_\mathrm{upper} / N_\sigma\)</span>.</p></li>
+<li><p><strong>detection_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>default</em> <code class="docutils literal notranslate"><span class="pre">3.0</span></code>) – <span class="math notranslate nohighlight">\(N_\sigma\)</span> used in error inference.</p></li>
+<li><p><strong>mask</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> of <a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Optional row mask applied before building the InferenceData.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="photometry.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Radio Photometry</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="optical_photometry.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Optical Photometry</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#schema">Schema</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#construction">Construction</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-an-astropy-table">From an Astropy Table</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-a-file">From a File</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#data-access">Data Access</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-integration">Inference Integration</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#deprecated-alias">Deprecated Alias</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/reference/data/radio_photometry_epoch.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

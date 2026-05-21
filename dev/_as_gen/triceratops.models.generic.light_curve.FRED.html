@@ -27,40 +27,43 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/triceratops.models.generic.light_curve.FRED';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
@@ -69,20 +72,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../_static/searchtools.js"></script>
+    <script src="../_static/language_data.js"></script>
+    <script src="../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +117,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -167,8 +176,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -200,11 +209,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -237,8 +253,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -374,7 +395,14 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
@@ -399,6 +427,53 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.base.Model.output_units.html">triceratops.models.core.base.Model.output_units</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.base.Model.parameter_names.html">triceratops.models.core.base.Model.parameter_names</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.base.Model.variable_names.html">triceratops.models.core.base.Model.variable_names</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.models.core.optical.html">triceratops.models.core.optical</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.html">OpticalEpochModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.add_filter.html">triceratops.models.core.optical.OpticalEpochModel.add_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.check_model_bounds.html">triceratops.models.core.optical.OpticalEpochModel.check_model_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.check_parameter_bounds.html">triceratops.models.core.optical.OpticalEpochModel.check_parameter_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.coerce_model_parameters.html">triceratops.models.core.optical.OpticalEpochModel.coerce_model_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.coerce_model_variables.html">triceratops.models.core.optical.OpticalEpochModel.coerce_model_variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.forward_model.html">triceratops.models.core.optical.OpticalEpochModel.forward_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.from_model_spec.html">triceratops.models.core.optical.OpticalEpochModel.from_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.remove_filter.html">triceratops.models.core.optical.OpticalEpochModel.remove_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.to_model_spec.html">triceratops.models.core.optical.OpticalEpochModel.to_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.DESCRIPTION.html">triceratops.models.core.optical.OpticalEpochModel.DESCRIPTION</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.PARAMETERS.html">triceratops.models.core.optical.OpticalEpochModel.PARAMETERS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.REFERENCE.html">triceratops.models.core.optical.OpticalEpochModel.REFERENCE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.UNITS.html">triceratops.models.core.optical.OpticalEpochModel.UNITS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.VARIABLES.html">triceratops.models.core.optical.OpticalEpochModel.VARIABLES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.bundle.html">triceratops.models.core.optical.OpticalEpochModel.bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.output_names.html">triceratops.models.core.optical.OpticalEpochModel.output_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.output_units.html">triceratops.models.core.optical.OpticalEpochModel.output_units</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.parameter_names.html">triceratops.models.core.optical.OpticalEpochModel.parameter_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalEpochModel.variable_names.html">triceratops.models.core.optical.OpticalEpochModel.variable_names</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.html">OpticalModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.add_filter.html">triceratops.models.core.optical.OpticalModel.add_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.check_model_bounds.html">triceratops.models.core.optical.OpticalModel.check_model_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.check_parameter_bounds.html">triceratops.models.core.optical.OpticalModel.check_parameter_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.coerce_model_parameters.html">triceratops.models.core.optical.OpticalModel.coerce_model_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.coerce_model_variables.html">triceratops.models.core.optical.OpticalModel.coerce_model_variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.forward_model.html">triceratops.models.core.optical.OpticalModel.forward_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.from_model_spec.html">triceratops.models.core.optical.OpticalModel.from_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.remove_filter.html">triceratops.models.core.optical.OpticalModel.remove_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.to_model_spec.html">triceratops.models.core.optical.OpticalModel.to_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.DESCRIPTION.html">triceratops.models.core.optical.OpticalModel.DESCRIPTION</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.PARAMETERS.html">triceratops.models.core.optical.OpticalModel.PARAMETERS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.REFERENCE.html">triceratops.models.core.optical.OpticalModel.REFERENCE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.UNITS.html">triceratops.models.core.optical.OpticalModel.UNITS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.VARIABLES.html">triceratops.models.core.optical.OpticalModel.VARIABLES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.bundle.html">triceratops.models.core.optical.OpticalModel.bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.output_names.html">triceratops.models.core.optical.OpticalModel.output_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.output_units.html">triceratops.models.core.optical.OpticalModel.output_units</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.parameter_names.html">triceratops.models.core.optical.OpticalModel.parameter_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.core.optical.OpticalModel.variable_names.html">triceratops.models.core.optical.OpticalModel.variable_names</a></li>
 </ul>
 </details></li>
 </ul>
@@ -839,6 +914,53 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.models.SEDs.html">triceratops.models.SEDs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.html">triceratops.models.SEDs.blackbody_optical</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.html">BlackbodyOpticalEpochModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.add_filter.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.add_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.check_model_bounds.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.check_model_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.check_parameter_bounds.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.check_parameter_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.coerce_model_parameters.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.coerce_model_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.coerce_model_variables.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.coerce_model_variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.forward_model.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.forward_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.from_model_spec.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.from_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.remove_filter.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.remove_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.to_model_spec.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.to_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.DESCRIPTION.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.DESCRIPTION</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.PARAMETERS.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.PARAMETERS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.REFERENCE.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.REFERENCE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.UNITS.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.UNITS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.VARIABLES.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.VARIABLES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.bundle.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.output_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.output_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.output_units.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.output_units</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.parameter_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.parameter_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.variable_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalEpochModel.variable_names</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.html">BlackbodyOpticalModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.add_filter.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.add_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.check_model_bounds.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.check_model_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.check_parameter_bounds.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.check_parameter_bounds</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.coerce_model_parameters.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.coerce_model_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.coerce_model_variables.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.coerce_model_variables</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.forward_model.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.forward_model</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.from_model_spec.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.from_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.remove_filter.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.remove_filter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.to_model_spec.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.to_model_spec</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.DESCRIPTION.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.DESCRIPTION</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.PARAMETERS.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.PARAMETERS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.REFERENCE.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.REFERENCE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.UNITS.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.UNITS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.VARIABLES.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.VARIABLES</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.bundle.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.bundle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.output_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.output_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.output_units.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.output_units</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.parameter_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.parameter_names</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.variable_names.html">triceratops.models.SEDs.blackbody_optical.BlackbodyOpticalModel.variable_names</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.models.SEDs.synchrotron.html">triceratops.models.SEDs.synchrotron</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.models.SEDs.synchrotron.Cooling_SynchrotronSEDModel.html">Cooling_SynchrotronSEDModel</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.models.SEDs.synchrotron.Cooling_SynchrotronSEDModel.check_model_bounds.html">triceratops.models.SEDs.synchrotron.Cooling_SynchrotronSEDModel.check_model_bounds</a></li>
@@ -993,6 +1115,7 @@
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.data.core.html">triceratops.data.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.core.DataContainer.html">DataContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.DataContainer.apply_mask.html">triceratops.data.core.DataContainer.apply_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.DataContainer.copy.html">triceratops.data.core.DataContainer.copy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.DataContainer.from_file.html">triceratops.data.core.DataContainer.from_file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.DataContainer.from_table.html">triceratops.data.core.DataContainer.from_table</a></li>
@@ -1005,6 +1128,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.core.InferenceData.html">InferenceData</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.InferenceData.describe.html">triceratops.data.core.InferenceData.describe</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.InferenceData.from_arrays.html">triceratops.data.core.InferenceData.from_arrays</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.InferenceData.from_dict.html">triceratops.data.core.InferenceData.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.InferenceData.from_file.html">triceratops.data.core.InferenceData.from_file</a></li>
@@ -1053,6 +1177,7 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.core.XYDataContainer.html">XYDataContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.apply_mask.html">triceratops.data.core.XYDataContainer.apply_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.class_has_x_column.html">triceratops.data.core.XYDataContainer.class_has_x_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.class_has_x_error_column.html">triceratops.data.core.XYDataContainer.class_has_x_error_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.class_has_x_upper_limit_column.html">triceratops.data.core.XYDataContainer.class_has_x_upper_limit_column</a></li>
@@ -1065,7 +1190,6 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.to_cgs_array.html">triceratops.data.core.XYDataContainer.to_cgs_array</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.to_file.html">triceratops.data.core.XYDataContainer.to_file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.to_inference_data.html">triceratops.data.core.XYDataContainer.to_inference_data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_lower_limit.html">triceratops.data.core.XYDataContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.COLUMNS.html">triceratops.data.core.XYDataContainer.COLUMNS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.X_COLUMN.html">triceratops.data.core.XYDataContainer.X_COLUMN</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.X_ERROR_COLUMN.html">triceratops.data.core.XYDataContainer.X_ERROR_COLUMN</a></li>
@@ -1089,6 +1213,7 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_error.html">triceratops.data.core.XYDataContainer.y_error</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_lim_mask.html">triceratops.data.core.XYDataContainer.y_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_lower_lim_mask.html">triceratops.data.core.XYDataContainer.y_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_lower_limit.html">triceratops.data.core.XYDataContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_upper_lim_mask.html">triceratops.data.core.XYDataContainer.y_upper_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.core.XYDataContainer.y_upper_limit.html">triceratops.data.core.XYDataContainer.y_upper_limit</a></li>
 </ul>
@@ -1096,7 +1221,63 @@
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.data.light_curve.html">triceratops.data.light_curve</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.html">OpticalLightCurveContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.apply_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.apply_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_error_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_error_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_upper_limit_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_x_upper_limit_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_error_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_error_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_upper_limit_column.html">triceratops.data.light_curve.OpticalLightCurveContainer.class_has_y_upper_limit_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.copy.html">triceratops.data.light_curve.OpticalLightCurveContainer.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.from_file.html">triceratops.data.light_curve.OpticalLightCurveContainer.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.from_table.html">triceratops.data.light_curve.OpticalLightCurveContainer.from_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.to_cgs_array.html">triceratops.data.light_curve.OpticalLightCurveContainer.to_cgs_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.to_file.html">triceratops.data.light_curve.OpticalLightCurveContainer.to_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.to_inference_data.html">triceratops.data.light_curve.OpticalLightCurveContainer.to_inference_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.COLUMNS.html">triceratops.data.light_curve.OpticalLightCurveContainer.COLUMNS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.X_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.X_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.X_ERROR_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.X_ERROR_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.X_LOWER_LIMIT_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.X_LOWER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.X_UPPER_LIMIT_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.X_UPPER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.Y_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.Y_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.Y_ERROR_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.Y_ERROR_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.Y_LOWER_LIMIT_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.Y_LOWER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.Y_UPPER_LIMIT_COLUMN.html">triceratops.data.light_curve.OpticalLightCurveContainer.Y_UPPER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.band.html">triceratops.data.light_curve.OpticalLightCurveContainer.band</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.detection_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.flux.html">triceratops.data.light_curve.OpticalLightCurveContainer.flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.flux_error.html">triceratops.data.light_curve.OpticalLightCurveContainer.flux_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.flux_upper_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.flux_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.limit_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.limit_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.mag.html">triceratops.data.light_curve.OpticalLightCurveContainer.mag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.mag_error.html">triceratops.data.light_curve.OpticalLightCurveContainer.mag_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.mag_upper_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.mag_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.n_detections.html">triceratops.data.light_curve.OpticalLightCurveContainer.n_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.n_non_detections.html">triceratops.data.light_curve.OpticalLightCurveContainer.n_non_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.n_obs.html">triceratops.data.light_curve.OpticalLightCurveContainer.n_obs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.non_detection_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.non_detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.size.html">triceratops.data.light_curve.OpticalLightCurveContainer.size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.table.html">triceratops.data.light_curve.OpticalLightCurveContainer.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.time.html">triceratops.data.light_curve.OpticalLightCurveContainer.time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x.html">triceratops.data.light_curve.OpticalLightCurveContainer.x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_error.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_lower_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_lower_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_lower_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_upper_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_upper_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.x_upper_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.x_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y.html">triceratops.data.light_curve.OpticalLightCurveContainer.y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_error.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_lower_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_lower_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_lower_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_upper_lim_mask.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_upper_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.OpticalLightCurveContainer.y_upper_limit.html">triceratops.data.light_curve.OpticalLightCurveContainer.y_upper_limit</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.html">RadioLightCurveContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.apply_mask.html">triceratops.data.light_curve.RadioLightCurveContainer.apply_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_column.html">triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_error_column.html">triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_error_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_upper_limit_column.html">triceratops.data.light_curve.RadioLightCurveContainer.class_has_x_upper_limit_column</a></li>
@@ -1109,7 +1290,6 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.to_cgs_array.html">triceratops.data.light_curve.RadioLightCurveContainer.to_cgs_array</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.to_file.html">triceratops.data.light_curve.RadioLightCurveContainer.to_file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.to_inference_data.html">triceratops.data.light_curve.RadioLightCurveContainer.to_inference_data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_lower_limit.html">triceratops.data.light_curve.RadioLightCurveContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.COLUMNS.html">triceratops.data.light_curve.RadioLightCurveContainer.COLUMNS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.X_COLUMN.html">triceratops.data.light_curve.RadioLightCurveContainer.X_COLUMN</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.X_ERROR_COLUMN.html">triceratops.data.light_curve.RadioLightCurveContainer.X_ERROR_COLUMN</a></li>
@@ -1145,15 +1325,16 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_error.html">triceratops.data.light_curve.RadioLightCurveContainer.y_error</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_lim_mask.html">triceratops.data.light_curve.RadioLightCurveContainer.y_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_lower_lim_mask.html">triceratops.data.light_curve.RadioLightCurveContainer.y_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_lower_limit.html">triceratops.data.light_curve.RadioLightCurveContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_upper_lim_mask.html">triceratops.data.light_curve.RadioLightCurveContainer.y_upper_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.light_curve.RadioLightCurveContainer.y_upper_limit.html">triceratops.data.light_curve.RadioLightCurveContainer.y_upper_limit</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="triceratops.data.spectra.html">triceratops.data.spectra</a></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.data.photometry.html">triceratops.data.photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.html">RadioPhotometryContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.apply_mask.html">triceratops.data.photometry.RadioPhotometryContainer.apply_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.copy.html">triceratops.data.photometry.RadioPhotometryContainer.copy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.from_file.html">triceratops.data.photometry.RadioPhotometryContainer.from_file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.from_table.html">triceratops.data.photometry.RadioPhotometryContainer.from_table</a></li>
@@ -1192,7 +1373,62 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryContainer.time.html">triceratops.data.photometry.RadioPhotometryContainer.time</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.html">RadioPhotometryEpoch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.apply_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.apply_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_error_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_error_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_upper_limit_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_x_upper_limit_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_error_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_error_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_upper_limit_column.html">triceratops.data.photometry.RadioPhotometryEpoch.class_has_y_upper_limit_column</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.copy.html">triceratops.data.photometry.RadioPhotometryEpoch.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.from_file.html">triceratops.data.photometry.RadioPhotometryEpoch.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.from_table.html">triceratops.data.photometry.RadioPhotometryEpoch.from_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.plot.html">triceratops.data.photometry.RadioPhotometryEpoch.plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.to_cgs_array.html">triceratops.data.photometry.RadioPhotometryEpoch.to_cgs_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.to_file.html">triceratops.data.photometry.RadioPhotometryEpoch.to_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.to_inference_data.html">triceratops.data.photometry.RadioPhotometryEpoch.to_inference_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.COLUMNS.html">triceratops.data.photometry.RadioPhotometryEpoch.COLUMNS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.X_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.X_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.X_ERROR_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.X_ERROR_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.X_LOWER_LIMIT_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.X_LOWER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.X_UPPER_LIMIT_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.X_UPPER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.Y_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.Y_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.Y_ERROR_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.Y_ERROR_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.Y_LOWER_LIMIT_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.Y_LOWER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.Y_UPPER_LIMIT_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpoch.Y_UPPER_LIMIT_COLUMN</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.detection_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.detection_table.html">triceratops.data.photometry.RadioPhotometryEpoch.detection_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.flux_density.html">triceratops.data.photometry.RadioPhotometryEpoch.flux_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.flux_density_error.html">triceratops.data.photometry.RadioPhotometryEpoch.flux_density_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.flux_upper_limit.html">triceratops.data.photometry.RadioPhotometryEpoch.flux_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.freq.html">triceratops.data.photometry.RadioPhotometryEpoch.freq</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.limit_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.limit_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.n_detections.html">triceratops.data.photometry.RadioPhotometryEpoch.n_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.n_non_detections.html">triceratops.data.photometry.RadioPhotometryEpoch.n_non_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.n_obs.html">triceratops.data.photometry.RadioPhotometryEpoch.n_obs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.non_detection_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.non_detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.non_detection_table.html">triceratops.data.photometry.RadioPhotometryEpoch.non_detection_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.size.html">triceratops.data.photometry.RadioPhotometryEpoch.size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.table.html">triceratops.data.photometry.RadioPhotometryEpoch.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x.html">triceratops.data.photometry.RadioPhotometryEpoch.x</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_error.html">triceratops.data.photometry.RadioPhotometryEpoch.x_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.x_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_lower_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.x_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_lower_limit.html">triceratops.data.photometry.RadioPhotometryEpoch.x_lower_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_upper_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.x_upper_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.x_upper_limit.html">triceratops.data.photometry.RadioPhotometryEpoch.x_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y.html">triceratops.data.photometry.RadioPhotometryEpoch.y</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_error.html">triceratops.data.photometry.RadioPhotometryEpoch.y_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.y_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_lower_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.y_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_lower_limit.html">triceratops.data.photometry.RadioPhotometryEpoch.y_lower_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_upper_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpoch.y_upper_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpoch.y_upper_limit.html">triceratops.data.photometry.RadioPhotometryEpoch.y_upper_limit</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.html">RadioPhotometryEpochContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.apply_mask.html">triceratops.data.photometry.RadioPhotometryEpochContainer.apply_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_column.html">triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_error_column.html">triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_error_column</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_upper_limit_column.html">triceratops.data.photometry.RadioPhotometryEpochContainer.class_has_x_upper_limit_column</a></li>
@@ -1206,7 +1442,6 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.to_cgs_array.html">triceratops.data.photometry.RadioPhotometryEpochContainer.to_cgs_array</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.to_file.html">triceratops.data.photometry.RadioPhotometryEpochContainer.to_file</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.to_inference_data.html">triceratops.data.photometry.RadioPhotometryEpochContainer.to_inference_data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_limit.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.COLUMNS.html">triceratops.data.photometry.RadioPhotometryEpochContainer.COLUMNS</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.X_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpochContainer.X_COLUMN</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.X_ERROR_COLUMN.html">triceratops.data.photometry.RadioPhotometryEpochContainer.X_ERROR_COLUMN</a></li>
@@ -1241,8 +1476,72 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_error.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_error</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_lim_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_limit.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_lower_limit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_upper_lim_mask.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_upper_lim_mask</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.data.photometry.RadioPhotometryEpochContainer.y_upper_limit.html">triceratops.data.photometry.RadioPhotometryEpochContainer.y_upper_limit</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.data.optical_photometry.html">triceratops.data.optical_photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.html">OpticalPhotometryContainer</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.apply_mask.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.apply_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.copy.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.from_file.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.from_table.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.from_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.get_epoch_mask.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.get_epoch_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.set_epochs_from_indices.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.set_epochs_from_indices</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.set_epochs_from_time_gaps.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.set_epochs_from_time_gaps</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_cgs_array.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.to_cgs_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_file.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.to_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.to_inference_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.COLUMNS.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.COLUMNS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.band_name.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.band_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.detection_mask.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.detections.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.epoch_ids.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.epoch_ids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.flux.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.flux_error.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.flux_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.flux_upper_limit.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.flux_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.has_epochs.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.has_epochs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.mag.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.mag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.mag_error.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.mag_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.mag_upper_limit.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.mag_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.n_detections.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.n_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.n_epochs.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.n_epochs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.n_non_detections.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.n_non_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.n_obs.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.n_obs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.non_detection_mask.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.non_detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.obs_name.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.obs_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.size.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.table.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.time.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.time</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryContainer.upper_limits.html">triceratops.data.optical_photometry.OpticalPhotometryContainer.upper_limits</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.html">OpticalPhotometryEpoch</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.apply_mask.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.apply_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.copy.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.copy</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.from_file.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.from_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.from_table.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.from_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_cgs_array.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_cgs_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_file.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_inference_data.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.to_inference_data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.COLUMNS.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.COLUMNS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.band_name.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.band_name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.detection_mask.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux_error.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux_upper_limit.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.flux_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag_error.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag_error</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag_upper_limit.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.mag_upper_limit</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_detections.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_non_detections.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_non_detections</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_obs.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.n_obs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.non_detection_mask.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.non_detection_mask</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.size.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.size</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.data.optical_photometry.OpticalPhotometryEpoch.table.html">triceratops.data.optical_photometry.OpticalPhotometryEpoch.table</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1508,6 +1807,21 @@
 </ul>
 <ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.radiation.html">triceratops.radiation</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.radiation.blackbody.html">triceratops.radiation.blackbody</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.photospheric_radius.html">triceratops.radiation.blackbody.photospheric_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.photospheric_radius_from_flux.html">triceratops.radiation.blackbody.photospheric_radius_from_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.photospheric_temperature.html">triceratops.radiation.blackbody.photospheric_temperature</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.photospheric_temperature_from_flux.html">triceratops.radiation.blackbody.photospheric_temperature_from_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.planck_B.html">triceratops.radiation.blackbody.planck_B</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.planck_flux.html">triceratops.radiation.blackbody.planck_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.planck_luminosity.html">triceratops.radiation.blackbody.planck_luminosity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.planck_surface_flux.html">triceratops.radiation.blackbody.planck_surface_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.stefan_boltzmann_flux.html">triceratops.radiation.blackbody.stefan_boltzmann_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.stefan_boltzmann_observed_flux.html">triceratops.radiation.blackbody.stefan_boltzmann_observed_flux</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.wien_peak_frequency.html">triceratops.radiation.blackbody.wien_peak_frequency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.blackbody.wien_peak_wavelength.html">triceratops.radiation.blackbody.wien_peak_wavelength</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.radiation.constants.html">triceratops.radiation.constants</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.electron_rest_energy.html">triceratops.radiation.constants.electron_rest_energy</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.electron_rest_energy_cgs.html">triceratops.radiation.constants.electron_rest_energy_cgs</a></li>
@@ -1517,31 +1831,36 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.h_cgs.html">triceratops.radiation.constants.h_cgs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.kB_cgs.html">triceratops.radiation.constants.kB_cgs</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.Ry_cgs.html">triceratops.radiation.constants.Ry_cgs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.radiation.constants.sigma_sb_cgs.html">triceratops.radiation.constants.sigma_sb_cgs</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.radiation.free_free.html">triceratops.radiation.free_free</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.free_free.absorption.html">triceratops.radiation.free_free.absorption</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_EM.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_EM</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_arrays</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_from_quadrature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_powerlaw</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_shell</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_arrays.html">triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_arrays</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature.html">triceratops.radiation.free_free.absorption.compute_ff_optical_depth_from_quadrature</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_optical_depth_powerlaw.html">triceratops.radiation.free_free.absorption.compute_ff_optical_depth_powerlaw</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_optical_depth_shell.html">triceratops.radiation.free_free.absorption.compute_ff_optical_depth_shell</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_optical_depth_wind.html">triceratops.radiation.free_free.absorption.compute_ff_optical_depth_wind</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot.html">triceratops.radiation.free_free.absorption.compute_ff_RJ_optical_depth_wind_Mdot</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.free_free.core.html">triceratops.radiation.free_free.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_RJ_absorption.html">triceratops.radiation.free_free.core.compute_ff_RJ_absorption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_RJ_absorption_comp.html">triceratops.radiation.free_free.core.compute_ff_RJ_absorption_comp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_RJ_emissivity.html">triceratops.radiation.free_free.core.compute_ff_RJ_emissivity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_RJ_emissivity_comp.html">triceratops.radiation.free_free.core.compute_ff_RJ_emissivity_comp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_absorption.html">triceratops.radiation.free_free.core.compute_ff_absorption</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_absorption_comp.html">triceratops.radiation.free_free.core.compute_ff_absorption_comp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_emissivity.html">triceratops.radiation.free_free.core.compute_ff_emissivity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.core.compute_ff_emissivity_comp.html">triceratops.radiation.free_free.core.compute_ff_emissivity_comp</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.html">triceratops.radiation.free_free.gaunt_factor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.gaunt_ff_draine.html">triceratops.radiation.free_free.gaunt_factor.gaunt_ff_draine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor.html">triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor_comp.html">triceratops.radiation.free_free.gaunt_factor.compute_ff_gaunt_factor_comp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.compute_mean_ff_gaunt_factor.html">triceratops.radiation.free_free.gaunt_factor.compute_mean_ff_gaunt_factor</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.compute_mean_ff_gaunt_factor_comp.html">triceratops.radiation.free_free.gaunt_factor.compute_mean_ff_gaunt_factor_comp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator.html">triceratops.radiation.free_free.gaunt_factor.get_default_gaunt_interpolator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator.html">triceratops.radiation.free_free.gaunt_factor.get_default_relativistic_gaunt_interpolator</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.free_free.gaunt_factor.GauntFactorInterpolatorBase.html">GauntFactorInterpolatorBase</a></li>
@@ -1553,26 +1872,36 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.radiation.opacity.html">triceratops.radiation.opacity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.base.html">triceratops.radiation.opacity.base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.base.GreyOpacityLaw.html">GreyOpacityLaw</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.base.OpacityLaw.html">OpacityLaw</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.models.html">triceratops.radiation.opacity.models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.models.core.html">triceratops.radiation.opacity.models.core</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.grey_opacity.html">triceratops.radiation.opacity.grey_opacity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.grey_opacity.base.html">triceratops.radiation.opacity.grey_opacity.base</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.grey_opacity.planck.html">triceratops.radiation.opacity.grey_opacity.planck</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.grey_opacity.rosseland.html">triceratops.radiation.opacity.grey_opacity.rosseland</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.grey_opacity.tops.html">triceratops.radiation.opacity.grey_opacity.tops</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.opacity_base.html">triceratops.radiation.opacity.opacity_base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.opacity_base.C_GreyOpacityBase.html">C_GreyOpacityBase</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.opacity_base.C_OpacityBase.html">C_OpacityBase</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.opacity_io.html">triceratops.radiation.opacity.opacity_io</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.opacity_io.read_tops.html">triceratops.radiation.opacity.opacity_io.read_tops</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.opacity.utils.html">triceratops.radiation.opacity.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.utils.get_opacity.html">triceratops.radiation.opacity.utils.get_opacity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.utils.load_opal_opacity.html">triceratops.radiation.opacity.utils.load_opal_opacity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.opacity.utils.load_tops_opacity.html">triceratops.radiation.opacity.utils.load_tops_opacity</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.radiation.synchrotron.html">triceratops.radiation.synchrotron</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.synchrotron.SEDs.html">triceratops.radiation.synchrotron.SEDs</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.SEDs.numerical.html">triceratops.radiation.synchrotron.SEDs.numerical</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.SEDs.one_zone.html">triceratops.radiation.synchrotron.SEDs.one_zone</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.SEDs.one_zone_closure.html">triceratops.radiation.synchrotron.SEDs.one_zone_closure</a></li>
 </ul>
@@ -1584,19 +1913,13 @@
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.synchrotron.core.html">triceratops.radiation.synchrotron.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_ME_spectrum_from_dist_function.html">triceratops.radiation.synchrotron.core.compute_ME_spectrum_from_dist_function</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_ME_spectrum_from_dist_grid.html">triceratops.radiation.synchrotron.core.compute_ME_spectrum_from_dist_grid</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_first_kernel_interp.html">triceratops.radiation.synchrotron.core.compute_first_kernel_interp</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_averaged_first_synchrotron_kernel.html">triceratops.radiation.synchrotron.core.compute_averaged_first_synchrotron_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_first_synchrotron_kernel.html">triceratops.radiation.synchrotron.core.compute_first_synchrotron_kernel</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_gyrofrequency.html">triceratops.radiation.synchrotron.core.compute_gyrofrequency</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_nu_critical.html">triceratops.radiation.synchrotron.core.compute_nu_critical</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_second_kernel_interp.html">triceratops.radiation.synchrotron.core.compute_second_kernel_interp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_single_electron_power.html">triceratops.radiation.synchrotron.core.compute_single_electron_power</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_synchrotron_frequency.html">triceratops.radiation.synchrotron.core.compute_synchrotron_frequency</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.compute_synchrotron_gamma.html">triceratops.radiation.synchrotron.core.compute_synchrotron_gamma</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.first_synchrotron_kernel.html">triceratops.radiation.synchrotron.core.first_synchrotron_kernel</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.get_first_kernel_interpolator.html">triceratops.radiation.synchrotron.core.get_first_kernel_interpolator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.get_second_kernel_interpolator.html">triceratops.radiation.synchrotron.core.get_second_kernel_interpolator</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.core.second_synchrotron_kernel.html">triceratops.radiation.synchrotron.core.second_synchrotron_kernel</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.html">triceratops.radiation.synchrotron.microphysics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -1604,6 +1927,12 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_magnetic_field</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_norm_from_thermal_energy_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_BPL_total_number_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_and_PL_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_effective_number_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_norm_from_thermal_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_MJD_total_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_MJD_total_number_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_effective_number_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_magnetic_field</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_PL_norm_from_thermal_energy_density</a></li>
@@ -1611,16 +1940,24 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_BPL_from_thermal_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_MJD_from_thermal_energy_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density.html">triceratops.radiation.synchrotron.microphysics.compute_bol_emissivity_from_thermal_energy_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_BPL_moment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_energy_PL_moment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_BPL_moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_MJD_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_MJD_moment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment.html">triceratops.radiation.synchrotron.microphysics.compute_electron_gamma_PL_moment</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field.html">triceratops.radiation.synchrotron.microphysics.compute_equipartition_magnetic_field</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_BPL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_MJD.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_MJD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_energy_PL</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_BPL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_MJD.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_MJD</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL.html">triceratops.radiation.synchrotron.microphysics.compute_mean_gamma_PL</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.get_broken_power_law_distribution.html">triceratops.radiation.synchrotron.microphysics.get_broken_power_law_distribution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution.html">triceratops.radiation.synchrotron.microphysics.get_maxwell_juttner_distribution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.get_power_law_distribution.html">triceratops.radiation.synchrotron.microphysics.get_power_law_distribution</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_BPL_normalization</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization.html">triceratops.radiation.synchrotron.microphysics.swap_electron_PL_normalization</a></li>
 </ul>
@@ -1654,23 +1991,31 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.one_zone.utils.html">triceratops.dynamics.accretion.one_zone.utils</a></li>
 </ul>
 </details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.html">triceratops.dynamics.accretion.thin_disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.disk_bolometric_luminosity.html">triceratops.dynamics.accretion.thin_disk.disk_bolometric_luminosity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.disk_effective_temperature.html">triceratops.dynamics.accretion.thin_disk.disk_effective_temperature</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.disk_flux_density.html">triceratops.dynamics.accretion.thin_disk.disk_flux_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.disk_spectral_luminosity.html">triceratops.dynamics.accretion.thin_disk.disk_spectral_luminosity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.disk_spectral_luminosity_iso.html">triceratops.dynamics.accretion.thin_disk.disk_spectral_luminosity_iso</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.AlphaDisk.html">AlphaDisk</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.thin_disk.ThinDiskBase.html">ThinDiskBase</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.accretion.utils.html">triceratops.dynamics.accretion.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.accretion_rate_from_viscous_timescale.html">triceratops.dynamics.accretion.utils.accretion_rate_from_viscous_timescale</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.alpha_viscosity.html">triceratops.dynamics.accretion.utils.alpha_viscosity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.central_temperature.html">triceratops.dynamics.accretion.utils.central_temperature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_aspect_ratio.html">triceratops.dynamics.accretion.utils.disk_aspect_ratio</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_bolometric_luminosity.html">triceratops.dynamics.accretion.utils.disk_bolometric_luminosity</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_effective_temperature.html">triceratops.dynamics.accretion.utils.disk_effective_temperature</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_flux_density.html">triceratops.dynamics.accretion.utils.disk_flux_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_scale_height.html">triceratops.dynamics.accretion.utils.disk_scale_height</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_spectral_luminosity.html">triceratops.dynamics.accretion.utils.disk_spectral_luminosity</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.disk_spectral_luminosity_iso.html">triceratops.dynamics.accretion.utils.disk_spectral_luminosity_iso</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.effective_temperature.html">triceratops.dynamics.accretion.utils.effective_temperature</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.effective_temperature_from_viscosity.html">triceratops.dynamics.accretion.utils.effective_temperature_from_viscosity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.inner_boundary_correction.html">triceratops.dynamics.accretion.utils.inner_boundary_correction</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.keplerian_angular_velocity.html">triceratops.dynamics.accretion.utils.keplerian_angular_velocity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.midplane_density.html">triceratops.dynamics.accretion.utils.midplane_density</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.optical_depth.html">triceratops.dynamics.accretion.utils.optical_depth</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.uniform_disk_bolometric_luminosity.html">triceratops.dynamics.accretion.utils.uniform_disk_bolometric_luminosity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.uniform_disk_flux_density.html">triceratops.dynamics.accretion.utils.uniform_disk_flux_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.uniform_disk_spectral_luminosity.html">triceratops.dynamics.accretion.utils.uniform_disk_spectral_luminosity</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.viscous_dissipation_rate.html">triceratops.dynamics.accretion.utils.viscous_dissipation_rate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.viscous_dissipation_rate_from_mdot.html">triceratops.dynamics.accretion.utils.viscous_dissipation_rate_from_mdot</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.accretion.utils.viscous_timescale.html">triceratops.dynamics.accretion.utils.viscous_timescale</a></li>
@@ -1679,36 +2024,76 @@
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.html">triceratops.dynamics.shocks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.blandford_mckee.html">triceratops.dynamics.shocks.blandford_mckee</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockEngine.html">BlandfordMcKeeShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeShockState.html">BlandfordMcKeeShockState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.blandford_mckee.BlandfordMcKeeWindShockEngine.html">BlandfordMcKeeWindShockEngine</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.html">triceratops.dynamics.shocks.chevalier</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.compute_self_similar_critical_grid.html">triceratops.dynamics.shocks.chevalier.compute_self_similar_critical_grid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.compute_self_similar_functions.html">triceratops.dynamics.shocks.chevalier.compute_self_similar_functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarCriticalGrid.html">ChevalierSelfSimilarCriticalGrid</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarFunctions.html">ChevalierSelfSimilarFunctions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarShockEngine.html">ChevalierSelfSimilarShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierSelfSimilarWindShockEngine.html">ChevalierSelfSimilarWindShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierShockState.html">ChevalierShockState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarEngine.html">ChevalierTwoShockSelfSimilarEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierTwoShockSelfSimilarWindEngine.html">ChevalierTwoShockSelfSimilarWindEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.chevalier.ChevalierTwoShockState.html">ChevalierTwoShockState</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.core.html">triceratops.dynamics.shocks.core</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.core.rankine_hugoniot.html">triceratops.dynamics.shocks.core.rankine_hugoniot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.core.relativistic_jump_conditions.html">triceratops.dynamics.shocks.core.relativistic_jump_conditions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.core.shock_engine.html">triceratops.dynamics.shocks.core.shock_engine</a></li>
+</ul>
+</details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.html">triceratops.dynamics.shocks.numerical</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.NumericalThinShellShockEngine.html">NumericalThinShellShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.MechanicalShockEngine.html">MechanicalShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.MechanicalShockState.html">MechanicalShockState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.MomentumConservingShockEngine.html">MomentumConservingShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine.html">PressureDrivenThinShellShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.RelMechanicalShockEngine.html">RelMechanicalShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.RelMomentumConservingShockEngine.html">RelMomentumConservingShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.RelPressureDrivenThinShellShockEngine.html">RelPressureDrivenThinShellShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.RelThinShellShockState.html">RelThinShellShockState</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.numerical.ThinShellShockState.html">ThinShellShockState</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.html">triceratops.dynamics.shocks.rankine_hugoniot</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_magnetic_field.html">triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_magnetic_field</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_pressure.html">triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_pressure</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_temperature.html">triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_cold_shock_temperature</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_shock_density.html">triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_shock_density</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_shock_velocity.html">triceratops.dynamics.shocks.rankine_hugoniot.compute_strong_shock_velocity</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.sedov_taylor.html">triceratops.dynamics.shocks.sedov_taylor</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta.html">triceratops.dynamics.shocks.sedov_taylor.sedov_taylor_beta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockEngine.html">SedovTaylorShockEngine</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.sedov_taylor.SedovTaylorShockState.html">SedovTaylorShockState</a></li>
 </ul>
 </details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.shock_engine.html">triceratops.dynamics.shocks.shock_engine</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.shock_engine.ShockEngine.html">ShockEngine</a></li>
-</ul>
-</details></li>
-</ul>
-</details></li>
-<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.dynamics.supernovae.html">triceratops.dynamics.supernovae</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.html">triceratops.dynamics.supernovae.profiles</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.compute_BKC_ejecta_parameters.html">triceratops.dynamics.supernovae.profiles.compute_BKC_ejecta_parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.compute_wind_csm_parameters.html">triceratops.dynamics.supernovae.profiles.compute_wind_csm_parameters</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.get_broken_power_law_ejecta_kernel_func.html">triceratops.dynamics.supernovae.profiles.get_broken_power_law_ejecta_kernel_func</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.get_wind_csm_density_func.html">triceratops.dynamics.supernovae.profiles.get_wind_csm_density_func</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.profiles.normalize_inner_BPL_ejecta.html">triceratops.dynamics.supernovae.profiles.normalize_inner_BPL_ejecta</a></li>
-</ul>
-</details></li>
-<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.supernovae.shock_dynamics.html">triceratops.dynamics.supernovae.shock_dynamics</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarShockEngine.html">ChevalierSelfSimilarShockEngine</a></li>
-<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.supernovae.shock_dynamics.ChevalierSelfSimilarWindShockEngine.html">ChevalierSelfSimilarWindShockEngine</a></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.dynamics.shocks.utils.html">triceratops.dynamics.shocks.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.compute_wind_csm_parameters.html">triceratops.dynamics.shocks.utils.compute_wind_csm_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel.html">triceratops.dynamics.shocks.utils.get_bpl_ejecta_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_bpl_ejecta_profile.html">triceratops.dynamics.shocks.utils.get_bpl_ejecta_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func.html">triceratops.dynamics.shocks.utils.get_broken_power_law_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_constant_velocity_profile.html">triceratops.dynamics.shocks.utils.get_constant_velocity_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel.html">triceratops.dynamics.shocks.utils.get_exponential_ejecta_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_exponential_ejecta_profile.html">triceratops.dynamics.shocks.utils.get_exponential_ejecta_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func.html">triceratops.dynamics.shocks.utils.get_gaussian_shell_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_power_law_csm_density_func.html">triceratops.dynamics.shocks.utils.get_power_law_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_shell_csm_density_func.html">triceratops.dynamics.shocks.utils.get_shell_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func.html">triceratops.dynamics.shocks.utils.get_smooth_truncated_wind_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel.html">triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_profile.html">triceratops.dynamics.shocks.utils.get_truncated_bpl_ejecta_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_kernel.html">triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_kernel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_profile.html">triceratops.dynamics.shocks.utils.get_truncated_exponential_ejecta_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func.html">triceratops.dynamics.shocks.utils.get_truncated_wind_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_uniform_csm_density_func.html">triceratops.dynamics.shocks.utils.get_uniform_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_wind_csm_density_func.html">triceratops.dynamics.shocks.utils.get_wind_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func.html">triceratops.dynamics.shocks.utils.get_wind_with_floor_csm_density_func</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.homologous_velocity_profile.html">triceratops.dynamics.shocks.utils.homologous_velocity_profile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.make_homologous_stationary_sources.html">triceratops.dynamics.shocks.utils.make_homologous_stationary_sources</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.normalize_bpl_ejecta.html">triceratops.dynamics.shocks.utils.normalize_bpl_ejecta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.normalize_exponential_ejecta.html">triceratops.dynamics.shocks.utils.normalize_exponential_ejecta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.normalize_truncated_bpl_ejecta.html">triceratops.dynamics.shocks.utils.normalize_truncated_bpl_ejecta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.normalize_truncated_exponential_ejecta.html">triceratops.dynamics.shocks.utils.normalize_truncated_exponential_ejecta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.dynamics.shocks.utils.stationary_velocity_profile.html">triceratops.dynamics.shocks.utils.stationary_velocity_profile</a></li>
 </ul>
 </details></li>
 </ul>
@@ -1723,6 +2108,7 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
 </ul>
 </details></li>
@@ -1730,13 +2116,19 @@
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
 </ul>
 </details></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.parallel.factory.html">triceratops.parallel.factory</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.parallel.mp.html">triceratops.parallel.mp</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
 <li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
@@ -1746,7 +2138,19 @@
 </details></li>
 </ul>
 </details></li>
-<li class="toctree-l2"><a class="reference internal" href="triceratops.parallel.mpi.html">triceratops.parallel.mpi</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.parallel.mpi.html">triceratops.parallel.mpi</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.parallel.utils.html">triceratops.parallel.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.parallel.utils.get_batch_slices.html">triceratops.parallel.utils.get_batch_slices</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.parallel.utils.split_args_into_batches.html">triceratops.parallel.utils.split_args_into_batches</a></li>
@@ -1819,6 +2223,71 @@
 <li class="toctree-l2"><a class="reference internal" href="triceratops.utils.misc_utils.ensure_unit.html">triceratops.utils.misc_utils.ensure_unit</a></li>
 </ul>
 </details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.utils.phot_utils.html">triceratops.utils.phot_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.ab_mag_to_flux.html">triceratops.utils.phot_utils.ab_mag_to_flux</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.filter_to_ab_mag.html">triceratops.utils.phot_utils.filter_to_ab_mag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.flux_lambda_to_st_mag.html">triceratops.utils.phot_utils.flux_lambda_to_st_mag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.flux_to_ab_mag.html">triceratops.utils.phot_utils.flux_to_ab_mag</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.list_speclite_filters.html">triceratops.utils.phot_utils.list_speclite_filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.list_svo_filters.html">triceratops.utils.phot_utils.list_svo_filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.load_filter_from_file.html">triceratops.utils.phot_utils.load_filter_from_file</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.load_filter_from_name.html">triceratops.utils.phot_utils.load_filter_from_name</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.load_filter_from_speclite.html">triceratops.utils.phot_utils.load_filter_from_speclite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.load_filter_from_svo.html">triceratops.utils.phot_utils.load_filter_from_svo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.load_filters_from_svo.html">triceratops.utils.phot_utils.load_filters_from_svo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="triceratops.utils.phot_utils.st_mag_to_flux_lambda.html">triceratops.utils.phot_utils.st_mag_to_flux_lambda</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.html">FilterBundle</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.add_filter.html">triceratops.utils.phot_utils.FilterBundle.add_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.apply.html">triceratops.utils.phot_utils.FilterBundle.apply</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.convolve_lambda.html">triceratops.utils.phot_utils.FilterBundle.convolve_lambda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.convolve_nu.html">triceratops.utils.phot_utils.FilterBundle.convolve_nu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.from_dict.html">triceratops.utils.phot_utils.FilterBundle.from_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.from_hdf5.html">triceratops.utils.phot_utils.FilterBundle.from_hdf5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.from_json.html">triceratops.utils.phot_utils.FilterBundle.from_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.plot.html">triceratops.utils.phot_utils.FilterBundle.plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.remove_filter.html">triceratops.utils.phot_utils.FilterBundle.remove_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.to_dict.html">triceratops.utils.phot_utils.FilterBundle.to_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.to_hdf5.html">triceratops.utils.phot_utils.FilterBundle.to_hdf5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.to_json.html">triceratops.utils.phot_utils.FilterBundle.to_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.filter_names.html">triceratops.utils.phot_utils.FilterBundle.filter_names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.filters.html">triceratops.utils.phot_utils.FilterBundle.filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.frequency_grid.html">triceratops.utils.phot_utils.FilterBundle.frequency_grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.n_filters.html">triceratops.utils.phot_utils.FilterBundle.n_filters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.wavelength_grid.html">triceratops.utils.phot_utils.FilterBundle.wavelength_grid</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.FilterBundle.weight_matrix.html">triceratops.utils.phot_utils.FilterBundle.weight_matrix</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.html">PhotometryFilter</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.apply.html">triceratops.utils.phot_utils.PhotometryFilter.apply</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda.html">triceratops.utils.phot_utils.PhotometryFilter.convolve_lambda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.convolve_nu.html">triceratops.utils.phot_utils.PhotometryFilter.convolve_nu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.from_array.html">triceratops.utils.phot_utils.PhotometryFilter.from_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.from_dict.html">triceratops.utils.phot_utils.PhotometryFilter.from_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.from_hdf5.html">triceratops.utils.phot_utils.PhotometryFilter.from_hdf5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.from_json.html">triceratops.utils.phot_utils.PhotometryFilter.from_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.from_table.html">triceratops.utils.phot_utils.PhotometryFilter.from_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.plot.html">triceratops.utils.phot_utils.PhotometryFilter.plot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.to_array.html">triceratops.utils.phot_utils.PhotometryFilter.to_array</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.to_dict.html">triceratops.utils.phot_utils.PhotometryFilter.to_dict</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.to_hdf5.html">triceratops.utils.phot_utils.PhotometryFilter.to_hdf5</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.to_json.html">triceratops.utils.phot_utils.PhotometryFilter.to_json</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.to_table.html">triceratops.utils.phot_utils.PhotometryFilter.to_table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.effective_frequency.html">triceratops.utils.phot_utils.PhotometryFilter.effective_frequency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.effective_wavelength.html">triceratops.utils.phot_utils.PhotometryFilter.effective_wavelength</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.filter_width_lambda.html">triceratops.utils.phot_utils.PhotometryFilter.filter_width_lambda</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.filter_width_nu.html">triceratops.utils.phot_utils.PhotometryFilter.filter_width_nu</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.frequency.html">triceratops.utils.phot_utils.PhotometryFilter.frequency</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.frequency_bounds.html">triceratops.utils.phot_utils.PhotometryFilter.frequency_bounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.name.html">triceratops.utils.phot_utils.PhotometryFilter.name</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.transmission.html">triceratops.utils.phot_utils.PhotometryFilter.transmission</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.wavelength.html">triceratops.utils.phot_utils.PhotometryFilter.wavelength</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.wavelength_bounds.html">triceratops.utils.phot_utils.PhotometryFilter.wavelength_bounds</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.weighting.html">triceratops.utils.phot_utils.PhotometryFilter.weighting</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.utils.phot_utils.PhotometryFilter.weights.html">triceratops.utils.phot_utils.PhotometryFilter.weights</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="triceratops.physics_utils.html">triceratops.physics_utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.physics_utils.composition.html">triceratops.physics_utils.composition</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.composition.compute_mean_molecular_weight.html">triceratops.physics_utils.composition.compute_mean_molecular_weight</a></li>
@@ -1868,6 +2337,13 @@
 <li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.general_relativity.compute_kerr_spin.html">triceratops.physics_utils.general_relativity.compute_kerr_spin</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.general_relativity.compute_precession_per_orbit.html">triceratops.physics_utils.general_relativity.compute_precession_per_orbit</a></li>
 <li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.general_relativity.compute_schwarzschild_radius.html">triceratops.physics_utils.general_relativity.compute_schwarzschild_radius</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.physics_utils.gravity.html">triceratops.physics_utils.gravity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.gravity.compute_bondi_radius.html">triceratops.physics_utils.gravity.compute_bondi_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.gravity.compute_hill_radius.html">triceratops.physics_utils.gravity.compute_hill_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.gravity.compute_roche_lobe_radius.html">triceratops.physics_utils.gravity.compute_roche_lobe_radius</a></li>
+<li class="toctree-l3"><a class="reference internal" href="triceratops.physics_utils.gravity.compute_tidal_radius.html">triceratops.physics_utils.gravity.compute_tidal_radius</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="triceratops.physics_utils.special_relativity.html">triceratops.physics_utils.special_relativity</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -2230,20 +2706,20 @@ The model reduces to a simple exponential decay when
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#triceratops.models.generic.light_curve.FRED"><code class="docutils literal notranslate"><span class="pre">FRED</span></code></a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../_sources/_as_gen/triceratops.models.generic.light_curve.FRED.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../_sources/_as_gen/triceratops.models.generic.light_curve.FRED.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -2258,8 +2734,8 @@ The model reduces to a simple exponential decay when
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -2293,7 +2769,7 @@ The model reduces to a simple exponential decay when
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

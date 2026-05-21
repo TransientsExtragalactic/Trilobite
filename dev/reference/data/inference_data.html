@@ -27,61 +27,70 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data/inference_data';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Triceratops Models" href="../models/overview.html" />
-    <link rel="prev" title="Photometry" href="photometry.html" />
+    <link rel="next" title="From Data to Inference: A Complete Guide" href="data_to_inference.html" />
+    <link rel="prev" title="OpticalPhotometryEpoch" href="optical_photometry_epoch.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -107,7 +116,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -166,8 +175,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -199,11 +208,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -236,8 +252,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -302,8 +317,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -326,11 +341,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -363,8 +385,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -373,18 +394,31 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="overview.html">Data Loading, Handling, and Visualization</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="light_curve.html">Light Curves</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">Inference Data Containers</a></li>
 </ul>
@@ -410,33 +444,113 @@
 </details></li>
 </ul>
 <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../physics/shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../physics/shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../physics/radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../physics/disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../physics/disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../physics/disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../physics/disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -628,6 +742,94 @@ If uncertainties are required but absent, the corresponding accessor
 raises an exception rather than silently returning incomplete data.</p>
 </section>
 </section>
+<section id="inspecting-inferencedata">
+<h2>Inspecting InferenceData<a class="headerlink" href="#inspecting-inferencedata" title="Link to this heading">#</a></h2>
+<p>After calling <code class="docutils literal notranslate"><span class="pre">to_inference_data()</span></code>, always verify the result before
+proceeding to the likelihood step.</p>
+<section id="repr">
+<h3>repr<a class="headerlink" href="#repr" title="Link to this heading">#</a></h3>
+<p>The <a class="reference external" href="https://docs.python.org/3/library/functions.html#repr" title="(in Python v3.14)"><code class="xref py py-func docutils literal notranslate"><span class="pre">repr()</span></code></a> of an <code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code> object gives a compact,
+readable summary:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">inference_data</span><span class="p">))</span>
+<span class="go">InferenceData(</span>
+<span class="go">  n_obs=32,</span>
+<span class="go">  x=[&#39;time&#39;, &#39;freq&#39;],</span>
+<span class="go">  observables=[&#39;flux_density&#39;],</span>
+<span class="go">  censored=True,</span>
+<span class="go">  x_error=[]</span>
+<span class="go">)</span>
+</pre></div>
+</div>
+<p>This is safe to print in a notebook or interactive session — it does not
+dump raw array contents.</p>
+</section>
+<section id="describe">
+<h3>describe()<a class="headerlink" href="#describe" title="Link to this heading">#</a></h3>
+<p>For a fuller diagnostic, use <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.describe.html#triceratops.data.core.InferenceData.describe" title="triceratops.data.core.InferenceData.describe"><code class="xref py py-meth docutils literal notranslate"><span class="pre">describe()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="n">inference_data</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Example output:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>InferenceData — 32 observations
+──────────────────────────────────────────────────
+Independent Variables
+  time        : min=0.10  max=1200.00  (shape=(32,))
+  freq        : min=1.40  max=22.00    (shape=(32,))
+──────────────────────────────────────────────────
+Observables
+  flux_density
+    detections    : 28
+    upper limits  : 4
+    lower limits  : 0
+    value range   : 1.23e-28 … 8.45e-26
+    error present : True
+</pre></div>
+</div>
+<p>Use this to confirm:</p>
+<ul class="simple">
+<li><p>The number of detections and upper limits matches your expectation.</p></li>
+<li><p>Independent variable ranges look physically reasonable.</p></li>
+<li><p>Errors are present (if <code class="docutils literal notranslate"><span class="pre">infer_errors=True</span></code> was passed).</p></li>
+</ul>
+<p>If any of these look wrong, check the <code class="docutils literal notranslate"><span class="pre">mask</span></code> argument or the column
+mapping passed to <code class="docutils literal notranslate"><span class="pre">to_inference_data()</span></code>.</p>
+</section>
+</section>
+<section id="worked-example">
+<h2>Worked Example<a class="headerlink" href="#worked-example" title="Link to this heading">#</a></h2>
+<p>The complete data → inference pipeline in one block:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryContainer</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.likelihood</span><span class="w"> </span><span class="kn">import</span> <span class="n">GaussianLikelihood</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
+
+<span class="c1"># Step 1 — Load data into a container</span>
+<span class="n">container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="s2">&quot;photometry.fits&quot;</span><span class="p">)</span>
+
+<span class="c1"># Step 2 — Convert to InferenceData (all unit coercion happens here)</span>
+<span class="n">inference_data</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span>
+    <span class="n">model</span><span class="p">,</span>
+    <span class="n">infer_errors</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">detection_threshold</span><span class="o">=</span><span class="mf">3.0</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Step 3 — Inspect before proceeding</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">inference_data</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+
+<span class="c1"># Step 4 — Wire into the likelihood and inference problem</span>
+<span class="n">likelihood</span> <span class="o">=</span> <span class="n">GaussianLikelihood</span><span class="p">(</span><span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">inference_data</span><span class="p">)</span>
+<span class="n">problem</span> <span class="o">=</span> <span class="n">InferenceProblem</span><span class="p">(</span><span class="n">likelihood</span><span class="p">)</span>
+
+<span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">,</span>  <span class="s2">&quot;log_uniform&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">100</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">)</span>
+<span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s2">&quot;n0&quot;</span><span class="p">,</span> <span class="s2">&quot;log_uniform&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">1e-3</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">100</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_log_posterior</span><span class="p">)</span>   <span class="c1"># should be finite</span>
+</pre></div>
+</div>
+<p>See <a class="reference internal" href="data_to_inference.html#data-to-inference"><span class="std std-ref">From Data to Inference: A Complete Guide</span></a> for a step-by-step walkthrough covering all
+container types.</p>
+</section>
 <section id="design-philosophy">
 <h2>Design Philosophy<a class="headerlink" href="#design-philosophy" title="Link to this heading">#</a></h2>
 <p>The inference system is deliberately layered.</p>
@@ -639,6 +841,1007 @@ data entering the statistical layer are already numerically valid.</p>
 <p>This separation ensures that likelihood evaluation is a pure numerical
 operation with no hidden unit coercion, no column resolution logic,
 and no ambiguity in array shape or ordering.</p>
+</section>
+<hr class="docutils" />
+<section id="api-reference">
+<h2>API Reference<a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triceratops.data.core.</span></span><span class="sig-name descname"><span class="pre">InferenceData</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><span class="pre">Observable</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Immutable, validated numerical dataset for use in the inference pipeline.</p>
+<p>The <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> class is the <strong>canonical numerical representation</strong>
+consumed by likelihood objects in Triceratops. It defines the contract between
+the <code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.data</span></code> layer (which performs column resolution and unit coercion)
+and the <code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.inference</span></code> layer (which performs statistical evaluation).</p>
+<p>In a typical workflow:</p>
+<ol class="arabic simple">
+<li><p>Observational data are loaded into a data container.</p></li>
+<li><p>The container resolves column names, performs unit coercion,
+and validates structural consistency.</p></li>
+<li><p>An <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object is created.</p></li>
+<li><p>Likelihood objects operate exclusively on this standardized
+numerical representation.</p></li>
+</ol>
+<p>Once constructed, an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance is <strong>immutable</strong>.
+It contains only NumPy arrays and lightweight metadata required for
+statistical evaluation. No unit handling, column interpretation, or
+structural reshaping occurs at likelihood evaluation time.</p>
+<p class="rubric">Structure</p>
+<p>An <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object contains:</p>
+<ul class="simple">
+<li><p>Independent variables stored in <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.x.html#triceratops.data.core.InferenceData.x" title="triceratops.data.core.InferenceData.x"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x</span></code></a></p></li>
+<li><p>Dependent variables stored in <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.observables.html#triceratops.data.core.InferenceData.observables" title="triceratops.data.core.InferenceData.observables"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observables</span></code></a></p></li>
+<li><p>Optional uncertainties and censoring information</p></li>
+</ul>
+<p>All arrays share a common <em>base shape</em>. This base shape defines the
+dimensional structure of the dataset (for example <code class="docutils literal notranslate"><span class="pre">(N,)</span></code> for a
+one-dimensional dataset or <code class="docutils literal notranslate"><span class="pre">(N,</span> <span class="pre">M)</span></code> for a grid). Likelihoods may
+derive stacked views from this base shape but do not modify it.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>) – <p>Mapping from model variable names to arrays.</p>
+<ul>
+<li><p>Keys must match the model’s declared variable names.</p></li>
+<li><p>All arrays must share identical shape.</p></li>
+<li><p>Arrays must already be expressed in the model’s base units.</p></li>
+<li><p>No unit coercion is performed during initialization.</p></li>
+</ul>
+</p></li>
+<li><p><strong>observables</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a>) – <p>Mapping from observable names to <a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> objects.</p>
+<p>Each <a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> contains:</p>
+<ul>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">value</span></code><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></span></dt><dd><p>Observed dependent-variable values.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">error</span></code><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <code class="docutils literal notranslate"><span class="pre">None</span></code></span></dt><dd><p>Symmetric 1-sigma uncertainties.</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">upper</span></code><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <code class="docutils literal notranslate"><span class="pre">None</span></code></span></dt><dd><p>Upper limits (NaN where not applicable).</p>
+</dd>
+</dl>
+</li>
+<li><dl>
+<dt><code class="docutils literal notranslate"><span class="pre">lower</span></code><span class="classifier"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a> or <code class="docutils literal notranslate"><span class="pre">None</span></code></span></dt><dd><p>Lower limits (NaN where not applicable).</p>
+</dd>
+</dl>
+</li>
+</ul>
+<p>All observable arrays must match the shape of the independent variables.</p>
+</p></li>
+<li><p><strong>x_error</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – <p>Symmetric uncertainties on independent variables.</p>
+<ul>
+<li><p>Must contain entries for <em>all</em> independent variables if provided.</p></li>
+<li><p>Arrays must match the base shape of <code class="docutils literal notranslate"><span class="pre">x</span></code>.</p></li>
+</ul>
+</p></li>
+<li><p><strong>x_upper</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – Upper limits on independent variables.
+Missing entries are interpreted as no censoring.</p></li>
+<li><p><strong>x_lower</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a> of <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> to <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a>, <em>optional</em>) – Lower limits on independent variables.
+Missing entries are interpreted as no censoring.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>This class performs <strong>no statistical interpretation</strong>.</p></li>
+<li><p>All arrays must already be expressed in consistent base units.</p></li>
+<li><p>Shape validation is strict and enforced at construction time.</p></li>
+<li><p>The object is immutable once created to guarantee inference reproducibility.</p></li>
+<li><p>Not all likelihoods support all optional features (e.g., independent-variable
+uncertainties or censoring).</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<p>Constructing directly from arrays:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.data.core</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">InferenceData</span><span class="p">,</span>
+    <span class="n">Observable</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)}</span>
+
+<span class="n">flux</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+
+<span class="n">observables</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;flux_density&quot;</span><span class="p">:</span> <span class="n">Observable</span><span class="p">(</span>
+        <span class="n">value</span><span class="o">=</span><span class="n">flux</span><span class="p">,</span>
+        <span class="n">error</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">full_like</span><span class="p">(</span><span class="n">flux</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span>
+        <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="p">)</span>
+<span class="p">}</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="p">(</span>
+    <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+    <span class="n">observables</span><span class="o">=</span><span class="n">observables</span><span class="p">,</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Constructing from an Astropy table:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span>
+    <span class="n">table</span><span class="o">=</span><span class="n">photometry_table</span><span class="p">,</span>
+    <span class="n">variables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="s2">&quot;time&quot;</span><span class="p">},</span>
+    <span class="n">observables</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">&quot;flux_density&quot;</span><span class="p">:</span> <span class="p">(</span>
+            <span class="s2">&quot;flux_density&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;flux_density_error&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;flux_upper_limit&quot;</span><span class="p">,</span>
+            <span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.DataContainer.html#triceratops.data.core.DataContainer" title="triceratops.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.data.core.DataContainer</span></code></a></dt><dd><p>High-level data ingestion and column resolution.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html#triceratops.inference.likelihood.base.Likelihood" title="triceratops.inference.likelihood.base.Likelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">triceratops.inference.likelihood.base.Likelihood</span></code></a></dt><dd><p>Statistical layer that consumes <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a></dt><dd><p>Lightweight container representing a single dependent variable.</p>
+</dd>
+</dl>
+</div>
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">describe</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.describe"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return a human-readable summary of this <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object.</p>
+<p>The summary includes per-variable value ranges and per-observable
+detection/censoring statistics. Use this after calling
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.DataContainer.to_inference_data.html#triceratops.data.core.DataContainer.to_inference_data" title="triceratops.data.core.DataContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataContainer.to_inference_data()</span></code></a> to verify the conversion
+produced the expected result before wiring into a likelihood.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Multi-line summary string (also printed via <code class="docutils literal notranslate"><span class="pre">print()</span></code>).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">inference_data</span><span class="o">.</span><span class="n">describe</span><span class="p">())</span>
+<span class="go">InferenceData — 32 observations</span>
+<span class="go">────────────────────────────────────────────────</span>
+<span class="go">Independent Variables</span>
+<span class="go">  time   : min=0.10  max=1200.00  (shape=(32,))</span>
+<span class="go">  freq   : min=1.40  max=22.00    (shape=(32,))</span>
+<span class="go">────────────────────────────────────────────────</span>
+<span class="go">Observables</span>
+<span class="go">  flux_density</span>
+<span class="go">    detections    : 28</span>
+<span class="go">    upper limits  : 4</span>
+<span class="go">    lower limits  : 0</span>
+<span class="go">    value range   : 1.23e-28 … 8.45e-26</span>
+<span class="go">    error present : True</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_arrays</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">y_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_err</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x_lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_arrays"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Construct an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance directly from raw array inputs.</p>
+<p>This is a convenience constructor for workflows where data are already
+available as numerical arrays (or <cite>astropy.units.Quantity</cite> objects)
+and are intended to be used directly for inference against a given model.</p>
+<p>The method performs:</p>
+<ol class="arabic simple">
+<li><p><strong>Name validation</strong> — all model-declared variables and observables
+must be present; extra keys are ignored; missing required entries
+raise immediately.</p></li>
+<li><p><strong>Unit coercion</strong> — if a value is provided as a <code class="docutils literal notranslate"><span class="pre">Quantity</span></code> it is
+converted to the units declared by the model; plain NumPy arrays are
+assumed to already be in model-expected units; incompatible units
+raise a <code class="docutils literal notranslate"><span class="pre">ValueError</span></code>.</p></li>
+<li><p><strong>Shape validation</strong> — all independent variables must share
+identical shape; all observables must match; optional
+uncertainty/limit arrays must match the same shape.</p></li>
+<li><p><strong>Construction</strong> — observable objects are created internally and the
+resulting <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance is fully validated and
+immutable.</p></li>
+</ol>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – <p>The model defining:</p>
+<ul>
+<li><p>Required independent variable names</p></li>
+<li><p>Required observable names</p></li>
+<li><p>Expected base units for each variable and observable</p></li>
+</ul>
+</p></li>
+<li><p><strong>x</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>) – Mapping from model variable names to arrays.
+All arrays must share the same shape.</p></li>
+<li><p><strong>y</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>) – Mapping from model observable names to arrays.
+All arrays must match the shape of <cite>x</cite>.</p></li>
+<li><p><strong>y_err</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Symmetric uncertainties for observables.
+Must match observable shape.</p></li>
+<li><p><strong>y_upper</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Upper limits for observables.
+Must match observable shape.</p></li>
+<li><p><strong>y_lower</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Lower limits for observables.
+Must match observable shape.</p></li>
+<li><p><strong>x_err</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Symmetric uncertainties for independent variables.
+Must match independent-variable shape.</p></li>
+<li><p><strong>x_upper</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Upper limits for independent variables.</p></li>
+<li><p><strong>x_lower</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity]</span></code>, <em>optional</em>) – Lower limits for independent variables.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully validated, immutable inference-ready dataset.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If:
+    - Required variables or observables are missing
+    - Shapes are inconsistent
+    - Units cannot be coerced to model-declared units</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>No statistical interpretation is applied.</p></li>
+<li><p>No transformations (e.g., log-space conversions) are performed.</p></li>
+<li><p>All arrays must already represent physical values in model units.</p></li>
+<li><p>This method is intended for low-level or programmatic data ingestion.</p></li>
+<li><p>For table-based workflows with automatic unit coercion and column
+resolution, use <a class="reference internal" href="../../_as_gen/triceratops.data.core.DataContainer.to_inference_data.html#triceratops.data.core.DataContainer.to_inference_data" title="triceratops.data.core.DataContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">DataContainer.to_inference_data()</span></code></a> instead.</p></li>
+</ul>
+<p class="rubric">Examples</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)}</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Using quantities:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">x</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;time&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">day</span><span class="p">}</span>
+<span class="n">y</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;flux&quot;</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">mJy</span><span class="p">}</span>
+<span class="n">data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_arrays</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Reconstruct an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from a dictionary.</p>
+<p>This method is the inverse of <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a>. It restores NumPy
+arrays and <a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> objects from a JSON-deserialized
+dictionary representation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>) – Dictionary representation produced by <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully validated, immutable <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the dictionary does not represent a valid
+    <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> structure.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Load an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from disk.</p>
+<p>The input format is inferred from the file extension.</p>
+<p class="rubric">Supported Formats</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.h5</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.hdf5</span></code></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Path to serialized file.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully validated, immutable instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the file extension is unsupported.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_json.html#triceratops.data.core.InferenceData.from_json" title="triceratops.data.core.InferenceData.from_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_json()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_hdf5.html#triceratops.data.core.InferenceData.from_hdf5" title="triceratops.data.core.InferenceData.from_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_hdf5()</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_file.html#triceratops.data.core.InferenceData.to_file" title="triceratops.data.core.InferenceData.to_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_file</span></code></a></dt><dd><p>Generic serialization method.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Deserialize an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from an HDF5 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Path to an HDF5 file produced by <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_hdf5.html#triceratops.data.core.InferenceData.to_hdf5" title="triceratops.data.core.InferenceData.to_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_hdf5()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully validated, immutable instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If the file does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the file does not conform to the expected format.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>The file must contain a root attribute <code class="docutils literal notranslate"><span class="pre">format=&quot;InferenceData&quot;</span></code>.</p></li>
+<li><p>Arrays are loaded directly as NumPy arrays.</p></li>
+<li><p>Structural validation occurs during object construction.</p></li>
+<li><p>Metadata stored in HDF5 attributes is not automatically
+attached to the returned object.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_hdf5.html#triceratops.data.core.InferenceData.to_hdf5" title="triceratops.data.core.InferenceData.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a></dt><dd><p>HDF5 serialization method.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Deserialize an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from a JSON file.</p>
+<p>This method reads the JSON file, reconstructs the canonical
+dictionary representation, and delegates object construction
+to <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_dict.html#triceratops.data.core.InferenceData.from_dict" title="triceratops.data.core.InferenceData.from_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_dict()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Path to a JSON file produced by <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_json.html#triceratops.data.core.InferenceData.to_json" title="triceratops.data.core.InferenceData.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Fully validated, immutable instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If the file does not exist.</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the file contents are not a valid InferenceData structure.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>All arrays are restored as NumPy arrays.</p></li>
+<li><p>Shape and structural validation occur during object construction.</p></li>
+<li><p>Metadata stored in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> block is not automatically
+attached to the returned object but remains available in the file.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_json.html#triceratops.data.core.InferenceData.to_json" title="triceratops.data.core.InferenceData.to_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_json</span></code></a></dt><dd><p>JSON serialization method.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_dict.html#triceratops.data.core.InferenceData.from_dict" title="triceratops.data.core.InferenceData.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></dt><dd><p>Canonical reconstruction backend.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">from_table</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="../../_as_gen/triceratops.models.core.base.Model.html#triceratops.models.core.base.Model" title="triceratops.models.core.base.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">variables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">observables</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.from_table"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Construct an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object from an Astropy Table.</p>
+<p>This method extracts columns from a table, performs name resolution
+and unit coercion, and delegates validation to
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_arrays.html#triceratops.data.core.InferenceData.from_arrays" title="triceratops.data.core.InferenceData.from_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_arrays()</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code>) – Model defining required variable and observable names and units.</p></li>
+<li><p><strong>table</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">astropy.table.Table</span></code></a>) – Input data table.</p></li>
+<li><p><strong>variables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str]</span></code>, <em>optional</em>) – <p>Manual column specifications for independent variables.</p>
+<p>Each key is a model variable name.</p>
+<p>Values may be:
+- “column_name”
+- (“column”, “error”)
+- (“column”, “error”, “upper”, “lower”)</p>
+</p></li>
+<li><p><strong>observables</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">dict[str</span></code>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">str]</span></code>, <em>optional</em>) – Manual column specifications for observables.
+Same format as <cite>variables</cite>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If required columns are missing or incompatible.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Column names default to model names if not overridden.</p></li>
+<li><p>Columns must contain Quantity data or unit-compatible values.</p></li>
+<li><p>All unit conversion and shape validation is handled by
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_arrays.html#triceratops.data.core.InferenceData.from_arrays" title="triceratops.data.core.InferenceData.from_arrays"><code class="xref py py-meth docutils literal notranslate"><span class="pre">from_arrays()</span></code></a>.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_observable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><span class="pre">Observable</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_observable"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return a specific observable by name.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_x_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_x_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked independent-variable values.</p>
+<p>This method stacks all independent-variable arrays stored in
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.x.html#triceratops.data.core.InferenceData.x" title="triceratops.data.core.InferenceData.x"><code class="xref py py-attr docutils literal notranslate"><span class="pre">x</span></code></a> into a single NumPy array.</p>
+<p>The stacking order follows <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.variable_names.html#triceratops.data.core.InferenceData.variable_names" title="triceratops.data.core.InferenceData.variable_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">variable_names</span></code></a>, which must
+match the model’s expected input ordering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If False (default), returns array with shape
+<code class="docutils literal notranslate"><span class="pre">(*base_shape,</span> <span class="pre">n_variables)</span></code>.
+If True, reshapes to <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">n_variables)</span></code>
+where <code class="docutils literal notranslate"><span class="pre">n_points</span> <span class="pre">=</span> <span class="pre">product(base_shape)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stacked independent-variable array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Always returns a numeric array.</p></li>
+<li><p>Raises if any required variable is missing.</p></li>
+<li><p>No unit conversion is performed.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_x_error_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_x_error_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked independent-variable uncertainties.</p>
+<p>All independent variables must define symmetric uncertainties.
+If any variable lacks uncertainty information, a ValueError is raised.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If False (default), returns shape <code class="docutils literal notranslate"><span class="pre">(*base_shape,</span> <span class="pre">n_variables)</span></code>.
+If True, reshapes to <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">n_variables)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stacked uncertainty array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If uncertainties are not defined for all variables.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_x_lower_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_x_lower_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked independent-variable lower limits.</p>
+<p>Missing lower limits are represented as np.nan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Same reshaping semantics as <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.get_x_array.html#triceratops.data.core.InferenceData.get_x_array" title="triceratops.data.core.InferenceData.get_x_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_x_array()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lower-limit array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_x_upper_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_x_upper_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked independent-variable upper limits.</p>
+<p>Missing upper limits are represented as np.nan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Same reshaping semantics as <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.get_x_array.html#triceratops.data.core.InferenceData.get_x_array" title="triceratops.data.core.InferenceData.get_x_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_x_array()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Upper-limit array with shape <code class="docutils literal notranslate"><span class="pre">(*base_shape,</span> <span class="pre">n_variables)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_y_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_y_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked observable values.</p>
+<p>All observable values are required and must be numeric.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If False (default), returns <code class="docutils literal notranslate"><span class="pre">(*base_shape,</span> <span class="pre">n_observables)</span></code>.
+If True, reshapes to <code class="docutils literal notranslate"><span class="pre">(n_points,</span> <span class="pre">n_observables)</span></code>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stacked observable array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>NaN values are preserved.</p></li>
+<li><p>Observable order matches <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.observable_names.html#triceratops.data.core.InferenceData.observable_names" title="triceratops.data.core.InferenceData.observable_names"><code class="xref py py-attr docutils literal notranslate"><span class="pre">observable_names</span></code></a>.</p></li>
+</ul>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_y_error_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_y_error_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked observable uncertainties.</p>
+<p>All observables must define symmetric uncertainties.
+Raises if any observable lacks uncertainty information.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Same reshaping semantics as <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.get_y_array.html#triceratops.data.core.InferenceData.get_y_array" title="triceratops.data.core.InferenceData.get_y_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_y_array()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Stacked uncertainty array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If any observable lacks uncertainties.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_y_lower_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_y_lower_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked observable lower limits.</p>
+<p>Missing lower limits are represented as np.nan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Same reshaping semantics as <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.get_y_array.html#triceratops.data.core.InferenceData.get_y_array" title="triceratops.data.core.InferenceData.get_y_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_y_array()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Lower-limit array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">get_y_upper_array</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">flatten</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.get_y_upper_array"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Return stacked observable upper limits.</p>
+<p>Missing upper limits are represented as np.nan.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>flatten</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – Same reshaping semantics as <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.get_y_array.html#triceratops.data.core.InferenceData.get_y_array" title="triceratops.data.core.InferenceData.get_y_array"><code class="xref py py-meth docutils literal notranslate"><span class="pre">get_y_array()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Upper-limit array.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">has_x_uncertainty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.has_x_uncertainty"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Determine if independent variable uncertainties are provided.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if independent variable uncertainties are provided, False otherwise.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">n_observables</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Number of dependent variables.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">observable_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd><p>List of observable names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">observables</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><span class="pre">Observable</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd><p>Shape of the dataset.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Total number of data points.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">to_dict</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a></span></span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.to_dict"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Convert this instance to a JSON-serializable dictionary.</p>
+<p>This method converts the <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> object into a fully
+JSON-safe representation composed only of native Python types
+(<code class="docutils literal notranslate"><span class="pre">dict</span></code>, <code class="docutils literal notranslate"><span class="pre">list</span></code>, <code class="docutils literal notranslate"><span class="pre">str</span></code>, <code class="docutils literal notranslate"><span class="pre">float</span></code>, <code class="docutils literal notranslate"><span class="pre">int</span></code>, <code class="docutils literal notranslate"><span class="pre">None</span></code>). NumPy
+arrays are converted to nested lists via <code class="docutils literal notranslate"><span class="pre">.tolist()</span></code>.</p>
+<p>The resulting dictionary is suitable for:</p>
+<ul class="simple">
+<li><p>JSON serialization (<code class="docutils literal notranslate"><span class="pre">json.dumps</span></code>),</p></li>
+<li><p>writing to disk,</p></li>
+<li><p>transmission across process boundaries (e.g. MPI),</p></li>
+<li><p>caching or checkpointing inference state.</p></li>
+</ul>
+<p>Additional keyword arguments are inserted into the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> block
+and may be used to store provenance or contextual metadata
+(e.g. run identifiers, dataset names, timestamps).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>**metadata</strong> – Additional metadata to include under the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> key.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>JSON-safe dictionary representation of this
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>The dictionary structure has the following canonical form:</p>
+<div class="highlight-text notranslate"><div class="highlight"><pre><span></span>{
+  &quot;attrs&quot;: {
+    &quot;format&quot;: &quot;InferenceData&quot;,
+    &quot;version&quot;: &quot;x.y.z&quot;,
+    &quot;...&quot;: &quot;additional metadata&quot;
+  },
+
+  &quot;x&quot;: {
+    &quot;time&quot;: [ ... ],
+    &quot;frequency&quot;: [ ... ]
+  },
+
+  &quot;x_error&quot;: {                 // Optional
+    &quot;time&quot;: [ ... ]
+  },
+
+  &quot;x_upper&quot;: { ... },          // Optional
+  &quot;x_lower&quot;: { ... },          // Optional
+
+  &quot;observables&quot;: {
+    &quot;flux&quot;: {
+      &quot;value&quot;: [ ... ],
+      &quot;error&quot;: [ ... ],        // Optional
+      &quot;upper&quot;: [ ... ],        // Optional
+      &quot;lower&quot;: [ ... ]         // Optional
+    }
+  }
+}
+</pre></div>
+</div>
+<ul class="simple">
+<li><p>All arrays are converted to Python lists.</p></li>
+<li><p>Optional groups (<code class="docutils literal notranslate"><span class="pre">x_error</span></code>, <code class="docutils literal notranslate"><span class="pre">x_upper</span></code>, <code class="docutils literal notranslate"><span class="pre">x_lower</span></code>) are only
+included if present.</p></li>
+<li><p>Optional observable fields (<code class="docutils literal notranslate"><span class="pre">error</span></code>, <code class="docutils literal notranslate"><span class="pre">upper</span></code>, <code class="docutils literal notranslate"><span class="pre">lower</span></code>)
+are only included when defined.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_dict.html#triceratops.data.core.InferenceData.from_dict" title="triceratops.data.core.InferenceData.from_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_dict</span></code></a></dt><dd><p>Reconstruct an <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance from a dictionary.</p>
+</dd>
+<dt><a class="reference external" href="https://docs.python.org/3/library/json.html#json.dumps" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">json.dumps</span></code></a></dt><dd><p>Serialize dictionary to JSON.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">to_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.to_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Serialize this <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance to disk.</p>
+<p>The output format is determined automatically from the file
+extension.</p>
+<p class="rubric">Supported Formats</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">.json</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.h5</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">.hdf5</span></code></p></li>
+</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Destination file path.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code> and the file exists, raise <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileExistsError</span></code></a>.</p></li>
+<li><p><strong>**metadata</strong> – Additional metadata passed to the underlying serializer.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the file extension is unsupported.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>This is a convenience wrapper around <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_json.html#triceratops.data.core.InferenceData.to_json" title="triceratops.data.core.InferenceData.to_json"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_json()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_hdf5.html#triceratops.data.core.InferenceData.to_hdf5" title="triceratops.data.core.InferenceData.to_hdf5"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_hdf5()</span></code></a>.</p>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_file.html#triceratops.data.core.InferenceData.from_file" title="triceratops.data.core.InferenceData.from_file"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_file</span></code></a></dt><dd><p>Inverse operation.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">to_hdf5</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.to_hdf5"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Serialize this <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance to an HDF5 file.</p>
+<p>The HDF5 layout mirrors the canonical dictionary structure,
+with independent variables and observables stored in hierarchical
+groups.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Destination HDF5 file path.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code> (default) and the file already exists,
+a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileExistsError</span></code></a> is raised.</p></li>
+<li><p><strong>**metadata</strong> – Additional metadata stored as root-level HDF5 attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.14)"><strong>FileExistsError</strong></a> – If the file exists and <code class="docutils literal notranslate"><span class="pre">overwrite=False</span></code>.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Independent variables are stored under <code class="docutils literal notranslate"><span class="pre">/x</span></code>.</p></li>
+<li><p>Optional groups (<code class="docutils literal notranslate"><span class="pre">x_error</span></code>, <code class="docutils literal notranslate"><span class="pre">x_upper</span></code>, <code class="docutils literal notranslate"><span class="pre">x_lower</span></code>)
+are created only if present.</p></li>
+<li><p>Observables are stored under <code class="docutils literal notranslate"><span class="pre">/observables/&lt;name&gt;/</span></code>.</p></li>
+<li><p>Root attributes include <code class="docutils literal notranslate"><span class="pre">format</span></code> and <code class="docutils literal notranslate"><span class="pre">version</span></code>.</p></li>
+<li><p>Arrays are written in native NumPy format (no conversion to lists).</p></li>
+<li><p>This method is suitable for large datasets and high-performance workflows.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_hdf5.html#triceratops.data.core.InferenceData.from_hdf5" title="triceratops.data.core.InferenceData.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a></dt><dd><p>Inverse operation.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a></dt><dd><p>JSON serialization backend.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">to_json</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filename</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><span class="pre">Path</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">overwrite</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">metadata</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#InferenceData.to_json"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Serialize this <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance to a JSON file.</p>
+<p>The object is first converted to its canonical dictionary
+representation via <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a>, then written to disk using
+<code class="docutils literal notranslate"><span class="pre">json.dump</span></code> with pretty formatting (<code class="docutils literal notranslate"><span class="pre">indent=2</span></code>).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filename</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> or <code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code>) – Destination JSON file path.</p></li>
+<li><p><strong>overwrite</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <em>optional</em>) – If <code class="docutils literal notranslate"><span class="pre">False</span></code> (default) and the file already exists,
+a <a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FileExistsError</span></code></a> is raised.</p></li>
+<li><p><strong>**metadata</strong> – Additional metadata forwarded to <a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a> and
+stored in the <code class="docutils literal notranslate"><span class="pre">attrs</span></code> block of the serialized file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileExistsError" title="(in Python v3.14)"><strong>FileExistsError</strong></a> – If the file exists and <code class="docutils literal notranslate"><span class="pre">overwrite=False</span></code>.</p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>Output is fully JSON-safe (pure Python types only).</p></li>
+<li><p>NumPy arrays are stored as nested lists.</p></li>
+<li><p>NaN values are preserved according to Python’s JSON encoding rules.</p></li>
+<li><p>The resulting file is human-readable.</p></li>
+<li><p>This method does not modify the object state.</p></li>
+</ul>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<dl class="simple">
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.from_json.html#triceratops.data.core.InferenceData.from_json" title="triceratops.data.core.InferenceData.from_json"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_json</span></code></a></dt><dd><p>Inverse operation.</p>
+</dd>
+<dt><a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.to_dict.html#triceratops.data.core.InferenceData.to_dict" title="triceratops.data.core.InferenceData.to_dict"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_dict</span></code></a></dt><dd><p>Canonical serialization backend.</p>
+</dd>
+</dl>
+</div>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">variable_names</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><span class="pre">list</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd><p>List of independent variable names.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">x</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">x_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">x_lower</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">x_upper</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.14)"><span class="pre">dict</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="p"><span class="pre">]</span></span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<hr class="docutils" />
+<dl class="py class">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">triceratops.data.core.</span></span><span class="sig-name descname"><span class="pre">Observable</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">error</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">upper</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/triceratops/data/core.html#Observable"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Immutable numerical representation of a single dependent variable used in statistical inference.</p>
+<p>An <a class="reference internal" href="../../_as_gen/triceratops.data.core.Observable.html#triceratops.data.core.Observable" title="triceratops.data.core.Observable"><code class="xref py py-class docutils literal notranslate"><span class="pre">Observable</span></code></a> encapsulates a measured quantity (e.g. flux,
+magnitude, polarization) along with optional uncertainty and
+censoring information. This object is tied into a single
+<a class="reference internal" href="../../_as_gen/triceratops.data.core.InferenceData.html#triceratops.data.core.InferenceData" title="triceratops.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> instance, which may contain multiple named observables
+(e.g., flux and polarization) that are jointly modeled.</p>
+<p>This object is <em>purely numerical</em> and contains no units or
+domain-specific semantics. All unit conversion and validation
+should be performed upstream in reference to the generating
+model or data container. This allows likelihood implementations to
+interpret the data according to the needs of the problem at hand while
+being agnostic about the physical meaning of the observable.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>) – Measured values of the observable. This should be provided
+as a <code class="docutils literal notranslate"><span class="pre">(n,)</span></code> array where <code class="docutils literal notranslate"><span class="pre">n</span></code> is the number of observations.</p></li>
+<li><p><strong>error</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Symmetric 1-sigma uncertainties. Must be finite. Should be
+the same shape as <code class="docutils literal notranslate"><span class="pre">value</span></code>. Use <code class="docutils literal notranslate"><span class="pre">None</span></code> if not provided.</p></li>
+<li><p><strong>upper</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Upper limit values. Use NaN where not applicable.</p></li>
+<li><p><strong>lower</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code>, <em>optional</em>) – Lower limit values. Use NaN where not applicable.</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<ul class="simple">
+<li><p>To indicate non-detections, provide finite values in the <code class="docutils literal notranslate"><span class="pre">upper</span></code> column
+and NaN in the <code class="docutils literal notranslate"><span class="pre">value</span></code> column. The likelihood can then interpret
+these as upper limits. Likewise, detections should be represented as
+finite values in the <code class="docutils literal notranslate"><span class="pre">value</span></code> column and NaN in the <code class="docutils literal notranslate"><span class="pre">upper</span></code> column.</p></li>
+</ul>
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_censoring</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></dt>
+<dd><p>True if any censoring exists.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_error</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></dt>
+<dd><p>True if uncertainties are provided.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_lower_limits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></dt>
+<dd><p>True if any lower-censored points exist.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">has_upper_limits</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><span class="pre">bool</span></a></span></dt>
+<dd><p>True if any upper-censored points exist.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">lower</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">lower_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></dt>
+<dd><p>Boolean mask of lower-censored points.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">shape</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><span class="pre">tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="p"><span class="pre">...</span></span><span class="p"><span class="pre">]</span></span></span></dt>
+<dd><p>Shape of the observable.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">size</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a></span></dt>
+<dd><p>Number of observations.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">upper</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span><span class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></span></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py">
+<span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">upper_mask</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><span class="pre">None</span></a></span></dt>
+<dd><p>Boolean mask of upper-censored points.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">value</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.4)"><span class="pre">ndarray</span></a></span></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
 </section>
 </section>
 
@@ -653,20 +1856,20 @@ and no ambiguity in array shape or ordering.</p>
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="photometry.html"
+       href="optical_photometry_epoch.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">Photometry</p>
+        <p class="prev-next-title">OpticalPhotometryEpoch</p>
       </div>
     </a>
     <a class="right-next"
-       href="../models/overview.html"
+       href="data_to_inference.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Triceratops Models</p>
+        <p class="prev-next-title">From Data to Inference: A Complete Guide</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -687,8 +1890,8 @@ and no ambiguity in array shape or ordering.</p>
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inference-data-overview">Inference Data Overview</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generating-inference-data">Generating Inference Data</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#from-data-containers">From Data Containers</a></li>
@@ -700,18 +1903,25 @@ and no ambiguity in array shape or ordering.</p>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#extracting-numerical-arrays">Extracting Numerical Arrays</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#inspecting-inferencedata">Inspecting InferenceData</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#repr">repr</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#describe">describe()</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#worked-example">Worked Example</a></li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#design-philosophy">Design Philosophy</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a></li>
 </ul>
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../_sources/reference/data/inference_data.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/reference/data/inference_data.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -726,8 +1936,8 @@ and no ambiguity in array shape or ordering.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -761,7 +1971,7 @@ and no ambiguity in array shape or ordering.</p>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>

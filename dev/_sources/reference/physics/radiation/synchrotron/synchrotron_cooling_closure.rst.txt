@@ -1,7 +1,7 @@
 .. _synchrotron_cooling_closure:
 
 =============================================
-Synchrotron Cooling Closure
+Theory Note: Synchrotron Cooling Closure
 =============================================
 
 In the default implementation of the synchrotron SED inversion routines,

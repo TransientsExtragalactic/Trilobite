@@ -1,0 +1,165 @@
+:orphan:
+
+.. _data_gallery:
+
+*****************************
+Working With Radio Photometry
+*****************************
+
+These examples demonstrate how to work with **observational radio data** in Triceratops. They cover
+the full data ingestion workflow:
+
+- loading a FITS photometry table,
+- inspecting its contents,
+- grouping observations into temporal epochs,
+- and plotting individual epochs or the full light curve.
+
+The :mod:`~triceratops.data.photometry` subpackage provides container classes for radio photometry that
+carry unit-aware arrays (frequency, flux density, flux uncertainty, upper-limit flags) and
+integrate directly with the inference pipeline.
+
+.. rubric:: What you'll find here
+
+- Loading :class:`~triceratops.data.photometry.RadioPhotometryContainer` objects from FITS files
+- Inspecting and printing photometry tables
+- Defining temporal epochs from observation time-gaps
+- Plotting light curves and individual SED epochs
+
+.. rubric:: API reference
+
+- :mod:`~triceratops.data.photometry`
+- :class:`~triceratops.data.photometry.RadioPhotometryContainer`,
+- :class:`~triceratops.data.photometry.RadioPhotometryEpochContainer`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to load and plot radio photometry data using the Triceratops library. We&#x27;ll be using the data.photometry.RadioPhotometryContainer to manage and visualize the data.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_photometry_data_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_photometry_data`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Data</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this simple cookbook, we&#x27;ll load in some data and break it into epochs and then plot a subset of those epochs using the plot_epoch method of data.photometry.RadioPhotometryContainer.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_specific_epochs_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_specific_epochs`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot Single Epochs</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to construct an OpticalLightCurveContainer from tabular data, access its dual flux/magnitude representations, separate detections from upper limits, and plot the resulting light curve.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_optical_light_curve_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_optical_light_curve`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Optical Light Curve Container</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the full chain from a synthetic radio photometry table to a configured InferenceProblem. It is intended as a concrete, runnable illustration of the pipeline described in data_to_inference.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_inference_workflow_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_inference_workflow`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">From Data to Inference: End-to-End Workflow</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example will demonstrate how to load radio photometry data and separate it into epochs for plotting using the Triceratops library. We&#x27;ll utilize the data.photometry.RadioPhotometryContainer to manage and visualize the data.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_epoch_photometry_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_epoch_photometry`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Epochs</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/data/plot_photometry_data
+   /auto_examples/data/plot_specific_epochs
+   /auto_examples/data/plot_optical_light_curve
+   /auto_examples/data/plot_inference_workflow
+   /auto_examples/data/plot_epoch_photometry
+
+
+.. only:: html
+
+  .. container:: sphx-glr-footer sphx-glr-footer-gallery
+
+    .. container:: sphx-glr-download sphx-glr-download-python
+
+      :download:`Download all examples in Python source code: data_python.zip </auto_examples/data/data_python.zip>`
+
+    .. container:: sphx-glr-download sphx-glr-download-jupyter
+
+      :download:`Download all examples in Jupyter notebooks: data_jupyter.zip </auto_examples/data/data_jupyter.zip>`
+
+
+.. only:: html
+
+ .. rst-class:: sphx-glr-signature
+
+    `Gallery generated by Sphinx-Gallery <https://sphinx-gallery.github.io>`_

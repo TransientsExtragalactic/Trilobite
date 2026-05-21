@@ -1,0 +1,133 @@
+
+
+.. _sphx_glr_auto_examples_synchrotron_d_closures:
+
+Closures and Equipartition
+===========================
+
+These examples demonstrate the *closure relations* that bridge the gap between observed SED
+parameters (:math:`F_\mathrm{pk}`, :math:`\nu_\mathrm{pk}`) and the physical properties of
+the emitting region (radius :math:`R`, magnetic field :math:`B`, electron density :math:`n_e`).
+
+The **forward closure** maps physical parameters onto observables; the **inverse closure** does
+the reverse. Together they enable a complete equipartition analysis: given a measured SED,
+recover the source size, magnetic field, and energy content — and propagate measurement
+uncertainties through to physical posteriors via MCMC.
+
+**Theory:** :ref:`sed_forward_closure`, :ref:`sed_inverse_closure`, :ref:`synch_equipartition_theory`
+
+**API:** :ref:`synchrotron_microphysics`, :ref:`synchrotron_seds`
+
+
+.. raw:: html
+
+  <div id='sg-tag-list' class='sphx-glr-tag-list'></div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The equipartition analysis is the standard first-pass method for extracting physical parameters from a synchrotron radio SED. It was popularized by :footcitereadheadEquipartitionBrightnessTemperature1994 and is now used routinely in the analysis of radio supernovae, GRBs, and TDEs.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_equipartition_analysis_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_equipartition_analysis`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Equipartition Analysis from a Radio SED</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The bolometric synchrotron emissivity is the total radiated power per unit volume integrated over all frequencies. For a power-law electron distribution">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_bolometric_emissivity_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_bolometric_emissivity`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Bolometric Synchrotron Emissivity and Equipartition</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The inverse closure maps observed SED parameters — peak flux F_{\rm peak}, peak frequency \nu_{\rm peak}, and spectral regime — back to the physical properties of the emitting region: magnetic field B, emitting radius R, and electron distribution parameters.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_inverse_closure_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_inverse_closure`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Recovering Physical Parameters from an Observed SED: the Inverse Closure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="The forward closure maps physical parameters of a synchrotron-emitting region — magnetic field B, emitting radius R, microphysical energy fractions \epsilon_E and \epsilon_B, and the electron energy distribution — onto the phenomenological spectral parameters that are directly measured from broadband observations.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_forward_closure_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_forward_closure`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">From Physical Parameters to SED Parameters: the Forward Closure</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Radio astronomers often measure a synchrotron SED with uncertainties and want to estimate the source radius, magnetic field, and minimum energy without direct angular resolution (e.g. no VLBI size measurement). This workflow — fitting the SED and propagating the fit uncertainties through the inverse closure — is the standard approach in the literature.">
+
+.. only:: html
+
+  .. image:: /auto_examples/synchrotron/d_closures/images/thumb/sphx_glr_plot_sed_to_source_size_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/synchrotron/d_closures/plot_sed_to_source_size`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">From SED to Source Size: The Inverse Closure Workflow</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /auto_examples/synchrotron/d_closures/plot_equipartition_analysis
+   /auto_examples/synchrotron/d_closures/plot_bolometric_emissivity
+   /auto_examples/synchrotron/d_closures/plot_inverse_closure
+   /auto_examples/synchrotron/d_closures/plot_forward_closure
+   /auto_examples/synchrotron/d_closures/plot_sed_to_source_size
+

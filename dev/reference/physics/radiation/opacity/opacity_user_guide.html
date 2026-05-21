@@ -1,0 +1,1390 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Opacity Laws &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/opacity/opacity_user_guide';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="triceratops.radiation.opacity.get_opacity" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html" />
+    <link rel="prev" title="Free-Free Radiation Theory" href="../free_free/free_free_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html">triceratops.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 current active has-children"><a class="current reference internal" href="#">Opacity Laws</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Triceratops</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Opacity Laws</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="opacity-laws">
+<span id="opacity-user-guide"></span><h1>Opacity Laws<a class="headerlink" href="#opacity-laws" title="Link to this heading">#</a></h1>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For the underlying physics of each opacity law see <a class="reference internal" href="opacity_theory.html#opacity-theory"><span class="std std-ref">Opacity Theory</span></a>.
+For instructions on implementing custom laws see <a class="reference internal" href="opacity_dev_guide.html#opacity-dev-guide"><span class="std std-ref">Developer Guide: Implementing Opacity Laws</span></a>.</p>
+</div>
+<p>The <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.html#module-triceratops.radiation.opacity" title="triceratops.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.opacity</span></code></a> module provides opacity laws for astrophysical
+plasma modelling.  Every law exposes a uniform interface returning the opacity
+<span class="math notranslate nohighlight">\(\kappa\)</span> in <span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span> and its logarithmic derivatives with
+respect to density and temperature. These opacity laws are then incorporated into various physics
+engines throughout the code-base to close the energy-balance equation, compute optical depths, and so on.</p>
+<p>In many cases, users are able to provide an opacity specification as a string, instantiate a particular
+opacity class directly, or implement a custom opacity function. All of the infrastructure for working with
+these functions is found in this module, and the public interface is designed to be flexible and context-agnostic.
+The same opacity object can be used wherever an opacity evaluation is needed: in the energy-balance solver
+of an accretion disc integrator, in an optical-depth integration over a supernova CSM density profile, in a
+stellar-wind or outflow model, or as a building block in a custom spectral-synthesis pipeline.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#overview" id="id2">Overview</a></p>
+<ul>
+<li><p><a class="reference internal" href="#grey-opacity-subtypes" id="id3">Grey Opacity Subtypes</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#initializing-opacities" id="id4">Initializing Opacities</a></p>
+<ul>
+<li><p><a class="reference internal" href="#direct-instantiation" id="id5">Direct instantiation</a></p></li>
+<li><p><a class="reference internal" href="#using-get-opacity" id="id6">Using <code class="docutils literal notranslate"><span class="pre">get_opacity</span></code></a></p></li>
+<li><p><a class="reference internal" href="#constant-opacities" id="id7">Constant Opacities</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#working-with-opacity-objects" id="id8">Working With Opacity Objects</a></p>
+<ul>
+<li><p><a class="reference internal" href="#evaluating-the-opacity" id="id9">Evaluating the Opacity</a></p></li>
+<li><p><a class="reference internal" href="#opacity-derivatives" id="id10">Opacity Derivatives</a></p></li>
+<li><p><a class="reference internal" href="#the-public-private-api" id="id11">The Public / Private API</a></p></li>
+<li><p><a class="reference internal" href="#developers-calling-the-c-level-opacity" id="id12">(Developers) Calling the C-level Opacity</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#custom-opacity-tables" id="id13">Custom Opacity Tables</a></p>
+<ul>
+<li><p><a class="reference internal" href="#custom-tops-tables" id="id14">Custom TOPS Tables</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#api-reference" id="id15">API Reference</a></p></li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="overview">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">Overview</a><a class="headerlink" href="#overview" title="Link to this heading">#</a></h2>
+<p>All of the opacity laws in Triceratops effectively represent a function of the form</p>
+<div class="math notranslate nohighlight">
+\[\kappa_\nu(\rho, T)\]</div>
+<p>and (optionally) its derivatives with respect to each of the variables. These are all implemented as
+subclasses of the base class <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.base.OpacityLaw.html#triceratops.radiation.opacity.base.OpacityLaw" title="triceratops.radiation.opacity.base.OpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpacityLaw</span></code></a>, which defines the public
+interface for opacity evaluation and differentiation.</p>
+<p>In addition to the generic base class, there are a number of opacity sub-types which are provided
+specifically for use in different contexts. Most importantly, opacity functions are separated based on
+their arguments:</p>
+<ul class="simple">
+<li><p><strong>General Opacity</strong> functions take the frequency (<span class="math notranslate nohighlight">\(\nu\)</span>) as an argument and are designed for use
+in more complex / detailed radiative transfer applications.</p></li>
+<li><p><strong>Grey Opacity</strong> functions are frequency-independent and depend only on density and temperature.  These
+are the most commonly used opacities in Triceratops and are the only type currently implemented, but the
+framework is designed to accommodate more complex frequency-dependent laws in the future.</p></li>
+</ul>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Currently, there are NO frequency dependent opacity laws implemented in Triceratops.</p>
+</div>
+<section id="grey-opacity-subtypes">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Grey Opacity Subtypes</a><a class="headerlink" href="#grey-opacity-subtypes" title="Link to this heading">#</a></h3>
+<p>There are two subclasses of grey opacities which are worth of special mention: the <strong>Rosseland mean</strong>
+and <strong>Planck mean</strong> opacities.  These are frequency-averaged opacities that are commonly
+used in astrophysical applications, and they differ in the weighting function used for the frequency average.</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Rosseland mean</label><div class="sd-tab-content docutils">
+<p>The Rosseland mean is the <strong>harmonic</strong> mean of the monochromatic opacity, weighted by the
+temperature derivative of the Planck function:</p>
+<div class="math notranslate nohighlight">
+\[\frac{1}{\kappa_R} =
+    \frac{\displaystyle\int_0^\infty
+          \frac{1}{\kappa_\nu}\,\frac{\partial B_\nu}{\partial T}\,d\nu}
+         {\displaystyle\int_0^\infty
+          \frac{\partial B_\nu}{\partial T}\,d\nu}.\]</div>
+<p>The harmonic weighting means the Rosseland mean is dominated by the
+<em>most transparent</em> frequency channels — those through which radiation
+escapes most easily.  It therefore governs radiative diffusion through
+an optically thick medium, entering the radiative flux as</p>
+<div class="math notranslate nohighlight">
+\[\vec{F}_{\rm rad} = -\frac{4acT^3}{3\kappa_R\rho}\,\nabla T.\]</div>
+<p><strong>When to use</strong>: stellar interiors, accretion disc midplanes, supernova
+ejecta — any regime where the mean free path is short compared to the
+scale of interest and the radiation field is close to isotropic
+(diffusion approximation).  All currently implemented Triceratops
+opacity laws provide the Rosseland mean.</p>
+</div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Planck mean</label><div class="sd-tab-content docutils">
+<p>The Planck mean is the <strong>arithmetic</strong> mean of the monochromatic opacity,
+weighted by the Planck function itself:</p>
+<div class="math notranslate nohighlight">
+\[\kappa_P =
+    \frac{\displaystyle\int_0^\infty
+          \kappa_\nu\,B_\nu(T)\,d\nu}
+         {\displaystyle\int_0^\infty
+          B_\nu(T)\,d\nu}.\]</div>
+<p>Because it weights by the emission spectrum, <span class="math notranslate nohighlight">\(\kappa_P\)</span> is
+dominated by the <em>most opaque</em> frequency channels — those that absorb
+(and emit) the most thermal radiation.  It governs the net rate at which
+matter and radiation exchange energy and therefore controls thermal
+equilibration and radiative cooling rates.</p>
+<p><strong>When to use</strong>: optically thin regions (stellar atmospheres, CSM shells,
+nebulae) where line cooling, photo-ionisation heating, or departure from
+LTE are important; also in radiation-hydrodynamics codes that split the
+energy-exchange and diffusion operators.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity.html#triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity" title="triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOPSOpacity</span></code></a> provides
+the Planck mean via <code class="docutils literal notranslate"><span class="pre">mean_type=&quot;planck&quot;</span></code>.  Standalone analytic Planck-mean laws
+(e.g. a Planck-weighted Kramers) are not yet implemented.</p>
+</div>
+</div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Opacities are <strong>internally aware of their type</strong>, meaning that a Rosseland mean opacity object knows it
+is a Rosseland mean and can only be used in contexts where a Rosseland mean is required.  This is enforced
+by the class hierarchy and the public interface of each opacity law. Models can engines can check
+the type of opacity they are given and raise an error if it is incompatible with the intended use.</p>
+</div>
+</section>
+</section>
+<section id="initializing-opacities">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Initializing Opacities</a><a class="headerlink" href="#initializing-opacities" title="Link to this heading">#</a></h2>
+<p>There are many ways to get started with an opacity law, depending on the context and the user’s needs.
+The most direct way is to instantiate one of the provided classes directly, but there are also helper functions for
+loading table-based opacities and for resolving opacity specifications from strings or existing instances.
+The following sections cover the most common use cases.</p>
+<section id="direct-instantiation">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Direct instantiation</a><a class="headerlink" href="#direct-instantiation" title="Link to this heading">#</a></h3>
+<p>Opacity laws can be constructed directly by instantiating the desired
+class. All public opacity classes are importable from
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.html#module-triceratops.radiation.opacity" title="triceratops.radiation.opacity"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.opacity</span></code></a>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">KramersESOpacity</span><span class="p">,</span> <span class="n">OPALOpacity</span><span class="p">,</span> <span class="n">TOPSOpacity</span><span class="p">,</span>
+    <span class="n">load_opal_opacity</span><span class="p">,</span> <span class="n">load_tops_opacity</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c1"># Analytic opacity laws</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">KramersESOpacity</span><span class="p">()</span>                 <span class="c1"># default (solar-like) normalization</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">KramersESOpacity</span><span class="p">(</span><span class="n">kappa_es</span><span class="o">=</span><span class="mf">0.20</span><span class="p">)</span>    <span class="c1"># helium-dominated plasma</span>
+
+<span class="c1"># Table-based opacity (OPAL Rosseland mean)</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">load_opal_opacity</span><span class="p">(</span><span class="mi">72</span><span class="p">)</span>              <span class="c1"># solar composition (X=0.70, Z=0.02)</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">load_opal_opacity</span><span class="p">(</span><span class="n">X</span><span class="o">=</span><span class="mf">0.70</span><span class="p">,</span> <span class="n">Z</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span> <span class="c1"># same, by composition</span>
+
+<span class="c1"># Table-based opacity (TOPS — Rosseland or Planck mean)</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">load_tops_opacity</span><span class="p">()</span>                          <span class="c1"># bundled solar table, Rosseland</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">load_tops_opacity</span><span class="p">(</span><span class="n">mean_type</span><span class="o">=</span><span class="s2">&quot;planck&quot;</span><span class="p">)</span>        <span class="c1"># Planck mean</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">TOPSOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">(</span><span class="n">out_of_bounds</span><span class="o">=</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>In some cases, this is quite simple to achieve (e.g. for Kramer’s opacities), but in other cases
+(particularly those involving tables), it may require some more familiarity with the underlying data
+and available options.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>For table-based opacities where there are multiple tables available with different
+compositions, the relevant classes provide search and selection methods to help you
+find the right table for your application.</p>
+</div>
+</section>
+<section id="using-get-opacity">
+<h3><a class="toc-backref" href="#id6" role="doc-backlink">Using <code class="docutils literal notranslate"><span class="pre">get_opacity</span></code></a><a class="headerlink" href="#using-get-opacity" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.utils.get_opacity.html#triceratops.radiation.opacity.utils.get_opacity" title="triceratops.radiation.opacity.utils.get_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_opacity()</span></code></a> is the recommended
+entry point when an opacity specification is passed in from outside (e.g. a
+model parameter).  It accepts a registered string key, a plain float, or an
+existing opacity instance and always returns a
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_opacity</span>
+
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">&quot;kramers_es&quot;</span><span class="p">)</span>    <span class="c1"># string key → KramersESOpacity()</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">&quot;opal&quot;</span><span class="p">)</span>          <span class="c1"># solar OPAL table</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="n">my_kap</span><span class="p">)</span>          <span class="c1"># existing instance returned unchanged</span>
+</pre></div>
+</div>
+<p>The full table of registered string keys is in the <span class="xref std std-ref">API reference</span>
+and in <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.utils.get_opacity.html#triceratops.radiation.opacity.utils.get_opacity" title="triceratops.radiation.opacity.utils.get_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_opacity()</span></code></a>.</p>
+</section>
+<section id="constant-opacities">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Constant Opacities</a><a class="headerlink" href="#constant-opacities" title="Link to this heading">#</a></h3>
+<p>A flat, state-independent opacity can be constructed from a plain float (in
+<span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>) or an <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">ConstantGreyOpacity</span>
+
+<span class="n">kap</span> <span class="o">=</span> <span class="n">ConstantGreyOpacity</span><span class="p">(</span><span class="mf">0.34</span><span class="p">)</span>                     <span class="c1"># solar electron-scattering value</span>
+<span class="n">kap</span> <span class="o">=</span> <span class="n">ConstantGreyOpacity</span><span class="p">(</span><span class="mf">0.034</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">m</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">kg</span><span class="p">)</span>   <span class="c1"># same value via Quantity</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kap</span><span class="o">.</span><span class="n">kappa</span><span class="p">)</span>                                    <span class="c1"># &lt;Quantity 0.34 cm2 / g&gt;</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">get_opacity</span></code> also accepts a plain float and wraps it in a
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity" title="triceratops.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>
+automatically:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="mf">0.34</span><span class="p">)</span>   <span class="c1"># → ConstantGreyOpacity(0.34)</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="working-with-opacity-objects">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Working With Opacity Objects</a><a class="headerlink" href="#working-with-opacity-objects" title="Link to this heading">#</a></h2>
+<p>Once an opacity object has been constructed, <strong>its interface is identical regardless of
+whether it wraps a simple analytic formula or a large numerical table</strong>.  All public
+methods are unit-aware: they accept <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> inputs and return
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> outputs in consistent CGS units.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>Like most elements of the Triceratops API, there are also CGS-only private methods
+that operate in log-space and are designed for use in performance-critical code paths.</p>
+<p>See the section below on the public/private API for details.</p>
+</div>
+<section id="evaluating-the-opacity">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Evaluating the Opacity</a><a class="headerlink" href="#evaluating-the-opacity" title="Link to this heading">#</a></h3>
+<p>In all opacity objects the primary entry point is the
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.base.OpacityLaw.opacity.html#triceratops.radiation.opacity.base.OpacityLaw.opacity" title="triceratops.radiation.opacity.base.OpacityLaw.opacity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code></a> method, which returns the opacity,
+which accepts the density (<span class="math notranslate nohighlight">\(\rho\)</span>) and temperature (<span class="math notranslate nohighlight">\(T\)</span>) as well as
+(in frequency dependent laws), the frequency (<span class="math notranslate nohighlight">\(\nu\)</span>) as arguments.  For grey opacity laws, the frequency
+argument is accepted but silently ignored.  The Law will then evaluate the
+opacity function</p>
+<div class="math notranslate nohighlight">
+\[\kappa(\rho, T, [\nu])\]</div>
+<p>and return the result as a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> in <span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_opacity</span>
+
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">&quot;kramers_es&quot;</span><span class="p">)</span>
+
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">T</span>   <span class="o">=</span> <span class="mf">1e7</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+
+<span class="n">kappa</span> <span class="o">=</span> <span class="n">kap</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>   <span class="c1"># returns a Quantity in cm² g⁻¹</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">kappa</span><span class="p">)</span>                  <span class="c1"># &lt;Quantity ... cm2 / g&gt;</span>
+</pre></div>
+</div>
+<p>All opacity laws support NumPy broadcasting, so arrays of densities or temperatures
+(or both) can be passed directly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">rho_arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">T_arr</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>   <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+
+<span class="n">kappa_arr</span> <span class="o">=</span> <span class="n">kap</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho_arr</span><span class="p">,</span> <span class="n">T_arr</span><span class="p">)</span>   <span class="c1"># shape (200,)</span>
+</pre></div>
+</div>
+<p>Two-dimensional opacity surfaces, useful, for example, for inspecting the behaviour
+of an OPAL table across the <span class="math notranslate nohighlight">\((\rho, T)\)</span> plane, can be computed by constructing
+a grid beforehand:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPALOpacity</span>
+
+<span class="n">opal</span> <span class="o">=</span> <span class="n">OPALOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">(</span><span class="n">out_of_bounds</span><span class="o">=</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+<span class="n">rho_grid</span><span class="p">,</span> <span class="n">T_grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">3.75</span><span class="p">,</span> <span class="mf">8.7</span><span class="p">,</span> <span class="mi">70</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">,</span>
+    <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">kappa_surface</span> <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho_grid</span><span class="p">,</span> <span class="n">T_grid</span><span class="p">)</span>   <span class="c1"># shape (70, 70), NaN outside table</span>
+</pre></div>
+</div>
+<p>Notice the use of <code class="docutils literal notranslate"><span class="pre">out_of_bounds=&quot;nan&quot;</span></code> here: grid points that fall outside the
+tabulated domain return <a class="reference external" href="https://numpy.org/doc/stable/reference/constants.html#numpy.nan" title="(in NumPy v2.4)"><code class="xref py py-data docutils literal notranslate"><span class="pre">nan</span></code></a> rather than raising an error, which makes
+it straightforward to mask or visualise the valid region of the table.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For grey opacity laws, the <code class="docutils literal notranslate"><span class="pre">nu</span></code> argument present on the base class
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.base.OpacityLaw.opacity.html#triceratops.radiation.opacity.base.OpacityLaw.opacity" title="triceratops.radiation.opacity.base.OpacityLaw.opacity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code></a> is
+accepted but silently ignored: grey opacities have no frequency dependence.
+The public method signature for
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>
+subclasses is therefore simply <code class="docutils literal notranslate"><span class="pre">opacity(rho,</span> <span class="pre">T)</span></code>.</p>
+</div>
+<details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
+<summary class="sd-summary-title sd-card-header">
+<span class="sd-summary-text">Example: Comparing Opacity Families</span><span class="sd-summary-state-marker sd-summary-chevron-right"><svg version="1.1" width="1.5em" height="1.5em" class="sd-octicon sd-octicon-chevron-right" viewBox="0 0 24 24" aria-hidden="true"><path d="M8.72 18.78a.75.75 0 0 1 0-1.06L14.44 12 8.72 6.28a.751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018l6.25 6.25a.75.75 0 0 1 0 1.06l-6.25 6.25a.75.75 0 0 1-1.06 0Z"></path></svg></span></summary><div class="sd-summary-content sd-card-body docutils">
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">mpl_toolkits.axes_grid1.inset_locator</span><span class="w"> </span><span class="kn">import</span> <span class="n">inset_axes</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPALOpacity</span><span class="p">,</span> <span class="n">KramersOpacity</span><span class="p">,</span> <span class="n">TOPSOpacity</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Sampling grid</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">T</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logspace</span><span class="p">(</span><span class="mf">3.75</span><span class="p">,</span> <span class="mi">9</span><span class="p">,</span> <span class="mi">120</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="n">RHO</span><span class="p">,</span> <span class="n">TMP</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">indexing</span><span class="o">=</span><span class="s2">&quot;ij&quot;</span><span class="p">)</span>
+
+<span class="n">rho_q</span> <span class="o">=</span> <span class="n">RHO</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+<span class="n">T_q</span>   <span class="o">=</span> <span class="n">TMP</span><span class="o">.</span><span class="n">ravel</span><span class="p">()</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Evaluate opacity models</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">opal</span> <span class="o">=</span> <span class="n">OPALOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">(</span><span class="n">out_of_bounds</span><span class="o">=</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+<span class="n">kram</span> <span class="o">=</span> <span class="n">KramersOpacity</span><span class="p">()</span>
+<span class="n">tops</span> <span class="o">=</span> <span class="n">TOPSOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">(</span><span class="n">mean_type</span><span class="o">=</span><span class="s2">&quot;rosseland&quot;</span><span class="p">,</span> <span class="n">out_of_bounds</span><span class="o">=</span><span class="s2">&quot;nan&quot;</span><span class="p">)</span>
+
+<span class="n">lg_opal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">opal</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho_q</span><span class="p">,</span> <span class="n">T_q</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">RHO</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="n">lg_kram</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">kram</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho_q</span><span class="p">,</span> <span class="n">T_q</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">RHO</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+<span class="n">lg_tops</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">tops</span><span class="o">.</span><span class="n">opacity</span><span class="p">(</span><span class="n">rho_q</span><span class="p">,</span> <span class="n">T_q</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">RHO</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">cgs</span><span class="o">.</span><span class="n">value</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Plot settings</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">6</span>
+
+<span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s2">&quot;plasma&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+<span class="n">cmap</span><span class="o">.</span><span class="n">set_bad</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">7</span><span class="p">),</span> <span class="n">sharex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">sharey</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="n">panels</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">(</span><span class="n">lg_opal</span><span class="p">,</span> <span class="s2">&quot;OPAL (Rosseland)&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">lg_kram</span><span class="p">,</span> <span class="s2">&quot;Kramers (analytic)&quot;</span><span class="p">),</span>
+    <span class="p">(</span><span class="n">lg_tops</span><span class="p">,</span> <span class="s2">&quot;TOPS (Rosseland)&quot;</span><span class="p">),</span>
+<span class="p">]</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Plot panels</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="k">for</span> <span class="n">ax</span><span class="p">,</span> <span class="p">(</span><span class="n">surf</span><span class="p">,</span> <span class="n">title</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">axes</span><span class="o">.</span><span class="n">flat</span><span class="p">,</span> <span class="n">panels</span><span class="p">):</span>
+    <span class="n">im</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">pcolormesh</span><span class="p">(</span>
+        <span class="n">T</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="n">rho</span><span class="o">.</span><span class="n">value</span><span class="p">,</span>
+        <span class="n">surf</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span>
+        <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">,</span>
+        <span class="n">shading</span><span class="o">=</span><span class="s2">&quot;auto&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="s2">&quot;log&quot;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">11</span><span class="p">)</span>
+
+<span class="c1"># Hide unused panel</span>
+<span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+
+<span class="c1"># Axis labels (only outer)</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;Temperature [K]&quot;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">ax</span> <span class="ow">in</span> <span class="n">axes</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;Density [g cm$^{-3}$]&quot;</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Inset colorbar</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">cb_parent</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+<span class="n">cb_ax</span> <span class="o">=</span> <span class="n">inset_axes</span><span class="p">(</span>
+    <span class="n">cb_parent</span><span class="p">,</span>
+    <span class="n">width</span><span class="o">=</span><span class="s2">&quot;6%&quot;</span><span class="p">,</span>
+    <span class="n">height</span><span class="o">=</span><span class="s2">&quot;95%&quot;</span><span class="p">,</span>
+    <span class="n">loc</span><span class="o">=</span><span class="s2">&quot;center left&quot;</span><span class="p">,</span>
+    <span class="n">borderpad</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+    <span class="n">im</span><span class="p">,</span>
+    <span class="n">cax</span><span class="o">=</span><span class="n">cb_ax</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;$\log_</span><span class="si">{10}</span><span class="s2">\,\kappa\ \mathrm{[cm^2\,g^{-1}]}$&quot;</span><span class="p">)</span>
+
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="c1"># Layout polish</span>
+<span class="c1"># ---------------------------------------------------------------------</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sd-card-text">(<a class="reference download internal" download="" href="../../../../_downloads/15df6a08ad60f28b40d578d411747910/opacity_user_guide-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/f0863630b77a74bbc7c4fa573c3d02ec/opacity_user_guide-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/078f1f9ed0c895f0bf5a27798eaed8b3/opacity_user_guide-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/4d3847ff5f5484c034fc4c25b4476eeb/opacity_user_guide-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/opacity_user_guide-1.png" class="plot-directive" src="../../../../_images/opacity_user_guide-1.png" />
+</figure>
+</div>
+</details></section>
+<section id="opacity-derivatives">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Opacity Derivatives</a><a class="headerlink" href="#opacity-derivatives" title="Link to this heading">#</a></h3>
+<p>All opacity laws expose logarithmic partial derivatives, which are the natural
+quantities for stability analysis, disc structure equations, and stellar envelope
+integrations.  Specifically, Triceratops provides the two dimensionless logarithmic
+derivatives</p>
+<div class="math notranslate nohighlight">
+\[\alpha \equiv \frac{\partial \ln \kappa}{\partial \ln \rho}, \qquad
+\beta  \equiv \frac{\partial \ln \kappa}{\partial \ln T}.\]</div>
+<p>For a pure power-law opacity <span class="math notranslate nohighlight">\(\kappa \propto \rho^\alpha T^\beta\)</span>, these are
+simply the exponents.  For example, the Kramers free-free law
+<span class="math notranslate nohighlight">\(\kappa \propto \rho T^{-3.5}\)</span> gives <span class="math notranslate nohighlight">\(\alpha = 1\)</span> and <span class="math notranslate nohighlight">\(\beta = -3.5\)</span>,
+while electron scattering and other constant grey opacities give <span class="math notranslate nohighlight">\(\alpha = \beta = 0\)</span>.
+Table-based opacities return local finite-difference estimates of these quantities
+computed in log-space from the bilinearly-interpolated grid.</p>
+<p>The derivatives are computed via
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogrho"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogrho()</span></code></a>
+and
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.dlogkappa_dlogT"><code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogT()</span></code></a>,
+which accept the same unit-bearing arguments as
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.opacity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code></a>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_opacity</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">&quot;kramers_ff&quot;</span><span class="p">)</span>
+<span class="n">rho</span> <span class="o">=</span> <span class="mf">1e-5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="o">**</span><span class="mi">3</span>
+<span class="n">T</span>   <span class="o">=</span> <span class="mf">1e7</span>  <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">kap</span><span class="o">.</span><span class="n">dlogkappa_dlogrho</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>   <span class="c1"># → 1.0 (kappa ~ rho^1)</span>
+<span class="n">beta</span>  <span class="o">=</span> <span class="n">kap</span><span class="o">.</span><span class="n">dlogkappa_dlogT</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>     <span class="c1"># → -3.5 (kappa ~ T^-3.5)</span>
+</pre></div>
+</div>
+<p>The same calls work for OPAL table opacities, but here the derivatives are estimated
+numerically from the bilinear interpolant:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPALOpacity</span>
+
+<span class="n">opal</span> <span class="o">=</span> <span class="n">OPALOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+
+<span class="n">alpha</span> <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">dlogkappa_dlogrho</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+<span class="n">beta</span>  <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">dlogkappa_dlogT</span><span class="p">(</span><span class="n">rho</span><span class="p">,</span> <span class="n">T</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>These values are particularly useful when constructing opacity-dependent stability
+criteria such as the Ledoux condition or the viscous instability criterion for
+accretion discs, both of which depend critically on the local exponents <span class="math notranslate nohighlight">\(\alpha\)</span>
+and <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The derivatives returned by analytic Kramers-type laws are <em>exact</em> power-law
+exponents derived analytically from the closed-form expression for <span class="math notranslate nohighlight">\(\kappa\)</span>.
+The derivatives returned by OPAL table opacities are <em>numerical</em> estimates
+from the bilinear interpolant and may exhibit discontinuities at grid cell boundaries.
+If smooth derivatives are required near a specific <span class="math notranslate nohighlight">\((\rho, T)\)</span> point,
+consider using a Kramers approximation calibrated to that region instead.</p>
+</div>
+</section>
+<section id="the-public-private-api">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">The Public / Private API</a><a class="headerlink" href="#the-public-private-api" title="Link to this heading">#</a></h3>
+<p>Every opacity class in Triceratops exposes two distinct layers of interface, which
+serve different audiences.</p>
+<p>The <strong>public interface</strong> is unit-aware and designed for interactive use and
+high-level model code.  Methods at this level accept <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>
+inputs, perform unit conversion internally, and return <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>
+outputs.  These are the methods documented above — <code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code>,
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogrho()</span></code>, and <code class="xref py py-meth docutils literal notranslate"><span class="pre">dlogkappa_dlogT()</span></code>.</p>
+<p>The <strong>private log-space interface</strong> is intended for use inside performance-critical
+code paths — for example, the inner loop of a time-stepping integrator or a Cython
+extension module — where the overhead of unit handling and exponentiation would be
+significant.  The private methods operate entirely in natural-log space:</p>
+<ul class="simple">
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_opacity(log_T,</span> <span class="pre">log_rho)()</span></code> — returns <span class="math notranslate nohighlight">\(\ln\kappa\)</span>
+in <span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span></p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_dlogkappa_dlogrho(log_T,</span> <span class="pre">log_rho)()</span></code> — returns <span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln\rho\)</span></p></li>
+<li><p><code class="xref py py-meth docutils literal notranslate"><span class="pre">_dlogkappa_dlogT(log_T,</span> <span class="pre">log_rho)()</span></code> — returns <span class="math notranslate nohighlight">\(\partial\ln\kappa/\partial\ln T\)</span></p></li>
+</ul>
+<p>Arguments are plain Python floats or NumPy arrays with no attached units; the caller
+is responsible for the coordinate system (natural log, CGS).  These methods are
+not part of the stable public API and may change without notice.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_opacity</span>
+
+<span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">&quot;kramers_es&quot;</span><span class="p">)</span>
+
+<span class="n">log_T</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e7</span><span class="p">)</span>           <span class="c1"># ln(T [K])</span>
+<span class="n">log_rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">)</span>          <span class="c1"># ln(rho [g/cm³])</span>
+
+<span class="n">ln_kappa</span> <span class="o">=</span> <span class="n">kap</span><span class="o">.</span><span class="n">_log_opacity</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+<span class="n">kappa</span>    <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">ln_kappa</span><span class="p">)</span>     <span class="c1"># in cm² g⁻¹</span>
+</pre></div>
+</div>
+</section>
+<section id="developers-calling-the-c-level-opacity">
+<h3><a class="toc-backref" href="#id12" role="doc-backlink">(Developers) Calling the C-level Opacity</a><a class="headerlink" href="#developers-calling-the-c-level-opacity" title="Link to this heading">#</a></h3>
+<p>For Cython extension modules that need the fastest possible opacity evaluation,
+the compiled backend object can be accessed directly.  Opacity laws with
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">IS_C_BACKED</span> <span class="pre">=</span> <span class="pre">True</span></code> store a reference to their Cython companion on
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">_c_object</span></code>.  This companion exposes two signatures for each quantity:
+a scalar entry point and a contiguous-array entry point:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">OPALOpacity</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="n">opal</span> <span class="o">=</span> <span class="n">OPALOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="k">assert</span> <span class="n">opal</span><span class="o">.</span><span class="n">IS_C_BACKED</span>
+
+<span class="c1"># Scalar evaluation (releases the GIL internally)</span>
+<span class="n">ln_kap</span>  <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">log_opacity</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e7</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))</span>
+<span class="n">d_rho</span>   <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogrho</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e7</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))</span>
+<span class="n">d_T</span>     <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">dlogkappa_dlogT</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e7</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e-5</span><span class="p">))</span>
+
+<span class="c1"># Array evaluation (requires C-contiguous float64 arrays)</span>
+<span class="n">log_T</span>   <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">([</span><span class="mf">1e6</span><span class="p">,</span> <span class="mf">1e7</span><span class="p">,</span> <span class="mf">1e8</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">log_rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">([</span><span class="mf">1e-7</span><span class="p">,</span> <span class="mf">1e-5</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">]),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+<span class="n">ln_kap_arr</span> <span class="o">=</span> <span class="n">opal</span><span class="o">.</span><span class="n">_c_object</span><span class="o">.</span><span class="n">log_opacity_array</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Inside a <code class="docutils literal notranslate"><span class="pre">.pyx</span></code> file, the <code class="xref py py-attr docutils literal notranslate"><span class="pre">_c_object</span></code> attribute can be typed as the
+appropriate <code class="xref py py-class docutils literal notranslate"><span class="pre">C_GreyOpacityBase</span></code> subclass to avoid Python-level dispatch
+and enable direct <code class="docutils literal notranslate"><span class="pre">cdef</span></code>-level calls:</p>
+<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><span class="k">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity.grey_opacity.rosseland._opal_table</span><span class="w"> </span><span class="k">cimport</span> <span class="n">C_OPALTableOpacity</span>
+<span class="k">from</span><span class="w"> </span><span class="nn">triceratops.radiation.opacity.grey_opacity.rosseland</span><span class="w"> </span><span class="k">import</span> <span class="n">OPALOpacity</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="kt">C_OPALTableOpacity</span> <span class="nv">c_kap</span><span class="w"> </span><span class="o">=</span> <span class="n">OPALOpacity</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span><span class="o">.</span><span class="n">_c_object</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nf">eval_kap</span><span class="p">(</span><span class="nb">double</span> <span class="n">log_T</span><span class="p">,</span> <span class="nb">double</span> <span class="n">log_rho</span><span class="p">)</span> <span class="k">nogil</span><span class="p">:</span>
+    <span class="k">return</span> <span class="n">c_kap</span><span class="o">.</span><span class="n">log_opacity</span><span class="p">(</span><span class="n">log_T</span><span class="p">,</span> <span class="n">log_rho</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>C-backed evaluation does <strong>not</strong> perform unit conversion.  Arguments must be in
+natural log of CGS units (<span class="math notranslate nohighlight">\(\ln T\)</span> in K, <span class="math notranslate nohighlight">\(\ln\rho\)</span> in
+<span class="math notranslate nohighlight">\(\mathrm{g\,cm^{-3}}\)</span>), and the return value is <span class="math notranslate nohighlight">\(\ln\kappa\)</span> in
+<span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>.</p>
+</div>
+</section>
+</section>
+<section id="custom-opacity-tables">
+<h2><a class="toc-backref" href="#id13" role="doc-backlink">Custom Opacity Tables</a><a class="headerlink" href="#custom-opacity-tables" title="Link to this heading">#</a></h2>
+<p>In some cases, users may need to work with custom opacity tables, particularly if they are performing
+detailed radiative transfer calculations. Because Triceratops does not fashion itself to be a spectral
+synthesis code (and to avoid the bloat of managing large opacity datasets), the set of built-in opacity
+tables is very minimal:</p>
+<ul class="simple">
+<li><p><strong>OPAL Opacities</strong>: Triceratops bundles the OPAL opacity tables of footcite:t:<cite>2005ASPC..336…25A</cite>, providing
+opacities over a fairly significant set of compositions. These are accessible via the
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html#triceratops.radiation.opacity.OPALOpacity" title="triceratops.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a> class and the helper function
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.utils.load_opal_opacity.html#triceratops.radiation.opacity.utils.load_opal_opacity" title="triceratops.radiation.opacity.utils.load_opal_opacity"><code class="xref py py-func docutils literal notranslate"><span class="pre">load_opal_opacity()</span></code></a>; however, it should also be noted that these
+tables to not cover every <span class="math notranslate nohighlight">\((\rho, T)\)</span> regime of interest in many cases.</p></li>
+<li><p><strong>TOPS Opacities</strong>: Triceratops provides only a single TOPS opacity table with standard solar composition,
+which is accessible via the <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity.html#triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity" title="triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOPSOpacity</span></code></a> class.</p></li>
+</ul>
+<p>In order to work with other custom opacity tables, users may be able to simply download the table and load
+it into the code (for TOPS opacities), or they may need to implement a custom subclass of
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="triceratops.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> that performs interpolation over
+the table (for OPAL opacities, which are not provided in a convenient format for direct loading).  The latter
+is more work but also more flexible, and the <a class="reference internal" href="opacity_dev_guide.html#opacity-dev-guide"><span class="std std-ref">Developer Guide: Implementing Opacity Laws</span></a> provides a step-by-step walkthrough of
+how to do this.</p>
+<section id="custom-tops-tables">
+<h3><a class="toc-backref" href="#id14" role="doc-backlink">Custom TOPS Tables</a><a class="headerlink" href="#custom-tops-tables" title="Link to this heading">#</a></h3>
+<p>The Los Alamos National Laboratory (LANL) provides a service called TOPS which allows users to download custom
+opacity tables for various compositions <a class="footnote-reference brackets" href="#footcite-magee1995atomic" id="id1" role="doc-noteref"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></a>. These tables and the corresponding
+web interface are free to use, but they are not designed for programmatic access.</p>
+<p>Users may visit <a class="reference external" href="https://aphysics2.lanl.gov/">https://aphysics2.lanl.gov/</a> to download custom TOPS tables
+for their desired composition. Once downloaded, these tables can be loaded into Triceratops using the
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.opacity_io.read_tops.html#triceratops.radiation.opacity.opacity_io.read_tops" title="triceratops.radiation.opacity.opacity_io.read_tops"><code class="xref py py-func docutils literal notranslate"><span class="pre">read_tops()</span></code></a> function, which returns a namespace containing all of the
+relevant data extracted from the table text file. This can then be passed to
+<a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity.html#triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity" title="triceratops.radiation.opacity.grey_opacity.tops.TOPSOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">TOPSOpacity</span></code></a> to construct an opacity object that can be
+used in the same way as any other opacity law.</p>
+</section>
+</section>
+<section id="api-reference">
+<h2><a class="toc-backref" href="#id15" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html#triceratops.radiation.opacity.get_opacity" title="triceratops.radiation.opacity.get_opacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_opacity</span></code></a>(opacity, *[, force_type])</p></td>
+<td><p>Resolve an opacity specification into an <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.base.OpacityLaw.html#triceratops.radiation.opacity.base.OpacityLaw" title="triceratops.radiation.opacity.base.OpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpacityLaw</span></code></a> instance.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html#triceratops.radiation.opacity.OpacityLaw" title="triceratops.radiation.opacity.OpacityLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OpacityLaw</span></code></a>(**parameters)</p></td>
+<td><p>Base class for opacity laws <span class="math notranslate nohighlight">\(\kappa(\nu, \rho, T)\)</span>.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html#triceratops.radiation.opacity.GreyOpacityLaw" title="triceratops.radiation.opacity.GreyOpacityLaw"><code class="xref py py-obj docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>(**parameters)</p></td>
+<td><p>Abstract base class for grey (frequency-averaged) opacity laws.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html#triceratops.radiation.opacity.ConstantGreyOpacity" title="triceratops.radiation.opacity.ConstantGreyOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>(kappa, *[, mean_type])</p></td>
+<td><p>Grey opacity law with a fixed, composition- and state-independent value.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html#triceratops.radiation.opacity.ElectronScatteringOpacity" title="triceratops.radiation.opacity.ElectronScatteringOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">ElectronScatteringOpacity</span></code></a>([kappa_es])</p></td>
+<td><p>Thomson electron-scattering opacity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html#triceratops.radiation.opacity.KramersFFOpacity" title="triceratops.radiation.opacity.KramersFFOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersFFOpacity</span></code></a>([kappa0])</p></td>
+<td><p>Free-free (bremsstrahlung) Kramers opacity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html#triceratops.radiation.opacity.KramersBFOpacity" title="triceratops.radiation.opacity.KramersBFOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersBFOpacity</span></code></a>([kappa0])</p></td>
+<td><p>Bound-free (photoionisation) Kramers opacity.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html#triceratops.radiation.opacity.KramersOpacity" title="triceratops.radiation.opacity.KramersOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersOpacity</span></code></a>([kappa0])</p></td>
+<td><p>Combined free-free and bound-free Kramers opacity.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html#triceratops.radiation.opacity.KramersFFESOpacity" title="triceratops.radiation.opacity.KramersFFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersFFESOpacity</span></code></a>([kappa0, kappa_es])</p></td>
+<td><p>Free-free Kramers opacity with an electron-scattering floor.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html#triceratops.radiation.opacity.KramersBFESOpacity" title="triceratops.radiation.opacity.KramersBFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersBFESOpacity</span></code></a>([kappa0, kappa_es])</p></td>
+<td><p>Bound-free Kramers opacity with an electron-scattering floor.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html#triceratops.radiation.opacity.KramersESOpacity" title="triceratops.radiation.opacity.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a>([kappa0, kappa_es])</p></td>
+<td><p>Combined Kramers opacity with an electron-scattering floor.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html#triceratops.radiation.opacity.OPALOpacity" title="triceratops.radiation.opacity.OPALOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a>(grid_T, grid_R, kappa, *[, ...])</p></td>
+<td><p>Rosseland mean opacity from bilinear interpolation on a 2-D OPAL table.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html#triceratops.radiation.opacity.load_opal_opacity" title="triceratops.radiation.opacity.load_opal_opacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_opal_opacity</span></code></a>([index, X, Z, table_path, ...])</p></td>
+<td><p>Load an OPAL Rosseland mean opacity for a specified composition.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="pst-scrollable-table-container"><table class="autosummary longtable table">
+<tbody>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../free_free/free_free_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Free-Free Radiation Theory</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">triceratops.radiation.opacity.get_opacity</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#overview">Overview</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#grey-opacity-subtypes">Grey Opacity Subtypes</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#initializing-opacities">Initializing Opacities</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#direct-instantiation">Direct instantiation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-get-opacity">Using <code class="docutils literal notranslate"><span class="pre">get_opacity</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#constant-opacities">Constant Opacities</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#working-with-opacity-objects">Working With Opacity Objects</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#evaluating-the-opacity">Evaluating the Opacity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#opacity-derivatives">Opacity Derivatives</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-public-private-api">The Public / Private API</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#developers-calling-the-c-level-opacity">(Developers) Calling the C-level Opacity</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-opacity-tables">Custom Opacity Tables</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#custom-tops-tables">Custom TOPS Tables</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a><ul class="nav section-nav flex-column">
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/opacity/opacity_user_guide.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

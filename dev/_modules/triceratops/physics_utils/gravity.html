@@ -1,0 +1,924 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>triceratops.physics_utils.gravity &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/triceratops/physics_utils/gravity';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../reference/user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">triceratops.physics_utils.gravity</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for triceratops.physics_utils.gravity</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Newtonian gravitational physics utilities for Triceratops models.</span>
+
+<span class="sd">Provides characteristic radii for tidal disruption, binary mass transfer,</span>
+<span class="sd">accretion, and gravitational capture commonly encountered in astrophysical</span>
+<span class="sd">transient modelling.</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">All log-space functions operate in CGS units (:math:`\text{cm}`,</span>
+<span class="sd">:math:`\text{g}`, :math:`\text{s}`).  The Roche-lobe formula follows</span>
+<span class="sd">Eggleton (1983); the Hill-sphere formula assumes a circular, restricted</span>
+<span class="sd">three-body configuration.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Eggleton (1983), ApJ, 268, 368.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_UnitBearingArrayLike</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.physics_utils.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">_log_G_cgs</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Private log-space helpers                                         #</span>
+<span class="c1"># ================================================================= #</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_tidal_radius</span><span class="p">(</span><span class="n">log_R_star</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_M_primary</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_M_secondary</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute :math:`\ln R_T` in CGS units.</span>
+
+<span class="sd">    The tidal disruption radius is the orbital distance at which the primary&#39;s</span>
+<span class="sd">    self-gravity is overcome by tidal forces from a more massive body:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_T = R_\star \left(\frac{M_{\rm primary}}{M_{\rm secondary}}\right)^{1/3}</span>
+<span class="sd">        \implies</span>
+<span class="sd">        \ln R_T = \ln R_\star + \tfrac{1}{3}(\ln M_{\rm primary} - \ln M_{\rm secondary}).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_R_star : float</span>
+<span class="sd">        :math:`\ln R_\star` [:math:`\ln(\text{cm})`], stellar radius.</span>
+<span class="sd">    log_M_primary : float</span>
+<span class="sd">        :math:`\ln M_{\rm primary}` [:math:`\ln(\text{g})`], mass of the</span>
+<span class="sd">        disrupting body (e.g. black hole).</span>
+<span class="sd">    log_M_secondary : float</span>
+<span class="sd">        :math:`\ln M_{\rm secondary}` [:math:`\ln(\text{g})`], mass of the</span>
+<span class="sd">        disrupted body (e.g. star).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        :math:`\ln R_T` [:math:`\ln(\text{cm})`].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">log_R_star</span> <span class="o">+</span> <span class="p">(</span><span class="n">log_M_primary</span> <span class="o">-</span> <span class="n">log_M_secondary</span><span class="p">)</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_hill_radius</span><span class="p">(</span><span class="n">log_a</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_m_secondary</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_M_primary</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute :math:`\ln R_H` in CGS units.</span>
+
+<span class="sd">    The Hill (Roche) sphere radius sets the region within which a secondary</span>
+<span class="sd">    body dominates the gravitational attraction of a test particle:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_H = a \left(\frac{m_{\rm secondary}}{3 M_{\rm primary}}\right)^{1/3}</span>
+<span class="sd">        \implies</span>
+<span class="sd">        \ln R_H = \ln a + \tfrac{1}{3}\left(\ln m_{\rm secondary} - \ln M_{\rm primary} - \ln 3\right).</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_a : float</span>
+<span class="sd">        :math:`\ln a` [:math:`\ln(\text{cm})`], orbital semi-major axis.</span>
+<span class="sd">    log_m_secondary : float</span>
+<span class="sd">        :math:`\ln m_{\rm secondary}` [:math:`\ln(\text{g})`], mass of the</span>
+<span class="sd">        secondary (the body whose sphere of influence is computed).</span>
+<span class="sd">    log_M_primary : float</span>
+<span class="sd">        :math:`\ln M_{\rm primary}` [:math:`\ln(\text{g})`], mass of the</span>
+<span class="sd">        primary (the dominant central body).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        :math:`\ln R_H` [:math:`\ln(\text{cm})`].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">log_a</span> <span class="o">+</span> <span class="p">(</span><span class="n">log_m_secondary</span> <span class="o">-</span> <span class="n">log_M_primary</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">3.0</span><span class="p">))</span> <span class="o">/</span> <span class="mf">3.0</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_roche_lobe_radius</span><span class="p">(</span><span class="n">log_m_donor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_m_accretor</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_a</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute :math:`\ln r_L` in CGS units via the Eggleton (1983) approximation.</span>
+
+<span class="sd">    The Roche lobe radius of the donor star is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{r_L}{a} = \frac{0.49\,q^{2/3}}{0.6\,q^{2/3} + \ln(1 + q^{1/3})},</span>
+<span class="sd">        \quad q = \frac{M_{\rm donor}}{M_{\rm accretor}},</span>
+
+<span class="sd">    accurate to better than 1 % for all mass ratios :math:`0 &lt; q &lt; \infty`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_m_donor : float</span>
+<span class="sd">        :math:`\ln M_{\rm donor}` [:math:`\ln(\text{g})`], donor mass.</span>
+<span class="sd">    log_m_accretor : float</span>
+<span class="sd">        :math:`\ln M_{\rm accretor}` [:math:`\ln(\text{g})`], accretor mass.</span>
+<span class="sd">    log_a : float</span>
+<span class="sd">        :math:`\ln a` [:math:`\ln(\text{cm})`], orbital semi-major axis.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        :math:`\ln r_L` [:math:`\ln(\text{cm})`].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_m_donor</span> <span class="o">-</span> <span class="n">log_m_accretor</span><span class="p">)</span>
+    <span class="n">q_13</span> <span class="o">=</span> <span class="n">q</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">q_23</span> <span class="o">=</span> <span class="n">q</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="n">roche_factor</span> <span class="o">=</span> <span class="mf">0.49</span> <span class="o">*</span> <span class="n">q_23</span> <span class="o">/</span> <span class="p">(</span><span class="mf">0.6</span> <span class="o">*</span> <span class="n">q_23</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">q_13</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">log_a</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">roche_factor</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_compute_bondi_radius</span><span class="p">(</span><span class="n">log_M</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">log_c_s</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute :math:`\ln r_B` in CGS units.</span>
+
+<span class="sd">    The Bondi (gravitational capture) radius is the distance at which the</span>
+<span class="sd">    escape speed equals the sound speed of the ambient medium:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        r_B = \frac{G M}{c_s^2}</span>
+<span class="sd">        \implies</span>
+<span class="sd">        \ln r_B = \ln G + \ln M - 2\,\ln c_s.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_M : float</span>
+<span class="sd">        :math:`\ln M` [:math:`\ln(\text{g})`], accreting mass.</span>
+<span class="sd">    log_c_s : float</span>
+<span class="sd">        :math:`\ln c_s` [:math:`\ln(\text{cm s}^{-1})`], ambient sound speed.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    float</span>
+<span class="sd">        :math:`\ln r_B` [:math:`\ln(\text{cm})`].</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_log_G_cgs</span> <span class="o">+</span> <span class="n">log_M</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_c_s</span>
+
+
+<span class="c1"># ================================================================= #</span>
+<span class="c1"># Public unit-bearing functions                                     #</span>
+<span class="c1"># ================================================================= #</span>
+
+
+<div class="viewcode-block" id="compute_tidal_radius">
+<a class="viewcode-back" href="../../../_as_gen/triceratops.physics_utils.gravity.compute_tidal_radius.html#triceratops.physics_utils.gravity.compute_tidal_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_tidal_radius</span><span class="p">(</span>
+    <span class="n">R_star</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_primary</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_secondary</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the tidal disruption radius :math:`R_T`.</span>
+
+<span class="sd">    The tidal radius is the orbital separation at which the tidal force of the</span>
+<span class="sd">    primary on the secondary equals the secondary&#39;s self-gravity:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_T = R_\star \left(\frac{M_{\rm primary}}{M_{\rm secondary}}\right)^{1/3}.</span>
+
+<span class="sd">    For a tidal disruption event (TDE) this gives the periapsis inside which a</span>
+<span class="sd">    star of radius :math:`R_\star` and mass :math:`M_\star` is disrupted by a</span>
+<span class="sd">    black hole of mass :math:`M_{\rm BH}`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    R_star : `~astropy.units.Quantity`</span>
+<span class="sd">        Radius of the secondary (disrupted) body.</span>
+<span class="sd">    M_primary : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the primary (disrupting) body, e.g. a black hole.</span>
+<span class="sd">    M_secondary : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the secondary (disrupted) body, e.g. a star.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `~astropy.units.Quantity`</span>
+<span class="sd">        Tidal disruption radius [:math:`\text{cm}`].</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from triceratops.physics_utils.gravity import (</span>
+<span class="sd">            compute_tidal_radius,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Solar-type star disrupted by a 10^6 Msun SMBH</span>
+<span class="sd">        R_T = compute_tidal_radius(</span>
+<span class="sd">            R_star=1.0 * u.Rsun,</span>
+<span class="sd">            M_primary=1e6 * u.Msun,</span>
+<span class="sd">            M_secondary=1.0 * u.Msun,</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_R_star</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">R_star</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_M_primary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">M_primary</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="n">log_M_secondary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">M_secondary</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_compute_tidal_radius</span><span class="p">(</span><span class="n">log_R_star</span><span class="p">,</span> <span class="n">log_M_primary</span><span class="p">,</span> <span class="n">log_M_secondary</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="compute_hill_radius">
+<a class="viewcode-back" href="../../../_as_gen/triceratops.physics_utils.gravity.compute_hill_radius.html#triceratops.physics_utils.gravity.compute_hill_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_hill_radius</span><span class="p">(</span>
+    <span class="n">a</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">m_secondary</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">M_primary</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Hill sphere radius :math:`R_H`.</span>
+
+<span class="sd">    The Hill sphere is the region around a secondary body within which it</span>
+<span class="sd">    dominates the gravitational attraction over the primary.  For a circular</span>
+<span class="sd">    orbit of semi-major axis :math:`a`:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R_H = a \left(\frac{m_{\rm secondary}}{3 M_{\rm primary}}\right)^{1/3}.</span>
+
+<span class="sd">    This radius sets the size of a planet&#39;s sphere of gravitational influence</span>
+<span class="sd">    relative to its host star, or the zone within which a satellite can</span>
+<span class="sd">    maintain a stable orbit around a planet.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : `~astropy.units.Quantity`</span>
+<span class="sd">        Orbital semi-major axis of the secondary around the primary.</span>
+<span class="sd">    m_secondary : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the secondary (the body whose sphere of influence is computed).</span>
+<span class="sd">    M_primary : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the primary (the dominant central body).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `~astropy.units.Quantity`</span>
+<span class="sd">        Hill sphere radius [:math:`\text{cm}`].</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from triceratops.physics_utils.gravity import (</span>
+<span class="sd">            compute_hill_radius,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Earth&#39;s Hill sphere at 1 AU from the Sun</span>
+<span class="sd">        R_H = compute_hill_radius(</span>
+<span class="sd">            a=1.0 * u.au,</span>
+<span class="sd">            m_secondary=1.0 * u.Mearth,</span>
+<span class="sd">            M_primary=1.0 * u.Msun,</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="n">log_m_secondary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">m_secondary</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="n">log_M_primary</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">M_primary</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_compute_hill_radius</span><span class="p">(</span><span class="n">log_a</span><span class="p">,</span> <span class="n">log_m_secondary</span><span class="p">,</span> <span class="n">log_M_primary</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="compute_roche_lobe_radius">
+<a class="viewcode-back" href="../../../_as_gen/triceratops.physics_utils.gravity.compute_roche_lobe_radius.html#triceratops.physics_utils.gravity.compute_roche_lobe_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_roche_lobe_radius</span><span class="p">(</span>
+    <span class="n">m_donor</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">m_accretor</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">a</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the donor Roche lobe radius via the Eggleton (1983) formula.</span>
+
+<span class="sd">    The Eggleton approximation gives the Roche lobe radius of the donor star</span>
+<span class="sd">    as a fraction of the binary separation:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \frac{r_L}{a} = \frac{0.49\,q^{2/3}}{0.6\,q^{2/3} + \ln(1 + q^{1/3})},</span>
+<span class="sd">        \quad q = \frac{M_{\rm donor}}{M_{\rm accretor}}.</span>
+
+<span class="sd">    This fit is accurate to better than 1 % for all mass ratios</span>
+<span class="sd">    :math:`0 &lt; q &lt; \infty`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    m_donor : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the Roche-lobe-filling star (the donor).</span>
+<span class="sd">    m_accretor : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the accreting companion.</span>
+<span class="sd">    a : `~astropy.units.Quantity`</span>
+<span class="sd">        Orbital semi-major axis.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `~astropy.units.Quantity`</span>
+<span class="sd">        Roche lobe radius of the donor [:math:`\text{cm}`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Mass transfer begins when the donor&#39;s stellar radius equals :math:`r_L`.</span>
+<span class="sd">    The formula is symmetric in the sense that swapping donor and accretor</span>
+<span class="sd">    (and updating :math:`q` accordingly) gives the Roche lobe of the other star.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Eggleton (1983), ApJ, 268, 368.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from triceratops.physics_utils.gravity import (</span>
+<span class="sd">            compute_roche_lobe_radius,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Equal-mass binary at 10 Rsun separation</span>
+<span class="sd">        r_L = compute_roche_lobe_radius(</span>
+<span class="sd">            m_donor=1.0 * u.Msun,</span>
+<span class="sd">            m_accretor=1.4 * u.Msun,</span>
+<span class="sd">            a=10.0 * u.Rsun,</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_m_donor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">m_donor</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="n">log_m_accretor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">m_accretor</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="n">log_a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_compute_roche_lobe_radius</span><span class="p">(</span><span class="n">log_m_donor</span><span class="p">,</span> <span class="n">log_m_accretor</span><span class="p">,</span> <span class="n">log_a</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+
+
+<div class="viewcode-block" id="compute_bondi_radius">
+<a class="viewcode-back" href="../../../_as_gen/triceratops.physics_utils.gravity.compute_bondi_radius.html#triceratops.physics_utils.gravity.compute_bondi_radius">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">compute_bondi_radius</span><span class="p">(</span>
+    <span class="n">M</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+    <span class="n">c_s</span><span class="p">:</span> <span class="s2">&quot;_UnitBearingArrayLike&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the Bondi accretion radius :math:`r_B = GM / c_s^2`.</span>
+
+<span class="sd">    The Bondi radius is the characteristic length scale within which an</span>
+<span class="sd">    accreting body can gravitationally capture material from the ambient</span>
+<span class="sd">    medium.  At :math:`r \lesssim r_B` the escape speed exceeds the</span>
+<span class="sd">    sound speed and material falls inward; at :math:`r \gg r_B` the</span>
+<span class="sd">    ambient pressure resists capture.</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        r_B = \frac{G M}{c_s^2}.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    M : `~astropy.units.Quantity`</span>
+<span class="sd">        Mass of the accreting body.</span>
+<span class="sd">    c_s : `~astropy.units.Quantity`</span>
+<span class="sd">        Sound speed of the ambient medium.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    `~astropy.units.Quantity`</span>
+<span class="sd">        Bondi accretion radius [:math:`\text{cm}`].</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The Bondi accretion rate follows as</span>
+<span class="sd">    :math:`\dot{M}_B \approx \pi r_B^2 \rho c_s`, where :math:`\rho` is the</span>
+<span class="sd">    ambient density.  For a hot medium (large :math:`c_s`) the Bondi radius</span>
+<span class="sd">    shrinks and accretion becomes inefficient.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    .. code-block:: python</span>
+
+<span class="sd">        from astropy import units as u</span>
+<span class="sd">        from triceratops.physics_utils.gravity import (</span>
+<span class="sd">            compute_bondi_radius,</span>
+<span class="sd">        )</span>
+
+<span class="sd">        # Neutron star accreting from a warm ISM</span>
+<span class="sd">        r_B = compute_bondi_radius(</span>
+<span class="sd">            M=1.4 * u.Msun,</span>
+<span class="sd">            c_s=10.0 * u.km / u.s,</span>
+<span class="sd">        )</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">log_M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">g</span><span class="p">))</span>
+    <span class="n">log_c_s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">c_s</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">s</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_compute_bondi_radius</span><span class="p">(</span><span class="n">log_M</span><span class="p">,</span> <span class="n">log_c_s</span><span class="p">))</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

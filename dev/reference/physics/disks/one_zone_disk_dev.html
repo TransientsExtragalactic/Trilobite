@@ -1,0 +1,1401 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Developer Guide: Adding One-Zone Disk Closures &#8212; Triceratops dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
+
+    <script src="../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/disks/one_zone_disk_dev';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../_static/logo.png"/>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <link rel="next" title="Steady-State Thin Disk" href="thin_disk.html" />
+    <link rel="prev" title="One-Zone Accretion Disk Models: Theory" href="one_zone_disk_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../_static/searchtools.js"></script>
+    <script src="../../../_static/language_data.js"></script>
+    <script src="../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../_static/logo.png" class="logo__image only-light" alt="Triceratops logo"/>
+    <img src="../../../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Triceratops logo"/>
+  
+  
+    <p class="title logo__title">Triceratops</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../user_guide.html">
+    Triceratops User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../models/overview.html">Triceratops Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../models/directory.html">Triceratops Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.Likelihood.log_likelihood.html">triceratops.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">triceratops.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../radiation/overview.html">Radiation Processes in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/synchrotron/synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../radiation/opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../radiation/opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Accretion Disks</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 has-children"><a class="reference internal" href="one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../user_guide.html" class="nav-link">Triceratops User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="index.html" class="nav-link">Accretion Disks</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Developer Guide: Adding One-Zone Disk Closures</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="developer-guide-adding-one-zone-disk-closures">
+<span id="one-zone-disk-dev"></span><h1>Developer Guide: Adding One-Zone Disk Closures<a class="headerlink" href="#developer-guide-adding-one-zone-disk-closures" title="Link to this heading">#</a></h1>
+<p>This guide walks through every step required to add a new thermodynamic closure to
+Triceratops’s one-zone accretion disk framework.  A “closure” is the combination of an
+equation of state, an opacity prescription, and heating/cooling terms that closes the
+energy-balance equation and determines the midplane temperature <span class="math notranslate nohighlight">\(T_c\)</span> at each
+integration step.</p>
+<p>For user documentation on running the existing models see <a class="reference internal" href="one_zone_disk.html#one-zone-disk"><span class="std std-ref">One-Zone Accretion Disk Models</span></a>.
+For the underlying theory see <a class="reference internal" href="one_zone_disk_theory.html#one-zone-disk-theory"><span class="std std-ref">One-Zone Accretion Disk Models: Theory</span></a>.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#architecture-overview" id="id1">Architecture Overview</a></p></li>
+<li><p><a class="reference internal" href="#the-metaclass-onezonemeta" id="id2">The Metaclass: <code class="docutils literal notranslate"><span class="pre">_OneZoneMeta</span></code></a></p>
+<ul>
+<li><p><a class="reference internal" href="#parameter-and-result-field-specification-schema" id="id3">Parameter and Result-Field Specification Schema</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#step-1-write-the-cython-closure" id="id4">Step 1 — Write the Cython Closure</a></p>
+<ul>
+<li><p><a class="reference internal" href="#minimal-cython-template" id="id5">Minimal Cython Template</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#step-2-declare-the-python-model-class" id="id6">Step 2 — Declare the Python Model Class</a></p>
+<ul>
+<li><p><a class="reference internal" href="#adding-fallback-mass-supply" id="id7">Adding Fallback Mass Supply</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#step-3-register-aliases-and-exports" id="id8">Step 3 — Register Aliases and Exports</a></p></li>
+<li><p><a class="reference internal" href="#step-4-build-the-cython-extension" id="id9">Step 4 — Build the Cython Extension</a></p></li>
+<li><p><a class="reference internal" href="#step-5-add-tests" id="id10">Step 5 — Add Tests</a></p></li>
+<li><p><a class="reference internal" href="#understanding-basetestonezonedisk" id="id11">Understanding <code class="docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="#checklist" id="id12">Checklist</a></p></li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="architecture-overview">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Architecture Overview</a><a class="headerlink" href="#architecture-overview" title="Link to this heading">#</a></h2>
+<p>The one-zone disk framework is built in two layers:</p>
+<div class="highlight-none notranslate"><div class="highlight"><pre><span></span>Python layer (base.py, core.py)
+├── OneZoneAccretionDiskBase   (abstract, validated by _OneZoneMeta)
+│   ├── GasPressureDisk       (gP_esDisk)
+│   ├── FullPressureDisk      (igP_esDisk)
+│   └── AdvectiveDisk         (igP_es_advDisk)
+│
+Cython layer (models/*.pyx)
+├── gPClosure                 ← compiled C function pointers
+├── igPClosure
+└── igPAdvClosure
+</pre></div>
+</div>
+<p>The Python class declares <em>what</em> parameters the model has, <em>how</em> to pack them for Cython,
+and <em>how</em> to serialize the model.  The Cython closure implements <em>the actual physics</em> — the
+energy-balance root-find, the ODE derivative, and the output writer — inside a GIL-free
+explicit-Euler loop.</p>
+<p><strong>Adding a new closure requires three coordinated steps:</strong></p>
+<ol class="arabic simple">
+<li><p>Write the Cython extension type (the hot inner loop).</p></li>
+<li><p>Declare the Python model class (parameter schema + metadata).</p></li>
+<li><p>Register a test class that inherits from <code class="docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code>.</p></li>
+</ol>
+</section>
+<hr class="docutils" />
+<section id="the-metaclass-onezonemeta">
+<h2><a class="toc-backref" href="#id2" role="doc-backlink">The Metaclass: <code class="docutils literal notranslate"><span class="pre">_OneZoneMeta</span></code></a><a class="headerlink" href="#the-metaclass-onezonemeta" title="Link to this heading">#</a></h2>
+<p>All Python model classes are validated at <strong>class-definition time</strong> by
+<code class="xref py py-class docutils literal notranslate"><span class="pre">_OneZoneMeta</span></code>.  You do not
+interact with the metaclass directly, but you must satisfy its constraints: the four
+class-level declaration dicts must be present and well-formed, or a descriptive
+<a class="reference external" href="https://docs.python.org/3/library/exceptions.html#TypeError" title="(in Python v3.14)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> is raised immediately when the class body is evaluated.</p>
+<p>The four required declaration dicts are:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Attribute</p></th>
+<th class="head"><p>Purpose</p></th>
+<th class="head"><p>Where used</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">CONTEXT_PARAMETERS</span></code></p></td>
+<td><p>Constructor arguments fixed for the lifetime of an instance.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__init__</span></code>, <code class="docutils literal notranslate"><span class="pre">to_spec_dict</span></code>, <code class="docutils literal notranslate"><span class="pre">from_spec_dict</span></code>, <code class="docutils literal notranslate"><span class="pre">__repr__</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RUNTIME_PARAMETERS</span></code></p></td>
+<td><p>Per-solve physics inputs passed to <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">process_runtime_parameters</span></code>, Cython parameter packing</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">INITIAL_CONDITIONS</span></code></p></td>
+<td><p>ODE initial state consumed by <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">process_initial_conditions</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code></p></td>
+<td><p>All output quantities exposed via <code class="docutils literal notranslate"><span class="pre">result.data</span></code>.</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code>, HDF5 serialization, plotting utilities</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Each dict entry has a well-defined schema that the metaclass enforces.  See
+<a class="reference internal" href="#parameter-spec-schema"><span class="std std-ref">Parameter and Result-Field Specification Schema</span></a> below for the field definitions.</p>
+<section id="parameter-and-result-field-specification-schema">
+<span id="parameter-spec-schema"></span><h3><a class="toc-backref" href="#id3" role="doc-backlink">Parameter and Result-Field Specification Schema</a><a class="headerlink" href="#parameter-and-result-field-specification-schema" title="Link to this heading">#</a></h3>
+<p>Every entry in <code class="docutils literal notranslate"><span class="pre">CONTEXT_PARAMETERS</span></code>, <code class="docutils literal notranslate"><span class="pre">RUNTIME_PARAMETERS</span></code>, and
+<code class="docutils literal notranslate"><span class="pre">INITIAL_CONDITIONS</span></code> must be a dict with exactly these keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> (non-empty)</p></td>
+<td><p>Human-readable description used in <code class="docutils literal notranslate"><span class="pre">__str__</span></code> and documentation.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">base_units</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>The CGS unit string to which the parameter is converted (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;g&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;cm&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;g*cm**2/s&quot;</span></code>).  Use <code class="docutils literal notranslate"><span class="pre">None</span></code> for dimensionless parameters.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">default</span></code></p></td>
+<td><p>any or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Default value in base units.  Use <code class="docutils literal notranslate"><span class="pre">None</span></code> for required parameters (no default).</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">log_transform</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">bool</span></code></p></td>
+<td><p>If <code class="docutils literal notranslate"><span class="pre">True</span></code>, the parameter is stored internally as <code class="docutils literal notranslate"><span class="pre">ln(value)</span></code> under the
+key <code class="docutils literal notranslate"><span class="pre">&quot;log_{name}&quot;</span></code>.  Use for parameters that span many decades.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Every entry in <code class="docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code> must be a dict with exactly these keys:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 20.0%" />
+<col style="width: 15.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Type</p></th>
+<th class="head"><p>Description</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">description</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> (non-empty)</p></td>
+<td><p>Human-readable description.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">units</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">str</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+<td><p>Astropy unit string for the output Quantity (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;K&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;g&quot;</span></code>,
+<code class="docutils literal notranslate"><span class="pre">&quot;erg/cm**2/s&quot;</span></code>).  Use <code class="docutils literal notranslate"><span class="pre">None</span></code> for dimensionless fields.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-1-write-the-cython-closure">
+<h2><a class="toc-backref" href="#id4" role="doc-backlink">Step 1 — Write the Cython Closure</a><a class="headerlink" href="#step-1-write-the-cython-closure" title="Link to this heading">#</a></h2>
+<p>The Cython closure is a subclass of
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure.html#triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure" title="triceratops.dynamics.accretion.one_zone.closure.OneZoneClosure"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneClosure</span></code></a> defined in a
+<code class="docutils literal notranslate"><span class="pre">.pyx</span></code> file under <code class="docutils literal notranslate"><span class="pre">triceratops/dynamics/accretion/one_zone/models/</span></code>.</p>
+<p>The subclass must supply three C function pointers in its <code class="docutils literal notranslate"><span class="pre">__cinit__</span></code>:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Pointer</p></th>
+<th class="head"><p>Signature</p></th>
+<th class="head"><p>Purpose</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_closure_fn</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(state,</span> <span class="pre">params,</span> <span class="pre">result_ptr)</span> <span class="pre">→</span> <span class="pre">int</span></code></p></td>
+<td><p>Solves the energy-balance equation for <span class="math notranslate nohighlight">\(T_c\)</span>, fills a
+<code class="docutils literal notranslate"><span class="pre">ClosureResult</span></code> struct, computes <span class="math notranslate nohighlight">\(\nu\)</span>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">_derivative_fn</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(closure_result,</span> <span class="pre">params,</span> <span class="pre">dt_ptr)</span> <span class="pre">→</span> <span class="pre">int</span></code></p></td>
+<td><p>Evaluates <span class="math notranslate nohighlight">\(\dot{M}_D\)</span>, <span class="math notranslate nohighlight">\(\dot{J}_D\)</span>, sets the adaptive timestep.</p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">_writer_fn</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">(result_array,</span> <span class="pre">col,</span> <span class="pre">closure_result,</span> <span class="pre">state)</span> <span class="pre">→</span> <span class="pre">int</span></code></p></td>
+<td><p>Writes all output fields to the result array at column index <code class="docutils literal notranslate"><span class="pre">col</span></code>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">ClosureResult</span></code> struct carries the standard set of thermodynamic and structural
+outputs that all closures must compute:</p>
+<div class="highlight-c notranslate"><div class="highlight"><pre><span></span><span class="n">cdef</span><span class="w"> </span><span class="k">struct</span><span class="w"> </span><span class="nc">ClosureResult</span><span class="o">:</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">dM_dt</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="n">s</span><span class="o">^</span><span class="p">{</span><span class="mi">-1</span><span class="p">}</span><span class="w">  </span><span class="p">(</span><span class="o">&lt;</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w"> </span><span class="n">drain</span><span class="p">,</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">0</span><span class="o">:</span><span class="w"> </span><span class="n">source</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">dJ_dt</span><span class="w">       </span><span class="err">#</span><span class="w"> </span><span class="n">g</span><span class="w"> </span><span class="n">cm</span><span class="o">^</span><span class="mi">2</span><span class="w"> </span><span class="n">s</span><span class="o">^</span><span class="p">{</span><span class="mi">-2</span><span class="p">}</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">t_visc</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">s</span><span class="w">  </span><span class="err">—</span><span class="w"> </span><span class="n">warm</span><span class="o">-</span><span class="n">start</span><span class="w"> </span><span class="n">seed</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="n">step</span><span class="err">&#39;</span><span class="n">s</span><span class="w"> </span><span class="n">timestep</span><span class="w"> </span><span class="n">estimate</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_T_eff</span><span class="w">   </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_T_c</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">K</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_tau</span><span class="w">     </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">dimensionless</span><span class="p">)</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_cs</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">cm</span><span class="w"> </span><span class="n">s</span><span class="o">^</span><span class="p">{</span><span class="mi">-1</span><span class="p">})</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_nu</span><span class="w">      </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">cm</span><span class="o">^</span><span class="mi">2</span><span class="w"> </span><span class="n">s</span><span class="o">^</span><span class="p">{</span><span class="mi">-1</span><span class="p">})</span>
+<span class="w">    </span><span class="kt">double</span><span class="w"> </span><span class="n">log_q_visc</span><span class="w">  </span><span class="err">#</span><span class="w"> </span><span class="n">ln</span><span class="p">(</span><span class="n">erg</span><span class="w"> </span><span class="n">cm</span><span class="o">^</span><span class="p">{</span><span class="mi">-2</span><span class="p">}</span><span class="w"> </span><span class="n">s</span><span class="o">^</span><span class="p">{</span><span class="mi">-1</span><span class="p">})</span>
+</pre></div>
+</div>
+<p>If your closure produces <strong>additional output fields</strong> (e.g. advective cooling rate
+<code class="docutils literal notranslate"><span class="pre">Q_adv</span></code>), store them in extra <code class="docutils literal notranslate"><span class="pre">double</span></code> attributes on the extension type and have the
+writer function copy them into the additional rows of the result array.  Set
+<code class="docutils literal notranslate"><span class="pre">n_result_fields</span></code> in <code class="docutils literal notranslate"><span class="pre">__cinit__</span></code> to the total number of rows.</p>
+<section id="minimal-cython-template">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Minimal Cython Template</a><a class="headerlink" href="#minimal-cython-template" title="Link to this heading">#</a></h3>
+<div class="highlight-cython notranslate"><div class="highlight"><pre><span></span><span class="c"># triceratops/dynamics/accretion/one_zone/models/_my_closure.pyx</span>
+
+<span class="k">from</span><span class="w"> </span><span class="nn">libc.math</span><span class="w"> </span><span class="k">cimport</span> <span class="n">exp</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">sqrt</span>
+<span class="k">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone.closure</span><span class="w"> </span><span class="k">cimport</span> <span class="p">(</span>
+    <span class="n">OneZoneClosure</span><span class="p">,</span> <span class="n">ClosureResult</span><span class="p">,</span>
+    <span class="n">closure_fn_t</span><span class="p">,</span> <span class="n">derivative_fn_t</span><span class="p">,</span> <span class="n">writer_fn_t</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="c"># ------------------------------------------------------------------ #</span>
+<span class="c"># C-level function implementations                                    #</span>
+<span class="c"># ------------------------------------------------------------------ #</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="kt">int</span> <span class="nf">_my_closure_fn</span><span class="p">(</span>
+    <span class="nb">double</span><span class="p">[::</span><span class="mf">1</span><span class="p">]</span> <span class="n">state</span><span class="p">,</span> <span class="nb">double</span><span class="p">[::</span><span class="mf">1</span><span class="p">]</span> <span class="n">params</span><span class="p">,</span>
+    <span class="n">ClosureResult</span><span class="o">*</span> <span class="n">result</span>
+<span class="p">)</span> <span class="k">noexcept</span> <span class="k">nogil</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Solve the energy-balance equation for T_c.&quot;&quot;&quot;</span>
+    <span class="c"># Unpack the state vector: state[0] = M_D, state[1] = J_D</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">M_D</span><span class="w"> </span><span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">J_D</span><span class="w"> </span><span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>
+
+    <span class="c"># Unpack the parameter vector (order must match _pack_cython_parameters)</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">M_BH</span><span class="w">  </span><span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mf">0</span><span class="p">])</span>   <span class="c"># log_M_BH → M_BH</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">R_in</span><span class="w">  </span><span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="mf">1</span><span class="p">])</span>   <span class="c"># log_R_in  → R_in</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">alpha</span><span class="w"> </span><span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mf">2</span><span class="p">]</span>
+    <span class="k">cdef</span><span class="w"> </span><span class="kt">double</span> <span class="nv">mu</span><span class="w">    </span><span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="mf">3</span><span class="p">]</span>
+    <span class="c"># ... add any additional parameters ...</span>
+
+    <span class="c"># Compute geometry: R_D, Sigma, Omega, H</span>
+    <span class="c"># (use the constants _A, _B, _F compiled into the base layer)</span>
+    <span class="c"># ...</span>
+
+    <span class="c"># Solve energy balance for T_c:</span>
+    <span class="c"># Q+ = Q-   →  9/8 * alpha * c_s^2 * Sigma * Omega = 16*sigma*T_c^4 / (3*kappa*Sigma)</span>
+    <span class="c"># For ES opacity with gas EOS: analytic solution exists.</span>
+    <span class="c"># For more complex EOS: use the bracket/Brent root-finder.</span>
+    <span class="c"># ...</span>
+
+    <span class="c"># Fill the ClosureResult struct</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">dM_dt</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">dJ_dt</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">t_visc</span> <span class="o">=</span> <span class="o">...</span>
+    <span class="n">result</span><span class="o">.</span><span class="n">log_T_c</span> <span class="o">=</span> <span class="n">log</span><span class="p">(</span><span class="n">T_c</span><span class="p">)</span>
+    <span class="c"># ...</span>
+    <span class="k">return</span> <span class="mf">0</span>    <span class="c"># 0 = SUCCESS; non-zero triggers an error in the integrator</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="kt">int</span> <span class="nf">_my_derivative_fn</span><span class="p">(</span>
+    <span class="n">ClosureResult</span><span class="o">*</span> <span class="n">cr</span><span class="p">,</span> <span class="nb">double</span><span class="p">[::</span><span class="mf">1</span><span class="p">]</span> <span class="n">params</span><span class="p">,</span> <span class="nb">double</span><span class="o">*</span> <span class="n">dt</span>
+<span class="p">)</span> <span class="k">noexcept</span> <span class="k">nogil</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Compute the adaptive timestep.&quot;&quot;&quot;</span>
+    <span class="n">dt</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span> <span class="o">=</span> <span class="o">...</span>   <span class="c"># e.g. 0.1 * min(M_D / |dM_dt|, J_D / |dJ_dt|)</span>
+    <span class="k">return</span> <span class="mf">0</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="kt">int</span> <span class="nf">_my_writer_fn</span><span class="p">(</span>
+    <span class="nb">double</span><span class="p">[:,::</span><span class="mf">1</span><span class="p">]</span> <span class="n">result</span><span class="p">,</span> <span class="nb">int</span> <span class="n">col</span><span class="p">,</span>
+    <span class="n">ClosureResult</span><span class="o">*</span> <span class="n">cr</span><span class="p">,</span> <span class="nb">double</span><span class="p">[::</span><span class="mf">1</span><span class="p">]</span> <span class="n">state</span>
+<span class="p">)</span> <span class="k">noexcept</span> <span class="k">nogil</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Write output fields to the result array.&quot;&quot;&quot;</span>
+    <span class="c"># Row indices must match CYTHON_FIELD_MAP in the Python class</span>
+    <span class="n">result</span><span class="p">[</span><span class="mf">0</span><span class="p">,</span>  <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mf">0</span><span class="p">]</span>         <span class="c"># M_D</span>
+    <span class="n">result</span><span class="p">[</span><span class="mf">1</span><span class="p">,</span>  <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">state</span><span class="p">[</span><span class="mf">1</span><span class="p">]</span>         <span class="c"># J_D</span>
+    <span class="n">result</span><span class="p">[</span><span class="mf">2</span><span class="p">,</span>  <span class="n">col</span><span class="p">]</span> <span class="o">=</span> <span class="n">exp</span><span class="p">(</span><span class="n">cr</span><span class="o">.</span><span class="n">log_T_c</span><span class="p">)</span>  <span class="c"># T_c</span>
+    <span class="c"># ... write all rows declared in RESULT_FIELDS ...</span>
+    <span class="k">return</span> <span class="mf">0</span>
+
+<span class="c"># ------------------------------------------------------------------ #</span>
+<span class="c"># Extension type                                                      #</span>
+<span class="c"># ------------------------------------------------------------------ #</span>
+
+<span class="k">cdef</span><span class="w"> </span><span class="k">class</span><span class="w"> </span><span class="nc">MyClosureType</span><span class="p">(</span><span class="n">OneZoneClosure</span><span class="p">):</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">__cinit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="nb">int</span> <span class="n">n_result_fields</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_result_fields</span> <span class="o">=</span> <span class="n">n_result_fields</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closure_fn</span>    <span class="o">=</span> <span class="n">_my_closure_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_derivative_fn</span> <span class="o">=</span> <span class="n">_my_derivative_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_writer_fn</span>     <span class="o">=</span> <span class="n">_my_writer_fn</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The C function signatures are declared in
+<a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.closure.html#module-triceratops.dynamics.accretion.one_zone.closure" title="triceratops.dynamics.accretion.one_zone.closure"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.dynamics.accretion.one_zone.closure</span></code></a> (<code class="docutils literal notranslate"><span class="pre">.pxd</span></code>); import them
+with <code class="docutils literal notranslate"><span class="pre">cimport</span></code>.  Never call <code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneClosure</span></code> methods from inside the GIL-free
+functions — only use <code class="docutils literal notranslate"><span class="pre">cdef</span></code> functions and C standard-library calls.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-2-declare-the-python-model-class">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Step 2 — Declare the Python Model Class</a><a class="headerlink" href="#step-2-declare-the-python-model-class" title="Link to this heading">#</a></h2>
+<p>Subclass <a class="reference internal" href="../../../_as_gen/triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.html#triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase" title="triceratops.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase"><code class="xref py py-class docutils literal notranslate"><span class="pre">OneZoneAccretionDiskBase</span></code></a>
+and declare the four required class-level dicts.  The full template below includes all
+required elements:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># triceratops/dynamics/accretion/one_zone/core.py  (append or modify)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">OneZoneAccretionDiskBase</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone._closure_specs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BASE_RUNTIME_PARAMETERS</span><span class="p">,</span>
+    <span class="n">BASE_INITIAL_CONDITIONS</span><span class="p">,</span>
+    <span class="n">BASE_RESULT_FIELDS</span><span class="p">,</span>
+    <span class="n">CYTHON_FIELD_MAP</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyDisk</span><span class="p">(</span><span class="n">OneZoneAccretionDiskBase</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;One-zone disk with a custom thermodynamic closure.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mu : float, optional</span>
+<span class="sd">        Mean molecular weight of the plasma (dimensionless).  Default 0.6.</span>
+<span class="sd">    my_param : float, optional</span>
+<span class="sd">        A custom context parameter (dimensionless).  Default 1.0.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Metzger+08 geometry constants (compiled into the Cython layer)</span>
+    <span class="n">_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.62</span>
+    <span class="n">_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.33</span>
+    <span class="n">_F</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.6</span>
+
+    <span class="c1"># ---- Declaration dicts -------------------------------------------</span>
+
+    <span class="n">CONTEXT_PARAMETERS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Mean molecular weight of the plasma&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;base_units&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>      <span class="c1"># dimensionless</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mf">0.6</span><span class="p">,</span>
+            <span class="s2">&quot;log_transform&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">&quot;my_param&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Custom dimensionless closure parameter&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;base_units&quot;</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">&quot;default&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">,</span>
+            <span class="s2">&quot;log_transform&quot;</span><span class="p">:</span> <span class="kc">False</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Inherit the standard set of runtime parameters.</span>
+    <span class="n">RUNTIME_PARAMETERS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BASE_RUNTIME_PARAMETERS</span>
+
+    <span class="n">INITIAL_CONDITIONS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="n">BASE_INITIAL_CONDITIONS</span>
+
+    <span class="c1"># Add any extra output fields beyond the base set.</span>
+    <span class="n">RESULT_FIELDS</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">BASE_RESULT_FIELDS</span><span class="p">,</span>
+        <span class="s2">&quot;my_extra_field&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;description&quot;</span><span class="p">:</span> <span class="s2">&quot;Custom output quantity&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;units&quot;</span><span class="p">:</span> <span class="s2">&quot;erg/cm**2/s&quot;</span><span class="p">,</span>
+        <span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="n">CYTHON_FIELD_MAP</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">CYTHON_FIELD_MAP</span><span class="p">,</span>
+        <span class="s2">&quot;my_extra_field&quot;</span><span class="p">:</span> <span class="mi">17</span><span class="p">,</span>   <span class="c1"># assign the next available row index</span>
+    <span class="p">}</span>
+
+    <span class="c1"># ---- Required methods --------------------------------------------</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.6</span><span class="p">,</span> <span class="n">my_param</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">mu</span><span class="o">=</span><span class="n">mu</span><span class="p">,</span> <span class="n">my_param</span><span class="o">=</span><span class="n">my_param</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_cython_closure</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.models._my_closure</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyClosureType</span>
+        <span class="n">n_fields</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">RESULT_FIELDS</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MyClosureType</span><span class="p">(</span><span class="n">n_result_fields</span><span class="o">=</span><span class="n">n_fields</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_pack_cython_parameters</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">run_params</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;np.ndarray&quot;</span><span class="p">:</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span>
+            <span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_M_BH&quot;</span><span class="p">],</span>          <span class="c1"># packed as log value</span>
+            <span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;log_R_in&quot;</span><span class="p">],</span>
+            <span class="n">run_params</span><span class="p">[</span><span class="s2">&quot;alpha&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;my_param&quot;</span><span class="p">],</span>
+        <span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">to_spec_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__module__</span><span class="si">}</span><span class="s2">:</span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;mu&quot;</span><span class="p">:</span>       <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;mu&quot;</span><span class="p">],</span>
+            <span class="s2">&quot;my_param&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;my_param&quot;</span><span class="p">],</span>
+        <span class="p">}</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_spec_dict</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;MyDisk&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="p">(</span><span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="o">!=</span> <span class="s2">&quot;target&quot;</span><span class="p">})</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><code class="docutils literal notranslate"><span class="pre">BASE_RUNTIME_PARAMETERS</span></code>, <code class="docutils literal notranslate"><span class="pre">BASE_INITIAL_CONDITIONS</span></code>, <code class="docutils literal notranslate"><span class="pre">BASE_RESULT_FIELDS</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">CYTHON_FIELD_MAP</span></code> are centrally defined in
+<code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.dynamics.accretion.one_zone._closure_specs</span></code> and contain the
+standard set of parameters and fields shared by all one-zone models.  Reuse them
+unless your closure fundamentally changes the ODE variables or adds extra runtime
+parameters (e.g. fallback rate <code class="docutils literal notranslate"><span class="pre">M_fb_0</span></code> and <code class="docutils literal notranslate"><span class="pre">t_fb</span></code> for fallback disks).</p>
+</div>
+<section id="adding-fallback-mass-supply">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Adding Fallback Mass Supply</a><a class="headerlink" href="#adding-fallback-mass-supply" title="Link to this heading">#</a></h3>
+<p>Fallback disks require two additional runtime parameters (<code class="docutils literal notranslate"><span class="pre">M_fb_0</span></code>, <code class="docutils literal notranslate"><span class="pre">t_fb</span></code>) that enter the
+mass and angular-momentum evolution equations.  Use
+<code class="docutils literal notranslate"><span class="pre">FALLBACK_RUNTIME_PARAMETERS</span></code> from <code class="docutils literal notranslate"><span class="pre">_closure_specs</span></code> in addition to the base set:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone._closure_specs</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BASE_RUNTIME_PARAMETERS</span><span class="p">,</span>
+    <span class="n">FALLBACK_RUNTIME_PARAMETERS</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="k">class</span><span class="w"> </span><span class="nc">MyFallbackDisk</span><span class="p">(</span><span class="n">MyDisk</span><span class="p">):</span>
+    <span class="n">RUNTIME_PARAMETERS</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="o">**</span><span class="n">BASE_RUNTIME_PARAMETERS</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">FALLBACK_RUNTIME_PARAMETERS</span><span class="p">,</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="step-3-register-aliases-and-exports">
+<h2><a class="toc-backref" href="#id8" role="doc-backlink">Step 3 — Register Aliases and Exports</a><a class="headerlink" href="#step-3-register-aliases-and-exports" title="Link to this heading">#</a></h2>
+<p>If you want backward-compatible aliases (following the existing naming convention):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># bottom of core.py</span>
+<span class="n">myDisk</span>    <span class="o">=</span> <span class="n">MyDisk</span>     <span class="c1"># alias without fallback</span>
+<span class="n">myFbDisk</span>  <span class="o">=</span> <span class="n">MyDisk</span>     <span class="c1"># pass fallback=True at construction</span>
+</pre></div>
+</div>
+<p>Export from the package <code class="docutils literal notranslate"><span class="pre">__init__.py</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># triceratops/dynamics/accretion/one_zone/__init__.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyDisk</span><span class="p">,</span> <span class="n">myDisk</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-4-build-the-cython-extension">
+<h2><a class="toc-backref" href="#id9" role="doc-backlink">Step 4 — Build the Cython Extension</a><a class="headerlink" href="#step-4-build-the-cython-extension" title="Link to this heading">#</a></h2>
+<p>Add the new <code class="docutils literal notranslate"><span class="pre">.pyx</span></code> file to the build system in <code class="docutils literal notranslate"><span class="pre">setup.py</span></code> (or
+<code class="docutils literal notranslate"><span class="pre">pyproject.toml</span></code> if using scikit-build-core):</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">Extension</span><span class="p">(</span>
+    <span class="s2">&quot;triceratops.dynamics.accretion.one_zone.models._my_closure&quot;</span><span class="p">,</span>
+    <span class="n">sources</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;triceratops/dynamics/accretion/one_zone/models/_my_closure.pyx&quot;</span><span class="p">],</span>
+    <span class="n">include_dirs</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">get_include</span><span class="p">()],</span>
+<span class="p">),</span>
+</pre></div>
+</div>
+<p>Rebuild the package:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">&quot;.[dev]&quot;</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="step-5-add-tests">
+<h2><a class="toc-backref" href="#id10" role="doc-backlink">Step 5 — Add Tests</a><a class="headerlink" href="#step-5-add-tests" title="Link to this heading">#</a></h2>
+<p>The test module <code class="docutils literal notranslate"><span class="pre">tests/test_dynamics/test_one_zone_disk_base.py</span></code> provides
+<code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code>, a shared pytest base class that automatically runs the
+full suite of over 60 physical-consistency, round-trip, and result-field checks.
+Inheriting from it is the easiest way to ensure your new model is correct.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># tests/test_dynamics/test_my_closure.py</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pytest</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">constants</span> <span class="k">as</span> <span class="n">const</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone</span><span class="w"> </span><span class="kn">import</span> <span class="n">MyDisk</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">test_one_zone_disk_base</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseTestOneZoneDisk</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">TestMyDisk</span><span class="p">(</span><span class="n">BaseTestOneZoneDisk</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Full common test suite for MyDisk.</span>
+
+<span class="sd">    Physical setup</span>
+<span class="sd">    --------------</span>
+<span class="sd">    - 3 M☉ BH, 0.1 M☉ disk, α = 0.1</span>
+<span class="sd">    - R_D_0 / R_in = 1e7 — comfortably in the one-zone regime</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">MODEL</span> <span class="o">=</span> <span class="n">MyDisk</span>
+    <span class="n">DISK_KWARGS</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;mu&quot;</span><span class="p">:</span> <span class="mf">0.62</span><span class="p">,</span> <span class="s2">&quot;my_param&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">}</span>
+
+    <span class="n">M_BH</span>  <span class="o">=</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">M_sun</span>
+    <span class="n">M_D_0</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">const</span><span class="o">.</span><span class="n">M_sun</span>
+    <span class="n">R_IN</span>  <span class="o">=</span> <span class="mf">3.0e6</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+    <span class="n">R_D_0</span> <span class="o">=</span> <span class="mf">3.0e13</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>
+    <span class="n">ALPHA</span> <span class="o">=</span> <span class="mf">0.1</span>
+
+    <span class="c1"># ——— Model-specific assertions ———</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_my_param_stored</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;my_param context parameter is stored correctly.&quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_disk</span><span class="p">()</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;my_param&quot;</span><span class="p">],</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_closure_is_correct_type</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;_build_cython_closure() returns a MyClosureType.&quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">triceratops.dynamics.accretion.one_zone.models._my_closure</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">MyClosureType</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_disk</span><span class="p">()</span><span class="o">.</span><span class="n">_build_cython_closure</span><span class="p">(),</span> <span class="n">MyClosureType</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_all_fields_finite</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Every field in result.data is finite and non-NaN.&quot;&quot;&quot;</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_solve_result</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">arr</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">value</span><span class="p">)),</span> <span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;Field &#39;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&#39; contains non-finite values&quot;</span>
+            <span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">test_from_spec_dict_preserves_my_param</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Spec-dict round-trip preserves my_param.&quot;&quot;&quot;</span>
+        <span class="n">disk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_disk</span><span class="p">()</span>
+        <span class="n">loaded</span> <span class="o">=</span> <span class="n">MyDisk</span><span class="o">.</span><span class="n">from_spec_dict</span><span class="p">(</span><span class="n">disk</span><span class="o">.</span><span class="n">to_spec_dict</span><span class="p">())</span>
+        <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span>
+            <span class="n">loaded</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;my_param&quot;</span><span class="p">],</span>
+            <span class="n">disk</span><span class="o">.</span><span class="n">_context_parameters</span><span class="p">[</span><span class="s2">&quot;my_param&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+</pre></div>
+</div>
+<p>Run the tests with:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests/test_dynamics/test_my_closure.py<span class="w"> </span>-v
+</pre></div>
+</div>
+<p>or run the entire dynamics suite:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>pytest<span class="w"> </span>tests/test_dynamics/<span class="w"> </span>-v
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="understanding-basetestonezonedisk">
+<h2><a class="toc-backref" href="#id11" role="doc-backlink">Understanding <code class="docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code></a><a class="headerlink" href="#understanding-basetestonezonedisk" title="Link to this heading">#</a></h2>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code> runs more than 60 inherited test methods organized into
+the following categories.  All of these run automatically for any subclass — you do not
+need to implement them.</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 35.0%" />
+<col style="width: 65.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Category</p></th>
+<th class="head"><p>What is tested</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>Metaclass validation</p></td>
+<td><p>Malformed declarations raise descriptive <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> at class-definition time.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Parameter processing</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">process_runtime_parameters</span></code> returns correct keys and finite values;
+<code class="docutils literal notranslate"><span class="pre">process_initial_conditions</span></code> returns an ndarray of the right shape.</p></td>
+</tr>
+<tr class="row-even"><td><p>Cython integration</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">_build_cython_closure</span></code> returns a ready object; parameter binding succeeds.</p></td>
+</tr>
+<tr class="row-odd"><td><p>ODE solve</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">solve()</span></code> completes; returns a <code class="docutils literal notranslate"><span class="pre">OneZoneAccretionResult</span></code>; disk mass
+decreases (viscous drain); initial mass matches declaration.</p></td>
+</tr>
+<tr class="row-even"><td><p>Result properties</p></td>
+<td><p>All <code class="docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code> present and finite; unit checks; shape checks.</p></td>
+</tr>
+<tr class="row-odd"><td><p>HDF5 round-trip</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_hdf5</span></code> / <code class="docutils literal notranslate"><span class="pre">from_hdf5</span></code> round-trips preserve time, arrays, parameters,
+and model type.</p></td>
+</tr>
+<tr class="row-even"><td><p>Serialization</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">to_spec_dict</span></code> / <code class="docutils literal notranslate"><span class="pre">from_spec_dict</span></code> round-trips; JSON-serializable spec.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Dunder methods</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">__repr__</span></code>, <code class="docutils literal notranslate"><span class="pre">__str__</span></code>, <code class="docutils literal notranslate"><span class="pre">__eq__</span></code>, <code class="docutils literal notranslate"><span class="pre">__hash__</span></code>.</p></td>
+</tr>
+<tr class="row-even"><td><p>Result field access</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">result[key]</span></code>, <code class="docutils literal notranslate"><span class="pre">get_field</span></code>, <code class="docutils literal notranslate"><span class="pre">has_field</span></code>, <code class="docutils literal notranslate"><span class="pre">add_field</span></code>, <code class="docutils literal notranslate"><span class="pre">remove_field</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p>Plotting utilities</p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">plot_state_variables</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_field</span></code>, <code class="docutils literal notranslate"><span class="pre">plot_all_fields</span></code> run without error.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>Override any inherited test in your subclass if the default assertion is too tight
+for your closure’s physics (e.g. if <code class="docutils literal notranslate"><span class="pre">M_D</span></code> grows at early times due to strong
+fallback supply, override <code class="docutils literal notranslate"><span class="pre">test_M_D_decreases</span></code>).</p>
+</section>
+<hr class="docutils" />
+<section id="checklist">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">Checklist</a><a class="headerlink" href="#checklist" title="Link to this heading">#</a></h2>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>Step</p></th>
+<th class="head"><p>Action</p></th>
+<th class="head"><p>Required</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>1</p></td>
+<td><p>Write <code class="docutils literal notranslate"><span class="pre">.pyx</span></code> Cython extension with <code class="docutils literal notranslate"><span class="pre">_closure_fn</span></code>, <code class="docutils literal notranslate"><span class="pre">_derivative_fn</span></code>,
+<code class="docutils literal notranslate"><span class="pre">_writer_fn</span></code>, and extension type</p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-odd"><td><p>2</p></td>
+<td><p>Declare <code class="docutils literal notranslate"><span class="pre">CONTEXT_PARAMETERS</span></code>, <code class="docutils literal notranslate"><span class="pre">RUNTIME_PARAMETERS</span></code>,
+<code class="docutils literal notranslate"><span class="pre">INITIAL_CONDITIONS</span></code>, <code class="docutils literal notranslate"><span class="pre">RESULT_FIELDS</span></code>, <code class="docutils literal notranslate"><span class="pre">CYTHON_FIELD_MAP</span></code></p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-even"><td><p>3</p></td>
+<td><p>Implement <code class="docutils literal notranslate"><span class="pre">_build_cython_closure</span></code>, <code class="docutils literal notranslate"><span class="pre">_pack_cython_parameters</span></code>,
+<code class="docutils literal notranslate"><span class="pre">to_spec_dict</span></code>, <code class="docutils literal notranslate"><span class="pre">from_spec_dict</span></code></p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-odd"><td><p>4</p></td>
+<td><p>Export from <code class="docutils literal notranslate"><span class="pre">core.py</span></code> and <code class="docutils literal notranslate"><span class="pre">one_zone/__init__.py</span></code></p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-even"><td><p>5</p></td>
+<td><p>Add <code class="docutils literal notranslate"><span class="pre">.pyx</span></code> to build system; run <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">-e</span> <span class="pre">&quot;.[dev]&quot;</span></code></p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-odd"><td><p>6</p></td>
+<td><p>Inherit <code class="docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code>; add closure-specific tests</p></td>
+<td><p>✓ Always</p></td>
+</tr>
+<tr class="row-even"><td><p>7</p></td>
+<td><p>Add backward-compatible aliases if needed</p></td>
+<td><p>Optional</p></td>
+</tr>
+<tr class="row-odd"><td><p>8</p></td>
+<td><p>Document in the user guide and theory pages</p></td>
+<td><p>Recommended</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="one_zone_disk_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">One-Zone Accretion Disk Models: Theory</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="thin_disk.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Steady-State Thin Disk</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#architecture-overview">Architecture Overview</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-metaclass-onezonemeta">The Metaclass: <code class="docutils literal notranslate"><span class="pre">_OneZoneMeta</span></code></a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#parameter-and-result-field-specification-schema">Parameter and Result-Field Specification Schema</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-1-write-the-cython-closure">Step 1 — Write the Cython Closure</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#minimal-cython-template">Minimal Cython Template</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-2-declare-the-python-model-class">Step 2 — Declare the Python Model Class</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#adding-fallback-mass-supply">Adding Fallback Mass Supply</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-3-register-aliases-and-exports">Step 3 — Register Aliases and Exports</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-4-build-the-cython-extension">Step 4 — Build the Cython Extension</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#step-5-add-tests">Step 5 — Add Tests</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#understanding-basetestonezonedisk">Understanding <code class="docutils literal notranslate"><span class="pre">BaseTestOneZoneDisk</span></code></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#checklist">Checklist</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../_sources/reference/physics/disks/one_zone_disk_dev.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

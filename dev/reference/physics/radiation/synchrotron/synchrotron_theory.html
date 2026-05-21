@@ -27,62 +27,71 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
-<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+  <link href="../../../../_static/styles/theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=0790524f97105ba85085" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=fd6457a4" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
     <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script src="../../../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=0790524f97105ba85085"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
-<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085" />
 
     <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
     <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
     <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../../../../_static/copybutton.js?v=f281be69"></script>
     <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/synchrotron/synchrotron_theory';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.16.1';
+        DOCUMENTATION_OPTIONS.theme_version = '0.18.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://eliza-diggins.github.io/Triceratops/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
             false;
         </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
     <link rel="icon" href="../../../../_static/logo.png"/>
     <link rel="index" title="Index" href="../../../../genindex.html" />
     <link rel="search" title="Search" href="../../../../search.html" />
-    <link rel="next" title="Methods: Single-Zone Synchrotron SEDs" href="synchrotron_sed_theory.html" />
+    <link rel="next" title="Methods: Single-Zone Synchrotron SEDs" href="synchrotron_pl_sed_theory.html" />
     <link rel="prev" title="Radiative Cooling Engines" href="synchrotron_cooling.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
   </head>
-  
-  
-  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
-
+  <body data-default-mode="">
   
   
   <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
   
   <div id="pst-scroll-pixel-helper"></div>
   
   <button type="button" class="btn rounded-pill" id="pst-back-to-top">
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
-
+  
+  
+  
   
   <dialog id="pst-search-dialog">
     
@@ -108,7 +117,7 @@
 </div>
 
   
-    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
   <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
@@ -167,8 +176,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -200,11 +209,18 @@
       
         <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
       
         <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -237,8 +253,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
       
@@ -303,8 +318,8 @@
 
 
 <li class="nav-item ">
-  <a class="nav-link nav-internal" href="../../../../auto_examples/index.html">
-    Triceratops Example Gallery
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
   </a>
 </li>
 
@@ -327,11 +342,18 @@
         
           <div class="navbar-item">
 
-<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
-  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
-  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
-  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
-</button></div>
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
         
           <div class="navbar-item">
 <div class="version-switcher__container dropdown pst-js-only">
@@ -364,8 +386,7 @@
           
           
           
-          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
-            <span class="sr-only">GitHub</span></a>
+          <a href="https://github.com/eliza-diggins/Triceratops" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
         </li>
 </ul></div>
         
@@ -374,18 +395,31 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar"><svg class="pst-icon svg-inline--fa" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
         <div class="sidebar-primary-item">
+
 <nav class="bd-docs-nav bd-links"
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
 </ul>
 </details></li>
-<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
 </ul>
@@ -411,33 +445,113 @@
 </details></li>
 </ul>
 <ul class="current nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="../../shocks/overview.html">Shocks in Triceratops</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Triceratops</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Triceratops</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_overview.html">Synchrotron Emission Overview</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_core.html">Core Synchrotron Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_microphysics.html">Synchrotron Microphysics</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling.html">Radiative Cooling Engines</a></li>
 <li class="toctree-l2 current active"><a class="current reference internal" href="#">Synchrotron Radiation Theory</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory of Synchrotron Electron Populations</a></li>
-<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Synchrotron Cooling Closure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_cooling_closure.html">Theory Note: Synchrotron Cooling Closure</a></li>
 <li class="toctree-l2"><a class="reference internal" href="synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="synchrotron_barniol_duran.html">Theory Note: The Barniol-Duran Formalism</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.get_opacity.html">triceratops.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OpacityLaw.html">triceratops.radiation.opacity.OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.GreyOpacityLaw.html">triceratops.radiation.opacity.GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ConstantGreyOpacity.html">triceratops.radiation.opacity.ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.ElectronScatteringOpacity.html">triceratops.radiation.opacity.ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFOpacity.html">triceratops.radiation.opacity.KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFOpacity.html">triceratops.radiation.opacity.KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersOpacity.html">triceratops.radiation.opacity.KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersFFESOpacity.html">triceratops.radiation.opacity.KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersBFESOpacity.html">triceratops.radiation.opacity.KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.KramersESOpacity.html">triceratops.radiation.opacity.KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.OPALOpacity.html">triceratops.radiation.opacity.OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.radiation.opacity.load_opal_opacity.html">triceratops.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_esDisk.html">triceratops.dynamics.accretion.one_zone.gP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_esDisk.html">triceratops.dynamics.accretion.one_zone.igP_esDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.gP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.gP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_advDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_advDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk.html">triceratops.dynamics.accretion.one_zone.igP_es_adv_fbDisk</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
-<li class="toctree-l3"><a class="reference internal" href="../../disks/generated/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.GasPressureDisk.html">triceratops.dynamics.accretion.one_zone.GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.FullPressureDisk.html">triceratops.dynamics.accretion.one_zone.FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.AdvectiveDisk.html">triceratops.dynamics.accretion.one_zone.AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult.html">triceratops.dynamics.accretion.one_zone.OneZoneAccretionResult</a></li>
 </ul>
 </details></li>
 <li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.ThinDiskBase.html">triceratops.dynamics.accretion.ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.dynamics.accretion.AlphaDisk.html">triceratops.dynamics.accretion.AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.batched_map.html">triceratops.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.close.html">triceratops.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.map.html">triceratops.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.terminate.html">triceratops.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.Pool.size.html">triceratops.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.batched_map.html">triceratops.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.close.html">triceratops.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.map.html">triceratops.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.terminate.html">triceratops.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.base.SerialPool.size.html">triceratops.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.batched_map.html">triceratops.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.close.html">triceratops.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.join.html">triceratops.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.map.html">triceratops.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.terminate.html">triceratops.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mp.LikelihoodMPPool.size.html">triceratops.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.batched_map.html">triceratops.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.close.html">triceratops.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.is_master.html">triceratops.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.map.html">triceratops.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.terminate.html">triceratops.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.wait.html">triceratops.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.mpi.LikelihoodMPIPool.size.html">triceratops.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/triceratops.parallel.factory.make_pool.html">triceratops.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -516,38 +630,40 @@ however, we provide references throughout to more detailed treatments of the sub
 for various results.</p>
 <nav class="contents local" id="contents">
 <ul class="simple">
-<li><p><a class="reference internal" href="#synchrotron-from-a-single-electron" id="id23">Synchrotron From a Single Electron</a></p>
+<li><p><a class="reference internal" href="#synchrotron-from-a-single-electron" id="id34">Synchrotron From a Single Electron</a></p>
 <ul>
-<li><p><a class="reference internal" href="#the-cyclotron-frequency" id="id24">The Cyclotron Frequency</a></p></li>
-<li><p><a class="reference internal" href="#synchrotron-power" id="id25">Synchrotron Power</a></p></li>
-<li><p><a class="reference internal" href="#the-characteristic-synchrotron-frequency" id="id26">The Characteristic Synchrotron Frequency</a></p></li>
-<li><p><a class="reference internal" href="#the-single-electron-synchrotron-spectrum" id="id27">The Single Electron Synchrotron Spectrum</a></p></li>
+<li><p><a class="reference internal" href="#the-cyclotron-frequency" id="id35">The Cyclotron Frequency</a></p></li>
+<li><p><a class="reference internal" href="#synchrotron-power" id="id36">Synchrotron Power</a></p></li>
+<li><p><a class="reference internal" href="#the-characteristic-synchrotron-frequency" id="id37">The Characteristic Synchrotron Frequency</a></p></li>
+<li><p><a class="reference internal" href="#the-single-electron-synchrotron-spectrum" id="id38">The Single Electron Synchrotron Spectrum</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#synchrotron-from-a-population-of-electrons" id="id28">Synchrotron From A Population of Electrons</a></p>
+<li><p><a class="reference internal" href="#synchrotron-from-a-population-of-electrons" id="id39">Synchrotron From A Population of Electrons</a></p>
 <ul>
-<li><p><a class="reference internal" href="#the-spectrum-of-a-power-law-distribution" id="id29">The Spectrum of a Power-Law Distribution</a></p></li>
-<li><p><a class="reference internal" href="#conventions-in-the-literature" id="id30">Conventions in the Literature</a></p></li>
+<li><p><a class="reference internal" href="#the-spectrum-of-a-power-law-distribution" id="id40">The Spectrum of a Power-Law Distribution</a></p></li>
+<li><p><a class="reference internal" href="#thermal-electrons" id="id41">Thermal Electrons</a></p></li>
+<li><p><a class="reference internal" href="#conventions-in-the-literature" id="id42">Conventions in the Literature</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#microphysical-closures-and-equipartition" id="id31">Microphysical Closures and Equipartition</a></p>
+<li><p><a class="reference internal" href="#microphysical-closures-and-equipartition" id="id43">Microphysical Closures and Equipartition</a></p>
 <ul>
-<li><p><a class="reference internal" href="#equipartition" id="id32">Equipartition</a></p></li>
-<li><p><a class="reference internal" href="#power-law-electron-distributions" id="id33">Power-Law Electron Distributions</a></p></li>
-<li><p><a class="reference internal" href="#cooling-of-electrons" id="id34">Cooling of Electrons</a></p></li>
+<li><p><a class="reference internal" href="#equipartition" id="id44">Equipartition</a></p></li>
+<li><p><a class="reference internal" href="#power-law-electron-distributions" id="id45">Power-Law Electron Distributions</a></p></li>
+<li><p><a class="reference internal" href="#thermal-electron-distributions" id="id46">Thermal Electron Distributions</a></p></li>
+<li><p><a class="reference internal" href="#cooling-of-electrons" id="id47">Cooling of Electrons</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#absorption-processes-in-synchrotron-radiation" id="id35">Absorption Processes in Synchrotron Radiation</a></p>
+<li><p><a class="reference internal" href="#absorption-processes-in-synchrotron-radiation" id="id48">Absorption Processes in Synchrotron Radiation</a></p>
 <ul>
-<li><p><a class="reference internal" href="#synchrotron-self-absorption" id="id36">Synchrotron Self-Absorption</a></p></li>
-<li><p><a class="reference internal" href="#the-ssa-spectrum" id="id37">The SSA Spectrum</a></p></li>
+<li><p><a class="reference internal" href="#synchrotron-self-absorption" id="id49">Synchrotron Self-Absorption</a></p></li>
+<li><p><a class="reference internal" href="#the-ssa-spectrum" id="id50">The SSA Spectrum</a></p></li>
 </ul>
 </li>
-<li><p><a class="reference internal" href="#references" id="id38">References</a></p></li>
+<li><p><a class="reference internal" href="#references" id="id51">References</a></p></li>
 </ul>
 </nav>
 <section id="synchrotron-from-a-single-electron">
-<h2><a class="toc-backref" href="#id23" role="doc-backlink">Synchrotron From a Single Electron</a><a class="headerlink" href="#synchrotron-from-a-single-electron" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id34" role="doc-backlink">Synchrotron From a Single Electron</a><a class="headerlink" href="#synchrotron-from-a-single-electron" title="Link to this heading">#</a></h2>
 <p>To describe, from first principles, the relevant synchrotron theory used in Triceratops, we first need to develop
 the emission of a single relativistic electron spiraling in a magnetic field. With that in hand, it will be a
 relatively straightforward process to extend to a population of electrons with some distribution function.</p>
@@ -559,7 +675,7 @@ composition must be. Thus, for the relativistic electrons in this case, the emis
 as the electron’s velocity vector sweeps past the observer. This leads to a characteristic synchrotron spectrum which
 can extend to very high frequencies.</p>
 <section id="the-cyclotron-frequency">
-<h3><a class="toc-backref" href="#id24" role="doc-backlink">The Cyclotron Frequency</a><a class="headerlink" href="#the-cyclotron-frequency" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id35" role="doc-backlink">The Cyclotron Frequency</a><a class="headerlink" href="#the-cyclotron-frequency" title="Link to this heading">#</a></h3>
 <p>In the classical case, we consider a magnetic field <span class="math notranslate nohighlight">\({\bf B} = B_0 \hat{\bf z}\)</span> and a particle of
 charge <span class="math notranslate nohighlight">\(q\)</span> bound to the <span class="math notranslate nohighlight">\(x-y\)</span> plane. The <strong>Lorentz Force</strong> dictates that</p>
 <div class="math notranslate nohighlight">
@@ -580,7 +696,7 @@ so that <span class="math notranslate nohighlight">\({\bf v}_0 = v_0 \hat{\bf x}
 }\]</div>
 </section>
 <section id="synchrotron-power">
-<h3><a class="toc-backref" href="#id25" role="doc-backlink">Synchrotron Power</a><a class="headerlink" href="#synchrotron-power" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id36" role="doc-backlink">Synchrotron Power</a><a class="headerlink" href="#synchrotron-power" title="Link to this heading">#</a></h3>
 <p>Already, because we know the acceleration of the electron, we can compute the total power emitted from synchrotron
 radiation using the Larmor formula. The Larmor formula states that the power emitted by an accelerating charge is</p>
 <div class="math notranslate nohighlight">
@@ -599,7 +715,7 @@ P_{\rm synch} = \frac{4}{3} \sigma_T c \gamma^2 U_B,
 <p>where <span class="math notranslate nohighlight">\(U_B = B^2/8\pi\)</span> is the magnetic energy density.</p>
 </section>
 <section id="the-characteristic-synchrotron-frequency">
-<h3><a class="toc-backref" href="#id26" role="doc-backlink">The Characteristic Synchrotron Frequency</a><a class="headerlink" href="#the-characteristic-synchrotron-frequency" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id37" role="doc-backlink">The Characteristic Synchrotron Frequency</a><a class="headerlink" href="#the-characteristic-synchrotron-frequency" title="Link to this heading">#</a></h3>
 <p>The critical physical insight that distinguishes <strong>synchrotron radiation</strong> from its
 non-relativistic cyclotron counterpart is the emergence of <strong>strong relativistic beaming</strong>.
 Although an accelerated charged particle emits radiation continuously in its instantaneous
@@ -695,7 +811,7 @@ quantities.</p>
 </div>
 </details></section>
 <section id="the-single-electron-synchrotron-spectrum">
-<h3><a class="toc-backref" href="#id27" role="doc-backlink">The Single Electron Synchrotron Spectrum</a><a class="headerlink" href="#the-single-electron-synchrotron-spectrum" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id38" role="doc-backlink">The Single Electron Synchrotron Spectrum</a><a class="headerlink" href="#the-single-electron-synchrotron-spectrum" title="Link to this heading">#</a></h3>
 <p>In this section, we will derive the synchrotron spectrum of a single electron spiraling in a magnetic field. From
 elementary electrodynamics (see Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id3" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a> for a detailed treatment), the power radiated per unit
 frequency per unit solid angle is given by</p>
@@ -927,7 +1043,7 @@ the <strong>second synchrotron kernel</strong>.</p>
 </section>
 </section>
 <section id="synchrotron-from-a-population-of-electrons">
-<span id="synch-theory-populations"></span><h2><a class="toc-backref" href="#id28" role="doc-backlink">Synchrotron From A Population of Electrons</a><a class="headerlink" href="#synchrotron-from-a-population-of-electrons" title="Link to this heading">#</a></h2>
+<span id="synch-theory-populations"></span><h2><a class="toc-backref" href="#id39" role="doc-backlink">Synchrotron From A Population of Electrons</a><a class="headerlink" href="#synchrotron-from-a-population-of-electrons" title="Link to this heading">#</a></h2>
 <div class="admonition important">
 <p class="admonition-title">Important</p>
 <p>At this point, convention in the literature diverges in certain respects. As we describe the relevant theory,
@@ -959,7 +1075,7 @@ are some scenarios which are of particular relevance to astrophysical sources wh
 feature of Triceratops, but not currently implemented.</p>
 </div>
 <section id="the-spectrum-of-a-power-law-distribution">
-<h3><a class="toc-backref" href="#id29" role="doc-backlink">The Spectrum of a Power-Law Distribution</a><a class="headerlink" href="#the-spectrum-of-a-power-law-distribution" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id40" role="doc-backlink">The Spectrum of a Power-Law Distribution</a><a class="headerlink" href="#the-spectrum-of-a-power-law-distribution" title="Link to this heading">#</a></h3>
 <p>The most important case in which the above formalism has a known closure is that of a power-law distribution
 of electrons. This is the most common assumption in astrophysical synchrotron modeling, as it is both
 theoretically motivated by diffusive shock acceleration Caprioli<a class="footnote-reference brackets" href="#footcite-caprioliparticleaccelerationshocks2023" id="id8" role="doc-noteref"><span class="fn-bracket">[</span>5<span class="fn-bracket">]</span></a> and
@@ -1144,14 +1260,92 @@ c_{\rm 5, ISO}(p)\,N_{0,E}
 </div>
 </section>
 </section>
+<section id="thermal-electrons">
+<h3><a class="toc-backref" href="#id41" role="doc-backlink">Thermal Electrons</a><a class="headerlink" href="#thermal-electrons" title="Link to this heading">#</a></h3>
+<p>In some scenarios, thermal electrons may also contribute to the synchrotron emission spectrum. In order to do so,
+these electrons must be <strong>relativistic</strong>; meaning that these scenarios are only relevant in very extreme circumstances when
+fluid temperatures are sufficiently high to produce a significant population of relativistic, thermal electrons.</p>
+<p>In this case, we use the so-called <strong>Maxwell-Juttner distribution</strong> to describe the distribution of electrons:</p>
+<div class="math notranslate nohighlight">
+\[\frac{d N_e}{d\gamma} = N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Theta = k_B T / (m_e c^2)\)</span> is the dimensionless temperature, <span class="math notranslate nohighlight">\(K_2\)</span> is the modified Bessel function
+of the second kind, and <span class="math notranslate nohighlight">\(N_0\)</span> is a normalization constant.</p>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The Maxwell-Juttner distribution is broadly peaked around <span class="math notranslate nohighlight">\(\gamma \sim \Theta\)</span>, meaning that
+the thermal electrons will only contribute to synchrotron emission if <span class="math notranslate nohighlight">\(\gamma \sim \Theta \gtrsim 1\)</span>,
+implying a temperature of <span class="math notranslate nohighlight">\(T \sim 5.9 \times 10^9\;{\rm K} \sim 511 {\rm keV}\)</span> or higher. We are therefore
+always able to invoke the assumption that <span class="math notranslate nohighlight">\(\Theta \gtrsim 1\)</span> when considering the contribution of thermal
+electrons to synchrotron emission.</p>
+</div>
+<p>As before, the total emitting power is</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+P(\nu) &amp;= \frac{\sqrt{3} q^3 B \sin \alpha}{m_ec^2} \int_{1}^{\infty}
+\frac{dN}{d\gamma} F\left(\frac{\nu}{\nu_c(\gamma)}\right)\;d\gamma, \\
+P(\nu) &amp;= \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{m_e c^2 \Theta K_2(1/\Theta)}
+         \int_{1}^{\infty} \gamma^2 \beta \exp\!\left(-\frac{\gamma}{\Theta}\right)
+F\left(\frac{\nu}{\nu_c(\gamma)}\right)\;d\gamma.
+\end{aligned}\end{split}\]</div>
+<p>It has been shown (see Mahadevan <em>et al.</em><a class="footnote-reference brackets" href="#footcite-1996apj-465-327m" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>) that this integral has the form (for <span class="math notranslate nohighlight">\(\Theta \gtrsim 1\)</span>,
+and <span class="math notranslate nohighlight">\(\beta \simeq 1\)</span>)</p>
+<div class="math notranslate nohighlight">
+\[P(\nu) = \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{2 m_e c^2} f(\Theta) x
+         I\left(x\right),\;\; x=\frac{4\pi m_e c}{3 q B \sin \alpha} \frac{\nu}{\Theta^2} = \frac{\nu}{\nu_\Theta},\]</div>
+<p>where <span class="math notranslate nohighlight">\(f(\Theta) = 2\Theta^2/K_2(1/\Theta)\)</span> is a correction term relevant in non-relativistic scenarios,
+<span class="math notranslate nohighlight">\(\nu_\Theta\)</span> is the characteristic synchrotron frequency for thermal electrons,
+and the integral kernel <span class="math notranslate nohighlight">\(I(x)\)</span> is well approximated<a class="footnote-reference brackets" href="#footcite-1996apj-465-327m" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> by</p>
+<div class="math notranslate nohighlight">
+\[I(z) \approx 2.5651 \left[1 + 1.92 z^{-1/3} + 0.9977z^{-2/3}\right]\exp\left(-1.8899 (x')^{1/3}\right), \;\;\Theta \gg 1.\]</div>
+<p>The above solution is dependent on the specific electron pitch angle <span class="math notranslate nohighlight">\(\sin \alpha\)</span>. It is often the case that
+one wants to consider an isotropic pitch-angle distribution for the thermal electrons, which modifies the above solution such
+that</p>
+<div class="math notranslate nohighlight">
+\[\left&lt;P(\nu)\right&gt;_\alpha = \frac{\sqrt{3} q^3 N_0 B }{2 m_e c^2} f(\Theta) x'
+         I'\left(x'\right),\;\; x'=\frac{4\pi m_e c}{3 q B} \frac{\nu}{\Theta^2},\]</div>
+<p>and the kernel is modified to<a class="footnote-reference brackets" href="#footcite-1996apj-465-327m" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[I'(x') \approx 4.0505(x')^{-1/6} \left[1 + 0.4 (x')^{-1/4} + 0.532 (x')^{-1/2}\right]\exp\left(-1.8899 (x')^{1/3}\right), \;\;\Theta \gg 1,\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Formally, <span class="math notranslate nohighlight">\(I(z)\)</span> as provided here is valid only for <span class="math notranslate nohighlight">\(\Theta \gg 1\)</span>, and
+Mahadevan <em>et al.</em><a class="footnote-reference brackets" href="#footcite-1996apj-465-327m" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a> provide approximations in the low-energy regime as well; however,
+it is generally the case that <span class="math notranslate nohighlight">\(x\gg 1\)</span>, in which case the above approximation is accurate
+regardless<a class="footnote-reference brackets" href="#footcite-margalitthermalelectronsmildlyrelativistic2021" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>. For
+very low frequency scenarios, some care should be taken to ensure that the approximation is valid.</p>
+</div>
+<section id="id19">
+<h4>Emissivity<a class="headerlink" href="#id19" title="Link to this heading">#</a></h4>
+<p>The <strong>emissivity</strong> (power radiated per unit frequency per unit volume per unit solid angle) is derived from our
+expressions for the power as</p>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-4" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-8">
+Pitch-Angle Emissivity</label><div class="sd-tab-content docutils">
+<div class="math notranslate nohighlight">
+\[\boxed{
+j_\nu = \frac{\sqrt{3} q^3 N_0 B \sin \alpha}{8 \pi m_e c^2} f(\Theta) x I\left(x\right)
+}\]</div>
+</div>
+<input id="sd-tab-item-9" name="sd-tab-set-4" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-9">
+Isotropic Emissivity</label><div class="sd-tab-content docutils">
+<div class="math notranslate nohighlight">
+\[\boxed{
+\left&lt;j_\nu\right&gt;_\alpha = \frac{\sqrt{3} q^3 N_0 B}{8 \pi m_e c^2} f(\Theta) x' I'\left(x'\right)
+}\]</div>
+</div>
+</div>
+</section>
+</section>
 <section id="conventions-in-the-literature">
-<h3><a class="toc-backref" href="#id30" role="doc-backlink">Conventions in the Literature</a><a class="headerlink" href="#conventions-in-the-literature" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id42" role="doc-backlink">Conventions in the Literature</a><a class="headerlink" href="#conventions-in-the-literature" title="Link to this heading">#</a></h3>
 <p>Two common conventions appear in synchrotron modeling:</p>
 <ul class="simple">
-<li><p>Some authors (e.g. Chevalier<a class="footnote-reference brackets" href="#footcite-chevalier1998synchrotronselfabsorption" id="id14" role="doc-noteref"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></a>) simply
+<li><p>Some authors (e.g. Chevalier<a class="footnote-reference brackets" href="#footcite-chevalier1998synchrotronselfabsorption" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>) simply
 approximate <span class="math notranslate nohighlight">\(\sin\alpha \simeq 1\)</span>, effectively assuming that all electrons
 radiate perpendicular to the magnetic field.</p></li>
-<li><p>Others (e.g. Chevalier and Fransson<a class="footnote-reference brackets" href="#footcite-chevalierfranssonhandbook" id="id15" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a>, Pacholczyk<a class="footnote-reference brackets" href="#footcite-pacholczyk1970" id="id16" role="doc-noteref"><span class="fn-bracket">[</span>10<span class="fn-bracket">]</span></a>)
+<li><p>Others (e.g. Chevalier and Fransson<a class="footnote-reference brackets" href="#footcite-chevalierfranssonhandbook" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a>, Pacholczyk<a class="footnote-reference brackets" href="#footcite-pacholczyk1970" id="id22" role="doc-noteref"><span class="fn-bracket">[</span>12<span class="fn-bracket">]</span></a>)
 explicitly perform the isotropic pitch-angle average described above.</p></li>
 </ul>
 <p>Both conventions lead to the same <strong>spectral scalings</strong>, differing only by factors
@@ -1165,19 +1359,19 @@ routines return the angle-averaged emissivity using the isotropic assumption.</p
 </section>
 </section>
 <section id="microphysical-closures-and-equipartition">
-<span id="synch-equipartition-theory"></span><h2><a class="toc-backref" href="#id31" role="doc-backlink">Microphysical Closures and Equipartition</a><a class="headerlink" href="#microphysical-closures-and-equipartition" title="Link to this heading">#</a></h2>
+<span id="synch-equipartition-theory"></span><h2><a class="toc-backref" href="#id43" role="doc-backlink">Microphysical Closures and Equipartition</a><a class="headerlink" href="#microphysical-closures-and-equipartition" title="Link to this heading">#</a></h2>
 <p>A critical element of most synchrotron modeling pipelines is a treatment of the coupling between the dynamics
 of the radiating material and the resulting synchrotron emission. A detailed treatment of this coupling is generally
 beyond the scope of most modeling efforts, and so we instead rely on a set of microphysical parameters that
 parameterize our ignorance of the detailed physics at play.</p>
 <section id="equipartition">
-<h3><a class="toc-backref" href="#id32" role="doc-backlink">Equipartition</a><a class="headerlink" href="#equipartition" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id44" role="doc-backlink">Equipartition</a><a class="headerlink" href="#equipartition" title="Link to this heading">#</a></h3>
 <p>The most common approach to microphysical closure is to assume some form of equipartition between the energy
 in the magnetic fields and relativistic electrons and the thermal energy of the shocked plasma. This approach
 is motivated by the idea that shocks are efficient at converting kinetic energy into thermal energy, and that
 some fraction of this thermal energy is then partitioned into magnetic fields and relativistic particles.</p>
-<p>A common choice throughout the modern literature (e.g. Margutti <em>et al.</em><a class="footnote-reference brackets" href="#footcite-margutti2019cow" id="id17" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>,
-DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id18" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, Wu <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id19" role="doc-noteref"><span class="fn-bracket">[</span>11<span class="fn-bracket">]</span></a>, etc.) is to introduce
+<p>A common choice throughout the modern literature (e.g. Margutti <em>et al.</em><a class="footnote-reference brackets" href="#footcite-margutti2019cow" id="id23" role="doc-noteref"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></a>,
+DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id24" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>, Wu <em>et al.</em><a class="footnote-reference brackets" href="#footcite-wudelayedradioemission2025" id="id25" role="doc-noteref"><span class="fn-bracket">[</span>13<span class="fn-bracket">]</span></a>, etc.) is to introduce
 the parameters <span class="math notranslate nohighlight">\(\epsilon_e\)</span> and <span class="math notranslate nohighlight">\(\epsilon_B\)</span>, which represent the fraction of the thermal energy density
 that goes into relativistic electrons and magnetic fields, respectively.</p>
 <p>Given a thermal energy density <span class="math notranslate nohighlight">\(U_{\rm thermal}\)</span>, we can then write the energy densities in relativistic electrons
@@ -1201,7 +1395,7 @@ relativistic electrons, equipartition can uniquely determine the normalization o
 </div>
 </section>
 <section id="power-law-electron-distributions">
-<h3><a class="toc-backref" href="#id33" role="doc-backlink">Power-Law Electron Distributions</a><a class="headerlink" href="#power-law-electron-distributions" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id45" role="doc-backlink">Power-Law Electron Distributions</a><a class="headerlink" href="#power-law-electron-distributions" title="Link to this heading">#</a></h3>
 <p>A central assumption in most synchrotron emission models is that the population of relativistic
 electrons accelerated by a shock follows a power-law distribution in Lorentz factor (and energy). This assumption
 is motivated both by theoretical considerations of diffusive shock
@@ -1245,15 +1439,15 @@ equipartition)</p>
 \[U_e = \epsilon_e U_{\rm thermal}.\]</div>
 <p>The total energy density of the electron population is</p>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-8" name="sd-tab-set-4" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-8">
+<input checked="checked" id="sd-tab-item-10" name="sd-tab-set-5" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-10">
 In Terms of Lorentz Factor</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[U_e = m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma \frac{dN}{d\gamma} d\gamma
 = N_0 m_e c^2 \int_{\gamma_{\min}}^{\gamma_{\max}} \gamma^{1 - p} d\gamma.\]</div>
 </div>
-<input id="sd-tab-item-9" name="sd-tab-set-4" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-9">
+<input id="sd-tab-item-11" name="sd-tab-set-5" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-11">
 In Terms of Energy</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[U_e = \int_{E_{\min}}^{E_{\max}} E \frac{dN}{dE} dE = N_{E,0} \int_{E_{\min}}^{E_{\max}} E^{1 - p} dE.\]</div>
@@ -1305,12 +1499,89 @@ radiating electrons in the population (see <a class="reference internal" href="s
 </div>
 </section>
 </section>
+<section id="thermal-electron-distributions">
+<h3><a class="toc-backref" href="#id46" role="doc-backlink">Thermal Electron Distributions</a><a class="headerlink" href="#thermal-electron-distributions" title="Link to this heading">#</a></h3>
+<p>In the rare cases where thermal electrons contribute to the synchrotron emission, we can also derive the normalization of the
+distribution from equipartition. The procedure is similar to that described above for power-law distributions,
+but with the <strong>Maxwell-Juttner</strong> distribution instead.</p>
+<p>We write the electron distribution function as</p>
+<div class="math notranslate nohighlight">
+\[\frac{dN}{d\gamma} = N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right),\]</div>
+<p>where <span class="math notranslate nohighlight">\(\Theta = k_B T / (m_e c^2)\)</span> is the dimensionless temperature, <span class="math notranslate nohighlight">\(K_2\)</span> is the modified Bessel function
+of the second kind, and <span class="math notranslate nohighlight">\(N_0\)</span> is a normalization constant.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><span class="math notranslate nohighlight">\(N\)</span> may be either the total number of electrons or the number density of electrons, depending on context.
+Triceratops generally works with number densities to facilitate coupling with hydrodynamical quantities. The
+conversion between the two is just a division by the relevant volume.</p>
+</div>
+<section id="equipartition-for-thermal-electron-distributions">
+<h4>Equipartition for Thermal Electron Distributions<a class="headerlink" href="#equipartition-for-thermal-electron-distributions" title="Link to this heading">#</a></h4>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>The relevant API in Triceratops is in the <a class="reference internal" href="../../../../_as_gen/triceratops.radiation.synchrotron.microphysics.html#module-triceratops.radiation.synchrotron.microphysics" title="triceratops.radiation.synchrotron.microphysics"><code class="xref py py-mod docutils literal notranslate"><span class="pre">triceratops.radiation.synchrotron.microphysics</span></code></a> module. See
+<a class="reference internal" href="synchrotron_microphysics.html#synchrotron-microphysics"><span class="std std-ref">Synchrotron Microphysics</span></a> for details on use.</p>
+</div>
+<p>Given a thermal energy density <span class="math notranslate nohighlight">\(U_{\rm thermal}\)</span>, the energy density in relativistic electrons is (by
+equipartition)</p>
+<div class="math notranslate nohighlight">
+\[U_e = \epsilon_e U_{\rm thermal}.\]</div>
+<p>The total energy density of the electron population is</p>
+<div class="math notranslate nohighlight">
+\[U_e = m_e c^2 N_0 \int_{0}^{\infty} \frac{\gamma^3 \beta}{\Theta K_2(1/\Theta)} \exp\!\left(-\frac{\gamma}{\Theta}\right), d\gamma\]</div>
+<p>This integral is<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id26" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-2000apj-541-234o" id="id27" role="doc-noteref"><span class="fn-bracket">[</span>15<span class="fn-bracket">]</span></a><a class="footnote-reference brackets" href="#footcite-chandrasekhar1957introduction" id="id28" role="doc-noteref"><span class="fn-bracket">[</span>16<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[U_e = N_0 m_e c^2 \left[\frac{3K_3(1/\Theta) + K_1(1/\Theta)}{4K_2(1/\Theta)} -1 \right],\]</div>
+<p>which, in turn, is well approximated by<a class="footnote-reference brackets" href="#footcite-1998apj-498-313g" id="id29" role="doc-noteref"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[U_e \approx N_0 m_e c^2 \Theta \left(\frac{6+15\Theta}{4+5\Theta}\right)\]</div>
+<p>Solving for <span class="math notranslate nohighlight">\(N_0\)</span>, we find</p>
+<div class="math notranslate nohighlight">
+\[\boxed{
+N_0 = \frac{\epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right).
+}\]</div>
+<p>In terms of the magnetic field, we also have</p>
+<div class="math notranslate nohighlight">
+\[B = \sqrt{8 \pi \epsilon_B U_{\rm thermal}} \implies N_0 =\frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\epsilon_e}{\epsilon_B}
+\left(\frac{4+5\Theta}{6+15\Theta}\right).\]</div>
+<div class="admonition hint">
+<p class="admonition-title">Hint</p>
+<p>This form of the equipartition closure relies on the thermal electrons being the only contributors to the energy
+density. One may also introduce the scenario where <span class="math notranslate nohighlight">\(\epsilon_e U_{\rm thermal}\)</span> goes to <strong>all electrons</strong>, of
+which, only <span class="math notranslate nohighlight">\(\delta \epsilon_e U_{\rm thermal}\)</span> goes to the thermal electrons, and
+<span class="math notranslate nohighlight">\((1-\delta) \epsilon_e U_{\rm thermal}\)</span> goes to a non-thermal population of electrons. In this case,
+the normalization of the thermal electron distribution is modified by a factor of <span class="math notranslate nohighlight">\(\delta\)</span>.</p>
+</div>
+</section>
+<section id="mixed-distributions">
+<h4>Mixed Distributions<a class="headerlink" href="#mixed-distributions" title="Link to this heading">#</a></h4>
+<p>In some scenarios, one encounters both a thermal and non-thermal population of electrons. In this case, equipartition is
+made somewhat more subtle on the basis that the fraction of the electrons which are / are not relativistic is
+a free parameter. We therefore introduce the <span class="math notranslate nohighlight">\(\delta\)</span> parameter to represent the fraction of the electron
+energy in the <strong>thermal</strong> population. In this case,</p>
+<div class="math notranslate nohighlight">
+\[U_{\rm e,\;thermal} = \delta \epsilon_e U_{\rm thermal}, \;\; U_{\rm e,\;non-thermal} = (1-\delta) \epsilon_e U_{\rm thermal}.\]</div>
+<p>In this case, the normalization of the thermal and non-thermal electron distributions are given by</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+N_{0,\;thermal} &amp;= \frac{\delta \epsilon_e U_{\rm thermal}}{m_e c^2 \Theta} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+N_{0,\;non-thermal} &amp;= \frac{(1-\delta) \epsilon_e U_{\rm thermal}}{m_e c^2 M^{(1)}_{\gamma}}.
+\end{aligned}\end{split}\]</div>
+<p>and, in terms of the <span class="math notranslate nohighlight">\(B\)</span> field,</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}\begin{aligned}
+N_{0,\;thermal} &amp;= \frac{B^2}{8 \pi m_e c^2 \Theta}\frac{\delta \epsilon_e}{\epsilon_B} \left(\frac{4+5\Theta}{6+15\Theta}\right), \\
+N_{0,\;non-thermal} &amp;= \frac{B^2}{8 \pi m_e c^2}\frac{(1-\delta) \epsilon_e}{\epsilon_B} \left(\frac{1}{M^{(1)}_{\gamma}}\right).
+\end{aligned}\end{split}\]</div>
+<hr class="docutils" />
+</section>
+</section>
 <section id="cooling-of-electrons">
-<span id="electron-cooling"></span><h3><a class="toc-backref" href="#id34" role="doc-backlink">Cooling of Electrons</a><a class="headerlink" href="#cooling-of-electrons" title="Link to this heading">#</a></h3>
+<span id="electron-cooling"></span><h3><a class="toc-backref" href="#id47" role="doc-backlink">Cooling of Electrons</a><a class="headerlink" href="#cooling-of-electrons" title="Link to this heading">#</a></h3>
 <div class="admonition hint">
 <p class="admonition-title">Hint</p>
 <p>For a much more detailed discussion of electron cooling, including all of the relevant theory which
-is applied in Triceratops, see <a class="reference internal" href="synchrotron_cooling_theory.html#synchrotron-cooling-theory"><span class="std std-ref">Theory of Synchrotron Electron Populations</span></a>.</p>
+is applied in Triceratops, see <a class="reference internal" href="synchrotron_cooling_theory.html#synchrotron-cooling-theory"><span class="std std-ref">Theory Note: Electron Populations</span></a>.</p>
 </div>
 <p>As a population, relativistic electrons will cool and thereby evolve away from their injected energy distribution.
 This evolution can imprint additional spectral breaks and modify the normalization of the synchrotron emission.</p>
@@ -1440,13 +1711,13 @@ method for the associated API.</p>
 </section>
 </section>
 <section id="absorption-processes-in-synchrotron-radiation">
-<h2><a class="toc-backref" href="#id35" role="doc-backlink">Absorption Processes in Synchrotron Radiation</a><a class="headerlink" href="#absorption-processes-in-synchrotron-radiation" title="Link to this heading">#</a></h2>
+<h2><a class="toc-backref" href="#id48" role="doc-backlink">Absorption Processes in Synchrotron Radiation</a><a class="headerlink" href="#absorption-processes-in-synchrotron-radiation" title="Link to this heading">#</a></h2>
 <p>It is not always the case that radiation observed by an observer is simply the emitted synchrotron radiation; it may
 be modified by absorption processes in the emitting plasma or along the line of sight. Two important absorption
 processes that can affect synchrotron radiation are synchrotron self-absorption (SSA) and free-free absorption.</p>
 <p>In this section, we’ll discuss both processes and derive the critical results.</p>
 <section id="synchrotron-self-absorption">
-<span id="ssa"></span><h3><a class="toc-backref" href="#id36" role="doc-backlink">Synchrotron Self-Absorption</a><a class="headerlink" href="#synchrotron-self-absorption" title="Link to this heading">#</a></h3>
+<span id="ssa"></span><h3><a class="toc-backref" href="#id49" role="doc-backlink">Synchrotron Self-Absorption</a><a class="headerlink" href="#synchrotron-self-absorption" title="Link to this heading">#</a></h3>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The presentation given here ignores the effects of extreme electron cooling on SSA. A theory note
@@ -1479,7 +1750,7 @@ coefficient is</p>
 \int_{\gamma_{\min}}^{\gamma_{\max}}
 N(\gamma)\,B(\gamma,\nu)\,d\gamma.\]</div>
 <p>At first glance, <span class="math notranslate nohighlight">\(B(\gamma,\nu)\)</span> appears to be an independent and complicated quantity.
-However, it may be related directly to the emissivity using <a class="reference external" href="https://en.wikipedia.org/wiki/Detailed_balance">**detailed balance**</a>.
+However, it may be related directly to the emissivity using <a class="reference external" href="https://en.wikipedia.org/wiki/Detailed_balance">detailed balance</a>.
 For synchrotron radiation, electrons occupy a continuum of energies rather than discrete levels.
 Nevertheless, the logic of Einstein coefficients still applies if we treat each infinitesimal
 energy interval as an effective “state.”</p>
@@ -1491,9 +1762,9 @@ energy interval as an effective “state.”</p>
 <p>Detailed balance requires that, in thermodynamic equilibrium, the rates of absorption and
 stimulated emission balance the spontaneous emission. This condition allows the absorption
 coefficient to be written <em>entirely</em> in terms of the synchrotron emission power
-(see Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id20" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, Chapter 6):</p>
-<div class="math notranslate nohighlight">
-\[\boxed{
+(see Rybicki and Lightman<a class="footnote-reference brackets" href="#footcite-rybickilightman" id="id30" role="doc-noteref"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></a>, Chapter 6):</p>
+<div class="math notranslate nohighlight" id="equation-eq-alpha-nu">
+<span class="eqno">(2)<a class="headerlink" href="#equation-eq-alpha-nu" title="Link to this equation">#</a></span>\[\boxed{
 \alpha_\nu
 =
 -\frac{1}{8\pi m_e \nu^2}
@@ -1518,7 +1789,7 @@ higher-energy states, ensuring a net upward transition rate.</p>
 </div>
 </section>
 <section id="the-ssa-spectrum">
-<h3><a class="toc-backref" href="#id37" role="doc-backlink">The SSA Spectrum</a><a class="headerlink" href="#the-ssa-spectrum" title="Link to this heading">#</a></h3>
+<h3><a class="toc-backref" href="#id50" role="doc-backlink">The SSA Spectrum</a><a class="headerlink" href="#the-ssa-spectrum" title="Link to this heading">#</a></h3>
 <p>From radiative transfer theory, the specific intensity emerging from a homogeneous synchrotron
 source of path length <span class="math notranslate nohighlight">\(L\)</span> is</p>
 <div class="math notranslate nohighlight">
@@ -1558,8 +1829,8 @@ from a synchrotron source including SSA effects.</p>
 \[c_6(p) = \sqrt{3} \frac{\pi}{72} em_e^5 c^{10} \left(p+\frac{10}{3}\right) \Gamma\left(\frac{3p+2}{12}\right) \Gamma\left(\frac{3p+10}{12}\right).\]</div>
 <p>With this, the absorption coefficient for a power-law distribution of electrons is</p>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-10" name="sd-tab-set-5" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-10">
+<input checked="checked" id="sd-tab-item-12" name="sd-tab-set-6" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-12">
 Lorentz Factor Distribution</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[\alpha_\nu
@@ -1568,8 +1839,8 @@ c_6(p)\,N_0\,(m_e c^2)^{p-1}
 (B\sin\alpha)^{(p+2)/2}
 \left(\frac{\nu}{2 c_1}\right)^{-(p+4)/2},\]</div>
 </div>
-<input id="sd-tab-item-11" name="sd-tab-set-5" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-11">
+<input id="sd-tab-item-13" name="sd-tab-set-6" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-13">
 Energy Distribution</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[\alpha_\nu
@@ -1588,7 +1859,7 @@ between (i) the <strong>frequency scaling</strong> of <span class="math notransl
 defining <span class="math notranslate nohighlight">\(\alpha_\nu\)</span> in Lorentz factor.</p>
 <p class="sd-card-text">Starting from the exact expression,</p>
 <div class="math notranslate nohighlight" id="equation-eq-ssa-exact">
-<span class="eqno">(2)<a class="headerlink" href="#equation-eq-ssa-exact" title="Link to this equation">#</a></span>\[\alpha_\nu
+<span class="eqno">(3)<a class="headerlink" href="#equation-eq-ssa-exact" title="Link to this equation">#</a></span>\[\alpha_\nu
 =
 -\frac{1}{8\pi m_e \nu^2}
 \int d\gamma \;
@@ -1651,7 +1922,7 @@ refers to the <em>support of the absorption integral</em>, not to the emission s
 <p>From our discussion in the previous section, we know that</p>
 <div class="math notranslate nohighlight">
 \[\tau_\nu = \frac{\alpha_\nu}{\alpha_{\nu_a}} = \left(\frac{\nu}{\nu_a}\right)^{-(p+4)/2}.\]</div>
-<p>And therefore, the specific intensity including SSA effects is (e.g. DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id21" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>)</p>
+<p>And therefore, the specific intensity including SSA effects is (e.g. DeMarchi <em>et al.</em><a class="footnote-reference brackets" href="#footcite-demarchiradioanalysissn2004c2022" id="id31" role="doc-noteref"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></a>)</p>
 <div class="math notranslate nohighlight">
 \[I_\nu = S_\nu(\nu_a) J_\nu(y, p),\]</div>
 <p>where</p>
@@ -1662,14 +1933,14 @@ y = \frac{\nu}{\nu_a}.\]</div>
 <p>Assuming some known path length <span class="math notranslate nohighlight">\(\ell\)</span>, one can compute <span class="math notranslate nohighlight">\(\nu_a\)</span> from the condition <span class="math notranslate nohighlight">\(\alpha_{\nu_a} \ell = 1\)</span>.
 This implies that</p>
 <div class="sd-tab-set docutils">
-<input checked="checked" id="sd-tab-item-12" name="sd-tab-set-6" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-12">
+<input checked="checked" id="sd-tab-item-14" name="sd-tab-set-7" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-14">
 Lorentz Factor Distribution</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[\nu_a = 2c_1 \left(c_6 \ell\right)^{2/(p+4)} \left(N_0 (m_e c^2)^{p-1}\right)^{2/(p+4)} (B\sin\alpha)^{(p+2)/(p+4)}.\]</div>
 </div>
-<input id="sd-tab-item-13" name="sd-tab-set-6" type="radio">
-<label class="sd-tab-label" for="sd-tab-item-13">
+<input id="sd-tab-item-15" name="sd-tab-set-7" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-15">
 Energy Distribution</label><div class="sd-tab-content docutils">
 <div class="math notranslate nohighlight">
 \[\nu_a = 2c_1 \left(c_6 \ell\right)^{2/(p+4)} \left(N_{0,E}\right)^{2/(p+4)} (B\sin\alpha)^{(p+2)/(p+4)}.\]</div>
@@ -1682,6 +1953,44 @@ Energy Distribution</label><div class="sd-tab-content docutils">
 any set of assumptions about the behavior of the underlying electrons, the corresponding SSA frequency may be quite
 different.</p>
 </div>
+</section>
+<section id="ssa-in-thermal-electron-distributions">
+<h4>SSA In Thermal Electron Distributions<a class="headerlink" href="#ssa-in-thermal-electron-distributions" title="Link to this heading">#</a></h4>
+<p>For a thermal distribution of electrons (Maxwell-Juttner), the absorption coefficient may be obtained using the same
+integral forms as used in the emissivity case. Formally, we return to equation <a class="reference internal" href="#equation-eq-alpha-nu">(2)</a> and substitute
+the Maxwell-Juttner distribution to compute <span class="math notranslate nohighlight">\(\alpha_\nu\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu
+=
+-\frac{1}{8\pi m_e \nu^2}
+\int_0^\infty
+P(\nu,\gamma)\,
+\gamma^2
+\frac{\partial}{\partial\gamma}
+\left[
+    \frac{1}{\gamma^2}
+    N_0 \frac{\gamma^2 \beta}{\Theta K_2(1/\Theta)} e^{-\gamma/\Theta}
+\right]
+d\gamma.\]</div>
+<p>In the ultra-relativistic limit (<span class="math notranslate nohighlight">\(\Theta \gg 1\)</span>, and <span class="math notranslate nohighlight">\(\beta \sim 1\)</span>), the absorption coefficient
+simplifies to<a class="footnote-reference brackets" href="#footcite-margalitthermalelectronsmildlyrelativistic2021" id="id32" role="doc-noteref"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></a></p>
+<div class="math notranslate nohighlight">
+\[\alpha_\nu = \frac{\pi}{3^{3/2}} \frac{q N_0}{\Theta^5 B \sin \alpha} f(\Theta) x^{-1} I(x),\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[x = \frac{\nu}{\nu_\Theta} = \frac{4\pi m_e c \nu}{3 e B \sin\alpha \Theta^2}.\]</div>
+<p>As before, the pitch-angle averaged absorption coefficient is</p>
+<div class="math notranslate nohighlight">
+\[\langle\alpha_\nu\rangle_\alpha = \frac{\pi}{3^{3/2}} \frac{q N_0}{\Theta^5 B } f(\Theta) \left(x'\right)^{-1} I'(x'),\]</div>
+<p>where</p>
+<div class="math notranslate nohighlight">
+\[x' = \frac{\nu}{\nu'_\Theta} = \frac{4\pi m_e c \nu}{3 e B \Theta^2}.\]</div>
+<p>Unlike the non-thermal distribution case, in which we had to explicitly calculate the source function, we may
+instead invoke Kirchhoff’s law to determine the source function for a thermal distribution of electrons. Since the
+electrons are in thermal equilibrium, the source function must be the Planck function:</p>
+<div class="math notranslate nohighlight">
+\[S_\nu = B_\nu(T) = \frac{2 h \nu^3}{c^2} \frac{1}{e^{h\nu/k_B T} - 1}.\]</div>
+<p>The calculation of the SSA frequency and resulting specific intensity then follow as before.</p>
 </section>
 <section id="approximate-methods">
 <h4>Approximate Methods<a class="headerlink" href="#approximate-methods" title="Link to this heading">#</a></h4>
@@ -1760,8 +2069,8 @@ constants into a single fudge factor as described above. This <strong>includes</
 </section>
 </section>
 <section id="references">
-<h2><a class="toc-backref" href="#id38" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
-<div class="docutils container" id="id22">
+<h2><a class="toc-backref" href="#id51" role="doc-backlink">References</a><a class="headerlink" href="#references" title="Link to this heading">#</a></h2>
+<div class="docutils container" id="id33">
 <aside class="footnote-list brackets">
 <aside class="footnote brackets" id="footcite-1970ranp-book-p" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>1<span class="fn-bracket">]</span></span>
@@ -1770,17 +2079,17 @@ constants into a single fudge factor as described above. This <strong>includes</
 </aside>
 <aside class="footnote brackets" id="footcite-rybickilightman" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>2<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id9">4</a>,<a role="doc-backlink" href="#id10">5</a>,<a role="doc-backlink" href="#id20">6</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id2">1</a>,<a role="doc-backlink" href="#id3">2</a>,<a role="doc-backlink" href="#id4">3</a>,<a role="doc-backlink" href="#id9">4</a>,<a role="doc-backlink" href="#id10">5</a>,<a role="doc-backlink" href="#id30">6</a>)</span>
 <p>George B. Rybicki and Alan P. Lightman. <em>Radiative processes in astrophysics</em>. John Wiley &amp; Sons, 1979.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-demarchiradioanalysissn2004c2022" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>3<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id18">2</a>,<a role="doc-backlink" href="#id21">3</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id6">1</a>,<a role="doc-backlink" href="#id24">2</a>,<a role="doc-backlink" href="#id31">3</a>)</span>
 <p>Lindsay DeMarchi, R. Margutti, J. Dittman, A. Brunthaler, D. Milisavljevic, Michael F. Bietenholz, C. Stauffer, D. Brethauer, D. Coppejans, K. Auchettl, K. D. Alexander, C. D. Kilpatrick, Joe S. Bright, L. Z. Kelley, Michael C. Stroh, and W. V. Jacobson-Galán. Radio Analysis of SN2004C Reveals an Unusual CSM Density Profile as a Harbinger of Core Collapse. <em>The Astrophysical Journal</em>, 938(1):84, October 2022. <a class="reference external" href="https://doi.org/10.3847/1538-4357/ac8c26">doi:10.3847/1538-4357/ac8c26</a>.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-margutti2019cow" role="doc-footnote">
 <span class="label"><span class="fn-bracket">[</span>4<span class="fn-bracket">]</span></span>
-<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id17">2</a>)</span>
+<span class="backrefs">(<a role="doc-backlink" href="#id7">1</a>,<a role="doc-backlink" href="#id23">2</a>)</span>
 <p>R. Margutti, B. D. Metzger, R. Chornock, I. Vurm, N. Roth, B. W. Grefenstette, V. Savchenko, R. Cartier, J. F. Steiner, G. Terreran, B. Margalit, G. Migliori, D. Milisavljevic, K. D. Alexander, M. Bietenholz, P. K. Blanchard, E. Bozzo, D. Brethauer, I. V. Chilingarian, D. L. Coppejans, L. Ducci, C. Ferrigno, W. Fong, D. Götz, C. Guidorzi, A. Hajela, K. Hurley, E. Kuulkers, P. Laurent, S. Mereghetti, M. Nicholl, D. Patnaude, P. Ubertini, J. Banovetz, N. Bartel, E. Berger, E. R. Coughlin, T. Eftekhari, D. D. Frederiks, A. V. Kozlova, T. Laskar, D. S. Svinkin, M. R. Drout, A. MacFadyen, and K. Paterson. An Embedded X-Ray Source Shines through the Aspherical AT 2018cow: Revealing the Inner Workings of the Most Luminous Fast-evolving Optical Transients. <em>\apj </em>, 872(1):18, February 2019. <a class="reference external" href="https://arxiv.org/abs/1810.10720">arXiv:1810.10720</a>, <a class="reference external" href="https://doi.org/10.3847/1538-4357/aafa01">doi:10.3847/1538-4357/aafa01</a>.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-caprioliparticleaccelerationshocks2023" role="doc-footnote">
@@ -1795,21 +2104,44 @@ constants into a single fudge factor as described above. This <strong>includes</
 <span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id13">7</a><span class="fn-bracket">]</span></span>
 <p>Daniel Zwillinger. <em>CRC standard mathematical tables and formulae</em>. chapman and hall/CRC, 2002.</p>
 </aside>
+<aside class="footnote brackets" id="footcite-1996apj-465-327m" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>8<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id14">1</a>,<a role="doc-backlink" href="#id15">2</a>,<a role="doc-backlink" href="#id16">3</a>,<a role="doc-backlink" href="#id17">4</a>)</span>
+<p>Rohan Mahadevan, Ramesh Narayan, and Insu Yi. Harmony in Electrons: Cyclotron and Synchrotron Emission by Thermal Electrons in a Magnetic Field. <em>\apj </em>, 465:327, July 1996. <a class="reference external" href="https://arxiv.org/abs/astro-ph/9601073">arXiv:astro-ph/9601073</a>, <a class="reference external" href="https://doi.org/10.1086/177422">doi:10.1086/177422</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-margalitthermalelectronsmildlyrelativistic2021" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>9<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id18">1</a>,<a role="doc-backlink" href="#id32">2</a>)</span>
+<p>Ben Margalit and Eliot Quataert. Thermal Electrons in Mildly-relativistic Synchrotron Blast-waves. <em>The Astrophysical Journal Letters</em>, 923(1):L14, December 2021. arXiv:2111.00012 [astro-ph]. URL: <a class="reference external" href="http://arxiv.org/abs/2111.00012">http://arxiv.org/abs/2111.00012</a> (visited on 2026-04-28), <a class="reference external" href="https://doi.org/10.3847/2041-8213/ac3d97">doi:10.3847/2041-8213/ac3d97</a>.</p>
+</aside>
 <aside class="footnote brackets" id="footcite-chevalier1998synchrotronselfabsorption" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id14">8</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id20">10</a><span class="fn-bracket">]</span></span>
 <p>Roger A. Chevalier. Synchrotron Self-Absorption in Radio Supernovae. <em>\apj </em>, 499(2):810–819, May 1998. <a class="reference external" href="https://doi.org/10.1086/305676">doi:10.1086/305676</a>.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-chevalierfranssonhandbook" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id15">9</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id21">11</a><span class="fn-bracket">]</span></span>
 <p>Roger A. Chevalier and Claes Fransson. Thermal and nonthermal emission from circumstellar interaction. In Athem W. Alsabti and Paul Murdin, editors, <em>Handbook of supernovae</em>, pages 1–63. Springer International Publishing, Cham, 2017. URL: <a class="reference external" href="https://doi.org/10.1007/978-3-319-20794-0_34-1">https://doi.org/10.1007/978-3-319-20794-0_34-1</a>, <a class="reference external" href="https://doi.org/10.1007/978-3-319-20794-0_34-1">doi:10.1007/978-3-319-20794-0_34-1</a>.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-pacholczyk1970" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id16">10</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id22">12</a><span class="fn-bracket">]</span></span>
 <p>A. G. Pacholczyk. <em>Radio astrophysics. Nonthermal processes in galactic and extragalactic sources</em>. W.H. Freeman, 1970.</p>
 </aside>
 <aside class="footnote brackets" id="footcite-wudelayedradioemission2025" role="doc-footnote">
-<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id19">11</a><span class="fn-bracket">]</span></span>
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id25">13</a><span class="fn-bracket">]</span></span>
 <p>Samantha C. Wu, Daichi Tsuna, Brenna Mockler, and Anthony L. Piro. Delayed radio emission in tidal disruption events from collisions of outflows driven by disk instabilities. November 2025. ADS Bibcode: 2025arXiv251114008W. URL: <a class="reference external" href="https://ui.adsabs.harvard.edu/abs/2025arXiv251114008W">https://ui.adsabs.harvard.edu/abs/2025arXiv251114008W</a> (visited on 2025-11-19).</p>
+</aside>
+<aside class="footnote brackets" id="footcite-1998apj-498-313g" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span>14<span class="fn-bracket">]</span></span>
+<span class="backrefs">(<a role="doc-backlink" href="#id26">1</a>,<a role="doc-backlink" href="#id29">2</a>)</span>
+<p>Charles F. Gammie and Robert Popham. Advection-dominated Accretion Flows in the Kerr Metric. I. Basic Equations. <em>\apj </em>, 498(1):313–326, May 1998. <a class="reference external" href="https://arxiv.org/abs/astro-ph/9705117">arXiv:astro-ph/9705117</a>, <a class="reference external" href="https://doi.org/10.1086/305521">doi:10.1086/305521</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-2000apj-541-234o" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id27">15</a><span class="fn-bracket">]</span></span>
+<p>Feryal Özel, Dimitrios Psaltis, and Ramesh Narayan. Hybrid Thermal-Nonthermal Synchrotron Emission from Hot Accretion Flows. <em>\apj </em>, 541(1):234–249, September 2000. <a class="reference external" href="https://arxiv.org/abs/astro-ph/0004195">arXiv:astro-ph/0004195</a>, <a class="reference external" href="https://doi.org/10.1086/309396">doi:10.1086/309396</a>.</p>
+</aside>
+<aside class="footnote brackets" id="footcite-chandrasekhar1957introduction" role="doc-footnote">
+<span class="label"><span class="fn-bracket">[</span><a role="doc-backlink" href="#id28">16</a><span class="fn-bracket">]</span></span>
+<p>Subrahmanyan Chandrasekhar and Subrahmanyan Chandrasekhar. <em>An introduction to the study of stellar structure</em>. Volume 2. Courier Corporation, 1957.</p>
 </aside>
 </aside>
 </div>
@@ -1836,7 +2168,7 @@ constants into a single fudge factor as described above. This <strong>includes</
       </div>
     </a>
     <a class="right-next"
-       href="synchrotron_sed_theory.html"
+       href="synchrotron_pl_sed_theory.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
@@ -1861,8 +2193,8 @@ constants into a single fudge factor as described above. This <strong>includes</
     class="page-toc tocsection onthispage">
     <i class="fa-solid fa-list"></i> On this page
   </div>
-  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
-    <ul class="visible nav section-nav flex-column">
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-from-a-single-electron">Synchrotron From a Single Electron</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-cyclotron-frequency">The Cyclotron Frequency</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-power">Synchrotron Power</a></li>
@@ -1875,6 +2207,10 @@ constants into a single fudge factor as described above. This <strong>includes</
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#emissivity">Emissivity</a></li>
 </ul>
 </li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-electrons">Thermal Electrons</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#id19">Emissivity</a></li>
+</ul>
+</li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conventions-in-the-literature">Conventions in the Literature</a></li>
 </ul>
 </li>
@@ -1882,6 +2218,11 @@ constants into a single fudge factor as described above. This <strong>includes</
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#equipartition">Equipartition</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#power-law-electron-distributions">Power-Law Electron Distributions</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#equipartition-for-power-law-distributions">Equipartition for Power-Law Distributions</a></li>
+</ul>
+</li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#thermal-electron-distributions">Thermal Electron Distributions</a><ul class="nav section-nav flex-column">
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#equipartition-for-thermal-electron-distributions">Equipartition for Thermal Electron Distributions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#mixed-distributions">Mixed Distributions</a></li>
 </ul>
 </li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cooling-of-electrons">Cooling of Electrons</a><ul class="nav section-nav flex-column">
@@ -1895,6 +2236,7 @@ constants into a single fudge factor as described above. This <strong>includes</
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#synchrotron-self-absorption">Synchrotron Self-Absorption</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-ssa-spectrum">The SSA Spectrum</a><ul class="nav section-nav flex-column">
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ssa-in-power-law-electron-distributions">SSA In Power-Law Electron Distributions</a></li>
+<li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#ssa-in-thermal-electron-distributions">SSA In Thermal Electron Distributions</a></li>
 <li class="toc-h4 nav-item toc-entry"><a class="reference internal nav-link" href="#approximate-methods">Approximate Methods</a></li>
 </ul>
 </li>
@@ -1905,13 +2247,13 @@ constants into a single fudge factor as described above. This <strong>includes</
   </nav></div>
 
   <div class="sidebar-secondary-item">
-  <div role="note" aria-label="source link">
-    <h3>This Page</h3>
-    <ul class="this-page-menu">
-      <li><a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_theory.rst.txt"
-            rel="nofollow">Show Source</a></li>
-    </ul>
-   </div></div>
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/synchrotron/synchrotron_theory.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
 
 </div></div>
               
@@ -1926,8 +2268,8 @@ constants into a single fudge factor as described above. This <strong>includes</
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
-<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=0790524f97105ba85085"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=0790524f97105ba85085"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1961,7 +2303,7 @@ constants into a single fudge factor as described above. This <strong>includes</
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.16.1.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.18.0.
 </p></div>
       
     </div>
