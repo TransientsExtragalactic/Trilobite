@@ -82,7 +82,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.9", "3.10", "3.11"]
+        python-version: ["3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
       - uses: actions/checkout@v4
       - name: Set up Python
@@ -90,7 +90,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - name: Install build dependencies
-        run: pip install "numpy>=1.22,<2.0.0" "Cython>=0.29"
+        run: pip install "numpy>=1.26" "Cython>=3.0"
       - name: Build Cython extensions
         run: python setup.py build_ext --inplace
       - name: Install test dependencies

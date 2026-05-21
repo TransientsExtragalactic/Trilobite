@@ -11,6 +11,7 @@ an engine for forward modeling of astrophysical transients.
 """
 
 from abc import ABC, abstractmethod
+from typing import Union
 
 from triceratops._typing import _UnitBearingArrayLike
 
@@ -53,7 +54,7 @@ class ShockEngine(ABC):
         the :class:`ShockEngine` abstraction.
     """
 
-    _STATE_CLASS: "type | None" = None
+    _STATE_CLASS: "Union[type, None]" = None
 
     # =========================================== #
     # Initialization                              #

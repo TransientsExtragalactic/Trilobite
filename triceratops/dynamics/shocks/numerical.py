@@ -1144,42 +1144,42 @@ class MechanicalShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     # Evolved dynamical state                                             #
     # ------------------------------------------------------------------ #
-    radius: np.ndarray | u.Quantity
+    radius: Union[np.ndarray, u.Quantity]
     r"""
     Contact-discontinuity radius :math:`R_{\rm cd}` in cm.
     """
 
-    velocity: np.ndarray | u.Quantity
+    velocity: Union[np.ndarray, u.Quantity]
     r"""
     Contact-discontinuity velocity :math:`v_{\rm cd}` in cm/s.
     """
 
-    mass_2: np.ndarray | u.Quantity
+    mass_2: Union[np.ndarray, u.Quantity]
     r"""
     Shocked ejecta mass :math:`M_2` in g.
     """
 
-    mass_3: np.ndarray | u.Quantity
+    mass_3: Union[np.ndarray, u.Quantity]
     r"""
     Shocked CSM mass :math:`M_3` in g.
     """
 
-    energy_2: np.ndarray | u.Quantity
+    energy_2: Union[np.ndarray, u.Quantity]
     r"""
     Internal energy of the shocked ejecta, :math:`U_2`, in erg.
     """
 
-    energy_3: np.ndarray | u.Quantity
+    energy_3: Union[np.ndarray, u.Quantity]
     r"""
     Internal energy of the shocked CSM, :math:`U_3`, in erg.
     """
 
-    width_2: np.ndarray | u.Quantity
+    width_2: Union[np.ndarray, u.Quantity]
     r"""
     Effective shocked-ejecta width :math:`\Delta_2 = R_{\rm cd}-R_{\rm rs}` in cm.
     """
 
-    width_3: np.ndarray | u.Quantity
+    width_3: Union[np.ndarray, u.Quantity]
     r"""
     Effective shocked-CSM width :math:`\Delta_3 = R_{\rm fs}-R_{\rm cd}` in cm.
     """
@@ -1187,22 +1187,22 @@ class MechanicalShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     # Shock geometry and kinematics                                       #
     # ------------------------------------------------------------------ #
-    radius_rs: np.ndarray | u.Quantity
+    radius_rs: Union[np.ndarray, u.Quantity]
     r"""
     Reverse-shock radius :math:`R_{\rm rs} = R_{\rm cd}-\Delta_2` in cm.
     """
 
-    radius_fs: np.ndarray | u.Quantity
+    radius_fs: Union[np.ndarray, u.Quantity]
     r"""
     Forward-shock radius :math:`R_{\rm fs} = R_{\rm cd}+\Delta_3` in cm.
     """
 
-    velocity_rs: np.ndarray | u.Quantity
+    velocity_rs: Union[np.ndarray, u.Quantity]
     r"""
     Reverse-shock speed :math:`D_{\rm rs}` in cm/s.
     """
 
-    velocity_fs: np.ndarray | u.Quantity
+    velocity_fs: Union[np.ndarray, u.Quantity]
     r"""
     Forward-shock speed :math:`D_{\rm fs}` in cm/s.
     """
@@ -1210,43 +1210,43 @@ class MechanicalShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     # Region-averaged thermodynamics                                     #
     # ------------------------------------------------------------------ #
-    volume_2: np.ndarray | u.Quantity
+    volume_2: Union[np.ndarray, u.Quantity]
     r"""
     Effective shocked-ejecta volume :math:`V_2 \simeq 4\pi R_{\rm cd}^2\Delta_2`
     in cm³.
     """
 
-    volume_3: np.ndarray | u.Quantity
+    volume_3: Union[np.ndarray, u.Quantity]
     r"""
     Effective shocked-CSM volume :math:`V_3 \simeq 4\pi R_{\rm cd}^2\Delta_3`
     in cm³.
     """
 
-    density_2: np.ndarray | u.Quantity
+    density_2: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-ejecta density :math:`\bar{\rho}_2 = M_2/V_2`
     in g/cm³.
     """
 
-    density_3: np.ndarray | u.Quantity
+    density_3: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-CSM density :math:`\bar{\rho}_3 = M_3/V_3`
     in g/cm³.
     """
 
-    pressure_2: np.ndarray | u.Quantity
+    pressure_2: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-ejecta pressure
     :math:`P_2 = (\gamma_2-1)U_2/V_2` in dyn/cm².
     """
 
-    pressure_3: np.ndarray | u.Quantity
+    pressure_3: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-CSM pressure
     :math:`P_3 = (\gamma_3-1)U_3/V_3` in dyn/cm².
     """
 
-    temperature_2: np.ndarray | u.Quantity
+    temperature_2: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-ejecta temperature
 
@@ -1262,7 +1262,7 @@ class MechanicalShockState(NamedTuple):
     Returned in K.
     """
 
-    temperature_3: np.ndarray | u.Quantity
+    temperature_3: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-CSM temperature
 
@@ -1278,19 +1278,19 @@ class MechanicalShockState(NamedTuple):
     Returned in K.
     """
 
-    thermal_energy_density_2: np.ndarray | u.Quantity
+    thermal_energy_density_2: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-ejecta thermal energy density
     :math:`e_2 = U_2/V_2` in erg/cm³.
     """
 
-    thermal_energy_density_3: np.ndarray | u.Quantity
+    thermal_energy_density_3: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-CSM thermal energy density
     :math:`e_3 = U_3/V_3` in erg/cm³.
     """
 
-    sound_speed_2: np.ndarray | u.Quantity
+    sound_speed_2: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-ejecta sound speed
 
@@ -1304,7 +1304,7 @@ class MechanicalShockState(NamedTuple):
     Returned in cm/s.
     """
 
-    sound_speed_3: np.ndarray | u.Quantity
+    sound_speed_3: Union[np.ndarray, u.Quantity]
     r"""
     Volume-averaged shocked-CSM sound speed
 
@@ -1321,7 +1321,7 @@ class MechanicalShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     # Instantaneous reverse-shock jump diagnostics                        #
     # ------------------------------------------------------------------ #
-    jump_density_rs: np.ndarray | u.Quantity
+    jump_density_rs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock density at the reverse shock in g/cm³.
 
@@ -1329,7 +1329,7 @@ class MechanicalShockState(NamedTuple):
     volume-averaged density of Region 2.
     """
 
-    jump_pressure_rs: np.ndarray | u.Quantity
+    jump_pressure_rs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock pressure at the reverse shock in dyn/cm².
 
@@ -1337,7 +1337,7 @@ class MechanicalShockState(NamedTuple):
     volume-averaged pressure of Region 2.
     """
 
-    jump_temperature_rs: np.ndarray | u.Quantity
+    jump_temperature_rs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock temperature at the reverse shock in K.
 
@@ -1346,7 +1346,7 @@ class MechanicalShockState(NamedTuple):
     temperature.
     """
 
-    jump_thermal_energy_density_rs: np.ndarray | u.Quantity
+    jump_thermal_energy_density_rs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock thermal energy density at the reverse shock in
     erg/cm³.
@@ -1355,7 +1355,7 @@ class MechanicalShockState(NamedTuple):
     # ------------------------------------------------------------------ #
     # Instantaneous forward-shock jump diagnostics                        #
     # ------------------------------------------------------------------ #
-    jump_density_fs: np.ndarray | u.Quantity
+    jump_density_fs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock density at the forward shock in g/cm³.
 
@@ -1363,7 +1363,7 @@ class MechanicalShockState(NamedTuple):
     volume-averaged density of Region 3.
     """
 
-    jump_pressure_fs: np.ndarray | u.Quantity
+    jump_pressure_fs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock pressure at the forward shock in dyn/cm².
 
@@ -1371,7 +1371,7 @@ class MechanicalShockState(NamedTuple):
     volume-averaged pressure of Region 3.
     """
 
-    jump_temperature_fs: np.ndarray | u.Quantity
+    jump_temperature_fs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock temperature at the forward shock in K.
 
@@ -1380,7 +1380,7 @@ class MechanicalShockState(NamedTuple):
     temperature.
     """
 
-    jump_thermal_energy_density_fs: np.ndarray | u.Quantity
+    jump_thermal_energy_density_fs: Union[np.ndarray, u.Quantity]
     r"""
     Immediate post-shock thermal energy density at the forward shock in
     erg/cm³.
@@ -1737,9 +1737,9 @@ class MechanicalShockEngine(ShockEngine):
         u_4: Callable,
         gamma_2: float = 5 / 3,
         gamma_3: float = 5 / 3,
-        cooling_2: "Callable | None" = None,
-        cooling_3: "Callable | None" = None,
-        M1_total: "float | None" = None,
+        cooling_2: "Union[Callable, None]" = None,
+        cooling_3: "Union[Callable, None]" = None,
+        M1_total: "Union[float, None]" = None,
     ) -> Callable:
         r"""
         Build the ODE right-hand side for the mechanical shock model.
@@ -1922,9 +1922,9 @@ class MechanicalShockEngine(ShockEngine):
         t_0: "_UnitBearingScalarLike" = 1.0 * u.s,
         gamma_2: float = 5 / 3,
         gamma_3: float = 5 / 3,
-        cooling_2: "Callable | None" = None,
-        cooling_3: "Callable | None" = None,
-        M1_total: "float | None" = None,
+        cooling_2: "Union[Callable, None]" = None,
+        cooling_3: "Union[Callable, None]" = None,
+        M1_total: "Union[float, None]" = None,
         **kwargs,
     ) -> MechanicalShockState:
         r"""
@@ -2089,9 +2089,9 @@ class MechanicalShockEngine(ShockEngine):
         t_0: float = 1.0,
         gamma_2: float = 5 / 3,
         gamma_3: float = 5 / 3,
-        cooling_2: "Callable | None" = None,
-        cooling_3: "Callable | None" = None,
-        M1_total: "float | None" = None,
+        cooling_2: "Union[Callable, None]" = None,
+        cooling_3: "Union[Callable, None]" = None,
+        M1_total: "Union[float, None]" = None,
         **kwargs,
     ) -> MechanicalShockState:
         r"""

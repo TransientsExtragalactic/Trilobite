@@ -7,7 +7,7 @@ requires = [
   "setuptools>=61.2",
   "setuptools_scm[toml]>=6.2",
   "oldest-supported-numpy",
-  "Cython>=0.29",
+  "Cython>=3.0",
 ]
 build-backend = "setuptools.build_meta"
 
@@ -27,11 +27,16 @@ readme = "README.md"
 requires-python = ">=3.9"
 classifiers = [
   "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
   "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
   "Operating System :: OS Independent",
 ]
 dependencies = [
-  "numpy>=1.22,<2.0.0", # This ensures we don't have C header issues.
+  "numpy>=1.26",
   "unyt>=2.9",
   "h5py>=3.0",
   "scipy>=1.10",
