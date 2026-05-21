@@ -22,7 +22,7 @@ from GitHub and install it using pip. Here are the steps:
 
    .. code-block::
 
-        git clone https://github.com/TransientsExtragalactic/Triceratops
+        git clone https://github.com/TransientsExtragalactic/Trilobite
 
 2. Navigate to the cloned directory:
 
@@ -60,7 +60,7 @@ To get started using Trilobite, we recommend the following steps:
    most of the basic functionality of Trilobite and will help you understand how to use the library effectively.
 
 If you have specific questions about using Trilobite, encounter a bug, or have suggestions for improvements,
-please feel free to open an issue on the `Trilobite GitHub <https://github.com/TransientsExtragalactic/Triceratops>`__ repository.
+please feel free to open an issue on the `Trilobite GitHub <https://github.com/TransientsExtragalactic/Trilobite>`__ repository.
 We welcome contributions and feedback from the community to help improve the library.
 
 Developers
