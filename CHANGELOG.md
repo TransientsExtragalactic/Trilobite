@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Additional Rosseland mean opacity laws: electron scattering, Kramers free-free, Kramers bound-free, combined Kramers+ES variants
 - Synchrotron SED gallery documentation pages
 - A changelog file (``CHANGELOG.md``) to track changes across versions.
+- `RadioPhotometryContainer.extract_lightcurve(band, bandwidth)` — extracts all observations within a frequency window and returns a `RadioLightCurveContainer` (`trilobite/data/photometry.py`)
+- `OpticalPhotometryContainer.extract_lightcurve(band)` — extracts all observations for a named filter band and returns an `OpticalLightCurveContainer` (`trilobite/data/optical_photometry.py`)
 
 ### Changed
 - Switched readme to Markdown for better PyPI rendering

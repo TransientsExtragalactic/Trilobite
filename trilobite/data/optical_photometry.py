@@ -26,6 +26,8 @@ from .core import DataContainer, InferenceData
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model  # noqa: F401
 
+    from .light_curve import OpticalLightCurveContainer
+
 
 __all__ = ["OpticalPhotometryContainer", "OpticalPhotometryEpoch"]
 
@@ -447,6 +449,46 @@ class OpticalPhotometryContainer(DataContainer):
         if self.has_epochs and "epoch_id" not in sliced.colnames:
             sliced["epoch_id"] = self.__epoch_ids__[mask]
         return self.__class__.from_table(sliced)
+
+    def extract_lightcurve(self, band: str) -> "OpticalLightCurveContainer":
+        """Extract a single-band light curve from this container.
+
+        Selects all observations whose ``band_name`` matches *band* and returns
+        them as an :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`.
+
+        Parameters
+        ----------
+        band : str
+            Band name to extract (e.g. ``"g"``, ``"r"``). Must match a value
+            present in the ``band_name`` column.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.OpticalLightCurveContainer
+            Light curve for the requested band, ordered by time.
+
+        Raises
+        ------
+        ValueError
+            If *band* is not found in this container.
+        """
+        from .light_curve import OpticalLightCurveContainer
+
+        available = np.unique(self.band_name)
+        if band not in available:
+            raise ValueError(f"Band '{band}' not found. Available bands: {list(available)}.")
+
+        mask = self.band_name == band
+        sliced = self.table[mask]
+
+        # band_name is now metadata on the container; drop it from the table.
+        drop = [c for c in ["band_name", "epoch_id"] if c in sliced.colnames]
+        if drop:
+            sliced = sliced.copy()
+            sliced.remove_columns(drop)
+
+        sort_order = np.argsort(sliced["time"])
+        return OpticalLightCurveContainer(sliced[sort_order], band=band)
 
     # ========================= IO Methods ========================= #
     @classmethod

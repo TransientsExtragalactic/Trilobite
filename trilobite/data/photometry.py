@@ -25,6 +25,8 @@ from .utils import infer_err_from_non_detection
 if TYPE_CHECKING:
     from trilobite.models.core.base import Model
 
+    from .light_curve import RadioLightCurveContainer
+
 
 __all__ = [
     "RadioPhotometryContainer",
@@ -754,6 +756,60 @@ class RadioPhotometryContainer(DataContainer):
             sliced["epoch_id"] = self.__epoch_ids__[mask]
 
         return self.__class__.from_table(sliced)
+
+    def extract_lightcurve(
+        self,
+        band: Union[float, u.Quantity],
+        bandwidth: Union[float, u.Quantity],
+    ) -> "RadioLightCurveContainer":
+        """Extract a single-frequency light curve from this container.
+
+        Selects all observations within ``[band - bandwidth/2, band + bandwidth/2]``
+        and returns them as a :class:`~trilobite.data.light_curve.RadioLightCurveContainer`.
+
+        Parameters
+        ----------
+        band : float or ~astropy.units.Quantity
+            Center frequency. A bare float is interpreted as GHz.
+        bandwidth : float or ~astropy.units.Quantity
+            Total frequency window. A bare float is interpreted as GHz.
+
+        Returns
+        -------
+        ~trilobite.data.light_curve.RadioLightCurveContainer
+            Light curve at the specified frequency band, ordered by time.
+
+        Raises
+        ------
+        ValueError
+            If no observations fall within the specified frequency window.
+        """
+        from .light_curve import RadioLightCurveContainer
+
+        if not isinstance(band, u.Quantity):
+            band = band * u.GHz
+        if not isinstance(bandwidth, u.Quantity):
+            bandwidth = bandwidth * u.GHz
+
+        band_hz = band.to(u.Hz).value
+        half_hz = (bandwidth / 2).to(u.Hz).value
+        freq_hz = self.freq.to(u.Hz).value
+
+        mask = np.abs(freq_hz - band_hz) <= half_hz
+        if not np.any(mask):
+            raise ValueError(
+                f"No observations found within {band} ± {bandwidth / 2}. "
+                f"Available frequencies span {self.freq.min():.3f} – {self.freq.max():.3f}."
+            )
+
+        sliced = self.table[mask]
+        lc_cols = ["time", "flux_density", "flux_density_error", "flux_upper_limit"]
+        optional = ["obs_name", "comments"]
+        keep = lc_cols + [c for c in optional if c in sliced.colnames]
+        lc_table = sliced[keep]
+
+        sort_order = np.argsort(lc_table["time"])
+        return RadioLightCurveContainer(lc_table[sort_order], frequency=band)
 
     # ========================= IO Methods ========================= #
     @classmethod
