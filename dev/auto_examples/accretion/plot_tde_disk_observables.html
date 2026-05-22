@@ -407,12 +407,14 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Radio Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_photometry_data.html">Plot Radio Photometry Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_specific_epochs.html">Plot Single Epochs</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Observational Data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_light_curve.html">Radio Light Curve Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_light_curve.html">Optical Light Curve Container</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_workflow.html">From Data to Inference: End-to-End Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_epoch_photometry.html">Plot Radio Photometry Epochs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_optical.html">Multi-Band Optical Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_data.html">From Container to InferenceData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_photometry.html">Radio Photometry Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_radio.html">Multi-Band Radio Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_photometry.html">Optical Photometry Container</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../photometry/index.html">Optical Filters and Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -602,7 +604,7 @@ rate declines (<span class="math notranslate nohighlight">\(\propto t^{-5/3}\)</
 eventually sub-Eddington.</p>
 <section id="physical-setup">
 <h2>Physical Setup<a class="headerlink" href="#physical-setup" title="Link to this heading">#</a></h2>
-<p>We use <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a>
+<p>We use <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a>
 with a power-law fallback supply, which combines:</p>
 <ul class="simple">
 <li><p>Gas + radiation pressure EOS</p></li>
@@ -620,7 +622,7 @@ cooling is physically required.</p>
 <section id="relevant-api">
 <h2>Relevant API<a class="headerlink" href="#relevant-api" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a></p></li>
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.generate_initial_conditions"><code class="xref py py-meth docutils literal notranslate"><span class="pre">generate_initial_conditions()</span></code></a></p></li>
 </ul>
@@ -834,7 +836,7 @@ wins and the disk depletes.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_tde_disk_observables_002.png" srcset="../../_images/sphx_glr_plot_tde_disk_observables_002.png" alt="Disk Aspect Ratio, Mass Budget ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.552 seconds)</p>
+<img src="../../_images/sphx_glr_plot_tde_disk_observables_002.png" srcset="../../_images/sphx_glr_plot_tde_disk_observables_002.png" alt="Disk Aspect Ratio, Mass Budget ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 1.741 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-tde-disk-observables-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/fb8031c41a8f4d14d352743a8a41a140/plot_tde_disk_observables.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_tde_disk_observables.ipynb</span></code></a></p>

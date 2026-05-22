@@ -972,6 +972,29 @@ columns and plain NumPy arrays for dimensionless or string columns.</p></li>
 <dd><p>Return a copy of the epoch ID array (raises if epochs not set).</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">extract_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><span class="pre">OpticalLightCurveContainer</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/optical_photometry.html#OpticalPhotometryContainer.extract_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Extract a single-band light curve from this container.</p>
+<p>Selects all observations whose <code class="docutils literal notranslate"><span class="pre">band_name</span></code> matches <em>band</em> and returns
+them as an <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>band</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Band name to extract (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;g&quot;</span></code>, <code class="docutils literal notranslate"><span class="pre">&quot;r&quot;</span></code>). Must match a value
+present in the <code class="docutils literal notranslate"><span class="pre">band_name</span></code> column.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Light curve for the requested band, ordered by time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If <em>band</em> is not found in this container.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>

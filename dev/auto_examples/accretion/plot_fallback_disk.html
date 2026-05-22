@@ -407,12 +407,14 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Radio Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_photometry_data.html">Plot Radio Photometry Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_specific_epochs.html">Plot Single Epochs</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Observational Data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_light_curve.html">Radio Light Curve Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_light_curve.html">Optical Light Curve Container</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_workflow.html">From Data to Inference: End-to-End Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_epoch_photometry.html">Plot Radio Photometry Epochs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_optical.html">Multi-Band Optical Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_data.html">From Container to InferenceData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_photometry.html">Radio Photometry Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_radio.html">Multi-Band Radio Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_photometry.html">Optical Photometry Container</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../photometry/index.html">Optical Filters and Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -597,7 +599,7 @@ architecture: a C-level function applied after the base viscous derivative at
 every integration step.  The
 <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html#trilobite.dynamics.accretion.one_zone.GasPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a> (with <code class="docutils literal notranslate"><span class="pre">fallback=True</span></code>)
 and
-<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> (with <code class="docutils literal notranslate"><span class="pre">fallback=True</span></code>)
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> (with <code class="docutils literal notranslate"><span class="pre">fallback=True</span></code>)
 wire this source term onto the gas-pressure and full-pressure EOS
 closures respectively, without any modifications to the integrator.</p>
 <section id="physical-picture">
@@ -631,7 +633,7 @@ injection from the fallback stream.</p>
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html#trilobite.dynamics.accretion.one_zone.GasPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.GasPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">GasPressureDisk</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a></p></li>
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a></p></li>
 </ul>
 <div class="admonition hint">
@@ -988,19 +990,19 @@ in a single call.  Here we use it to map how the disk mass at
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/12 [00:00&lt;?, ?it/s]
-  8% |▊         | 🦖 1/12 [00:00&lt;00:02,  3.87it/s]
- 17% |█▋        | 🦖 2/12 [00:00&lt;00:02,  3.85it/s]
- 25% |██▌       | 🦖 3/12 [00:00&lt;00:02,  3.85it/s]
- 33% |███▎      | 🦖 4/12 [00:01&lt;00:02,  3.83it/s]
- 42% |████▏     | 🦖 5/12 [00:01&lt;00:01,  3.83it/s]
- 50% |█████     | 🦖 6/12 [00:01&lt;00:01,  3.82it/s]
- 58% |█████▊    | 🦖 7/12 [00:01&lt;00:01,  3.83it/s]
- 67% |██████▋   | 🦖 8/12 [00:02&lt;00:01,  3.83it/s]
- 75% |███████▌  | 🦖 9/12 [00:02&lt;00:00,  3.84it/s]
- 83% |████████▎ | 🦖 10/12 [00:02&lt;00:00,  3.85it/s]
- 92% |█████████▏| 🦖 11/12 [00:02&lt;00:00,  3.83it/s]
-100% |██████████| 🦖 12/12 [00:03&lt;00:00,  3.84it/s]
-100% |██████████| 🦖 12/12 [00:03&lt;00:00,  3.84it/s]
+  8% |▊         | 🦖 1/12 [00:00&lt;00:02,  4.03it/s]
+ 17% |█▋        | 🦖 2/12 [00:00&lt;00:02,  4.04it/s]
+ 25% |██▌       | 🦖 3/12 [00:00&lt;00:02,  4.05it/s]
+ 33% |███▎      | 🦖 4/12 [00:00&lt;00:01,  4.02it/s]
+ 42% |████▏     | 🦖 5/12 [00:01&lt;00:01,  4.03it/s]
+ 50% |█████     | 🦖 6/12 [00:01&lt;00:01,  4.03it/s]
+ 58% |█████▊    | 🦖 7/12 [00:01&lt;00:01,  4.04it/s]
+ 67% |██████▋   | 🦖 8/12 [00:01&lt;00:00,  4.04it/s]
+ 75% |███████▌  | 🦖 9/12 [00:02&lt;00:00,  4.04it/s]
+ 83% |████████▎ | 🦖 10/12 [00:02&lt;00:00,  4.04it/s]
+ 92% |█████████▏| 🦖 11/12 [00:02&lt;00:00,  4.05it/s]
+100% |██████████| 🦖 12/12 [00:02&lt;00:00,  4.03it/s]
+100% |██████████| 🦖 12/12 [00:02&lt;00:00,  4.04it/s]
 </pre></div>
 </div>
 </section>
@@ -1030,7 +1032,7 @@ regardless of fallback strength.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_fallback_disk_004.png" srcset="../../_images/sphx_glr_plot_fallback_disk_004.png" alt="Disk Mass at $t = 10^7\,\mathrm{s}$ vs. Fallback Rate and $\alpha$" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 6.239 seconds)</p>
+<img src="../../_images/sphx_glr_plot_fallback_disk_004.png" srcset="../../_images/sphx_glr_plot_fallback_disk_004.png" alt="Disk Mass at $t = 10^7\,\mathrm{s}$ vs. Fallback Rate and $\alpha$" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 6.321 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-fallback-disk-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/8612ce49b1feec3401bdbb1b98207e84/plot_fallback_disk.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_fallback_disk.ipynb</span></code></a></p>

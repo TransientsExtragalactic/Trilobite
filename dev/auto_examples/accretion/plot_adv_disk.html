@@ -407,12 +407,14 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Radio Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_photometry_data.html">Plot Radio Photometry Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_specific_epochs.html">Plot Single Epochs</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Observational Data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_light_curve.html">Radio Light Curve Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_light_curve.html">Optical Light Curve Container</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_workflow.html">From Data to Inference: End-to-End Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_epoch_photometry.html">Plot Radio Photometry Epochs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_optical.html">Multi-Band Optical Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_data.html">From Container to InferenceData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_photometry.html">Radio Photometry Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_radio.html">Multi-Band Radio Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_photometry.html">Optical Photometry Container</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../photometry/index.html">Optical Filters and Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -585,8 +587,8 @@ energy locally.  When the accretion rate is high (or the disk is geometrically
 thick) a substantial fraction of the viscous heating can be carried inward with
 the accreting gas rather than radiated away, a process called <em>advective
 cooling</em>.</p>
-<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> extends the
-standard <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> by
+<p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> extends the
+standard <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> by
 splitting the viscous dissipation rate into a radiated component and an
 advected component:</p>
 <div class="math notranslate nohighlight">
@@ -607,7 +609,7 @@ B = \frac{4}{3}\,\frac{\xi}{R_D^2\,\Omega^2}.\]</div>
 advective transport.  <span class="math notranslate nohighlight">\(A\,c_s^{-2}\,T_c^4\)</span> is the fraction of viscous
 heating that is radiated away, while <span class="math notranslate nohighlight">\(B\,c_s^2\)</span> is the advected fraction.
 Setting <span class="math notranslate nohighlight">\(\xi \to 0\)</span> recovers the non-advective
-<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> limit.</p>
+<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a> limit.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>The advective flux recorded in the output field <code class="docutils literal notranslate"><span class="pre">Q_adv</span></code> is computed from
@@ -624,8 +626,8 @@ in the root-finding step.</p>
 <section id="see-also">
 <h2>See Also<a class="headerlink" href="#see-also" title="Link to this heading">#</a></h2>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a></p></li>
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve.html#trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve" title="trilobite.dynamics.accretion.one_zone.base.OneZoneAccretionDiskBase.solve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">solve()</span></code></a></p></li>
 </ul>
 <div class="admonition hint">
@@ -685,7 +687,7 @@ set the inner radius of the black hole based on the black hole’s ISCO. To do t
 </section>
 <section id="effect-of-the-xi-parameter">
 <h2>Effect of the <span class="math notranslate nohighlight">\(\xi\)</span> Parameter<a class="headerlink" href="#effect-of-the-xi-parameter" title="Link to this heading">#</a></h2>
-<p>We run <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> for three values of
+<p>We run <a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a> for three values of
 <span class="math notranslate nohighlight">\(\xi\)</span> to show how the advective fraction <span class="math notranslate nohighlight">\(q_{\rm adv}/q_{\rm visc}\)</span> scales with the
 entropy-gradient parameter.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">xi_values</span></a> <span class="o">=</span> <span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
@@ -741,7 +743,7 @@ heating, less energy is available for radiation and the root of</p>
 <p>is pushed to a lower <span class="math notranslate nohighlight">\(T_c\)</span> than the pure-radiation solution
 <span class="math notranslate nohighlight">\(T_c^{(0)}\)</span> (recovered when <span class="math notranslate nohighlight">\(\xi \to 0\)</span>).</p>
 <p>Here we compare the midplane temperature <span class="math notranslate nohighlight">\(T_c\)</span> for the non-advective baseline
-(<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a>, <span class="math notranslate nohighlight">\(\xi = 0\)</span>)
+(<a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.FullPressureDisk.html#trilobite.dynamics.accretion.one_zone.core.FullPressureDisk" title="trilobite.dynamics.accretion.one_zone.core.FullPressureDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">FullPressureDisk</span></code></a>, <span class="math notranslate nohighlight">\(\xi = 0\)</span>)
 and two advective runs.</p>
 <div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">disk_no_adv</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">FullPressureDisk</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mu</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mu</span></a><span class="p">,</span> <span class="n">opacity</span><span class="o">=</span><span class="n">KramersBFESOpacity</span><span class="p">())</span>
 <span class="n">result_no_adv</span> <span class="o">=</span> <span class="n">disk_no_adv</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ic</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">run_params</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">t_span</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_steps</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">max_steps</span></a><span class="p">)</span>
@@ -790,7 +792,7 @@ and two advective runs.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_adv_disk_002.png" srcset="../../_images/sphx_glr_plot_adv_disk_002.png" alt="Midplane Temperature, Accretion Rate" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.525 seconds)</p>
+<img src="../../_images/sphx_glr_plot_adv_disk_002.png" srcset="../../_images/sphx_glr_plot_adv_disk_002.png" alt="Midplane Temperature, Accretion Rate" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 10.652 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-adv-disk-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/ef3909230dfddcc986f477e0a7b44835/plot_adv_disk.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_adv_disk.ipynb</span></code></a></p>

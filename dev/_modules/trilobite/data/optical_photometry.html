@@ -472,6 +472,8 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>  <span class="c1"># noqa: F401</span>
 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.light_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalLightCurveContainer</span>
+
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;OpticalPhotometryContainer&quot;</span><span class="p">,</span> <span class="s2">&quot;OpticalPhotometryEpoch&quot;</span><span class="p">]</span>
 
@@ -906,6 +908,49 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">has_epochs</span> <span class="ow">and</span> <span class="s2">&quot;epoch_id&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">sliced</span><span class="o">.</span><span class="n">colnames</span><span class="p">:</span>
             <span class="n">sliced</span><span class="p">[</span><span class="s2">&quot;epoch_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OpticalPhotometryContainer.extract_lightcurve">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_lightcurve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">band</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;OpticalLightCurveContainer&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a single-band light curve from this container.</span>
+
+<span class="sd">        Selects all observations whose ``band_name`` matches *band* and returns</span>
+<span class="sd">        them as an :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        band : str</span>
+<span class="sd">            Band name to extract (e.g. ``&quot;g&quot;``, ``&quot;r&quot;``). Must match a value</span>
+<span class="sd">            present in the ``band_name`` column.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.OpticalLightCurveContainer</span>
+<span class="sd">            Light curve for the requested band, ordered by time.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If *band* is not found in this container.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.light_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalLightCurveContainer</span>
+
+        <span class="n">available</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">band_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">band</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">available</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Band &#39;</span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2">&#39; not found. Available bands: </span><span class="si">{</span><span class="nb">list</span><span class="p">(</span><span class="n">available</span><span class="p">)</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">band_name</span> <span class="o">==</span> <span class="n">band</span>
+        <span class="n">sliced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+
+        <span class="c1"># band_name is now metadata on the container; drop it from the table.</span>
+        <span class="n">drop</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;band_name&quot;</span><span class="p">,</span> <span class="s2">&quot;epoch_id&quot;</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">sliced</span><span class="o">.</span><span class="n">colnames</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">drop</span><span class="p">:</span>
+            <span class="n">sliced</span> <span class="o">=</span> <span class="n">sliced</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">sliced</span><span class="o">.</span><span class="n">remove_columns</span><span class="p">(</span><span class="n">drop</span><span class="p">)</span>
+
+        <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">sliced</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">OpticalLightCurveContainer</span><span class="p">(</span><span class="n">sliced</span><span class="p">[</span><span class="n">sort_order</span><span class="p">],</span> <span class="n">band</span><span class="o">=</span><span class="n">band</span><span class="p">)</span></div>
 
 
     <span class="c1"># ========================= IO Methods ========================= #</span>

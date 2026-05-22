@@ -1057,6 +1057,31 @@ they are propagated to the returned container.</p>
 <dd><p>Return a copy of the epoch IDs array.</p>
 </dd></dl>
 
+<dl class="py method">
+<dt class="sig sig-object py">
+<span class="sig-name descname"><span class="pre">extract_lightcurve</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">band</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">bandwidth</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><span class="pre">RadioLightCurveContainer</span></a></span></span><a class="reference internal" href="../../_modules/trilobite/data/photometry.html#RadioPhotometryContainer.extract_lightcurve"><span class="viewcode-link"><span class="pre">[source]</span></span></a></dt>
+<dd><p>Extract a single-frequency light curve from this container.</p>
+<p>Selects all observations within <code class="docutils literal notranslate"><span class="pre">[band</span> <span class="pre">-</span> <span class="pre">bandwidth/2,</span> <span class="pre">band</span> <span class="pre">+</span> <span class="pre">bandwidth/2]</span></code>
+and returns them as a <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>band</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Center frequency. A bare float is interpreted as GHz.</p></li>
+<li><p><strong>bandwidth</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a> or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Total frequency window. A bare float is interpreted as GHz.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Light curve at the specified frequency band, ordered by time.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If no observations fall within the specified frequency window.</p>
+</dd>
+</dl>
+</dd></dl>
+
 <dl class="py property">
 <dt class="sig sig-object py">
 <span class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></span><span class="sig-name descname"><span class="pre">flux_density</span></span><span class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v7.2)"><span class="pre">Quantity</span></a></span></dt>

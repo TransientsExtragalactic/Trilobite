@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working With Radio Photometry &#8212; Trilobite dev documentation</title>
+    <title>Working With Observational Data &#8212; Trilobite dev documentation</title>
   
   
   
@@ -66,7 +66,7 @@
     <link rel="icon" href="../../_static/logo.svg"/>
     <link rel="index" title="Index" href="../../genindex.html" />
     <link rel="search" title="Search" href="../../search.html" />
-    <link rel="next" title="Plot Radio Photometry Data" href="plot_photometry_data.html" />
+    <link rel="next" title="Radio Light Curve Container" href="plot_radio_light_curve.html" />
     <link rel="prev" title="Example Gallery" href="../../examples.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
@@ -406,12 +406,14 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Working With Radio Photometry</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="plot_photometry_data.html">Plot Radio Photometry Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_specific_epochs.html">Plot Single Epochs</a></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Working With Observational Data</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="plot_radio_light_curve.html">Radio Light Curve Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_optical_light_curve.html">Optical Light Curve Container</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_inference_workflow.html">From Data to Inference: End-to-End Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="plot_epoch_photometry.html">Plot Radio Photometry Epochs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_multiband_optical.html">Multi-Band Optical Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_inference_data.html">From Container to InferenceData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_radio_photometry.html">Radio Photometry Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_multiband_radio.html">Multi-Band Radio Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="plot_optical_photometry.html">Optical Photometry Container</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../photometry/index.html">Optical Filters and Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -552,7 +554,7 @@
     
     <li class="breadcrumb-item"><a href="../../examples.html" class="nav-link">Example Gallery</a></li>
     
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Working With Radio Photometry</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Working With Observational Data</span></li>
   </ul>
 </nav>
 </div>
@@ -569,47 +571,59 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="working-with-radio-photometry">
-<span id="data-gallery"></span><h1>Working With Radio Photometry<a class="headerlink" href="#working-with-radio-photometry" title="Link to this heading">#</a></h1>
-<p>These examples demonstrate how to work with <strong>observational radio data</strong> in Trilobite. They cover
-the full data ingestion workflow:</p>
-<ul class="simple">
-<li><p>loading a FITS photometry table,</p></li>
-<li><p>inspecting its contents,</p></li>
-<li><p>grouping observations into temporal epochs,</p></li>
-<li><p>and plotting individual epochs or the full light curve.</p></li>
-</ul>
-<p>The <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.html#module-trilobite.data.photometry" title="trilobite.data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">photometry</span></code></a> subpackage provides container classes for radio photometry that
-carry unit-aware arrays (frequency, flux density, flux uncertainty, upper-limit flags) and
-integrate directly with the inference pipeline.</p>
+  <section id="working-with-observational-data">
+<span id="data-gallery"></span><h1>Working With Observational Data<a class="headerlink" href="#working-with-observational-data" title="Link to this heading">#</a></h1>
+<p>These examples demonstrate how to load, inspect, and visualize observational
+data in Trilobite using the container classes in <code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.data</span></code>. They
+cover the full range of supported data types — radio photometry, radio light
+curves, optical photometry, and optical light curves — as well as the bridge
+from validated containers to the inference pipeline.</p>
 <p class="rubric">What you’ll find here</p>
 <ul class="simple">
-<li><p>Loading <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a> objects from FITS files</p></li>
-<li><p>Inspecting and printing photometry tables</p></li>
-<li><p>Defining temporal epochs from observation time-gaps</p></li>
-<li><p>Plotting light curves and individual SED epochs</p></li>
+<li><p>Constructing <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>
+objects, grouping observations into epochs, and plotting SEDs.</p></li>
+<li><p>Working with <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a>
+for single-frequency time-series data.</p></li>
+<li><p>Building multi-band <a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a>
+objects and extracting per-band light curves.</p></li>
+<li><p>Using <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a> for
+flux/magnitude dual representation.</p></li>
+<li><p>Converting any container to <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> and
+understanding its structure before wiring into a likelihood.</p></li>
+<li><p>Extracting per-band light curves from multi-frequency photometry with
+<a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve.html#trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve" title="trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_lightcurve()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_lightcurve()</span></code></a>.</p></li>
 </ul>
 <p class="rubric">API reference</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.html#module-trilobite.data.photometry" title="trilobite.data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">photometry</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>,</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.photometry.RadioPhotometryEpochContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code></a></p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.data</span></code></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p></li>
 </ul>
-<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to load and plot radio photometry data using the Trilobite library. We&#x27;ll be using the data.photometry.RadioPhotometryContainer to manage and visualize the data."><img alt="" src="../../_images/sphx_glr_plot_photometry_data_thumb.png" />
-<p><a class="reference internal" href="plot_photometry_data.html"><span class="doc">Plot Radio Photometry Data</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Data</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="In this simple cookbook, we&#x27;ll load in some data and break it into epochs and then plot a subset of those epochs using the plot_epoch method of data.photometry.RadioPhotometryContainer."><img alt="" src="../../_images/sphx_glr_plot_specific_epochs_thumb.png" />
-<p><a class="reference internal" href="plot_specific_epochs.html"><span class="doc">Plot Single Epochs</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Plot Single Epochs</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to construct an OpticalLightCurveContainer from tabular data, access its dual flux/magnitude representations, separate detections from upper limits, and plot the resulting light curve."><img alt="" src="../../_images/sphx_glr_plot_optical_light_curve_thumb.png" />
+<div id='sg-tag-list' class='sphx-glr-tag-list'></div><div class="sphx-glr-thumbnails"><div class="sphx-glr-thumbcontainer" tooltip="A RadioLightCurveContainer represents a time series of flux density measurements taken at a single fixed observing frequency.  This is the natural representation for a single-band VLA or ATCA monitoring campaign, and the direct input to single-frequency light-curve models."><img alt="" src="../../_images/sphx_glr_plot_radio_light_curve_thumb.png" />
+<p><a class="reference internal" href="plot_radio_light_curve.html"><span class="doc">Radio Light Curve Container</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Radio Light Curve Container</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="An OpticalLightCurveContainer holds time-series photometry in a single fixed optical band.  Unlike OpticalPhotometryContainer, the band is stored as metadata rather than a per-row column — this is the natural representation once you have isolated a single filter&#x27;s light curve."><img alt="" src="../../_images/sphx_glr_plot_optical_light_curve_thumb.png" />
 <p><a class="reference internal" href="plot_optical_light_curve.html"><span class="doc">Optical Light Curve Container</span></a></p>
   <div class="sphx-glr-thumbnail-title">Optical Light Curve Container</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="This example walks through the full chain from a synthetic radio photometry table to a configured InferenceProblem. It is intended as a concrete, runnable illustration of the pipeline described in data_to_inference."><img alt="" src="../../_images/sphx_glr_plot_inference_workflow_thumb.png" />
-<p><a class="reference internal" href="plot_inference_workflow.html"><span class="doc">From Data to Inference: End-to-End Workflow</span></a></p>
-  <div class="sphx-glr-thumbnail-title">From Data to Inference: End-to-End Workflow</div>
-</div><div class="sphx-glr-thumbcontainer" tooltip="This example will demonstrate how to load radio photometry data and separate it into epochs for plotting using the Trilobite library. We&#x27;ll utilize the data.photometry.RadioPhotometryContainer to manage and visualize the data."><img alt="" src="../../_images/sphx_glr_plot_epoch_photometry_thumb.png" />
-<p><a class="reference internal" href="plot_epoch_photometry.html"><span class="doc">Plot Radio Photometry Epochs</span></a></p>
-  <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Epochs</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="When working with multi-band optical photometry it is often useful to isolate individual filter light curves for per-band modeling or visualisation. extract_lightcurve selects all observations with a given band_name and returns an OpticalLightCurveContainer — the natural input to single-band optical models."><img alt="" src="../../_images/sphx_glr_plot_multiband_optical_thumb.png" />
+<p><a class="reference internal" href="plot_multiband_optical.html"><span class="doc">Multi-Band Optical Light Curves</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Multi-Band Optical Light Curves</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Every data container in Trilobite exposes a to_inference_data method that converts validated observational data into an InferenceData object — the single format accepted by all likelihood functions."><img alt="" src="../../_images/sphx_glr_plot_inference_data_thumb.png" />
+<p><a class="reference internal" href="plot_inference_data.html"><span class="doc">From Container to InferenceData</span></a></p>
+  <div class="sphx-glr-thumbnail-title">From Container to InferenceData</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="This example walks through the core workflow for radio photometry in Trilobite: constructing a RadioPhotometryContainer, inspecting its contents, grouping observations into temporal epochs, and plotting individual SEDs."><img alt="" src="../../_images/sphx_glr_plot_radio_photometry_thumb.png" />
+<p><a class="reference internal" href="plot_radio_photometry.html"><span class="doc">Radio Photometry Container</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Radio Photometry Container</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="Multi-frequency radio campaigns produce a heterogeneous photometry table that mixes observations at several bands.  The extract_lightcurve method slices out all observations within a specified frequency window and returns them as a RadioLightCurveContainer — ready for single-frequency modeling or per-band visualisation."><img alt="" src="../../_images/sphx_glr_plot_multiband_radio_thumb.png" />
+<p><a class="reference internal" href="plot_multiband_radio.html"><span class="doc">Multi-Band Radio Light Curves</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Multi-Band Radio Light Curves</div>
+</div><div class="sphx-glr-thumbcontainer" tooltip="An OpticalPhotometryContainer holds multi-band optical photometry from survey instruments such as ZTF, LSST/Rubin, or DECam.  Observations may be supplied as AB magnitudes, flux densities, or a mix — the container exposes both representations on demand."><img alt="" src="../../_images/sphx_glr_plot_optical_photometry_thumb.png" />
+<p><a class="reference internal" href="plot_optical_photometry.html"><span class="doc">Optical Photometry Container</span></a></p>
+  <div class="sphx-glr-thumbnail-title">Optical Photometry Container</div>
 </div></div><div class="toctree-wrapper compound">
 </div>
 <div class="sphx-glr-footer sphx-glr-footer-gallery docutils container">
@@ -643,11 +657,11 @@ integrate directly with the inference pipeline.</p>
       </div>
     </a>
     <a class="right-next"
-       href="plot_photometry_data.html"
+       href="plot_radio_light_curve.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Plot Radio Photometry Data</p>
+        <p class="prev-next-title">Radio Light Curve Container</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

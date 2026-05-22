@@ -2,34 +2,40 @@
 
 .. _data_gallery:
 
-*****************************
-Working With Radio Photometry
-*****************************
+*******************************
+Working With Observational Data
+*******************************
 
-These examples demonstrate how to work with **observational radio data** in Trilobite. They cover
-the full data ingestion workflow:
-
-- loading a FITS photometry table,
-- inspecting its contents,
-- grouping observations into temporal epochs,
-- and plotting individual epochs or the full light curve.
-
-The :mod:`~trilobite.data.photometry` subpackage provides container classes for radio photometry that
-carry unit-aware arrays (frequency, flux density, flux uncertainty, upper-limit flags) and
-integrate directly with the inference pipeline.
+These examples demonstrate how to load, inspect, and visualize observational
+data in Trilobite using the container classes in :mod:`trilobite.data`. They
+cover the full range of supported data types — radio photometry, radio light
+curves, optical photometry, and optical light curves — as well as the bridge
+from validated containers to the inference pipeline.
 
 .. rubric:: What you'll find here
 
-- Loading :class:`~trilobite.data.photometry.RadioPhotometryContainer` objects from FITS files
-- Inspecting and printing photometry tables
-- Defining temporal epochs from observation time-gaps
-- Plotting light curves and individual SED epochs
+- Constructing :class:`~trilobite.data.photometry.RadioPhotometryContainer`
+  objects, grouping observations into epochs, and plotting SEDs.
+- Working with :class:`~trilobite.data.light_curve.RadioLightCurveContainer`
+  for single-frequency time-series data.
+- Building multi-band :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
+  objects and extracting per-band light curves.
+- Using :class:`~trilobite.data.light_curve.OpticalLightCurveContainer` for
+  flux/magnitude dual representation.
+- Converting any container to :class:`~trilobite.data.core.InferenceData` and
+  understanding its structure before wiring into a likelihood.
+- Extracting per-band light curves from multi-frequency photometry with
+  :meth:`~trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve`
+  and :meth:`~trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve`.
 
 .. rubric:: API reference
 
-- :mod:`~trilobite.data.photometry`
-- :class:`~trilobite.data.photometry.RadioPhotometryContainer`,
-- :class:`~trilobite.data.photometry.RadioPhotometryEpochContainer`
+- :mod:`trilobite.data`
+- :class:`~trilobite.data.photometry.RadioPhotometryContainer`
+- :class:`~trilobite.data.light_curve.RadioLightCurveContainer`
+- :class:`~trilobite.data.optical_photometry.OpticalPhotometryContainer`
+- :class:`~trilobite.data.light_curve.OpticalLightCurveContainer`
+- :class:`~trilobite.data.core.InferenceData`
 
 
 .. raw:: html
@@ -45,41 +51,24 @@ integrate directly with the inference pipeline.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to load and plot radio photometry data using the Trilobite library. We&#x27;ll be using the data.photometry.RadioPhotometryContainer to manage and visualize the data.">
+    <div class="sphx-glr-thumbcontainer" tooltip="A RadioLightCurveContainer represents a time series of flux density measurements taken at a single fixed observing frequency.  This is the natural representation for a single-band VLA or ATCA monitoring campaign, and the direct input to single-frequency light-curve models.">
 
 .. only:: html
 
-  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_photometry_data_thumb.png
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_radio_light_curve_thumb.png
     :alt:
 
-  :doc:`/auto_examples/data/plot_photometry_data`
+  :doc:`/auto_examples/data/plot_radio_light_curve`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Data</div>
+      <div class="sphx-glr-thumbnail-title">Radio Light Curve Container</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="In this simple cookbook, we&#x27;ll load in some data and break it into epochs and then plot a subset of those epochs using the plot_epoch method of data.photometry.RadioPhotometryContainer.">
-
-.. only:: html
-
-  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_specific_epochs_thumb.png
-    :alt:
-
-  :doc:`/auto_examples/data/plot_specific_epochs`
-
-.. raw:: html
-
-      <div class="sphx-glr-thumbnail-title">Plot Single Epochs</div>
-    </div>
-
-
-.. raw:: html
-
-    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to construct an OpticalLightCurveContainer from tabular data, access its dual flux/magnitude representations, separate detections from upper limits, and plot the resulting light curve.">
+    <div class="sphx-glr-thumbcontainer" tooltip="An OpticalLightCurveContainer holds time-series photometry in a single fixed optical band.  Unlike OpticalPhotometryContainer, the band is stored as metadata rather than a per-row column — this is the natural representation once you have isolated a single filter&#x27;s light curve.">
 
 .. only:: html
 
@@ -96,35 +85,86 @@ integrate directly with the inference pipeline.
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the full chain from a synthetic radio photometry table to a configured InferenceProblem. It is intended as a concrete, runnable illustration of the pipeline described in data_to_inference.">
+    <div class="sphx-glr-thumbcontainer" tooltip="When working with multi-band optical photometry it is often useful to isolate individual filter light curves for per-band modeling or visualisation. extract_lightcurve selects all observations with a given band_name and returns an OpticalLightCurveContainer — the natural input to single-band optical models.">
 
 .. only:: html
 
-  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_inference_workflow_thumb.png
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_multiband_optical_thumb.png
     :alt:
 
-  :doc:`/auto_examples/data/plot_inference_workflow`
+  :doc:`/auto_examples/data/plot_multiband_optical`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">From Data to Inference: End-to-End Workflow</div>
+      <div class="sphx-glr-thumbnail-title">Multi-Band Optical Light Curves</div>
     </div>
 
 
 .. raw:: html
 
-    <div class="sphx-glr-thumbcontainer" tooltip="This example will demonstrate how to load radio photometry data and separate it into epochs for plotting using the Trilobite library. We&#x27;ll utilize the data.photometry.RadioPhotometryContainer to manage and visualize the data.">
+    <div class="sphx-glr-thumbcontainer" tooltip="Every data container in Trilobite exposes a to_inference_data method that converts validated observational data into an InferenceData object — the single format accepted by all likelihood functions.">
 
 .. only:: html
 
-  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_epoch_photometry_thumb.png
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_inference_data_thumb.png
     :alt:
 
-  :doc:`/auto_examples/data/plot_epoch_photometry`
+  :doc:`/auto_examples/data/plot_inference_data`
 
 .. raw:: html
 
-      <div class="sphx-glr-thumbnail-title">Plot Radio Photometry Epochs</div>
+      <div class="sphx-glr-thumbnail-title">From Container to InferenceData</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example walks through the core workflow for radio photometry in Trilobite: constructing a RadioPhotometryContainer, inspecting its contents, grouping observations into temporal epochs, and plotting individual SEDs.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_radio_photometry_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_radio_photometry`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Radio Photometry Container</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Multi-frequency radio campaigns produce a heterogeneous photometry table that mixes observations at several bands.  The extract_lightcurve method slices out all observations within a specified frequency window and returns them as a RadioLightCurveContainer — ready for single-frequency modeling or per-band visualisation.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_multiband_radio_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_multiband_radio`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Multi-Band Radio Light Curves</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="An OpticalPhotometryContainer holds multi-band optical photometry from survey instruments such as ZTF, LSST/Rubin, or DECam.  Observations may be supplied as AB magnitudes, flux densities, or a mix — the container exposes both representations on demand.">
+
+.. only:: html
+
+  .. image:: /auto_examples/data/images/thumb/sphx_glr_plot_optical_photometry_thumb.png
+    :alt:
+
+  :doc:`/auto_examples/data/plot_optical_photometry`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Optical Photometry Container</div>
     </div>
 
 
@@ -138,11 +178,13 @@ integrate directly with the inference pipeline.
 .. toctree::
    :hidden:
 
-   /auto_examples/data/plot_photometry_data
-   /auto_examples/data/plot_specific_epochs
+   /auto_examples/data/plot_radio_light_curve
    /auto_examples/data/plot_optical_light_curve
-   /auto_examples/data/plot_inference_workflow
-   /auto_examples/data/plot_epoch_photometry
+   /auto_examples/data/plot_multiband_optical
+   /auto_examples/data/plot_inference_data
+   /auto_examples/data/plot_radio_photometry
+   /auto_examples/data/plot_multiband_radio
+   /auto_examples/data/plot_optical_photometry
 
 
 .. only:: html

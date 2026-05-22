@@ -407,12 +407,14 @@
      aria-label="Section Navigation">
   <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
   <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
-<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Radio Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_photometry_data.html">Plot Radio Photometry Data</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_specific_epochs.html">Plot Single Epochs</a></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../data/index.html">Working With Observational Data</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_light_curve.html">Radio Light Curve Container</a></li>
 <li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_light_curve.html">Optical Light Curve Container</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_workflow.html">From Data to Inference: End-to-End Workflow</a></li>
-<li class="toctree-l2"><a class="reference internal" href="../data/plot_epoch_photometry.html">Plot Radio Photometry Epochs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_optical.html">Multi-Band Optical Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_inference_data.html">From Container to InferenceData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_radio_photometry.html">Radio Photometry Container</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_multiband_radio.html">Multi-Band Radio Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../data/plot_optical_photometry.html">Optical Photometry Container</a></li>
 </ul>
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../photometry/index.html">Optical Filters and Photometry</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
@@ -601,7 +603,7 @@ during the evolution.</p>
 <h2>Relevant API<a class="headerlink" href="#relevant-api" title="Link to this heading">#</a></h2>
 <ul class="simple">
 <li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve.html#trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve" title="trilobite.dynamics.accretion.one_zone.utils.compute_advection_s_curve"><code class="xref py py-func docutils literal notranslate"><span class="pre">compute_advection_s_curve()</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk.html#trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk" title="trilobite.dynamics.accretion.one_zone.core.AdvectiveDisk"><code class="xref py py-class docutils literal notranslate"><span class="pre">AdvectiveDisk</span></code></a></p></li>
 </ul>
 </section>
 <section id="setup">
@@ -707,34 +709,34 @@ riding at that moment.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7093.12it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 6806.23it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7250.87it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 6784.32it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7236.05it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 6930.73it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7181.54it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 6879.24it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7393.65it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 7094.68it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7451.18it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 7064.45it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7368.12it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 7053.70it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7371.23it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 7046.53it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7369.42it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 6960.92it/s]
 
   0%|          | 0/200 [00:00&lt;?, ?it/s]
-100%|██████████| 200/200 [00:00&lt;00:00, 7348.05it/s]
+100%|██████████| 200/200 [00:00&lt;00:00, 7042.33it/s]
 </pre></div>
 </div>
 </section>
@@ -787,7 +789,7 @@ as both the surface density and the S-curve itself evolve.</p>
 <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
 </pre></div>
 </div>
-<img src="../../_images/sphx_glr_plot_disk_scurve_001.png" srcset="../../_images/sphx_glr_plot_disk_scurve_001.png" alt="TDE Disk Track vs. Evolving S-curves ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.861 seconds)</p>
+<img src="../../_images/sphx_glr_plot_disk_scurve_001.png" srcset="../../_images/sphx_glr_plot_disk_scurve_001.png" alt="TDE Disk Track vs. Evolving S-curves ($\xi = 1.5$)" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.952 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-accretion-plot-disk-scurve-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/6ffa17f370b198da01e40fdf47465af6/plot_disk_scurve.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_disk_scurve.ipynb</span></code></a></p>

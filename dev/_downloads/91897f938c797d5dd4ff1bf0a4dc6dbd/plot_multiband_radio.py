@@ -1,0 +1,138 @@
+"""
+Multi-Band Radio Light Curves
+==============================
+
+Multi-frequency radio campaigns produce a heterogeneous photometry table
+that mixes observations at several bands.  The
+:meth:`~trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve`
+method slices out all observations within a specified frequency window and
+returns them as a
+:class:`~trilobite.data.light_curve.RadioLightCurveContainer` — ready for
+single-frequency modeling or per-band visualisation.
+"""
+
+# %%
+# Synthetic Multi-Frequency Dataset
+# ----------------------------------
+#
+# We simulate a VLA radio monitoring campaign with four standard bands
+# (C, X, Ku, K) sampled at irregular cadences, as commonly arises when
+# time is shared across multiple science programs.
+
+import numpy as np
+from astropy import units as u
+from astropy.table import Table
+
+from trilobite.data import RadioPhotometryContainer
+
+rng = np.random.default_rng(12)
+
+# Central frequencies and approximate bandwidths for VLA bands.
+bands = [
+    {"name": "C", "freq_ghz": 5.5, "bw_ghz": 2.0},
+    {"name": "X", "freq_ghz": 9.0, "bw_ghz": 2.0},
+    {"name": "Ku", "freq_ghz": 15.0, "bw_ghz": 2.0},
+    {"name": "K", "freq_ghz": 22.0, "bw_ghz": 2.0},
+]
+n_per_band = 20
+
+rows = {k: [] for k in ["time", "freq", "flux_density", "flux_density_error", "flux_upper_limit"]}
+
+for band in bands:
+    nu = band["freq_ghz"]
+    t = np.sort(rng.uniform(10, 600, n_per_band))
+    # Simple synchrotron power-law, steeper at high frequency.
+    f = 4e-3 * (t / 50.0) ** -0.75 * (nu / 5.5) ** -0.65 * rng.lognormal(0, 0.10, n_per_band)
+    err = f * rng.uniform(0.07, 0.17, n_per_band)
+    ul = np.full(n_per_band, np.nan)
+    # Late-time upper limits for the two highest bands.
+    if nu >= 15.0:
+        f[-3:] = np.nan
+        err[-3:] = np.nan
+        ul[-3:] = rng.uniform(3e-4, 8e-4, 3)
+    rows["time"].extend(t)
+    rows["freq"].extend([nu] * n_per_band)
+    rows["flux_density"].extend(f)
+    rows["flux_density_error"].extend(err)
+    rows["flux_upper_limit"].extend(ul)
+
+container = RadioPhotometryContainer(
+    Table(
+        {
+            "time": np.array(rows["time"]) * u.day,
+            "freq": np.array(rows["freq"]) * u.GHz,
+            "flux_density": np.array(rows["flux_density"]) * u.Jy,
+            "flux_density_error": np.array(rows["flux_density_error"]) * u.Jy,
+            "flux_upper_limit": np.array(rows["flux_upper_limit"]) * u.Jy,
+        }
+    )
+)
+
+print(f"Total observations: {container.n_obs}")
+
+# %%
+# Extracting Per-Band Light Curves
+# ---------------------------------
+#
+# :meth:`~trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve`
+# accepts a center frequency and a total bandwidth window.  All observations
+# whose frequency falls within ``[band - bandwidth/2, band + bandwidth/2]``
+# are collected into a
+# :class:`~trilobite.data.light_curve.RadioLightCurveContainer`.
+
+light_curves = {}
+for band in bands:
+    lc = container.extract_lightcurve(
+        band=band["freq_ghz"] * u.GHz,
+        bandwidth=band["bw_ghz"] * u.GHz,
+    )
+    light_curves[band["name"]] = lc
+    print(f"  {band['name']:>3} band ({band['freq_ghz']} GHz): {lc.n_detections} detections, {lc.n_non_detections} ULs")
+
+# %%
+# Per-Band Light Curve Plot
+# --------------------------
+#
+# Plotting each extracted light curve on the same axes reveals the spectral
+# evolution of the source: at early times the emission is brightest at lower
+# frequencies (optically thick), while at late times the source fades first
+# at high frequencies.
+
+import matplotlib.pyplot as plt
+
+from trilobite.utils.plot_utils import set_plot_style
+
+set_plot_style()
+
+colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]
+
+fig, ax = plt.subplots(figsize=(9, 5))
+
+for (band_name, lc), col in zip(light_curves.items(), colors):
+    det = lc.detection_mask
+    ul = lc.non_detection_mask
+    ax.errorbar(
+        lc.time[det].to_value(u.day),
+        lc.flux_density[det].to_value(u.mJy),
+        yerr=lc.flux_density_error[det].to_value(u.mJy),
+        fmt="o",
+        color=col,
+        label=f"{band_name} ({lc.frequency:.1f})",
+    )
+    if np.any(ul):
+        ax.errorbar(
+            lc.time[ul].to_value(u.day),
+            lc.flux_upper_limit[ul].to_value(u.mJy),
+            fmt="v",
+            color=col,
+            alpha=0.5,
+        )
+
+ax.set_xscale("log")
+ax.set_yscale("log")
+ax.set_xlabel("Time since explosion (days)")
+ax.set_ylabel(r"$F_\nu$ (mJy)")
+ax.set_title("Multi-band radio light curves")
+ax.legend(title="Band")
+plt.tight_layout()
+plt.show()

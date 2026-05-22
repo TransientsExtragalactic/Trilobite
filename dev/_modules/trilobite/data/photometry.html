@@ -471,6 +471,8 @@
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.core.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Model</span>
 
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.light_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioLightCurveContainer</span>
+
 
 <span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
     <span class="s2">&quot;RadioPhotometryContainer&quot;</span><span class="p">,</span>
@@ -1225,6 +1227,63 @@
             <span class="n">sliced</span><span class="p">[</span><span class="s2">&quot;epoch_id&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__epoch_ids__</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
 
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">sliced</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="RadioPhotometryContainer.extract_lightcurve">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve.html#trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">extract_lightcurve</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">band</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+        <span class="n">bandwidth</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">],</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;RadioLightCurveContainer&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Extract a single-frequency light curve from this container.</span>
+
+<span class="sd">        Selects all observations within ``[band - bandwidth/2, band + bandwidth/2]``</span>
+<span class="sd">        and returns them as a :class:`~trilobite.data.light_curve.RadioLightCurveContainer`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        band : float or ~astropy.units.Quantity</span>
+<span class="sd">            Center frequency. A bare float is interpreted as GHz.</span>
+<span class="sd">        bandwidth : float or ~astropy.units.Quantity</span>
+<span class="sd">            Total frequency window. A bare float is interpreted as GHz.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ~trilobite.data.light_curve.RadioLightCurveContainer</span>
+<span class="sd">            Light curve at the specified frequency band, ordered by time.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If no observations fall within the specified frequency window.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.light_curve</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioLightCurveContainer</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">band</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">band</span> <span class="o">=</span> <span class="n">band</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bandwidth</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Quantity</span><span class="p">):</span>
+            <span class="n">bandwidth</span> <span class="o">=</span> <span class="n">bandwidth</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span>
+
+        <span class="n">band_hz</span> <span class="o">=</span> <span class="n">band</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">half_hz</span> <span class="o">=</span> <span class="p">(</span><span class="n">bandwidth</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+        <span class="n">freq_hz</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">)</span><span class="o">.</span><span class="n">value</span>
+
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">freq_hz</span> <span class="o">-</span> <span class="n">band_hz</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="n">half_hz</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;No observations found within </span><span class="si">{</span><span class="n">band</span><span class="si">}</span><span class="s2"> ± </span><span class="si">{</span><span class="n">bandwidth</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mi">2</span><span class="si">}</span><span class="s2">. &quot;</span>
+                <span class="sa">f</span><span class="s2">&quot;Available frequencies span </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">min</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2"> – </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">freq</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">sliced</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+        <span class="n">lc_cols</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_density&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_density_error&quot;</span><span class="p">,</span> <span class="s2">&quot;flux_upper_limit&quot;</span><span class="p">]</span>
+        <span class="n">optional</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;obs_name&quot;</span><span class="p">,</span> <span class="s2">&quot;comments&quot;</span><span class="p">]</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">lc_cols</span> <span class="o">+</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">optional</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">sliced</span><span class="o">.</span><span class="n">colnames</span><span class="p">]</span>
+        <span class="n">lc_table</span> <span class="o">=</span> <span class="n">sliced</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span>
+
+        <span class="n">sort_order</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">lc_table</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">RadioLightCurveContainer</span><span class="p">(</span><span class="n">lc_table</span><span class="p">[</span><span class="n">sort_order</span><span class="p">],</span> <span class="n">frequency</span><span class="o">=</span><span class="n">band</span><span class="p">)</span></div>
 
 
     <span class="c1"># ========================= IO Methods ========================= #</span>

@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Working With Radio Photometry &#8212; Trilobite dev documentation</title>
+    <title>Working With Observational Data &#8212; Trilobite dev documentation</title>
   
   
   
@@ -428,7 +428,7 @@
         <i class="fa-solid fa-home"></i>
       </a>
     </li>
-    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Working With Radio Photometry</span></li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Working With Observational Data</span></li>
   </ul>
 </nav>
 </div>
@@ -445,31 +445,37 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section id="working-with-radio-photometry">
-<span id="data-gallery"></span><h1>Working With Radio Photometry<a class="headerlink" href="#working-with-radio-photometry" title="Link to this heading">#</a></h1>
-<p>These examples demonstrate how to work with <strong>observational radio data</strong> in Trilobite. They cover
-the full data ingestion workflow:</p>
-<ul class="simple">
-<li><p>loading a FITS photometry table,</p></li>
-<li><p>inspecting its contents,</p></li>
-<li><p>grouping observations into temporal epochs,</p></li>
-<li><p>and plotting individual epochs or the full light curve.</p></li>
-</ul>
-<p>The <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.html#module-trilobite.data.photometry" title="trilobite.data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">photometry</span></code></a> subpackage provides container classes for radio photometry that
-carry unit-aware arrays (frequency, flux density, flux uncertainty, upper-limit flags) and
-integrate directly with the inference pipeline.</p>
+  <section id="working-with-observational-data">
+<span id="data-gallery"></span><h1>Working With Observational Data<a class="headerlink" href="#working-with-observational-data" title="Link to this heading">#</a></h1>
+<p>These examples demonstrate how to load, inspect, and visualize observational
+data in Trilobite using the container classes in <code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.data</span></code>. They
+cover the full range of supported data types — radio photometry, radio light
+curves, optical photometry, and optical light curves — as well as the bridge
+from validated containers to the inference pipeline.</p>
 <p class="rubric">What you’ll find here</p>
 <ul class="simple">
-<li><p>Loading <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a> objects from FITS files</p></li>
-<li><p>Inspecting and printing photometry tables</p></li>
-<li><p>Defining temporal epochs from observation time-gaps</p></li>
-<li><p>Plotting light curves and individual SED epochs</p></li>
+<li><p>Constructing <a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>
+objects, grouping observations into epochs, and plotting SEDs.</p></li>
+<li><p>Working with <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a>
+for single-frequency time-series data.</p></li>
+<li><p>Building multi-band <a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a>
+objects and extracting per-band light curves.</p></li>
+<li><p>Using <a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a> for
+flux/magnitude dual representation.</p></li>
+<li><p>Converting any container to <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a> and
+understanding its structure before wiring into a likelihood.</p></li>
+<li><p>Extracting per-band light curves from multi-frequency photometry with
+<a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve.html#trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve" title="trilobite.data.photometry.RadioPhotometryContainer.extract_lightcurve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_lightcurve()</span></code></a>
+and <a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.extract_lightcurve"><code class="xref py py-meth docutils literal notranslate"><span class="pre">extract_lightcurve()</span></code></a>.</p></li>
 </ul>
 <p class="rubric">API reference</p>
 <ul class="simple">
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.html#module-trilobite.data.photometry" title="trilobite.data.photometry"><code class="xref py py-mod docutils literal notranslate"><span class="pre">photometry</span></code></a></p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a>,</p></li>
-<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.photometry.RadioPhotometryEpochContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code></a></p></li>
+<li><p><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.data</span></code></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryContainer.html#trilobite.data.photometry.RadioPhotometryContainer" title="trilobite.data.photometry.RadioPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.RadioLightCurveContainer.html#trilobite.data.light_curve.RadioLightCurveContainer" title="trilobite.data.light_curve.RadioLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">RadioLightCurveContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a></p></li>
 </ul>
 </section>
 
