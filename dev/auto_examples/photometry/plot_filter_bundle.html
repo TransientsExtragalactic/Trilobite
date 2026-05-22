@@ -813,9 +813,9 @@ multiply with no interpolation overhead.</p>
 </pre></div>
 </div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Timing over 1,000 evaluations (4 filters):
-  bundle.apply()       : 3.45 ms  (21.8x faster than loop)
-  bundle.convolve_nu() : 21.77 ms  (3.4x faster than loop)
-  filter loop          : 75.05 ms  (baseline)
+  bundle.apply()       : 2.34 ms  (39.0x faster than loop)
+  bundle.convolve_nu() : 14.80 ms  (6.2x faster than loop)
+  filter loop          : 91.10 ms  (baseline)
 </pre></div>
 </div>
 <p>Visualise the speedup as a bar chart</p>
@@ -844,7 +844,7 @@ multiply with no interpolation overhead.</p>
 This avoids the interpolation cost of <code class="docutils literal notranslate"><span class="pre">convolve_nu()</span></code> and typically delivers
 an order-of-magnitude speedup over per-filter loops.</p>
 </div>
-<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.525 seconds)</p>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 0.440 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-photometry-plot-filter-bundle-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/d547c099a31362d72234dcb2372f4427/plot_filter_bundle.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_filter_bundle.ipynb</span></code></a></p>
