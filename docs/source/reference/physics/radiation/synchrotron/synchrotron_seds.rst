@@ -343,14 +343,6 @@ All closure logic is also available as standalone functions in
 interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
 inversions) that are not exposed through any SED class method.
 
-For **relativistic sources in the coasting phase**, the
-:func:`~trilobite.radiation.synchrotron.SEDs.one_zone.closure.invert_barniol_duran_coasting`
-function implements the :footcite:t:`duran2013radius` equipartition inversion, which
-simultaneously solves for the radius :math:`R`, bulk Lorentz factor :math:`\Gamma`,
-equipartition energy :math:`E`, and the derived microphysical quantities
-:math:`\gamma_e`, :math:`N_e`, and :math:`B`.  See :ref:`barnoil_duran` for the
-theoretical background.
-
 .. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone.closure
 
 .. rubric:: Public Inversion Functions
@@ -365,7 +357,6 @@ theoretical background.
    invert_powerlaw_implicit_cooling_sed
    invert_powerlaw_implicit_cooling_ssa_sed
    invert_powerlaw_ssa_sed_demarchi
-   invert_barniol_duran_coasting
 
 .. rubric:: Private (Low-Level) Inversion Functions
 
@@ -383,7 +374,6 @@ routines where unit overhead must be minimized.
    _invert_powerlaw_implicit_cooling_sed
    _invert_powerlaw_implicit_cooling_ssa_sed
    _invert_powerlaw_ssa_sed_demarchi
-   _invert_barniol_duran_coasting
 
 ----
 

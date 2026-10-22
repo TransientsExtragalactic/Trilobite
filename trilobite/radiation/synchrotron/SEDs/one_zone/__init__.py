@@ -29,11 +29,9 @@ __all__ = [
     "invert_powerlaw_implicit_cooling_sed",
     "invert_powerlaw_implicit_cooling_ssa_sed",
     "invert_powerlaw_ssa_sed_demarchi",
-    "invert_barniol_duran_coasting",
 ]
 
 from .closure import (
-    invert_barniol_duran_coasting,
     invert_powerlaw_cooling_sed,
     invert_powerlaw_cooling_ssa_sed,
     invert_powerlaw_implicit_cooling_sed,

@@ -59,7 +59,6 @@ the various algorithms.
         - :ref:`synchrotron_cooling_theory`
         - :ref:`synchrotron_cooling_closure`
         - :ref:`stratified_absorption`
-        - :ref:`barnoil_duran`
 
 .. toctree::
     :hidden:
@@ -77,7 +76,6 @@ the various algorithms.
     synchrotron/synchrotron_cooling_theory
     synchrotron/synchrotron_cooling_closure
     synchrotron/synchrotron_stratified_absorption
-    synchrotron/synchrotron_barniol_duran
 
 ----
 
