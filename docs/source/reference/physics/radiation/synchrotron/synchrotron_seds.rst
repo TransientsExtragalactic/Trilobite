@@ -340,8 +340,9 @@ Standalone Closure Functions
 
 All closure logic is also available as standalone functions in
 :mod:`~trilobite.radiation.synchrotron.SEDs.one_zone.closure`. These are useful when the SED class
-interface is not needed, or for specialized closures (e.g. the implicit-cooling or De Marchi SSA
-inversions) that are not exposed through any SED class method.
+interface is not needed. Closed-form inversions from a break frequency and flux alone (including the De Marchi
+inversion and self-consistent synchrotron and inverse-Compton cooling) are described in
+:ref:`synchrotron_spectral_inversion`.
 
 .. currentmodule:: trilobite.radiation.synchrotron.SEDs.one_zone.closure
 
@@ -354,9 +355,6 @@ inversions) that are not exposed through any SED class method.
    invert_powerlaw_cooling_sed
    invert_powerlaw_ssa_sed
    invert_powerlaw_cooling_ssa_sed
-   invert_powerlaw_implicit_cooling_sed
-   invert_powerlaw_implicit_cooling_ssa_sed
-   invert_powerlaw_ssa_sed_demarchi
 
 .. rubric:: Private (Low-Level) Inversion Functions
 
@@ -371,9 +369,6 @@ routines where unit overhead must be minimized.
    _invert_powerlaw_cooling_sed
    _invert_powerlaw_ssa_sed
    _invert_powerlaw_cooling_ssa_sed
-   _invert_powerlaw_implicit_cooling_sed
-   _invert_powerlaw_implicit_cooling_ssa_sed
-   _invert_powerlaw_ssa_sed_demarchi
 
 ----
 

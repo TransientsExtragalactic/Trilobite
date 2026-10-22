@@ -14,12 +14,7 @@ from trilobite.radiation.synchrotron.SEDs import (
     PowerLaw_SSA_SynchrotronSED,
     PowerLaw_SynchrotronSED,
 )
-
-from trilobite.radiation.synchrotron.SEDs.one_zone.closure import (
-    invert_powerlaw_implicit_cooling_sed,
-    invert_powerlaw_implicit_cooling_ssa_sed,
-    invert_powerlaw_ssa_sed_demarchi,
-)
+from trilobite.radiation.synchrotron.spectral_inversion import invert_ssa_DeMarchi22
 
 
 # ==========================================================
@@ -537,10 +532,6 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     and compares the inferred B(t) and R(t) from the two methods.
     """
 
-    from trilobite.radiation.synchrotron.SEDs.one_zone.closure import (
-        invert_powerlaw_ssa_sed_demarchi,
-    )
-
     sed_engine = PowerLaw_SSA_SynchrotronSED()
 
     # ---------------------------------------------------------
@@ -576,10 +567,10 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
     # De Marchi closure
     # ---------------------------------------------------------
 
-    B_dm22, R_dm22 = invert_powerlaw_ssa_sed_demarchi(
+    dm22 = invert_ssa_DeMarchi22(
         nu_t,
         F_t,
-        luminosity_distance=luminosity_distance,
+        luminosity_distance,
         gamma_min=gamma_min,
         gamma_max=gamma_max,
         p=p,
@@ -588,6 +579,7 @@ def test_demarchi_equivalence(diagnostic_plots, diagnostic_plots_dir):
         f=f_V,
         theta=np.pi / 2,
     )
+    B_dm22, R_dm22 = dm22["B"], dm22["R"]
 
     # ---------------------------------------------------------
     # Model inversion
@@ -1214,310 +1206,6 @@ def test_cooling_transition_continuity(diagnostic_plots, diagnostic_plots_dir):
         plt.close()
 
 
-# ── Implicit Cooling (optically thin) Inversions ─────────────────────────────
-
-
-@pytest.mark.parametrize(
-    "B,R,t,p",
-    list(
-        itertools.product(
-            [0.1 * u.G, 1.0 * u.G],
-            [1e15 * u.cm, 1e16 * u.cm],
-            [1e5 * u.s, 1e6 * u.s, 1e7 * u.s],
-            [2.5, 3.0],
-        )
-    ),
-)
-def test_implicit_cooling_round_trip(B, R, t, p, diagnostic_plots, diagnostic_plots_dir):
-    r"""
-    Round-trip test for the implicit synchrotron-cooling optically-thin inversion.
-
-    Parameters
-    ----------
-    B : ~astropy.units.Quantity
-        Magnetic field strength.
-    R : ~astropy.units.Quantity
-        Emitting-region radius.
-    t : ~astropy.units.Quantity
-        Source age.
-    p : float
-        Electron power-law index.
-    diagnostic_plots : bool
-        If ``True``, save comparison plots.
-    diagnostic_plots_dir : ~pathlib.Path or None
-        Directory in which to write diagnostic plots.
-
-    Notes
-    -----
-    The pipeline tested is::
-
-        (B, R, t)
-            -> gamma_c = THETA / (B^2 * t)
-            -> PowerLaw_Cooling_SynchrotronSED.from_physics_to_params
-            -> (F_peak, nu_peak, regime)
-            -> invert_powerlaw_implicit_cooling_sed("slow_cooling", ...)
-            -> (B_rec, R_rec)
-
-    ``gamma_c`` is not supplied explicitly; instead it is derived from the
-    synchrotron cooling time :math:`t_{\rm cool} = \Theta / (B^2 \gamma)`,
-    giving :math:`\gamma_c = \Theta / (B^2 t)`.  This is the same relation
-    used internally by :func:`invert_powerlaw_implicit_cooling_sed`.
-
-    The test is skipped automatically when the forward model produces a
-    regime other than ``"slow_cooling"``, which is the only regime currently
-    supported by the implicit-cooling inversion.
-
-    Both ``B`` and ``R`` must be recovered within ``rtol=0.1``.
-    """
-    gamma_min = 1
-    gamma_max = 1e8
-    epsilon_E = 0.1
-    epsilon_B = 0.1
-    f_V = 1.0
-    gamma_bulk = 1.0
-    luminosity_distance = 35 * u.Mpc
-
-    cooling_engine = SynchrotronRadiativeCoolingEngine()
-
-    # Compute gamma_c from the synchrotron cooling closure: gamma_c = THETA / (B^2 t)
-    B_cgs = B.to_value("G")
-    t_cgs = t.to_value("s")
-
-    gamma_c = cooling_engine.compute_cooling_gamma(B=B, t=t)
-
-    # Forward normalization
-    model = PowerLaw_Cooling_SynchrotronSED()
-    params = model.from_physics_to_params(
-        B,
-        R,
-        gamma_c=gamma_c,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        p=p,
-        epsilon_E=epsilon_E,
-        epsilon_B=epsilon_B,
-        f_V=f_V,
-        gamma_bulk=gamma_bulk,
-        luminosity_distance=luminosity_distance,
-        pitch_average=True,
-    )
-
-    regime = params["regime"]
-    if regime != "slow_cooling":
-        pytest.skip(f"Parameters produce regime '{regime}'; only 'slow_cooling' is supported.")
-
-    F_peak = params["F_peak"]
-    nu_peak = params["nu_peak"]
-    print(F_peak.to_value("Jy"), nu_peak)
-
-    # Inversion
-    recovered = invert_powerlaw_implicit_cooling_sed(
-        "slow_cooling",
-        F_peak,
-        nu_peak,
-        t,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        p=p,
-        epsilon_E=epsilon_E,
-        epsilon_B=epsilon_B,
-        f_V=f_V,
-        gamma_bulk=gamma_bulk,
-        luminosity_distance=luminosity_distance,
-        pitch_average=True,
-    )
-
-    B_rec = recovered["B"]
-    R_rec = recovered["R"]
-
-    assert np.isclose(
-        B_rec.to_value("G"),
-        B.to_value("G"),
-        rtol=0.1,
-    ), f"B mismatch: B_true={B}, B_rec={B_rec}, regime={regime}"
-
-    assert np.isclose(
-        R_rec.to_value("cm"),
-        R.to_value("cm"),
-        rtol=0.1,
-    ), f"R mismatch: R_true={R}, R_rec={R_rec}, regime={regime}"
-
-    if diagnostic_plots:
-        fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-
-        axes[0].scatter([B.to_value("G")], [B_rec.to_value("G")], zorder=3)
-        lim_B = [0.9 * B.to_value("G"), 1.1 * B.to_value("G")]
-        axes[0].plot(lim_B, lim_B, "k--")
-        axes[0].set_xlabel("B_in [G]")
-        axes[0].set_ylabel("B_rec [G]")
-        axes[0].set_title(f"B round-trip ({regime})")
-
-        axes[1].scatter([R.to_value("cm")], [R_rec.to_value("cm")], zorder=3)
-        lim_R = [0.9 * R.to_value("cm"), 1.1 * R.to_value("cm")]
-        axes[1].plot(lim_R, lim_R, "k--")
-        axes[1].set_xlabel("R_in [cm]")
-        axes[1].set_ylabel("R_rec [cm]")
-        axes[1].set_title("R round-trip")
-
-        plt.tight_layout()
-        fname = f"implicit_cooling_rt_B{B_cgs:.2e}_R{R.to_value('cm'):.2e}_t{t_cgs:.2e}_p{p}.png"
-        plt.savefig(diagnostic_plots_dir / fname)
-        plt.close()
-
-
-@pytest.mark.parametrize(
-    "regime,B,R,t,p",
-    list(
-        itertools.product(
-            ["Spectrum4", "Spectrum7", "Spectrum3"],
-            [1.0 * u.G, 10.0 * u.G],
-            [1e16 * u.cm, 1e17 * u.cm, 1e18 * u.cm],
-            [1e4 * u.s, 1e5 * u.s, 1e6 * u.s],
-            [3.0],
-        )
-    ),
-)
-def test_implicit_cooling_ssa_round_trip(regime, B, R, t, p, diagnostic_plots, diagnostic_plots_dir):
-    r"""
-    Round-trip test for the implicit synchrotron-cooling SSA inversion.
-
-    Parameters
-    ----------
-    regime : str
-        Target SSA spectral regime: one of ``"Spectrum3"``, ``"Spectrum4"``,
-        or ``"Spectrum7"``.
-    B : ~astropy.units.Quantity
-        Magnetic field strength.
-    R : ~astropy.units.Quantity
-        Emitting-region radius.
-    t : ~astropy.units.Quantity
-        Source age.
-    p : float
-        Electron power-law index.
-    diagnostic_plots : bool
-        If ``True``, save comparison plots.
-    diagnostic_plots_dir : ~pathlib.Path or None
-        Directory in which to write diagnostic plots.
-
-    Notes
-    -----
-    The pipeline tested is::
-
-        (B, R, t)
-            -> gamma_c = THETA / (B^2 * t)
-            -> PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params
-            -> (F_peak, nu_peak, actual_regime)
-            -> invert_powerlaw_implicit_cooling_ssa_sed(regime, ...)
-            -> (B_rec, R_rec)
-
-    The test is skipped when the forward model produces a regime that does
-    not match the parametrized ``regime`` target.  This ensures that the
-    inversion is tested only with observables that are self-consistent with
-    the assumed spectral ordering.
-
-    Both ``B`` and ``R`` must be recovered within ``rtol=0.1``.
-    """
-    gamma_min = 1
-    gamma_max = 1e8
-    epsilon_E = 0.1
-    epsilon_B = 0.1
-    f_V = 0.5
-    f_A = 0.1
-    gamma_bulk = 1.0
-    luminosity_distance = 35 * u.Mpc
-
-    # Compute gamma_c from the synchrotron cooling closure
-    B_cgs = B.to_value("G")
-    t_cgs = t.to_value("s")
-    cooling_engine = SynchrotronRadiativeCoolingEngine()
-    gamma_c = cooling_engine.compute_cooling_gamma(B=B, t=t)
-
-    if gamma_c < 1:
-        raise ValueError(
-            f"gamma_c < 1: {gamma_c:.2e}; adjust parameters to ensure gamma_c > 1 for physical consistency."
-        )
-
-    # Forward normalization
-    model = PowerLaw_Cooling_SSA_SynchrotronSED()
-    params = model.from_physics_to_params(
-        B,
-        R,
-        gamma_c=gamma_c,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        p=p,
-        epsilon_E=epsilon_E,
-        epsilon_B=epsilon_B,
-        f_V=f_V,
-        f_A=f_A,
-        gamma_bulk=gamma_bulk,
-        luminosity_distance=luminosity_distance,
-        pitch_average=True,
-    )
-
-    actual_regime = params["regime"]
-    if actual_regime != regime:
-        pytest.skip(f"Parameters produce regime '{actual_regime}'; target regime was '{regime}'.")
-
-    F_peak = params["F_peak"]
-    nu_peak = params["nu_peak"]
-
-    # Inversion
-    recovered = invert_powerlaw_implicit_cooling_ssa_sed(
-        regime,
-        F_peak,
-        nu_peak,
-        t,
-        gamma_min=gamma_min,
-        gamma_max=gamma_max,
-        p=p,
-        epsilon_E=epsilon_E,
-        epsilon_B=epsilon_B,
-        f_V=f_V,
-        f_A=f_A,
-        gamma_bulk=gamma_bulk,
-        luminosity_distance=luminosity_distance,
-        pitch_average=True,
-    )
-
-    B_rec = recovered["B"]
-    R_rec = recovered["R"]
-
-    assert np.isclose(
-        B_rec.to_value("G"),
-        B.to_value("G"),
-        rtol=0.1,
-    ), f"B mismatch: B_true={B}, B_rec={B_rec}, regime={regime}"
-
-    assert np.isclose(
-        R_rec.to_value("cm"),
-        R.to_value("cm"),
-        rtol=0.1,
-    ), f"R mismatch: R_true={R}, R_rec={R_rec}, regime={regime}"
-
-    if diagnostic_plots:
-        fig, axes = plt.subplots(1, 2, figsize=(8, 4))
-
-        axes[0].scatter([B.to_value("G")], [B_rec.to_value("G")], zorder=3)
-        lim_B = [0.9 * B.to_value("G"), 1.1 * B.to_value("G")]
-        axes[0].plot(lim_B, lim_B, "k--")
-        axes[0].set_xlabel("B_in [G]")
-        axes[0].set_ylabel("B_rec [G]")
-        axes[0].set_title(f"B round-trip ({regime})")
-
-        axes[1].scatter([R.to_value("cm")], [R_rec.to_value("cm")], zorder=3)
-        lim_R = [0.9 * R.to_value("cm"), 1.1 * R.to_value("cm")]
-        axes[1].plot(lim_R, lim_R, "k--")
-        axes[1].set_xlabel("R_in [cm]")
-        axes[1].set_ylabel("R_rec [cm]")
-        axes[1].set_title("R round-trip")
-
-        plt.tight_layout()
-        fname = f"implicit_cooling_ssa_rt_{regime}_B{B_cgs:.2e}_R{R.to_value('cm'):.2e}_t{t_cgs:.2e}_p{p}.png"
-        plt.savefig(diagnostic_plots_dir / fname)
-        plt.close()
-
-
 @pytest.mark.parametrize(
     "B,R,d,p",
     list(
@@ -1556,7 +1244,7 @@ def test_demarchi_round_trip(B, R, d, p, diagnostic_plots, diagnostic_plots_dir)
             -> PowerLaw_SSA_SynchrotronSED.from_physics_to_params
                (pitch_average=False, alpha=pi/2 to match DM22 assumption)
             -> (F_peak, nu_peak, regime)
-            -> invert_powerlaw_ssa_sed_demarchi(nu_peak, F_peak, ...)
+            -> invert_ssa_DeMarchi22(nu_peak, F_peak, ...)
             -> (B_rec, R_rec)
 
     The DM22 inversion is an independent analytic formula and is only an
@@ -1603,9 +1291,10 @@ def test_demarchi_round_trip(B, R, d, p, diagnostic_plots, diagnostic_plots_dir)
     nu_peak = params["nu_peak"]
 
     # DM22 inversion
-    B_rec, R_rec = invert_powerlaw_ssa_sed_demarchi(
+    dm22_rec = invert_ssa_DeMarchi22(
         nu_peak.to(u.GHz),
         F_peak.to(u.Jy),
+        d,
         p=p,
         f=f_V,
         theta=theta,
@@ -1613,8 +1302,8 @@ def test_demarchi_round_trip(B, R, d, p, diagnostic_plots, diagnostic_plots_dir)
         epsilon_E=epsilon_E,
         gamma_min=gamma_min,
         gamma_max=gamma_max,
-        luminosity_distance=d,
     )
+    B_rec, R_rec = dm22_rec["B"], dm22_rec["R"]
 
     assert np.isclose(
         B_rec.to_value("G"),

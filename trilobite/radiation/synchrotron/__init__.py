@@ -27,6 +27,12 @@ __all__ = [
     "MixedThermalNonThermal",
     "MaxwellJuettnerPowerLaw",
     "MaxwellJuettnerBrokenPowerLaw",
+    "invert_ssa_Diggins26",
+    "invert_ssa_synchrotron_cooled_Diggins26",
+    "invert_ssa_ic_cooled_Diggins26",
+    "invert_ssa_combined_cooled_Diggins26",
+    "invert_ssa_with_cooling_Diggins26",
+    "invert_ssa_DeMarchi22",
 ]
 
 # Import the various core module items.
@@ -52,6 +58,14 @@ from .electron_distributions import (
     PowerLaw,
     equipartition_electron_energy,
     equipartition_magnetic_field,
+)
+from .spectral_inversion import (
+    invert_ssa_combined_cooled_Diggins26,
+    invert_ssa_DeMarchi22,
+    invert_ssa_Diggins26,
+    invert_ssa_ic_cooled_Diggins26,
+    invert_ssa_synchrotron_cooled_Diggins26,
+    invert_ssa_with_cooling_Diggins26,
 )
 
 __all__ += SEDs.__all__

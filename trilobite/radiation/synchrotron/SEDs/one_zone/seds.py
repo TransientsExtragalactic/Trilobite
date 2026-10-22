@@ -79,6 +79,7 @@ from trilobite.radiation.synchrotron.utils import (
 from trilobite.utils.log import trilobite_logger
 from trilobite.utils.misc_utils import ensure_in_units
 
+from ...spectral_inversion import _invert_ssa_DeMarchi22
 from ..numerical.core import NumericalSynchrotronEngine
 from ._closure import SSA_INV_FUNCTION_REGISTRY
 from ._functions import (
@@ -105,7 +106,6 @@ from .closure import (
     _invert_powerlaw_cooling_ssa_sed,
     _invert_powerlaw_sed,
     _invert_powerlaw_ssa_sed,
-    _invert_powerlaw_ssa_sed_demarchi,
     invert_powerlaw_cooling_sed,
     invert_powerlaw_cooling_ssa_sed,
     invert_powerlaw_sed,
@@ -5749,7 +5749,7 @@ class SSA_SED_PowerLaw(SynchrotronSED):
         Effective 1/19/26: We have modified this to work exclusively in log space due to issues with floating point
         truncation errors. Catastrophic cancellation caused significant loss of accuracy.
         """
-        return _invert_powerlaw_ssa_sed_demarchi(
+        return _invert_ssa_DeMarchi22(
             nu_brk=nu_brk,
             F_nu_brk=F_nu_brk,
             distance=distance,

@@ -57,7 +57,7 @@ the various algorithms.
         - :ref:`synch_sed_theory`
         - :ref:`synch_numerical_sed_theory`
         - :ref:`synchrotron_cooling_theory`
-        - :ref:`synchrotron_cooling_closure`
+        - :ref:`synchrotron_spectral_inversion`
         - :ref:`stratified_absorption`
 
 .. toctree::
@@ -74,7 +74,7 @@ the various algorithms.
     synchrotron/synchrotron_pl_sed_theory
     synchrotron/synchrotron_numerical_seds
     synchrotron/synchrotron_cooling_theory
-    synchrotron/synchrotron_cooling_closure
+    synchrotron/synchrotron_spectral_inversion
     synchrotron/synchrotron_stratified_absorption
 
 ----

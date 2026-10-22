@@ -26,19 +26,13 @@ __all__ = [
     "invert_powerlaw_cooling_ssa_sed",
     "invert_powerlaw_cooling_sed",
     "invert_powerlaw_ssa_sed",
-    "invert_powerlaw_implicit_cooling_sed",
-    "invert_powerlaw_implicit_cooling_ssa_sed",
-    "invert_powerlaw_ssa_sed_demarchi",
 ]
 
 from .closure import (
     invert_powerlaw_cooling_sed,
     invert_powerlaw_cooling_ssa_sed,
-    invert_powerlaw_implicit_cooling_sed,
-    invert_powerlaw_implicit_cooling_ssa_sed,
     invert_powerlaw_sed,
     invert_powerlaw_ssa_sed,
-    invert_powerlaw_ssa_sed_demarchi,
 )
 from .seds import (
     Numerical_PowerLaw_Cooling_SSA_SynchrotronSED,
