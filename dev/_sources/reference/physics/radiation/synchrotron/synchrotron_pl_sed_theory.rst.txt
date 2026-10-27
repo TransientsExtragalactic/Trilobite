@@ -982,9 +982,9 @@ Inversion
     In addition, some other inversion schemes are provided in the code with varying levels of applicability. The links
     below provide some examples of these other inversion schemes:
 
-    - :ref:`synchrotron_cooling_closure` provides a closure relation for which :math:`\gamma_c` may be treated as a dependent
-      variable and thus inferred from the SED. There are a number of caveats and restrictions to this approach
-      which are described in the theory note.
+    - :ref:`synchrotron_spectral_inversion` provides closed-form inversions from a break frequency and flux
+      alone, including inversions for which :math:`\gamma_c` is a dependent variable set by synchrotron and
+      inverse-Compton cooling over the source age.
 
 The final theoretical topic which must be discussed in the context of our single-zone SED implementation is that of
 inversion. By inversion, we mean the process of taking an observed SED and inferring the underlying physical parameters which

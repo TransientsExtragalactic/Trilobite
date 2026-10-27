@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -27,14 +26,14 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+  <link href="_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -42,10 +41,10 @@
     <link rel="stylesheet" type="text/css" href="_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <script defer src="_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
     <script src="_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="_static/doctools.js?v=fd6eb6e6"></script>
@@ -56,7 +55,7 @@
     <script src="_static/design-tabs.js?v=f930bc37"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'sg_execution_times';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -67,6 +66,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
   
@@ -116,7 +116,7 @@
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -196,7 +196,7 @@
         <div class="navbar-item navbar-persistent--container">
           
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
  <i class="fa-solid fa-magnifying-glass"></i>
  <span class="search-button__default-text">Search</span>
  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -207,15 +207,15 @@
         <div class="navbar-item">
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
     <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
     <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
   </ul>
 </div></div>
       
@@ -261,7 +261,7 @@
   
     <div class="navbar-persistent--mobile">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
  <i class="fa-solid fa-magnifying-glass"></i>
  <span class="search-button__default-text">Search</span>
  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -270,7 +270,7 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -342,15 +342,15 @@
           <div class="navbar-item">
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
     <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
     <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
   </ul>
 </div></div>
         
@@ -447,7 +447,7 @@
                   
   <section id="computation-times">
 <span id="sphx-glr-sg-execution-times"></span><h1>Computation times<a class="headerlink" href="#computation-times" title="Link to this heading">#</a></h1>
-<p><strong>13:42.417</strong> total execution time for 67 files <strong>from all galleries</strong>:</p>
+<p><strong>07:53.594</strong> total execution time for 67 files <strong>from all galleries</strong>:</p>
 <div class="docutils container">
 <style scoped>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
@@ -469,263 +469,263 @@ $(document).ready( function () {
 </thead>
 <tbody>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/inference/plot_shock_parameter_inference.html#sphx-glr-auto-examples-inference-plot-shock-parameter-inference-py"><span class="std std-ref">Inferring Physical Shock Parameters from a Radio Supernova</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_shock_parameter_inference.py</span></code>)</p></td>
-<td><p>02:04.626</p></td>
+<td><p>01:12.266</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/inference/plot_multi_epoch_sed_evolution.html#sphx-glr-auto-examples-inference-plot-multi-epoch-sed-evolution-py"><span class="std std-ref">Multi-Epoch SED Fitting: Tracking Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_multi_epoch_sed_evolution.py</span></code>)</p></td>
-<td><p>01:46.147</p></td>
+<td><p>00:57.407</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/modeling/plot_ffa_fadeout_evolution.html#sphx-glr-auto-examples-modeling-plot-ffa-fadeout-evolution-py"><span class="std std-ref">Time-Resolved Spectral Modeling: FFA Fade-out in a Radio SN</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_ffa_fadeout_evolution.py</span></code>)</p></td>
-<td><p>01:44.782</p></td>
+<td><p>00:54.732</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/inference/plot_upper_limit_inference.html#sphx-glr-auto-examples-inference-plot-upper-limit-inference-py"><span class="std std-ref">Upper Limit Constraints: Non-Detections as Information</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_upper_limit_inference.py</span></code>)</p></td>
-<td><p>01:08.864</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/inference/plot_evolving_sed.html#sphx-glr-auto-examples-inference-plot-evolving-sed-py"><span class="std std-ref">Fitting a Time-Evolving Synchrotron SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_evolving_sed.py</span></code>)</p></td>
+<td><p>00:45.497</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/inference/plot_evolving_sed.html#sphx-glr-auto-examples-inference-plot-evolving-sed-py"><span class="std std-ref">Fitting a Time-Evolving Synchrotron SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_evolving_sed.py</span></code>)</p></td>
-<td><p>01:06.408</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/inference/plot_upper_limit_inference.html#sphx-glr-auto-examples-inference-plot-upper-limit-inference-py"><span class="std std-ref">Upper Limit Constraints: Non-Detections as Information</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_upper_limit_inference.py</span></code>)</p></td>
+<td><p>00:37.299</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/inference/plot_censored_SED_fit.html#sphx-glr-auto-examples-inference-plot-censored-sed-fit-py"><span class="std std-ref">Fit Censored Radio Photometry to a BPL</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_censored_SED_fit.py</span></code>)</p></td>
-<td><p>00:56.301</p></td>
+<td><p>00:31.112</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_off_axis_numerical.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-off-axis-numerical-py"><span class="std std-ref">Off-Axis Synchrotron SEDs from Axisymmetric Outflows</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_off_axis_numerical.py</span></code>)</p></td>
-<td><p>00:46.419</p></td>
+<td><p>00:24.721</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/modeling/plot_phenomenological_lc_fit.html#sphx-glr-auto-examples-modeling-plot-phenomenological-lc-fit-py"><span class="std std-ref">Phenomenological Radio Light Curve Fitting</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_phenomenological_lc_fit.py</span></code>)</p></td>
-<td><p>00:43.435</p></td>
+<td><p>00:24.592</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/inference/plot_SED_fit.html#sphx-glr-auto-examples-inference-plot-sed-fit-py"><span class="std std-ref">Fit Radio Photometry to a BPL</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_SED_fit.py</span></code>)</p></td>
-<td><p>00:36.797</p></td>
+<td><p>00:20.298</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/modeling/plot_type_IIn_SN_dense_CSM.html#sphx-glr-auto-examples-modeling-plot-type-iin-sn-dense-csm-py"><span class="std std-ref">Type IIn Supernova in a Dense Circumstellar Wind</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_type_IIn_SN_dense_CSM.py</span></code>)</p></td>
-<td><p>00:30.831</p></td>
+<td><p>00:16.285</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_sed_to_source_size.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-sed-to-source-size-py"><span class="std std-ref">From SED to Source Size: The Inverse Closure Workflow</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_sed_to_source_size.py</span></code>)</p></td>
-<td><p>00:21.286</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/photometry/plot_svo_filters.html#sphx-glr-auto-examples-photometry-plot-svo-filters-py"><span class="std std-ref">Loading Filters from the SVO Filter Profile Service</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_svo_filters.py</span></code>)</p></td>
+<td><p>00:13.061</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/photometry/plot_svo_filters.html#sphx-glr-auto-examples-photometry-plot-svo-filters-py"><span class="std std-ref">Loading Filters from the SVO Filter Profile Service</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_svo_filters.py</span></code>)</p></td>
-<td><p>00:15.822</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_relativistic_thin_shell_convergence.html#sphx-glr-auto-examples-dynamics-c-engines-plot-relativistic-thin-shell-convergence-py"><span class="std std-ref">Relativistic vs. Non-Relativistic Thin-Shell Convergence</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_relativistic_thin_shell_convergence.py</span></code>)</p></td>
-<td><p>00:11.786</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_numerical_shocks_csms.html#sphx-glr-auto-examples-dynamics-c-engines-plot-numerical-shocks-csms-py"><span class="std std-ref">SNe Shocks In Different CSM Environments</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_numerical_shocks_csms.py</span></code>)</p></td>
-<td><p>00:11.260</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_sed_to_source_size.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-sed-to-source-size-py"><span class="std std-ref">From SED to Source Size: The Inverse Closure Workflow</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_sed_to_source_size.py</span></code>)</p></td>
+<td><p>00:11.794</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_adv_disk.html#sphx-glr-auto-examples-accretion-plot-adv-disk-py"><span class="std std-ref">Advective Cooling in One-Zone Accretion Disks</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_adv_disk.py</span></code>)</p></td>
-<td><p>00:10.152</p></td>
+<td><p>00:07.530</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_relativistic_thin_shell_convergence.html#sphx-glr-auto-examples-dynamics-c-engines-plot-relativistic-thin-shell-convergence-py"><span class="std std-ref">Relativistic vs. Non-Relativistic Thin-Shell Convergence</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_relativistic_thin_shell_convergence.py</span></code>)</p></td>
+<td><p>00:06.994</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_numerical_shocks_csms.html#sphx-glr-auto-examples-dynamics-c-engines-plot-numerical-shocks-csms-py"><span class="std std-ref">SNe Shocks In Different CSM Environments</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_numerical_shocks_csms.py</span></code>)</p></td>
+<td><p>00:06.282</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/accretion/plot_fallback_disk.html#sphx-glr-auto-examples-accretion-plot-fallback-disk-py"><span class="std std-ref">Accretion Disk with Fallback Mass Supply</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_fallback_disk.py</span></code>)</p></td>
-<td><p>00:06.298</p></td>
+<td><p>00:04.797</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/modeling/plot_tde_radio_afterglow.html#sphx-glr-auto-examples-modeling-plot-tde-radio-afterglow-py"><span class="std std-ref">TDE Radio Afterglow: Mildly Relativistic Outflow in ISM</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_tde_radio_afterglow.py</span></code>)</p></td>
-<td><p>00:05.051</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_broadband_sed.html#sphx-glr-auto-examples-accretion-plot-disk-broadband-sed-py"><span class="std std-ref">Late-Time Broadband SED Evolution of a TDE Accretion Disk</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_broadband_sed.py</span></code>)</p></td>
+<td><p>00:03.048</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_broadband_sed.html#sphx-glr-auto-examples-accretion-plot-disk-broadband-sed-py"><span class="std std-ref">Late-Time Broadband SED Evolution of a TDE Accretion Disk</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_broadband_sed.py</span></code>)</p></td>
-<td><p>00:04.164</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/modeling/plot_tde_radio_afterglow.html#sphx-glr-auto-examples-modeling-plot-tde-radio-afterglow-py"><span class="std std-ref">TDE Radio Afterglow: Mildly Relativistic Outflow in ISM</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_tde_radio_afterglow.py</span></code>)</p></td>
+<td><p>00:02.915</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_one_zone_disk_quickstart.html#sphx-glr-auto-examples-accretion-plot-one-zone-disk-quickstart-py"><span class="std std-ref">One-Zone Accretion Disk — Quickstart</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_one_zone_disk_quickstart.py</span></code>)</p></td>
-<td><p>00:03.289</p></td>
+<td><p>00:02.309</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_inhomogeneous_sphere.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-inhomogeneous-sphere-py"><span class="std std-ref">Synchrotron SEDs from an Inhomogeneous Sphere</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_inhomogeneous_sphere.py</span></code>)</p></td>
-<td><p>00:02.952</p></td>
+<td><p>00:01.738</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_two_shock.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-two-shock-py"><span class="std std-ref">Two-Shock Chevalier Self-Similar Evolution in a Steady Wind</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_two_shock.py</span></code>)</p></td>
-<td><p>00:02.805</p></td>
+<td><p>00:01.676</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_mechanical_shocks_csms.html#sphx-glr-auto-examples-dynamics-c-engines-plot-mechanical-shocks-csms-py"><span class="std std-ref">MechanicalShockEngine: Forward and Reverse Shocks in Different CSM Environments</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_mechanical_shocks_csms.py</span></code>)</p></td>
-<td><p>00:02.289</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_eos_comparison.html#sphx-glr-auto-examples-accretion-plot-disk-eos-comparison-py"><span class="std std-ref">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_eos_comparison.py</span></code>)</p></td>
+<td><p>00:01.460</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_ss_disk.html#sphx-glr-auto-examples-accretion-plot-ss-disk-py"><span class="std std-ref">Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_ss_disk.py</span></code>)</p></td>
-<td><p>00:02.286</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_mechanical_shocks_csms.html#sphx-glr-auto-examples-dynamics-c-engines-plot-mechanical-shocks-csms-py"><span class="std std-ref">MechanicalShockEngine: Forward and Reverse Shocks in Different CSM Environments</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_mechanical_shocks_csms.py</span></code>)</p></td>
+<td><p>00:01.423</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/accretion/plot_ss_disk.html#sphx-glr-auto-examples-accretion-plot-ss-disk-py"><span class="std std-ref">Sunyaev-Shakura Alpha-Disk: Structure, Scalings, and SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_ss_disk.py</span></code>)</p></td>
+<td><p>00:01.422</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/modeling/plot_chevalier_shock_synchrotron_cooling.html#sphx-glr-auto-examples-modeling-plot-chevalier-shock-synchrotron-cooling-py"><span class="std std-ref">Synchrotron Emission from Fast-Cooling SN Shocks</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_chevalier_shock_synchrotron_cooling.py</span></code>)</p></td>
+<td><p>00:01.349</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_momentum_conserving_shock.html#sphx-glr-auto-examples-dynamics-c-engines-plot-momentum-conserving-shock-py"><span class="std std-ref">Momentum-Conserving Snowplow Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_momentum_conserving_shock.py</span></code>)</p></td>
-<td><p>00:02.112</p></td>
+<td><p>00:01.200</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_eos_comparison.html#sphx-glr-auto-examples-accretion-plot-disk-eos-comparison-py"><span class="std std-ref">Gas Pressure vs. Full Pressure — Equation-of-State Comparison</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_eos_comparison.py</span></code>)</p></td>
-<td><p>00:02.108</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_forward_closure.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-forward-closure-py"><span class="std std-ref">From Physical Parameters to SED Parameters: the Forward Closure</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_forward_closure.py</span></code>)</p></td>
+<td><p>00:01.195</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/modeling/plot_chevalier_shock_synchrotron_cooling.html#sphx-glr-auto-examples-modeling-plot-chevalier-shock-synchrotron-cooling-py"><span class="std std-ref">Synchrotron Emission from Fast-Cooling SN Shocks</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/modeling/plot_chevalier_shock_synchrotron_cooling.py</span></code>)</p></td>
-<td><p>00:02.100</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_on_axis_numerical.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-on-axis-numerical-py"><span class="std std-ref">On-Axis Asymmetric Synchrotron SEDs</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_on_axis_numerical.py</span></code>)</p></td>
-<td><p>00:01.943</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_forward_closure.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-forward-closure-py"><span class="std std-ref">From Physical Parameters to SED Parameters: the Forward Closure</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_forward_closure.py</span></code>)</p></td>
-<td><p>00:01.914</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_on_axis_numerical.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-on-axis-numerical-py"><span class="std std-ref">On-Axis Asymmetric Synchrotron SEDs</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_on_axis_numerical.py</span></code>)</p></td>
+<td><p>00:01.125</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_inverse_closure.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-inverse-closure-py"><span class="std std-ref">Recovering Physical Parameters from an Observed SED: the Inverse Closure</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_inverse_closure.py</span></code>)</p></td>
-<td><p>00:01.824</p></td>
+<td><p>00:01.073</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_shock_structure.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-shock-structure-py"><span class="std std-ref">Chevalier Self-Similar Shock Structure</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_shock_structure.py</span></code>)</p></td>
-<td><p>00:01.612</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_tde_disk_observables.html#sphx-glr-auto-examples-accretion-plot-tde-disk-observables-py"><span class="std std-ref">TDE Disk Evolution and Observable Signatures</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_tde_disk_observables.py</span></code>)</p></td>
-<td><p>00:01.608</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_synchrotron_cooling_engine.html#sphx-glr-auto-examples-synchrotron-c-cooling-plot-synchrotron-cooling-engine-py"><span class="std std-ref">Electron Cooling — the Synchrotron Radiative Cooling Engine</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/c_cooling/plot_synchrotron_cooling_engine.py</span></code>)</p></td>
-<td><p>00:01.496</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.html#sphx-glr-auto-examples-free-free-c-ffa-sed-plot-ffa-synchrotron-sed-py"><span class="std std-ref">Free-Free Absorption of a Synchrotron SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.py</span></code>)</p></td>
-<td><p>00:01.169</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.html#sphx-glr-auto-examples-synchrotron-c-cooling-plot-ic-vs-synchrotron-cooling-py"><span class="std std-ref">Synchrotron vs Inverse Compton Cooling</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.py</span></code>)</p></td>
-<td><p>00:01.133</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_scurve.html#sphx-glr-auto-examples-accretion-plot-disk-scurve-py"><span class="std std-ref">Disk Thermal Equilibrium: The S-curve</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_scurve.py</span></code>)</p></td>
-<td><p>00:01.087</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.html#sphx-glr-auto-examples-free-free-a-gaunt-factors-plot-gaunt-factor-comparison-py"><span class="std std-ref">Comparing Free-Free Gaunt Factor Approximations</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py</span></code>)</p></td>
-<td><p>00:01.076</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_equipartition_analysis.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-equipartition-analysis-py"><span class="std std-ref">Equipartition Analysis from a Radio SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_equipartition_analysis.py</span></code>)</p></td>
-<td><p>00:01.072</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_mechanical_shock_model.html#sphx-glr-auto-examples-dynamics-c-engines-plot-mechanical-shock-model-py"><span class="std std-ref">Mechanical Shock Model: Forward and Reverse Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_mechanical_shock_model.py</span></code>)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/accretion/plot_tde_disk_observables.html#sphx-glr-auto-examples-accretion-plot-tde-disk-observables-py"><span class="std std-ref">TDE Disk Evolution and Observable Signatures</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_tde_disk_observables.py</span></code>)</p></td>
 <td><p>00:01.061</p></td>
 <td><p>0.0</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_shock_structure.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-shock-structure-py"><span class="std std-ref">Chevalier Self-Similar Shock Structure</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_shock_structure.py</span></code>)</p></td>
+<td><p>00:01.037</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_synchrotron_cooling_engine.html#sphx-glr-auto-examples-synchrotron-c-cooling-plot-synchrotron-cooling-engine-py"><span class="std std-ref">Electron Cooling — the Synchrotron Radiative Cooling Engine</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/c_cooling/plot_synchrotron_cooling_engine.py</span></code>)</p></td>
+<td><p>00:00.942</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/accretion/plot_disk_scurve.html#sphx-glr-auto-examples-accretion-plot-disk-scurve-py"><span class="std std-ref">Disk Thermal Equilibrium: The S-curve</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/accretion/plot_disk_scurve.py</span></code>)</p></td>
+<td><p>00:00.745</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.html#sphx-glr-auto-examples-free-free-c-ffa-sed-plot-ffa-synchrotron-sed-py"><span class="std std-ref">Free-Free Absorption of a Synchrotron SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.py</span></code>)</p></td>
+<td><p>00:00.741</p></td>
+<td><p>0.0</p></td>
+</tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_SSA_cooling_SED.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-ssa-cooling-sed-py"><span class="std std-ref">Synchrotron Spectra With Cooling and SSA</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_SSA_cooling_SED.py</span></code>)</p></td>
-<td><p>00:01.059</p></td>
+<td><p>00:00.723</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/a_fundamentals/plot_rh_jump_conditions.html#sphx-glr-auto-examples-dynamics-a-fundamentals-plot-rh-jump-conditions-py"><span class="std std-ref">Rankine–Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/a_fundamentals/plot_rh_jump_conditions.py</span></code>)</p></td>
-<td><p>00:01.001</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.html#sphx-glr-auto-examples-synchrotron-c-cooling-plot-ic-vs-synchrotron-cooling-py"><span class="std std-ref">Synchrotron vs Inverse Compton Cooling</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/c_cooling/plot_ic_vs_synchrotron_cooling.py</span></code>)</p></td>
+<td><p>00:00.722</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_bolometric_emissivity.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-bolometric-emissivity-py"><span class="std std-ref">Bolometric Synchrotron Emissivity and Equipartition</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_bolometric_emissivity.py</span></code>)</p></td>
-<td><p>00:00.993</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.html#sphx-glr-auto-examples-free-free-a-gaunt-factors-plot-gaunt-factor-comparison-py"><span class="std std-ref">Comparing Free-Free Gaunt Factor Approximations</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/a_gaunt_factors/plot_gaunt_factor_comparison.py</span></code>)</p></td>
+<td><p>00:00.704</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_numerical_shock_engine.html#sphx-glr-auto-examples-dynamics-c-engines-plot-numerical-shock-engine-py"><span class="std std-ref">Numerical Thin-Shell Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_numerical_shock_engine.py</span></code>)</p></td>
-<td><p>00:00.957</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_mechanical_shock_model.html#sphx-glr-auto-examples-dynamics-c-engines-plot-mechanical-shock-model-py"><span class="std std-ref">Mechanical Shock Model: Forward and Reverse Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_mechanical_shock_model.py</span></code>)</p></td>
+<td><p>00:00.671</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/photometry/plot_filter_basics.html#sphx-glr-auto-examples-photometry-plot-filter-basics-py"><span class="std std-ref">Photometric Filters: Construction and Convolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_filter_basics.py</span></code>)</p></td>
-<td><p>00:00.909</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_equipartition_analysis.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-equipartition-analysis-py"><span class="std std-ref">Equipartition Analysis from a Radio SED</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_equipartition_analysis.py</span></code>)</p></td>
+<td><p>00:00.663</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/d_closures/plot_bolometric_emissivity.html#sphx-glr-auto-examples-synchrotron-d-closures-plot-bolometric-emissivity-py"><span class="std std-ref">Bolometric Synchrotron Emissivity and Equipartition</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/d_closures/plot_bolometric_emissivity.py</span></code>)</p></td>
+<td><p>00:00.615</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/a_fundamentals/plot_rh_jump_conditions.html#sphx-glr-auto-examples-dynamics-a-fundamentals-plot-rh-jump-conditions-py"><span class="std std-ref">Rankine–Hugoniot Jump Conditions: Newtonian to Ultra-Relativistic</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/a_fundamentals/plot_rh_jump_conditions.py</span></code>)</p></td>
+<td><p>00:00.613</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/opacity/plot_tops_rosseland_opacity.html#sphx-glr-auto-examples-opacity-plot-tops-rosseland-opacity-py"><span class="std std-ref">TOPS Rosseland Mean Opacity: \kappa(T,\rho) for Solar Composition</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/opacity/plot_tops_rosseland_opacity.py</span></code>)</p></td>
-<td><p>00:00.891</p></td>
+<td><p>00:00.586</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/photometry/plot_filter_basics.html#sphx-glr-auto-examples-photometry-plot-filter-basics-py"><span class="std std-ref">Photometric Filters: Construction and Convolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_filter_basics.py</span></code>)</p></td>
+<td><p>00:00.579</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_numerical_shock_engine.html#sphx-glr-auto-examples-dynamics-c-engines-plot-numerical-shock-engine-py"><span class="std std-ref">Numerical Thin-Shell Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_numerical_shock_engine.py</span></code>)</p></td>
+<td><p>00:00.572</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/a_fundamentals/plot_electron_distributions.html#sphx-glr-auto-examples-synchrotron-a-fundamentals-plot-electron-distributions-py"><span class="std std-ref">Electron Energy Distributions</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/a_fundamentals/plot_electron_distributions.py</span></code>)</p></td>
-<td><p>00:00.884</p></td>
+<td><p>00:00.550</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_inhomogeneous_cylinder.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-inhomogeneous-cylinder-py"><span class="std std-ref">Synchrotron SEDs from an Inhomogeneous Cylinder</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_inhomogeneous_cylinder.py</span></code>)</p></td>
-<td><p>00:00.815</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/photometry/plot_magnitude_conversions.html#sphx-glr-auto-examples-photometry-plot-magnitude-conversions-py"><span class="std std-ref">Magnitude Systems: AB, ST, and Filter-Convolved Photometry</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_magnitude_conversions.py</span></code>)</p></td>
+<td><p>00:00.526</p></td>
 <td><p>0.0</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/photometry/plot_magnitude_conversions.html#sphx-glr-auto-examples-photometry-plot-magnitude-conversions-py"><span class="std std-ref">Magnitude Systems: AB, ST, and Filter-Convolved Photometry</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_magnitude_conversions.py</span></code>)</p></td>
-<td><p>00:00.786</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_inhomogeneous_cylinder.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-inhomogeneous-cylinder-py"><span class="std std-ref">Synchrotron SEDs from an Inhomogeneous Cylinder</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_inhomogeneous_cylinder.py</span></code>)</p></td>
+<td><p>00:00.504</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/a_fundamentals/plot_rh_jump_weak_conditions.html#sphx-glr-auto-examples-dynamics-a-fundamentals-plot-rh-jump-weak-conditions-py"><span class="std std-ref">Weak vs Strong Shock Jump Conditions (Cold Medium)</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/a_fundamentals/plot_rh_jump_weak_conditions.py</span></code>)</p></td>
-<td><p>00:00.757</p></td>
+<td><p>00:00.481</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/c_engines/plot_mechanical_shock_cooling.html#sphx-glr-auto-examples-dynamics-c-engines-plot-mechanical-shock-cooling-py"><span class="std std-ref">Radiative Cooling in the Mechanical Shock Engine</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/c_engines/plot_mechanical_shock_cooling.py</span></code>)</p></td>
-<td><p>00:00.640</p></td>
+<td><p>00:00.408</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/data/plot_radio_photometry.html#sphx-glr-auto-examples-data-plot-radio-photometry-py"><span class="std std-ref">Radio Photometry Container</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_radio_photometry.py</span></code>)</p></td>
-<td><p>00:00.626</p></td>
+<td><p>00:00.408</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_blandford_mcKee.html#sphx-glr-auto-examples-dynamics-b-models-plot-blandford-mckee-py"><span class="std std-ref">Blandford-McKee Ultra-Relativistic Blast Wave</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_blandford_mcKee.py</span></code>)</p></td>
-<td><p>00:00.614</p></td>
+<td><p>00:00.405</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/photometry/plot_filter_bundle.html#sphx-glr-auto-examples-photometry-plot-filter-bundle-py"><span class="std std-ref">FilterBundle: Batched Convolution for MCMC</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/photometry/plot_filter_bundle.py</span></code>)</p></td>
-<td><p>00:00.528</p></td>
+<td><p>00:00.363</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/opacity/plot_opal_rosseland_opacity.html#sphx-glr-auto-examples-opacity-plot-opal-rosseland-opacity-py"><span class="std std-ref">OPAL Rosseland Mean Opacity: \kappa(T,\rho) for Solar Composition</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/opacity/plot_opal_rosseland_opacity.py</span></code>)</p></td>
-<td><p>00:00.462</p></td>
+<td><p>00:00.289</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_multi_component_numerical_SED.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-multi-component-numerical-sed-py"><span class="std std-ref">Multi-Component Synchrotron SEDs with the Numerical Engine</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_multi_component_numerical_SED.py</span></code>)</p></td>
-<td><p>00:00.398</p></td>
+<td><p>00:00.265</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/synchrotron/b_seds/plot_sed_model_comparison.html#sphx-glr-auto-examples-synchrotron-b-seds-plot-sed-model-comparison-py"><span class="std std-ref">Comparing Synchrotron SED Models</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/synchrotron/b_seds/plot_sed_model_comparison.py</span></code>)</p></td>
-<td><p>00:00.347</p></td>
+<td><p>00:00.225</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_sedov_taylor_shock.html#sphx-glr-auto-examples-dynamics-b-models-plot-sedov-taylor-shock-py"><span class="std std-ref">Chevalier and Sedov-Taylor Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_sedov_taylor_shock.py</span></code>)</p></td>
-<td><p>00:00.299</p></td>
+<td><p>00:00.198</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_wind_engine.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-wind-engine-py"><span class="std std-ref">Chevalier Self-Similar Shock in a Steady Wind</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_wind_engine.py</span></code>)</p></td>
-<td><p>00:00.283</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_self_similar.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-self-similar-py"><span class="std std-ref">Chevalier Self-Similar Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_self_similar.py</span></code>)</p></td>
-<td><p>00:00.274</p></td>
-<td><p>0.0</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/free_free/b_emission/plot_ff_flux_prediction.html#sphx-glr-auto-examples-free-free-b-emission-plot-ff-flux-prediction-py"><span class="std std-ref">Free-Free Flux Density from a Hot Optically-Thin Plasma</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/b_emission/plot_ff_flux_prediction.py</span></code>)</p></td>
-<td><p>00:00.274</p></td>
+<td><p>00:00.189</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/data/plot_radio_light_curve.html#sphx-glr-auto-examples-data-plot-radio-light-curve-py"><span class="std std-ref">Radio Light Curve Container</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_radio_light_curve.py</span></code>)</p></td>
-<td><p>00:00.263</p></td>
+<td><p>00:00.180</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="auto_examples/dynamics/b_models/plot_chevalier_self_similar.html#sphx-glr-auto-examples-dynamics-b-models-plot-chevalier-self-similar-py"><span class="std std-ref">Chevalier Self-Similar Shock Evolution</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/dynamics/b_models/plot_chevalier_self_similar.py</span></code>)</p></td>
+<td><p>00:00.179</p></td>
+<td><p>0.0</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/free_free/b_emission/plot_ff_flux_prediction.html#sphx-glr-auto-examples-free-free-b-emission-plot-ff-flux-prediction-py"><span class="std std-ref">Free-Free Flux Density from a Hot Optically-Thin Plasma</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/free_free/b_emission/plot_ff_flux_prediction.py</span></code>)</p></td>
+<td><p>00:00.176</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/data/plot_optical_light_curve.html#sphx-glr-auto-examples-data-plot-optical-light-curve-py"><span class="std std-ref">Optical Light Curve Container</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_optical_light_curve.py</span></code>)</p></td>
-<td><p>00:00.252</p></td>
+<td><p>00:00.170</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/data/plot_inference_data.html#sphx-glr-auto-examples-data-plot-inference-data-py"><span class="std std-ref">From Container to InferenceData</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_inference_data.py</span></code>)</p></td>
-<td><p>00:00.221</p></td>
+<td><p>00:00.154</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/data/plot_multiband_radio.html#sphx-glr-auto-examples-data-plot-multiband-radio-py"><span class="std std-ref">Multi-Band Radio Light Curves</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_multiband_radio.py</span></code>)</p></td>
-<td><p>00:00.212</p></td>
+<td><p>00:00.137</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/data/plot_optical_photometry.html#sphx-glr-auto-examples-data-plot-optical-photometry-py"><span class="std std-ref">Optical Photometry Container</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_optical_photometry.py</span></code>)</p></td>
-<td><p>00:00.165</p></td>
+<td><p>00:00.111</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="auto_examples/data/plot_multiband_optical.html#sphx-glr-auto-examples-data-plot-multiband-optical-py"><span class="std std-ref">Multi-Band Optical Light Curves</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/data/plot_multiband_optical.py</span></code>)</p></td>
-<td><p>00:00.142</p></td>
+<td><p>00:00.098</p></td>
 <td><p>0.0</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="auto_examples/inference/plot_optical_lc_inference.html#sphx-glr-auto-examples-inference-plot-optical-lc-inference-py"><span class="std std-ref">Fitting a Multi-Band Optical Light Curve with MCMC</span></a> (<code class="docutils literal notranslate"><span class="pre">galleries/inference/plot_optical_lc_inference.py</span></code>)</p></td>
@@ -785,8 +785,8 @@ $(document).ready( function () {
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
-<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -807,7 +807,6 @@ $(document).ready( function () {
 
   <p class="sphinx-version">
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-    <br/>
   </p>
 </div>
       
@@ -820,7 +819,7 @@ $(document).ready( function () {
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Container Metadata and Mixin Defaults &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/data/metadata_mixins';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../_static/searchtools.js"></script>
+    <script src="../../_static/language_data.js"></script>
+    <script src="../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Container Metadata and Mixin Defaults</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="container-metadata-and-mixin-defaults">
+<span id="data-metadata-mixins"></span><h1>Container Metadata and Mixin Defaults<a class="headerlink" href="#container-metadata-and-mixin-defaults" title="Link to this heading">#</a></h1>
+<p>Every <a class="reference internal" href="../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.core.DataContainer" title="trilobite.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code></a> subclass stores an optional
+dictionary of user-supplied metadata under <code class="docutils literal notranslate"><span class="pre">container.meta</span></code>. This dictionary
+is persisted inside the underlying Astropy table so it survives all I/O
+round-trips. Beyond simple key–value storage, Trilobite uses this dictionary to
+drive a set of <strong>metadata mixins</strong> — lightweight capability classes that
+activate when specific keys are present. Mixins let you attach physical context
+(cosmological distances, filter curves, detection thresholds) directly to a
+container at construction time, rather than having to pass the same values
+repeatedly to every downstream method.</p>
+<p>Each mixin implements a <code class="docutils literal notranslate"><span class="pre">_setup_mixin</span></code> hook that is called automatically
+during construction.  If the required key is absent, the hook exits silently
+and the mixin is effectively a no-op; it never raises unless a malformed value
+is provided.</p>
+<hr class="docutils" />
+<section id="attaching-metadata-to-a-container">
+<h2>Attaching Metadata to a Container<a class="headerlink" href="#attaching-metadata-to-a-container" title="Link to this heading">#</a></h2>
+<p>Pass a <code class="docutils literal notranslate"><span class="pre">metadata</span></code> dict to any container constructor or <code class="docutils literal notranslate"><span class="pre">from_table</span></code> call.
+Keys already present in the underlying Astropy table’s <code class="docutils literal notranslate"><span class="pre">meta</span></code> block are not
+overwritten.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">RadioPhotometryContainer</span>
+
+<span class="n">container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"redshift"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">,</span>
+        <span class="s2">"n_sigma_det_thresh"</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>For optical containers, use <code class="docutils literal notranslate"><span class="pre">filters</span></code> together with <code class="docutils literal notranslate"><span class="pre">n_sigma_det_thresh</span></code>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalPhotometryContainer</span>
+
+<span class="n">container</span> <span class="o">=</span> <span class="n">OpticalPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"redshift"</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">,</span>
+        <span class="s2">"filters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"g"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.g"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.r"</span><span class="p">},</span>
+        <span class="s2">"n_sigma_det_thresh"</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+</pre></div>
+</div>
+<p>Metadata can also be inspected or updated at any time through the <code class="docutils literal notranslate"><span class="pre">meta</span></code>
+property, which returns a live reference to the underlying dict:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">"n_sigma_det_thresh"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5.0</span>
+</pre></div>
+</div>
+</section>
+<hr class="docutils" />
+<section id="available-mixins">
+<h2>Available Mixins<a class="headerlink" href="#available-mixins" title="Link to this heading">#</a></h2>
+<section id="cosmologymixin">
+<span id="cosmology-mixin"></span><h3>CosmologyMixin<a class="headerlink" href="#cosmologymixin" title="Link to this heading">#</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">CosmologyMixin</span></code> is active on <strong>all</strong>
+<a class="reference internal" href="../../_as_gen/trilobite.data.core.DataContainer.html#trilobite.data.core.DataContainer" title="trilobite.data.core.DataContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">DataContainer</span></code></a> subclasses. It resolves a full
+set of cosmological distances from a single user-supplied distance measure.</p>
+<p><strong>Trigger keys</strong> (provide exactly one):</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">redshift</span></code></p></td>
+<td><p>Dimensionless float</p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">luminosity_distance</span></code></p></td>
+<td><p>Float in Mpc, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p></td>
+</tr>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">angular_diameter_distance</span></code></p></td>
+<td><p>Float in Mpc, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="docutils literal notranslate"><span class="pre">proper_distance</span></code></p></td>
+<td><p>Float in Mpc, or <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p><strong>Optional key:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">cosmology_spec</span></code></p></td>
+<td><p>Named Astropy cosmology string (e.g. <code class="docutils literal notranslate"><span class="pre">&quot;Planck18&quot;</span></code>) or an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.FLRW.html#astropy.cosmology.FLRW" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">FLRW</span></code></a> object. Defaults to the Trilobite
+configured cosmology.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>When triggered, the mixin resolves all four distance measures and exposes them
+as properties:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"redshift"</span><span class="p">:</span> <span class="mf">0.31</span><span class="p">}</span>
+<span class="p">)</span>
+
+<span class="n">container</span><span class="o">.</span><span class="n">redshift</span>                    <span class="c1"># 0.31 (float)</span>
+<span class="n">container</span><span class="o">.</span><span class="n">luminosity_distance</span>         <span class="c1"># ~1650 Mpc (Quantity)</span>
+<span class="n">container</span><span class="o">.</span><span class="n">angular_diameter_distance</span>   <span class="c1"># Quantity</span>
+<span class="n">container</span><span class="o">.</span><span class="n">proper_distance</span>             <span class="c1"># Quantity</span>
+<span class="n">container</span><span class="o">.</span><span class="n">cosmology</span>                   <span class="c1"># Planck18 (or configured default)</span>
+</pre></div>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Cosmological distances are resolved at construction time using
+<a class="reference internal" href="../../_as_gen/trilobite.physics_utils.cosmology.resolve_cosmological_distances.html#trilobite.physics_utils.cosmology.resolve_cosmological_distances" title="trilobite.physics_utils.cosmology.resolve_cosmological_distances"><code class="xref py py-func docutils literal notranslate"><span class="pre">resolve_cosmological_distances()</span></code></a>.
+The resolved values are cached as private attributes and are not updated
+if <code class="docutils literal notranslate"><span class="pre">meta</span></code> is modified after construction.</p>
+</div>
+</section>
+<section id="filtermixin">
+<span id="filter-mixin"></span><h3>FilterMixin<a class="headerlink" href="#filtermixin" title="Link to this heading">#</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterMixin</span></code> is active on all <strong>optical</strong>
+containers:</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.html#trilobite.data.optical_photometry.OpticalPhotometryContainer" title="trilobite.data.optical_photometry.OpticalPhotometryContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryContainer</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryEpoch.html#trilobite.data.optical_photometry.OpticalPhotometryEpoch" title="trilobite.data.optical_photometry.OpticalPhotometryEpoch"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalPhotometryEpoch</span></code></a></p></li>
+<li><p><a class="reference internal" href="../../_as_gen/trilobite.data.light_curve.OpticalLightCurveContainer.html#trilobite.data.light_curve.OpticalLightCurveContainer" title="trilobite.data.light_curve.OpticalLightCurveContainer"><code class="xref py py-class docutils literal notranslate"><span class="pre">OpticalLightCurveContainer</span></code></a></p></li>
+</ul>
+<p>It stores a <code class="docutils literal notranslate"><span class="pre">{band_name:</span> <span class="pre">svo_filter_id}</span></code> mapping from metadata and provides
+a <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_svo_filters()</span></code> method to
+fetch transmission curves from the <a class="reference external" href="https://svo2.cab.inta-csic.es/svo/theory/fps/">SVO Filter Profile Service</a> on demand.</p>
+<p><strong>Trigger key:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">filters</span></code></p></td>
+<td><p><code class="docutils literal notranslate"><span class="pre">dict</span></code> of <code class="docutils literal notranslate"><span class="pre">{band_name:</span> <span class="pre">svo_filter_id}</span></code>, e.g.
+<code class="docutils literal notranslate"><span class="pre">{&quot;g&quot;:</span> <span class="pre">&quot;SDSS/SDSS.g&quot;,</span> <span class="pre">&quot;r&quot;:</span> <span class="pre">&quot;SDSS/SDSS.r&quot;}</span></code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>At construction the mixin validates the <code class="docutils literal notranslate"><span class="pre">filters</span></code> dict and records the
+band-to-SVO-ID mapping.  Transmission curves are <strong>not</strong> downloaded at this
+stage; call <code class="xref py py-meth docutils literal notranslate"><span class="pre">load_svo_filters()</span></code>
+explicitly when you are ready to fetch them:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalPhotometryContainer</span>
+
+<span class="n">container</span> <span class="o">=</span> <span class="n">OpticalPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"filters"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"g"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.g"</span><span class="p">,</span> <span class="s2">"r"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.r"</span><span class="p">}},</span>
+<span class="p">)</span>
+
+<span class="c1"># Inspect the registered band-to-SVO mapping (no network call)</span>
+<span class="n">container</span><span class="o">.</span><span class="n">filter_specs</span>
+<span class="c1"># {"g": "SDSS/SDSS.g", "r": "SDSS/SDSS.r"}</span>
+
+<span class="c1"># Fetch transmission curves (makes an HTTP request on first call;</span>
+<span class="c1"># subsequent calls are served from astroquery's local cache)</span>
+<span class="n">bundle</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">load_svo_filters</span><span class="p">(</span><span class="n">weighting</span><span class="o">=</span><span class="s2">"photon"</span><span class="p">,</span> <span class="n">cache</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># bundle is stored and accessible as a property</span>
+<span class="n">container</span><span class="o">.</span><span class="n">filter_bundle</span>
+<span class="c1"># FilterBundle(['g', 'r'], N_common=...)</span>
+</pre></div>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Save the returned <a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a> to
+disk (<code class="docutils literal notranslate"><span class="pre">bundle.to_hdf5(&quot;filters.h5&quot;)</span></code>) so subsequent runs don’t need a
+network connection. See <a class="reference internal" href="filter_photometry.html#filter-photometry"><span class="std std-ref">Optical Filters and Photometry</span></a> for the full filter API.</p>
+</div>
+<p><strong>Integration with</strong> <code class="docutils literal notranslate"><span class="pre">to_inference_data</span></code></p>
+<p>Once a bundle is loaded, it becomes the <strong>default</strong> <code class="docutils literal notranslate"><span class="pre">filters</span></code> argument for
+<a class="reference internal" href="../../_as_gen/trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data.html#trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data" title="trilobite.data.optical_photometry.OpticalPhotometryContainer.to_inference_data"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_inference_data()</span></code></a>.
+You no longer need to pass it explicitly:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Before: filters must be passed every time</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span><span class="n">filters</span><span class="o">=</span><span class="n">bundle</span><span class="p">)</span>
+
+<span class="c1"># After load_svo_filters: filters default to the loaded bundle</span>
+<span class="n">container</span><span class="o">.</span><span class="n">load_svo_filters</span><span class="p">()</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">()</span>   <span class="c1"># equivalent</span>
+</pre></div>
+</div>
+<p>If <code class="docutils literal notranslate"><span class="pre">filters=None</span></code> and no bundle has been loaded, the method raises a
+<a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#TypeError" title="(in Python v3.15)"><code class="xref py py-exc docutils literal notranslate"><span class="pre">TypeError</span></code></a> with a message directing you to call
+<code class="xref py py-meth docutils literal notranslate"><span class="pre">load_svo_filters()</span></code> first.</p>
+</section>
+<section id="detectionthresholdmixin">
+<span id="detection-threshold-mixin"></span><h3>DetectionThresholdMixin<a class="headerlink" href="#detectionthresholdmixin" title="Link to this heading">#</a></h3>
+<p><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectionThresholdMixin</span></code> is active on
+<strong>all six</strong> data containers — both optical and radio.  It records an
+<span class="math notranslate nohighlight">\(N_\sigma\)</span> detection threshold that controls how upper-limit errors
+are inferred when building <a class="reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code></a>.</p>
+<p><strong>Trigger key:</strong></p>
+<div class="pst-scrollable-table-container"><table class="table">
+<colgroup>
+<col style="width: 30.0%" />
+<col style="width: 70.0%" />
+</colgroup>
+<thead>
+<tr class="row-odd"><th class="head"><p>Key</p></th>
+<th class="head"><p>Value</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p><code class="docutils literal notranslate"><span class="pre">n_sigma_det_thresh</span></code></p></td>
+<td><p>Positive float. An observation satisfying
+<span class="math notranslate nohighlight">\(F / \sigma_F \ge N_\sigma\)</span> is treated as a detection.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>The value is coerced to <code class="docutils literal notranslate"><span class="pre">float</span></code> and validated (must be <span class="math notranslate nohighlight">\(&gt; 0\)</span>) at
+construction time:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">container</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="p">{</span><span class="s2">"n_sigma_det_thresh"</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">container</span><span class="o">.</span><span class="n">detection_threshold</span>   <span class="c1"># 3.0</span>
+</pre></div>
+</div>
+<p><strong>Integration with</strong> <code class="docutils literal notranslate"><span class="pre">to_inference_data</span></code></p>
+<p>When <code class="docutils literal notranslate"><span class="pre">detection_threshold</span></code> is not passed explicitly to
+<code class="docutils literal notranslate"><span class="pre">to_inference_data</span></code>, the method falls back to
+<code class="xref py py-attr docutils literal notranslate"><span class="pre">detection_threshold</span></code>
+from metadata.  If neither is available, the hard-coded default of <code class="docutils literal notranslate"><span class="pre">3.0</span></code>
+is used:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Explicit override — always takes priority</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">(</span><span class="n">detection_threshold</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
+
+<span class="c1"># Metadata default — used when detection_threshold is not passed</span>
+<span class="n">container</span><span class="o">.</span><span class="n">meta</span><span class="p">[</span><span class="s2">"n_sigma_det_thresh"</span><span class="p">]</span> <span class="o">=</span> <span class="mf">5.0</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">()</span>   <span class="c1"># uses 5.0</span>
+
+<span class="c1"># Neither provided — silently uses 3.0</span>
+<span class="n">container2</span> <span class="o">=</span> <span class="n">RadioPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span><span class="n">table</span><span class="p">)</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container2</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">()</span>  <span class="c1"># uses 3.0</span>
+</pre></div>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="combining-mixins">
+<h2>Combining Mixins<a class="headerlink" href="#combining-mixins" title="Link to this heading">#</a></h2>
+<p>All mixins compose cleanly.  A full optical workflow that attaches cosmology,
+filters, and a detection threshold in one construction call looks like this:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">OpticalPhotometryContainer</span>
+
+<span class="n">container</span> <span class="o">=</span> <span class="n">OpticalPhotometryContainer</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
+    <span class="n">table</span><span class="p">,</span>
+    <span class="n">metadata</span><span class="o">=</span><span class="p">{</span>
+        <span class="s2">"redshift"</span><span class="p">:</span> <span class="mf">0.031</span><span class="p">,</span>
+        <span class="s2">"filters"</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">"g"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.g"</span><span class="p">,</span>
+            <span class="s2">"r"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.r"</span><span class="p">,</span>
+            <span class="s2">"i"</span><span class="p">:</span> <span class="s2">"SDSS/SDSS.i"</span><span class="p">,</span>
+        <span class="p">},</span>
+        <span class="s2">"n_sigma_det_thresh"</span><span class="p">:</span> <span class="mf">5.0</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">)</span>
+
+<span class="c1"># Fetch filter curves once (cached to disk afterward)</span>
+<span class="n">container</span><span class="o">.</span><span class="n">load_svo_filters</span><span class="p">()</span>
+
+<span class="c1"># All three mixin properties now available</span>
+<span class="n">container</span><span class="o">.</span><span class="n">redshift</span>            <span class="c1"># 0.031</span>
+<span class="n">container</span><span class="o">.</span><span class="n">luminosity_distance</span> <span class="c1"># ~133 Mpc</span>
+<span class="n">container</span><span class="o">.</span><span class="n">filter_bundle</span>       <span class="c1"># FilterBundle(['g', 'r', 'i'])</span>
+<span class="n">container</span><span class="o">.</span><span class="n">detection_threshold</span> <span class="c1"># 5.0</span>
+
+<span class="c1"># to_inference_data needs no extra arguments</span>
+<span class="n">idata</span> <span class="o">=</span> <span class="n">container</span><span class="o">.</span><span class="n">to_inference_data</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>The resolution order for each <code class="docutils literal notranslate"><span class="pre">to_inference_data</span></code> argument is:</p>
+<ol class="arabic simple">
+<li><p>Explicit keyword argument (highest priority).</p></li>
+<li><p>Mixin metadata value (<code class="docutils literal notranslate"><span class="pre">filter_bundle</span></code> or <code class="docutils literal notranslate"><span class="pre">detection_threshold</span></code>).</p></li>
+<li><p>Built-in default — <code class="docutils literal notranslate"><span class="pre">3.0</span></code> for <code class="docutils literal notranslate"><span class="pre">detection_threshold</span></code>; <code class="docutils literal notranslate"><span class="pre">TypeError</span></code> for
+<code class="docutils literal notranslate"><span class="pre">filters</span></code> when no bundle has been loaded.</p></li>
+</ol>
+<hr class="docutils" />
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<ul class="simple">
+<li><p><a class="reference internal" href="filter_photometry.html#filter-photometry"><span class="std std-ref">Optical Filters and Photometry</span></a> — full reference for
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.PhotometryFilter.html#trilobite.utils.phot_utils.PhotometryFilter" title="trilobite.utils.phot_utils.PhotometryFilter"><code class="xref py py-class docutils literal notranslate"><span class="pre">PhotometryFilter</span></code></a> and
+<a class="reference internal" href="../../_as_gen/trilobite.utils.phot_utils.FilterBundle.html#trilobite.utils.phot_utils.FilterBundle" title="trilobite.utils.phot_utils.FilterBundle"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterBundle</span></code></a></p></li>
+<li><p><a class="reference internal" href="data_to_inference.html#data-to-inference"><span class="std std-ref">From Data to Inference: A Complete Guide</span></a> — end-to-end pipeline walkthrough</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">CosmologyMixin</span></code> — API reference</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">FilterMixin</span></code> — API reference</p></li>
+<li><p><code class="xref py py-class docutils literal notranslate"><span class="pre">DetectionThresholdMixin</span></code> — API reference</p></li>
+</ul>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#attaching-metadata-to-a-container">Attaching Metadata to a Container</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#available-mixins">Available Mixins</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#cosmologymixin">CosmologyMixin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#filtermixin">FilterMixin</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#detectionthresholdmixin">DetectionThresholdMixin</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-mixins">Combining Mixins</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../_sources/reference/data/metadata_mixins.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

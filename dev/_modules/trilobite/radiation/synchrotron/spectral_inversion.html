@@ -1,0 +1,1503 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>trilobite.radiation.synchrotron.spectral_inversion &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = '_modules/trilobite/radiation/synchrotron/spectral_inversion';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar hide-on-wide">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../reference/user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../index.html" class="nav-link">Module code</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">trilobite.radiation.synchrotron.spectral_inversion</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <h1>Source code for trilobite.radiation.synchrotron.spectral_inversion</h1><div class="highlight"><pre>
+<span></span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">Pen-and-paper synchrotron spectral inversions.</span>
+
+<span class="sd">This module provides closed-form (and, for one case, semi-analytic) inversions which map a small set of observed</span>
+<span class="sd">spectral quantities,</span>
+
+<span class="sd">.. math::</span>
+
+<span class="sd">    \left(t,\; \nu_{\rm brk},\; F_{\rm brk}\right) \longrightarrow \left(B,\; R,\; \dots\right),</span>
+
+<span class="sd">to the physical parameters of a one-zone synchrotron source with a self-absorbed (SSA) spectral peak. They are</span>
+<span class="sd">intended as a quick analysis tool which sits *outside* of the SED generators in</span>
+<span class="sd">:mod:`trilobite.radiation.synchrotron.SEDs`: there is no SED object to build and no spectral-regime detection, so each</span>
+<span class="sd">inversion **assumes** the regime it is named after.</span>
+
+<span class="sd">.. rubric:: Conventions</span>
+
+<span class="sd">- :math:`\nu_{\rm brk}` is the best-fit break frequency of the spectrum. It is identified with the SSA frequency</span>
+<span class="sd">  :math:`\nu_a`, which is accurate to a fraction of a percent across the relevant parameter space.</span>
+<span class="sd">- :math:`F_{\rm brk}` is the **asymptotic intercept flux** of the fit: the flux at :math:`\nu_{\rm brk}` of the</span>
+<span class="sd">  optically thick asymptote extrapolated to the break. The user is responsible for supplying this value. For a</span>
+<span class="sd">  traditional (sharp) broken power-law fit it is the fitted normalization at the break, so no correction is needed.</span>
+<span class="sd">  For a smoothed fit, the asymptotic flux must be extracted from the fitted form before calling these functions.</span>
+<span class="sd">- The source is in the local universe and non-relativistic. Cosmological redshift and Doppler corrections are</span>
+<span class="sd">  **not** applied, and ``distance`` is simply the distance to the source. These inversions should not be used for</span>
+<span class="sd">  relativistic outflows such as GRBs.</span>
+<span class="sd">- Pitch-angle treatment follows the rest of Trilobite. Either a fixed pitch angle ``alpha`` is used</span>
+<span class="sd">  (default :math:`\pi/2`) or ``pitch_average=True`` selects the isotropic coefficients, including the</span>
+<span class="sd">  angle-averaged synchrotron loss rate in the cooled inversions.</span>
+<span class="sd">- Every observable and every microphysical parameter may be a scalar or an array. They are broadcast against one</span>
+<span class="sd">  another following the usual numpy rules, so e.g. a column of break frequencies and a row of electron indices give a</span>
+<span class="sd">  grid of solutions. All array-valued entries of the returned dictionaries have the broadcast shape.</span>
+<span class="sd">- Bare floats are interpreted in CGS units (Hz, :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`, cm, s,</span>
+<span class="sd">  :math:`\mathrm{erg\,s^{-1}}`) unless otherwise stated. The De Marchi inversion keeps the units of its original</span>
+<span class="sd">  implementation (GHz, Jy, Mpc).</span>
+
+<span class="sd">.. rubric:: Inversions</span>
+
+<span class="sd">.. list-table::</span>
+<span class="sd">    :widths: 40 60</span>
+<span class="sd">    :header-rows: 1</span>
+
+<span class="sd">    * - Function</span>
+<span class="sd">      - Assumed regime</span>
+<span class="sd">    * - :func:`invert_ssa_Diggins26`</span>
+<span class="sd">      - Uncooled electrons, :math:`\nu_a &gt; \nu_m`.</span>
+<span class="sd">    * - :func:`invert_ssa_synchrotron_cooled_Diggins26`</span>
+<span class="sd">      - Synchrotron-cooled electrons with :math:`\nu_c \ll \nu_a`, cooling time :math:`t`.</span>
+<span class="sd">    * - :func:`invert_ssa_ic_cooled_Diggins26`</span>
+<span class="sd">      - Inverse-Compton-cooled electrons with :math:`\nu_c \ll \nu_a`, seed luminosity :math:`L`.</span>
+<span class="sd">    * - :func:`invert_ssa_combined_cooled_Diggins26`</span>
+<span class="sd">      - Both loss channels with :math:`\nu_c \ll \nu_a` (numerical).</span>
+<span class="sd">    * - :func:`invert_ssa_with_cooling_Diggins26`</span>
+<span class="sd">      - Evaluates the cooled and uncooled branches and selects the self-consistent one.</span>
+<span class="sd">    * - :func:`invert_ssa_DeMarchi22`</span>
+<span class="sd">      - Fixed-angle uncooled inversion of :footcite:t:`demarchiRadioAnalysisSN2004C2022`.</span>
+
+<span class="sd">The inversions labelled ``Diggins26`` are derived in the appendix of Diggins et al. (2026); the derivations are</span>
+<span class="sd">summarised in :ref:`synchrotron_spectral_inversion`.</span>
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">:ref:`synchrotron_spectral_inversion`</span>
+<span class="sd">    Derivations and usage notes for the inversions in this module.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">.. footbibliography::</span>
+<span class="sd">"""</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Union</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.constants</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">c_cgs</span><span class="p">,</span>
+    <span class="n">electron_rest_energy_cgs</span><span class="p">,</span>
+    <span class="n">electron_rest_mass_cgs</span><span class="p">,</span>
+    <span class="n">sigma_T_cgs</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.synchrotron.utils</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">c_1_cgs</span><span class="p">,</span>
+    <span class="n">c_1_gamma_cgs</span><span class="p">,</span>
+    <span class="n">compute_c5_parameter</span><span class="p">,</span>
+    <span class="n">compute_c6_parameter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.utils.misc_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">ensure_in_units</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">trilobite._typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">_UnitBearingScalarLike</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"invert_ssa_Diggins26"</span><span class="p">,</span>
+    <span class="s2">"invert_ssa_synchrotron_cooled_Diggins26"</span><span class="p">,</span>
+    <span class="s2">"invert_ssa_ic_cooled_Diggins26"</span><span class="p">,</span>
+    <span class="s2">"invert_ssa_combined_cooled_Diggins26"</span><span class="p">,</span>
+    <span class="s2">"invert_ssa_with_cooling_Diggins26"</span><span class="p">,</span>
+    <span class="s2">"invert_ssa_DeMarchi22"</span><span class="p">,</span>
+<span class="p">]</span>
+
+<span class="n">_FNU_UNIT</span> <span class="o">=</span> <span class="s2">"erg cm^-2 s^-1 Hz^-1"</span>
+<span class="n">_A_IC_CGS</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_energy_cgs</span> <span class="o">/</span> <span class="n">sigma_T_cgs</span>
+<span class="sd">"""float: Inverse-Compton cooling constant ``A_IC`` in ``gamma_c = A_IC R^2 / (L t)``."""</span>
+
+<span class="n">_NU_C_ACCURACY</span> <span class="o">=</span> <span class="mf">0.1</span>
+<span class="sd">"""float: ``nu_c / nu_a`` below which the cooled asymptotic forms are accurate to &lt; 0.1%."""</span>
+
+
+<span class="c1"># ================================================ #</span>
+<span class="c1"># PRIVATE HELPERS</span>
+<span class="c1"># ================================================ #</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">_SSAMicrophysics</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Bundle of microphysics, pitch-angle convention and derived constants (all CGS) for the Diggins26 inversions.</span>
+
+<span class="sd">    Every parameter may be array-valued; the derived constants broadcast against one another and against the</span>
+<span class="sd">    observables. The reduced constants ``A_N``, ``A_nu`` and ``A_F`` are stored for both the uncooled index ``p``</span>
+<span class="sd">    (suffix ``_u``) and the cooled index ``p + 1`` (suffix ``_c``). The electron normalization ``N_0 = A_N B^2`` is</span>
+<span class="sd">    always set by the *uncooled* energy budget.</span>
+<span class="sd">    """</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">f_A</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_V</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_A</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">f_V</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+        <span class="c1"># Pitch angle. The isotropic synchrotron cooling constant (9 pi m_e c / sigma_T, from &lt;sin^2 alpha&gt; = 2/3)</span>
+        <span class="c1"># is NOT the sin(alpha) -&gt; 1 limit of the fixed-angle value.</span>
+        <span class="k">if</span> <span class="n">pitch_average</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                    <span class="s2">"Pitch averaging is enabled, so the provided `alpha` is ignored. "</span>
+                    <span class="s2">"(Set `alpha=None` to suppress this warning.)"</span><span class="p">,</span>
+                    <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sin</span> <span class="o">=</span> <span class="mf">1.0</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_s</span> <span class="o">=</span> <span class="mf">9.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_mass_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">/</span> <span class="n">sigma_T_cgs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sin</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">alpha</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">A_s</span> <span class="o">=</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_mass_cgs</span> <span class="o">*</span> <span class="n">c_cgs</span> <span class="o">/</span> <span class="p">(</span><span class="n">sigma_T_cgs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+        <span class="c1"># First moment of the Lorentz-factor distribution, M = int gamma^(1-p) dgamma, evaluated for array inputs.</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"`gamma_max` must be greater than `gamma_min`."</span><span class="p">)</span>
+        <span class="n">e</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+            <span class="n">M1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                <span class="n">e</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">),</span>
+                <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">gamma_max</span><span class="o">**</span><span class="n">e</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma_min</span><span class="o">**</span><span class="n">e</span><span class="p">)</span> <span class="o">/</span> <span class="n">e</span><span class="p">,</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">M1</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"The first moment of the electron distribution is not finite. Use p &gt; 2 or a finite gamma_max."</span>
+            <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A_N</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_E</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">epsilon_B</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">))</span> <span class="o">/</span> <span class="p">(</span>
+            <span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">M1</span>
+        <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">reduced</span><span class="p">(</span><span class="n">q</span><span class="p">):</span>
+            <span class="n">c5</span> <span class="o">=</span> <span class="n">compute_c5_parameter</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">pitch_average</span><span class="o">=</span><span class="n">pitch_average</span><span class="p">)</span>
+            <span class="n">c6</span> <span class="o">=</span> <span class="n">compute_c6_parameter</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">pitch_average</span><span class="o">=</span><span class="n">pitch_average</span><span class="p">)</span>
+            <span class="n">A_nu</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="mf">2.0</span>
+                <span class="o">*</span> <span class="n">c_1_cgs</span>
+                <span class="o">*</span> <span class="n">electron_rest_energy_cgs</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">q</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">))</span>
+                <span class="o">*</span> <span class="p">(</span><span class="n">c6</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_V</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">))</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">q</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">))</span>
+                <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin</span> <span class="o">**</span> <span class="p">((</span><span class="n">q</span> <span class="o">+</span> <span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">q</span> <span class="o">+</span> <span class="mf">4.0</span><span class="p">))</span>
+            <span class="p">)</span>
+            <span class="n">A_F</span> <span class="o">=</span> <span class="p">(</span><span class="n">c5</span> <span class="o">/</span> <span class="n">c6</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">f_A</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sin</span><span class="o">**-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">A_nu</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">c_1_cgs</span><span class="p">))</span> <span class="o">**</span> <span class="mf">2.5</span>
+            <span class="k">return</span> <span class="n">c5</span><span class="p">,</span> <span class="n">c6</span><span class="p">,</span> <span class="n">A_nu</span><span class="p">,</span> <span class="n">A_F</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">c5_u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c6_u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_nu_u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_F_u</span> <span class="o">=</span> <span class="n">reduced</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">c5_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">c6_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_nu_c</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_F_c</span> <span class="o">=</span> <span class="n">reduced</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">+</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">gamma_c</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Cooling Lorentz factor with synchrotron and (optionally) IC losses."""</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="p">(</span><span class="n">t</span> <span class="o">*</span> <span class="p">(</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_s</span> <span class="o">+</span> <span class="n">L</span> <span class="o">/</span> <span class="p">(</span><span class="n">_A_IC_CGS</span> <span class="o">*</span> <span class="n">R</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">compton_Y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Ratio of the IC to the synchrotron loss rate."""</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">A_s</span> <span class="o">*</span> <span class="n">L</span> <span class="o">/</span> <span class="p">(</span><span class="n">_A_IC_CGS</span> <span class="o">*</span> <span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_invert_ssa_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">:</span> <span class="n">_SSAMicrophysics</span><span class="p">,</span> <span class="n">log_nu_brk</span><span class="p">,</span> <span class="n">log_F_brk</span><span class="p">,</span> <span class="n">log_D</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Uncooled SSA inversion. Natural-log CGS inputs, returns linear ``(B, R)`` in CGS."""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">13.0</span>
+    <span class="n">log_X</span> <span class="o">=</span> <span class="n">log_nu_brk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_nu_u</span><span class="p">)</span>
+    <span class="n">log_FD2</span> <span class="o">=</span> <span class="n">log_F_brk</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_D</span>
+    <span class="n">log_AF</span><span class="p">,</span> <span class="n">log_AN</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_F_u</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_N</span><span class="p">)</span>
+
+    <span class="n">log_B</span> <span class="o">=</span> <span class="n">log_X</span> <span class="o">+</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_AF</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_AN</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_FD2</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="o">-</span><span class="n">log_X</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_AF</span> <span class="o">-</span> <span class="n">log_AN</span> <span class="o">+</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mf">6.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_FD2</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_B</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_invert_ssa_synchrotron_cooled_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">:</span> <span class="n">_SSAMicrophysics</span><span class="p">,</span> <span class="n">log_nu_brk</span><span class="p">,</span> <span class="n">log_F_brk</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">log_t</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Synchrotron-cooled SSA inversion. Natural-log CGS inputs, returns linear ``(B, R, gamma_c)`` in CGS."""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">7.0</span>
+    <span class="n">log_X</span> <span class="o">=</span> <span class="n">log_nu_brk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_nu_c</span><span class="p">)</span>
+    <span class="n">log_Y</span> <span class="o">=</span> <span class="n">log_F_brk</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_F_c</span><span class="p">)</span>
+    <span class="n">log_Lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_N</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">A_s</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_t</span>
+
+    <span class="n">log_B</span> <span class="o">=</span> <span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">15.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_Lam</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="p">((</span><span class="n">p</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">5.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="n">log_Lam</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_B</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">A_s</span> <span class="o">/</span> <span class="p">(</span><span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_t</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_invert_ssa_ic_cooled_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">:</span> <span class="n">_SSAMicrophysics</span><span class="p">,</span> <span class="n">log_nu_brk</span><span class="p">,</span> <span class="n">log_F_brk</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">log_t</span><span class="p">,</span> <span class="n">log_L</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""IC-cooled SSA inversion. Natural-log CGS inputs, returns linear ``(B, R, gamma_c)`` in CGS."""</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">17.0</span>
+    <span class="n">log_X</span> <span class="o">=</span> <span class="n">log_nu_brk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_nu_c</span><span class="p">)</span>
+    <span class="n">log_Y</span> <span class="o">=</span> <span class="n">log_F_brk</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_F_c</span><span class="p">)</span>
+    <span class="n">log_Lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_N</span> <span class="o">*</span> <span class="n">_A_IC_CGS</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_L</span> <span class="o">-</span> <span class="n">log_t</span>
+
+    <span class="n">log_B</span> <span class="o">=</span> <span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">25.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="n">log_Lam</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">log_R</span> <span class="o">=</span> <span class="p">((</span><span class="n">p</span> <span class="o">+</span> <span class="mf">7.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">15.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="n">log_Lam</span><span class="p">)</span> <span class="o">/</span> <span class="n">n</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_B</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_R</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">_A_IC_CGS</span> <span class="o">*</span> <span class="n">R</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_L</span> <span class="o">+</span> <span class="n">log_t</span><span class="p">))</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_invert_ssa_combined_cooled_Diggins26</span><span class="p">(</span>
+    <span class="n">mp</span><span class="p">:</span> <span class="n">_SSAMicrophysics</span><span class="p">,</span> <span class="n">log_nu_brk</span><span class="p">,</span> <span class="n">log_F_brk</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">log_t</span><span class="p">,</span> <span class="n">log_L</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mf">1e-12</span><span class="p">,</span> <span class="n">max_iter</span><span class="o">=</span><span class="mi">50</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break cooled by both synchrotron and IC losses.</span>
+
+<span class="sd">    Safeguarded Newton iteration on ``g(ln B) = 0`` started from the larger of the single-channel closed forms (each a</span>
+<span class="sd">    lower bound on ``B``). ``g`` is concave and increasing in ``ln B``, so the iteration converges monotonically.</span>
+<span class="sd">    Inputs are natural-log CGS; a luminosity of zero (``log_L = -inf``) removes the IC channel. Returns linear</span>
+<span class="sd">    ``(B, R, gamma_c, n_iter)`` in CGS.</span>
+<span class="sd">    """</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_L</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_t</span><span class="p">)</span>
+        <span class="n">FD2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_F_brk</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_D</span><span class="p">)</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_nu_brk</span><span class="p">)</span>
+
+        <span class="c1"># Single-channel closed forms bracket the root from below.</span>
+        <span class="n">n7</span><span class="p">,</span> <span class="n">n17</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">17.0</span>
+        <span class="n">log_X</span> <span class="o">=</span> <span class="n">log_nu_brk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_nu_c</span><span class="p">)</span>
+        <span class="n">log_Y</span> <span class="o">=</span> <span class="n">log_F_brk</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_F_c</span><span class="p">)</span>
+        <span class="n">log_B_s</span> <span class="o">=</span> <span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">15.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_N</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">A_s</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_t</span><span class="p">))</span> <span class="o">/</span> <span class="n">n7</span>
+        <span class="n">log_B_ic</span> <span class="o">=</span> <span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">25.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">log_X</span> <span class="o">-</span> <span class="mf">6.0</span> <span class="o">*</span> <span class="n">log_Y</span> <span class="o">-</span> <span class="mf">4.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">A_N</span> <span class="o">*</span> <span class="n">_A_IC_CGS</span><span class="p">)</span> <span class="o">-</span> <span class="n">log_L</span> <span class="o">-</span> <span class="n">log_t</span><span class="p">))</span> <span class="o">/</span> <span class="n">n17</span>
+        <span class="n">lnB_lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">log_B_s</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">L</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">log_B_ic</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">))</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="n">nu</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">c_1_cgs</span><span class="p">)</span>
+        <span class="n">R_pref</span> <span class="o">=</span> <span class="n">FD2</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">f_A</span> <span class="o">*</span> <span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">c5_c</span> <span class="o">/</span> <span class="n">mp</span><span class="o">.</span><span class="n">c6_c</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span><span class="o">**</span><span class="mf">2.5</span><span class="p">)</span>  <span class="c1"># R^2 = R_pref * (B sin)^(1/2)</span>
+        <span class="n">const</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">c6_c</span> <span class="o">*</span> <span class="n">electron_rest_energy_cgs</span><span class="o">**</span><span class="n">p</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">f_V</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">A_N</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span>
+            <span class="n">p</span> <span class="o">+</span> <span class="mf">5.0</span>
+        <span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">g_and_slope</span><span class="p">(</span><span class="n">lnB</span><span class="p">):</span>
+            <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnB</span><span class="p">)</span>
+            <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R_pref</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">B</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span><span class="p">))</span>
+            <span class="n">gc</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_c</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">compton_Y</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
+            <span class="n">g</span> <span class="o">=</span> <span class="n">const</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">R</span><span class="p">)</span> <span class="o">+</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">lnB</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gc</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">p</span> <span class="o">+</span> <span class="mf">3.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">B</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">g</span><span class="p">,</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">17.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span> <span class="o">-</span> <span class="mf">2.5</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">Y</span><span class="p">)</span>
+
+        <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">lnB_lo</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+        <span class="n">g_lo</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">g_and_slope</span><span class="p">(</span><span class="n">lo</span><span class="p">)</span>
+        <span class="n">hi</span> <span class="o">=</span> <span class="n">lo</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="o">-</span><span class="n">g_lo</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">)</span> <span class="o">/</span> <span class="p">((</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">p</span> <span class="o">+</span> <span class="mf">7.0</span><span class="p">)</span> <span class="o">/</span> <span class="mf">4.0</span><span class="p">)</span>  <span class="c1"># analytic upper bound</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">lo</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">n_iter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+        <span class="n">active</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">it</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iter</span><span class="p">):</span>
+            <span class="n">g</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">g_and_slope</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">lo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">g</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">lo</span><span class="p">)</span>
+            <span class="n">hi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">g</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">hi</span><span class="p">)</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">g</span> <span class="o">/</span> <span class="n">s</span>
+            <span class="n">x_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">x_new</span> <span class="o">&lt;</span> <span class="n">lo</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x_new</span> <span class="o">&gt;</span> <span class="n">hi</span><span class="p">),</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">lo</span> <span class="o">+</span> <span class="n">hi</span><span class="p">),</span> <span class="n">x_new</span><span class="p">)</span>  <span class="c1"># bisect if Newton leaves bracket</span>
+            <span class="n">step</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x_new</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">n_iter</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">active</span><span class="p">,</span> <span class="n">it</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">n_iter</span><span class="p">)</span>
+            <span class="n">active</span> <span class="o">&amp;=</span> <span class="n">step</span> <span class="o">&gt;</span> <span class="n">tol</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x_new</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">active</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">break</span>
+
+        <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">R_pref</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">B</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_c</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">t</span><span class="p">),</span> <span class="n">n_iter</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_cooling_summary</span><span class="p">(</span><span class="n">mp</span><span class="p">:</span> <span class="n">_SSAMicrophysics</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">nu_brk</span><span class="p">,</span> <span class="n">caller</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""Build the result dict (with units) of a cooled inversion; warn if ``nu_c &gt;= nu_a`` for any input."""</span>
+    <span class="n">nu_c</span> <span class="o">=</span> <span class="n">c_1_gamma_cgs</span> <span class="o">*</span> <span class="n">B</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span> <span class="o">*</span> <span class="n">gamma_c</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">consistent</span> <span class="o">=</span> <span class="n">nu_c</span> <span class="o">&lt;</span> <span class="n">nu_brk</span>  <span class="c1"># the cooled branch requires nu_c &lt; nu_a</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">consistent</span><span class="p">):</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">caller</span><span class="si">}</span><span class="s2">: nu_c &gt;= nu_a for </span><span class="si">{</span><span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">~</span><span class="n">consistent</span><span class="p">))</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">consistent</span><span class="p">)</span><span class="si">}</span><span class="s2"> input(s). The cooled "</span>
+            <span class="s2">"asymptotic forms assume nu_c &lt;&lt; nu_a, so these results are not self-consistent."</span><span class="p">,</span>
+            <span class="n">stacklevel</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="c1"># Fractional energy error (gamma_c / gamma_min)^(2-p) / (p-1) of the uncooled normalization (gamma_max -&gt; inf).</span>
+        <span class="n">delta_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">isinf</span><span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">gamma_max</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">p</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">),</span>
+            <span class="p">(</span><span class="n">gamma_c</span> <span class="o">/</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mf">2.0</span> <span class="o">-</span> <span class="n">mp</span><span class="o">.</span><span class="n">p</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">mp</span><span class="o">.</span><span class="n">p</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"B"</span><span class="p">:</span> <span class="n">B</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+        <span class="s2">"R"</span><span class="p">:</span> <span class="n">R</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+        <span class="s2">"gamma_c"</span><span class="p">:</span> <span class="n">gamma_c</span><span class="p">,</span>
+        <span class="s2">"nu_c"</span><span class="p">:</span> <span class="n">nu_c</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+        <span class="s2">"nu_c_over_nu_a"</span><span class="p">:</span> <span class="n">nu_c</span> <span class="o">/</span> <span class="n">nu_brk</span><span class="p">,</span>
+        <span class="s2">"delta_c"</span><span class="p">:</span> <span class="n">delta_c</span><span class="p">,</span>
+        <span class="s2">"consistent"</span><span class="p">:</span> <span class="n">consistent</span><span class="p">,</span>
+        <span class="s2">"accurate"</span><span class="p">:</span> <span class="n">nu_c</span> <span class="o">&lt;</span> <span class="n">_NU_C_ACCURACY</span> <span class="o">*</span> <span class="n">nu_brk</span><span class="p">,</span>  <span class="c1"># cooled asymptotic forms good to &lt; 0.1%</span>
+        <span class="s2">"slow_cooling"</span><span class="p">:</span> <span class="n">gamma_c</span> <span class="o">&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="k">if</span> <span class="n">L</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">compton_Y</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">L</span><span class="p">)</span>
+        <span class="n">out</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s2">"Y"</span><span class="p">:</span> <span class="n">Y</span><span class="p">,</span> <span class="s2">"ic_dominated"</span><span class="p">:</span> <span class="n">Y</span> <span class="o">&gt;</span> <span class="mf">1.0</span><span class="p">})</span>
+    <span class="k">return</span> <span class="n">out</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Convert user inputs to a list of broadcast CGS float arrays (``nu, F, D`` then ``t``, ``L`` if given)."""</span>
+    <span class="n">nu</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="s2">"Hz"</span><span class="p">)</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">F_brk</span><span class="p">,</span> <span class="n">_FNU_UNIT</span><span class="p">)</span>
+    <span class="n">D</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="s2">"cm"</span><span class="p">)</span>
+    <span class="n">arrays</span> <span class="o">=</span> <span class="p">[</span><span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">L</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">arrays</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ensure_in_units</span><span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="s2">"erg s^-1"</span><span class="p">))</span>
+    <span class="n">arrays</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_arrays</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span> <span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">arrays</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">arrays</span>
+
+
+<span class="c1"># ================================================ #</span>
+<span class="c1"># PUBLIC INVERSIONS</span>
+<span class="c1"># ================================================ #</span>
+<div class="viewcode-block" id="invert_ssa_Diggins26">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_Diggins26">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_Diggins26</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break for :math:`B` and :math:`R` assuming uncooled electrons.</span>
+
+<span class="sd">    Solves the pair of power-law relations for the SSA frequency and the optically thick asymptote of a</span>
+<span class="sd">    one-zone source with a power-law electron distribution, with :math:`N_0` fixed by equipartition,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        B = \frac{\nu_{\rm brk}}{A_\nu}\,A_F^{\frac{2}{2p+13}}\,A_N^{-\frac{4}{2p+13}}\,</span>
+<span class="sd">            \left(F_{\rm brk}D^2\right)^{-\frac{2}{2p+13}},</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        R = \frac{A_\nu}{\nu_{\rm brk}}\,A_F^{-\frac{p+6}{2p+13}}\,A_N^{-\frac{1}{2p+13}}\,</span>
+<span class="sd">            \left(F_{\rm brk}D^2\right)^{\frac{p+6}{2p+13}},</span>
+
+<span class="sd">    where :math:`A_N`, :math:`A_\nu` and :math:`A_F` are the reduced constants described in</span>
+<span class="sd">    :ref:`synchrotron_spectral_inversion`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Best-fit break frequency, identified with :math:`\nu_a`. Bare floats are in Hz.</span>
+<span class="sd">    F_brk : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Asymptotic intercept flux density of the fit at ``nu_brk``. Bare floats are in</span>
+<span class="sd">        :math:`\mathrm{erg\,cm^{-2}\,s^{-1}\,Hz^{-1}}`.</span>
+<span class="sd">    distance : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Distance to the source. Bare floats are in cm.</span>
+<span class="sd">    p : float or array-like, optional</span>
+<span class="sd">        Electron power-law index. Requires :math:`p &gt; 2` when ``gamma_max`` is infinite.</span>
+<span class="sd">    epsilon_E, epsilon_B : float or array-like, optional</span>
+<span class="sd">        Fractions of the post-shock energy in relativistic electrons and in the magnetic field.</span>
+<span class="sd">    f_A, f_V : float or array-like, optional</span>
+<span class="sd">        Area and volume filling factors.</span>
+<span class="sd">    alpha : float or array-like, optional</span>
+<span class="sd">        Pitch angle in radians. Defaults to :math:`\pi/2`. Ignored (with a warning if given) when</span>
+<span class="sd">        ``pitch_average=True``.</span>
+<span class="sd">    pitch_average : bool, optional</span>
+<span class="sd">        If ``True``, use the isotropic pitch-angle coefficients.</span>
+<span class="sd">    gamma_min, gamma_max : float or array-like, optional</span>
+<span class="sd">        Bounds of the electron Lorentz-factor distribution.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``"B"`` (:math:`\mathrm{G}`) and ``"R"`` (:math:`\mathrm{cm}`), with the shape obtained by broadcasting all</span>
+<span class="sd">        of the inputs against one another.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This inversion makes no statement about cooling. If electrons are cooled at :math:`\nu_a`, use one of the cooled</span>
+<span class="sd">    inversions or :func:`invert_ssa_with_cooling_Diggins26`. Relativistic effects and redshift are not treated.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    invert_ssa_with_cooling_Diggins26 : Cooled-versus-uncooled consistency check.</span>
+<span class="sd">    """</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">_SSAMicrophysics</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">)</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">_invert_ssa_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"B"</span><span class="p">:</span> <span class="n">B</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="s2">"R"</span><span class="p">:</span> <span class="n">R</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="invert_ssa_synchrotron_cooled_Diggins26">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_synchrotron_cooled_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_synchrotron_cooled_Diggins26">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_synchrotron_cooled_Diggins26</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break for :math:`B` and :math:`R` assuming synchrotron-cooled electrons.</span>
+
+<span class="sd">    The break is assumed to lie in the cooled segment of a slow-cooling spectrum (:math:`\nu_c \ll \nu_a`), with</span>
+<span class="sd">    :math:`\gamma_c = A_c/(B^2 t)` set by synchrotron losses over the time :math:`t`. The factor :math:`B^2` in the</span>
+<span class="sd">    equipartition normalization cancels the :math:`B^{-2}` in :math:`\gamma_c`, so the system is again a pair of</span>
+<span class="sd">    power laws,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        B = \left(\frac{\nu_{\rm brk}}{A_\nu^{(c)}}\right)^{\frac{2p+15}{2p+7}}</span>
+<span class="sd">            \left(\frac{F_{\rm brk}D^2}{A_F^{(c)}}\right)^{-\frac{2}{2p+7}}\Lambda^{-\frac{4}{2p+7}},</span>
+<span class="sd">        \qquad</span>
+<span class="sd">        R = \left(\frac{F_{\rm brk}D^2}{A_F^{(c)}}\right)^{\frac{p+3}{2p+7}}</span>
+<span class="sd">            \left(\frac{\nu_{\rm brk}}{A_\nu^{(c)}}\right)^{-\frac{2p+5}{2p+7}}\Lambda^{-\frac{1}{2p+7}},</span>
+
+<span class="sd">    with :math:`\Lambda = A_N A_c/t`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk, F_brk, distance, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max</span>
+<span class="sd">        As in :func:`invert_ssa_Diggins26`.</span>
+<span class="sd">    t : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Dynamical (effective cooling) time of the source. Bare floats are in s.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        - ``"B"``, ``"R"``: magnetic field (G) and radius (cm).</span>
+<span class="sd">        - ``"gamma_c"``: cooling Lorentz factor.</span>
+<span class="sd">        - ``"nu_c"``: synchrotron frequency of the cooling electrons (Hz).</span>
+<span class="sd">        - ``"nu_c_over_nu_a"``: regime diagnostic; the assumed branch requires :math:`\ll 1`.</span>
+<span class="sd">        - ``"delta_c"``: fractional energy error of the uncooled normalization (NaN unless :math:`p&gt;2` and</span>
+<span class="sd">          ``gamma_max`` is infinite).</span>
+<span class="sd">        - ``"consistent"``: ``nu_c &lt; nu_a``.</span>
+<span class="sd">        - ``"accurate"``: ``nu_c &lt; 0.1 nu_a`` (cooled asymptotic forms good to better than 0.1%).</span>
+<span class="sd">        - ``"slow_cooling"``: ``gamma_c &gt; gamma_min``.</span>
+
+<span class="sd">    Warns</span>
+<span class="sd">    -----</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If :math:`\nu_c \ge \nu_a` for any input, since the assumed regime then does not hold.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The isotropic cooling constant :math:`9\pi m_e c/\sigma_T` (``pitch_average=True``) assumes pitch-angle</span>
+<span class="sd">    scattering is fast compared with cooling; it is not the :math:`\sin\alpha\to1` limit of the fixed-angle value.</span>
+<span class="sd">    """</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">_SSAMicrophysics</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">tt</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span> <span class="o">=</span> <span class="n">_invert_ssa_synchrotron_cooled_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tt</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_cooling_summary</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="s2">"invert_ssa_synchrotron_cooled_Diggins26"</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="invert_ssa_ic_cooled_Diggins26">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_ic_cooled_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_ic_cooled_Diggins26">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_ic_cooled_Diggins26</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">L</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break for :math:`B` and :math:`R` assuming inverse-Compton-cooled electrons.</span>
+
+<span class="sd">    The break is assumed to lie in the cooled segment (:math:`\nu_c \ll \nu_a`), with the cooling Lorentz factor set</span>
+<span class="sd">    by Thomson-regime IC losses on the radiation field of a central source of luminosity :math:`L`,</span>
+<span class="sd">    :math:`\gamma_c = A_{\rm IC}R^2/(L t)` with :math:`A_{\rm IC} = 3\pi m_e c^2/\sigma_T`. Since</span>
+<span class="sd">    :math:`\gamma_c\propto R^2` there is no cancellation against the normalization, but the system remains log-linear,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        B = \left(\frac{\nu_{\rm brk}}{A_\nu^{(c)}}\right)^{\frac{2p+25}{2p+17}}</span>
+<span class="sd">            \left(\frac{F_{\rm brk}D^2}{A_F^{(c)}}\right)^{-\frac{6}{2p+17}}\Lambda_{\rm IC}^{-\frac{4}{2p+17}},</span>
+<span class="sd">        \qquad</span>
+<span class="sd">        R = \left(\frac{F_{\rm brk}D^2}{A_F^{(c)}}\right)^{\frac{p+7}{2p+17}}</span>
+<span class="sd">            \left(\frac{\nu_{\rm brk}}{A_\nu^{(c)}}\right)^{-\frac{2p+15}{2p+17}}\Lambda_{\rm IC}^{-\frac{1}{2p+17}},</span>
+
+<span class="sd">    with :math:`\Lambda_{\rm IC} = A_N A_{\rm IC}/(L t)`.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk, F_brk, distance, t, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max</span>
+<span class="sd">        As in :func:`invert_ssa_synchrotron_cooled_Diggins26`.</span>
+<span class="sd">    L : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Bolometric luminosity of the seed-photon source at the epoch being inverted. Bare floats are in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}}`. Must be positive.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        As :func:`invert_ssa_synchrotron_cooled_Diggins26`, plus</span>
+
+<span class="sd">        - ``"Y"``: ratio of the IC to the synchrotron loss rate at the solution.</span>
+<span class="sd">        - ``"ic_dominated"``: ``Y &gt; 1``.</span>
+
+<span class="sd">    Warns</span>
+<span class="sd">    -----</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If :math:`\nu_c \ge \nu_a` for any input.</span>
+<span class="sd">    """</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">_SSAMicrophysics</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">tt</span><span class="p">,</span> <span class="n">LL</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">LL</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The IC-cooled inversion requires a positive luminosity `L`."</span><span class="p">)</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span> <span class="o">=</span> <span class="n">_invert_ssa_ic_cooled_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LL</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">_cooling_summary</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="s2">"invert_ssa_ic_cooled_Diggins26"</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">LL</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="invert_ssa_combined_cooled_Diggins26">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_combined_cooled_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_combined_cooled_Diggins26">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_combined_cooled_Diggins26</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">L</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break assuming electrons cooled by both synchrotron and inverse-Compton losses.</span>
+
+<span class="sd">    With both loss channels the rates add,</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \gamma_c = \frac{A_c}{B^2 t}\,\frac{1}{1+Y},</span>
+<span class="sd">        \qquad</span>
+<span class="sd">        Y = \frac{A_c L}{A_{\rm IC}R^2B^2},</span>
+
+<span class="sd">    and :math:`\gamma_c` is a sum of two power laws, so there is no closed form. The optically thick asymptote fixes</span>
+<span class="sd">    :math:`R \propto B^{1/4}`, which reduces the problem to a single equation :math:`g(\ln B)=0` in :math:`B`.</span>
+<span class="sd">    The function :math:`g` is increasing and concave, and each single-channel closed form is a lower bound on</span>
+<span class="sd">    :math:`B`, so the root is bracketed analytically and found by safeguarded Newton iteration (a few</span>
+<span class="sd">    iterations). The solver is vectorized over the inputs, e.g. over posterior draws.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk, F_brk, distance, t, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max</span>
+<span class="sd">        As in :func:`invert_ssa_synchrotron_cooled_Diggins26`.</span>
+<span class="sd">    L : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Bolometric luminosity of the seed-photon source at the epoch being inverted. Bare floats are in</span>
+<span class="sd">        :math:`\mathrm{erg\,s^{-1}}`. ``L = 0`` removes the IC channel.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        As :func:`invert_ssa_ic_cooled_Diggins26`, plus ``"n_iter"``, the number of Newton iterations used.</span>
+
+<span class="sd">    Warns</span>
+<span class="sd">    -----</span>
+<span class="sd">    UserWarning</span>
+<span class="sd">        If :math:`\nu_c \ge \nu_a` for any input.</span>
+<span class="sd">    """</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">_SSAMicrophysics</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">tt</span><span class="p">,</span> <span class="n">LL</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">LL</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The luminosity `L` must be non-negative."</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LL</span><span class="p">)</span>
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="n">_invert_ssa_combined_cooled_Diggins26</span><span class="p">(</span>
+        <span class="n">mp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tt</span><span class="p">),</span> <span class="n">log_L</span>
+    <span class="p">)</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">_cooling_summary</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">nu</span><span class="p">,</span> <span class="s2">"invert_ssa_combined_cooled_Diggins26"</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">LL</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="o">**</span><span class="n">summary</span><span class="p">,</span> <span class="s2">"n_iter"</span><span class="p">:</span> <span class="n">n_iter</span><span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="invert_ssa_with_cooling_Diggins26">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_with_cooling_Diggins26.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_with_cooling_Diggins26">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_with_cooling_Diggins26</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">t</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">L</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">f_A</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">f_V</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">pitch_average</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break, selecting between the cooled and uncooled branches by self-consistency.</span>
+
+<span class="sd">    For each input the function computes</span>
+
+<span class="sd">    1. the **uncooled** solution (:func:`invert_ssa_Diggins26`) and the cooling break it implies from the *combined*</span>
+<span class="sd">       synchrotron and IC losses, and</span>
+<span class="sd">    2. the **cooled** solution (:func:`invert_ssa_combined_cooled_Diggins26`),</span>
+
+<span class="sd">    and keeps the branch whose own cooling break is consistent with the assumption it was derived under: the</span>
+<span class="sd">    uncooled branch needs :math:`\nu_c &gt; \nu_a`, the cooled branch needs :math:`\nu_c &lt; \nu_a` and</span>
+<span class="sd">    :math:`\gamma_c &gt; \gamma_{\min}`.</span>
+
+<span class="sd">    Inputs ``nu_brk``, ``F_brk``, ``distance``, ``t`` and ``L`` are treated as data and broadcast against one</span>
+<span class="sd">    another; ``L`` may be an array with one value per observation.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk, F_brk, distance, t, L, p, epsilon_E, epsilon_B, f_A, f_V, alpha, pitch_average, gamma_min, gamma_max</span>
+<span class="sd">        As in :func:`invert_ssa_combined_cooled_Diggins26`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        - ``"B"``, ``"R"``, ``"gamma_c"``, ``"nu_c"``: the selected solution. NaN where ``branch`` is</span>
+<span class="sd">          ``"ambiguous"`` or ``"fast_cooling"``.</span>
+<span class="sd">        - ``"Y"``, ``"nu_c_over_nu_a"``: diagnostics of the selected branch.</span>
+<span class="sd">        - ``"branch"``: array of ``"uncooled"``, ``"cooled"``, ``"fast_cooling"`` or ``"ambiguous"``. A draw is</span>
+<span class="sd">          ``"fast_cooling"`` when the cooled ordering holds but :math:`\gamma_c \le \gamma_{\min}`, which the</span>
+<span class="sd">          slow-cooling distribution does not describe, and ``"ambiguous"`` when both or neither branch is consistent</span>
+<span class="sd">          (typically :math:`\nu_c\approx\nu_a`, where the asymptotic forms fail).</span>
+<span class="sd">        - ``"accurate"``: the selected branch is in the regime where its asymptotic forms are accurate to better than</span>
+<span class="sd">          0.1% (:math:`\nu_c &lt; 0.1\nu_a` cooled, :math:`\nu_c &gt; 10\nu_a` uncooled).</span>
+<span class="sd">        - ``"n_iter"``: Newton iterations used by the cooled solver.</span>
+<span class="sd">        - ``"cooled"``, ``"uncooled"``: dicts of ``B``, ``R``, ``gamma_c`` and ``nu_c`` for each branch, for</span>
+<span class="sd">          diagnostics.</span>
+<span class="sd">    """</span>
+    <span class="n">mp</span> <span class="o">=</span> <span class="n">_SSAMicrophysics</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">f_A</span><span class="p">,</span> <span class="n">f_V</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">pitch_average</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+    <span class="n">nu</span><span class="p">,</span> <span class="n">F</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">tt</span><span class="p">,</span> <span class="n">LL</span> <span class="o">=</span> <span class="n">_prepare</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">t</span><span class="o">=</span><span class="n">t</span><span class="p">,</span> <span class="n">L</span><span class="o">=</span><span class="n">L</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">LL</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"The luminosity `L` must be non-negative."</span><span class="p">)</span>
+    <span class="n">log_nu</span><span class="p">,</span> <span class="n">log_F</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">log_t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">D</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">log_L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">LL</span><span class="p">)</span>
+
+    <span class="n">B_u</span><span class="p">,</span> <span class="n">R_u</span> <span class="o">=</span> <span class="n">_invert_ssa_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">log_nu</span><span class="p">,</span> <span class="n">log_F</span><span class="p">,</span> <span class="n">log_D</span><span class="p">)</span>
+    <span class="n">B_c</span><span class="p">,</span> <span class="n">R_c</span><span class="p">,</span> <span class="n">gc_c</span><span class="p">,</span> <span class="n">n_iter</span> <span class="o">=</span> <span class="n">_invert_ssa_combined_cooled_Diggins26</span><span class="p">(</span><span class="n">mp</span><span class="p">,</span> <span class="n">log_nu</span><span class="p">,</span> <span class="n">log_F</span><span class="p">,</span> <span class="n">log_D</span><span class="p">,</span> <span class="n">log_t</span><span class="p">,</span> <span class="n">log_L</span><span class="p">)</span>
+
+    <span class="c1"># The uncooled branch still cools: evaluate the break it implies with both loss channels.</span>
+    <span class="n">gc_u</span> <span class="o">=</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_c</span><span class="p">(</span><span class="n">B_u</span><span class="p">,</span> <span class="n">R_u</span><span class="p">,</span> <span class="n">LL</span><span class="p">,</span> <span class="n">tt</span><span class="p">)</span>
+    <span class="n">nuc_u</span> <span class="o">=</span> <span class="n">c_1_gamma_cgs</span> <span class="o">*</span> <span class="n">B_u</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span> <span class="o">*</span> <span class="n">gc_u</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">nuc_c</span> <span class="o">=</span> <span class="n">c_1_gamma_cgs</span> <span class="o">*</span> <span class="n">B_c</span> <span class="o">*</span> <span class="n">mp</span><span class="o">.</span><span class="n">sin</span> <span class="o">*</span> <span class="n">gc_c</span><span class="o">**</span><span class="mi">2</span>
+
+    <span class="n">ok_u</span> <span class="o">=</span> <span class="n">nuc_u</span> <span class="o">&gt;</span> <span class="n">nu</span>
+    <span class="n">ok_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc_c</span> <span class="o">&lt;</span> <span class="n">nu</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gc_c</span> <span class="o">&gt;</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">)</span>
+    <span class="n">fast</span> <span class="o">=</span> <span class="p">(</span><span class="n">nuc_c</span> <span class="o">&lt;</span> <span class="n">nu</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gc_c</span> <span class="o">&lt;=</span> <span class="n">mp</span><span class="o">.</span><span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ok_u</span>
+    <span class="n">branch</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+        <span class="n">ok_u</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ok_c</span><span class="p">,</span>
+        <span class="s2">"uncooled"</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">ok_c</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">ok_u</span><span class="p">,</span> <span class="s2">"cooled"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">fast</span><span class="p">,</span> <span class="s2">"fast_cooling"</span><span class="p">,</span> <span class="s2">"ambiguous"</span><span class="p">)),</span>
+    <span class="p">)</span>
+    <span class="n">use_c</span> <span class="o">=</span> <span class="n">branch</span> <span class="o">==</span> <span class="s2">"cooled"</span>
+    <span class="n">flagged</span> <span class="o">=</span> <span class="p">(</span><span class="n">branch</span> <span class="o">==</span> <span class="s2">"ambiguous"</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">branch</span> <span class="o">==</span> <span class="s2">"fast_cooling"</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">pick</span><span class="p">(</span><span class="n">x_c</span><span class="p">,</span> <span class="n">x_u</span><span class="p">,</span> <span class="n">mask_flagged</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">use_c</span><span class="p">,</span> <span class="n">x_c</span><span class="p">,</span> <span class="n">x_u</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flagged</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">out</span><span class="p">)</span> <span class="k">if</span> <span class="n">mask_flagged</span> <span class="k">else</span> <span class="n">out</span>
+
+    <span class="n">B_sel</span><span class="p">,</span> <span class="n">R_sel</span> <span class="o">=</span> <span class="n">pick</span><span class="p">(</span><span class="n">B_c</span><span class="p">,</span> <span class="n">B_u</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span> <span class="n">pick</span><span class="p">(</span><span class="n">R_c</span><span class="p">,</span> <span class="n">R_u</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">nuc_sel</span> <span class="o">=</span> <span class="n">pick</span><span class="p">(</span><span class="n">nuc_c</span><span class="p">,</span> <span class="n">nuc_u</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s2">"B"</span><span class="p">:</span> <span class="n">pick</span><span class="p">(</span><span class="n">B_c</span><span class="p">,</span> <span class="n">B_u</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span>
+        <span class="s2">"R"</span><span class="p">:</span> <span class="n">pick</span><span class="p">(</span><span class="n">R_c</span><span class="p">,</span> <span class="n">R_u</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span>
+        <span class="s2">"gamma_c"</span><span class="p">:</span> <span class="n">pick</span><span class="p">(</span><span class="n">gc_c</span><span class="p">,</span> <span class="n">gc_u</span><span class="p">),</span>
+        <span class="s2">"nu_c"</span><span class="p">:</span> <span class="n">pick</span><span class="p">(</span><span class="n">nuc_c</span><span class="p">,</span> <span class="n">nuc_u</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">,</span>
+        <span class="s2">"Y"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flagged</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">mp</span><span class="o">.</span><span class="n">compton_Y</span><span class="p">(</span><span class="n">B_sel</span><span class="p">,</span> <span class="n">R_sel</span><span class="p">,</span> <span class="n">LL</span><span class="p">)),</span>
+        <span class="s2">"nu_c_over_nu_a"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">flagged</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">nuc_sel</span> <span class="o">/</span> <span class="n">nu</span><span class="p">),</span>
+        <span class="s2">"branch"</span><span class="p">:</span> <span class="n">branch</span><span class="p">,</span>
+        <span class="s2">"accurate"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">use_c</span><span class="p">,</span> <span class="n">nuc_c</span> <span class="o">&lt;</span> <span class="n">_NU_C_ACCURACY</span> <span class="o">*</span> <span class="n">nu</span><span class="p">,</span> <span class="n">nuc_u</span> <span class="o">&gt;</span> <span class="mf">10.0</span> <span class="o">*</span> <span class="n">nu</span><span class="p">)</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">flagged</span><span class="p">,</span>
+        <span class="s2">"n_iter"</span><span class="p">:</span> <span class="n">n_iter</span><span class="p">,</span>
+        <span class="s2">"cooled"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"B"</span><span class="p">:</span> <span class="n">B_c</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="s2">"R"</span><span class="p">:</span> <span class="n">R_c</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="s2">"gamma_c"</span><span class="p">:</span> <span class="n">gc_c</span><span class="p">,</span> <span class="s2">"nu_c"</span><span class="p">:</span> <span class="n">nuc_c</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">},</span>
+        <span class="s2">"uncooled"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"B"</span><span class="p">:</span> <span class="n">B_u</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="s2">"R"</span><span class="p">:</span> <span class="n">R_u</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">,</span> <span class="s2">"gamma_c"</span><span class="p">:</span> <span class="n">gc_u</span><span class="p">,</span> <span class="s2">"nu_c"</span><span class="p">:</span> <span class="n">nuc_u</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span><span class="p">},</span>
+    <span class="p">}</span></div>
+
+
+
+<span class="c1"># ================================================ #</span>
+<span class="c1"># DE MARCHI (2022)</span>
+<span class="c1"># ================================================ #</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">_invert_ssa_DeMarchi22</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">F_nu_brk</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span>
+    <span class="n">p</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA turnover using the DeMarchi et al. (2022) analytic closure.</span>
+
+<span class="sd">    This low-level helper implements the DeMarchi et al. (2022) inversion</span>
+<span class="sd">    for a broken power-law synchrotron spectrum with an SSA turnover. It</span>
+<span class="sd">    returns the magnetic field strength :math:`B` and emitting radius</span>
+<span class="sd">    :math:`R` implied by the supplied turnover frequency and flux density.</span>
+
+<span class="sd">    The implementation works internally in log space for numerical</span>
+<span class="sd">    stability, but this helper itself accepts linear-valued inputs in the</span>
+<span class="sd">    units assumed by the underlying analytic formulae.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk : float or array-like</span>
+<span class="sd">        SSA turnover frequency :math:`\nu_{\rm brk}` in GHz.</span>
+<span class="sd">    F_nu_brk : float or array-like</span>
+<span class="sd">        Flux density at the turnover, :math:`F_{\nu,\rm brk}`, in Jy.</span>
+<span class="sd">    distance : float or array-like</span>
+<span class="sd">        Source distance in Mpc.</span>
+<span class="sd">    p : float or array-like, optional</span>
+<span class="sd">        Electron power-law index. Values equal to :math:`2` are not</span>
+<span class="sd">        supported by this implementation.</span>
+<span class="sd">    f : float or array-like, optional</span>
+<span class="sd">        Effective filling factor of the emitting region.</span>
+<span class="sd">    theta : float or array-like, optional</span>
+<span class="sd">        Pitch angle in radians.</span>
+<span class="sd">    epsilon_B : float or array-like, optional</span>
+<span class="sd">        Fraction of internal energy in magnetic fields.</span>
+<span class="sd">    epsilon_E : float or array-like, optional</span>
+<span class="sd">        Fraction of internal energy in relativistic electrons.</span>
+<span class="sd">    gamma_min : float or array-like, optional</span>
+<span class="sd">        Minimum electron Lorentz factor.</span>
+<span class="sd">    gamma_max : float or array-like, optional</span>
+<span class="sd">        Maximum electron Lorentz factor. This matters only for</span>
+<span class="sd">        :math:`p &lt; 2`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    tuple of ndarray</span>
+<span class="sd">        Two-element tuple ``(B, R)`` containing</span>
+
+<span class="sd">        - magnetic field strength in G</span>
+<span class="sd">        - emitting radius in cm</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is a specialized analytic closure based on the DM22 treatment and</span>
+<span class="sd">    is distinct from the Diggins26 inversions in this module. It does not pitch-angle average; the pitch angle</span>
+<span class="sd">    is fixed by ``theta``.</span>
+
+<span class="sd">    .. dropdown:: Numerical implementation notes</span>
+<span class="sd">       :icon: info</span>
+
+<span class="sd">       The calculation is carried out in log space to reduce floating-point</span>
+<span class="sd">       precision loss and catastrophic cancellation in the analytic</span>
+<span class="sd">       expressions.</span>
+
+<span class="sd">    .. dropdown:: Applicability</span>
+<span class="sd">       :icon: chevron-down</span>
+
+<span class="sd">       Use this function when you specifically want the DM22 inversion based</span>
+<span class="sd">       on an SSA turnover treated as a broken power law. To pitch-angle average,</span>
+<span class="sd">       use :func:`invert_ssa_Diggins26`.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    invert_ssa_DeMarchi22</span>
+<span class="sd">        Public, unit-aware wrapper.</span>
+<span class="sd">    invert_ssa_Diggins26</span>
+<span class="sd">        Uncooled SSA inversion for a fixed-angle or pitch-averaged source.</span>
+<span class="sd">    :ref:`synch_sed_theory`</span>
+<span class="sd">        General synchrotron SED conventions.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Cast all parameters to float arrays. Shapes are free to differ; they broadcast against one another and against</span>
+    <span class="c1"># the observables.</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_min</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">),</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_max</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">),</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Obtain the synchrotron coefficients relevant for this scenario. We need c_1,c_5, and c_6.</span>
+    <span class="n">c_5</span> <span class="o">=</span> <span class="n">compute_c5_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">c_6</span> <span class="o">=</span> <span class="n">compute_c6_parameter</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="n">c_1</span> <span class="o">=</span> <span class="n">c_1_cgs</span>  <span class="c1"># Scalar constant.</span>
+
+    <span class="c1"># Construct the array for delta. See the documentation notes for details on the procedure here / physical</span>
+    <span class="c1"># motivation. Delta is 1 for p &gt; 2 and (gamma_max / gamma_min)^(2-p) - 1 for p &lt; 2. In THIS IMPLEMENTATION, we</span>
+    <span class="c1"># ignore cases where p == 2; these should be screened for upstream if needed.</span>
+    <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">over</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">,</span> <span class="n">invalid</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">p</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">gamma_max</span> <span class="o">/</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="c1"># Construct the "p_norm" term used in the B and R calculations. This allows us to handle the two branches</span>
+    <span class="c1"># of the solution (p &lt; 2 and p &gt; 2) in a unified way.</span>
+    <span class="c1"># Note that we take the absolute value here to avoid issues with negative bases and fractional exponents.</span>
+    <span class="c1"># The p == 2 case is handled upstream.</span>
+    <span class="n">p_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">p</span> <span class="o">-</span> <span class="mf">2.0</span><span class="p">)</span>
+
+    <span class="c1"># Compute the electron energy floor using the gamma_min parameter and the standard formula.</span>
+    <span class="n">E_l</span> <span class="o">=</span> <span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">gamma_min</span>
+
+    <span class="c1"># Normalize unit bearing values and convert them to logarithmic quantities for</span>
+    <span class="c1"># numerical stability.</span>
+    <span class="n">_log_nu_brk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nu_brk</span> <span class="o">/</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">_log_F_nu_brk</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">F_nu_brk</span><span class="p">)</span>
+    <span class="n">_log_distance</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+    <span class="n">_log_c1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_1</span><span class="p">)</span>
+    <span class="n">_log_E_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">E_l</span><span class="p">)</span>
+    <span class="n">_log_delta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+    <span class="n">_log_sin_theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">theta</span><span class="p">))</span>
+    <span class="n">_log_p_norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">p_norm</span><span class="p">)</span>
+
+    <span class="c1"># Compute the magnetic field following equation (16) of DeMarchi+22. We break this into</span>
+    <span class="c1"># components for clarity. The operation should be heavily CPU bound, so this should not have any impact</span>
+    <span class="c1"># on optimization.</span>
+    <span class="c1">#</span>
+    <span class="c1"># Here nu_brk is in GHz, E_l is in erg, distance is in Mpc, F_nu_brk is in Jy, and B will be in Gauss.</span>
+    <span class="n">_log_B_coeff</span> <span class="o">=</span> <span class="mf">21.6396</span> <span class="o">+</span> <span class="n">_log_nu_brk</span> <span class="o">-</span> <span class="n">_log_c1</span>
+    <span class="n">_log_B_num</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="o">-</span><span class="mf">51.41402455</span>
+        <span class="o">+</span> <span class="p">((</span><span class="mi">4</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">_log_E_l</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">_log_delta</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epsilon_B</span> <span class="o">/</span> <span class="n">epsilon_E</span><span class="p">))</span>
+        <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_5</span><span class="p">)</span>
+        <span class="o">+</span> <span class="p">((</span><span class="mi">1</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">5</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">_log_sin_theta</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">_log_B_denom</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_log_p_norm</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_log_distance</span> <span class="o">+</span> <span class="p">(</span><span class="n">_log_F_nu_brk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">))</span> <span class="o">+</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_6</span><span class="p">))</span>
+    <span class="n">_log_B</span> <span class="o">=</span> <span class="n">_log_B_coeff</span> <span class="o">+</span> <span class="p">(</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">13</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">_log_B_num</span> <span class="o">-</span> <span class="n">_log_B_denom</span><span class="p">)</span>
+
+    <span class="c1"># Compute the radius following equation (17) of DeMarchi+22. We break this into parts as well on the same</span>
+    <span class="c1"># basis as above.</span>
+    <span class="n">_log_R_coeff</span> <span class="o">=</span> <span class="o">-</span><span class="mf">21.63956</span> <span class="o">+</span> <span class="n">_log_c1</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="n">_log_nu_brk</span><span class="p">)</span>
+    <span class="n">_log_R_t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">12</span> <span class="o">*</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">6</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_5</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">5</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">c_6</span><span class="p">)</span>
+    <span class="n">_log_R_t2</span> <span class="o">=</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="mf">59.818022</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">_log_sin_theta</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="mi">5</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="mi">12</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">_log_distance</span>
+    <span class="n">_log_R_t3</span> <span class="o">=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">_log_E_l</span> <span class="o">+</span> <span class="p">(</span><span class="mi">6</span> <span class="o">+</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">_log_F_nu_brk</span>
+    <span class="n">_log_R_t4</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">epsilon_E</span><span class="p">)</span> <span class="o">+</span> <span class="n">_log_p_norm</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">f</span> <span class="o">/</span> <span class="mf">0.5</span><span class="p">))</span>
+    <span class="n">_log_R</span> <span class="o">=</span> <span class="n">_log_R_coeff</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">13</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">p</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">_log_R_t1</span> <span class="o">+</span> <span class="n">_log_R_t2</span> <span class="o">+</span> <span class="n">_log_R_t3</span> <span class="o">+</span> <span class="n">_log_R_t4</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_B</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">_log_R</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="invert_ssa_DeMarchi22">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22.html#trilobite.radiation.synchrotron.spectral_inversion.invert_ssa_DeMarchi22">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">invert_ssa_DeMarchi22</span><span class="p">(</span>
+    <span class="n">nu_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">F_brk</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="n">distance</span><span class="p">:</span> <span class="s2">"_UnitBearingScalarLike"</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">p</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">3.0</span><span class="p">,</span>
+    <span class="n">f</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">theta</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="n">epsilon_B</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">epsilon_E</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">gamma_min</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">gamma_max</span><span class="p">:</span> <span class="n">Union</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1e6</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Invert an SSA break using the analytic formulae of :footcite:t:`demarchiRadioAnalysisSN2004C2022`.</span>
+
+<span class="sd">    This is the public, unit-aware wrapper for the DeMarchi et al. (2022) SSA inversion. It converts an SSA break</span>
+<span class="sd">    frequency and flux density to the magnetic field strength :math:`B` and emitting radius :math:`R`, using the</span>
+<span class="sd">    same observable convention as the other inversions in this module: ``nu_brk`` is the best-fit break frequency</span>
+<span class="sd">    and ``F_brk`` is the asymptotic intercept flux of the fit.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nu_brk : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        SSA break frequency. Bare floats are in GHz.</span>
+<span class="sd">    F_brk : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Asymptotic intercept flux density at the break. Bare floats are in Jy.</span>
+<span class="sd">    distance : float, array-like, or ~astropy.units.Quantity</span>
+<span class="sd">        Distance to the source. Bare floats are in Mpc.</span>
+<span class="sd">    p : float or array-like, optional</span>
+<span class="sd">        Electron power-law index. The singular case :math:`p = 2` is not supported.</span>
+<span class="sd">    f : float or array-like, optional</span>
+<span class="sd">        Effective filling factor of the emitting region.</span>
+<span class="sd">    theta : float or array-like, optional</span>
+<span class="sd">        Pitch angle in radians.</span>
+<span class="sd">    epsilon_B, epsilon_E : float or array-like, optional</span>
+<span class="sd">        Fractions of the internal energy in magnetic fields and in relativistic electrons.</span>
+<span class="sd">    gamma_min, gamma_max : float or array-like, optional</span>
+<span class="sd">        Bounds of the electron Lorentz-factor distribution. ``gamma_max`` matters only for :math:`p &lt; 2`.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        ``"B"`` (:math:`\mathrm{G}`) and ``"R"`` (:math:`\mathrm{cm}`).</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    .. important::</span>
+
+<span class="sd">        This inversion does **not** pitch-angle average. It uses the fixed pitch angle ``theta`` throughout. To</span>
+<span class="sd">        use the isotropic pitch-angle coefficients, use :func:`invert_ssa_Diggins26`.</span>
+
+<span class="sd">    The source is treated as local and non-relativistic, as for the other inversions in this module.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    invert_ssa_Diggins26 : Uncooled inversion with optional pitch-angle averaging.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. footbibliography::</span>
+<span class="sd">    """</span>
+    <span class="n">nu_brk</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">GHz</span><span class="p">)</span>
+    <span class="n">F_brk</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">F_brk</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Jy</span><span class="p">)</span>
+    <span class="n">distance</span> <span class="o">=</span> <span class="n">ensure_in_units</span><span class="p">(</span><span class="n">distance</span><span class="p">,</span> <span class="n">u</span><span class="o">.</span><span class="n">Mpc</span><span class="p">)</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">p</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+            <span class="s2">"The DeMarchi et al. (2022) inversion does not support p = 2. "</span>
+            <span class="s2">"Use p slightly above or below 2, or implement a dedicated logarithmic normalization for this case."</span>
+        <span class="p">)</span>
+
+    <span class="n">B</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">_invert_ssa_DeMarchi22</span><span class="p">(</span>
+        <span class="n">nu_brk</span><span class="o">=</span><span class="n">nu_brk</span><span class="p">,</span>
+        <span class="n">F_nu_brk</span><span class="o">=</span><span class="n">F_brk</span><span class="p">,</span>
+        <span class="n">distance</span><span class="o">=</span><span class="n">distance</span><span class="p">,</span>
+        <span class="n">p</span><span class="o">=</span><span class="n">p</span><span class="p">,</span>
+        <span class="n">f</span><span class="o">=</span><span class="n">f</span><span class="p">,</span>
+        <span class="n">theta</span><span class="o">=</span><span class="n">theta</span><span class="p">,</span>
+        <span class="n">epsilon_B</span><span class="o">=</span><span class="n">epsilon_B</span><span class="p">,</span>
+        <span class="n">epsilon_E</span><span class="o">=</span><span class="n">epsilon_E</span><span class="p">,</span>
+        <span class="n">gamma_min</span><span class="o">=</span><span class="n">gamma_min</span><span class="p">,</span>
+        <span class="n">gamma_max</span><span class="o">=</span><span class="n">gamma_max</span><span class="p">,</span>
+    <span class="p">)</span>
+    <span class="c1"># R does not depend on every input (e.g. gamma_max), so broadcast both outputs to the full input shape.</span>
+    <span class="n">shape</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_shapes</span><span class="p">(</span>
+        <span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">(</span><span class="n">nu_brk</span><span class="p">,</span> <span class="n">F_brk</span><span class="p">,</span> <span class="n">distance</span><span class="p">,</span> <span class="n">p</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">epsilon_B</span><span class="p">,</span> <span class="n">epsilon_E</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="p">{</span><span class="s2">"B"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">G</span><span class="p">,</span> <span class="s2">"R"</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">broadcast_to</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span><span class="p">}</span></div>
+
+</pre></div>
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

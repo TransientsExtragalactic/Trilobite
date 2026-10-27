@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 
 
@@ -27,14 +26,14 @@
   </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="../../_static/styles/theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
-<link href="../../_static/styles/pydata-sphinx-theme.css?digest=cb8930eaaf36d9849b67" rel="stylesheet" />
+  <link href="../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
     <link rel="stylesheet" type="text/css" href="../../_static/graphviz.css?v=4ae1632d" />
     <link rel="stylesheet" type="text/css" href="../../_static/plot_directive.css" />
     <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=fd6457a4" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=c83e6b79" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
     <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
@@ -42,10 +41,10 @@
     <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=391a8568" />
   
   <!-- So that users can add custom icons -->
-  <script defer src="../../_static/scripts/fontawesome.js?digest=cb8930eaaf36d9849b67"></script>
+  <script defer src="../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67" />
-<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67" />
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
 
     <script src="../../_static/documentation_options.js?v=3ce10a4d"></script>
     <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
@@ -57,7 +56,7 @@
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'auto_examples/inference/plot_SED_fit';</script>
     <script>
-        DOCUMENTATION_OPTIONS.theme_version = '0.21.0';
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
         DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
         DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
         DOCUMENTATION_OPTIONS.show_version_warning_banner =
@@ -70,6 +69,7 @@
     <link rel="next" title="Fitting a Time-Evolving Synchrotron SED" href="plot_evolving_sed.html" />
     <link rel="prev" title="Inference and Parameter Estimation" href="index.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
   <meta name="docsearch:version" content="dev" />
   
@@ -119,7 +119,7 @@
   
     <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
 <div class="bd-header__inner bd-page-width">
-  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
     <span class="fa-solid fa-bars"></span>
   </button>
   
@@ -199,7 +199,7 @@
         <div class="navbar-item navbar-persistent--container">
           
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
  <i class="fa-solid fa-magnifying-glass"></i>
  <span class="search-button__default-text">Search</span>
  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -210,15 +210,15 @@
         <div class="navbar-item">
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
     <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
     <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
   </ul>
 </div></div>
       
@@ -264,7 +264,7 @@
   
     <div class="navbar-persistent--mobile">
 
-<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
  <i class="fa-solid fa-magnifying-glass"></i>
  <span class="search-button__default-text">Search</span>
  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
@@ -273,7 +273,7 @@
   
 
   
-    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
       <span class="fa-solid fa-outdent"></span>
     </button>
   
@@ -343,15 +343,15 @@
           <div class="navbar-item">
 
 <div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
     <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
     <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
     <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
   </button>
   <ul class="dropdown-menu dropdown-menu-end">
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
-    <li><button class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
   </ul>
 </div></div>
         
@@ -395,7 +395,7 @@
   </div>
   
     <div class="sidebar-primary-items__start sidebar-primary__section">
-        <div class="sidebar-primary-item pst-sidebar-collapse"><button id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
   <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
     <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
   </svg>
@@ -523,7 +523,7 @@
 </ul>
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Inference and Parameter Estimation</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
-<li class="toctree-l2 current active"><a class="current reference internal" href="#">Fit Radio Photometry to a BPL</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">Fit Radio Photometry to a BPL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_evolving_sed.html">Fitting a Time-Evolving Synchrotron SED</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_censored_SED_fit.html">Fit Censored Radio Photometry to a BPL</a></li>
 <li class="toctree-l2"><a class="reference internal" href="plot_multi_epoch_sed_evolution.html">Multi-Epoch SED Fitting: Tracking Shock Evolution</a></li>
@@ -608,16 +608,14 @@ This is an excellent place to start for understanding how to fit models to data 
 data with a fixed noise threshold and then we’ll invert that data to recover the original parameters using MCMC.
 This will take us through the basic steps of generating the model, defining the dataset, setting up the likelihood,
 and running the inference with correct priors.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span><span class="w">
+</span></pre></div></div>
 <section id="setup">
 <h2>Setup<a class="headerlink" href="#setup" title="Link to this heading">#</a></h2>
 <p>First, we need to import the necessary libraries</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.models.SEDs.synchrotron</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">Synchrotron_SSA_SBPL_Model</span></a>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">models</span><span class="nn">.</span><span class="nn">SEDs</span><span class="nn">.</span><span class="nn">synchrotron</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><span class="n">Synchrotron_SSA_SBPL_Model</span></a><span class="w">
+</span></pre></div></div>
 <p>Now, the <code class="xref py py-class docutils literal notranslate"><span class="pre">Synchrotron_SSA_SBPL_Model</span></code> model produces a synchrotron SED
 with the form:</p>
 <div class="math notranslate nohighlight">
@@ -639,54 +637,52 @@ spectral slopes expected for a homogeneous emitting region with a power-law elec
 population.</p>
 <p>In order to produce the synthetic data, we’ll first define a set of model parameters and then forward model their
 SED with a Gaussian noise with a standard deviation proportional to the flux density.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Generate the forward model object.</span>
-<span class="n">sed_model</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">Synchrotron_SSA_SBPL_Model</span></a><span class="p">()</span>
-
-<span class="c1"># Create a parameter dictionary with our preferred true values.</span>
-<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">"norm"</span><span class="p">:</span> <span class="mf">5.0</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">,</span> <span class="s2">"nu_break"</span><span class="p">:</span> <span class="mf">4.0</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">,</span> <span class="s2">"p"</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s2">"s"</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">}</span>
-
-<span class="c1"># Define the noise level as a fraction of the flux density.</span>
-<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_fraction</span></a> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># 5% noise</span>
-
-<span class="c1"># Generate the frequencies to use for the synthetic data.</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequencies</span></a> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class"><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">([</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">],</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span>
-
-<span class="c1"># Generate the synthetic flux densities with noise.</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">synthetic_flux</span></a> <span class="o">=</span> <span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">({</span><span class="s2">"frequency"</span><span class="p">:</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequencies</span></a><span class="p">},</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">synthetic_flux</span></a> <span class="o">+=</span> <span class="p">(</span>
-    <a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html#numpy.random.normal" title="numpy.random.normal" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span></a><span class="p">(</span><span class="n">size</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">shape</span></a><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><span class="s2">"mJy"</span><span class="p">))</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a>
-<span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="c1"># Generate the forward model object.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><span class="n">sed_model</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><span class="n">Synchrotron_SSA_SBPL_Model</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create a parameter dictionary with our preferred true values.</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;</span><span class="s2">norm</span><span class="s2">&quot;</span><span class="p">:</span> <span class="mf">5.0</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">nu_break</span><span class="s2">&quot;</span><span class="p">:</span> <span class="mf">4.0</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">p</span><span class="s2">&quot;</span><span class="p">:</span> <span class="mf">3.0</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">s</span><span class="s2">&quot;</span><span class="p">:</span> <span class="o">-</span><span class="mf">1.0</span><span class="p">}</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Define the noise level as a fraction of the flux density.</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">noise_fraction</span></a> <span class="o">=</span> <span class="mf">0.1</span>  <span class="c1"># 5% noise</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Generate the frequencies to use for the synthetic data.</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">frequencies</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">u</span><span class="o">.</span><span class="n">Quantity</span></a><span class="p">(</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">3.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">,</span> <span class="mf">10.0</span><span class="p">,</span> <span class="mf">15.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">]</span><span class="p">,</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Generate the synthetic flux densities with noise.</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">synthetic_flux</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model"><span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span></a><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">frequency</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">frequencies</span></a><span class="p">}</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">synthetic_flux</span></a> <span class="o">+</span><span class="o">=</span> <span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.normal.html#numpy.random.normal" title="numpy.random.normal"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span></a><span class="p">(</span><span class="n">size</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">shape</span></a><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">mJy</span><span class="s2">&quot;</span><span class="p">)</span><span class="p">)</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="w">
+</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <p>Let’s go ahead and look at the plot of the true model and the synthetic data points.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
-
-<span class="c1"># Create a figure and axis for the plot.</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="c1"># Plot the true model.</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs_plot</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.logspace.html#numpy.logspace" title="numpy.logspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">logspace</span></a><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">Hz</span></a>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_flux_plot</span></a> <span class="o">=</span> <span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">({</span><span class="s2">"frequency"</span><span class="p">:</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs_plot</span></a><span class="p">},</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">),</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">true_flux_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s2">"True Model"</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">)</span>
-
-<span class="c1"># Add our synthetic data points.</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.errorbar.html#matplotlib.axes.Axes.errorbar" title="matplotlib.axes.Axes.errorbar" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span></a><span class="p">(</span>
-    <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">frequencies</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">),</span>
-    <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span>
-    <span class="n">yerr</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">"Synthetic Data"</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">"Frequency [Hz]"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">"Flux Density [mJy]"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xscale.html#matplotlib.axes.Axes.set_xscale" title="matplotlib.axes.Axes.set_xscale" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span></a><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yscale.html#matplotlib.axes.Axes.set_yscale" title="matplotlib.axes.Axes.set_yscale" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span></a><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="nn">.</span><span class="nn">pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create a figure and axis for the plot.</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Plot the true model.</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">freqs_plot</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.logspace.html#numpy.logspace" title="numpy.logspace"><span class="n">np</span><span class="o">.</span><span class="n">logspace</span></a><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><span class="n">u</span><span class="o">.</span><span class="n">Hz</span></a><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">true_flux_plot</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model"><span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span></a><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">frequency</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">freqs_plot</span></a><span class="p">}</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">true_flux_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">True Model</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">black</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Add our synthetic data points.</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.errorbar.html#matplotlib.axes.Axes.errorbar" title="matplotlib.axes.Axes.errorbar"><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span></a><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">frequencies</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">yerr</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">o</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Synthetic Data</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">red</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Frequency [Hz]</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Flux Density [mJy]</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xscale.html#matplotlib.axes.Axes.set_xscale" title="matplotlib.axes.Axes.set_xscale"><span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">log</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yscale.html#matplotlib.axes.Axes.set_yscale" title="matplotlib.axes.Axes.set_yscale"><span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">log</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_SED_fit_001.png" srcset="../../_images/sphx_glr_plot_SED_fit_001.png" alt="plot SED fit" class = "sphx-glr-single-img"/></section>
 <section id="inference">
 <h2>Inference<a class="headerlink" href="#inference" title="Link to this heading">#</a></h2>
@@ -695,24 +691,23 @@ We’ll use MCMC for this purpose, which requires us to define a likelihood func
 <p>To start, we’ll need to create a data container object to hold our synthetic data. We’ll use
 a <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Table</span></code></a> object and then feed it into the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">RadioPhotometryEpochContainer</span></code>.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy.table</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data.photometry</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryEpochContainer</span></a>
-
-<span class="c1"># Create an Astropy Table with the synthetic data. We'll have everything happen at the same</span>
-<span class="c1"># epoch in this case (dummy time column), and we'll set the upper limits to NaN since we have detections.</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class"><span class="n">Table</span></a><span class="p">()</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">"freq"</span><span class="p">]</span> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequencies</span></a>
-<a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">"flux_density"</span><span class="p">]</span> <span class="o">=</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">synthetic_flux</span></a>
-<a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">"flux_density_error"</span><span class="p">]</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">synthetic_flux</span></a>
-<a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">"flux_upper_limit"</span><span class="p">]</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.full.html#numpy.full" title="numpy.full" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">full</span></a><span class="p">((</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">frequencies</span><span class="o">.</span><span class="n">size</span></a><span class="p">,),</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">nan</span></a><span class="p">)</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a>  <span class="c1"># No upper limits</span>
-
-<span class="c1"># Create the RadioPhotometryContainer from the table.</span>
-<span class="n">photometry_data</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">RadioPhotometryEpochContainer</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table" class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">data_table</span></a><span class="p">)</span>
-
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.data</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="nn">.</span><span class="nn">table</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">Table</span></a><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">data</span><span class="nn">.</span><span class="nn">photometry</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.RadioPhotometryEpochContainer"><span class="n">RadioPhotometryEpochContainer</span></a><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create an Astropy Table with the synthetic data. We'll have everything happen at the same</span><span class="w">
+</span><span class="c1"># epoch in this case (dummy time column), and we'll set the upper limits to NaN since we have detections.</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">Table</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">freq</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">frequencies</span></a><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">flux_density</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">synthetic_flux</span></a><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">flux_density_error</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">synthetic_flux</span></a><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">flux_upper_limit</span><span class="s2">&quot;</span><span class="p">]</span> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.full.html#numpy.full" title="numpy.full"><span class="n">np</span><span class="o">.</span><span class="n">full</span></a><span class="p">(</span><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">frequencies</span><span class="o">.</span><span class="n">size</span></a><span class="p">,</span><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">np</span><span class="o">.</span><span class="n">nan</span></a><span class="p">)</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a>  <span class="c1"># No upper limits</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create the RadioPhotometryContainer from the table.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.RadioPhotometryEpochContainer"><span class="n">photometry_data</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.html#trilobite.data.photometry.RadioPhotometryEpochContainer" title="trilobite.data.RadioPhotometryEpochContainer"><span class="n">RadioPhotometryEpochContainer</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-table sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.table.Table.html#astropy.table.Table" title="astropy.table.Table"><span class="n">data_table</span></a><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">data</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceData</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/Trilobite/Trilobite/docs/source/galleries/inference/plot_SED_fit.py:123: DeprecationWarning: RadioPhotometryEpochContainer is deprecated and will be removed in a future release. Use RadioPhotometryEpoch instead.
   photometry_data = RadioPhotometryEpochContainer(data_table)
 </pre></div>
@@ -720,467 +715,306 @@ a <a class="reference external" href="https://docs.astropy.org/en/stable/api/ast
 <p>Now that we have the data container, we can set up the likelihood function. We’ll use the
 <code class="xref py py-class docutils literal notranslate"><span class="pre">GaussianCensoredLikelihood</span></code> for this purpose.</p>
 <p>This likelihood works with single-epoch photometry data and assumes Gaussian errors on the flux densities.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.likelihood.base</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GaussianCensoredLikelihood</span></a>
-
-<span class="c1"># Create the inference data object.</span>
-<span class="n">inference_data</span> <span class="o">=</span> <span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span><span class="p">(</span>
-    <span class="n">sed_model</span><span class="p">,</span>
-    <span class="n">photometry_data</span><span class="o">.</span><span class="n">table</span><span class="p">,</span>
-    <span class="n">variables</span><span class="o">=</span><span class="p">{</span><span class="s2">"frequency"</span><span class="p">:</span> <span class="s2">"freq"</span><span class="p">},</span>
-    <span class="n">observables</span><span class="o">=</span><span class="p">{</span>
-        <span class="s2">"flux_density"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"flux_density"</span><span class="p">,</span> <span class="s2">"flux_density_error"</span><span class="p">,</span> <span class="s2">"flux_upper_limit"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
-    <span class="p">},</span>
-<span class="p">)</span>
-
-<span class="c1"># Create the likelihood object.</span>
-<span class="n">likelihood</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">GaussianCensoredLikelihood</span></a><span class="p">(</span>
-    <span class="n">model</span><span class="o">=</span><span class="n">sed_model</span><span class="p">,</span>
-    <span class="n">data</span><span class="o">=</span><span class="n">inference_data</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Print the current log likelihood value for the true parameters.</span>
-<a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">log_likelihood_true</span></a> <span class="o">=</span> <span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Log Likelihood at True Parameters: </span><span class="si">{</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">log_likelihood_true</span></a><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
-</pre></div>
-</div>
-<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Log Likelihood at True Parameters: 85.27549561606186
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">inference</span><span class="nn">.</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="nn">likelihood</span></a><span class="nn">.</span><span class="nn">base</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="n">GaussianCensoredLikelihood</span></a><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create the inference data object.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.InferenceData"><span class="n">inference_data</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.from_table.html#trilobite.data.core.InferenceData.from_table" title="trilobite.data.InferenceData.from_table"><span class="n">InferenceData</span><span class="o">.</span><span class="n">from_table</span></a><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><span class="n">sed_model</span></a><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-property reference internal" href="../../_as_gen/trilobite.data.photometry.RadioPhotometryEpochContainer.table.html#trilobite.data.photometry.RadioPhotometryEpochContainer.table" title="trilobite.data.RadioPhotometryEpochContainer.table"><span class="n">photometry_data</span><span class="o">.</span><span class="n">table</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">variables</span><span class="o">=</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">frequency</span><span class="s2">&quot;</span><span class="p">:</span> <span class="s2">&quot;</span><span class="s2">freq</span><span class="s2">&quot;</span><span class="p">}</span><span class="p">,</span><span class="w">
+</span>    <span class="n">observables</span><span class="o">=</span><span class="p">{</span><span class="w">
+</span>        <span class="s2">&quot;</span><span class="s2">flux_density</span><span class="s2">&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;</span><span class="s2">flux_density</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">flux_density_error</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">flux_upper_limit</span><span class="s2">&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="p">}</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create the likelihood object.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="n">likelihood</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="n">GaussianCensoredLikelihood</span></a><span class="p">(</span><span class="w">
+</span>    <span class="n">model</span><span class="o">=</span><a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model"><span class="n">sed_model</span></a><span class="p">,</span><span class="w">
+</span>    <span class="n">data</span><span class="o">=</span><a class="sphx-glr-backref-module-trilobite-data sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.InferenceData"><span class="n">inference_data</span></a><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Print the current log likelihood value for the true parameters.</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">log_likelihood_true</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood" title="trilobite.inference.GaussianCensoredLikelihood.log_likelihood"><span class="n">likelihood</span><span class="o">.</span><span class="n">log_likelihood</span></a><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a><span class="p">)</span><span class="w">
+</span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="s2">Log Likelihood at True Parameters: </span><span class="si">{</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.float64" title="numpy.float64"><span class="n">log_likelihood_true</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Log Likelihood at True Parameters: 90.12790600245533
 </pre></div>
 </div>
 <p>Next, we need to define priors for the parameters we want to infer and generate an
 inference problem (<code class="xref py py-class docutils literal notranslate"><span class="pre">inference.problem.InferenceProblem</span></code>). We’ll use uniform priors for simplicity.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">UniformPrior</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.inference.sampling.mcmc</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EmceeSampler</span></a>
-
-<span class="c1"># Generate the inference problem</span>
-<span class="n">problem</span> <span class="o">=</span> <span class="n">InferenceProblem</span><span class="p">(</span>
-    <span class="n">likelihood</span><span class="o">=</span><span class="n">likelihood</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Set the priors for the parameters.</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"uniform"</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">1e-3</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">Jy</span></a><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">10.0</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">Jy</span></a><span class="p">)</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s2">"nu_break"</span><span class="p">,</span> <span class="s2">"uniform"</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">50</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span><span class="p">(</span><span class="s2">"p"</span><span class="p">,</span> <span class="s2">"uniform"</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span>
-
-<span class="c1"># Fix the 's' parameter since we don't want to infer it in this example.</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"s"</span><span class="p">]</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a><span class="p">[</span><span class="s2">"s"</span><span class="p">]</span>
-<span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="s2">"s"</span><span class="p">]</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="kc">True</span>
-
-<span class="c1"># Create the sampler.</span>
-<span class="n">sampler</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/abc.html#abc.ABC" title="abc.ABC" class="sphx-glr-backref-module-abc sphx-glr-backref-type-py-class"><span class="n">EmceeSampler</span></a><span class="p">(</span><span class="n">problem</span><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">ensemble_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">())</span>
-
-<span class="c1"># Run MCMC</span>
-<span class="n">result</span> <span class="o">=</span> <span class="n">sampler</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">10_000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">samples</span></a> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">get_flat_samples</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">inference</span><span class="nn">.</span><span class="nn">prior</span><span class="w"> </span><span class="kn">import</span> <span class="n">UniformPrior</span><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">inference</span><span class="nn">.</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.InferenceProblem"><span class="nn">problem</span></a><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.InferenceProblem"><span class="n">InferenceProblem</span></a><span class="w">
+</span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite</span><span class="nn">.</span><span class="nn">inference</span><span class="nn">.</span><span class="nn">sampling</span><span class="nn">.</span><span class="nn">mcmc</span><span class="w"> </span><span class="kn">import</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.EmceeSampler"><span class="n">EmceeSampler</span></a><span class="w">
+</span><span class="w">
+</span><span class="c1"># Generate the inference problem</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.InferenceProblem"><span class="n">problem</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.InferenceProblem"><span class="n">InferenceProblem</span></a><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="n">likelihood</span></a><span class="o">=</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.GaussianCensoredLikelihood"><span class="n">likelihood</span></a><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Set the priors for the parameters.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.set_prior.html#trilobite.inference.problem.InferenceProblem.set_prior" title="trilobite.inference.InferenceProblem.set_prior"><span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">norm</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">uniform</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">1e-3</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><span class="n">u</span><span class="o">.</span><span class="n">Jy</span></a><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">10.0</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><span class="n">u</span><span class="o">.</span><span class="n">Jy</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.set_prior.html#trilobite.inference.problem.InferenceProblem.set_prior" title="trilobite.inference.InferenceProblem.set_prior"><span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">nu_break</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">uniform</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mi">1</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mi">50</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.set_prior.html#trilobite.inference.problem.InferenceProblem.set_prior" title="trilobite.inference.InferenceProblem.set_prior"><span class="n">problem</span><span class="o">.</span><span class="n">set_prior</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">p</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">uniform</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="mf">2.0</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="mf">5.0</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Fix the 's' parameter since we don't want to infer it in this example.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-property reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.parameters.html#trilobite.inference.problem.InferenceProblem.parameters" title="trilobite.inference.InferenceProblem.parameters"><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">s</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">initial_value</span> <span class="o">=</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">s</span><span class="s2">&quot;</span><span class="p">]</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-property reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.parameters.html#trilobite.inference.problem.InferenceProblem.parameters" title="trilobite.inference.InferenceProblem.parameters"><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span></a><span class="p">[</span><span class="s2">&quot;</span><span class="s2">s</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">freeze</span> <span class="o">=</span> <span class="kc">True</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Create the sampler.</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.EmceeSampler"><span class="n">sampler</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.html#trilobite.inference.sampling.mcmc.EmceeSampler" title="trilobite.inference.EmceeSampler"><span class="n">EmceeSampler</span></a><span class="p">(</span><a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.html#trilobite.inference.problem.InferenceProblem" title="trilobite.inference.InferenceProblem"><span class="n">problem</span></a><span class="p">,</span> <span class="n">n_walkers</span><span class="o">=</span><span class="mi">32</span><span class="p">,</span> <span class="n">ensemble_kwargs</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Run MCMC</span><span class="w">
+</span><a class="sphx-glr-backref-module-trilobite-inference-sampling sphx-glr-backref-type-py-class sphx-glr-backref-instance reference internal" href="../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.html#trilobite.inference.sampling.result.MCMCSamplingResult" title="trilobite.inference.sampling.MCMCSamplingResult"><span class="n">result</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.run.html#trilobite.inference.sampling.mcmc.EmceeSampler.run" title="trilobite.inference.EmceeSampler.run"><span class="n">sampler</span><span class="o">.</span><span class="n">run</span></a><span class="p">(</span><span class="mi">10_000</span><span class="p">,</span> <span class="n">progress</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">samples</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference-sampling sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples" title="trilobite.inference.sampling.MCMCSamplingResult.get_flat_samples"><span class="n">result</span><span class="o">.</span><span class="n">get_flat_samples</span></a><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>  0% |          | 🦖 0/10000 [00:00&lt;?, ?it/s]
-  0% |          | 🦖 28/10000 [00:00&lt;00:35, 277.56it/s]
-  1% |          | 🦖 58/10000 [00:00&lt;00:34, 289.13it/s]
-  1% |          | 🦖 92/10000 [00:00&lt;00:32, 309.61it/s]
-  1% |          | 🦖 123/10000 [00:00&lt;00:32, 304.79it/s]
-  2% |▏         | 🦖 154/10000 [00:00&lt;00:33, 295.44it/s]
-  2% |▏         | 🦖 184/10000 [00:00&lt;00:33, 290.11it/s]
-  2% |▏         | 🦖 214/10000 [00:00&lt;00:34, 286.65it/s]
-  2% |▏         | 🦖 243/10000 [00:00&lt;00:34, 284.03it/s]
-  3% |▎         | 🦖 272/10000 [00:00&lt;00:34, 280.26it/s]
-  3% |▎         | 🦖 301/10000 [00:01&lt;00:34, 280.38it/s]
-  3% |▎         | 🦖 330/10000 [00:01&lt;00:34, 280.21it/s]
-  4% |▎         | 🦖 359/10000 [00:01&lt;00:34, 280.01it/s]
-  4% |▍         | 🦖 388/10000 [00:01&lt;00:34, 279.50it/s]
-  4% |▍         | 🦖 416/10000 [00:01&lt;00:34, 279.41it/s]
-  4% |▍         | 🦖 444/10000 [00:01&lt;00:34, 278.83it/s]
-  5% |▍         | 🦖 472/10000 [00:01&lt;00:34, 278.27it/s]
-  5% |▌         | 🦖 500/10000 [00:01&lt;00:34, 277.19it/s]
-  5% |▌         | 🦖 528/10000 [00:01&lt;00:34, 275.95it/s]
-  6% |▌         | 🦖 557/10000 [00:01&lt;00:34, 277.47it/s]
-  6% |▌         | 🦖 585/10000 [00:02&lt;00:33, 277.69it/s]
-  6% |▌         | 🦖 613/10000 [00:02&lt;00:33, 277.84it/s]
-  6% |▋         | 🦖 641/10000 [00:02&lt;00:33, 278.25it/s]
-  7% |▋         | 🦖 669/10000 [00:02&lt;00:33, 278.45it/s]
-  7% |▋         | 🦖 697/10000 [00:02&lt;00:33, 278.49it/s]
-  7% |▋         | 🦖 725/10000 [00:02&lt;00:33, 276.56it/s]
-  8% |▊         | 🦖 753/10000 [00:02&lt;00:33, 277.55it/s]
-  8% |▊         | 🦖 781/10000 [00:02&lt;00:33, 278.18it/s]
-  8% |▊         | 🦖 809/10000 [00:02&lt;00:33, 278.28it/s]
-  8% |▊         | 🦖 837/10000 [00:02&lt;00:32, 278.60it/s]
-  9% |▊         | 🦖 865/10000 [00:03&lt;00:32, 278.50it/s]
-  9% |▉         | 🦖 893/10000 [00:03&lt;00:32, 278.19it/s]
-  9% |▉         | 🦖 921/10000 [00:03&lt;00:32, 278.31it/s]
-  9% |▉         | 🦖 949/10000 [00:03&lt;00:32, 278.56it/s]
- 10% |▉         | 🦖 978/10000 [00:03&lt;00:32, 279.48it/s]
- 10% |█         | 🦖 1006/10000 [00:03&lt;00:32, 278.92it/s]
- 10% |█         | 🦖 1034/10000 [00:03&lt;00:32, 278.84it/s]
- 11% |█         | 🦖 1062/10000 [00:03&lt;00:32, 278.79it/s]
- 11% |█         | 🦖 1090/10000 [00:03&lt;00:31, 278.50it/s]
- 11% |█         | 🦖 1118/10000 [00:03&lt;00:31, 278.85it/s]
- 11% |█▏        | 🦖 1146/10000 [00:04&lt;00:31, 278.24it/s]
- 12% |█▏        | 🦖 1174/10000 [00:04&lt;00:31, 278.57it/s]
- 12% |█▏        | 🦖 1203/10000 [00:04&lt;00:31, 279.02it/s]
- 12% |█▏        | 🦖 1231/10000 [00:04&lt;00:31, 278.53it/s]
- 13% |█▎        | 🦖 1260/10000 [00:04&lt;00:31, 279.28it/s]
- 13% |█▎        | 🦖 1288/10000 [00:04&lt;00:31, 279.36it/s]
- 13% |█▎        | 🦖 1317/10000 [00:04&lt;00:31, 279.88it/s]
- 13% |█▎        | 🦖 1346/10000 [00:04&lt;00:30, 280.03it/s]
- 14% |█▍        | 🦖 1375/10000 [00:04&lt;00:30, 280.39it/s]
- 14% |█▍        | 🦖 1404/10000 [00:05&lt;00:30, 280.83it/s]
- 14% |█▍        | 🦖 1433/10000 [00:05&lt;00:30, 280.33it/s]
- 15% |█▍        | 🦖 1462/10000 [00:05&lt;00:30, 279.71it/s]
- 15% |█▍        | 🦖 1490/10000 [00:05&lt;00:30, 279.34it/s]
- 15% |█▌        | 🦖 1518/10000 [00:05&lt;00:30, 279.31it/s]
- 15% |█▌        | 🦖 1547/10000 [00:05&lt;00:30, 279.64it/s]
- 16% |█▌        | 🦖 1575/10000 [00:05&lt;00:30, 279.74it/s]
- 16% |█▌        | 🦖 1604/10000 [00:05&lt;00:29, 279.95it/s]
- 16% |█▋        | 🦖 1633/10000 [00:05&lt;00:29, 280.02it/s]
- 17% |█▋        | 🦖 1662/10000 [00:05&lt;00:29, 279.68it/s]
- 17% |█▋        | 🦖 1691/10000 [00:06&lt;00:29, 280.06it/s]
- 17% |█▋        | 🦖 1720/10000 [00:06&lt;00:29, 280.16it/s]
- 17% |█▋        | 🦖 1749/10000 [00:06&lt;00:29, 280.10it/s]
- 18% |█▊        | 🦖 1778/10000 [00:06&lt;00:29, 279.69it/s]
- 18% |█▊        | 🦖 1807/10000 [00:06&lt;00:29, 280.21it/s]
- 18% |█▊        | 🦖 1836/10000 [00:06&lt;00:29, 280.51it/s]
- 19% |█▊        | 🦖 1865/10000 [00:06&lt;00:29, 279.91it/s]
- 19% |█▉        | 🦖 1894/10000 [00:06&lt;00:28, 280.58it/s]
- 19% |█▉        | 🦖 1923/10000 [00:06&lt;00:28, 280.57it/s]
- 20% |█▉        | 🦖 1952/10000 [00:06&lt;00:28, 280.83it/s]
- 20% |█▉        | 🦖 1981/10000 [00:07&lt;00:29, 267.78it/s]
- 20% |██        | 🦖 2009/10000 [00:07&lt;00:29, 270.87it/s]
- 20% |██        | 🦖 2038/10000 [00:07&lt;00:29, 274.33it/s]
- 21% |██        | 🦖 2067/10000 [00:07&lt;00:28, 276.98it/s]
- 21% |██        | 🦖 2096/10000 [00:07&lt;00:28, 278.68it/s]
- 21% |██▏       | 🦖 2125/10000 [00:07&lt;00:28, 279.22it/s]
- 22% |██▏       | 🦖 2153/10000 [00:07&lt;00:28, 279.40it/s]
- 22% |██▏       | 🦖 2182/10000 [00:07&lt;00:27, 279.96it/s]
- 22% |██▏       | 🦖 2211/10000 [00:07&lt;00:27, 280.94it/s]
- 22% |██▏       | 🦖 2240/10000 [00:08&lt;00:27, 281.28it/s]
- 23% |██▎       | 🦖 2269/10000 [00:08&lt;00:27, 281.33it/s]
- 23% |██▎       | 🦖 2298/10000 [00:08&lt;00:27, 281.02it/s]
- 23% |██▎       | 🦖 2327/10000 [00:08&lt;00:27, 280.32it/s]
- 24% |██▎       | 🦖 2356/10000 [00:08&lt;00:27, 280.48it/s]
- 24% |██▍       | 🦖 2385/10000 [00:08&lt;00:27, 280.35it/s]
- 24% |██▍       | 🦖 2414/10000 [00:08&lt;00:27, 280.20it/s]
- 24% |██▍       | 🦖 2443/10000 [00:08&lt;00:26, 280.40it/s]
- 25% |██▍       | 🦖 2472/10000 [00:08&lt;00:26, 280.19it/s]
- 25% |██▌       | 🦖 2501/10000 [00:08&lt;00:26, 279.72it/s]
- 25% |██▌       | 🦖 2530/10000 [00:09&lt;00:26, 280.21it/s]
- 26% |██▌       | 🦖 2559/10000 [00:09&lt;00:26, 280.17it/s]
- 26% |██▌       | 🦖 2588/10000 [00:09&lt;00:26, 279.96it/s]
- 26% |██▌       | 🦖 2617/10000 [00:09&lt;00:26, 280.47it/s]
- 26% |██▋       | 🦖 2646/10000 [00:09&lt;00:26, 279.96it/s]
- 27% |██▋       | 🦖 2675/10000 [00:09&lt;00:26, 280.11it/s]
- 27% |██▋       | 🦖 2704/10000 [00:09&lt;00:26, 279.94it/s]
- 27% |██▋       | 🦖 2732/10000 [00:09&lt;00:25, 279.80it/s]
- 28% |██▊       | 🦖 2761/10000 [00:09&lt;00:25, 279.86it/s]
- 28% |██▊       | 🦖 2790/10000 [00:09&lt;00:25, 280.43it/s]
- 28% |██▊       | 🦖 2819/10000 [00:10&lt;00:25, 280.02it/s]
- 28% |██▊       | 🦖 2848/10000 [00:10&lt;00:25, 279.54it/s]
- 29% |██▉       | 🦖 2877/10000 [00:10&lt;00:25, 280.32it/s]
- 29% |██▉       | 🦖 2906/10000 [00:10&lt;00:25, 280.37it/s]
- 29% |██▉       | 🦖 2935/10000 [00:10&lt;00:25, 281.12it/s]
- 30% |██▉       | 🦖 2964/10000 [00:10&lt;00:25, 280.80it/s]
- 30% |██▉       | 🦖 2993/10000 [00:10&lt;00:24, 281.14it/s]
- 30% |███       | 🦖 3022/10000 [00:10&lt;00:24, 281.35it/s]
- 31% |███       | 🦖 3051/10000 [00:10&lt;00:24, 280.95it/s]
- 31% |███       | 🦖 3080/10000 [00:10&lt;00:24, 280.69it/s]
- 31% |███       | 🦖 3109/10000 [00:11&lt;00:24, 280.65it/s]
- 31% |███▏      | 🦖 3138/10000 [00:11&lt;00:24, 280.38it/s]
- 32% |███▏      | 🦖 3167/10000 [00:11&lt;00:24, 280.48it/s]
- 32% |███▏      | 🦖 3196/10000 [00:11&lt;00:24, 280.82it/s]
- 32% |███▏      | 🦖 3225/10000 [00:11&lt;00:24, 281.43it/s]
- 33% |███▎      | 🦖 3254/10000 [00:11&lt;00:24, 280.72it/s]
- 33% |███▎      | 🦖 3283/10000 [00:11&lt;00:23, 280.47it/s]
- 33% |███▎      | 🦖 3312/10000 [00:11&lt;00:23, 280.04it/s]
- 33% |███▎      | 🦖 3341/10000 [00:11&lt;00:23, 279.88it/s]
- 34% |███▎      | 🦖 3370/10000 [00:12&lt;00:23, 279.96it/s]
- 34% |███▍      | 🦖 3398/10000 [00:12&lt;00:23, 279.88it/s]
- 34% |███▍      | 🦖 3426/10000 [00:12&lt;00:23, 279.78it/s]
- 35% |███▍      | 🦖 3455/10000 [00:12&lt;00:23, 280.38it/s]
- 35% |███▍      | 🦖 3484/10000 [00:12&lt;00:23, 280.53it/s]
- 35% |███▌      | 🦖 3513/10000 [00:12&lt;00:23, 280.35it/s]
- 35% |███▌      | 🦖 3542/10000 [00:12&lt;00:23, 280.03it/s]
- 36% |███▌      | 🦖 3571/10000 [00:12&lt;00:22, 280.55it/s]
- 36% |███▌      | 🦖 3600/10000 [00:12&lt;00:22, 279.95it/s]
- 36% |███▋      | 🦖 3628/10000 [00:12&lt;00:22, 279.45it/s]
- 37% |███▋      | 🦖 3657/10000 [00:13&lt;00:22, 279.66it/s]
- 37% |███▋      | 🦖 3685/10000 [00:13&lt;00:22, 279.53it/s]
- 37% |███▋      | 🦖 3713/10000 [00:13&lt;00:22, 279.58it/s]
- 37% |███▋      | 🦖 3741/10000 [00:13&lt;00:22, 279.67it/s]
- 38% |███▊      | 🦖 3770/10000 [00:13&lt;00:22, 279.94it/s]
- 38% |███▊      | 🦖 3798/10000 [00:13&lt;00:22, 279.31it/s]
- 38% |███▊      | 🦖 3826/10000 [00:13&lt;00:22, 279.37it/s]
- 39% |███▊      | 🦖 3855/10000 [00:13&lt;00:21, 279.97it/s]
- 39% |███▉      | 🦖 3883/10000 [00:13&lt;00:21, 279.58it/s]
- 39% |███▉      | 🦖 3912/10000 [00:13&lt;00:21, 280.27it/s]
- 39% |███▉      | 🦖 3941/10000 [00:14&lt;00:21, 280.37it/s]
- 40% |███▉      | 🦖 3970/10000 [00:14&lt;00:21, 281.11it/s]
- 40% |███▉      | 🦖 3999/10000 [00:14&lt;00:21, 280.29it/s]
- 40% |████      | 🦖 4028/10000 [00:14&lt;00:21, 279.59it/s]
- 41% |████      | 🦖 4056/10000 [00:14&lt;00:21, 279.65it/s]
- 41% |████      | 🦖 4084/10000 [00:14&lt;00:21, 279.73it/s]
- 41% |████      | 🦖 4112/10000 [00:14&lt;00:21, 279.71it/s]
- 41% |████▏     | 🦖 4141/10000 [00:14&lt;00:20, 279.76it/s]
- 42% |████▏     | 🦖 4170/10000 [00:14&lt;00:20, 280.68it/s]
- 42% |████▏     | 🦖 4199/10000 [00:14&lt;00:20, 280.89it/s]
- 42% |████▏     | 🦖 4228/10000 [00:15&lt;00:20, 280.81it/s]
- 43% |████▎     | 🦖 4257/10000 [00:15&lt;00:20, 280.72it/s]
- 43% |████▎     | 🦖 4286/10000 [00:15&lt;00:20, 280.86it/s]
- 43% |████▎     | 🦖 4315/10000 [00:15&lt;00:20, 280.67it/s]
- 43% |████▎     | 🦖 4344/10000 [00:15&lt;00:20, 280.63it/s]
- 44% |████▎     | 🦖 4373/10000 [00:15&lt;00:20, 280.22it/s]
- 44% |████▍     | 🦖 4402/10000 [00:15&lt;00:20, 279.63it/s]
- 44% |████▍     | 🦖 4430/10000 [00:15&lt;00:19, 279.39it/s]
- 45% |████▍     | 🦖 4458/10000 [00:15&lt;00:19, 278.29it/s]
- 45% |████▍     | 🦖 4487/10000 [00:16&lt;00:19, 279.21it/s]
- 45% |████▌     | 🦖 4516/10000 [00:16&lt;00:19, 279.76it/s]
- 45% |████▌     | 🦖 4544/10000 [00:16&lt;00:19, 279.73it/s]
- 46% |████▌     | 🦖 4573/10000 [00:16&lt;00:19, 280.05it/s]
- 46% |████▌     | 🦖 4602/10000 [00:16&lt;00:19, 280.23it/s]
- 46% |████▋     | 🦖 4631/10000 [00:16&lt;00:19, 280.34it/s]
- 47% |████▋     | 🦖 4660/10000 [00:16&lt;00:19, 280.01it/s]
- 47% |████▋     | 🦖 4689/10000 [00:16&lt;00:18, 280.25it/s]
- 47% |████▋     | 🦖 4718/10000 [00:16&lt;00:18, 280.29it/s]
- 47% |████▋     | 🦖 4747/10000 [00:16&lt;00:18, 279.89it/s]
- 48% |████▊     | 🦖 4775/10000 [00:17&lt;00:18, 279.90it/s]
- 48% |████▊     | 🦖 4803/10000 [00:17&lt;00:18, 279.75it/s]
- 48% |████▊     | 🦖 4831/10000 [00:17&lt;00:18, 279.52it/s]
- 49% |████▊     | 🦖 4860/10000 [00:17&lt;00:18, 280.21it/s]
- 49% |████▉     | 🦖 4889/10000 [00:17&lt;00:18, 279.87it/s]
- 49% |████▉     | 🦖 4917/10000 [00:17&lt;00:18, 279.32it/s]
- 49% |████▉     | 🦖 4945/10000 [00:17&lt;00:18, 279.05it/s]
- 50% |████▉     | 🦖 4973/10000 [00:17&lt;00:18, 279.05it/s]
- 50% |█████     | 🦖 5001/10000 [00:17&lt;00:17, 279.30it/s]
- 50% |█████     | 🦖 5029/10000 [00:17&lt;00:17, 279.41it/s]
- 51% |█████     | 🦖 5057/10000 [00:18&lt;00:17, 279.58it/s]
- 51% |█████     | 🦖 5085/10000 [00:18&lt;00:17, 279.00it/s]
- 51% |█████     | 🦖 5114/10000 [00:18&lt;00:17, 279.42it/s]
- 51% |█████▏    | 🦖 5143/10000 [00:18&lt;00:17, 279.61it/s]
- 52% |█████▏    | 🦖 5172/10000 [00:18&lt;00:17, 280.36it/s]
- 52% |█████▏    | 🦖 5201/10000 [00:18&lt;00:17, 279.66it/s]
- 52% |█████▏    | 🦖 5229/10000 [00:18&lt;00:17, 279.55it/s]
- 53% |█████▎    | 🦖 5257/10000 [00:18&lt;00:16, 279.53it/s]
- 53% |█████▎    | 🦖 5285/10000 [00:18&lt;00:16, 279.14it/s]
- 53% |█████▎    | 🦖 5314/10000 [00:18&lt;00:16, 279.67it/s]
- 53% |█████▎    | 🦖 5342/10000 [00:19&lt;00:16, 279.77it/s]
- 54% |█████▎    | 🦖 5370/10000 [00:19&lt;00:16, 279.74it/s]
- 54% |█████▍    | 🦖 5398/10000 [00:19&lt;00:16, 279.63it/s]
- 54% |█████▍    | 🦖 5426/10000 [00:19&lt;00:16, 279.64it/s]
- 55% |█████▍    | 🦖 5455/10000 [00:19&lt;00:16, 279.93it/s]
- 55% |█████▍    | 🦖 5484/10000 [00:19&lt;00:16, 280.08it/s]
- 55% |█████▌    | 🦖 5513/10000 [00:19&lt;00:16, 279.59it/s]
- 55% |█████▌    | 🦖 5541/10000 [00:19&lt;00:15, 279.54it/s]
- 56% |█████▌    | 🦖 5569/10000 [00:19&lt;00:15, 279.34it/s]
- 56% |█████▌    | 🦖 5597/10000 [00:19&lt;00:15, 279.35it/s]
- 56% |█████▋    | 🦖 5625/10000 [00:20&lt;00:15, 279.17it/s]
- 57% |█████▋    | 🦖 5653/10000 [00:20&lt;00:15, 278.50it/s]
- 57% |█████▋    | 🦖 5681/10000 [00:20&lt;00:15, 278.90it/s]
- 57% |█████▋    | 🦖 5709/10000 [00:20&lt;00:15, 278.87it/s]
- 57% |█████▋    | 🦖 5738/10000 [00:20&lt;00:15, 279.47it/s]
- 58% |█████▊    | 🦖 5766/10000 [00:20&lt;00:15, 279.22it/s]
- 58% |█████▊    | 🦖 5794/10000 [00:20&lt;00:15, 279.37it/s]
- 58% |█████▊    | 🦖 5822/10000 [00:20&lt;00:14, 279.41it/s]
- 58% |█████▊    | 🦖 5850/10000 [00:20&lt;00:14, 279.54it/s]
- 59% |█████▉    | 🦖 5879/10000 [00:21&lt;00:14, 279.82it/s]
- 59% |█████▉    | 🦖 5908/10000 [00:21&lt;00:14, 280.32it/s]
- 59% |█████▉    | 🦖 5937/10000 [00:21&lt;00:14, 280.05it/s]
- 60% |█████▉    | 🦖 5966/10000 [00:21&lt;00:14, 279.97it/s]
- 60% |█████▉    | 🦖 5995/10000 [00:21&lt;00:14, 280.54it/s]
- 60% |██████    | 🦖 6024/10000 [00:21&lt;00:14, 280.51it/s]
- 61% |██████    | 🦖 6053/10000 [00:21&lt;00:14, 280.24it/s]
- 61% |██████    | 🦖 6082/10000 [00:21&lt;00:13, 280.18it/s]
- 61% |██████    | 🦖 6111/10000 [00:21&lt;00:14, 276.42it/s]
- 61% |██████▏   | 🦖 6140/10000 [00:21&lt;00:13, 278.01it/s]
- 62% |██████▏   | 🦖 6169/10000 [00:22&lt;00:13, 278.80it/s]
- 62% |██████▏   | 🦖 6197/10000 [00:22&lt;00:13, 278.89it/s]
- 62% |██████▏   | 🦖 6225/10000 [00:22&lt;00:13, 279.07it/s]
- 63% |██████▎   | 🦖 6254/10000 [00:22&lt;00:13, 279.22it/s]
- 63% |██████▎   | 🦖 6283/10000 [00:22&lt;00:13, 279.83it/s]
- 63% |██████▎   | 🦖 6311/10000 [00:22&lt;00:13, 279.67it/s]
- 63% |██████▎   | 🦖 6339/10000 [00:22&lt;00:13, 279.47it/s]
- 64% |██████▎   | 🦖 6368/10000 [00:22&lt;00:12, 279.95it/s]
- 64% |██████▍   | 🦖 6396/10000 [00:22&lt;00:12, 279.93it/s]
- 64% |██████▍   | 🦖 6424/10000 [00:22&lt;00:12, 279.91it/s]
- 65% |██████▍   | 🦖 6452/10000 [00:23&lt;00:12, 279.70it/s]
- 65% |██████▍   | 🦖 6480/10000 [00:23&lt;00:12, 279.32it/s]
- 65% |██████▌   | 🦖 6509/10000 [00:23&lt;00:12, 280.20it/s]
- 65% |██████▌   | 🦖 6538/10000 [00:23&lt;00:12, 280.69it/s]
- 66% |██████▌   | 🦖 6567/10000 [00:23&lt;00:12, 280.85it/s]
- 66% |██████▌   | 🦖 6596/10000 [00:23&lt;00:12, 281.17it/s]
- 66% |██████▋   | 🦖 6625/10000 [00:23&lt;00:12, 280.55it/s]
- 67% |██████▋   | 🦖 6654/10000 [00:23&lt;00:11, 280.84it/s]
- 67% |██████▋   | 🦖 6683/10000 [00:23&lt;00:11, 280.30it/s]
- 67% |██████▋   | 🦖 6712/10000 [00:23&lt;00:11, 280.49it/s]
- 67% |██████▋   | 🦖 6741/10000 [00:24&lt;00:11, 280.51it/s]
- 68% |██████▊   | 🦖 6770/10000 [00:24&lt;00:11, 279.33it/s]
- 68% |██████▊   | 🦖 6798/10000 [00:24&lt;00:11, 279.05it/s]
- 68% |██████▊   | 🦖 6826/10000 [00:24&lt;00:11, 278.54it/s]
- 69% |██████▊   | 🦖 6855/10000 [00:24&lt;00:11, 279.35it/s]
- 69% |██████▉   | 🦖 6883/10000 [00:24&lt;00:11, 278.93it/s]
- 69% |██████▉   | 🦖 6912/10000 [00:24&lt;00:11, 279.29it/s]
- 69% |██████▉   | 🦖 6941/10000 [00:24&lt;00:10, 279.78it/s]
- 70% |██████▉   | 🦖 6970/10000 [00:24&lt;00:10, 280.28it/s]
- 70% |██████▉   | 🦖 6999/10000 [00:25&lt;00:10, 280.46it/s]
- 70% |███████   | 🦖 7028/10000 [00:25&lt;00:10, 280.39it/s]
- 71% |███████   | 🦖 7057/10000 [00:25&lt;00:10, 280.00it/s]
- 71% |███████   | 🦖 7086/10000 [00:25&lt;00:10, 280.24it/s]
- 71% |███████   | 🦖 7115/10000 [00:25&lt;00:10, 280.48it/s]
- 71% |███████▏  | 🦖 7144/10000 [00:25&lt;00:10, 280.51it/s]
- 72% |███████▏  | 🦖 7173/10000 [00:25&lt;00:10, 280.71it/s]
- 72% |███████▏  | 🦖 7202/10000 [00:25&lt;00:09, 280.73it/s]
- 72% |███████▏  | 🦖 7231/10000 [00:25&lt;00:09, 280.43it/s]
- 73% |███████▎  | 🦖 7260/10000 [00:25&lt;00:09, 281.06it/s]
- 73% |███████▎  | 🦖 7289/10000 [00:26&lt;00:09, 280.90it/s]
- 73% |███████▎  | 🦖 7318/10000 [00:26&lt;00:09, 280.99it/s]
- 73% |███████▎  | 🦖 7347/10000 [00:26&lt;00:09, 281.23it/s]
- 74% |███████▍  | 🦖 7376/10000 [00:26&lt;00:09, 280.59it/s]
- 74% |███████▍  | 🦖 7405/10000 [00:26&lt;00:09, 280.72it/s]
- 74% |███████▍  | 🦖 7434/10000 [00:26&lt;00:09, 281.49it/s]
- 75% |███████▍  | 🦖 7463/10000 [00:26&lt;00:09, 280.89it/s]
- 75% |███████▍  | 🦖 7492/10000 [00:26&lt;00:08, 280.82it/s]
- 75% |███████▌  | 🦖 7521/10000 [00:26&lt;00:08, 280.68it/s]
- 76% |███████▌  | 🦖 7550/10000 [00:26&lt;00:08, 281.09it/s]
- 76% |███████▌  | 🦖 7579/10000 [00:27&lt;00:08, 280.60it/s]
- 76% |███████▌  | 🦖 7608/10000 [00:27&lt;00:08, 280.68it/s]
- 76% |███████▋  | 🦖 7637/10000 [00:27&lt;00:08, 281.09it/s]
- 77% |███████▋  | 🦖 7666/10000 [00:27&lt;00:08, 281.15it/s]
- 77% |███████▋  | 🦖 7695/10000 [00:27&lt;00:08, 281.51it/s]
- 77% |███████▋  | 🦖 7724/10000 [00:27&lt;00:08, 280.71it/s]
- 78% |███████▊  | 🦖 7753/10000 [00:27&lt;00:08, 280.80it/s]
- 78% |███████▊  | 🦖 7782/10000 [00:27&lt;00:07, 281.18it/s]
- 78% |███████▊  | 🦖 7811/10000 [00:27&lt;00:07, 281.21it/s]
- 78% |███████▊  | 🦖 7840/10000 [00:27&lt;00:07, 281.56it/s]
- 79% |███████▊  | 🦖 7869/10000 [00:28&lt;00:07, 281.10it/s]
- 79% |███████▉  | 🦖 7898/10000 [00:28&lt;00:07, 281.00it/s]
- 79% |███████▉  | 🦖 7927/10000 [00:28&lt;00:07, 281.29it/s]
- 80% |███████▉  | 🦖 7956/10000 [00:28&lt;00:07, 281.18it/s]
- 80% |███████▉  | 🦖 7985/10000 [00:28&lt;00:07, 282.72it/s]
- 80% |████████  | 🦖 8014/10000 [00:28&lt;00:07, 282.45it/s]
- 80% |████████  | 🦖 8043/10000 [00:28&lt;00:06, 282.06it/s]
- 81% |████████  | 🦖 8072/10000 [00:28&lt;00:06, 282.38it/s]
- 81% |████████  | 🦖 8101/10000 [00:28&lt;00:06, 282.07it/s]
- 81% |████████▏ | 🦖 8130/10000 [00:29&lt;00:06, 281.67it/s]
- 82% |████████▏ | 🦖 8159/10000 [00:29&lt;00:06, 281.39it/s]
- 82% |████████▏ | 🦖 8188/10000 [00:29&lt;00:06, 280.86it/s]
- 82% |████████▏ | 🦖 8217/10000 [00:29&lt;00:06, 280.37it/s]
- 82% |████████▏ | 🦖 8246/10000 [00:29&lt;00:06, 279.78it/s]
- 83% |████████▎ | 🦖 8274/10000 [00:29&lt;00:06, 279.73it/s]
- 83% |████████▎ | 🦖 8302/10000 [00:29&lt;00:06, 279.36it/s]
- 83% |████████▎ | 🦖 8331/10000 [00:29&lt;00:05, 279.79it/s]
- 84% |████████▎ | 🦖 8360/10000 [00:29&lt;00:05, 280.03it/s]
- 84% |████████▍ | 🦖 8389/10000 [00:29&lt;00:05, 280.17it/s]
- 84% |████████▍ | 🦖 8418/10000 [00:30&lt;00:05, 279.94it/s]
- 84% |████████▍ | 🦖 8446/10000 [00:30&lt;00:05, 279.78it/s]
- 85% |████████▍ | 🦖 8474/10000 [00:30&lt;00:05, 279.52it/s]
- 85% |████████▌ | 🦖 8502/10000 [00:30&lt;00:05, 279.22it/s]
- 85% |████████▌ | 🦖 8530/10000 [00:30&lt;00:05, 279.10it/s]
- 86% |████████▌ | 🦖 8558/10000 [00:30&lt;00:05, 278.84it/s]
- 86% |████████▌ | 🦖 8586/10000 [00:30&lt;00:05, 278.70it/s]
- 86% |████████▌ | 🦖 8614/10000 [00:30&lt;00:04, 279.03it/s]
- 86% |████████▋ | 🦖 8642/10000 [00:30&lt;00:04, 276.54it/s]
- 87% |████████▋ | 🦖 8670/10000 [00:30&lt;00:04, 277.29it/s]
- 87% |████████▋ | 🦖 8699/10000 [00:31&lt;00:04, 278.19it/s]
- 87% |████████▋ | 🦖 8727/10000 [00:31&lt;00:04, 278.10it/s]
- 88% |████████▊ | 🦖 8756/10000 [00:31&lt;00:04, 279.10it/s]
- 88% |████████▊ | 🦖 8785/10000 [00:31&lt;00:04, 279.50it/s]
- 88% |████████▊ | 🦖 8813/10000 [00:31&lt;00:04, 273.65it/s]
- 88% |████████▊ | 🦖 8841/10000 [00:31&lt;00:04, 265.29it/s]
- 89% |████████▊ | 🦖 8870/10000 [00:31&lt;00:04, 269.73it/s]
- 89% |████████▉ | 🦖 8899/10000 [00:31&lt;00:04, 273.46it/s]
- 89% |████████▉ | 🦖 8928/10000 [00:31&lt;00:03, 275.92it/s]
- 90% |████████▉ | 🦖 8957/10000 [00:32&lt;00:03, 277.61it/s]
- 90% |████████▉ | 🦖 8986/10000 [00:32&lt;00:03, 279.06it/s]
- 90% |█████████ | 🦖 9014/10000 [00:32&lt;00:03, 278.84it/s]
- 90% |█████████ | 🦖 9042/10000 [00:32&lt;00:03, 278.23it/s]
- 91% |█████████ | 🦖 9071/10000 [00:32&lt;00:03, 279.21it/s]
- 91% |█████████ | 🦖 9100/10000 [00:32&lt;00:03, 280.16it/s]
- 91% |█████████▏| 🦖 9129/10000 [00:32&lt;00:03, 279.17it/s]
- 92% |█████████▏| 🦖 9158/10000 [00:32&lt;00:03, 280.02it/s]
- 92% |█████████▏| 🦖 9187/10000 [00:32&lt;00:02, 279.95it/s]
- 92% |█████████▏| 🦖 9216/10000 [00:32&lt;00:02, 280.78it/s]
- 92% |█████████▏| 🦖 9245/10000 [00:33&lt;00:02, 280.96it/s]
- 93% |█████████▎| 🦖 9274/10000 [00:33&lt;00:02, 280.40it/s]
- 93% |█████████▎| 🦖 9303/10000 [00:33&lt;00:02, 279.93it/s]
- 93% |█████████▎| 🦖 9332/10000 [00:33&lt;00:02, 280.52it/s]
- 94% |█████████▎| 🦖 9361/10000 [00:33&lt;00:02, 280.39it/s]
- 94% |█████████▍| 🦖 9390/10000 [00:33&lt;00:02, 279.85it/s]
- 94% |█████████▍| 🦖 9418/10000 [00:33&lt;00:02, 279.65it/s]
- 94% |█████████▍| 🦖 9446/10000 [00:33&lt;00:01, 279.73it/s]
- 95% |█████████▍| 🦖 9475/10000 [00:33&lt;00:01, 280.06it/s]
- 95% |█████████▌| 🦖 9504/10000 [00:33&lt;00:01, 279.86it/s]
- 95% |█████████▌| 🦖 9532/10000 [00:34&lt;00:01, 279.84it/s]
- 96% |█████████▌| 🦖 9561/10000 [00:34&lt;00:01, 280.04it/s]
- 96% |█████████▌| 🦖 9590/10000 [00:34&lt;00:01, 279.97it/s]
- 96% |█████████▌| 🦖 9618/10000 [00:34&lt;00:01, 279.33it/s]
- 96% |█████████▋| 🦖 9646/10000 [00:34&lt;00:01, 279.43it/s]
- 97% |█████████▋| 🦖 9674/10000 [00:34&lt;00:01, 278.97it/s]
- 97% |█████████▋| 🦖 9702/10000 [00:34&lt;00:01, 279.12it/s]
- 97% |█████████▋| 🦖 9731/10000 [00:34&lt;00:00, 279.53it/s]
- 98% |█████████▊| 🦖 9760/10000 [00:34&lt;00:00, 279.86it/s]
- 98% |█████████▊| 🦖 9789/10000 [00:34&lt;00:00, 280.23it/s]
- 98% |█████████▊| 🦖 9818/10000 [00:35&lt;00:00, 280.44it/s]
- 98% |█████████▊| 🦖 9847/10000 [00:35&lt;00:00, 280.60it/s]
- 99% |█████████▉| 🦖 9876/10000 [00:35&lt;00:00, 280.67it/s]
- 99% |█████████▉| 🦖 9905/10000 [00:35&lt;00:00, 280.47it/s]
- 99% |█████████▉| 🦖 9934/10000 [00:35&lt;00:00, 280.49it/s]
-100% |█████████▉| 🦖 9963/10000 [00:35&lt;00:00, 279.62it/s]
-100% |█████████▉| 🦖 9992/10000 [00:35&lt;00:00, 279.75it/s]
-100% |██████████| 🦖 10000/10000 [00:35&lt;00:00, 279.87it/s]
+  1% |          | 🦖 56/10000 [00:00&lt;00:17, 552.97it/s]
+  1% |          | 🦖 115/10000 [00:00&lt;00:17, 569.57it/s]
+  2% |▏         | 🦖 172/10000 [00:00&lt;00:18, 545.57it/s]
+  2% |▏         | 🦖 227/10000 [00:00&lt;00:18, 535.20it/s]
+  3% |▎         | 🦖 281/10000 [00:00&lt;00:18, 529.31it/s]
+  3% |▎         | 🦖 334/10000 [00:00&lt;00:18, 526.37it/s]
+  4% |▍         | 🦖 387/10000 [00:00&lt;00:18, 523.16it/s]
+  4% |▍         | 🦖 440/10000 [00:00&lt;00:18, 522.27it/s]
+  5% |▍         | 🦖 493/10000 [00:00&lt;00:18, 521.85it/s]
+  5% |▌         | 🦖 546/10000 [00:01&lt;00:18, 521.34it/s]
+  6% |▌         | 🦖 599/10000 [00:01&lt;00:18, 520.84it/s]
+  7% |▋         | 🦖 652/10000 [00:01&lt;00:17, 520.09it/s]
+  7% |▋         | 🦖 705/10000 [00:01&lt;00:17, 518.59it/s]
+  8% |▊         | 🦖 757/10000 [00:01&lt;00:17, 515.19it/s]
+  8% |▊         | 🦖 809/10000 [00:01&lt;00:18, 506.39it/s]
+  9% |▊         | 🦖 860/10000 [00:01&lt;00:18, 506.12it/s]
+  9% |▉         | 🦖 912/10000 [00:01&lt;00:17, 508.55it/s]
+ 10% |▉         | 🦖 964/10000 [00:01&lt;00:17, 511.58it/s]
+ 10% |█         | 🦖 1017/10000 [00:01&lt;00:17, 514.22it/s]
+ 11% |█         | 🦖 1070/10000 [00:02&lt;00:17, 516.00it/s]
+ 11% |█         | 🦖 1122/10000 [00:02&lt;00:17, 516.77it/s]
+ 12% |█▏        | 🦖 1174/10000 [00:02&lt;00:17, 516.52it/s]
+ 12% |█▏        | 🦖 1226/10000 [00:02&lt;00:16, 516.93it/s]
+ 13% |█▎        | 🦖 1278/10000 [00:02&lt;00:16, 516.86it/s]
+ 13% |█▎        | 🦖 1330/10000 [00:02&lt;00:16, 517.27it/s]
+ 14% |█▍        | 🦖 1382/10000 [00:02&lt;00:16, 516.35it/s]
+ 14% |█▍        | 🦖 1434/10000 [00:02&lt;00:16, 516.52it/s]
+ 15% |█▍        | 🦖 1486/10000 [00:02&lt;00:16, 517.07it/s]
+ 15% |█▌        | 🦖 1538/10000 [00:02&lt;00:16, 517.60it/s]
+ 16% |█▌        | 🦖 1590/10000 [00:03&lt;00:16, 517.72it/s]
+ 16% |█▋        | 🦖 1642/10000 [00:03&lt;00:16, 517.17it/s]
+ 17% |█▋        | 🦖 1694/10000 [00:03&lt;00:16, 516.87it/s]
+ 17% |█▋        | 🦖 1746/10000 [00:03&lt;00:15, 516.87it/s]
+ 18% |█▊        | 🦖 1798/10000 [00:03&lt;00:15, 516.76it/s]
+ 18% |█▊        | 🦖 1850/10000 [00:03&lt;00:15, 516.76it/s]
+ 19% |█▉        | 🦖 1902/10000 [00:03&lt;00:15, 516.57it/s]
+ 20% |█▉        | 🦖 1954/10000 [00:03&lt;00:15, 515.91it/s]
+ 20% |██        | 🦖 2006/10000 [00:03&lt;00:15, 516.89it/s]
+ 21% |██        | 🦖 2058/10000 [00:03&lt;00:15, 517.53it/s]
+ 21% |██        | 🦖 2110/10000 [00:04&lt;00:15, 517.95it/s]
+ 22% |██▏       | 🦖 2162/10000 [00:04&lt;00:15, 517.88it/s]
+ 22% |██▏       | 🦖 2214/10000 [00:04&lt;00:15, 517.34it/s]
+ 23% |██▎       | 🦖 2266/10000 [00:04&lt;00:14, 517.06it/s]
+ 23% |██▎       | 🦖 2318/10000 [00:04&lt;00:14, 517.30it/s]
+ 24% |██▎       | 🦖 2370/10000 [00:04&lt;00:14, 517.76it/s]
+ 24% |██▍       | 🦖 2422/10000 [00:04&lt;00:14, 517.65it/s]
+ 25% |██▍       | 🦖 2474/10000 [00:04&lt;00:14, 517.04it/s]
+ 25% |██▌       | 🦖 2526/10000 [00:04&lt;00:14, 517.14it/s]
+ 26% |██▌       | 🦖 2578/10000 [00:04&lt;00:14, 517.49it/s]
+ 26% |██▋       | 🦖 2630/10000 [00:05&lt;00:14, 517.69it/s]
+ 27% |██▋       | 🦖 2682/10000 [00:05&lt;00:14, 517.69it/s]
+ 27% |██▋       | 🦖 2734/10000 [00:05&lt;00:14, 517.63it/s]
+ 28% |██▊       | 🦖 2786/10000 [00:05&lt;00:13, 517.58it/s]
+ 28% |██▊       | 🦖 2838/10000 [00:05&lt;00:13, 517.61it/s]
+ 29% |██▉       | 🦖 2890/10000 [00:05&lt;00:13, 517.93it/s]
+ 29% |██▉       | 🦖 2942/10000 [00:05&lt;00:13, 517.82it/s]
+ 30% |██▉       | 🦖 2994/10000 [00:05&lt;00:13, 517.08it/s]
+ 30% |███       | 🦖 3046/10000 [00:05&lt;00:13, 516.40it/s]
+ 31% |███       | 🦖 3098/10000 [00:05&lt;00:13, 516.11it/s]
+ 32% |███▏      | 🦖 3150/10000 [00:06&lt;00:13, 516.32it/s]
+ 32% |███▏      | 🦖 3202/10000 [00:06&lt;00:13, 515.27it/s]
+ 33% |███▎      | 🦖 3254/10000 [00:06&lt;00:13, 516.18it/s]
+ 33% |███▎      | 🦖 3306/10000 [00:06&lt;00:12, 516.24it/s]
+ 34% |███▎      | 🦖 3358/10000 [00:06&lt;00:12, 516.82it/s]
+ 34% |███▍      | 🦖 3410/10000 [00:06&lt;00:12, 515.91it/s]
+ 35% |███▍      | 🦖 3462/10000 [00:06&lt;00:12, 516.78it/s]
+ 35% |███▌      | 🦖 3514/10000 [00:06&lt;00:12, 515.01it/s]
+ 36% |███▌      | 🦖 3566/10000 [00:06&lt;00:12, 514.42it/s]
+ 36% |███▌      | 🦖 3618/10000 [00:06&lt;00:12, 496.45it/s]
+ 37% |███▋      | 🦖 3669/10000 [00:07&lt;00:12, 500.38it/s]
+ 37% |███▋      | 🦖 3720/10000 [00:07&lt;00:12, 498.31it/s]
+ 38% |███▊      | 🦖 3770/10000 [00:07&lt;00:12, 498.75it/s]
+ 38% |███▊      | 🦖 3821/10000 [00:07&lt;00:12, 501.05it/s]
+ 39% |███▊      | 🦖 3872/10000 [00:07&lt;00:12, 503.45it/s]
+ 39% |███▉      | 🦖 3923/10000 [00:07&lt;00:12, 499.43it/s]
+ 40% |███▉      | 🦖 3973/10000 [00:07&lt;00:12, 497.15it/s]
+ 40% |████      | 🦖 4023/10000 [00:07&lt;00:12, 491.71it/s]
+ 41% |████      | 🦖 4074/10000 [00:07&lt;00:11, 495.21it/s]
+ 41% |████      | 🦖 4124/10000 [00:08&lt;00:11, 495.67it/s]
+ 42% |████▏     | 🦖 4176/10000 [00:08&lt;00:11, 500.37it/s]
+ 42% |████▏     | 🦖 4228/10000 [00:08&lt;00:11, 504.03it/s]
+ 43% |████▎     | 🦖 4279/10000 [00:08&lt;00:11, 504.92it/s]
+ 43% |████▎     | 🦖 4331/10000 [00:08&lt;00:11, 507.45it/s]
+ 44% |████▍     | 🦖 4383/10000 [00:08&lt;00:10, 510.72it/s]
+ 44% |████▍     | 🦖 4435/10000 [00:08&lt;00:10, 513.00it/s]
+ 45% |████▍     | 🦖 4487/10000 [00:08&lt;00:10, 513.56it/s]
+ 45% |████▌     | 🦖 4539/10000 [00:08&lt;00:10, 515.07it/s]
+ 46% |████▌     | 🦖 4591/10000 [00:08&lt;00:10, 515.33it/s]
+ 46% |████▋     | 🦖 4643/10000 [00:09&lt;00:10, 515.59it/s]
+ 47% |████▋     | 🦖 4695/10000 [00:09&lt;00:10, 515.77it/s]
+ 47% |████▋     | 🦖 4747/10000 [00:09&lt;00:10, 514.97it/s]
+ 48% |████▊     | 🦖 4799/10000 [00:09&lt;00:10, 515.89it/s]
+ 49% |████▊     | 🦖 4851/10000 [00:09&lt;00:09, 515.98it/s]
+ 49% |████▉     | 🦖 4903/10000 [00:09&lt;00:10, 507.61it/s]
+ 50% |████▉     | 🦖 4954/10000 [00:09&lt;00:10, 497.38it/s]
+ 50% |█████     | 🦖 5006/10000 [00:09&lt;00:09, 502.83it/s]
+ 51% |█████     | 🦖 5058/10000 [00:09&lt;00:09, 507.80it/s]
+ 51% |█████     | 🦖 5111/10000 [00:09&lt;00:09, 511.51it/s]
+ 52% |█████▏    | 🦖 5163/10000 [00:10&lt;00:09, 513.77it/s]
+ 52% |█████▏    | 🦖 5215/10000 [00:10&lt;00:09, 515.05it/s]
+ 53% |█████▎    | 🦖 5267/10000 [00:10&lt;00:09, 516.29it/s]
+ 53% |█████▎    | 🦖 5320/10000 [00:10&lt;00:09, 517.65it/s]
+ 54% |█████▎    | 🦖 5372/10000 [00:10&lt;00:08, 518.31it/s]
+ 54% |█████▍    | 🦖 5425/10000 [00:10&lt;00:08, 519.22it/s]
+ 55% |█████▍    | 🦖 5478/10000 [00:10&lt;00:08, 519.53it/s]
+ 55% |█████▌    | 🦖 5530/10000 [00:10&lt;00:08, 518.13it/s]
+ 56% |█████▌    | 🦖 5583/10000 [00:10&lt;00:08, 518.84it/s]
+ 56% |█████▋    | 🦖 5635/10000 [00:10&lt;00:08, 518.58it/s]
+ 57% |█████▋    | 🦖 5687/10000 [00:11&lt;00:08, 501.85it/s]
+ 57% |█████▋    | 🦖 5739/10000 [00:11&lt;00:08, 506.44it/s]
+ 58% |█████▊    | 🦖 5791/10000 [00:11&lt;00:08, 510.31it/s]
+ 58% |█████▊    | 🦖 5843/10000 [00:11&lt;00:08, 512.90it/s]
+ 59% |█████▉    | 🦖 5895/10000 [00:11&lt;00:07, 514.58it/s]
+ 59% |█████▉    | 🦖 5947/10000 [00:11&lt;00:07, 516.13it/s]
+ 60% |█████▉    | 🦖 5999/10000 [00:11&lt;00:07, 516.13it/s]
+ 61% |██████    | 🦖 6051/10000 [00:11&lt;00:07, 516.05it/s]
+ 61% |██████    | 🦖 6103/10000 [00:11&lt;00:07, 516.93it/s]
+ 62% |██████▏   | 🦖 6155/10000 [00:11&lt;00:07, 516.92it/s]
+ 62% |██████▏   | 🦖 6207/10000 [00:12&lt;00:07, 516.92it/s]
+ 63% |██████▎   | 🦖 6259/10000 [00:12&lt;00:07, 517.12it/s]
+ 63% |██████▎   | 🦖 6311/10000 [00:12&lt;00:07, 517.17it/s]
+ 64% |██████▎   | 🦖 6363/10000 [00:12&lt;00:07, 516.93it/s]
+ 64% |██████▍   | 🦖 6415/10000 [00:12&lt;00:06, 516.78it/s]
+ 65% |██████▍   | 🦖 6467/10000 [00:12&lt;00:06, 516.71it/s]
+ 65% |██████▌   | 🦖 6519/10000 [00:12&lt;00:06, 516.38it/s]
+ 66% |██████▌   | 🦖 6571/10000 [00:12&lt;00:06, 516.86it/s]
+ 66% |██████▌   | 🦖 6623/10000 [00:12&lt;00:06, 517.30it/s]
+ 67% |██████▋   | 🦖 6675/10000 [00:12&lt;00:06, 511.56it/s]
+ 67% |██████▋   | 🦖 6727/10000 [00:13&lt;00:06, 513.50it/s]
+ 68% |██████▊   | 🦖 6779/10000 [00:13&lt;00:06, 514.14it/s]
+ 68% |██████▊   | 🦖 6831/10000 [00:13&lt;00:06, 514.26it/s]
+ 69% |██████▉   | 🦖 6883/10000 [00:13&lt;00:06, 515.49it/s]
+ 69% |██████▉   | 🦖 6936/10000 [00:13&lt;00:05, 517.01it/s]
+ 70% |██████▉   | 🦖 6988/10000 [00:13&lt;00:05, 513.65it/s]
+ 70% |███████   | 🦖 7040/10000 [00:13&lt;00:06, 487.59it/s]
+ 71% |███████   | 🦖 7091/10000 [00:13&lt;00:05, 492.18it/s]
+ 71% |███████▏  | 🦖 7142/10000 [00:13&lt;00:05, 494.91it/s]
+ 72% |███████▏  | 🦖 7192/10000 [00:14&lt;00:05, 495.92it/s]
+ 72% |███████▏  | 🦖 7242/10000 [00:14&lt;00:05, 486.97it/s]
+ 73% |███████▎  | 🦖 7291/10000 [00:14&lt;00:05, 485.96it/s]
+ 73% |███████▎  | 🦖 7342/10000 [00:14&lt;00:05, 490.47it/s]
+ 74% |███████▍  | 🦖 7393/10000 [00:14&lt;00:05, 495.18it/s]
+ 74% |███████▍  | 🦖 7444/10000 [00:14&lt;00:05, 497.21it/s]
+ 75% |███████▍  | 🦖 7494/10000 [00:14&lt;00:05, 498.00it/s]
+ 75% |███████▌  | 🦖 7544/10000 [00:14&lt;00:04, 497.09it/s]
+ 76% |███████▌  | 🦖 7594/10000 [00:14&lt;00:04, 496.32it/s]
+ 76% |███████▋  | 🦖 7645/10000 [00:14&lt;00:04, 498.73it/s]
+ 77% |███████▋  | 🦖 7697/10000 [00:15&lt;00:04, 502.31it/s]
+ 77% |███████▋  | 🦖 7749/10000 [00:15&lt;00:04, 507.24it/s]
+ 78% |███████▊  | 🦖 7801/10000 [00:15&lt;00:04, 510.12it/s]
+ 79% |███████▊  | 🦖 7853/10000 [00:15&lt;00:04, 512.20it/s]
+ 79% |███████▉  | 🦖 7905/10000 [00:15&lt;00:04, 513.76it/s]
+ 80% |███████▉  | 🦖 7957/10000 [00:15&lt;00:03, 515.50it/s]
+ 80% |████████  | 🦖 8009/10000 [00:15&lt;00:03, 516.62it/s]
+ 81% |████████  | 🦖 8061/10000 [00:15&lt;00:03, 516.60it/s]
+ 81% |████████  | 🦖 8114/10000 [00:15&lt;00:03, 517.96it/s]
+ 82% |████████▏ | 🦖 8166/10000 [00:15&lt;00:03, 517.75it/s]
+ 82% |████████▏ | 🦖 8218/10000 [00:16&lt;00:03, 518.04it/s]
+ 83% |████████▎ | 🦖 8270/10000 [00:16&lt;00:03, 518.03it/s]
+ 83% |████████▎ | 🦖 8322/10000 [00:16&lt;00:03, 516.62it/s]
+ 84% |████████▍ | 🦖 8375/10000 [00:16&lt;00:03, 517.75it/s]
+ 84% |████████▍ | 🦖 8427/10000 [00:16&lt;00:03, 518.29it/s]
+ 85% |████████▍ | 🦖 8479/10000 [00:16&lt;00:02, 517.83it/s]
+ 85% |████████▌ | 🦖 8531/10000 [00:16&lt;00:02, 517.80it/s]
+ 86% |████████▌ | 🦖 8583/10000 [00:16&lt;00:02, 517.80it/s]
+ 86% |████████▋ | 🦖 8635/10000 [00:16&lt;00:02, 517.45it/s]
+ 87% |████████▋ | 🦖 8687/10000 [00:16&lt;00:02, 517.54it/s]
+ 87% |████████▋ | 🦖 8739/10000 [00:17&lt;00:02, 518.26it/s]
+ 88% |████████▊ | 🦖 8791/10000 [00:17&lt;00:02, 518.73it/s]
+ 88% |████████▊ | 🦖 8843/10000 [00:17&lt;00:02, 518.42it/s]
+ 89% |████████▉ | 🦖 8895/10000 [00:17&lt;00:02, 513.37it/s]
+ 89% |████████▉ | 🦖 8947/10000 [00:17&lt;00:02, 515.03it/s]
+ 90% |████████▉ | 🦖 8999/10000 [00:17&lt;00:01, 515.49it/s]
+ 91% |█████████ | 🦖 9051/10000 [00:17&lt;00:01, 516.24it/s]
+ 91% |█████████ | 🦖 9103/10000 [00:17&lt;00:01, 516.67it/s]
+ 92% |█████████▏| 🦖 9155/10000 [00:17&lt;00:01, 517.26it/s]
+ 92% |█████████▏| 🦖 9207/10000 [00:17&lt;00:01, 517.81it/s]
+ 93% |█████████▎| 🦖 9259/10000 [00:18&lt;00:01, 517.67it/s]
+ 93% |█████████▎| 🦖 9311/10000 [00:18&lt;00:01, 518.21it/s]
+ 94% |█████████▎| 🦖 9363/10000 [00:18&lt;00:01, 517.67it/s]
+ 94% |█████████▍| 🦖 9415/10000 [00:18&lt;00:01, 517.93it/s]
+ 95% |█████████▍| 🦖 9468/10000 [00:18&lt;00:01, 518.69it/s]
+ 95% |█████████▌| 🦖 9520/10000 [00:18&lt;00:00, 518.17it/s]
+ 96% |█████████▌| 🦖 9573/10000 [00:18&lt;00:00, 518.82it/s]
+ 96% |█████████▋| 🦖 9625/10000 [00:18&lt;00:00, 516.88it/s]
+ 97% |█████████▋| 🦖 9677/10000 [00:18&lt;00:00, 517.08it/s]
+ 97% |█████████▋| 🦖 9729/10000 [00:18&lt;00:00, 517.36it/s]
+ 98% |█████████▊| 🦖 9781/10000 [00:19&lt;00:00, 516.83it/s]
+ 98% |█████████▊| 🦖 9833/10000 [00:19&lt;00:00, 517.38it/s]
+ 99% |█████████▉| 🦖 9885/10000 [00:19&lt;00:00, 516.29it/s]
+ 99% |█████████▉| 🦖 9938/10000 [00:19&lt;00:00, 517.59it/s]
+100% |█████████▉| 🦖 9990/10000 [00:19&lt;00:00, 517.17it/s]
+100% |██████████| 🦖 10000/10000 [00:19&lt;00:00, 513.51it/s]
 </pre></div>
 </div>
 <p>Finally, we can analyze the MCMC results to see how well we recovered the original parameters.
 Frequencies for plotting</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs_plot</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.logspace.html#numpy.logspace" title="numpy.logspace" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">logspace</span></a><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">Hz</span></a>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
-
-<span class="c1"># Plot data</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.errorbar.html#matplotlib.axes.Axes.errorbar" title="matplotlib.axes.Axes.errorbar" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span></a><span class="p">(</span>
-    <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">frequencies</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">),</span>
-    <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span>
-    <span class="n">yerr</span><span class="o">=</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span>
-    <span class="n">fmt</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span>
-    <span class="n">color</span><span class="o">=</span><span class="s2">"red"</span><span class="p">,</span>
-    <span class="n">label</span><span class="o">=</span><span class="s2">"Data"</span><span class="p">,</span>
-<span class="p">)</span>
-
-<span class="c1"># Draw a subset of posterior samples</span>
-<a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_draw</span></a> <span class="o">=</span> <span class="mi">100</span>
-<a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">idx</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.choice.html#numpy.random.choice" title="numpy.random.choice" class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">samples</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">n_draw</span></a><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
-
-<span class="k">for</span> <a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">i</span></a> <span class="ow">in</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">idx</span></a><span class="p">:</span>
-    <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">theta_free</span></a> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">samples</span></a><span class="p">[</span><a href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute"><span class="n">i</span></a><span class="p">]</span>
-    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">params</span></a> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">theta_free</span></a><span class="p">)</span>
-    <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">flux</span></a> <span class="o">=</span> <span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">({</span><span class="s2">"frequency"</span><span class="p">:</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs_plot</span></a><span class="p">},</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span>
-
-    <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">),</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"C0"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span>
-
-<span class="c1"># Plot true model</span>
-<a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_flux_plot</span></a> <span class="o">=</span> <span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span><span class="p">({</span><span class="s2">"frequency"</span><span class="p">:</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">freqs_plot</span></a><span class="p">},</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">),</span> <a href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method"><span class="n">true_flux_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit" class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">),</span> <span class="n">color</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"True Model"</span><span class="p">)</span>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xscale.html#matplotlib.axes.Axes.set_xscale" title="matplotlib.axes.Axes.set_xscale" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span></a><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yscale.html#matplotlib.axes.Axes.set_yscale" title="matplotlib.axes.Axes.set_yscale" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span></a><span class="p">(</span><span class="s2">"log"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">"Frequency [GHz]"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">"Flux Density [mJy]"</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span></a><span class="p">()</span>
-
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">freqs_plot</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.logspace.html#numpy.logspace" title="numpy.logspace"><span class="n">np</span><span class="o">.</span><span class="n">logspace</span></a><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">11</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Unit.html#astropy.units.Unit" title="astropy.units.Unit"><span class="n">u</span><span class="o">.</span><span class="n">Hz</span></a><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.subplots.html#matplotlib.pyplot.subplots" title="matplotlib.pyplot.subplots"><span class="n">plt</span><span class="o">.</span><span class="n">subplots</span></a><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Plot data</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.errorbar.html#matplotlib.axes.Axes.errorbar" title="matplotlib.axes.Axes.errorbar"><span class="n">ax</span><span class="o">.</span><span class="n">errorbar</span></a><span class="p">(</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">frequencies</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">yerr</span><span class="o">=</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="float"><span class="n">noise_fraction</span></a> <span class="o">*</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">synthetic_flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span><span class="w">
+</span>    <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">o</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">red</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span>    <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">Data</span><span class="s2">&quot;</span><span class="p">,</span><span class="w">
+</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Draw a subset of posterior samples</span><span class="w">
+</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">n_draw</span></a> <span class="o">=</span> <span class="mi">100</span><span class="w">
+</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">idx</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy-random sphx-glr-backref-type-py-function reference external" href="https://numpy.org/doc/stable/reference/random/generated/numpy.random.choice.html#numpy.random.choice" title="numpy.random.choice"><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span></a><span class="p">(</span><a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#tuple" title="tuple"><span class="n">samples</span><span class="o">.</span><span class="n">shape</span></a><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="int"><span class="n">n_draw</span></a><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="k">for</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64"><span class="n">i</span></a> <span class="ow">in</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">idx</span></a><span class="p">:</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">theta_free</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">samples</span></a><span class="p">[</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-attribute reference external" href="https://numpy.org/doc/stable/reference/arrays.scalars.html#numpy.int64" title="numpy.int64"><span class="n">i</span></a><span class="p">]</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">params</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.problem.InferenceProblem.unpack_free_parameters.html#trilobite.inference.problem.InferenceProblem.unpack_free_parameters" title="trilobite.inference.InferenceProblem.unpack_free_parameters"><span class="n">problem</span><span class="o">.</span><span class="n">unpack_free_parameters</span></a><span class="p">(</span><a class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="numpy.ndarray"><span class="n">theta_free</span></a><span class="p">)</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">flux</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model"><span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span></a><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">frequency</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">freqs_plot</span></a><span class="p">}</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span><span class="w">
+</span><span class="w">
+</span>    <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">flux</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">C0</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><span class="c1"># Plot true model</span><span class="w">
+</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">true_flux_plot</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-models-SEDs-synchrotron sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model.html#trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model" title="trilobite.models.SEDs.synchrotron.Synchrotron_SSA_SBPL_Model.forward_model"><span class="n">sed_model</span><span class="o">.</span><span class="n">forward_model</span></a><span class="p">(</span><span class="p">{</span><span class="s2">&quot;</span><span class="s2">frequency</span><span class="s2">&quot;</span><span class="p">:</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="astropy.units.Quantity"><span class="n">freqs_plot</span></a><span class="p">}</span><span class="p">,</span> <a class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="dict"><span class="n">true_params</span></a><span class="p">)</span><span class="o">.</span><span class="n">flux_density</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.plot.html#matplotlib.axes.Axes.plot" title="matplotlib.axes.Axes.plot"><span class="n">ax</span><span class="o">.</span><span class="n">plot</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">freqs_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">GHz</span></a><span class="p">)</span><span class="p">,</span> <a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-method reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity.to_value" title="astropy.units.Quantity.to_value"><span class="n">true_flux_plot</span><span class="o">.</span><span class="n">to_value</span></a><span class="p">(</span><a class="sphx-glr-backref-module-astropy-units sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.PrefixUnit.html#astropy.units.PrefixUnit" title="astropy.units.PrefixUnit"><span class="n">u</span><span class="o">.</span><span class="n">mJy</span></a><span class="p">)</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">black</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;</span><span class="s2">True Model</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xscale.html#matplotlib.axes.Axes.set_xscale" title="matplotlib.axes.Axes.set_xscale"><span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">log</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_yscale.html#matplotlib.axes.Axes.set_yscale" title="matplotlib.axes.Axes.set_yscale"><span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">log</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_xlabel.html#matplotlib.axes.Axes.set_xlabel" title="matplotlib.axes.Axes.set_xlabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Frequency [GHz]</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.set_ylabel.html#matplotlib.axes.Axes.set_ylabel" title="matplotlib.axes.Axes.set_ylabel"><span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">Flux Density [mJy]</span><span class="s2">&quot;</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-method reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.legend.html#matplotlib.axes.Axes.legend" title="matplotlib.axes.Axes.legend"><span class="n">ax</span><span class="o">.</span><span class="n">legend</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_SED_fit_002.png" srcset="../../_images/sphx_glr_plot_SED_fit_002.png" alt="plot SED fit" class = "sphx-glr-single-img"/><p>It’s also always good practice to look at some diagnostic plots to ensure that the MCMC
 chains have converged and that the posterior distributions look reasonable. We’ll use the built-in plotting utilities
 in Trilobite for this.</p>
 <p>Let’s start by looking at the trace plots for the <span class="math notranslate nohighlight">\(\nu_{\rm brk}\)</span> parameter.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a><span class="p">,</span> <a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes" class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ax</span></a> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">trace_plot</span><span class="p">(</span><span class="s2">"nu_break"</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
-</pre></div>
-</div>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a><span class="p">,</span> <a class="sphx-glr-backref-module-matplotlib-axes sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.axes.Axes.html#matplotlib.axes.Axes" title="matplotlib.axes.Axes"><span class="n">ax</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference-sampling sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot" title="trilobite.inference.sampling.MCMCSamplingResult.trace_plot"><span class="n">result</span><span class="o">.</span><span class="n">trace_plot</span></a><span class="p">(</span><span class="s2">&quot;</span><span class="s2">nu_break</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
 <img src="../../_images/sphx_glr_plot_SED_fit_003.png" srcset="../../_images/sphx_glr_plot_SED_fit_003.png" alt="Trace plot: nu_break" class = "sphx-glr-single-img"/><p>Let’s also look at the corner plot for all the parameters to see their posterior distributions and covariances.</p>
-<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure" class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fig</span></a> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">corner_plot</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="s2">"norm"</span><span class="p">,</span> <span class="s2">"nu_break"</span><span class="p">,</span> <span class="s2">"p"</span><span class="p">])</span>
-<a href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show" class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">()</span>
-</pre></div>
-</div>
-<img src="../../_images/sphx_glr_plot_SED_fit_004.png" srcset="../../_images/sphx_glr_plot_SED_fit_004.png" alt="norm = ${0.00414}_{-0.000295}^{+0.000308}$, nu_break = ${3.7}_{-0.141}^{+0.144}$, p = ${2.61}_{-0.141}^{+0.145}$" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 36.797 seconds)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><a class="sphx-glr-backref-module-matplotlib-figure sphx-glr-backref-type-py-class sphx-glr-backref-instance reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.figure.Figure.html#matplotlib.figure.Figure" title="matplotlib.figure.Figure"><span class="n">fig</span></a> <span class="o">=</span> <a class="sphx-glr-backref-module-trilobite-inference-sampling sphx-glr-backref-type-py-method reference internal" href="../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot" title="trilobite.inference.sampling.MCMCSamplingResult.corner_plot"><span class="n">result</span><span class="o">.</span><span class="n">corner_plot</span></a><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">parameters</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="s2">norm</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">nu_break</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="s2">p</span><span class="s2">&quot;</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><a class="sphx-glr-backref-module-matplotlib-pyplot sphx-glr-backref-type-py-function reference external" href="https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.show.html#matplotlib.pyplot.show" title="matplotlib.pyplot.show"><span class="n">plt</span><span class="o">.</span><span class="n">show</span></a><span class="p">(</span><span class="p">)</span><span class="w">
+</span></pre></div></div>
+<img src="../../_images/sphx_glr_plot_SED_fit_004.png" srcset="../../_images/sphx_glr_plot_SED_fit_004.png" alt="norm = ${0.00518}_{-0.000383}^{+0.000389}$, nu_break = ${4.09}_{-0.162}^{+0.162}$, p = ${3.01}_{-0.163}^{+0.169}$" class = "sphx-glr-single-img"/><p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (0 minutes 20.298 seconds)</p>
 <div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-auto-examples-inference-plot-sed-fit-py">
 <div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
 <p><a class="reference download internal" download="" href="../../_downloads/6b65bed4013883cc36f4c8809fd7cfb0/plot_SED_fit.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">plot_SED_fit.ipynb</span></code></a></p>
@@ -1270,8 +1104,8 @@ in Trilobite for this.</p>
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script defer src="../../_static/scripts/bootstrap.js?digest=cb8930eaaf36d9849b67"></script>
-<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=cb8930eaaf36d9849b67"></script>
+  <script defer src="../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
 
   <footer class="bd-footer">
 <div class="bd-footer__inner bd-page-width">
@@ -1292,7 +1126,6 @@ in Trilobite for this.</p>
 
   <p class="sphinx-version">
     Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
-    <br/>
   </p>
 </div>
       
@@ -1305,7 +1138,7 @@ in Trilobite for this.</p>
         <div class="footer-item">
 <p class="theme-version">
   <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
-  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.21.0.
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
 </p></div>
       
     </div>

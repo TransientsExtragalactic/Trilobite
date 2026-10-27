@@ -1,0 +1,1528 @@
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Blackbody Radiation &#8212; Trilobite dev documentation</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../../../_static/styles/theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+<link href="../../../../_static/styles/pydata-sphinx-theme.css?digest=18bd87630a240e9c25be" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/graphviz.css?v=4ae1632d" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/plot_directive.css" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery.css?v=c83e6b79" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/sphinx-design.min.css?v=95c83b7e" />
+    <link rel="stylesheet" type="text/css" href="../../../../_static/custom.css?v=391a8568" />
+  
+  <!-- So that users can add custom icons -->
+  <script defer src="../../../../_static/scripts/fontawesome.js?digest=18bd87630a240e9c25be"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be" />
+<link rel="preload" as="script" href="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be" />
+
+    <script src="../../../../_static/documentation_options.js?v=3ce10a4d"></script>
+    <script src="../../../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../../../_static/sg-tags.js?v=d80f6fa4"></script>
+    <script src="../../../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../../../_static/copybutton.js?v=f281be69"></script>
+    <script src="../../../../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'reference/physics/radiation/blackbody/blackbody';</script>
+    <script>
+        DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
+        DOCUMENTATION_OPTIONS.theme_switcher_json_url = 'https://transientsextragalactic.github.io/Trilobite/versions.json';
+        DOCUMENTATION_OPTIONS.theme_switcher_version_match = 'dev';
+        DOCUMENTATION_OPTIONS.show_version_warning_banner =
+            false;
+        </script>
+    <script>DOCUMENTATION_OPTIONS.search_as_you_type = false;</script>
+    <link rel="icon" href="../../../../_static/logo.svg"/>
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" />
+    <link rel="next" title="Opacity Laws" href="../opacity/opacity_user_guide.html" />
+    <link rel="prev" title="Free-Free Radiation Theory" href="../free_free/free_free_theory.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="color-scheme" content="light dark"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="dev" />
+  
+    
+    <script src="../../../../_static/searchtools.js"></script>
+    <script src="../../../../_static/language_data.js"></script>
+    <script src="../../../../searchindex.js"></script>
+  
+  </head>
+  <body data-default-mode="">
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+  
+  
+  
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header id="pst-header" class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button type="button" class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../../../../index.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../../../_static/logo.svg" class="logo__image only-light" alt="Trilobite logo"/>
+    <img src="../../../../_static/logo.svg" class="logo__image only-dark pst-js-only" alt="Trilobite logo"/>
+  
+  
+    <p class="title logo__title">Trilobite</p>
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+        <div class="navbar-item navbar-persistent--container">
+          
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+        </div>
+      
+      
+        <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+      
+        <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-2"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-2"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-2"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-2">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+    <div class="navbar-persistent--mobile">
+
+<button type="button" class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button>
+    </div>
+  
+
+  
+    <button type="button" class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../api.html">
+    API
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../../user_guide.html">
+    Trilobite User Guide
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../examples.html">
+    Example Gallery
+  </a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../../../getting_started.html">
+    Quickstart Guide
+  </a>
+</li>
+
+  </ul>
+</nav></div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+
+<div class="theme-switch-container dropdown pst-js-only" data-bs-toggle="tooltip" data-bs-placement="bottom" title="Color mode">
+  <button type="button" class="btn btn-sm nav-link pst-navbar-icon theme-switch-button dropdown-toggle" aria-label="Color mode" data-bs-toggle="dropdown">
+    <i class="theme-switch fa-solid fa-sun fa-lg fa-fw" data-mode="light" title="Light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg fa-fw" data-mode="dark" title="Dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg fa-fw" data-mode="auto" title="System Settings"></i>
+  </button>
+  <ul class="dropdown-menu dropdown-menu-end">
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="auto"><i class="fa-solid fa-circle-half-stroke fa-lg fa-fw me-1"></i>System Settings</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="light"><i class="fa-solid fa-sun fa-lg fa-fw me-1"></i>Light</button></li>
+    <li><button type="button" class="dropdown-item d-flex align-items-center theme-change-button" data-mode="dark"><i class="fa-solid fa-moon fa-lg fa-fw me-1"></i>Dark</button></li>
+  </ul>
+</div></div>
+        
+          <div class="navbar-item">
+<div class="version-switcher__container dropdown pst-js-only">
+  <button id="pst-version-switcher-button-3"
+    type="button"
+    class="version-switcher__button btn btn-sm dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-haspopup="listbox"
+    aria-controls="pst-version-switcher-list-3"
+    aria-label="Version switcher list"
+  >
+    Choose version  <!-- this text may get changed later by javascript -->
+    <span class="caret"></span>
+  </button>
+  <div id="pst-version-switcher-list-3"
+    class="version-switcher__menu dropdown-menu list-group-flush py-0"
+    role="listbox" aria-labelledby="pst-version-switcher-button-3">
+    <!-- dropdown will be populated by javascript on page load -->
+  </div>
+</div></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/TransientsExtragalactic/Trilobite" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i><span class="visually-hidden">GitHub</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item pst-sidebar-collapse"><button type="button" id="pst-collapse-sidebar-button" aria-expanded="true" aria-controls="pst-primary-sidebar">
+  <svg class="pst-icon" role="img" aria-hidden="true" focusable="false" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+    <path fill="currentColor" d="M3 15.5C2.36232 15.5 1.74874 15.2564 1.28478 14.8189C0.820828 14.3815 0.541576 13.7832 0.504167 13.1467L0.5 13L0.5 3C0.499965 2.36232 0.743605 1.74874 1.18107 1.28478C1.61854 0.820828 2.21676 0.541576 2.85333 0.504167L3 0.5L13 0.5C13.6377 0.499965 14.2513 0.743605 14.7152 1.18107C15.1792 1.61854 15.4584 2.21676 15.4958 2.85333L15.5 3L15.5 13C15.5 13.6377 15.2564 14.2513 14.8189 14.7152C14.3815 15.1792 13.7832 15.4584 13.1467 15.4958L13 15.5L3 15.5ZM3 13.8333L10.5 13.8333L10.5 2.16667L3 2.16667C2.79589 2.16669 2.59889 2.24163 2.44636 2.37726C2.29383 2.5129 2.19638 2.69979 2.1725 2.9025L2.16667 3L2.16667 13C2.16669 13.2041 2.24163 13.4011 2.37726 13.5536C2.5129 13.7062 2.69979 13.8036 2.9025 13.8275L3 13.8333ZM6.65583 10.325L6.5775 10.2558L4.91083 8.58917C4.76735 8.44567 4.68116 8.25476 4.66843 8.05223C4.65569 7.84971 4.71729 7.6495 4.84167 7.48917L4.91083 7.41083L6.5775 5.74417C6.72747 5.59471 6.9287 5.50794 7.14032 5.50148C7.35194 5.49502 7.55809 5.56935 7.7169 5.70937C7.8757 5.8494 7.97525 6.04463 7.99533 6.25539C8.01541 6.46616 7.95451 6.67667 7.825 6.84417L7.75583 6.9225L6.67917 8L7.75583 9.0775C7.89931 9.22099 7.98551 9.41191 7.99824 9.61443C8.01097 9.81695 7.94938 10.0172 7.825 10.1775L7.75583 10.2558C7.61234 10.3993 7.42142 10.4855 7.2189 10.4982C7.01638 10.511 6.81617 10.4494 6.65583 10.325Z"/>
+  </svg>
+  <span class="pst-collapse-sidebar-label">Collapse Sidebar</span>
+  <span class="pst-expand-sidebar-label">Expand Sidebar</span>
+</button></div>
+        <div class="sidebar-primary-item">
+
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../data/overview.html">Data Loading, Handling, and Visualization</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/radio_photometry_epoch.html">RadioPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/optical_photometry_epoch.html">OpticalPhotometryEpoch</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../../data/data_to_inference.html">From Data to Inference: A Complete Guide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/photometry.html">Radio Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/optical_photometry.html">Optical Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/filter_photometry.html">Optical Filters and Photometry</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/light_curve.html">Light Curves</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../data/inference_data.html">Inference Data Containers</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../../../models/overview.html">Trilobite Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../models/directory.html">Trilobite Model Directory</a></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../inference/overview.html">Parameter Inference and Model Comparison</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="current nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../shocks/overview.html">Shock Physics in Trilobite</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_overview.html">The Rankine-Hugoniot Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/jump_conditions_theory.html">Methods: (Non-Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/relativistic_jump_conditions_theory.html">Methods: (Relativistic) Jump Conditions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/shock_engines_overview.html">Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/blandford_mckee_theory.html">Theory: The Blandford–McKee Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/chevalier_theory.html">Theory: The Chevalier Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/sedov_taylor_theory.html">Theory: Sedov-Taylor Self-Similar Solution</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_theory.html">Theory: Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/numerical_shocks_overview.html">Numerical Shock Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../shocks/self_similar_overview.html">Self-Similar Shock Engines</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../overview.html">Radiation Processes in Trilobite</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_overview.html">Synchrotron Emission Overview</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_core.html">Core Synchrotron Tools</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../synchrotron/synchrotron_electron_distributions.html">Synchrotron Electron Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.html">PowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.cdf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logsf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.moment.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_between.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_total.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.pdf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.sf.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.std.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.support.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.PowerLaw.var.html">trilobite.radiation.synchrotron.electron_distributions.PowerLaw.var</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.html">BrokenPowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.cdf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logsf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_between.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_total.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.pdf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.sf.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.std.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.var.html">trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.var</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.html">MaxwellJuettner</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_kinetic_moment.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_kinetic_moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_moment.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.approx_first_moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.cdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logsf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.moment.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.pdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.sf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.std.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.support.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.var.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettner.var</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.html">MixedThermalNonThermal</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.cdf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logsf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_between.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_total.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.pdf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.sf.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.std.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.support.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.var.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.var</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.NON_THERMAL_DISTRIBUTION.html">trilobite.radiation.synchrotron.electron_distributions.MixedThermalNonThermal.NON_THERMAL_DISTRIBUTION</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.html">MaxwellJuettnerPowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.cdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logsf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.moment.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.pdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.sf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.std.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.support.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.var.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerPowerLaw.var</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.html">MaxwellJuettnerBrokenPowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.as_callable.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.as_callable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.bol_emiss_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.bol_emiss_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.bol_emiss_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.bol_emiss_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.cdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.cdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logcdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logcdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logpdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logpdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logsf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.logsf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean_kinetic_energy.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.mean_kinetic_energy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.moment.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.moment</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.moment_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.moment_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_eff_between.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_eff_between</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_energy_density.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_energy_density</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_magnetic_field.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_magnetic_field</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_n_eff.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_n_eff</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_n_total.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.normalize_from_n_total</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.pdf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.sf.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.sf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.std.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.std</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.support.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.support</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.var.html">trilobite.radiation.synchrotron.electron_distributions.MaxwellJuettnerBrokenPowerLaw.var</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../synchrotron/synchrotron_seds.html">Synchrotron Spectral Energy Distributions</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.html">SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.html">MultiSpectrumSynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.determine_sed_regime.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.MultiSpectrumSynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.html">PowerLaw_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SynchrotronSED.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.html">PowerLaw_Cooling_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.html">PowerLaw_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.determine_sed_regime.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_SSA_SynchrotronSED.SPECTRUM_INVERSION_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.html">PowerLaw_Cooling_SSA_SynchrotronSED</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.determine_sed_regime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.sed</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.PowerLaw_Cooling_SSA_SynchrotronSED.SPECTRUM_FUNCTIONS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.html">SSA_SED_PowerLaw</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.from_params_to_physics.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.from_params_to_physics</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.from_physics_to_params.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.from_physics_to_params</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.sed.html">trilobite.radiation.synchrotron.SEDs.one_zone.seds.SSA_SED_PowerLaw.sed</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.html">NumericalSynchrotronEngine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_first_kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.load_avg_first_kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_emissivity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_absorption</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_source_function</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_rest_frame_specific_intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_specific_intensity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density.html">trilobite.radiation.synchrotron.SEDs.numerical.NumericalSynchrotronEngine.compute_flux_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OnAxisAsymmetricSynchrotronEngine.html">OnAxisAsymmetricSynchrotronEngine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.numerical.OffAxisAsymmetricSynchrotronEngine.html">OffAxisAsymmetricSynchrotronEngine</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone._functions.log_smoothed_SFBPL.html">trilobite.radiation.synchrotron.SEDs.one_zone._functions.log_smoothed_SFBPL</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone._functions.log_exp_cutoff_sed.html">trilobite.radiation.synchrotron.SEDs.one_zone._functions.log_exp_cutoff_sed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.synchrotron.SEDs.one_zone._functions.smoothed_BPL.html">trilobite.radiation.synchrotron.SEDs.one_zone._functions.smoothed_BPL</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling.html">Radiative Cooling Engines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_theory.html">Synchrotron Radiation Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_pl_sed_theory.html">Methods: Single-Zone Synchrotron SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_numerical_seds.html">Methods: Quadrature Based SEDs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_cooling_theory.html">Theory Note: Electron Populations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_spectral_inversion.html">Spectral Inversion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../synchrotron/synchrotron_stratified_absorption.html">Theory Note: Stratified Synchrotron Absorption</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_emission.html">Free-Free Emission Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../free_free/free_free_theory.html">Free-Free Radiation Theory</a></li>
+<li class="toctree-l2 current active"><a aria-current="page" class="current reference internal" href="#">Blackbody Radiation</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../opacity/opacity_user_guide.html">Opacity Laws</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.get_opacity.html">trilobite.radiation.opacity.get_opacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OpacityLaw.html">OpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html">GreyOpacityLaw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html">ConstantGreyOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ElectronScatteringOpacity.html">ElectronScatteringOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFOpacity.html">KramersFFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFOpacity.html">KramersBFOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersOpacity.html">KramersOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersFFESOpacity.html">KramersFFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersBFESOpacity.html">KramersBFESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.KramersESOpacity.html">KramersESOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.OPALOpacity.html">OPALOpacity</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.load_opal_opacity.html">trilobite.radiation.opacity.load_opal_opacity</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_theory.html">Opacity Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../opacity/opacity_dev_guide.html">Developer Guide: Implementing Opacity Laws</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../disks/index.html">Accretion Disks</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/one_zone_disk.html">One-Zone Accretion Disk Models</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.GasPressureDisk.html">GasPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.FullPressureDisk.html">FullPressureDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.AdvectiveDisk.html">AdvectiveDisk</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionDiskBase.html">OneZoneAccretionDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.one_zone.OneZoneAccretionResult.html">OneZoneAccretionResult</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_theory.html">One-Zone Accretion Disk Models: Theory</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../disks/one_zone_disk_dev.html">Developer Guide: Adding One-Zone Disk Closures</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../disks/thin_disk.html">Steady-State Thin Disk</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.ThinDiskBase.html">ThinDiskBase</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.accretion.AlphaDisk.html">AlphaDisk</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../profiles/profiles_user_guide.html">Dynamical Profiles</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.core._DynamicalProfile.html">_DynamicalProfile</a></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.html">CSMDensityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.feval.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.process_arguments.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.process_parameters.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.CSMDensityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.CSMDensityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.html">StationaryCSMDensityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.as_callable.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.eval.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.feval.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.process_arguments.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.process_parameters.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.StationaryCSMDensityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.html">EjectaDensityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.as_callable.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.eval.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.feval.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.fkernel.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.fkernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.kernel.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.process_arguments.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.process_parameters.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.KERNEL_UNITS.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.KERNEL_UNITS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.ejecta.EjectaDensityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.html">VelocityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.as_callable.html">trilobite.dynamics.profiles.velocity.VelocityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.velocity.VelocityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.eval.html">trilobite.dynamics.profiles.velocity.VelocityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.feval.html">trilobite.dynamics.profiles.velocity.VelocityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.process_arguments.html">trilobite.dynamics.profiles.velocity.VelocityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.process_parameters.html">trilobite.dynamics.profiles.velocity.VelocityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.VelocityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.velocity.VelocityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.html">WindCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.WindCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.WindCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.column_density.html">trilobite.dynamics.profiles.csm.WindCSMProfile.column_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.compute_mass_loss_rate.html">trilobite.dynamics.profiles.csm.WindCSMProfile.compute_mass_loss_rate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.enclosed_mass.html">trilobite.dynamics.profiles.csm.WindCSMProfile.enclosed_mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.eval.html">trilobite.dynamics.profiles.csm.WindCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.feval.html">trilobite.dynamics.profiles.csm.WindCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.normalize.html">trilobite.dynamics.profiles.csm.WindCSMProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.normalize_A_star.html">trilobite.dynamics.profiles.csm.WindCSMProfile.normalize_A_star</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.normalize_from_A_star.html">trilobite.dynamics.profiles.csm.WindCSMProfile.normalize_from_A_star</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.WindCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.WindCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.shell_mass.html">trilobite.dynamics.profiles.csm.WindCSMProfile.shell_mass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.A_STAR_NORMALIZATION.html">trilobite.dynamics.profiles.csm.WindCSMProfile.A_STAR_NORMALIZATION</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.WindCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.html">UniformCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.eval.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.feval.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.UniformCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.UniformCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.html">PowerLawCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.eval.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.feval.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.PowerLawCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.PowerLawCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.html">ShellCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.eval.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.feval.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.ShellCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.ShellCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.html">GaussianShellCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.eval.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.feval.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.GaussianShellCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.html">BrokenPowerLawCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.eval.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.feval.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.BrokenPowerLawCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.html">TruncatedWindCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.eval.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.feval.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.normalize.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.TruncatedWindCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.html">WindWithFloorCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.eval.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.feval.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.normalize.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.WindWithFloorCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.html">SmoothTruncatedWindCSMProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.as_callable.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.as_optimized_callable.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.eval.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.feval.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.normalize.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.process_arguments.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.process_parameters.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.html">BrokenPowerLawEjectaProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.as_callable.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.as_optimized_callable.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.eval.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.feval.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.fkernel.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.fkernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.kernel.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.normalize.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.process_arguments.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.process_parameters.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.KERNEL_UNITS.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.KERNEL_UNITS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.ejecta.BrokenPowerLawEjectaProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.html">ExponentialEjectaProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.as_callable.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.as_optimized_callable.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.eval.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.feval.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.fkernel.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.fkernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.kernel.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.kernel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.normalize.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.normalize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.process_arguments.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.process_parameters.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.KERNEL_UNITS.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.KERNEL_UNITS</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.ejecta.ExponentialEjectaProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.html">StaticVelocityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.as_callable.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.eval.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.feval.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.process_arguments.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.process_parameters.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.StaticVelocityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.velocity.StaticVelocityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.html">HomologousVelocityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.as_callable.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.eval.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.feval.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.process_arguments.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.process_parameters.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.velocity.HomologousVelocityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.html">ConstantVelocityProfile</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.as_callable.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.as_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.as_optimized_callable.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.as_optimized_callable</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.eval.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.eval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.feval.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.feval</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.process_arguments.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.process_arguments</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.process_parameters.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.process_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.OUTPUT_UNITS.html">trilobite.dynamics.profiles.velocity.ConstantVelocityProfile.OUTPUT_UNITS</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+<ul class="nav bd-sidenav">
+<li class="toctree-l1 has-children"><a class="reference internal" href="../../../parallel/index.html">Parallel Computing</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../../parallel/pools.html">Pool API Reference</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.html">Pool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.batched_map.html">trilobite.parallel.base.Pool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.close.html">trilobite.parallel.base.Pool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.map.html">trilobite.parallel.base.Pool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.terminate.html">trilobite.parallel.base.Pool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.Pool.size.html">trilobite.parallel.base.Pool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.html">SerialPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.batched_map.html">trilobite.parallel.base.SerialPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.close.html">trilobite.parallel.base.SerialPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.map.html">trilobite.parallel.base.SerialPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.terminate.html">trilobite.parallel.base.SerialPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.base.SerialPool.size.html">trilobite.parallel.base.SerialPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.html">LikelihoodMPPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.batched_map.html">trilobite.parallel.mp.LikelihoodMPPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.close.html">trilobite.parallel.mp.LikelihoodMPPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.join.html">trilobite.parallel.mp.LikelihoodMPPool.join</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.map.html">trilobite.parallel.mp.LikelihoodMPPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.terminate.html">trilobite.parallel.mp.LikelihoodMPPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mp.LikelihoodMPPool.size.html">trilobite.parallel.mp.LikelihoodMPPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3 has-children"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.html">LikelihoodMPIPool</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.batched_map.html">trilobite.parallel.mpi.LikelihoodMPIPool.batched_map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.close.html">trilobite.parallel.mpi.LikelihoodMPIPool.close</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.is_master.html">trilobite.parallel.mpi.LikelihoodMPIPool.is_master</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.map.html">trilobite.parallel.mpi.LikelihoodMPIPool.map</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.terminate.html">trilobite.parallel.mpi.LikelihoodMPIPool.terminate</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.wait.html">trilobite.parallel.mpi.LikelihoodMPIPool.wait</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.mpi.LikelihoodMPIPool.size.html">trilobite.parallel.mpi.LikelihoodMPIPool.size</a></li>
+</ul>
+</details></li>
+<li class="toctree-l3"><a class="reference internal" href="../../../../_as_gen/trilobite.parallel.factory.make_pool.html">trilobite.parallel.factory.make_pool</a></li>
+</ul>
+</details></li>
+</ul>
+</details></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+
+<nav aria-label="Breadcrumb" class="d-print-none">
+  <ul class="bd-breadcrumbs">
+    
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="../../../../index.html" class="nav-link" aria-label="Home">
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+    
+    <li class="breadcrumb-item"><a href="../../../user_guide.html" class="nav-link">Trilobite User Guide</a></li>
+    
+    
+    <li class="breadcrumb-item"><a href="../overview.html" class="nav-link">Radiation Processes in Trilobite</a></li>
+    
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Blackbody Radiation</span></li>
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section id="blackbody-radiation">
+<span id="blackbody-user-guide"></span><h1>Blackbody Radiation<a class="headerlink" href="#blackbody-radiation" title="Link to this heading">#</a></h1>
+<p>The <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.blackbody.html#module-trilobite.radiation.blackbody" title="trilobite.radiation.blackbody"><code class="xref py py-mod docutils literal notranslate"><span class="pre">trilobite.radiation.blackbody</span></code></a> module provides the Planck function and
+related thermal-radiation utilities.  It follows the standard two-level API pattern
+used throughout Trilobite: private <code class="docutils literal notranslate"><span class="pre">_*_cgs</span></code> kernels operate on plain NumPy arrays
+with no unit overhead (suitable for MCMC hot loops), and public wrappers accept and
+return <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> objects for interactive use.</p>
+<nav class="contents local" id="contents">
+<ul class="simple">
+<li><p><a class="reference internal" href="#quick-start" id="id1">Quick Start</a></p></li>
+<li><p><a class="reference internal" href="#theory" id="id2">Theory</a></p>
+<ul>
+<li><p><a class="reference internal" href="#planck-function" id="id3">Planck Function</a></p></li>
+<li><p><a class="reference internal" href="#wien-displacement-law" id="id4">Wien Displacement Law</a></p></li>
+<li><p><a class="reference internal" href="#stefan-boltzmann-law" id="id5">Stefan-Boltzmann Law</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#usage-guide" id="id6">Usage Guide</a></p>
+<ul>
+<li><p><a class="reference internal" href="#per-frequency-specific-intensity" id="id7">Per-Frequency Specific Intensity</a></p></li>
+<li><p><a class="reference internal" href="#per-wavelength-specific-intensity" id="id8">Per-Wavelength Specific Intensity</a></p></li>
+<li><p><a class="reference internal" href="#wien-peak" id="id9">Wien Peak</a></p></li>
+<li><p><a class="reference internal" href="#bolometric-flux" id="id10">Bolometric Flux</a></p></li>
+<li><p><a class="reference internal" href="#using-cgs-kernels-directly" id="id11">Using CGS Kernels Directly</a></p></li>
+</ul>
+</li>
+<li><p><a class="reference internal" href="#api-reference" id="id12">API Reference</a></p></li>
+</ul>
+</nav>
+<hr class="docutils" />
+<section id="quick-start">
+<h2><a class="toc-backref" href="#id1" role="doc-backlink">Quick Start</a><a class="headerlink" href="#quick-start" title="Link to this heading">#</a></h2>
+<p>The example below plots <span class="math notranslate nohighlight">\(B_\nu\)</span> for three representative temperatures and marks
+the Wien peak of each.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_B</span><span class="p">,</span> <span class="n">wien_peak_frequency</span>
+
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e11</span><span class="p">,</span> <span class="mf">1e17</span><span class="p">,</span> <span class="mi">500</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+<span class="n">temperatures</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1e4</span><span class="p">,</span> <span class="mf">1e5</span><span class="p">,</span> <span class="mf">1e6</span><span class="p">]</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="sa">r</span><span class="s2">"$10^4\,\mathrm</span><span class="si">{K}</span><span class="s2">$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$10^5\,\mathrm</span><span class="si">{K}</span><span class="s2">$"</span><span class="p">,</span> <span class="sa">r</span><span class="s2">"$10^6\,\mathrm</span><span class="si">{K}</span><span class="s2">$"</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">7</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+
+<span class="k">for</span> <span class="n">T</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">temperatures</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">planck_B</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">)</span>
+    <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">loglog</span><span class="p">(</span><span class="n">nu</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">B</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">label</span><span class="p">)</span>
+    <span class="n">nu_peak</span> <span class="o">=</span> <span class="n">wien_peak_frequency</span><span class="p">(</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">B_peak</span> <span class="o">=</span> <span class="n">planck_B</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu_peak</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">axvline</span><span class="p">(</span><span class="n">nu_peak</span><span class="o">.</span><span class="n">value</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">line</span><span class="o">.</span><span class="n">get_color</span><span class="p">(),</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">"--"</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"Frequency $\nu$ [Hz]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="sa">r</span><span class="s2">"$B_\nu$ [erg s$^{-1}$ cm$^{-2}$ Hz$^{-1}$ sr$^{-1}$]"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Planck Function"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>(<a class="reference download internal" download="" href="../../../../_downloads/e89483ec88465a603df578fd79aa9dcc/blackbody-1.py"><code class="xref download docutils literal notranslate"><span class="pre">Source</span> <span class="pre">code</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/f8ed7abd24b9ddbd47220532138c11e9/blackbody-1.png"><code class="xref download docutils literal notranslate"><span class="pre">png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/6eb15faa582a383377d9eb771c15385e/blackbody-1.hires.png"><code class="xref download docutils literal notranslate"><span class="pre">hires.png</span></code></a>, <a class="reference download internal" download="" href="../../../../_downloads/68f12e6b55c584ddfe458a056cafeca6/blackbody-1.pdf"><code class="xref download docutils literal notranslate"><span class="pre">pdf</span></code></a>)</p>
+<figure class="align-default">
+<img alt="../../../../_images/blackbody-1.png" class="plot-directive" src="../../../../_images/blackbody-1.png" />
+</figure>
+<hr class="docutils" />
+</section>
+<section id="theory">
+<span id="blackbody-theory"></span><h2><a class="toc-backref" href="#id2" role="doc-backlink">Theory</a><a class="headerlink" href="#theory" title="Link to this heading">#</a></h2>
+<section id="planck-function">
+<h3><a class="toc-backref" href="#id3" role="doc-backlink">Planck Function</a><a class="headerlink" href="#planck-function" title="Link to this heading">#</a></h3>
+<p>The Planck function gives the specific intensity (spectral radiance) of a blackbody
+in thermal equilibrium at temperature <span class="math notranslate nohighlight">\(T\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[B_\nu(\nu, T) = \frac{2 h \nu^3}{c^2}
+                \frac{1}{e^{h\nu / k_{\rm B} T} - 1}\]</div>
+<p>in units of <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}\)</span>.  The equivalent
+expression per unit wavelength is:</p>
+<div class="math notranslate nohighlight">
+\[B_\lambda(\lambda, T) = \frac{2 h c^2}{\lambda^5}
+                        \frac{1}{e^{h c / \lambda k_{\rm B} T} - 1}\]</div>
+<p>in units of <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-3}\,sr^{-1}}\)</span>.  Both are related by
+<span class="math notranslate nohighlight">\(B_\lambda = B_\nu \cdot c / \lambda^2\)</span>.</p>
+<p><strong>Numerical stability.</strong> The denominator <span class="math notranslate nohighlight">\(e^x - 1\)</span> is evaluated using
+<code class="docutils literal notranslate"><span class="pre">numpy.expm1</span></code> to avoid cancellation errors in the Rayleigh-Jeans limit
+(<span class="math notranslate nohighlight">\(x \ll 1\)</span>).</p>
+</section>
+<section id="wien-displacement-law">
+<h3><a class="toc-backref" href="#id4" role="doc-backlink">Wien Displacement Law</a><a class="headerlink" href="#wien-displacement-law" title="Link to this heading">#</a></h3>
+<p>Differentiating <span class="math notranslate nohighlight">\(B_\nu\)</span> with respect to <span class="math notranslate nohighlight">\(\nu\)</span> and setting the result to
+zero yields the transcendental equation <span class="math notranslate nohighlight">\(x_{\rm peak} = 3(1 - e^{-x_{\rm peak}})\)</span>,
+whose solution is <span class="math notranslate nohighlight">\(x_{\rm peak} \approx 2.8214\)</span>.  The peak frequency is therefore:</p>
+<div class="math notranslate nohighlight">
+\[\nu_{\rm peak} = \frac{x_{\rm peak}\,k_{\rm B}}{h}\,T
+               \approx 5.879 \times 10^{10}\,T\ \mathrm{Hz\,K^{-1}}\]</div>
+<p>Similarly, the peak wavelength of <span class="math notranslate nohighlight">\(B_\lambda\)</span> satisfies:</p>
+<div class="math notranslate nohighlight">
+\[\lambda_{\rm peak} = \frac{b}{T},
+\qquad b \approx 0.2898\;\mathrm{cm\,K}\]</div>
+<p>Note that <span class="math notranslate nohighlight">\(\nu_{\rm peak}\)</span> and <span class="math notranslate nohighlight">\(\lambda_{\rm peak}\)</span> are not related by
+<span class="math notranslate nohighlight">\(c = \lambda \nu\)</span> because they are maxima of different representations of the
+spectrum.</p>
+</section>
+<section id="stefan-boltzmann-law">
+<h3><a class="toc-backref" href="#id5" role="doc-backlink">Stefan-Boltzmann Law</a><a class="headerlink" href="#stefan-boltzmann-law" title="Link to this heading">#</a></h3>
+<p>Integrating the Planck function over all frequencies and the outgoing hemisphere gives
+the bolometric radiative flux from a blackbody surface:</p>
+<div class="math notranslate nohighlight">
+\[F = \sigma_{\rm SB}\,T^4,
+\qquad \sigma_{\rm SB} \approx 5.670 \times 10^{-5}
+\;\mathrm{erg\,s^{-1}\,cm^{-2}\,K^{-4}}\]</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="usage-guide">
+<h2><a class="toc-backref" href="#id6" role="doc-backlink">Usage Guide</a><a class="headerlink" href="#usage-guide" title="Link to this heading">#</a></h2>
+<section id="per-frequency-specific-intensity">
+<h3><a class="toc-backref" href="#id7" role="doc-backlink">Per-Frequency Specific Intensity</a><a class="headerlink" href="#per-frequency-specific-intensity" title="Link to this heading">#</a></h3>
+<p>Use <a class="reference internal" href="#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> to evaluate <span class="math notranslate nohighlight">\(B_\nu\)</span>
+at an array of frequencies:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_B</span>
+
+<span class="n">nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e13</span><span class="p">,</span> <span class="mf">1e17</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">Hz</span>
+<span class="n">T</span>  <span class="o">=</span> <span class="mf">1e5</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="n">B</span>  <span class="o">=</span> <span class="n">planck_B</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">nu</span><span class="o">=</span><span class="n">nu</span><span class="p">)</span>          <span class="c1"># shape (200,), unit erg / (s cm**2 Hz sr)</span>
+</pre></div>
+</div>
+</section>
+<section id="per-wavelength-specific-intensity">
+<h3><a class="toc-backref" href="#id8" role="doc-backlink">Per-Wavelength Specific Intensity</a><a class="headerlink" href="#per-wavelength-specific-intensity" title="Link to this heading">#</a></h3>
+<p>Use <a class="reference internal" href="#trilobite.radiation.blackbody.planck_B" title="trilobite.radiation.blackbody.planck_B"><code class="xref py py-func docutils literal notranslate"><span class="pre">planck_B()</span></code></a> with the <code class="docutils literal notranslate"><span class="pre">lam</span></code> keyword to evaluate <span class="math notranslate nohighlight">\(B_\lambda\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">astropy.units</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">planck_B</span>
+
+<span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e-6</span><span class="p">,</span> <span class="mf">1e-3</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">cm</span>   <span class="c1"># UV through IR</span>
+<span class="n">T</span>   <span class="o">=</span> <span class="mf">5778.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="n">B</span>   <span class="o">=</span> <span class="n">planck_B</span><span class="p">(</span><span class="n">T</span><span class="p">,</span> <span class="n">lam</span><span class="o">=</span><span class="n">lam</span><span class="p">)</span>      <span class="c1"># unit erg / (s cm**3 sr)</span>
+</pre></div>
+</div>
+</section>
+<section id="wien-peak">
+<h3><a class="toc-backref" href="#id9" role="doc-backlink">Wien Peak</a><a class="headerlink" href="#wien-peak" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="#trilobite.radiation.blackbody.wien_peak_frequency" title="trilobite.radiation.blackbody.wien_peak_frequency"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_frequency()</span></code></a> and
+<a class="reference internal" href="#trilobite.radiation.blackbody.wien_peak_wavelength" title="trilobite.radiation.blackbody.wien_peak_wavelength"><code class="xref py py-func docutils literal notranslate"><span class="pre">wien_peak_wavelength()</span></code></a> return the peak
+of <span class="math notranslate nohighlight">\(B_\nu\)</span> and <span class="math notranslate nohighlight">\(B_\lambda\)</span>, respectively:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">wien_peak_frequency</span><span class="p">,</span> <span class="n">wien_peak_wavelength</span>
+
+<span class="n">T</span> <span class="o">=</span> <span class="mf">5778.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wien_peak_frequency</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">THz</span><span class="p">))</span>    <span class="c1"># ~339 THz for the Sun</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">wien_peak_wavelength</span><span class="p">(</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">nm</span><span class="p">))</span>    <span class="c1"># ~501 nm for the Sun</span>
+</pre></div>
+</div>
+</section>
+<section id="bolometric-flux">
+<h3><a class="toc-backref" href="#id10" role="doc-backlink">Bolometric Flux</a><a class="headerlink" href="#bolometric-flux" title="Link to this heading">#</a></h3>
+<p><a class="reference internal" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux" title="trilobite.radiation.blackbody.stefan_boltzmann_flux"><code class="xref py py-func docutils literal notranslate"><span class="pre">stefan_boltzmann_flux()</span></code></a> returns
+<span class="math notranslate nohighlight">\(F = \sigma_{\rm SB} T^4\)</span>:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">astropy</span><span class="w"> </span><span class="kn">import</span> <span class="n">units</span> <span class="k">as</span> <span class="n">u</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">stefan_boltzmann_flux</span>
+
+<span class="n">F</span> <span class="o">=</span> <span class="n">stefan_boltzmann_flux</span><span class="p">(</span><span class="mf">5778.0</span> <span class="o">*</span> <span class="n">u</span><span class="o">.</span><span class="n">K</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">F</span><span class="o">.</span><span class="n">to</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">L_sun</span> <span class="o">/</span> <span class="n">u</span><span class="o">.</span><span class="n">R_sun</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>    <span class="c1"># should be ~1 L_sun R_sun^-2</span>
+</pre></div>
+</div>
+</section>
+<section id="using-cgs-kernels-directly">
+<h3><a class="toc-backref" href="#id11" role="doc-backlink">Using CGS Kernels Directly</a><a class="headerlink" href="#using-cgs-kernels-directly" title="Link to this heading">#</a></h3>
+<p>For performance-critical code (e.g. inside an MCMC loop), import the private CGS
+functions directly and pass plain NumPy arrays:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.blackbody</span><span class="w"> </span><span class="kn">import</span> <span class="n">_log_planck_fnu_cgs</span>
+
+<span class="n">log_nu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">geomspace</span><span class="p">(</span><span class="mf">1e13</span><span class="p">,</span> <span class="mf">1e17</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>   <span class="c1"># natural log, Hz</span>
+<span class="n">log_T</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1e5</span><span class="p">)</span>                               <span class="c1"># natural log, K</span>
+<span class="n">log_B</span>  <span class="o">=</span> <span class="n">_log_planck_fnu_cgs</span><span class="p">(</span><span class="n">log_nu</span><span class="p">,</span> <span class="n">log_T</span><span class="p">)</span>       <span class="c1"># plain ndarray, log erg / (s cm**2 Hz sr)</span>
+<span class="n">B</span>      <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">log_B</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>The CGS kernels accept only plain NumPy arrays and Python floats.  Passing an
+<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a> will raise an error.  No unit checking is
+performed — it is the caller’s responsibility to pass values in CGS.</p>
+</div>
+</section>
+</section>
+<hr class="docutils" />
+<section id="api-reference">
+<h2><a class="toc-backref" href="#id12" role="doc-backlink">API Reference</a><a class="headerlink" href="#api-reference" title="Link to this heading">#</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_B">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_B</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_B"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_B" title="Link to this definition">#</a></dt>
+<dd><p>Planck spectral radiance <span class="math notranslate nohighlight">\(B_\nu\)</span> or <span class="math notranslate nohighlight">\(B_\lambda\)</span>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Frequency.  Convertible to Hz.  Mutually exclusive with <em>lam</em>.</p></li>
+<li><p><strong>lam</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Wavelength.  Convertible to cm.  Mutually exclusive with <em>nu</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(B_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}\,sr^{-1}}\)</span> when <em>nu</em> is given,
+or <span class="math notranslate nohighlight">\(B_\lambda\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}\,sr^{-1}}\)</span> when <em>lam</em> is given.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_surface_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_surface_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_surface_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_surface_flux" title="Link to this definition">#</a></dt>
+<dd><p>Outward specific flux <span class="math notranslate nohighlight">\(\pi B_\nu\)</span> or <span class="math notranslate nohighlight">\(\pi B_\lambda\)</span> per unit area of a blackbody surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Frequency.  Convertible to Hz.  Mutually exclusive with <em>lam</em>.</p></li>
+<li><p><strong>lam</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Wavelength.  Convertible to cm.  Mutually exclusive with <em>nu</em>.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(F_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}\)</span> when <em>nu</em> is given,
+or <span class="math notranslate nohighlight">\(F_\lambda\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}\)</span> when <em>lam</em> is given.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.planck_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">planck_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">R</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">nu</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">redshift</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">luminosity_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">angular_diameter_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">proper_distance</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cosmology</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v8.0)"><span class="pre">Cosmology</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#planck_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.planck_flux" title="Link to this definition">#</a></dt>
+<dd><p>Observed specific flux density <span class="math notranslate nohighlight">\(f_\nu\)</span> or <span class="math notranslate nohighlight">\(f_\lambda\)</span> from a spherical blackbody.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Blackbody temperature.  Convertible to K.</p></li>
+<li><p><strong>R</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Source radius.  Convertible to cm.</p></li>
+<li><p><strong>nu</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Observer-frame frequency.  Convertible to Hz.  Mutually exclusive with <em>lam</em>.</p></li>
+<li><p><strong>lam</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Observer-frame wavelength.  Convertible to cm.  Mutually exclusive with <em>nu</em>.</p></li>
+<li><p><strong>redshift</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <em>optional</em>) – Cosmological redshift of the source.</p></li>
+<li><p><strong>luminosity_distance</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Luminosity distance to the source.</p></li>
+<li><p><strong>angular_diameter_distance</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Angular diameter distance to the source.</p></li>
+<li><p><strong>proper_distance</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, <em>optional</em>) – Proper (comoving radial) distance to the source.</p></li>
+<li><p><strong>cosmology</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.cosmology.Cosmology.html#astropy.cosmology.Cosmology" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Cosmology</span></code></a>, <em>optional</em>) – Cosmology used to convert between redshift and distance measures.
+If not provided, the configured default cosmology is used.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(f_\nu\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,Hz^{-1}}\)</span> when <em>nu</em> is given,
+or <span class="math notranslate nohighlight">\(f_\lambda\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}\,cm^{-1}}\)</span> when <em>lam</em> is given.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+<p class="rubric">Notes</p>
+<p>Exactly one of <em>nu</em> or <em>lam</em> and exactly one of <em>redshift</em>, <em>luminosity_distance</em>,
+<em>angular_diameter_distance</em>, or <em>proper_distance</em> must be provided.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.wien_peak_frequency">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_frequency</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_frequency"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.wien_peak_frequency" title="Link to this definition">#</a></dt>
+<dd><p>Peak frequency <span class="math notranslate nohighlight">\(\nu_\mathrm{peak}\)</span> from Wien’s displacement law.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\nu_\mathrm{peak}\)</span> in Hz.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.wien_peak_wavelength">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">wien_peak_wavelength</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#wien_peak_wavelength"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.wien_peak_wavelength" title="Link to this definition">#</a></dt>
+<dd><p>Peak wavelength <span class="math notranslate nohighlight">\(\lambda_\mathrm{peak}\)</span> from Wien’s displacement law.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(\lambda_\mathrm{peak}\)</span> in cm.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="trilobite.radiation.blackbody.stefan_boltzmann_flux">
+<span class="sig-prename descclassname"><span class="pre">trilobite.radiation.blackbody.</span></span><span class="sig-name descname"><span class="pre">stefan_boltzmann_flux</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">T</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">_UnitBearingArrayLike</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><span class="pre">Quantity</span></a></span></span><a class="reference internal" href="../../../../_modules/trilobite/radiation/blackbody.html#stefan_boltzmann_flux"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux" title="Link to this definition">#</a></dt>
+<dd><p>Bolometric radiative flux <span class="math notranslate nohighlight">\(F = \sigma_\mathrm{SB} T^4\)</span> per unit area of a blackbody surface.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>T</strong> (<a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>) – Temperature.  Convertible to K.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="math notranslate nohighlight">\(F\)</span> in <span class="math notranslate nohighlight">\(\mathrm{erg\,s^{-1}\,cm^{-2}}\)</span>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../free_free/free_free_theory.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Free-Free Radiation Theory</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="../opacity/opacity_user_guide.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Opacity Laws</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav id="pst-page-toc-nav" class="page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="pst-show_toc_level nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-start">Quick Start</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#theory">Theory</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#planck-function">Planck Function</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wien-displacement-law">Wien Displacement Law</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#stefan-boltzmann-law">Stefan-Boltzmann Law</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-guide">Usage Guide</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-frequency-specific-intensity">Per-Frequency Specific Intensity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#per-wavelength-specific-intensity">Per-Wavelength Specific Intensity</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#wien-peak">Wien Peak</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bolometric-flux">Bolometric Flux</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#using-cgs-kernels-directly">Using CGS Kernels Directly</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#api-reference">API Reference</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_B"><code class="docutils literal notranslate"><span class="pre">planck_B()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_surface_flux"><code class="docutils literal notranslate"><span class="pre">planck_surface_flux()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.planck_flux"><code class="docutils literal notranslate"><span class="pre">planck_flux()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.wien_peak_frequency"><code class="docutils literal notranslate"><span class="pre">wien_peak_frequency()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.wien_peak_wavelength"><code class="docutils literal notranslate"><span class="pre">wien_peak_wavelength()</span></code></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#trilobite.radiation.blackbody.stefan_boltzmann_flux"><code class="docutils literal notranslate"><span class="pre">stefan_boltzmann_flux()</span></code></a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+
+  <div class="tocsection sourcelink">
+    <a href="../../../../_sources/reference/physics/radiation/blackbody/blackbody.rst.txt">
+      <i class="fa-solid fa-file-lines"></i> Show Source
+    </a>
+  </div>
+</div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../../../_static/scripts/bootstrap.js?digest=18bd87630a240e9c25be"></script>
+<script defer src="../../../../_static/scripts/pydata-sphinx-theme.js?digest=18bd87630a240e9c25be"></script>
+
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright 2025, Eliza Diggins.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<p class="theme-version">
+  <!-- # L10n: Setting the PST URL as an argument as this does not need to be localized -->
+  Built with the <a href="https://pydata-sphinx-theme.readthedocs.io/en/stable/index.html">PyData Sphinx Theme</a> 0.23.0.
+</p></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

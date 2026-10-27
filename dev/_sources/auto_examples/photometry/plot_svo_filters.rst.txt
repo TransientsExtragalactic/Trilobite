@@ -104,6 +104,7 @@ filters) and inspect the five bluest entries.
 
  .. code-block:: none
 
+    WARNING: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored. [astropy.config.paths]
     HST/WFC3_UVIS1: 63 filters in the SVO catalogue.
            filterID        WavelengthEff        FWHM     
                               Angstrom        Angstrom   
@@ -145,6 +146,8 @@ transmission curve already normalised into integration weights.
 
  .. code-block:: none
 
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
     PhotometryFilter('HST/WFC3_UVIS1.F555W', lam_eff=5256.6 AA, weighting='photon', N=3686)
       effective wavelength : 5256.6 Å
       equivalent width     : 450.4 Å
@@ -192,6 +195,16 @@ in a single matrix multiplication — the hot-loop method for MCMC.
 
  .. code-block:: none
 
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
+    /opt/hostedtoolcache/Python/3.11.17/x64/lib/python3.11/site-packages/astropy/config/paths.py:261: AstropyUserWarning: ASTROPY_CACHE_DIR is set to /home/runner/.astropy-cache, but no such file or directory was found. This environment variable will be ignored.
+      return self.find_directory_elements(namespace).join()
     FilterBundle(['F275W', 'F336W', 'F438W', 'F555W', 'F814W'], N_common=8437)
       F275W   lam_eff = 2699 Å
       F336W   lam_eff = 3347 Å
@@ -263,7 +276,7 @@ https://svo2.cab.inta-csic.es/svo/theory/fps/ and replace ``"HST"`` /
 
 .. rst-class:: sphx-glr-timing
 
-   **Total running time of the script:** (0 minutes 15.822 seconds)
+   **Total running time of the script:** (0 minutes 13.061 seconds)
 
 
 .. _sphx_glr_download_auto_examples_photometry_plot_svo_filters.py:
