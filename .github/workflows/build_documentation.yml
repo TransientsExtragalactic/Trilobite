@@ -24,6 +24,11 @@ on:
     tags:
       - "v*"               # Match version tags like v1.2.0
   workflow_dispatch:
+    inputs:
+      fresh:
+        description: "Ignore the gallery cache and re-execute every example"
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -70,6 +75,31 @@ jobs:
         run: python setup.py build_ext --inplace
       - name: Install documentation dependencies
         run: pip install -e .[docs] --no-build-isolation
+
+      # Cache the executed sphinx-gallery output. Sphinx-gallery stores an MD5 of each
+      # example next to its generated files and skips any example whose source is
+      # unchanged, so restoring `auto_examples` means only edited examples re-run.
+      # The MD5 covers the example file only, not the library it calls. The key therefore
+      # includes a hash of the library and examples: an exact hit means nothing changed,
+      # while a miss falls back (restore-keys) to the newest cache, accepting that
+      # unchanged examples may show output from slightly older library code. Release tags
+      # and manual `fresh` runs skip the restore so published docs are always rebuilt
+      # from scratch. The astropy cache directory is pinned (astropy >= 8 defaults to
+      # ~/.cache/astropy, older versions to ~/.astropy/cache) so that astroquery's SVO
+      # responses persist between runs and the cache path is version-independent.
+      - name: Point astropy cache at a fixed directory
+        run: echo "ASTROPY_CACHE_DIR=$HOME/.astropy-cache" >> "$GITHUB_ENV"
+
+      - name: Cache gallery output
+        if: ${{ !startsWith(github.ref, 'refs/tags/') && !inputs.fresh }}
+        uses: actions/cache@v4
+        with:
+          path: |
+            docs/source/auto_examples
+            ~/.astropy-cache
+          key: ${{ runner.os }}-docs-gallery-${{ matrix.python-version }}-${{ hashFiles('trilobite/**/*.py', 'trilobite/**/*.pyx', 'trilobite/**/*.pxd', 'docs/source/galleries/**', 'docs/source/conf.py') }}
+          restore-keys: |
+            ${{ runner.os }}-docs-gallery-${{ matrix.python-version }}-
 
       # Actually build the documentation. We use the `-j auto` flag to
       # allow Sphinx to use all available CPU cores for faster builds.
