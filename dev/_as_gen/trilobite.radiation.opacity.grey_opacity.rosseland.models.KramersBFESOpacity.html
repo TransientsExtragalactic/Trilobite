@@ -2283,6 +2283,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2479,6 +2480,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html">trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5</a></li>
@@ -2522,6 +2524,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -3236,10 +3239,10 @@ range (<span class="math notranslate nohighlight">\(T \sim 10^4\text{–}10^7\,\
 photoionisation is the dominant Kramers contribution but the electron
 scattering floor becomes non-negligible in the hotter, more diffuse
 upper layers.  The bound-free coefficient (<code class="docutils literal notranslate"><span class="pre">4.34e25</span></code>) is large enough
-that the free-free term (<a class="reference internal" href="trilobite.radiation.opacity.KramersFFOpacity.html#trilobite.radiation.opacity.KramersFFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFOpacity</span></code></a>, <code class="docutils literal notranslate"><span class="pre">3.68e22</span></code>) is
+that the free-free term (<a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersFFOpacity</span></code></a>, <code class="docutils literal notranslate"><span class="pre">3.68e22</span></code>) is
 essentially irrelevant, making this a good single-mechanism approximation
 to the full Kramers + electron-scattering model.</p>
-<p>Prefer <a class="reference internal" href="trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a> when you want both FF and BF included.</p>
+<p>Prefer <a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a> when you want both FF and BF included.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
@@ -3254,11 +3257,11 @@ Default <code class="docutils literal notranslate"><span class="pre">0.34</span>
 <div class="admonition seealso">
 <p class="admonition-title">See also</p>
 <dl class="simple">
-<dt><a class="reference internal" href="trilobite.radiation.opacity.KramersFFESOpacity.html#trilobite.radiation.opacity.KramersFFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersFFESOpacity</span></code></a></dt><dd><p>Free-free variant of the same floor structure.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersFFESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersFFESOpacity</span></code></a></dt><dd><p>Free-free variant of the same floor structure.</p>
 </dd>
-<dt><a class="reference internal" href="trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Combined FF + BF form — preferred in most contexts.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Combined FF + BF form — preferred in most contexts.</p>
 </dd>
-<dt><a class="reference internal" href="trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a></dt><dd><p>Full numerical opacity including metal-line blanketing.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a></dt><dd><p>Full numerical opacity including metal-line blanketing.</p>
 </dd>
 </dl>
 </div>

@@ -53,6 +53,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/trilobite.inference.sampling.mcmc.EmceeSampler.generate_initial_state';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.23.0';
@@ -2282,6 +2283,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2478,6 +2480,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html">trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5</a></li>
@@ -2521,6 +2524,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -3220,25 +3224,37 @@
 <h1>trilobite.inference.sampling.mcmc.EmceeSampler.generate_initial_state<a class="headerlink" href="#trilobite-inference-sampling-mcmc-emceesampler-generate-initial-state" title="Link to this heading">#</a></h1>
 <dl class="py method">
 <dt class="sig sig-object py" id="trilobite.inference.sampling.mcmc.EmceeSampler.generate_initial_state">
-<span class="sig-prename descclassname"><span class="pre">EmceeSampler.</span></span><span class="sig-name descname"><span class="pre">generate_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.001</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/trilobite/inference/sampling/mcmc.html#EmceeSampler.generate_initial_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.inference.sampling.mcmc.EmceeSampler.generate_initial_state" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">EmceeSampler.</span></span><span class="sig-name descname"><span class="pre">generate_initial_state</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><span class="pre">float</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">0.01</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">optimize</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><span class="pre">bool</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rng</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><span class="pre">Generator</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_attempts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><span class="pre">int</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><span class="pre">ndarray</span></a></span></span><a class="reference internal" href="../_modules/trilobite/inference/sampling/mcmc.html#EmceeSampler.generate_initial_state"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.inference.sampling.mcmc.EmceeSampler.generate_initial_state" title="Link to this definition">#</a></dt>
 <dd><p>Generate an initial walker ensemble around the problem’s initial point.</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">optimize</span></code> is set, the initial point is first moved to a nearby maximum of the posterior
+(see <a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html#trilobite.inference.sampling.utils.find_posterior_maximum" title="trilobite.inference.sampling.utils.find_posterior_maximum"><code class="xref py py-func docutils literal notranslate"><span class="pre">find_posterior_maximum()</span></code></a>) and the walkers are
+scattered around that. This matters when the initial guess is poor: from a point where the
+log-posterior is, say, <span class="math notranslate nohighlight">\(-10^8\)</span>, a sizeable fraction of walkers can fall into spurious
+corners of the prior and never reach the posterior bulk.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>scale</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#float" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>) – Fractional scale of the log-space Gaussian perturbation applied to
-each component of the initial parameter vector.  Walkers are placed
+each component of the starting point.  Walkers are placed
 at <code class="docutils literal notranslate"><span class="pre">theta0</span> <span class="pre">*</span> <span class="pre">exp(scale</span> <span class="pre">*</span> <span class="pre">N(0,</span> <span class="pre">1))</span></code>, which is scale-invariant and
 works correctly for parameters that span many orders of magnitude.
-For any component whose initial value is exactly zero an absolute
+For any component whose starting value is exactly zero an absolute
 perturbation of <code class="docutils literal notranslate"><span class="pre">scale</span></code> is used instead.</p></li>
-<li><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.random.Generator</span></code></a>, <em>optional</em>) – Random number generator.</p></li>
+<li><p><strong>optimize</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#bool" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>) – Whether to optimize the initial point before scattering the walkers. This costs a
+few thousand posterior evaluations. Default <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p></li>
+<li><p><strong>rng</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/random/generator.html#numpy.random.Generator" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Generator</span></code></a>, <em>optional</em>) – Random number generator.</p></li>
+<li><p><strong>max_attempts</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/functions.html#int" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>) – Walkers whose proposed starting point has a non-finite log-posterior
+(e.g. outside the prior support) are redrawn up to this many times.</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
 <dd class="field-even"><p>Initial walker positions with shape <code class="docutils literal notranslate"><span class="pre">(n_walkers,</span> <span class="pre">n_dim)</span></code>.</p>
 </dd>
 <dt class="field-odd">Return type<span class="colon">:</span></dt>
-<dd class="field-odd"><p><code class="xref py py-class docutils literal notranslate"><span class="pre">np.ndarray</span></code></p>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.5)"><code class="xref py py-class docutils literal notranslate"><span class="pre">numpy.ndarray</span></code></a></p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#RuntimeError" title="(in Python v3.15)"><strong>RuntimeError</strong></a> – If some walkers still have a non-finite log-posterior after <code class="docutils literal notranslate"><span class="pre">max_attempts</span></code> redraws.</p>
 </dd>
 </dl>
 </dd></dl>

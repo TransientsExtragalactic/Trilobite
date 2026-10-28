@@ -2282,6 +2282,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2478,6 +2479,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html">trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5</a></li>
@@ -2521,6 +2523,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -3254,16 +3257,19 @@ result and reshaped internally to:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot" title="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">corner_plot</span></code></a>([burn, thin, parameters, ...])</p></td>
 <td><p>Generate a corner plot of the posterior samples.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a>(path)</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html#trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers" title="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">find_stranded_walkers</span></code></a>([burn, threshold])</p></td>
+<td><p>Identify walkers stuck far below the rest of the ensemble in log-posterior.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a>(path)</p></td>
 <td><p>Reconstruct a <a class="reference internal" href="trilobite.inference.sampling.result.SamplingResult.html#trilobite.inference.sampling.result.SamplingResult" title="trilobite.inference.sampling.result.SamplingResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code></a> from disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_flat_samples</span></code></a>([burn, thin])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_flat_samples</span></code></a>([burn, thin, exclude_walkers])</p></td>
 <td><p>Return flattened MCMC samples with optional burn-in and thinning.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a>(path[, overwrite])</p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a>(path[, overwrite])</p></td>
 <td><p>Serialize the sampling result to disk.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot" title="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_plot</span></code></a>(parameter[, burn, thin, fig, axes])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot" title="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_plot</span></code></a>(parameter[, burn, thin, fig, axes])</p></td>
 <td><p>Plot the trace (chain evolution) for a single parameter.</p></td>
 </tr>
 </tbody>

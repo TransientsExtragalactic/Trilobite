@@ -453,6 +453,7 @@
 <span class="sd">uncertainties based on observational data.</span>
 <span class="sd">"""</span>
 
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
@@ -461,6 +462,7 @@
 
 <span class="kn">from</span><span class="w"> </span><span class="nn">.base</span><span class="w"> </span><span class="kn">import</span> <span class="n">Sampler</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">.result</span><span class="w"> </span><span class="kn">import</span> <span class="n">MCMCSamplingResult</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">find_posterior_maximum</span>
 
 <span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
     <span class="kn">from</span><span class="w"> </span><span class="nn">..problem</span><span class="w"> </span><span class="kn">import</span> <span class="n">InferenceProblem</span>
@@ -540,46 +542,81 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">generate_initial_state</span><span class="p">(</span>
         <span class="bp">self</span><span class="p">,</span>
         <span class="o">*</span><span class="p">,</span>
-        <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-3</span><span class="p">,</span>
+        <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1e-2</span><span class="p">,</span>
+        <span class="n">optimize</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">max_attempts</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Generate an initial walker ensemble around the problem's initial point.</span>
+
+<span class="sd">        If ``optimize`` is set, the initial point is first moved to a nearby maximum of the posterior</span>
+<span class="sd">        (see :func:`~trilobite.inference.sampling.utils.find_posterior_maximum`) and the walkers are</span>
+<span class="sd">        scattered around that. This matters when the initial guess is poor: from a point where the</span>
+<span class="sd">        log-posterior is, say, :math:`-10^8`, a sizeable fraction of walkers can fall into spurious</span>
+<span class="sd">        corners of the prior and never reach the posterior bulk.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        scale : float</span>
 <span class="sd">            Fractional scale of the log-space Gaussian perturbation applied to</span>
-<span class="sd">            each component of the initial parameter vector.  Walkers are placed</span>
+<span class="sd">            each component of the starting point.  Walkers are placed</span>
 <span class="sd">            at ``theta0 * exp(scale * N(0, 1))``, which is scale-invariant and</span>
 <span class="sd">            works correctly for parameters that span many orders of magnitude.</span>
-<span class="sd">            For any component whose initial value is exactly zero an absolute</span>
+<span class="sd">            For any component whose starting value is exactly zero an absolute</span>
 <span class="sd">            perturbation of ``scale`` is used instead.</span>
-<span class="sd">        rng : numpy.random.Generator, optional</span>
+<span class="sd">        optimize : bool</span>
+<span class="sd">            Whether to optimize the initial point before scattering the walkers. This costs a</span>
+<span class="sd">            few thousand posterior evaluations. Default ``True``.</span>
+<span class="sd">        rng : ~numpy.random.Generator, optional</span>
 <span class="sd">            Random number generator.</span>
+<span class="sd">        max_attempts : int</span>
+<span class="sd">            Walkers whose proposed starting point has a non-finite log-posterior</span>
+<span class="sd">            (e.g. outside the prior support) are redrawn up to this many times.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
-<span class="sd">        np.ndarray</span>
+<span class="sd">        numpy.ndarray</span>
 <span class="sd">            Initial walker positions with shape ``(n_walkers, n_dim)``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If some walkers still have a non-finite log-posterior after ``max_attempts`` redraws.</span>
 <span class="sd">        """</span>
         <span class="c1"># Grab the RNG if it is not given to us.</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 
         <span class="c1"># Grab the initial theta and dimensionality</span>
         <span class="n">theta0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_theta</span>
+        <span class="k">if</span> <span class="n">optimize</span><span class="p">:</span>
+            <span class="n">theta0</span> <span class="o">=</span> <span class="n">find_posterior_maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">,</span> <span class="n">theta0</span><span class="p">)</span>
         <span class="n">ndim</span> <span class="o">=</span> <span class="n">theta0</span><span class="o">.</span><span class="n">size</span>
-
-        <span class="n">noise</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
 
         <span class="c1"># Use a multiplicative (log-space) perturbation so that the spread is</span>
         <span class="c1"># proportional to the magnitude of each parameter.  This avoids the</span>
         <span class="c1"># near-zero absolute perturbations that arise when theta0 contains</span>
         <span class="c1"># values spanning many orders of magnitude.</span>
         <span class="n">nonzero</span> <span class="o">=</span> <span class="n">theta0</span> <span class="o">!=</span> <span class="mf">0.0</span>
-        <span class="n">positions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nonzero</span><span class="p">,</span> <span class="n">theta0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">noise</span><span class="p">),</span> <span class="n">noise</span><span class="p">)</span>
 
-        <span class="k">return</span> <span class="n">positions</span></div>
+        <span class="k">def</span><span class="w"> </span><span class="nf">_draw</span><span class="p">(</span><span class="n">n</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">rng</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">ndim</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">nonzero</span><span class="p">,</span> <span class="n">theta0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">noise</span><span class="p">),</span> <span class="n">noise</span><span class="p">)</span>
+
+        <span class="n">positions</span> <span class="o">=</span> <span class="n">_draw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="p">)</span>
+
+        <span class="c1"># A wide ball can step outside the prior support (e.g. near a bound), which</span>
+        <span class="c1"># emcee cannot start from. Redraw those walkers.</span>
+        <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_attempts</span><span class="p">):</span>
+            <span class="n">invalid</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="k">for</span> <span class="n">pos</span> <span class="ow">in</span> <span class="n">positions</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">invalid</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">return</span> <span class="n">positions</span>
+            <span class="n">positions</span><span class="p">[</span><span class="n">invalid</span><span class="p">]</span> <span class="o">=</span> <span class="n">_draw</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">invalid</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Could not place all </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2"> walkers at a finite log-posterior after </span><span class="si">{</span><span class="n">max_attempts</span><span class="si">}</span><span class="s2"> attempts "</span>
+            <span class="sa">f</span><span class="s2">"with scale=</span><span class="si">{</span><span class="n">scale</span><span class="si">}</span><span class="s2">. Reduce `scale` or move the initial values away from the prior bounds."</span>
+        <span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="EmceeSampler.run">
@@ -667,11 +704,25 @@
         <span class="c1"># --------------------------------------------------</span>
         <span class="c1"># Build result</span>
         <span class="c1"># --------------------------------------------------</span>
-        <span class="k">return</span> <span class="n">MCMCSamplingResult</span><span class="p">(</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">MCMCSamplingResult</span><span class="p">(</span>
             <span class="n">samples</span><span class="o">=</span><span class="n">chain</span><span class="p">,</span>
             <span class="n">problem</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="p">,</span>
             <span class="n">log_posterior</span><span class="o">=</span><span class="n">logp</span><span class="p">,</span>
-        <span class="p">)</span></div>
+        <span class="p">)</span>
+
+        <span class="c1"># Walkers that never reach the bulk of the posterior silently bias flat-chain statistics,</span>
+        <span class="c1"># so flag them rather than leaving the user to discover it in a corner plot.</span>
+        <span class="n">stranded</span> <span class="o">=</span> <span class="n">result</span><span class="o">.</span><span class="n">find_stranded_walkers</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">stranded</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">stranded</span><span class="o">.</span><span class="n">size</span><span class="si">}</span><span class="s2"> of </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="si">}</span><span class="s2"> walkers (indices </span><span class="si">{</span><span class="n">stranded</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">) are stranded far below "</span>
+                <span class="s2">"the rest of the ensemble in log-posterior. They bias the posterior statistics; exclude them with "</span>
+                <span class="s2">"`get_flat_samples(exclude_walkers=...)` or restart from a better initial state."</span><span class="p">,</span>
+                <span class="ne">RuntimeWarning</span><span class="p">,</span>
+                <span class="n">stacklevel</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
 </div>
 
 </pre></div>

@@ -458,7 +458,7 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Sequence</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">emcee</span>
 <span class="kn">import</span><span class="w"> </span><span class="nn">h5py</span>
@@ -862,6 +862,7 @@
         <span class="bp">self</span><span class="p">,</span>
         <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">thin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="n">exclude_walkers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return flattened MCMC samples with optional burn-in and thinning.</span>
@@ -872,6 +873,8 @@
 <span class="sd">            Number of initial steps to discard.</span>
 <span class="sd">        thin : int, optional</span>
 <span class="sd">            Thinning factor.</span>
+<span class="sd">        exclude_walkers : sequence of int, optional</span>
+<span class="sd">            Indices of walkers to drop entirely, e.g. the output of :meth:`find_stranded_walkers`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -879,9 +882,54 @@
 <span class="sd">            Array of shape (n_effective_samples, n_dim).</span>
 <span class="sd">        """</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">burn</span><span class="p">::</span><span class="n">thin</span><span class="p">,</span> <span class="p">:,</span> <span class="p">:]</span>
+        <span class="k">if</span> <span class="n">exclude_walkers</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">exclude_walkers</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="n">keep</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exclude_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">,</span> <span class="p">:]</span>
+
         <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
 
         <span class="k">return</span> <span class="n">samples</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n_steps</span> <span class="o">*</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="MCMCSamplingResult.find_stranded_walkers">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html#trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_stranded_walkers</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">burn</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">int</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Identify walkers stuck far below the rest of the ensemble in log-posterior.</span>
+
+<span class="sd">        A walker is flagged when its median log-posterior after burn-in lies more than ``threshold``</span>
+<span class="sd">        below the median over all walkers. Walkers that have converged to the same distribution have</span>
+<span class="sd">        per-walker medians that agree to within a few units, whereas a stranded walker (typically one</span>
+<span class="sd">        flung to a prior edge early in the run) sits many orders of magnitude lower and never rejoins</span>
+<span class="sd">        the ensemble.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        burn : int, optional</span>
+<span class="sd">            Number of initial steps to discard. Defaults to half of the chain.</span>
+<span class="sd">        threshold : float, optional</span>
+<span class="sd">            Required log-posterior deficit, relative to the ensemble median, for a walker to be</span>
+<span class="sd">            flagged. Default 20.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            Integer indices of the flagged walkers. Empty if there are none, or if no log-posterior</span>
+<span class="sd">            was stored.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_posterior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">burn</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_steps</span> <span class="o">//</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">burn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="n">burn</span>
+        <span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">log_posterior</span><span class="p">[</span><span class="n">burn</span><span class="p">:]</span>
+
+        <span class="c1"># Non-finite values (-inf from prior violations) count as arbitrarily low, so they push a walker's</span>
+        <span class="c1"># median down without poisoning the statistic with NaNs.</span>
+        <span class="n">walker_logp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logp</span><span class="p">),</span> <span class="n">logp</span><span class="p">,</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">walker_logp</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">flatnonzero</span><span class="p">(</span><span class="n">walker_logp</span> <span class="o">&lt;</span> <span class="n">reference</span> <span class="o">-</span> <span class="n">threshold</span><span class="p">)</span></div>
 
 
     <span class="c1"># ------------------------------------------------ #</span>

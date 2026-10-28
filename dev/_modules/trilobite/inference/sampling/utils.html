@@ -453,7 +453,64 @@
 <span class="sd">sampling outputs.</span>
 <span class="sd">"""</span>
 
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
+
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.optimize</span><span class="w"> </span><span class="kn">import</span> <span class="n">minimize</span>
+
+
+<span class="c1"># --------------------------------------- #</span>
+<span class="c1"># Optimization Utilities                  #</span>
+<span class="c1"># --------------------------------------- #</span>
+<div class="viewcode-block" id="find_posterior_maximum">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.sampling.utils.find_posterior_maximum.html#trilobite.inference.sampling.utils.find_posterior_maximum">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_posterior_maximum</span><span class="p">(</span>
+    <span class="n">log_posterior</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[</span><span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">],</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">theta0</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+    <span class="o">*</span><span class="p">,</span>
+    <span class="n">maxiter</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4000</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Locally maximize a log-posterior starting from ``theta0``.</span>
+
+<span class="sd">    This is used to move a poor initial guess into the bulk of the posterior before sampling. A</span>
+<span class="sd">    derivative-free Nelder-Mead search is run in coordinates :math:`u_i = (\theta_i - \theta_{0,i})/|\theta_{0,i}|`</span>
+<span class="sd">    (absolute units for components that start at zero), so parameters spanning many orders of magnitude are</span>
+<span class="sd">    treated on equal footing. Points with a non-finite log-posterior are treated as infinitely bad.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    log_posterior : callable</span>
+<span class="sd">        Function mapping a parameter vector of shape ``(n_dim,)`` to the (unnormalized) log-posterior.</span>
+<span class="sd">    theta0 : numpy.ndarray</span>
+<span class="sd">        Starting parameter vector.</span>
+<span class="sd">    maxiter : int, optional</span>
+<span class="sd">        Maximum number of Nelder-Mead iterations.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    numpy.ndarray</span>
+<span class="sd">        The best parameter vector found. This is ``theta0`` itself if the search does not improve on it,</span>
+<span class="sd">        so the result is never worse than the starting point.</span>
+<span class="sd">    """</span>
+    <span class="n">theta0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">theta0</span> <span class="o">!=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">theta0</span><span class="p">),</span> <span class="mf">1.0</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_objective</span><span class="p">(</span><span class="n">u</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">log_posterior</span><span class="p">(</span><span class="n">theta0</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">u</span><span class="p">)</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">value</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="k">else</span> <span class="mf">1e300</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">minimize</span><span class="p">(</span>
+        <span class="n">_objective</span><span class="p">,</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">theta0</span><span class="p">),</span>
+        <span class="n">method</span><span class="o">=</span><span class="s2">"Nelder-Mead"</span><span class="p">,</span>
+        <span class="n">options</span><span class="o">=</span><span class="p">{</span><span class="s2">"maxiter"</span><span class="p">:</span> <span class="n">maxiter</span><span class="p">,</span> <span class="s2">"xatol"</span><span class="p">:</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="s2">"fatol"</span><span class="p">:</span> <span class="mf">1e-8</span><span class="p">,</span> <span class="s2">"adaptive"</span><span class="p">:</span> <span class="kc">True</span><span class="p">},</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">fun</span> <span class="o">&lt;</span> <span class="n">_objective</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">theta0</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">theta0</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">result</span><span class="o">.</span><span class="n">x</span>
+    <span class="k">return</span> <span class="n">theta0</span></div>
+
 
 
 <span class="c1"># --------------------------------------- #</span>

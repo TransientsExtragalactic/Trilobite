@@ -2283,6 +2283,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2479,6 +2480,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_relative_mcse</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat.html">trilobite.inference.sampling.result.MCMCSamplingResult.compute_vehtari_rhat</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot.html">trilobite.inference.sampling.result.MCMCSamplingResult.corner_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html">trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5</a></li>
@@ -2522,6 +2524,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.sampling.utils.html">trilobite.inference.sampling.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.compute_gelman_rubin_rhat.html">trilobite.inference.sampling.utils.compute_gelman_rubin_rhat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.sampling.utils.find_posterior_maximum.html">trilobite.inference.sampling.utils.find_posterior_maximum</a></li>
 </ul>
 </details></li>
 </ul>
@@ -3260,7 +3263,7 @@ grid or lands on a NaN-flagged cell.  Default <code class="docutils literal notr
 <dl class="simple">
 <dt><a class="reference internal" href="trilobite.radiation.opacity.utils.load_opal_opacity.html#trilobite.radiation.opacity.utils.load_opal_opacity" title="trilobite.radiation.opacity.utils.load_opal_opacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_opal_opacity</span></code></a></dt><dd><p>Convenience loader for the bundled table.</p>
 </dd>
-<dt><a class="reference internal" href="trilobite.radiation.opacity.KramersESOpacity.html#trilobite.radiation.opacity.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Analytic alternative for rough estimates.</p>
+<dt><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.KramersESOpacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">KramersESOpacity</span></code></a></dt><dd><p>Analytic alternative for rough estimates.</p>
 </dd>
 </dl>
 </div>
@@ -3309,7 +3312,7 @@ grid or lands on a NaN-flagged cell.  Default <code class="docutils literal notr
 <td><p>Return the full OPAL table set, loading from disk on first call.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.load_default"><code class="xref py py-obj docutils literal notranslate"><span class="pre">load_default</span></code></a>(*[, index, X, Z, table_path, ...])</p></td>
-<td><p>Load an <a class="reference internal" href="trilobite.radiation.opacity.OPALOpacity.html#trilobite.radiation.opacity.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a> from the bundled OPAL table.</p></td>
+<td><p>Load an <a class="reference internal" href="#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">OPALOpacity</span></code></a> from the bundled OPAL table.</p></td>
 </tr>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.opacity.html#trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.opacity" title="trilobite.radiation.opacity.grey_opacity.rosseland.models.OPALOpacity.opacity"><code class="xref py py-obj docutils literal notranslate"><span class="pre">opacity</span></code></a>(rho, T[, nu])</p></td>
 <td><p>Return opacity <span class="math notranslate nohighlight">\(\kappa(\rho, T)\)</span> (<span class="math notranslate nohighlight">\(\mathrm{cm^2\,g^{-1}}\)</span>).</p></td>
