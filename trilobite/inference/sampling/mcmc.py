@@ -7,6 +7,7 @@ various MCMC algorithms, allowing users to estimate model parameters and their
 uncertainties based on observational data.
 """
 
+import warnings
 from typing import TYPE_CHECKING, Optional
 
 import numpy as np
@@ -15,6 +16,7 @@ from trilobite.utils.config import trilobite_config
 
 from .base import Sampler
 from .result import MCMCSamplingResult
+from .utils import find_posterior_maximum
 
 if TYPE_CHECKING:
     from ..problem import InferenceProblem
@@ -90,46 +92,81 @@ class EmceeSampler(Sampler):
     def generate_initial_state(
         self,
         *,
-        scale: float = 1e-3,
+        scale: float = 1e-2,
+        optimize: bool = True,
         rng: Optional[np.random.Generator] = None,
+        max_attempts: int = 100,
     ) -> np.ndarray:
         """
         Generate an initial walker ensemble around the problem's initial point.
+
+        If ``optimize`` is set, the initial point is first moved to a nearby maximum of the posterior
+        (see :func:`~trilobite.inference.sampling.utils.find_posterior_maximum`) and the walkers are
+        scattered around that. This matters when the initial guess is poor: from a point where the
+        log-posterior is, say, :math:`-10^8`, a sizeable fraction of walkers can fall into spurious
+        corners of the prior and never reach the posterior bulk.
 
         Parameters
         ----------
         scale : float
             Fractional scale of the log-space Gaussian perturbation applied to
-            each component of the initial parameter vector.  Walkers are placed
+            each component of the starting point.  Walkers are placed
             at ``theta0 * exp(scale * N(0, 1))``, which is scale-invariant and
             works correctly for parameters that span many orders of magnitude.
-            For any component whose initial value is exactly zero an absolute
+            For any component whose starting value is exactly zero an absolute
             perturbation of ``scale`` is used instead.
-        rng : numpy.random.Generator, optional
+        optimize : bool
+            Whether to optimize the initial point before scattering the walkers. This costs a
+            few thousand posterior evaluations. Default ``True``.
+        rng : ~numpy.random.Generator, optional
             Random number generator.
+        max_attempts : int
+            Walkers whose proposed starting point has a non-finite log-posterior
+            (e.g. outside the prior support) are redrawn up to this many times.
 
         Returns
         -------
-        np.ndarray
+        numpy.ndarray
             Initial walker positions with shape ``(n_walkers, n_dim)``.
+
+        Raises
+        ------
+        RuntimeError
+            If some walkers still have a non-finite log-posterior after ``max_attempts`` redraws.
         """
         # Grab the RNG if it is not given to us.
         rng = rng or np.random.default_rng()
 
         # Grab the initial theta and dimensionality
         theta0 = self.problem.initial_theta
+        if optimize:
+            theta0 = find_posterior_maximum(self.problem._log_free_posterior, theta0)
         ndim = theta0.size
-
-        noise = scale * rng.standard_normal(size=(self.n_walkers, ndim))
 
         # Use a multiplicative (log-space) perturbation so that the spread is
         # proportional to the magnitude of each parameter.  This avoids the
         # near-zero absolute perturbations that arise when theta0 contains
         # values spanning many orders of magnitude.
         nonzero = theta0 != 0.0
-        positions = np.where(nonzero, theta0 * np.exp(noise), noise)
 
-        return positions
+        def _draw(n: int) -> np.ndarray:
+            noise = scale * rng.standard_normal(size=(n, ndim))
+            return np.where(nonzero, theta0 * np.exp(noise), noise)
+
+        positions = _draw(self.n_walkers)
+
+        # A wide ball can step outside the prior support (e.g. near a bound), which
+        # emcee cannot start from. Redraw those walkers.
+        for _ in range(max_attempts):
+            invalid = ~np.isfinite([self.problem._log_free_posterior(pos) for pos in positions])
+            if not invalid.any():
+                return positions
+            positions[invalid] = _draw(int(invalid.sum()))
+
+        raise RuntimeError(
+            f"Could not place all {self.n_walkers} walkers at a finite log-posterior after {max_attempts} attempts "
+            f"with scale={scale}. Reduce `scale` or move the initial values away from the prior bounds."
+        )
 
     def run(
         self,
@@ -214,8 +251,22 @@ class EmceeSampler(Sampler):
         # --------------------------------------------------
         # Build result
         # --------------------------------------------------
-        return MCMCSamplingResult(
+        result = MCMCSamplingResult(
             samples=chain,
             problem=self.problem,
             log_posterior=logp,
         )
+
+        # Walkers that never reach the bulk of the posterior silently bias flat-chain statistics,
+        # so flag them rather than leaving the user to discover it in a corner plot.
+        stranded = result.find_stranded_walkers()
+        if stranded.size:
+            warnings.warn(
+                f"{stranded.size} of {self.n_walkers} walkers (indices {stranded.tolist()}) are stranded far below "
+                "the rest of the ensemble in log-posterior. They bias the posterior statistics; exclude them with "
+                "`get_flat_samples(exclude_walkers=...)` or restart from a better initial state.",
+                RuntimeWarning,
+                stacklevel=2,
+            )
+
+        return result

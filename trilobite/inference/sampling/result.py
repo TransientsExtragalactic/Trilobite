@@ -12,7 +12,7 @@ import json
 from abc import ABC
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Union
+from typing import TYPE_CHECKING, Optional, Sequence, Union
 
 import emcee
 import h5py
@@ -403,6 +403,7 @@ class MCMCSamplingResult(SamplingResult):
         self,
         burn: int = 0,
         thin: int = 1,
+        exclude_walkers: Optional[Sequence[int]] = None,
     ) -> np.ndarray:
         """
         Return flattened MCMC samples with optional burn-in and thinning.
@@ -413,6 +414,8 @@ class MCMCSamplingResult(SamplingResult):
             Number of initial steps to discard.
         thin : int, optional
             Thinning factor.
+        exclude_walkers : sequence of int, optional
+            Indices of walkers to drop entirely, e.g. the output of :meth:`find_stranded_walkers`.
 
         Returns
         -------
@@ -420,9 +423,51 @@ class MCMCSamplingResult(SamplingResult):
             Array of shape (n_effective_samples, n_dim).
         """
         samples = self.samples[burn::thin, :, :]
+        if exclude_walkers is not None and len(exclude_walkers) > 0:
+            keep = np.ones(self.n_walkers, dtype=bool)
+            keep[np.asarray(exclude_walkers, dtype=int)] = False
+            samples = samples[:, keep, :]
+
         n_steps, n_walkers, n_dim = samples.shape
 
         return samples.reshape((n_steps * n_walkers, n_dim))
+
+    def find_stranded_walkers(self, burn: Optional[int] = None, threshold: float = 20.0) -> np.ndarray:
+        """
+        Identify walkers stuck far below the rest of the ensemble in log-posterior.
+
+        A walker is flagged when its median log-posterior after burn-in lies more than ``threshold``
+        below the median over all walkers. Walkers that have converged to the same distribution have
+        per-walker medians that agree to within a few units, whereas a stranded walker (typically one
+        flung to a prior edge early in the run) sits many orders of magnitude lower and never rejoins
+        the ensemble.
+
+        Parameters
+        ----------
+        burn : int, optional
+            Number of initial steps to discard. Defaults to half of the chain.
+        threshold : float, optional
+            Required log-posterior deficit, relative to the ensemble median, for a walker to be
+            flagged. Default 20.
+
+        Returns
+        -------
+        numpy.ndarray
+            Integer indices of the flagged walkers. Empty if there are none, or if no log-posterior
+            was stored.
+        """
+        if self.log_posterior is None:
+            return np.array([], dtype=int)
+
+        burn = self.n_steps // 2 if burn is None else burn
+        logp = self.log_posterior[burn:]
+
+        # Non-finite values (-inf from prior violations) count as arbitrarily low, so they push a walker's
+        # median down without poisoning the statistic with NaNs.
+        walker_logp = np.median(np.where(np.isfinite(logp), logp, -np.inf), axis=0)
+        reference = np.median(walker_logp)
+
+        return np.flatnonzero(walker_logp < reference - threshold)
 
     # ------------------------------------------------ #
     # Goodness of Fit Statistics                       #

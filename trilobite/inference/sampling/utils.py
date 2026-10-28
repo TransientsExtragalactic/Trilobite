@@ -7,7 +7,61 @@ functions for initializing samplers, processing sampling results, and visualizin
 sampling outputs.
 """
 
+from typing import Callable
+
 import numpy as np
+from scipy.optimize import minimize
+
+
+# --------------------------------------- #
+# Optimization Utilities                  #
+# --------------------------------------- #
+def find_posterior_maximum(
+    log_posterior: Callable[[np.ndarray], float],
+    theta0: np.ndarray,
+    *,
+    maxiter: int = 4000,
+) -> np.ndarray:
+    r"""
+    Locally maximize a log-posterior starting from ``theta0``.
+
+    This is used to move a poor initial guess into the bulk of the posterior before sampling. A
+    derivative-free Nelder-Mead search is run in coordinates :math:`u_i = (\theta_i - \theta_{0,i})/|\theta_{0,i}|`
+    (absolute units for components that start at zero), so parameters spanning many orders of magnitude are
+    treated on equal footing. Points with a non-finite log-posterior are treated as infinitely bad.
+
+    Parameters
+    ----------
+    log_posterior : callable
+        Function mapping a parameter vector of shape ``(n_dim,)`` to the (unnormalized) log-posterior.
+    theta0 : numpy.ndarray
+        Starting parameter vector.
+    maxiter : int, optional
+        Maximum number of Nelder-Mead iterations.
+
+    Returns
+    -------
+    numpy.ndarray
+        The best parameter vector found. This is ``theta0`` itself if the search does not improve on it,
+        so the result is never worse than the starting point.
+    """
+    theta0 = np.asarray(theta0, dtype=float)
+    scale = np.where(theta0 != 0.0, np.abs(theta0), 1.0)
+
+    def _objective(u: np.ndarray) -> float:
+        value = log_posterior(theta0 + scale * u)
+        return -value if np.isfinite(value) else 1e300
+
+    result = minimize(
+        _objective,
+        np.zeros_like(theta0),
+        method="Nelder-Mead",
+        options={"maxiter": maxiter, "xatol": 1e-8, "fatol": 1e-8, "adaptive": True},
+    )
+
+    if result.fun < _objective(np.zeros_like(theta0)):
+        return theta0 + scale * result.x
+    return theta0
 
 
 # --------------------------------------- #
