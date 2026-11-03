@@ -33,6 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Gallery example `plot_inhomogeneous_cylinder.py` demonstrating multi-zone inhomogeneous synchrotron SEDs.
 - Reference documentation page `synchrotron_electron_distributions.rst` covering the class-based electron distribution system.
 - Overhauled data gallery with dedicated examples for radio photometry, optical photometry, radio light curves, optical light curves, multi-band radio/optical data, and inference data containers.
+- `Likelihood.config` and `get_likelihood_config` (`trilobite/inference/likelihood/`) — the construction options of a likelihood (e.g. `sys_dex`), which `InferenceProblem.to_dict` now stores under a new optional `likelihood_kwargs` key. Specifications written without the key still load.
 
 ### Changed
 - `Diggins26_TwoComponentModel` evaluates roughly 4x faster (about 85 ms to 20 ms per likelihood evaluation on the AT2018cow photometry): the shock integration defaults to `LSODA` at `rtol=1e-7` (within ~1e-3 in log-likelihood of a tight `Radau` reference), and the electron microphysics and synchrotron spectra are evaluated in batches over epochs instead of one epoch at a time.
@@ -53,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Default model parameters in `trilobite/models/SEDs/synchrotron.py` now guarantee `gamma_c > 1` to avoid unphysical cooling break positions.
 - Spurious warnings and incorrect guard conditions in `cooling.py`.
 - Corrected TREX footer attribution name in documentation.
+- `InferenceProblem.to_dict` / `to_json` stored the likelihood only as its class path, so `from_dict` / `from_json` rebuilt it with default options (e.g. `LogGaussianCensoredLikelihood(sys_dex=0.1)` came back with `sys_dex=0`). `LikelihoodMPPool` and `LikelihoodMPIPool` rebuild the problem in each worker this way, so pool runs silently sampled a different posterior than serial runs. Likelihood options are now serialized, and an option that cannot be represented in JSON raises `TypeError` instead of being dropped.
 
 ---
 

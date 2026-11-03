@@ -128,11 +128,25 @@ class Likelihood(ABC):
         self._model: Model = model
         self._data_container: InferenceData = data
 
+        # Keep the configuration so that the likelihood can be serialized and rebuilt (see
+        # `InferenceProblem.to_dict`); `model` and `data` are serialized separately.
+        self._config: dict = dict(kwargs)
+
         # Allow subclasses to configure internal state
         self._configure(**kwargs)
 
         # Validate model–data compatibility
         self._validate_model_and_data()
+
+    @property
+    def config(self) -> dict:
+        """dict: The keyword arguments this likelihood was constructed with (excluding ``model`` and ``data``).
+
+        These are exactly the options forwarded to :meth:`_configure` (e.g. ``sys_dex`` for
+        :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood`). They are stored when the
+        :class:`~trilobite.inference.problem.InferenceProblem` is serialized, and must therefore be JSON-serializable.
+        """
+        return dict(self._config)
 
     # ============================================================ #
     # Configuration & Validation                                   #
