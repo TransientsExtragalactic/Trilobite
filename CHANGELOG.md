@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `LogGaussianCensoredLikelihood` (`trilobite/inference/likelihood/base.py`) — censored Gaussian likelihood in log10 space with an optional systematic floor in dex (`sys_dex`); suited to positive observables spanning several decades.
 - One-zone accretion disk ODE integrator with Cython backend (`trilobite/dynamics/accretion/one_zone/`)
 - Bracket root-finder Cython utility (`trilobite/math_utils/_bracket_root_finder.pyx`)
 - TOPS opacity table support (`trilobite/radiation/opacity/grey_opacity/_tops_table.pyx`)

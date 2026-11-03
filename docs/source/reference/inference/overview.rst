@@ -260,6 +260,15 @@ Below are the likelihood classes currently available in Trilobite.
     base.Likelihood
     base.GaussianLikelihood
     base.GaussianCensoredLikelihood
+    base.LogGaussianCensoredLikelihood
+
+.. tip::
+
+    For strictly positive observables that span several orders of magnitude (e.g., radio flux densities),
+    :class:`~trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood` compares model and data in
+    :math:`\log_{10}` space and accepts a systematic floor in dex (``sys_dex``). In linear space, the brightest
+    points dominate the fit, and a model that under-predicts a point is penalized far less than one that
+    over-predicts it by the same factor.
 
 ----
 
