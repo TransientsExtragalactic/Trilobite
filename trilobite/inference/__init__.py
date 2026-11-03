@@ -21,6 +21,7 @@ __all__ = [
     "Likelihood",
     "GaussianLikelihood",
     "GaussianCensoredLikelihood",
+    "LogGaussianCensoredLikelihood",
     "problem",
     "sampling",
     "likelihood",
@@ -33,7 +34,7 @@ __all__ = [
     "SoftplusTransform",
 ]
 from . import likelihood, prior, problem, sampling
-from .likelihood import GaussianCensoredLikelihood, GaussianLikelihood, Likelihood
+from .likelihood import GaussianCensoredLikelihood, GaussianLikelihood, Likelihood, LogGaussianCensoredLikelihood
 from .prior import (
     BetaPrior,
     GammaPrior,

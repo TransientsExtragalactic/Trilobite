@@ -17,7 +17,7 @@ if TYPE_CHECKING:
     )
 
 # Defining the __all__ variable.
-__all__ = ["Likelihood", "GaussianLikelihood", "GaussianCensoredLikelihood"]
+__all__ = ["Likelihood", "GaussianLikelihood", "GaussianCensoredLikelihood", "LogGaussianCensoredLikelihood"]
 
 
 # ============================================================ #
@@ -587,6 +587,148 @@ class GaussianCensoredLikelihood(Likelihood):
         return censored_gaussian_loglikelihood(
             data_y=self._data_y,
             model_y=model_y,
+            y_err=self._y_err,
+            y_upper=self._y_upper,
+            y_lower=self._y_lower,
+            y_upper_mask=self._y_upper_mask,
+            y_lower_mask=self._y_lower_mask,
+        )
+
+
+class LogGaussianCensoredLikelihood(GaussianCensoredLikelihood):
+    r"""
+    Censored Gaussian log-likelihood in :math:`\log_{10}` of the observables.
+
+    This likelihood compares model and data in logarithmic space, which is the natural choice
+    for strictly positive observables (e.g. flux densities) that span several orders of
+    magnitude. In linear space, the brightest points dominate the fit and a model that
+    under-predicts a point by a large factor is penalized far less than one that over-predicts
+    it by the same factor. In log space both directions are penalized equally.
+
+    For detections, the likelihood contribution is
+
+    .. math::
+
+        \log \mathcal{L}_i
+        =
+        -\frac{1}{2}
+        \left[
+            \frac{(\log_{10} y_i - \log_{10} \mu_i)^2}{\sigma_{i}^2}
+            +
+            \log(2\pi \sigma_i^2)
+        \right],
+
+    and upper (lower) limits contribute :math:`\log\Phi` (:math:`\log[1-\Phi]`) of the standardized
+    :math:`\log_{10}` limit, exactly as in
+    :class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`. The uncertainty
+    in log space combines the reported measurement error, propagated to log space at the
+    observed value (or at the limit value for censored entries), with an optional systematic
+    floor added in quadrature:
+
+    .. math::
+
+        \sigma_i^2
+        =
+        \left(\frac{\sigma_{y,i}}{y_i \ln 10}\right)^2
+        +
+        \sigma_{\rm sys}^2 .
+
+    Parameters
+    ----------
+    model : ~trilobite.models.core.base.Model
+        The forward model. All of its outputs must be strictly positive.
+    data : ~trilobite.data.core.InferenceData
+        The dataset. Every detection and every limit must be strictly positive and finite.
+    sys_dex : float, optional
+        Systematic uncertainty floor in dex (:math:`\sigma_{\rm sys}`), added in quadrature to the
+        propagated measurement error of every entry, including the censoring width of limits.
+        Default is ``0``. If ``0``, every entry must have a nonzero reported error.
+
+    Notes
+    -----
+    - **Invalid model output.** If any model output is NaN, infinite, or negative, the
+      log-likelihood is ``-inf`` (this is how the infeasible-physics convention of models, which
+      return NaN, is carried through). A model output of exactly zero is floored at
+      ``1e-300`` before taking the logarithm, so it is penalized very strongly by detections but
+      remains consistent with upper limits.
+    - **Normalization.** This is a density in :math:`\log_{10} y`, not in :math:`y`; it omits the
+      constant Jacobian :math:`1/(y\ln 10)`. Values of :math:`\ln\mathcal{L}` are therefore not
+      comparable to those of the linear-space likelihoods (the parameter dependence, and hence
+      all posteriors, are unaffected).
+    - **Positivity.** Every observable in the dataset is assumed to be strictly positive.
+
+    See Also
+    --------
+    ~trilobite.inference.likelihood.base.GaussianCensoredLikelihood : The linear-space version.
+    """
+
+    #: Floor applied to non-negative model output before taking the logarithm.
+    _MODEL_FLOOR = 1e-300
+
+    def _configure(self, sys_dex: float = 0.0, **kwargs):
+        """
+        Cache the log10-transformed data, errors and limits.
+
+        Executed once during initialization.
+        """
+        sys_dex = float(sys_dex)
+        if not np.isfinite(sys_dex) or sys_dex < 0:
+            raise ValueError(f"`sys_dex` must be finite and non-negative, got {sys_dex}.")
+        self._sys_dex = sys_dex
+
+        # Cache the linear-space arrays and masks via the parent.
+        super()._configure(**kwargs)
+
+        upper_mask, lower_mask = self._y_upper_mask, self._y_lower_mask
+        det_mask = ~upper_mask & ~lower_mask
+
+        # The value at which each entry's reported error is converted to dex: the measured
+        # value for detections and the limit value for censored entries.
+        reference = np.where(det_mask, self._data_y, np.where(upper_mask, self._y_upper, self._y_lower))
+        if not (np.all(np.isfinite(reference)) and np.all(reference > 0)):
+            raise ValueError(
+                "LogGaussianCensoredLikelihood requires every detection and limit to be finite and strictly positive."
+            )
+
+        sigma_dex = np.sqrt((self._y_err / (reference * np.log(10.0))) ** 2 + sys_dex**2)
+        if not (np.all(np.isfinite(sigma_dex)) and np.all(sigma_dex > 0)):
+            raise ValueError(
+                "LogGaussianCensoredLikelihood requires a finite, nonzero uncertainty for every entry. "
+                "Provide nonzero measurement errors or set `sys_dex` > 0."
+            )
+
+        # NaN entries (non-detections in `value`, detections in the limit arrays) stay NaN.
+        self._data_y = np.log10(self._data_y)
+        self._y_upper = np.log10(self._y_upper)
+        self._y_lower = np.log10(self._y_lower)
+        self._y_err = sigma_dex
+
+    def _log_likelihood(self, parameters):
+        """
+        Evaluate the censored Gaussian log-likelihood in log10 space.
+
+        Parameters
+        ----------
+        parameters : dict[str, Any]
+            Raw model parameters in unit-consistent internal format.
+
+        Returns
+        -------
+        float
+            Log-likelihood value, ``-inf`` if the model output is non-finite or negative.
+        """
+        model_tuple = self._model._forward_model_tupled(
+            self._x,
+            parameters,
+        )
+        model_y = np.stack(model_tuple, axis=-1)
+
+        if not np.all(np.isfinite(model_y)) or np.any(model_y < 0):
+            return -np.inf
+
+        return censored_gaussian_loglikelihood(
+            data_y=self._data_y,
+            model_y=np.log10(np.maximum(model_y, self._MODEL_FLOOR)),
             y_err=self._y_err,
             y_upper=self._y_upper,
             y_lower=self._y_lower,
