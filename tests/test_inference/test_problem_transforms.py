@@ -104,3 +104,108 @@ def test_sampler_initial_state_is_in_sampling_space():
     # First coordinate is log10(m): centred near log10(1.5), not near 1.5.
     assert np.allclose(positions[:, 0], np.log10(1.5), atol=0.1)
     assert np.all(np.isfinite([problem._log_free_posterior(p) for p in positions]))
+
+
+# =================================================================== #
+# MCMCSamplingResult: the chain is stored in sampling space           #
+# =================================================================== #
+from trilobite.inference.sampling.result import MCMCSamplingResult  # noqa: E402
+
+
+def _synthetic_result(problem, n_steps=40, n_walkers=6, seed=0):
+    """A result whose raw chain is sampling-space draws: log10(m) ~ N(log10 2, 0.05), b ~ N(1, 0.1)."""
+    rng = np.random.default_rng(seed)
+    z = np.stack(
+        [
+            rng.normal(np.log10(2.0), 0.05, size=(n_steps, n_walkers)),
+            rng.normal(1.0, 0.1, size=(n_steps, n_walkers)),
+        ],
+        axis=-1,
+    )
+    return MCMCSamplingResult(samples=z, problem=problem, log_posterior=np.zeros((n_steps, n_walkers)))
+
+
+def test_physical_samples_apply_inverse_transforms_per_parameter():
+    result = _synthetic_result(_make_problem(transform_m=True))
+    phys = result.physical_samples
+    assert phys.shape == result.samples.shape
+    np.testing.assert_allclose(phys[..., 0], 10.0 ** result.samples[..., 0])  # m: transformed
+    np.testing.assert_array_equal(phys[..., 1], result.samples[..., 1])  # b: untouched
+    # The stored chain itself is left in sampling space.
+    assert np.all(np.abs(result.samples[..., 0]) < 1.0)
+
+
+def test_physical_samples_without_transforms_is_the_stored_chain():
+    result = _synthetic_result(_make_problem())
+    assert result.physical_samples is result.samples
+
+
+def test_get_flat_samples_defaults_to_physical_and_respects_burn_thin_exclude():
+    result = _synthetic_result(_make_problem(transform_m=True))
+    flat = result.get_flat_samples(burn=5, thin=2, exclude_walkers=[1, 4])
+    raw = result.get_flat_samples(burn=5, thin=2, exclude_walkers=[1, 4], physical=False)
+    assert flat.shape == raw.shape
+    np.testing.assert_allclose(flat[:, 0], 10.0 ** raw[:, 0])
+    np.testing.assert_array_equal(flat[:, 1], raw[:, 1])
+    assert np.median(flat[:, 0]) == pytest.approx(2.0, rel=0.1)
+
+
+def test_get_flat_samples_unchanged_without_transforms():
+    result = _synthetic_result(_make_problem())
+    np.testing.assert_array_equal(result.get_flat_samples(burn=3), result.get_flat_samples(burn=3, physical=False))
+
+
+def test_diagnostics_stay_in_sampling_space():
+    result = _synthetic_result(_make_problem(transform_m=True), n_steps=400)
+    raw = result.get_flat_samples(physical=False)
+    expected = np.std(raw, axis=0, ddof=1) / np.sqrt(result.compute_effective_sample_size())
+    np.testing.assert_allclose(result.compute_mcse(), expected)
+
+
+def test_trace_plot_physical_option():
+    import matplotlib
+
+    matplotlib.use("Agg")
+    result = _synthetic_result(_make_problem(transform_m=True))
+
+    _, ax = result.trace_plot("m")
+    y_phys = np.max([line.get_ydata().max() for line in ax.get_lines() if len(line.get_ydata()) > 2])
+    assert y_phys > 1.5 and ax.get_ylabel() == "m"
+
+    _, ax = result.trace_plot("m", physical=False)
+    y_raw = np.max([line.get_ydata().max() for line in ax.get_lines() if len(line.get_ydata()) > 2])
+    assert y_raw < 1.0 and ax.get_ylabel() == "m (sampling space)"
+
+
+def test_corner_plot_runs_in_both_spaces():
+    pytest.importorskip("corner")
+    import matplotlib
+
+    matplotlib.use("Agg")
+    result = _synthetic_result(_make_problem(transform_m=True))
+    assert result.corner_plot(truths={"m": 2.0, "b": 1.0}) is not None
+    assert result.corner_plot(physical=False) is not None
+
+
+def test_hdf5_round_trip_keeps_transform_information(tmp_path):
+    result = _synthetic_result(_make_problem(transform_m=True))
+    path = tmp_path / "chain.h5"
+    result.to_hdf5(path)
+    loaded = MCMCSamplingResult.from_hdf5(path)
+    np.testing.assert_array_equal(loaded.samples, result.samples)
+    np.testing.assert_allclose(loaded.physical_samples, result.physical_samples)
+
+
+def test_end_to_end_sampling_with_a_transform_recovers_physical_truth():
+    """Run the real sampler with m sampled as log10(m) and check the returned samples are physical m."""
+    problem = _make_problem(transform_m=True)
+    problem.parameters["m"].initial_value = 1.5
+    sampler = EmceeSampler(problem, n_walkers=16)
+    result = sampler.run(500, progress=False)
+
+    z_med = np.median(result.get_flat_samples(burn=100, physical=False)[:, 0])
+    m_med, b_med = np.median(result.get_flat_samples(burn=100), axis=0)
+    # The raw chain is log10(m) (about 0.3); the default samples are m itself (about 2).
+    assert abs(z_med - np.log10(m_med)) < 0.02
+    assert m_med == pytest.approx(TRUE["m"], abs=0.4)
+    assert b_med == pytest.approx(TRUE["b"], abs=0.4)
