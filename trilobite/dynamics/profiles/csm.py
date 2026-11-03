@@ -60,6 +60,8 @@ from typing import TYPE_CHECKING, Any
 
 import numpy as np
 from astropy import units as u
+from scipy.integrate import quad
+from scipy.special import expit
 
 from trilobite.utils.misc_utils import ensure_in_units
 
@@ -2920,3 +2922,383 @@ class TwoWindCSMProfile(StationaryCSMDensityProfile):
         A = np.exp(log_A)
 
         return A * r**-2
+
+
+class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
+    r"""
+    Axisymmetric CSM density profile with a dense, disk-confined interior component.
+
+    This profile describes a stationary, axisymmetric circumstellar medium consisting of a
+    spherical exterior component plus an interior component that is concentrated toward the
+    equatorial plane and fades out beyond a transition radius,
+
+    .. math::
+
+        \rho(r, \theta)
+        =
+        \rho_{\rm ext}(r)
+        +
+        \rho_{\rm int}(r)\,S(r)\,G(\theta),
+
+    with power-law radial dependence for each component,
+
+    .. math::
+
+        \rho_{\rm int}(r) = \rho_{\rm int}\left(\frac{r}{r_{\rm ref}}\right)^{-\alpha_{\rm int}},
+        \qquad
+        \rho_{\rm ext}(r) = \rho_{\rm ext}\left(\frac{r}{r_{\rm ref}}\right)^{-\alpha_{\rm ext}},
+
+    where :math:`\rho_{\rm int}` and :math:`\rho_{\rm ext}` are the component densities at the
+    reference radius :math:`r_{\rm ref}`. Parameterizing by the density at a reference radius,
+    rather than by a power-law amplitude, means that the same value corresponds to the same physical
+    density regardless of the slope.
+
+    The radial transition
+
+    .. math::
+
+        S(r) = \frac{1}{1 + (r / r_{\rm trans})^{1/\delta_{\rm trans}}}
+
+    switches the interior component off beyond :math:`r_{\rm trans}`, with a sharpness set by
+    :math:`\delta_{\rm trans}` (smaller is sharper). The angular shape is
+
+    .. math::
+
+        G(\theta)
+        =
+        \frac{f_{\rm pole} + (1 - f_{\rm pole})\,e^{-|\cot\theta| / b}}
+             {f_{\rm pole} + (1 - f_{\rm pole})\,I(b)},
+        \qquad
+        I(b) = \int_0^\infty \frac{e^{-x/b}}{(1 + x^2)^{3/2}}\,dx,
+
+    where :math:`\theta` is the polar angle measured from the symmetry axis, :math:`b` is the
+    ``aspect`` (larger is a thicker disk), and :math:`f_{\rm pole}` is the polar-to-equatorial
+    density contrast floor of the interior component. The normalization makes the
+    **solid-angle average of** :math:`G` **equal to unity**, so :math:`\rho_{\rm int}` is the
+    solid-angle-averaged interior density at :math:`r_{\rm ref}` (for :math:`r \ll r_{\rm trans}`).
+    The structure follows :footcite:t:`Klencki_2026`.
+
+    .. rubric:: Sightlines
+
+    Angle is a parameter, not an argument, so that the profile keeps the two-argument ``(r, t)``
+    source-function signature of the shock engines. A one-dimensional radial profile along a single
+    sightline is obtained by freezing the angle:
+
+    .. code-block:: python
+
+        rho_equator = AxisymmetricCSMDensityProfile.as_optimized_callable(
+            theta=np.pi / 2, **params
+        )
+        rho_pole = AxisymmetricCSMDensityProfile.as_optimized_callable(
+            theta=0.0, **params
+        )
+
+    .. rubric:: Sector weights
+
+    The half-maximum boundary of the disk, where :math:`G` is halfway between its polar floor
+    and its equatorial peak, lies at latitude :math:`\arctan(b\ln 2)` for any
+    :math:`f_{\rm pole}`. The disk and the polar cones therefore subtend the solid-angle fractions
+    returned by :meth:`equatorial_solid_angle_fraction` and :meth:`polar_solid_angle_fraction`,
+    which sum to unity.
+
+    .. rubric:: Parameters
+
+    .. list-table::
+       :header-rows: 1
+       :widths: 26 6 22 46
+
+       * - Parameter
+         - Opt.
+         - Type
+         - Description
+       * - ``rho_int``
+         - ☐
+         - float or :class:`~astropy.units.Quantity`
+         - Solid-angle-averaged interior density at ``r_ref``. Bare values interpreted as
+           :math:`\mathrm{g\,cm^{-3}}`. Must be non-negative.
+       * - ``rho_ext``
+         - ☐
+         - float or :class:`~astropy.units.Quantity`
+         - Exterior (spherical) density at ``r_ref``. Bare values interpreted as
+           :math:`\mathrm{g\,cm^{-3}}`. Must be non-negative.
+       * - ``r_ref``
+         - ☐
+         - float or :class:`~astropy.units.Quantity`
+         - Reference radius shared by both components. Bare values interpreted as cm.
+           Must be positive.
+       * - ``alpha_int``
+         - ☐
+         - float
+         - Power-law slope of the interior component.
+       * - ``alpha_ext``
+         - ☐
+         - float
+         - Power-law slope of the exterior component.
+       * - ``r_trans``
+         - ☐
+         - float or :class:`~astropy.units.Quantity`
+         - Radius at which the interior component has faded to half. Bare values interpreted
+           as cm. Must be positive.
+       * - ``delta_trans``
+         - ☐
+         - float
+         - Dimensionless sharpness of the transition. Must be positive.
+       * - ``f_pole``
+         - ☐
+         - float
+         - Polar density floor of the interior component relative to its equatorial peak
+           (before normalization). Must lie in :math:`[0, 1]`.
+       * - ``aspect``
+         - ☐
+         - float
+         - Angular thickness :math:`b` of the interior component. Must be positive.
+       * - ``theta``
+         - ☐
+         - float or :class:`~astropy.units.Quantity`
+         - Polar angle from the symmetry axis. Bare values interpreted as radians.
+           May be an array that broadcasts against ``r``.
+
+    .. rubric:: Example
+
+    .. plot::
+
+       import numpy as np
+       import astropy.units as u
+       import matplotlib.pyplot as plt
+       from trilobite.dynamics.profiles.csm import AxisymmetricCSMDensityProfile
+       from trilobite.utils.plot_utils import set_plot_style
+
+       set_plot_style()
+
+       params = dict(
+           rho_int=2e-16, rho_ext=1e-18, r_ref=1e15, alpha_int=1.5, alpha_ext=2.0,
+           r_trans=5e15, delta_trans=0.3, f_pole=0.2, aspect=2.0,
+       )
+       r = np.geomspace(1e14, 1e18, 500) * u.cm
+
+       fig, ax = plt.subplots()
+       for theta, label in [(np.pi / 2, "equator"), (0.0, "pole")]:
+           rho = AxisymmetricCSMDensityProfile.eval(r, theta=theta, **params)
+           ax.loglog(r.value, rho.value, label=label)
+       ax.set_xlabel(r'$r\ [\mathrm{cm}]$')
+       ax.set_ylabel(r'$\rho\ [\mathrm{g\,cm^{-3}}]$')
+       ax.legend()
+       plt.tight_layout()
+
+    Notes
+    -----
+    - The density is symmetric under :math:`\theta \to \pi - \theta` and :math:`\theta \to -\theta`.
+    - The angular normalization :math:`I(b)` is evaluated by numerical quadrature once per call to the
+      validation layer; freeze parameters with ``as_optimized_callable`` to avoid repeating it.
+    - With ``rho_int = 0``, or ``f_pole = 1``, the profile reduces to a spherical sum of power laws.
+
+    References
+    ----------
+    .. footbibliography::
+
+    See Also
+    --------
+    PowerLawCSMProfile : Spherical single power law.
+    BrokenPowerLawCSMProfile : Spherical broken power law.
+    """
+
+    # ------------------------------------------------------------------ #
+    # Angular Structure                                                  #
+    # ------------------------------------------------------------------ #
+    @classmethod
+    def _validate_shape_parameters(cls, f_pole: float, aspect: float) -> tuple[float, float]:
+        f_pole, aspect = float(f_pole), float(aspect)
+        if not 0.0 <= f_pole <= 1.0:
+            raise ValueError("`f_pole` must lie in [0, 1].")
+        if not (np.isfinite(aspect) and aspect > 0):
+            raise ValueError("`aspect` must be positive and finite.")
+        return f_pole, aspect
+
+    @classmethod
+    def _unnormalized_angular_shape(cls, theta, f_pole: float, aspect: float) -> np.ndarray:
+        theta = np.asarray(theta, dtype=float)
+        # |cot(theta)| = |cos| / |sin|, which is +inf on the axis; exp(-inf) = 0 there.
+        with np.errstate(divide="ignore", invalid="ignore"):
+            abs_cot = np.abs(np.cos(theta)) / np.abs(np.sin(theta))
+        return f_pole + (1.0 - f_pole) * np.exp(-abs_cot / aspect)
+
+    @classmethod
+    def angular_norm(cls, f_pole: float, aspect: float) -> float:
+        r"""
+        Solid-angle average of the unnormalized angular shape.
+
+        Evaluates :math:`f_{\rm pole} + (1 - f_{\rm pole})\,I(b)` with
+        :math:`I(b) = \int_0^\infty e^{-x/b}(1+x^2)^{-3/2}\,dx`, the average over the sphere of
+        :math:`e^{-|\cot\theta|/b}`.
+
+        Parameters
+        ----------
+        f_pole : float
+            Polar density floor, in :math:`[0, 1]`.
+        aspect : float
+            Angular thickness :math:`b`. Must be positive.
+
+        Returns
+        -------
+        float
+            The normalization such that :meth:`angular_shape` has unit solid-angle average.
+        """
+        f_pole, aspect = cls._validate_shape_parameters(f_pole, aspect)
+        integral, _ = quad(lambda x: np.exp(-x / aspect) * (1.0 + x * x) ** -1.5, 0.0, np.inf, epsabs=0.0, epsrel=1e-12)
+        return f_pole + (1.0 - f_pole) * integral
+
+    @classmethod
+    def angular_shape(cls, theta, f_pole: float, aspect: float) -> np.ndarray:
+        r"""
+        Evaluate the normalized angular shape :math:`G(\theta)`.
+
+        The solid-angle average of :math:`G` is unity.
+
+        Parameters
+        ----------
+        theta : float, array-like, or ~astropy.units.Quantity
+            Polar angle from the symmetry axis. Bare values interpreted as radians.
+        f_pole : float
+            Polar density floor, in :math:`[0, 1]`.
+        aspect : float
+            Angular thickness :math:`b`. Must be positive.
+
+        Returns
+        -------
+        ~numpy.ndarray
+            :math:`G(\theta)`, dimensionless.
+        """
+        theta = np.asarray(ensure_in_units(theta, u.rad), dtype=float)
+        f_pole, aspect = cls._validate_shape_parameters(f_pole, aspect)
+        return cls._unnormalized_angular_shape(theta, f_pole, aspect) / cls.angular_norm(f_pole, aspect)
+
+    @classmethod
+    def disk_half_opening_angle(cls, aspect: float) -> u.Quantity:
+        r"""
+        Latitude of the half-maximum boundary of the disk, :math:`\arctan(b\ln 2)`.
+
+        Parameters
+        ----------
+        aspect : float
+            Angular thickness :math:`b`. Must be positive.
+
+        Returns
+        -------
+        ~astropy.units.Quantity
+            Half-opening angle of the disk, measured from the equatorial plane, in radians.
+        """
+        _, aspect = cls._validate_shape_parameters(0.0, aspect)
+        return np.arctan(aspect * np.log(2.0)) * u.rad
+
+    @classmethod
+    def equatorial_solid_angle_fraction(cls, aspect: float) -> float:
+        r"""
+        Fraction of the sphere inside the disk, :math:`\sin[\arctan(b\ln 2)]`.
+
+        Parameters
+        ----------
+        aspect : float
+            Angular thickness :math:`b`. Must be positive.
+
+        Returns
+        -------
+        float
+            The solid-angle fraction of the band within the disk half-opening angle of the equator.
+        """
+        return float(np.sin(cls.disk_half_opening_angle(aspect).to_value(u.rad)))
+
+    @classmethod
+    def polar_solid_angle_fraction(cls, aspect: float) -> float:
+        r"""
+        Fraction of the sphere inside the two polar cones, ``1 - equatorial_solid_angle_fraction``.
+
+        Parameters
+        ----------
+        aspect : float
+            Angular thickness :math:`b`. Must be positive.
+
+        Returns
+        -------
+        float
+            The solid-angle fraction outside the disk.
+        """
+        return 1.0 - cls.equatorial_solid_angle_fraction(aspect)
+
+    # ------------------------------------------------------------------ #
+    # Profile Interface                                                  #
+    # ------------------------------------------------------------------ #
+    @classmethod
+    def _validate_and_process_parameters(
+        cls,
+        *,
+        rho_int,
+        rho_ext,
+        r_ref,
+        alpha_int,
+        alpha_ext,
+        r_trans,
+        delta_trans,
+        f_pole,
+        aspect,
+        theta,
+        **_,
+    ):
+        rho_int = float(ensure_in_units(rho_int, u.g / u.cm**3))
+        rho_ext = float(ensure_in_units(rho_ext, u.g / u.cm**3))
+        r_ref = float(ensure_in_units(r_ref, u.cm))
+        r_trans = float(ensure_in_units(r_trans, u.cm))
+        alpha_int, alpha_ext, delta_trans = float(alpha_int), float(alpha_ext), float(delta_trans)
+        theta = np.asarray(ensure_in_units(theta, u.rad), dtype=float)
+
+        if rho_int < 0:
+            raise ValueError("`rho_int` must be non-negative.")
+        if rho_ext < 0:
+            raise ValueError("`rho_ext` must be non-negative.")
+        if r_ref <= 0:
+            raise ValueError("`r_ref` must be positive.")
+        if r_trans <= 0:
+            raise ValueError("`r_trans` must be positive.")
+        if not delta_trans > 0:
+            raise ValueError("`delta_trans` must be positive.")
+        if not np.all(np.isfinite(theta)):
+            raise ValueError("`theta` must be finite.")
+        f_pole, aspect = cls._validate_shape_parameters(f_pole, aspect)
+
+        return {
+            "rho_int": rho_int,
+            "rho_ext": rho_ext,
+            "r_ref": r_ref,
+            "alpha_int": alpha_int,
+            "alpha_ext": alpha_ext,
+            "r_trans": r_trans,
+            "delta_trans": delta_trans,
+            "f_pole": f_pole,
+            "aspect": aspect,
+            "theta": theta,
+            "angular_norm": cls.angular_norm(f_pole, aspect),
+        }
+
+    @classmethod
+    def _opt_eval(
+        cls,
+        r,
+        _t=None,
+        *,
+        rho_int,
+        rho_ext,
+        r_ref,
+        alpha_int,
+        alpha_ext,
+        r_trans,
+        delta_trans,
+        f_pole,
+        aspect,
+        theta,
+        angular_norm,
+        **_,
+    ):
+        x = r / r_ref
+        # S(r) = 1 / (1 + (r / r_trans)^(1/delta)), written with expit to avoid overflow.
+        transition = expit(-np.log(r / r_trans) / delta_trans)
+        shape = cls._unnormalized_angular_shape(theta, f_pole, aspect) / angular_norm
+        return rho_ext * x ** (-alpha_ext) + rho_int * x ** (-alpha_int) * transition * shape
