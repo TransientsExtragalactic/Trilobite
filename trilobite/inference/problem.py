@@ -1746,14 +1746,16 @@ class InferenceProblem:
           serializable.
         - The model must implement :meth:`to_model_spec`.
         - The data container must implement :meth:`to_dict`.
-        - The likelihood must be importable via its fully-qualified module path.
+        - The likelihood must be importable via its fully-qualified module path, and its construction options
+          (:attr:`~trilobite.inference.likelihood.base.Likelihood.config`, e.g. ``sys_dex``) must be
+          JSON-serializable. They are stored under ``likelihood_kwargs``.
         - The returned dictionary contains a ``format`` field for validation
           during reconstruction.
         - A version tag is embedded to allow compatibility checks during loading.
         """
         import json
 
-        from .likelihood.utils import get_likelihood_target
+        from .likelihood.utils import get_likelihood_config, get_likelihood_target
 
         # ---------------------------------------------------------
         # Base output template
@@ -1763,6 +1765,7 @@ class InferenceProblem:
             "metadata": {},
             "model": None,
             "likelihood": None,
+            "likelihood_kwargs": {},
             "data": None,
             "parameters": {},
         }
@@ -1781,6 +1784,7 @@ class InferenceProblem:
         # ---------------------------------------------------------
         try:
             output["likelihood"] = get_likelihood_target(self.__likelihood__)
+            output["likelihood_kwargs"] = get_likelihood_config(self.__likelihood__)
         except Exception as e:
             raise TypeError(f"Failed to serialize likelihood: {e}") from e
 
@@ -1925,7 +1929,9 @@ class InferenceProblem:
         # --- Likelihood Reconstruction ------------------------
         try:
             likelihood_target = dict_spec["likelihood"]
-            likelihood = build_likelihood(likelihood_target, model=model, data=data)
+            # ``likelihood_kwargs`` is absent from specifications written before it was introduced.
+            likelihood_kwargs = dict_spec.get("likelihood_kwargs") or {}
+            likelihood = build_likelihood(likelihood_target, model=model, data=data, config=likelihood_kwargs)
         except Exception as e:
             raise TypeError(f"Failed to reconstruct likelihood from specification: {e}") from e
 
