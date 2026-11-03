@@ -17,6 +17,7 @@ import pytest
 from astropy import units as u
 
 from trilobite.dynamics.profiles.csm import (
+    AxisymmetricCSMDensityProfile,
     BrokenPowerLawCSMProfile,
     CoredPowerLawCSMProfile,
     ExponentialCSMProfile,
@@ -61,12 +62,8 @@ class BaseTestCSMProfile:
         """eval returns an astropy Quantity in g cm^{-3}."""
         for params in self.PARAMETER_SETS:
             result = self.PROFILE_CLASS.eval(_R_QTY, **params)
-            assert isinstance(result, u.Quantity), (
-                f"eval did not return Quantity for {params}"
-            )
-            assert result.unit.is_equivalent(u.g / u.cm**3), (
-                f"eval unit is not g/cm^3 for {params}: got {result.unit}"
-            )
+            assert isinstance(result, u.Quantity), f"eval did not return Quantity for {params}"
+            assert result.unit.is_equivalent(u.g / u.cm**3), f"eval unit is not g/cm^3 for {params}: got {result.unit}"
 
     def test_eval_shape_matches_input(self):
         """eval output shape matches the radius array shape."""
@@ -82,9 +79,7 @@ class BaseTestCSMProfile:
         for params in self.PARAMETER_SETS:
             result = self.PROFILE_CLASS.eval(r_scalar, **params)
             assert isinstance(result, u.Quantity)
-            assert result.isscalar or result.shape == (), (
-                f"Scalar eval did not return scalar-like for {params}"
-            )
+            assert result.isscalar or result.shape == (), f"Scalar eval did not return scalar-like for {params}"
 
     def test_feval_matches_eval_value(self):
         """feval with pre-processed inputs matches eval numerically."""
@@ -93,18 +88,14 @@ class BaseTestCSMProfile:
             processed_params = self.PROFILE_CLASS.process_parameters(**params)
             feval_result = self.PROFILE_CLASS.feval(*processed_args, **processed_params)
             eval_value = self.PROFILE_CLASS.eval(_R_CGS, **params).value
-            assert np.allclose(feval_result, eval_value), (
-                f"feval does not match eval for {params}"
-            )
+            assert np.allclose(feval_result, eval_value), f"feval does not match eval for {params}"
 
     def test_as_callable_returns_quantity(self):
         """as_callable returns a callable that produces Quantity output."""
         for params in self.PARAMETER_SETS:
             fn = self.PROFILE_CLASS.as_callable(**params)
             result = fn(_R_QTY)
-            assert isinstance(result, u.Quantity), (
-                f"as_callable did not return Quantity for {params}"
-            )
+            assert isinstance(result, u.Quantity), f"as_callable did not return Quantity for {params}"
 
     def test_as_callable_matches_eval(self):
         """as_callable output matches direct eval on the same grid."""
@@ -134,9 +125,7 @@ class BaseTestCSMProfile:
         """process_parameters returns a dict for each parameter set."""
         for params in self.PARAMETER_SETS:
             result = self.PROFILE_CLASS.process_parameters(**params)
-            assert isinstance(result, dict), (
-                f"process_parameters did not return dict for {params}"
-            )
+            assert isinstance(result, dict), f"process_parameters did not return dict for {params}"
 
     def test_output_is_nonnegative(self):
         """Density is non-negative everywhere on the test grid."""
@@ -149,14 +138,13 @@ class BaseTestCSMProfile:
         for params in self.PARAMETER_SETS:
             rho_no_t = self.PROFILE_CLASS.eval(_R_QTY, **params)
             rho_with_t = self.PROFILE_CLASS.eval(_R_QTY, _T_QTY, **params)
-            assert np.allclose(rho_no_t.value, rho_with_t.value), (
-                f"Profile is not time-independent for {params}"
-            )
+            assert np.allclose(rho_no_t.value, rho_with_t.value), f"Profile is not time-independent for {params}"
 
 
 # =========================================================================== #
 # Concrete CSM Profile Test Classes                                           #
 # =========================================================================== #
+
 
 class TestWindCSMProfile(BaseTestCSMProfile):
     PROFILE_CLASS = WindCSMProfile
@@ -192,9 +180,7 @@ class TestWindCSMProfile(BaseTestCSMProfile):
 
         rho1 = WindCSMProfile.eval(_R_QTY, A=A_cgs).value
         rho2 = WindCSMProfile.eval(_R_QTY, A_star=A_star).value
-        rho3 = WindCSMProfile.eval(
-            _R_QTY, mass_loss_rate=self._MDOT_CGS, wind_velocity=self._VW_CGS
-        ).value
+        rho3 = WindCSMProfile.eval(_R_QTY, mass_loss_rate=self._MDOT_CGS, wind_velocity=self._VW_CGS).value
 
         assert np.allclose(rho1, rho2, rtol=1e-10), "Routes 1 and 2 disagree"
         assert np.allclose(rho1, rho3, rtol=1e-10), "Routes 1 and 3 disagree"
@@ -261,9 +247,7 @@ class TestUniformCSMProfile(BaseTestCSMProfile):
         """eval returns rho_0 at every radius."""
         for params in self.PARAMETER_SETS:
             result = UniformCSMProfile.eval(_R_QTY, **params).value
-            assert np.allclose(result, params["rho_0"], atol=1e-40), (
-                f"Density is not constant for {params}"
-            )
+            assert np.allclose(result, params["rho_0"], atol=1e-40), f"Density is not constant for {params}"
 
 
 class TestPowerLawCSMProfile(BaseTestCSMProfile):
@@ -463,7 +447,7 @@ class TestSmoothTruncatedWindCSMProfile(BaseTestCSMProfile):
         for params in self.PARAMETER_SETS:
             r_m = params["r_max"] * u.cm
             result = SmoothTruncatedWindCSMProfile.eval(r_m, **params).value
-            wind_at_rmax = params["A"] * params["r_max"]**-2
+            wind_at_rmax = params["A"] * params["r_max"] ** -2
             expected = 0.5 * (wind_at_rmax + params["density_floor"])
             assert result == pytest.approx(expected, rel=1e-10)
 
@@ -504,12 +488,18 @@ class TestSmoothBPLCSMProfile(BaseTestCSMProfile):
 
     PARAMETER_SETS = [
         {
-            "density_break": 1e-18, "radius_break": 1e16,
-            "slope_inner": 2.0, "slope_outer": 0.0, "smoothness": 0.5,
+            "density_break": 1e-18,
+            "radius_break": 1e16,
+            "slope_inner": 2.0,
+            "slope_outer": 0.0,
+            "smoothness": 0.5,
         },
         {
-            "density_break": 5e-19, "radius_break": 5e15,
-            "slope_inner": 1.0, "slope_outer": 2.0, "smoothness": 0.1,
+            "density_break": 5e-19,
+            "radius_break": 5e15,
+            "slope_inner": 1.0,
+            "slope_outer": 2.0,
+            "smoothness": 0.1,
         },
     ]
 
@@ -679,3 +669,183 @@ class TestLogNormalCSMProfile(BaseTestCSMProfile):
             r_sig = params["r_peak"] * np.exp(params["sigma"]) * u.cm
             result = LogNormalCSMProfile.eval(r_sig, **params).value
             assert result == pytest.approx(params["rho_0"] * np.exp(-0.5), rel=1e-10)
+
+
+class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
+    PROFILE_CLASS = AxisymmetricCSMDensityProfile
+
+    _BASE = {
+        "rho_int": 2e-16,
+        "rho_ext": 1e-18,
+        "r_ref": 1e15,
+        "alpha_int": 1.5,
+        "alpha_ext": 2.0,
+        "r_trans": 5e15,
+        "delta_trans": 0.3,
+        "f_pole": 0.2,
+        "aspect": 2.0,
+    }
+    PARAMETER_SETS = [
+        {**_BASE, "theta": np.pi / 2},
+        {**_BASE, "theta": 0.0},
+        {**_BASE, "theta": 0.7, "aspect": 0.5, "f_pole": 0.0},
+    ]
+
+    @staticmethod
+    def _sphere_average(func, n=4001):
+        """Solid-angle average (1/2) * integral f(theta) sin(theta) dtheta, by the trapezoid rule."""
+        theta = np.linspace(0.0, np.pi, n)
+        return 0.5 * np.trapz(func(theta) * np.sin(theta), theta)
+
+    # ------------------------------------------- #
+    # Angular structure                           #
+    # ------------------------------------------- #
+    @pytest.mark.parametrize("f_pole", [0.0, 0.2, 0.7, 1.0])
+    @pytest.mark.parametrize("aspect", [0.1, 1.0, 5.0, 50.0])
+    def test_angular_shape_has_unit_solid_angle_average(self, f_pole, aspect):
+        avg = self._sphere_average(lambda th: AxisymmetricCSMDensityProfile.angular_shape(th, f_pole, aspect))
+        assert avg == pytest.approx(1.0, rel=1e-4)
+
+    def test_angular_norm_matches_direct_integration(self):
+        f, b = 0.2, 2.0
+        direct = self._sphere_average(lambda th: f + (1 - f) * np.exp(-np.abs(np.cos(th) / np.sin(th + 1e-300)) / b))
+        assert AxisymmetricCSMDensityProfile.angular_norm(f, b) == pytest.approx(direct, rel=1e-4)
+
+    def test_interior_component_averages_to_rho_int(self):
+        """With rho_ext = 0, the sphere-averaged density equals rho_int(r) S(r)."""
+        params = {**self._BASE, "rho_ext": 0.0}
+        for r in (1e14, 5e15, 3e16):
+            avg = self._sphere_average(lambda th: AxisymmetricCSMDensityProfile.eval(r, theta=th, **params).value)
+            x = r / params["r_ref"]
+            S = 1.0 / (1.0 + (r / params["r_trans"]) ** (1.0 / params["delta_trans"]))
+            assert avg == pytest.approx(params["rho_int"] * x ** (-params["alpha_int"]) * S, rel=1e-4)
+
+    def test_equator_denser_than_pole(self):
+        eq = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=np.pi / 2, **self._BASE)
+        pole = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=0.0, **self._BASE)
+        assert np.all(eq.value >= pole.value)
+
+    def test_pole_value_is_floor(self):
+        """On the axis G = f_pole / norm exactly."""
+        p = self._BASE
+        norm = AxisymmetricCSMDensityProfile.angular_norm(p["f_pole"], p["aspect"])
+        assert AxisymmetricCSMDensityProfile.angular_shape(0.0, p["f_pole"], p["aspect"]) == pytest.approx(
+            p["f_pole"] / norm, rel=1e-12
+        )
+
+    def test_reflection_symmetry(self):
+        th = np.array([0.1, 0.7, 1.3])
+        a = AxisymmetricCSMDensityProfile.eval(1e16, theta=th, **self._BASE).value
+        b = AxisymmetricCSMDensityProfile.eval(1e16, theta=np.pi - th, **self._BASE).value
+        c = AxisymmetricCSMDensityProfile.eval(1e16, theta=-th, **self._BASE).value
+        assert np.allclose(a, b, rtol=1e-12)
+        assert np.allclose(a, c, rtol=1e-12)
+
+    def test_angle_units(self):
+        deg = AxisymmetricCSMDensityProfile.eval(1e16, theta=90 * u.deg, **self._BASE).value
+        rad = AxisymmetricCSMDensityProfile.eval(1e16, theta=np.pi / 2, **self._BASE).value
+        assert deg == pytest.approx(rad, rel=1e-12)
+
+    def test_theta_broadcasts_against_radius(self):
+        r = np.geomspace(1e14, 1e17, 7)[:, None]
+        th = np.linspace(0.0, np.pi / 2, 5)[None, :]
+        rho = AxisymmetricCSMDensityProfile.eval(r, theta=th, **self._BASE)
+        assert rho.shape == (7, 5)
+
+    # ------------------------------------------- #
+    # Radial structure and limits                 #
+    # ------------------------------------------- #
+    def test_density_at_reference_radius_exterior_only(self):
+        params = {**self._BASE, "rho_int": 0.0}
+        rho = AxisymmetricCSMDensityProfile.eval(params["r_ref"], theta=1.0, **params)
+        assert rho.value == pytest.approx(params["rho_ext"], rel=1e-12)
+
+    def test_zero_interior_reduces_to_spherical_power_law(self):
+        params = {**self._BASE, "rho_int": 0.0}
+        rho = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=0.3, **params).value
+        expected = PowerLawCSMProfile.eval(
+            _R_QTY, rho_ref=params["rho_ext"], r_ref=params["r_ref"], slope=params["alpha_ext"]
+        ).value
+        assert np.allclose(rho, expected, rtol=1e-12)
+
+    def test_unit_f_pole_is_spherical(self):
+        """With f_pole = 1 the angular dependence vanishes."""
+        params = {**self._BASE, "f_pole": 1.0}
+        eq = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=np.pi / 2, **params).value
+        pole = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=0.0, **params).value
+        assert np.allclose(eq, pole, rtol=1e-12)
+
+    def test_transition_half_at_r_trans(self):
+        params = {**self._BASE, "rho_ext": 0.0}
+        theta = np.pi / 2
+        rho = AxisymmetricCSMDensityProfile.eval(params["r_trans"], theta=theta, **params).value
+        G = AxisymmetricCSMDensityProfile.angular_shape(theta, params["f_pole"], params["aspect"])
+        expected = 0.5 * params["rho_int"] * (params["r_trans"] / params["r_ref"]) ** (-params["alpha_int"]) * G
+        assert rho == pytest.approx(expected, rel=1e-12)
+
+    def test_sharp_transition_does_not_overflow(self):
+        params = {**self._BASE, "delta_trans": 1e-3}
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            rho = AxisymmetricCSMDensityProfile.eval(_R_QTY, theta=np.pi / 2, **params).value
+        assert np.all(np.isfinite(rho))
+        # Far beyond the transition only the exterior component remains.
+        assert rho[-1] == pytest.approx(params["rho_ext"] * (_R_CGS[-1] / params["r_ref"]) ** -2.0, rel=1e-12)
+
+    def test_sightline_callable_matches_eval(self):
+        fn = AxisymmetricCSMDensityProfile.as_optimized_callable(theta=0.4, **self._BASE)
+        expected = AxisymmetricCSMDensityProfile.eval(_R_CGS, theta=0.4, **self._BASE).value
+        assert np.allclose(fn(_R_CGS), expected, rtol=1e-12)
+
+    # ------------------------------------------- #
+    # Sector fractions                            #
+    # ------------------------------------------- #
+    @pytest.mark.parametrize("aspect", [0.2, 1.0, 2.0, 10.0])
+    def test_sector_fractions_sum_to_one(self, aspect):
+        eq = AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction(aspect)
+        pol = AxisymmetricCSMDensityProfile.polar_solid_angle_fraction(aspect)
+        assert eq + pol == pytest.approx(1.0, rel=1e-14)
+        assert 0 < eq < 1
+
+    @pytest.mark.parametrize("aspect", [0.2, 1.0, 2.0, 10.0])
+    @pytest.mark.parametrize("f_pole", [0.0, 0.3])
+    def test_disk_boundary_is_half_maximum(self, aspect, f_pole):
+        """At the disk half-opening latitude G sits halfway between its polar floor and equatorial peak."""
+        lat = AxisymmetricCSMDensityProfile.disk_half_opening_angle(aspect).to_value(u.rad)
+        theta = np.pi / 2 - lat
+        raw = AxisymmetricCSMDensityProfile._unnormalized_angular_shape
+        mid = 0.5 * (raw(0.0, f_pole, aspect) + raw(np.pi / 2, f_pole, aspect))
+        assert raw(theta, f_pole, aspect) == pytest.approx(mid, rel=1e-12)
+
+    def test_equatorial_fraction_is_solid_angle_of_band(self):
+        aspect = 2.0
+        lat = AxisymmetricCSMDensityProfile.disk_half_opening_angle(aspect).to_value(u.rad)
+        theta = np.linspace(np.pi / 2 - lat, np.pi / 2 + lat, 4001)
+        band = 0.5 * np.trapz(np.sin(theta), theta)
+        assert AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction(aspect) == pytest.approx(band, rel=1e-6)
+
+    # ------------------------------------------- #
+    # Validation                                  #
+    # ------------------------------------------- #
+    @pytest.mark.parametrize(
+        "override",
+        [
+            {"rho_int": -1e-18},
+            {"rho_ext": -1e-18},
+            {"r_ref": 0.0},
+            {"r_trans": -1.0},
+            {"delta_trans": 0.0},
+            {"f_pole": 1.5},
+            {"f_pole": -0.1},
+            {"aspect": 0.0},
+            {"aspect": -1.0},
+            {"theta": np.nan},
+        ],
+    )
+    def test_invalid_parameters_raise(self, override):
+        params = {**self._BASE, "theta": np.pi / 2, **override}
+        with pytest.raises(ValueError):
+            AxisymmetricCSMDensityProfile.eval(1e16, **params)
+
+    def test_missing_theta_raises(self):
+        with pytest.raises(TypeError):
+            AxisymmetricCSMDensityProfile.eval(1e16, **self._BASE)
