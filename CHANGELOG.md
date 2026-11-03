@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switched readme to Markdown for better PyPI rendering.
 
 ### Fixed
+- `Diggins26_TwoComponentModel` now returns NaN flux (and `diagnose()` reports why) when the ejecta cannot be normalized for a `v_0` that is below `max_initial_beta` but above what the kernel truncated at `c` can represent; previously the `RuntimeError` from the normalization escaped and aborted the run.
 - Pitch-angle averaging was incorrectly applied in `core.py`; the isotropic average is now used throughout the numerical synchrotron computations.
 - SED normalization error in the analytical one-zone models.
 - Default model parameters in `trilobite/models/SEDs/synchrotron.py` now guarantee `gamma_c > 1` to avoid unphysical cooling break positions.

@@ -868,7 +868,10 @@ class Diggins26_TwoComponentModel(Model):
         # which would only be converted straight back (a measurable cost at every posterior evaluation).
         try:
             K, v_t = _normalize_bpl_cgs(p["E_ej"], p["M_ej"], n=p["n"], delta=p["delta"], v_max=_C_CGS)
-        except ValueError as exc:
+        except (ValueError, RuntimeError) as exc:
+            # ValueError: invalid inputs. RuntimeError: no transition velocity reproduces E_ej / M_ej under the
+            # finite v_max (the kernel's largest attainable mean-square velocity is below the requested one), which
+            # can happen for a v_0 that is still below max_initial_beta.
             return None, f"The ejecta profile cannot be normalized: {exc}"
 
         rho_ej = BrokenPowerLawEjectaProfile.as_optimized_callable(

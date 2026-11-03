@@ -374,6 +374,15 @@ class TestInfeasibility:
         out = m.forward_model({"time": 20 * DAY, "frequency": 5e9}, {"M_ej": 1e29})
         assert np.isnan(out.flux_density.value)
 
+    def test_unnormalizable_ejecta_below_beta_max_is_infeasible(self, model):
+        """v_0 = 0.79 c passes the max_initial_beta = 0.8 check, but a delta = 0 kernel truncated at c cannot reach it."""
+        M_ej = 2e51 / (0.79 * C) ** 2
+        parameters = {"M_ej": M_ej, "delta": 0.0}
+        reason = model.diagnose(parameters, TIMES)
+        assert reason is not None and "normalized" in reason
+        out = model.forward_model({"time": TIMES, "frequency": np.full_like(TIMES, 5e9)}, parameters)
+        assert np.all(np.isnan(out.flux_density.value))
+
     def test_tabulate_raises_with_reason(self, model):
         with pytest.raises(ValueError, match="infeasible"):
             model.tabulate(TIMES, FREQS, {"M_ej": 1e29})
