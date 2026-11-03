@@ -35,6 +35,9 @@ from trilobite.dynamics.profiles.csm import (
     WindWithFloorCSMProfile,
 )
 
+# NumPy compatibility: np.trapezoid added in 2.0, np.trapz removed in 2.0.
+_trapz = getattr(np, "trapezoid", getattr(np, "trapz", None))
+
 # Shared test grid in CGS (bare cm values → accepted as cm by all stationary profiles)
 _R_CGS = np.geomspace(1e14, 1e18, 50)
 _R_QTY = _R_CGS * u.cm
@@ -695,7 +698,7 @@ class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
     def _sphere_average(func, n=4001):
         """Solid-angle average (1/2) * integral f(theta) sin(theta) dtheta, by the trapezoid rule."""
         theta = np.linspace(0.0, np.pi, n)
-        return 0.5 * np.trapz(func(theta) * np.sin(theta), theta)
+        return 0.5 * _trapz(func(theta) * np.sin(theta), theta)
 
     # ------------------------------------------- #
     # Angular structure                           #
@@ -820,7 +823,7 @@ class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
         aspect = 2.0
         lat = AxisymmetricCSMDensityProfile.disk_half_opening_angle(aspect).to_value(u.rad)
         theta = np.linspace(np.pi / 2 - lat, np.pi / 2 + lat, 4001)
-        band = 0.5 * np.trapz(np.sin(theta), theta)
+        band = 0.5 * _trapz(np.sin(theta), theta)
         assert AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction(aspect) == pytest.approx(band, rel=1e-6)
 
     # ------------------------------------------- #
