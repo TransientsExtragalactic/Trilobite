@@ -583,3 +583,42 @@ def test_pl_bpl_energy_budget_consistency():
 
     assert e_pl == pytest.approx(expected, rel=1.0e-10)
     assert e_bpl == pytest.approx(expected, rel=1.0e-10)
+
+
+class TestBrokenPowerLawBatchHelpers:
+    """The batched helpers used by the LFBOT model must match the scalar interface."""
+
+    GAMMA = np.geomspace(1.0, 1e8, 120)
+    BREAKS = np.geomspace(1.5, 5e7, 25)
+
+    @pytest.mark.parametrize("p1", [2.0, 2.4, 3.0])  # p1 = 2 is the logarithmic first-moment branch
+    def test_first_moment(self, p1):
+        shape = {"p1": p1, "p2": p1 + 1.0, "gamma_min": 1.2, "gamma_max": 1e8}
+        batch = BrokenPowerLaw._opt_first_moment_batch(self.BREAKS, **shape)
+        scalar = np.array([BrokenPowerLaw.moment(order=1, gamma_c=g, **shape) for g in self.BREAKS])
+        assert np.allclose(batch, scalar, rtol=1e-12, atol=0.0)
+
+    @pytest.mark.parametrize("p1", [2.0, 3.0])
+    def test_magnetic_field_normalization(self, p1):
+        shape = {"p1": p1, "p2": p1 + 1.0, "gamma_min": 1.2, "gamma_max": 1e8}
+        B = np.geomspace(0.01, 5.0, self.BREAKS.size)
+        batch = BrokenPowerLaw._opt_normalize_from_magnetic_field_batch(B, 0.01, 0.1, self.BREAKS, **shape)
+        scalar = np.array(
+            [
+                BrokenPowerLaw._normalize_from_magnetic_field(b, 0.01, 0.1, gamma_c=g, **shape)
+                for b, g in zip(B, self.BREAKS)
+            ]
+        )
+        assert np.allclose(batch, scalar, rtol=1e-12, atol=0.0)
+
+    def test_log_pdf(self):
+        shape = {"p1": 3.0, "p2": 4.0, "gamma_min": 1.2, "gamma_max": 1e8}
+        norm = np.geomspace(1e-3, 1e3, self.BREAKS.size)
+        batch = BrokenPowerLaw._opt_log_pdf_batch(self.GAMMA, norm, self.BREAKS, **shape)
+        assert batch.shape == (self.BREAKS.size, self.GAMMA.size)
+        with np.errstate(divide="ignore"):
+            scalar = np.log(
+                [BrokenPowerLaw.pdf(self.GAMMA, norm=n, gamma_c=g, **shape) for n, g in zip(norm, self.BREAKS)]
+            )
+        assert np.array_equal(batch, scalar)  # includes the -inf entries outside the support
+        assert np.isneginf(batch).any()

@@ -55,6 +55,7 @@ Each profile separates the user-facing and solver-facing paths:
     for repeated evaluation inside numerical solvers.
 """
 
+import math
 from abc import abstractmethod
 from typing import TYPE_CHECKING, Any
 
@@ -66,6 +67,9 @@ from scipy.special import expit
 from trilobite.utils.misc_utils import ensure_in_units
 
 from .core import _DynamicalProfile
+
+# Argument types that take the scalar fast path of ``as_optimized_callable``.
+_SCALAR_TYPES = (float, np.floating)
 
 if TYPE_CHECKING:
     from trilobite._typing import _UnitBearingArrayLike, _UnitBearingScalarLike
@@ -3277,6 +3281,41 @@ class AxisymmetricCSMDensityProfile(StationaryCSMDensityProfile):
             "theta": theta,
             "angular_norm": cls.angular_norm(f_pole, aspect),
         }
+
+    @classmethod
+    def as_optimized_callable(cls, **parameters: Any):
+        """
+        Return a fast unit-free callable with fixed profile parameters.
+
+        This behaves exactly like :meth:`~trilobite.dynamics.profiles.core._DynamicalProfile.as_optimized_callable`
+        for the density, but a frozen sightline has a fixed angular factor, so it is evaluated once rather than at
+        every call, and scalar radii are evaluated with plain scalar arithmetic. ODE right-hand sides call the
+        density at a single radius thousands of times, where the array machinery dominates the cost. Array radii take
+        the usual vectorized path.
+        """
+        p = cls._validate_and_process_parameters(**parameters)
+
+        # Everything that does not depend on the radius, evaluated once.
+        shape = cls._unnormalized_angular_shape(p["theta"], p["f_pole"], p["aspect"]) / p["angular_norm"]
+        rho_ext, rho_int, r_ref, r_trans = p["rho_ext"], p["rho_int"], p["r_ref"], p["r_trans"]
+        alpha_ext, alpha_int, delta_trans = p["alpha_ext"], p["alpha_int"], p["delta_trans"]
+        scalar_amplitude = rho_int * float(shape) if np.ndim(shape) == 0 else None
+
+        def _frozen(r, _t=None):
+            if scalar_amplitude is None or not isinstance(r, _SCALAR_TYPES) or not r > 0.0:
+                return cls._opt_eval(r, _t, **p)
+
+            ln_x = math.log(r / r_ref)
+            # S(r) = 1 / (1 + (r / r_trans)^(1/delta)), written so that neither branch can overflow.
+            z = -math.log(r / r_trans) / delta_trans
+            if z >= 0.0:
+                transition = 1.0 / (1.0 + math.exp(-z))
+            else:
+                e = math.exp(z)
+                transition = e / (1.0 + e)
+            return rho_ext * math.exp(-alpha_ext * ln_x) + scalar_amplitude * transition * math.exp(-alpha_int * ln_x)
+
+        return _frozen
 
     @classmethod
     def _opt_eval(

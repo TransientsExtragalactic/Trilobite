@@ -17,7 +17,8 @@ two sightlines, the equator and the pole, each of which stands in for its solid-
 """
 
 from collections import namedtuple
-from typing import NamedTuple, Optional, Union
+from collections.abc import Callable
+from typing import NamedTuple, Union
 
 import numpy as np
 from astropy import constants as const
@@ -25,14 +26,22 @@ from astropy import units as u
 from scipy.integrate import quad
 
 from trilobite.dynamics.profiles.csm import AxisymmetricCSMDensityProfile
-from trilobite.dynamics.profiles.ejecta import BrokenPowerLawEjectaProfile
+from trilobite.dynamics.profiles.ejecta import BrokenPowerLawEjectaProfile, _normalize_bpl_cgs
 from trilobite.dynamics.shocks.numerical import PressureDrivenThinShellShockEngine
 from trilobite.dynamics.shocks.utils import make_homologous_stationary_sources
 from trilobite.models.core.base import Model
 from trilobite.models.core.parameters import ModelParameter, ModelVariable
+from trilobite.physics_utils.composition import (
+    compute_mean_molecular_weight,
+    compute_mean_molecular_weight_per_electron,
+    compute_mean_molecular_weight_per_ion,
+)
 from trilobite.physics_utils.cosmology import get_cosmology, resolve_cosmological_distances
 from trilobite.radiation.free_free.absorption import _compute_RJ_ff_optical_depth_EM
-from trilobite.radiation.synchrotron.cooling import _opt_compute_synchrotron_cooling_gamma
+from trilobite.radiation.synchrotron.cooling import (
+    _opt_compute_IC_cooling_gamma,
+    _opt_compute_synchrotron_cooling_gamma,
+)
 from trilobite.radiation.synchrotron.electron_distributions import BrokenPowerLaw
 from trilobite.radiation.synchrotron.SEDs.numerical.core import NumericalSynchrotronEngine
 from trilobite.utils.misc_utils import ensure_in_units
@@ -60,7 +69,15 @@ _EM_MAX_PANEL = 0.4
 _EM_MIN_PANEL = 0.02
 _GL_NODES, _GL_WEIGHTS = np.polynomial.legendre.leggauss(8)
 
-# The parameters on which the shock dynamics depend.
+# Maximum number of (epoch, frequency) pairs sent to the synchrotron engine at once; this bounds the size of its
+# (pairs x Lorentz-factor) work arrays on large tabulation grids.
+_SPECTRUM_CHUNK = 2048
+
+# Keyword arguments of the shock integration that the model sets itself and which `integrator_kw` may not override.
+_RESERVED_INTEGRATOR_KW = frozenset({"fun", "t_span", "y0", "t_eval", "dense_output", "gamma"})
+
+# The parameters on which the shock dynamics depend. (The composition and adiabatic index, which also enter the
+# dynamics, are fixed hyperparameters rather than parameters.)
 _DYNAMICS_PARAMETERS = (
     "rho_int",
     "rho_ext",
@@ -168,64 +185,21 @@ class Diggins26_TwoComponentModel(Model):
     r"""
     Two-component (equatorial and polar) synchrotron model for the radio emission of LFBOTs.
 
-    The CSM is axisymmetric (see :class:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile`),
+    Ejecta interact with an axisymmetric CSM (a dense, disk-confined interior component plus a spherical exterior
+    component; see :class:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile`). The interaction is
+    followed along two sightlines, the equator and the pole, each standing in for its solid-angle sector. Along each
+    sightline a pressure-driven thin shell sets the post-shock thermal energy density, which is partitioned into a
+    magnetic field and a cooled broken power-law electron population that radiates synchrotron emission. Free-free
+    absorption by the ionized CSM exterior to the shock attenuates each sector, and the observed flux density is
+    the sum of the sectors. The technical details are given in the Notes below.
 
-    .. math::
+    .. important::
 
-        \rho(r, \theta) = \rho_{\rm ext}(r) + \rho_{\rm int}(r)\,S(r)\,G(\theta),
-
-    and the interaction of freely expanding, broken power-law ejecta with it is followed along two sightlines,
-    the equator (:math:`\theta = \pi/2`) and the pole (:math:`\theta = 0`). Along each, a pressure-driven thin
-    shell is integrated from :math:`t_0`; the post-shock thermal energy density :math:`e_{\rm th}` sets the
-    magnetic field :math:`B = \sqrt{8\pi\epsilon_B e_{\rm th}}` and the amplitude of a synchrotron-cooled broken
-    power-law electron distribution (:math:`N(\gamma) \propto \gamma^{-p}` below the cooling break and
-    :math:`\gamma^{-(p+1)}` above) carrying a fraction :math:`\epsilon_e` of :math:`e_{\rm th}`. The spectrum of each
-    sector comes from the numerical synchrotron engine (pitch-angle averaged, including self-absorption) with geometry
-
-    .. math::
-
-        A_{\rm eff} = \pi R^2 f_A, \qquad \ell_{\rm eff} = f_V^{1/3} R,
-
-    where :math:`f_A` is the sector's solid-angle fraction (derived from the CSM geometry, not a parameter) and
-    :math:`f_V` is a shared volume filling factor. Free-free absorption by the ionized CSM exterior to the shock
-    (a hydrogen and helium plasma with hydrogen mass fraction :math:`X` and electron temperature :math:`T_e`)
-    attenuates each sector by :math:`e^{-\tau_{\rm ff}}`. The model output is the sum of the sectors.
-
-    .. rubric:: Redshift
-
-    Redshift and distance are fixed model configuration (constructor arguments), never parameters. The model takes
-    **observer-frame** ``time`` and ``frequency``. Internally, the dynamics are solved at
-    :math:`t = t_{\rm obs}/(1+z)`, the free-free optical depth is evaluated at :math:`\nu = \nu_{\rm obs}(1+z)`, and
-    the synchrotron engine applies the cosmological flux transformation using :math:`D_A`.
-
-    .. rubric:: Evaluation paths
-
-    :meth:`forward_model`
-        The inference path. ``time`` and ``frequency`` are paired (one flux per pair); the shock is solved once per
-        sector at the unique rest-frame epochs and each epoch's spectrum is evaluated only at its own frequencies.
-
-    :meth:`tabulate`
-        The analysis and plotting path. ``time`` and ``frequency`` are independent axes, and the result is a
-        :class:`~trilobite.models.LFBOTs._diggins26.Diggins26Tabulation` containing the total and the per-sector
-        flux densities, optical depths, magnetic fields, and so on, on an ``(n_t, n_nu)`` grid. The shock can be solved
-        once with :meth:`compute_dynamics` and reused.
-
-    .. rubric:: Infeasible parameters
-
-    Instead of raising exceptions, :meth:`forward_model` returns NaN flux for a short, enumerated list of
-    infeasible parameter combinations (so that samplers can reject them), and lets every other exception
-    propagate:
-
-    - the ejecta profile cannot be normalized to :math:`(E_{\rm ej}, M_{\rm ej})` with :math:`v_{\max} = c`,
-    - :math:`v_0 = \sqrt{2E_{\rm ej}/M_{\rm ej}}` exceeds ``beta_max`` times :math:`c`,
-    - :math:`\gamma_{\max}` is too close to :math:`\gamma_{\min}` to place a cooling break,
-    - there is no CSM mass inside the starting radius, or
-    - the shock ODE integration fails.
-
-    :meth:`diagnose` reports which condition rejected a parameter set. Hard parameter-bound violations raise
-    ``ValueError`` as for every Trilobite model.
+        This model is **on-axis** with the polar region of the CSM.
 
     .. dropdown:: Parameters
+
+        Parameters are varied at evaluation time (and are therefore what an inference samples).
 
         .. list-table::
            :widths: 20 20 60
@@ -236,10 +210,10 @@ class Diggins26_TwoComponentModel(Model):
              - **Description**
            * - ``rho_int``
              - :math:`\rho_{\rm int}`
-             - Solid-angle-averaged interior CSM density at ``r_ref``.
+             - Solid-angle-averaged interior CSM density at ``reference_radius``.
            * - ``rho_ext``
              - :math:`\rho_{\rm ext}`
-             - Exterior (spherical) CSM density at ``r_ref``.
+             - Exterior (spherical) CSM density at ``reference_radius``.
            * - ``alpha_int``, ``alpha_ext``
              - :math:`\alpha_{\rm int}`, :math:`\alpha_{\rm ext}`
              - Power-law slopes of the interior and exterior components.
@@ -270,12 +244,54 @@ class Diggins26_TwoComponentModel(Model):
            * - ``T_e``
              - :math:`T_e`
              - Electron temperature of the ionized CSM.
-           * - ``X``
-             - :math:`X`
-             - Hydrogen mass fraction of the CSM (the remainder is helium).
            * - ``R_ion``
              - :math:`R_{\rm ion}`
              - Outer radius of the ionized CSM (the free-free integration cutoff).
+
+    .. dropdown:: Hyperparameters
+
+        Hyperparameters are fixed when the model is constructed and are never sampled.
+
+        .. list-table::
+           :widths: 25 15 60
+           :header-rows: 1
+
+           * - **Name**
+             - **Default**
+             - **Description**
+           * - ``redshift``, ``luminosity_distance``, ``angular_diameter_distance``
+             - (one required)
+             - Source distance. Exactly one is given and the others follow from ``cosmology``.
+           * - ``cosmology``
+             - configuration
+             - Cosmology relating redshift and distance.
+           * - ``hydrogen_mass_fraction``, ``helium_mass_fraction``
+             - ``0.7``, ``1 - X``
+             - CSM mass fractions :math:`X` and :math:`Y`. They set the mean molecular weights (and therefore the
+               shock temperature and free-free emission measure) and the ion mix of the free-free opacity.
+           * - ``adiabatic_index``
+             - ``5/3``
+             - Adiabatic index of the shocked gas.
+           * - ``reference_radius``
+             - ``1e15 cm``
+             - Radius at which ``rho_int`` and ``rho_ext`` are defined.
+           * - ``shock_start_time``
+             - ``0.3 d``
+             - Source-frame time :math:`t_0` at which the shock integration starts.
+           * - ``max_initial_beta``
+             - ``0.8``
+             - Largest permitted initial velocity :math:`v_0/c`; faster ejecta are rejected as infeasible.
+           * - ``gamma_points_per_decade``
+             - ``20``
+             - Resolution of the electron Lorentz-factor grid.
+           * - ``integrator_kw``
+             - ``{"method": "LSODA", "rtol": 1e-7}``
+             - Keyword arguments for the shock integration (:func:`scipy.integrate.solve_ivp`), such as ``method``,
+               ``rtol``, ``atol`` or ``max_step``.
+           * - ``seed_photon_luminosity``
+             - ``None``
+             - Optional :math:`L(t)` of the Compton seed photons. If given, inverse-Compton losses are added to
+               the synchrotron cooling.
 
     .. dropdown:: Variables
 
@@ -293,39 +309,115 @@ class Diggins26_TwoComponentModel(Model):
              - :math:`t`
              - Observer-frame time since explosion.
 
-    Parameters
-    ----------
-    redshift : float, optional
-        Source redshift. Exactly one of ``redshift`` and ``luminosity_distance`` must be given.
-    luminosity_distance : float or ~astropy.units.Quantity, optional
-        Source luminosity distance. Bare values are interpreted as Mpc.
-    cosmology : ~astropy.cosmology.FLRW, optional
-        Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.
-    r_ref : float or ~astropy.units.Quantity, optional
-        Reference radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.
-    t_0 : float or ~astropy.units.Quantity, optional
-        Source-frame time at which the shock integration starts (at :math:`R_0 = v_0 t_0`). Every requested epoch must
-        satisfy :math:`t_{\rm obs}/(1+z) \ge t_0`. Bare values are seconds. Default ``0.3 d``. The shock solution
-        forgets its start as :math:`t_0 \to 0`; ``0.3 d`` biases the thermal energy density by roughly 0.1% at 5 d.
-    beta_max : float, optional
-        Largest permitted initial velocity :math:`v_0/c`. The shock and radiation calculations are non-relativistic
-        (the radiation uses a static plasma, :math:`\beta = 0`), so both degrade as :math:`v_0` approaches
-        :math:`c`. Parameter sets with a larger :math:`v_0` are rejected as infeasible. Default ``0.8``.
-    n_gamma_per_decade : int, optional
-        Electron Lorentz-factor grid resolution. About 20 per decade converges the flux to ~0.01 dex. Default ``20``.
-    ode_rtol : float, optional
-        Relative tolerance of the shock integration. ``1e-6`` is several times faster than the engine's default
-        ``1e-10`` with errors of order :math:`10^{-8}`. Default ``1e-6``.
-
     Notes
     -----
-    - Serialization stores the redshift but not a custom ``cosmology`` object; a model rebuilt from its
-      specification uses the configuration cosmology.
-    - The emission measure of a hydrogen-helium plasma is
-      :math:`\int n_e n_i\,dr = \frac{(1+X)(1+3X)}{8 m_p^2}\int\rho^2\,dr`, and the free-free opacity uses
-      the corresponding hydrogen and helium ion fractions.
-    - The cooling Lorentz factor is the pitch-angle averaged :math:`\gamma_c = 9\pi m_e c/(\sigma_T B^2 t)` evaluated
-      at the source-frame time.
+    .. rubric:: Geometry and the shock
+
+    The CSM is axisymmetric,
+
+    .. math::
+
+        \rho(r, \theta) = \rho_{\rm ext}(r) + \rho_{\rm int}(r)\,S(r)\,G(\theta),
+
+    and the interaction of freely expanding, broken power-law ejecta with it is followed along the equator
+    (:math:`\theta = \pi/2`) and the pole (:math:`\theta = 0`). Along each, a pressure-driven thin shell is
+    integrated from :math:`t_0` (see
+    :class:`~trilobite.dynamics.shocks.numerical.PressureDrivenThinShellShockEngine`). The starting shell holds the
+    CSM swept up inside :math:`R_0 = v_0 t_0`, with :math:`v_0 = \sqrt{2E_{\rm ej}/M_{\rm ej}}`.
+
+    .. rubric:: Electrons and radiation
+
+    The post-shock thermal energy density :math:`e_{\rm th}` sets the magnetic field
+    :math:`B = \sqrt{8\pi\epsilon_B e_{\rm th}}` and the amplitude of a synchrotron-cooled broken power-law electron
+    distribution (:math:`N(\gamma) \propto \gamma^{-p}` below the cooling break and :math:`\gamma^{-(p+1)}` above)
+    carrying a fraction :math:`\epsilon_e` of :math:`e_{\rm th}`. The spectrum of each sector comes from the
+    numerical synchrotron engine (pitch-angle averaged, including self-absorption) with geometry
+
+    .. math::
+
+        A_{\rm eff} = \pi R^2 f_A, \qquad \ell_{\rm eff} = f_V^{1/3} R,
+
+    where :math:`f_A` is the sector's solid-angle fraction (derived from the CSM geometry, not a parameter) and
+    :math:`f_V` is a shared volume filling factor.
+
+    .. rubric:: Cooling
+
+    The cooling Lorentz factor :math:`\gamma_c` is the one whose cooling time equals the source-frame age
+    :math:`t`. For synchrotron losses alone (pitch-angle averaged),
+
+    .. math::
+
+        \gamma_{c,\rm syn} = \frac{9\pi m_e c}{\sigma_T B^2 t}.
+
+    If ``seed_photon_luminosity`` is given, inverse-Compton losses on a point source of luminosity :math:`L(t)` at
+    the center, seen by the shell at radius :math:`R`, are added in the Thomson regime without Klein-Nishina
+    corrections,
+
+    .. math::
+
+        \gamma_{c,\rm IC} = \frac{3\pi m_e c^2 R^2}{\sigma_T L\, t}.
+
+    The loss rates add, so the cooling times (and hence the inverse Lorentz factors) add:
+    :math:`1/\gamma_c = 1/\gamma_{c,\rm syn} + 1/\gamma_{c,\rm IC}`. In either case :math:`\gamma_c` is clipped
+    to lie strictly inside :math:`(\gamma_{\min}, \gamma_{\max})`. The same :math:`L(t)` is used for both sectors,
+    and it only changes the electron distribution, not the shock dynamics.
+
+    .. rubric:: Free-free absorption
+
+    The CSM exterior to the shock (a fully ionized plasma at temperature :math:`T_e`) attenuates each sector by
+    :math:`e^{-\tau_{\rm ff}}`. The emission measure is
+
+    .. math::
+
+        \int n_e n_i\,dr = \frac{1}{\mu_e \mu_i m_p^2}\int\rho^2\,dr,
+
+    where the mean molecular weights per electron and per ion :math:`\mu_e` and :math:`\mu_i` follow from the
+    composition (see :mod:`~trilobite.physics_utils.composition`); the same composition sets the mean molecular
+    weight :math:`\mu` that converts the post-shock pressure to a temperature. The free-free opacity is evaluated
+    with the hydrogen and helium ion fractions, :math:`n_{\rm H} : n_{\rm He} = X : Y/4`. A metal fraction
+    :math:`1 - X - Y` enters :math:`\mu`, :math:`\mu_e` and :math:`\mu_i` but is not included in the ion mix of the
+    opacity, which is accurate when the metals are a small contribution.
+
+    .. rubric:: Redshift
+
+    Redshift and distance are fixed model configuration (constructor arguments), never parameters. The model takes
+    **observer-frame** ``time`` and ``frequency``. Internally, the dynamics are solved at
+    :math:`t = t_{\rm obs}/(1+z)`, the free-free optical depth is evaluated at :math:`\nu = \nu_{\rm obs}(1+z)`, and
+    the synchrotron engine applies the cosmological flux transformation using :math:`D_A`. The seed photon
+    luminosity is a function of the **source-frame** time.
+
+    .. rubric:: Evaluation paths
+
+    :meth:`forward_model`
+        The inference path. ``time`` and ``frequency`` are paired (one flux per pair); the shock is solved once per
+        sector at the unique rest-frame epochs and each epoch's spectrum is evaluated only at its own frequencies.
+
+    :meth:`tabulate`
+        The analysis and plotting path. ``time`` and ``frequency`` are independent axes, and the result is a
+        :class:`~trilobite.models.LFBOTs._diggins26.Diggins26Tabulation` containing the total and the per-sector
+        flux densities, optical depths, magnetic fields, and so on, on an ``(n_t, n_nu)`` grid. The shock can be solved
+        once with :meth:`compute_dynamics` and reused.
+
+    .. rubric:: Infeasible parameters
+
+    Instead of raising exceptions, :meth:`forward_model` returns NaN flux for a short, enumerated list of
+    infeasible parameter combinations (so that samplers can reject them), and lets every other exception
+    propagate:
+
+    - the ejecta profile cannot be normalized to :math:`(E_{\rm ej}, M_{\rm ej})` with :math:`v_{\max} = c`,
+    - :math:`v_0 = \sqrt{2E_{\rm ej}/M_{\rm ej}}` exceeds ``max_initial_beta`` times :math:`c`,
+    - :math:`\gamma_{\max}` is too close to :math:`\gamma_{\min}` to place a cooling break,
+    - there is no CSM mass inside the starting radius, or
+    - the shock ODE integration fails.
+
+    :meth:`diagnose` reports which condition rejected a parameter set. Hard parameter-bound violations raise
+    ``ValueError`` as for every Trilobite model.
+
+    .. rubric:: Serialization
+
+    Serialization stores the resolved redshift and the hyperparameters, but not a custom ``cosmology`` object or the
+    ``seed_photon_luminosity`` callable; a model rebuilt from its specification uses the configuration cosmology and
+    has no Compton cooling unless the callable is supplied again.
 
     References
     ----------
@@ -480,13 +572,6 @@ class Diggins26_TwoComponentModel(Model):
             bounds=(0, None),
         ),
         ModelParameter(
-            "X",
-            0.7,
-            description="Hydrogen mass fraction of the CSM (the remainder is helium).",
-            latex=r"X",
-            bounds=(0, 1),
-        ),
-        ModelParameter(
             "R_ion",
             1e20,
             base_units="cm",
@@ -521,27 +606,87 @@ class Diggins26_TwoComponentModel(Model):
     # =============================================== #
     def __init__(
         self,
-        redshift: Optional[float] = None,
-        luminosity_distance: Optional[Union[float, u.Quantity]] = None,
+        redshift: float | None = None,
+        luminosity_distance: Union[float, u.Quantity] | None = None,
+        angular_diameter_distance: Union[float, u.Quantity] | None = None,
         cosmology=None,
         *,
-        r_ref: Union[float, u.Quantity] = 1e15,
-        t_0: Union[float, u.Quantity] = 0.3 * u.day,
-        beta_max: float = 0.8,
-        n_gamma_per_decade: int = 20,
-        ode_rtol: float = 1e-6,
+        hydrogen_mass_fraction: float = 0.7,
+        helium_mass_fraction: float | None = None,
+        adiabatic_index: float = 5.0 / 3.0,
+        reference_radius: Union[float, u.Quantity] = 1e15,
+        shock_start_time: Union[float, u.Quantity] = 0.3 * u.day,
+        max_initial_beta: float = 0.8,
+        gamma_points_per_decade: int = 20,
+        integrator_kw: dict | None = None,
+        seed_photon_luminosity: Callable | None = None,
     ):
+        r"""
+        Initialize the model.
+
+        Parameters
+        ----------
+        redshift : float, optional
+            Source redshift. Exactly one of ``redshift``, ``luminosity_distance`` and ``angular_diameter_distance`` must
+            be given.
+        luminosity_distance : float or ~astropy.units.Quantity, optional
+            Source luminosity distance :math:`D_L`. Bare values are interpreted as Mpc.
+        angular_diameter_distance : float or ~astropy.units.Quantity, optional
+            Source angular diameter distance :math:`D_A`. Bare values are interpreted as Mpc.
+        cosmology : ~astropy.cosmology.FLRW, optional
+            Cosmology used to convert between redshift and distance. Defaults to the Trilobite configuration cosmology.
+        hydrogen_mass_fraction : float, optional
+            Hydrogen mass fraction :math:`X` of the CSM. Default ``0.7``.
+        helium_mass_fraction : float, optional
+            Helium mass fraction :math:`Y` of the CSM. Defaults to ``1 - hydrogen_mass_fraction`` (no metals). Any
+            remainder :math:`1 - X - Y` is treated as metals; see the class Notes.
+        adiabatic_index : float, optional
+            Adiabatic index of the shocked gas. Default ``5/3``.
+        reference_radius : float or ~astropy.units.Quantity, optional
+            Reference radius at which ``rho_int`` and ``rho_ext`` are defined. Bare values are cm. Default ``1e15 cm``.
+        shock_start_time : float or ~astropy.units.Quantity, optional
+            Source-frame time at which the shock integration starts (at :math:`R_0 = v_0 t_0`). Every requested
+            epoch must satisfy :math:`t_{\rm obs}/(1+z) \ge t_0`. Bare values are seconds. Default ``0.3 d``. The
+            shock solution forgets its start as :math:`t_0 \to 0`; ``0.3 d`` biases the thermal energy density by
+            roughly 0.1% at 5 d.
+        max_initial_beta : float, optional
+            Largest permitted initial velocity :math:`v_0/c`. The shock and radiation calculations are non-relativistic
+            (the radiation uses a static plasma, :math:`\beta = 0`), so both degrade as :math:`v_0` approaches
+            :math:`c`. Parameter sets with a larger :math:`v_0` are rejected as infeasible. Default ``0.8``.
+        gamma_points_per_decade : int, optional
+            Electron Lorentz-factor grid resolution. About 20 per decade converges the flux to ~0.01 dex.
+            Default ``20``.
+        integrator_kw : dict, optional
+            Keyword arguments forwarded to :func:`scipy.integrate.solve_ivp` for the shock integration. The model
+            defaults to ``method="LSODA"`` and ``rtol=1e-7``, which keeps the log-likelihood within about
+            :math:`10^{-3}` of a ``Radau`` solution at ``rtol=1e-10`` while being roughly twice as fast as the
+            engine's own defaults (``Radau``, ``rtol=1e-10``) or as ``Radau`` at ``rtol=1e-6``. Anything given here
+            takes precedence. The integration grid and the adiabatic index cannot be overridden (use
+            ``adiabatic_index``).
+        seed_photon_luminosity : callable, optional
+            The luminosity :math:`L(t)` of the radiation field that Compton-scatters off the electrons, called with the
+            source-frame time since explosion (an array in seconds) and returning erg/s (an array, or a
+            :class:`~astropy.units.Quantity`). If ``None`` (default), only synchrotron cooling is included. See the
+            Notes of the class.
+        """
+        # Instantiate the superclass.
         super().__init__()
 
-        if (redshift is None) == (luminosity_distance is None):
-            raise ValueError("Exactly one of `redshift` and `luminosity_distance` must be provided.")
+        # ---- Distance and redshift ------------------------------------------------------------------------------ #
+        if all(x is None for x in (redshift, luminosity_distance, angular_diameter_distance)):
+            raise ValueError(
+                "Exactly one of `redshift`, `luminosity_distance` and `angular_diameter_distance` must be provided."
+            )
 
         self._cosmology = get_cosmology(cosmology)
         if luminosity_distance is not None:
             luminosity_distance = ensure_in_units(luminosity_distance, u.Mpc) * u.Mpc
+        if angular_diameter_distance is not None:
+            angular_diameter_distance = ensure_in_units(angular_diameter_distance, u.Mpc) * u.Mpc
         distances = resolve_cosmological_distances(
             redshift=redshift,
             luminosity_distance=luminosity_distance,
+            angular_diameter_distance=angular_diameter_distance,
             cosmology=self._cosmology,
         )
         self._z = float(u.Quantity(distances["redshift"]).value)
@@ -549,37 +694,84 @@ class Diggins26_TwoComponentModel(Model):
         self._D_A = distances["angular_diameter_distance"].to(u.cm)
         if not self._z >= 0:
             raise ValueError(f"The redshift must be non-negative, got {self._z}.")
+        self._log_D_A = float(np.log(self._D_A.value))
+        self._log_D_L = float(np.log(self._D_L.value))
 
-        self._r_ref = float(ensure_in_units(r_ref, u.cm))
-        self._t_0 = float(ensure_in_units(t_0, u.s))
-        self._beta_max = float(beta_max)
-        self._n_gamma_per_decade = int(n_gamma_per_decade)
-        self._ode_rtol = float(ode_rtol)
+        # ---- Composition ---------------------------------------------------------------------------------------- #
+        # The mean molecular weights are derived once here; they convert the post-shock pressure to a temperature
+        # (mu) and set the electron and ion densities of the free-free emission measure (mu_e, mu_i).
+        self._X = float(hydrogen_mass_fraction)
+        self._Y = float(1.0 - self._X if helium_mass_fraction is None else helium_mass_fraction)
+        self._Z_metals = max(1.0 - self._X - self._Y, 0.0)
+        if not (0.0 <= self._X <= 1.0 and 0.0 <= self._Y <= 1.0 and self._X + self._Y <= 1.0 + 1e-9):
+            raise ValueError(
+                "The hydrogen and helium mass fractions must each lie in [0, 1] and sum to at most 1, "
+                f"got X = {self._X} and Y = {self._Y}."
+            )
+        if self._X + 0.25 * self._Y <= 0.0:
+            raise ValueError("The CSM must contain hydrogen or helium.")
+
+        self._mu = compute_mean_molecular_weight(self._X, self._Y, self._Z_metals)
+        self._mu_e = compute_mean_molecular_weight_per_electron(self._X, self._Y, self._Z_metals)
+        self._mu_i = compute_mean_molecular_weight_per_ion(self._X, self._Y, self._Z_metals)
+
+        # Free-free ion mix: hydrogen (Z=1) and helium (Z=2), with number ratio n_H : n_He = X : Y/4.
+        n_H, n_He = self._X, 0.25 * self._Y
+        self._ion_charges = np.array([1.0, 2.0])
+        self._ion_fractions = np.array([n_H, n_He]) / (n_H + n_He)
+
+        # ---- Shock and numerical configuration ------------------------------------------------------------------ #
+        self._adiabatic_index = float(adiabatic_index)
+        self._r_ref = float(ensure_in_units(reference_radius, u.cm))
+        self._t_0 = float(ensure_in_units(shock_start_time, u.s))
+        self._max_initial_beta = float(max_initial_beta)
+        self._gamma_points_per_decade = int(gamma_points_per_decade)
+
+        # The model's defaults are applied first so that anything the user passes takes precedence.
+        self._integrator_kw = {"method": "LSODA", "rtol": 1e-7, **(integrator_kw or {})}
+        reserved = _RESERVED_INTEGRATOR_KW & self._integrator_kw.keys()
+        if reserved:
+            raise ValueError(
+                f"`integrator_kw` may not set {sorted(reserved)}: the model controls the integration grid, "
+                "and the adiabatic index is set by `adiabatic_index`."
+            )
+
+        if not self._adiabatic_index > 1:
+            raise ValueError("`adiabatic_index` must exceed 1.")
         if self._r_ref <= 0:
-            raise ValueError("`r_ref` must be positive.")
+            raise ValueError("`reference_radius` must be positive.")
         if self._t_0 <= 0:
-            raise ValueError("`t_0` must be positive.")
-        if not 0 < self._beta_max < 1:
-            raise ValueError("`beta_max` must lie in (0, 1).")
-        if self._n_gamma_per_decade < 1:
-            raise ValueError("`n_gamma_per_decade` must be a positive integer.")
-        if not self._ode_rtol > 0:
-            raise ValueError("`ode_rtol` must be positive.")
+            raise ValueError("`shock_start_time` must be positive.")
+        if not 0 < self._max_initial_beta < 1:
+            raise ValueError("`max_initial_beta` must lie in (0, 1).")
+        if self._gamma_points_per_decade < 1:
+            raise ValueError("`gamma_points_per_decade` must be a positive integer.")
+        if not self._integrator_kw["rtol"] > 0:
+            raise ValueError("The integrator's `rtol` must be positive.")
 
+        # ---- Compton seed photons ------------------------------------------------------------------------------- #
+        if seed_photon_luminosity is not None and not callable(seed_photon_luminosity):
+            raise TypeError("`seed_photon_luminosity` must be a callable L(t) or None.")
+        self._seed_luminosity = seed_photon_luminosity
+
+        # ---- Engines -------------------------------------------------------------------------------------------- #
         # The engines are built once so that they are not re-instantiated on every call. The averaged
         # synchrotron kernel is loaded here for the same reason.
-        self._shock_engine = PressureDrivenThinShellShockEngine(mu=0.6)
+        self._shock_engine = PressureDrivenThinShellShockEngine(mu=self._mu)
         self._synchrotron_engine = NumericalSynchrotronEngine()
         self._synchrotron_engine.load_avg_first_kernel()
-        self._log_D_A = float(np.log(self._D_A.value))
 
+        # The seed photon callable and the cosmology object are not serializable and are omitted.
         self._register_init(
             redshift=self._z,
-            r_ref=self._r_ref,
-            t_0=self._t_0,
-            beta_max=self._beta_max,
-            n_gamma_per_decade=self._n_gamma_per_decade,
-            ode_rtol=self._ode_rtol,
+            hydrogen_mass_fraction=self._X,
+            helium_mass_fraction=self._Y,
+            adiabatic_index=self._adiabatic_index,
+            reference_radius=self._r_ref,
+            shock_start_time=self._t_0,
+            max_initial_beta=self._max_initial_beta,
+            gamma_points_per_decade=self._gamma_points_per_decade,
+            integrator_kw=dict(self._integrator_kw),
         )
 
     # =============================================== #
@@ -601,7 +793,22 @@ class Diggins26_TwoComponentModel(Model):
         return self._D_A
 
     @property
-    def t_0(self) -> u.Quantity:
+    def mean_molecular_weight(self) -> float:
+        r"""float: Mean molecular weight :math:`\mu` of the CSM (in units of :math:`m_p`)."""
+        return self._mu
+
+    @property
+    def mean_molecular_weight_per_electron(self) -> float:
+        r"""float: Mean molecular weight per free electron :math:`\mu_e` of the CSM (in units of :math:`m_p`)."""
+        return self._mu_e
+
+    @property
+    def seed_photon_luminosity(self) -> Callable | None:
+        """Callable or None: The Compton seed photon luminosity :math:`L(t)`, or ``None`` (synchrotron cooling only)."""
+        return self._seed_luminosity
+
+    @property
+    def shock_start_time(self) -> u.Quantity:
         """~astropy.units.Quantity: Source-frame start time of the shock integration."""
         return self._t_0 * u.s
 
@@ -615,9 +822,9 @@ class Diggins26_TwoComponentModel(Model):
             raise ValueError("All times must be finite.")
         if np.min(t_rest) < self._t_0 * (1.0 - 1e-12):
             raise ValueError(
-                f"The model requires t_obs / (1 + z) >= t_0 = {self._t_0 / _DAY:.4g} d, "
+                f"The model requires t_obs / (1 + z) >= shock_start_time = {self._t_0 / _DAY:.4g} d, "
                 f"but the earliest epoch is {np.min(t_rest) / _DAY:.4g} d in the source frame. "
-                "Lower `t_0` or drop the earlier epochs."
+                "Lower `shock_start_time` or drop the earlier epochs."
             )
         if np.max(t_rest) <= self._t_0 * (1.0 + 1e-12):
             raise ValueError("At least one epoch must lie beyond `t_0`.")
@@ -649,20 +856,23 @@ class Diggins26_TwoComponentModel(Model):
             Why the parameters are infeasible.
         """
         v_0 = float(np.sqrt(2.0 * p["E_ej"] / p["M_ej"]))
-        if v_0 > self._beta_max * _C_CGS:
-            return None, (f"v_0 = sqrt(2 E_ej / M_ej) = {v_0 / _C_CGS:.3f} c exceeds beta_max = {self._beta_max:g} c.")
+        if v_0 > self._max_initial_beta * _C_CGS:
+            return None, (
+                f"v_0 = sqrt(2 E_ej / M_ej) = {v_0 / _C_CGS:.3f} c "
+                f"exceeds max_initial_beta = {self._max_initial_beta:g} c."
+            )
         if not p["gamma_max"] > 1.0201 * p["gamma_min"]:
             return None, "gamma_max must exceed 1.0201 * gamma_min to place a cooling break."
 
+        # The private CGS normalization is used directly: the public `normalize` wraps its result in astropy units,
+        # which would only be converted straight back (a measurable cost at every posterior evaluation).
         try:
-            K, v_t = BrokenPowerLawEjectaProfile.normalize(
-                E_ej=p["E_ej"], M_ej=p["M_ej"], n=p["n"], delta=p["delta"], v_max=_C_CGS
-            )
+            K, v_t = _normalize_bpl_cgs(p["E_ej"], p["M_ej"], n=p["n"], delta=p["delta"], v_max=_C_CGS)
         except ValueError as exc:
             return None, f"The ejecta profile cannot be normalized: {exc}"
 
         rho_ej = BrokenPowerLawEjectaProfile.as_optimized_callable(
-            K=K.cgs.value, v_t=v_t.cgs.value, n=p["n"], delta=p["delta"], v_max=_C_CGS
+            K=K, v_t=v_t, n=p["n"], delta=p["delta"], v_max=_C_CGS
         )
         return {"v_0": v_0, "R_0": v_0 * self._t_0, "rho_ej": rho_ej}, None
 
@@ -711,7 +921,8 @@ class Diggins26_TwoComponentModel(Model):
                     v_0=prep["v_0"],
                     M_0=M_0,
                     t_0=self._t_0,
-                    rtol=self._ode_rtol,
+                    gamma=self._adiabatic_index,
+                    **self._integrator_kw,
                 )
             except RuntimeError as exc:
                 return None, f"The shock ODE integration failed: {exc}"
@@ -737,39 +948,75 @@ class Diggins26_TwoComponentModel(Model):
     # Radiation                                       #
     # =============================================== #
     def _area_fractions(self, aspect: float) -> tuple[float, float]:
+        """Solid-angle fractions ``(equatorial, polar)`` of the two sectors."""
         eq = AxisymmetricCSMDensityProfile.equatorial_solid_angle_fraction(aspect)
         return eq, 1.0 - eq
 
     @staticmethod
-    def _gamma_grid(p: dict, n_per_decade: int):
+    def _gamma_grid(p: dict, n_per_decade: int) -> np.ndarray:
+        """Log-spaced electron Lorentz-factor grid spanning ``[gamma_min, gamma_max]`` (at least 16 points)."""
         n_gamma = max(int(np.ceil(n_per_decade * np.log10(p["gamma_max"] / p["gamma_min"]))) + 1, 16)
-        gamma = np.geomspace(p["gamma_min"], p["gamma_max"], n_gamma)
-        return gamma
+        return np.geomspace(p["gamma_min"], p["gamma_max"], n_gamma)
+
+    # ----- Electrons ---------------------------------------------------------------------------------------------- #
+    def _seed_luminosity_cgs(self, t_rest: np.ndarray) -> np.ndarray:
+        """Evaluate the user's seed photon luminosity L(t) at the source-frame epochs, in erg/s."""
+        L = self._seed_luminosity(t_rest)
+        if isinstance(L, u.Quantity):
+            L = L.to_value(u.erg / u.s)
+        L = np.broadcast_to(np.asarray(L, dtype=float), t_rest.shape)
+        if not np.all(np.isfinite(L)) or np.any(L < 0):
+            raise ValueError("`seed_photon_luminosity` must return finite, non-negative luminosities.")
+        return L
+
+    def _cooling_gamma(self, B: np.ndarray, radius: np.ndarray, t_rest: np.ndarray) -> np.ndarray:
+        r"""
+        Cooling Lorentz factor, at which the cooling time equals the source-frame age.
+
+        Synchrotron losses are always included. If a seed photon luminosity was given, inverse-Compton losses are
+        added: the loss rates add, so the inverse cooling Lorentz factors add,
+        :math:`1/\gamma_c = 1/\gamma_{c,\rm syn} + 1/\gamma_{c,\rm IC}`.
+        """
+        inv_gamma_c = 1.0 / _opt_compute_synchrotron_cooling_gamma(B, t_rest)
+
+        if self._seed_luminosity is not None:
+            L_seed = self._seed_luminosity_cgs(t_rest)
+            with np.errstate(divide="ignore"):  # L = 0 gives gamma_IC = inf, i.e. no Compton cooling
+                inv_gamma_c = inv_gamma_c + 1.0 / _opt_compute_IC_cooling_gamma(L_seed, radius, t_rest)
+
+        return 1.0 / inv_gamma_c
 
     def _microphysics(self, p: dict, state: _SectorState, t_rest: np.ndarray, gamma: np.ndarray):
-        """Magnetic field, cooling break, and electron distribution at every epoch."""
+        """
+        Magnetic field, cooling break, and electron distribution at every epoch.
+
+        Returns ``(B, gamma_c, N0, log_N)``, where ``log_N`` has shape ``(n_epochs, n_gamma)``.
+        """
+        # Equipartition magnetic field from the post-shock thermal energy density.
         B = np.sqrt(8.0 * np.pi * p["epsilon_B"] * state.eth)
+
+        # The cooling break must lie strictly inside the electron distribution's support.
         gamma_c = np.clip(
-            _opt_compute_synchrotron_cooling_gamma(B, t_rest),
+            self._cooling_gamma(B, state.radius, t_rest),
             1.01 * p["gamma_min"],
             p["gamma_max"] / 1.01,
         )
-        N0 = np.empty_like(B)
-        N_gamma = np.empty((B.size, gamma.size))
-        for i in range(B.size):
-            shape = {
-                "p1": p["p"],
-                "p2": p["p"] + 1.0,
-                "gamma_min": p["gamma_min"],
-                "gamma_max": p["gamma_max"],
-                "gamma_c": gamma_c[i],
-            }
-            N0[i] = BrokenPowerLaw._normalize_from_magnetic_field(B[i], p["epsilon_B"], p["epsilon_e"], **shape)
-            N_gamma[i] = BrokenPowerLaw.pdf(gamma, norm=N0[i], **shape)
-        with np.errstate(divide="ignore"):
-            log_N = np.log(N_gamma)
+
+        # Cooled broken power law at every epoch at once, each normalized to carry a fraction epsilon_e of the
+        # thermal energy (equipartition with the magnetic field).
+        shape = {
+            "p1": p["p"],
+            "p2": p["p"] + 1.0,
+            "gamma_min": p["gamma_min"],
+            "gamma_max": p["gamma_max"],
+        }
+        N0 = BrokenPowerLaw._opt_normalize_from_magnetic_field_batch(
+            B, p["epsilon_B"], p["epsilon_e"], gamma_c, **shape
+        )
+        log_N = BrokenPowerLaw._opt_log_pdf_batch(gamma, N0, gamma_c, **shape)  # -inf outside the support
         return B, gamma_c, N0, log_N
 
+    # ----- Free-free ---------------------------------------------------------------------------------------------- #
     def _emission_measure(self, p: dict, theta: float, radius: np.ndarray) -> np.ndarray:
         r"""
         Emission measure :math:`\int_R^{R_{\rm ion}} n_e n_i\,dr` of the CSM exterior to the shock at each radius.
@@ -778,16 +1025,20 @@ class Diggins26_TwoComponentModel(Model):
         than the CSM transition, with panel edges placed on the shock radii so that all epochs share one cumulative sum.
         """
         EM = np.zeros_like(radius)
+
+        # Only shocks inside the ionized region are absorbed by it.
         outside = radius < p["R_ion"]
         if not np.any(outside):
             return EM
 
+        # Panel edges: a uniform grid fine enough to resolve the CSM transition, plus every shock radius.
         ln_R = np.log(radius[outside])
         ln_R_ion = np.log(p["R_ion"])
         width = min(_EM_MAX_PANEL, max(p["delta_trans"], _EM_MIN_PANEL))
         n_panels = max(int(np.ceil((ln_R_ion - ln_R.min()) / width)), 1)
         edges = np.unique(np.concatenate([np.linspace(ln_R.min(), ln_R_ion, n_panels + 1), ln_R]))
 
+        # Gauss-Legendre quadrature of rho^2 r on each panel, then a cumulative sum from the outer edge inward.
         mid = 0.5 * (edges[1:] + edges[:-1])
         half = 0.5 * (edges[1:] - edges[:-1])
         r = np.exp(mid[:, None] + half[:, None] * _GL_NODES[None, :])
@@ -795,14 +1046,33 @@ class Diggins26_TwoComponentModel(Model):
         panel = half * np.sum(rho**2 * r * _GL_WEIGHTS[None, :], axis=1)
         tail = np.concatenate([np.cumsum(panel[::-1])[::-1], [0.0]])  # integral from each edge outward
 
-        X = p["X"]
-        composition = (1.0 + X) * (1.0 + 3.0 * X) / 8.0
-        EM[outside] = composition * tail[np.searchsorted(edges, ln_R)] / _M_P_CGS**2
+        # n_e n_i = rho^2 / (mu_e mu_i m_p^2)
+        EM[outside] = tail[np.searchsorted(edges, ln_R)] / (self._mu_e * self._mu_i * _M_P_CGS**2)
         return EM
 
-    def _ion_composition(self, X: float):
-        """Charges and number fractions of the ions of a fully ionized hydrogen-helium plasma."""
-        return np.array([1.0, 2.0]), np.array([4.0 * X, 1.0 - X]) / (1.0 + 3.0 * X)
+    # ----- Spectra ------------------------------------------------------------------------------------------------ #
+    def _free_free_opacity(self, p: dict, nu_groups: list) -> list:
+        """
+        Free-free optical depth per unit emission measure at each requested frequency (one array per epoch).
+
+        This depends on the frequency and the plasma only, not on the sector, so it is computed once per evaluation.
+        """
+        log_T = np.log(p["T_e"])
+
+        # The optical depth is exactly linear in the emission measure, but the routine evaluates its Gaunt factor at
+        # the mean of the frequencies it is given. Evaluating tau per unit EM one frequency at a time makes each
+        # result independent of which other frequencies are requested. The optical depth is a source-frame
+        # quantity, so the frequency is shifted to the source frame.
+        nu_unique, nu_inverse = np.unique(np.concatenate(nu_groups), return_inverse=True)
+        tau_unique = np.array(
+            [
+                _compute_RJ_ff_optical_depth_EM(
+                    np.log([nu_j * (1.0 + self._z)]), 0.0, log_T=log_T, Z=self._ion_charges, X=self._ion_fractions
+                )[0]
+                for nu_j in nu_unique
+            ]
+        )
+        return np.split(tau_unique[nu_inverse], np.cumsum([nu.size for nu in nu_groups])[:-1])
 
     def _sector_spectra(
         self,
@@ -813,59 +1083,80 @@ class Diggins26_TwoComponentModel(Model):
         f_A: float,
         gamma: np.ndarray,
         nu_groups: list,
+        tau_per_EM: list,
     ):
         """
         Intrinsic flux density and free-free optical depth of one sector.
 
-        ``nu_groups[i]`` holds the observer-frame frequencies to evaluate at epoch ``i``. Returns lists of arrays
-        (one per epoch) in CGS flux units and dimensionless optical depth.
+        ``nu_groups[i]`` holds the observer-frame frequencies to evaluate at epoch ``i`` and ``tau_per_EM[i]`` the
+        free-free optical depth per unit emission measure at those frequencies. Returns lists of arrays (one per
+        epoch) in CGS flux units and dimensionless optical depth.
         """
         B, _, _, log_N = micro
         log_gamma, log_weights = self._synchrotron_engine._build_gamma_grid(gamma)
-        Z, X_ions = self._ion_composition(p["X"])
-        log_T = np.log(p["T_e"])
-        ell = p["f_V"] ** (1.0 / 3.0) * state.radius
-        area = np.pi * state.radius**2 * f_A
 
-        # The free-free optical depth is exactly linear in the emission measure, but the routine evaluates its Gaunt
-        # factor at the mean of the frequencies it is given. Evaluating tau per unit EM one frequency at a time makes
-        # each result independent of which other frequencies are requested.
-        nu_unique, nu_inverse = np.unique(np.concatenate(nu_groups), return_inverse=True)
-        tau_per_EM = np.array(
-            [
-                _compute_RJ_ff_optical_depth_EM(np.log([nu_j * (1.0 + self._z)]), 0.0, log_T=log_T, Z=Z, X=X_ions)[0]
-                for nu_j in nu_unique
-            ]
-        )[nu_inverse]
-        tau_per_EM = np.split(tau_per_EM, np.cumsum([nu.size for nu in nu_groups])[:-1])
+        # Emitting geometry of the sector, per epoch.
+        log_ell = np.log(p["f_V"] ** (1.0 / 3.0) * state.radius)
+        log_area = np.log(np.pi * state.radius**2 * f_A)
+        log_B = np.log(B)
 
-        flux, tau = [], []
-        for i, nu in enumerate(nu_groups):
-            with np.errstate(divide="ignore"):
-                log_F = self._synchrotron_engine._compute_log_pa_flux_density(
-                    np.log(nu),
-                    np.log(ell[i]),
-                    np.log(B[i]),
-                    log_N[i],
+        # Flatten the (epoch, frequency) pairs so that the engine is called on whole batches rather than epoch by
+        # epoch. Each pair carries the plasma state of its epoch.
+        sizes = [nu.size for nu in nu_groups]
+        epoch = np.repeat(np.arange(len(nu_groups)), sizes)
+        log_nu = np.log(np.concatenate(nu_groups))
+
+        log_F = np.empty(log_nu.size)
+        for lo in range(0, log_nu.size, _SPECTRUM_CHUNK):
+            sl = slice(lo, lo + _SPECTRUM_CHUNK)
+            e = epoch[sl]
+            with np.errstate(divide="ignore"):  # log N = -inf outside the electron distribution's support
+                log_F[sl] = self._synchrotron_engine._compute_log_pa_flux_density(
+                    log_nu[sl],
+                    log_ell[e],
+                    log_B[e],
+                    log_N[e],
                     log_gamma,
                     log_weights,
-                    np.log(area[i]),
+                    log_area[e],
                     self._log_D_A,
                     z=self._z,
+                    paired=True,
                 )
-            flux.append(np.exp(log_F))
-            tau.append(EM[i] * tau_per_EM[i])
+
+        flux = np.split(np.exp(log_F), np.cumsum(sizes)[:-1])
+        tau = [EM[i] * tau_per_EM[i] for i in range(len(nu_groups))]
         return flux, tau
+
+    def _sector_radiation(
+        self,
+        p: dict,
+        theta: float,
+        state: _SectorState,
+        f_A: float,
+        t_rest: np.ndarray,
+        gamma: np.ndarray,
+        nu_groups: list,
+        tau_per_EM: list,
+    ):
+        """
+        Everything radiated by one sector: the electrons, the emission measure, and the spectra.
+
+        Returns ``(micro, EM, flux, tau)``, where ``micro`` is the output of :meth:`_microphysics`.
+        """
+        micro = self._microphysics(p, state, t_rest, gamma)
+        EM = self._emission_measure(p, theta, state.radius)
+        flux, tau = self._sector_spectra(p, state, micro, EM, f_A, gamma, nu_groups, tau_per_EM)
+        return micro, EM, flux, tau
 
     def _total_flux(self, p: dict, states: tuple, t_rest: np.ndarray, nu_groups: list):
         """Total attenuated flux density (CGS) per epoch group, summed over the two sectors."""
-        gamma = self._gamma_grid(p, self._n_gamma_per_decade)
-        f_As = self._area_fractions(p["aspect"])
+        gamma = self._gamma_grid(p, self._gamma_points_per_decade)
+        tau_per_EM = self._free_free_opacity(p, nu_groups)  # shared by both sectors
         total = [np.zeros_like(nu) for nu in nu_groups]
-        for theta, state, f_A in zip((_THETA_EQUATOR, _THETA_POLE), states, f_As):
-            micro = self._microphysics(p, state, t_rest, gamma)
-            EM = self._emission_measure(p, theta, state.radius)
-            flux, tau = self._sector_spectra(p, state, micro, EM, f_A, gamma, nu_groups)
+
+        for theta, state, f_A in zip((_THETA_EQUATOR, _THETA_POLE), states, self._area_fractions(p["aspect"])):
+            _, _, flux, tau = self._sector_radiation(p, theta, state, f_A, t_rest, gamma, nu_groups, tau_per_EM)
             for i in range(len(nu_groups)):
                 total[i] += flux[i] * np.exp(-tau[i])
         return total
@@ -911,7 +1202,7 @@ class Diggins26_TwoComponentModel(Model):
         v = self.coerce_model_variables({"time": time, "frequency": frequency})
         return np.atleast_1d(np.asarray(v["time"], dtype=float)), np.atleast_1d(np.asarray(v["frequency"], dtype=float))
 
-    def diagnose(self, parameters=None, time=None) -> Optional[str]:
+    def diagnose(self, parameters=None, time=None) -> str | None:
         """
         Explain why a parameter set is rejected as infeasible.
 
@@ -986,7 +1277,7 @@ class Diggins26_TwoComponentModel(Model):
             parameters={k: p[k] for k in _DYNAMICS_PARAMETERS},
         )
 
-    def tabulate(self, time, frequency, parameters=None, *, dynamics: Optional[Diggins26Dynamics] = None):
+    def tabulate(self, time, frequency, parameters=None, *, dynamics: Diggins26Dynamics | None = None):
         """
         Evaluate the model on independent time and frequency axes, keeping all intermediate quantities.
 
@@ -1040,13 +1331,12 @@ class Diggins26_TwoComponentModel(Model):
             for d in (dynamics.equatorial, dynamics.polar)
         )
 
-        gamma = self._gamma_grid(p, self._n_gamma_per_decade)
+        gamma = self._gamma_grid(p, self._gamma_points_per_decade)
         nu_groups = [nu_obs] * t_obs.size
+        tau_per_EM = self._free_free_opacity(p, nu_groups)  # shared by both sectors
         results, total = [], 0.0
         for theta, state, f_A in zip((_THETA_EQUATOR, _THETA_POLE), states, self._area_fractions(p["aspect"])):
-            micro = self._microphysics(p, state, t_rest, gamma)
-            EM = self._emission_measure(p, theta, state.radius)
-            flux, tau = self._sector_spectra(p, state, micro, EM, f_A, gamma, nu_groups)
+            micro, EM, flux, tau = self._sector_radiation(p, theta, state, f_A, t_rest, gamma, nu_groups, tau_per_EM)
             flux, tau = np.array(flux), np.array(tau)
             attenuated = flux * np.exp(-tau)
             total = total + attenuated

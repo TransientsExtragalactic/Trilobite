@@ -36,6 +36,9 @@ from trilobite.utils.misc_utils import ensure_in_units
 
 from .core import _DynamicalProfile
 
+# Argument types that take the scalar fast path of ``as_optimized_callable``.
+_SCALAR_TYPES = (float, np.floating)
+
 if TYPE_CHECKING:
     from trilobite._typing import _ArrayLike, _UnitBearingArrayLike, _UnitBearingScalarLike
 
@@ -115,47 +118,45 @@ def _normalize_bpl_cgs(
     if target >= 0.5 * v_max**2:
         raise ValueError("`E_ej / M_ej` is incompatible with `v_max`: must be < 0.5 * v_max**2.")
 
-    def _power_integral(a: float, b: float, p: float) -> float:
-        if b <= a:
-            return 0.0
-        if np.isclose(p, -1.0):
-            return np.log(b / a)
-        return (b ** (p + 1.0) - a ** (p + 1.0)) / (p + 1.0)
+    # The transition velocity is found from the condition E/M = (1/2) <v^4>/<v^2>, with the moments written as
+    # integrals of the kernel. The moments accept an array of trial transition velocities so that the bracketing
+    # scan below is evaluated in one vectorized pass.
+    def _power_integral(a, b, p: float):
+        """Integral of ``v**p`` over ``[a, b]``, zero where ``b <= a``."""
+        if abs(p + 1.0) <= 1.0e-8 + 1.0e-5:  # p == -1 (np.isclose(p, -1) semantics)
+            return np.where(b > a, np.log(np.where(b > a, b, 1.0) / np.where(b > a, a, 1.0)), 0.0)
+        return np.where(b > a, (b ** (p + 1.0) - a ** (p + 1.0)) / (p + 1.0), 0.0)
 
-    def _moment(v_t_: float, q: int) -> float:
-        inner_upper = min(v_t_, v_max)
+    def _moment(v_t_, q: int):
+        inner_upper = np.minimum(v_t_, v_max)
         I_inner = _power_integral(0.0, inner_upper, q - delta)
-        I_outer = 0.0
-        if v_t_ < v_max:
-            I_outer = v_t_ ** (n - delta) * _power_integral(v_t_, v_max, q - n)
+        I_outer = np.where(v_t_ < v_max, v_t_ ** (n - delta) * _power_integral(v_t_, v_max, q - n), 0.0)
         return I_inner + I_outer
 
-    def _residual(log_v_t: float) -> float:
+    def _residual(log_v_t):
         v_t_ = np.exp(log_v_t)
         return 0.5 * _moment(v_t_, 4) / _moment(v_t_, 2) - target
 
     lower = v_max * 1.0e-12
     upper = v_max * (1.0 - 1.0e-12)
     grid = np.geomspace(lower, upper, 256)
-    values = np.array([_residual(np.log(v)) for v in grid])
+    values = _residual(np.log(grid))
 
-    bracket = None
-    for left, right, fl, fr in zip(grid[:-1], grid[1:], values[:-1], values[1:]):
-        if fl == 0.0:
-            bracket = (left, left)
-            break
-        if np.sign(fl) != np.sign(fr):
-            bracket = (left, right)
-            break
-
-    if bracket is None:
+    # The first grid cell containing a root (an exact zero at its left edge counts as a root).
+    exact_zero = values[:-1] == 0.0
+    crossing = exact_zero | (np.sign(values[:-1]) != np.sign(values[1:]))
+    if not np.any(crossing):
         raise RuntimeError(
             "Could not bracket the BPL transition velocity. The requested E/M may be incompatible with `v_max`."
         )
+    i = int(np.argmax(crossing))
 
-    v_t = bracket[0] if bracket[0] == bracket[1] else np.exp(brentq(_residual, np.log(bracket[0]), np.log(bracket[1])))
-    K = M_ej / (4.0 * np.pi * _moment(v_t, 2))
-    return K, v_t
+    if exact_zero[i]:
+        v_t = grid[i]
+    else:
+        v_t = np.exp(brentq(lambda x: float(_residual(x)), np.log(grid[i]), np.log(grid[i + 1])))
+    K = M_ej / (4.0 * np.pi * float(_moment(v_t, 2)))
+    return K, float(v_t)
 
 
 def _normalize_exponential_cgs(
@@ -524,6 +525,33 @@ class BrokenPowerLawEjectaProfile(EjectaDensityProfile):
             "delta": delta_f,
             "v_max": v_max_cgs,
         }
+
+    @classmethod
+    def as_optimized_callable(cls, **parameters: Any):
+        """
+        Return a fast unit-free callable with fixed profile parameters.
+
+        This behaves exactly like :meth:`~trilobite.dynamics.profiles.core._DynamicalProfile.as_optimized_callable`,
+        but evaluates scalar ``(r, t)`` arguments with plain scalar arithmetic instead of building
+        arrays. ODE right-hand sides call the density at a single point thousands of times, where the array
+        machinery dominates the cost. Array arguments take the usual vectorized path.
+        """
+        p = cls._validate_and_process_parameters(**parameters)
+        K_inner, K_outer, v_t, n, delta, v_max = (p[k] for k in ("K_inner", "K_outer", "v_t", "n", "delta", "v_max"))
+        truncated = not np.isinf(v_max)
+
+        def _frozen(r, t):
+            # Anything but a positive scalar point (arrays, non-positive values) takes the vectorized path, whose
+            # handling of the edge cases is the reference.
+            if not (isinstance(r, _SCALAR_TYPES) and isinstance(t, _SCALAR_TYPES) and r > 0.0 and t > 0.0):
+                return cls._opt_eval(r, t, **p)
+            v = r / t
+            if truncated and v > v_max:
+                return 0.0 / t**3
+            G = K_inner * v ** (-delta) if v < v_t else K_outer * v ** (-n)
+            return G / t**3
+
+        return _frozen
 
     @classmethod
     def _opt_eval_kernel(cls, v, *, K_inner, K_outer, v_t, n, delta, v_max, **_):

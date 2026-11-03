@@ -172,6 +172,33 @@ class TestBrokenPowerLawEjectaProfile(BaseTestEjectaProfile):
     ]
 
     # ------------------------------------------- #
+    # Scalar fast path                            #
+    # ------------------------------------------- #
+
+    @pytest.mark.parametrize("params", PARAMETER_SETS)
+    @pytest.mark.parametrize("scalar_type", [float, np.float64])
+    def test_scalar_fast_path_matches_the_vectorized_evaluation(self, params, scalar_type):
+        """Scalar (r, t) take a dedicated path in the optimized callable; it must agree with the array path."""
+        density = BrokenPowerLawEjectaProfile.as_optimized_callable(**params)
+        # Velocities straddling v_t and (for the truncated set) v_max, including exactly on them.
+        t = 3.0e5
+        v = np.concatenate([np.geomspace(1e7, 1e10, 60), [params["v_t"], params.get("v_max", 1e10)]])
+        reference = density(v * t, np.full_like(v, t))  # array inputs: vectorized path
+        scalar = np.array([density(scalar_type(vi * t), scalar_type(t)) for vi in v])
+        assert np.allclose(scalar, reference, rtol=1e-13, atol=0.0)
+
+    @pytest.mark.parametrize("r", [0.0, -1e10])
+    def test_nonpositive_scalars_defer_to_the_vectorized_evaluation(self, r):
+        """Python-float arithmetic would raise or go complex here, so these points use the array code."""
+        params = {"K": 1e22, "v_t": 1e9, "n": 10, "delta": 1}
+        density = BrokenPowerLawEjectaProfile.as_optimized_callable(**params)
+        processed = BrokenPowerLawEjectaProfile._validate_and_process_parameters(**params)
+        with np.errstate(all="ignore"):
+            expected = BrokenPowerLawEjectaProfile._opt_eval(np.float64(r), np.float64(1e5), **processed)
+            result = density(np.float64(r), np.float64(1e5))
+        assert np.array_equal(result, expected, equal_nan=True)
+
+    # ------------------------------------------- #
     # Kernel Accuracy                             #
     # ------------------------------------------- #
 

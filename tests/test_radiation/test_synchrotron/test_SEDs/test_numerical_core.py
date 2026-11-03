@@ -774,3 +774,56 @@ class TestBroadcasting:
                 alpha=_ALPHA,
             )
             np.testing.assert_allclose(j_batch[:, i].value, j_scalar.value, rtol=1e-12)
+
+
+class TestPairedFrequencies:
+    """``paired=True`` evaluates each zone at its own frequency, instead of every frequency in every zone."""
+
+    @staticmethod
+    def _zones(n_zones=7):
+        rng = np.random.default_rng(3)
+        gamma = np.geomspace(_GAMMA_MIN, _GAMMA_MAX, 60)
+        log_gamma = np.log(gamma)
+        log_weights = np.log(np.gradient(log_gamma) * np.ones_like(log_gamma))
+        log_B = np.log(rng.uniform(0.05, 0.3, n_zones))
+        log_ell = np.log(rng.uniform(1e15, 1e16, n_zones))
+        log_A = np.log(rng.uniform(1e31, 1e33, n_zones))
+        # a different spectrum in every zone, with a hard cutoff so that log N = -inf occurs
+        log_N = np.log(np.outer(rng.uniform(1e-3, 1.0, n_zones), gamma ** (-3.0)) * (gamma < 3e3))
+        log_nu = np.log(rng.uniform(1e9, 1e12, n_zones))
+        return log_nu, log_ell, log_B, log_N, log_gamma, log_weights, log_A
+
+    def test_flux_density_matches_the_diagonal_of_the_outer_product(self, engine):
+        log_nu, log_ell, log_B, log_N, log_gamma, log_weights, log_A = self._zones()
+        log_D_A = np.log(1e26)
+        with np.errstate(divide="ignore"):
+            paired = engine._compute_log_pa_flux_density(
+                log_nu, log_ell, log_B, log_N, log_gamma, log_weights, log_A, log_D_A, z=0.1, paired=True
+            )
+            full = engine._compute_log_pa_flux_density(
+                log_nu, log_ell, log_B, log_N, log_gamma, log_weights, log_A, log_D_A, z=0.1
+            )
+        assert paired.shape == log_nu.shape
+        assert full.shape == (log_nu.size, log_nu.size)  # (n_nu, n_zones)
+        assert np.array_equal(paired, np.diagonal(full))
+
+    def test_scalar_frequency_is_broadcast_over_the_zones(self, engine):
+        log_nu, log_ell, log_B, log_N, log_gamma, log_weights, log_A = self._zones()
+        log_D_A = np.log(1e26)
+        with np.errstate(divide="ignore"):
+            paired = engine._compute_log_pa_flux_density(
+                np.log(5e10), log_ell, log_B, log_N, log_gamma, log_weights, log_A, log_D_A, paired=True
+            )
+            full = engine._compute_log_pa_flux_density(
+                np.log(5e10), log_ell, log_B, log_N, log_gamma, log_weights, log_A, log_D_A
+            )
+        assert np.array_equal(paired, full)
+
+    def test_emissivity_and_absorption_paired(self, engine):
+        log_nu, _, log_B, log_N, log_gamma, log_weights, _ = self._zones()
+        with np.errstate(divide="ignore"):
+            j_p, a_p = engine._compute_log_pa_emissivity_and_absorption(
+                log_nu, log_B, log_N, log_gamma, log_weights, paired=True
+            )
+            j, a = engine._compute_log_pa_emissivity_and_absorption(log_nu, log_B, log_N, log_gamma, log_weights)
+        assert np.array_equal(j_p, np.diagonal(j)) and np.array_equal(a_p, np.diagonal(a))
