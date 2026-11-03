@@ -2002,6 +2002,7 @@ class NumericalSynchrotronEngine:
         log_N: Union[float, np.ndarray],
         log_gamma: Union[float, np.ndarray],
         log_weights: Union[float, np.ndarray],
+        paired: bool = False,
     ) -> tuple[np.ndarray, np.ndarray]:
         r"""
         Compute pitch-angle-averaged :math:`\log j_\nu` and :math:`\log|\alpha_\nu|` in a single pass.
@@ -2011,6 +2012,14 @@ class NumericalSynchrotronEngine:
         evaluates both averaged-kernel interpolations once, eliminating the redundant
         array construction relative to calling the two methods separately. Parameters
         and return semantics match those of the constituent methods.
+
+        Parameters
+        ----------
+        paired : bool, optional
+            If ``False`` (default), every frequency is evaluated in every zone and the output has shape
+            ``(*nu_shape, *zone_shape)``. If ``True``, ``log_nu`` is broadcast against the zone axes and each
+            zone is evaluated only at its own frequency, giving output shape ``zone_shape``. Pairing avoids
+            computing the unused cross terms when every zone has a different frequency.
 
         Returns
         -------
@@ -2025,15 +2034,24 @@ class NumericalSynchrotronEngine:
         log_N = np.asarray(log_N, dtype="f8")
         log_weights = np.asarray(log_weights, dtype="f8")
 
-        nu_shape = log_nu.shape
         zone_shape = log_N.shape[:-1]
-        n_gamma = log_gamma.size
-        n_nu_dims = len(nu_shape)
         n_zone_dims = len(zone_shape)
+        n_gamma = log_gamma.size
+
+        # In paired mode the frequency is a per-zone quantity rather than its own axis.
+        if paired:
+            log_nu = np.broadcast_to(log_nu, zone_shape)
+            nu_shape = ()
+        else:
+            nu_shape = log_nu.shape
+        n_nu_dims = len(nu_shape)
 
         log_B = np.broadcast_to(log_B, zone_shape)
 
-        log_nu_v = log_nu.reshape(nu_shape + (1,) * n_zone_dims + (1,))
+        if paired:
+            log_nu_v = log_nu[..., np.newaxis]
+        else:
+            log_nu_v = log_nu.reshape(nu_shape + (1,) * n_zone_dims + (1,))
         log_B_v = log_B.reshape((1,) * n_nu_dims + zone_shape + (1,))
         log_g_v = log_gamma.reshape((1,) * (n_nu_dims + n_zone_dims) + (n_gamma,))
 
@@ -2055,7 +2073,7 @@ class NumericalSynchrotronEngine:
 
         log_kernel = log_F + np.log(np.maximum(1.0 - d_log_F_d_log_x, _FLOAT64_TINY))
         log_dloggamma = (log_weights - log_gamma).reshape((1,) * (n_nu_dims + n_zone_dims) + (n_gamma,))
-        log_nu_bc = log_nu.reshape(nu_shape + (1,) * n_zone_dims)
+        log_nu_bc = log_nu if paired else log_nu.reshape(nu_shape + (1,) * n_zone_dims)
         log_absorption = (
             _log_chi_abs_cgs + log_B_bc - 2.0 * log_nu_bc + logsumexp(log_kernel + log_N_v + log_dloggamma, axis=-1)
         )
@@ -2070,6 +2088,7 @@ class NumericalSynchrotronEngine:
         log_N: Union[float, np.ndarray],
         log_gamma: Union[float, np.ndarray],
         log_weights: Union[float, np.ndarray],
+        paired: bool = False,
     ) -> np.ndarray:
         r"""
         Compute the comoving-frame pitch-angle-averaged synchrotron specific intensity :math:`\log I'_{\nu'}`.
@@ -2148,10 +2167,10 @@ class NumericalSynchrotronEngine:
         log_slab_depth = np.asarray(log_slab_depth, dtype="f8")
 
         log_emissivity, log_absorption = self._compute_log_pa_emissivity_and_absorption(
-            log_nu, log_B, log_N, log_gamma, log_weights
+            log_nu, log_B, log_N, log_gamma, log_weights, paired=paired
         )
 
-        log_sd_v = log_slab_depth[(np.newaxis,) * log_nu.ndim]
+        log_sd_v = log_slab_depth if paired else log_slab_depth[(np.newaxis,) * log_nu.ndim]
 
         tau = np.exp(np.clip(log_absorption + log_sd_v, -np.inf, 500))
         return log_emissivity - log_absorption + np.log(-np.expm1(-tau))
@@ -2270,6 +2289,7 @@ class NumericalSynchrotronEngine:
         z: float = 0,
         beta: float = 0,
         cos_theta: float = 1.0,
+        paired: bool = False,
     ) -> np.ndarray:
         r"""
         Compute the observed pitch-angle-averaged synchrotron spectral flux density :math:`\log F_\nu`.
@@ -2325,6 +2345,10 @@ class NumericalSynchrotronEngine:
         cos_theta : float, optional
             Cosine of the angle between the bulk velocity vector and the observer
             line of sight. Default is ``1``.
+        paired : bool, optional
+            If ``True``, ``log_nu`` is paired with the zone axes: each zone is evaluated only at its own
+            frequency and the output has shape ``zone_shape`` instead of ``(*nu_shape, *zone_shape)``. This
+            avoids the unused cross terms when every zone has a different frequency. Default ``False``.
 
         Returns
         -------
@@ -2359,11 +2383,13 @@ class NumericalSynchrotronEngine:
         log_nu_rf = log_nu - log_correction_factor
 
         log_specific_intensity = (
-            self._compute_log_pa_rf_specific_intensity(log_nu_rf, log_slab_depth, log_B, log_N, log_gamma, log_weights)
+            self._compute_log_pa_rf_specific_intensity(
+                log_nu_rf, log_slab_depth, log_B, log_N, log_gamma, log_weights, paired=paired
+            )
             + 3 * log_correction_factor
         )
 
-        log_A_eff_v = log_A_eff[(np.newaxis,) * log_nu.ndim]
+        log_A_eff_v = log_A_eff if paired else log_A_eff[(np.newaxis,) * log_nu.ndim]
 
         return log_specific_intensity + log_A_eff_v - 2 * log_D_A
 

@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `Diggins26_TwoComponentModel` (`trilobite/models/LFBOTs/`) — two-component (equatorial and polar) thin-shell shock and synchrotron model for LFBOTs with an axisymmetric CSM, free-free attenuation (composition-consistent emission measure), full redshift treatment, a paired `forward_model` inference path, a `tabulate`/`compute_dynamics` analysis path, and an explicit NaN-on-infeasible policy with `diagnose()`.
 - `LogGaussianCensoredLikelihood` (`trilobite/inference/likelihood/base.py`) — censored Gaussian likelihood in log10 space with an optional systematic floor in dex (`sys_dex`); suited to positive observables spanning several decades.
 - `AxisymmetricCSMDensityProfile` (`trilobite/dynamics/profiles/csm.py`) — stationary axisymmetric CSM with a spherical exterior power law plus a disk-confined, radially truncated interior power law; the polar angle is a profile parameter, so a sightline is a frozen `as_optimized_callable`. Includes solid-angle-fraction helpers.
 - One-zone accretion disk ODE integrator with Cython backend (`trilobite/dynamics/accretion/one_zone/`)
@@ -34,6 +35,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Overhauled data gallery with dedicated examples for radio photometry, optical photometry, radio light curves, optical light curves, multi-band radio/optical data, and inference data containers.
 
 ### Changed
+- `Diggins26_TwoComponentModel` evaluates roughly 4x faster (about 85 ms to 20 ms per likelihood evaluation on the AT2018cow photometry): the shock integration defaults to `LSODA` at `rtol=1e-7` (within ~1e-3 in log-likelihood of a tight `Radau` reference), and the electron microphysics and synchrotron spectra are evaluated in batches over epochs instead of one epoch at a time.
+- `Diggins26_TwoComponentModel` takes the CSM composition (`hydrogen_mass_fraction`, `helium_mass_fraction`) as a hyperparameter, deriving the mean molecular weights used by the shock and the free-free emission measure; `integrator_kw`, `adiabatic_index` and an optional `seed_photon_luminosity` (inverse-Compton cooling) are also constructor options.
+- `BrokenPowerLawEjectaProfile` and `AxisymmetricCSMDensityProfile` evaluate scalar arguments of `as_optimized_callable` with scalar arithmetic (about 20x faster per call, identical to the vectorized path to round-off); array arguments are unchanged.
+- The finite-`v_max` normalization of the broken power-law ejecta is evaluated in one vectorized pass (about 60x faster, bit-identical results).
+- The numerical synchrotron engine's flux, intensity and emissivity/absorption methods accept `paired=True` to evaluate each zone at its own frequency instead of forming the full frequency-by-zone product.
 - `trilobite/radiation/synchrotron/SEDs/numerical.py` refactored into a `numerical/` subpackage (`core.py`, `one_zone.py`, `aspherical.py`, `inhomogeneous.py`); existing imports via `trilobite.radiation.synchrotron.SEDs` remain unchanged.
 - `trilobite/radiation/synchrotron/SEDs/one_zone.py` refactored into a `one_zone/` subpackage (`seds.py`, `closure.py`, `_closure.py`, `_functions.py`, `_normalization.py`, `_ssa.py`); public API unchanged.
 - `trilobite/radiation/synchrotron/microphysics.py` superseded by `electron_distributions.py`; the module is retained for backwards compatibility but its contents now re-export from the new class-based API.
@@ -41,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Switched readme to Markdown for better PyPI rendering.
 
 ### Fixed
+- `Diggins26_TwoComponentModel` now returns NaN flux (and `diagnose()` reports why) when the ejecta cannot be normalized for a `v_0` that is below `max_initial_beta` but above what the kernel truncated at `c` can represent; previously the `RuntimeError` from the normalization escaped and aborted the run.
 - Pitch-angle averaging was incorrectly applied in `core.py`; the isotropic average is now used throughout the numerical synchrotron computations.
 - SED normalization error in the analytical one-zone models.
 - Default model parameters in `trilobite/models/SEDs/synchrotron.py` now guarantee `gamma_c > 1` to avoid unphysical cooling break positions.

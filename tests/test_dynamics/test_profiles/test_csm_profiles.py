@@ -852,3 +852,35 @@ class TestAxisymmetricCSMDensityProfile(BaseTestCSMProfile):
     def test_missing_theta_raises(self):
         with pytest.raises(TypeError):
             AxisymmetricCSMDensityProfile.eval(1e16, **self._BASE)
+
+    # ------------------------------------------------------------------ #
+    # Scalar fast path                                                   #
+    # ------------------------------------------------------------------ #
+    @pytest.mark.parametrize("params", PARAMETER_SETS)
+    @pytest.mark.parametrize("scalar_type", [float, np.float64])
+    def test_scalar_fast_path_matches_the_vectorized_evaluation(self, params, scalar_type):
+        """Scalar radii take a dedicated path in the optimized callable; it must agree with the array path."""
+        density = AxisymmetricCSMDensityProfile.as_optimized_callable(**params)
+        # Many decades, including radii deep in the exponentially suppressed tail on both sides of r_trans.
+        r = np.geomspace(1e10, 1e25, 200)
+        reference = density(r, 0.0)  # array input: vectorized path
+        scalar = np.array([density(scalar_type(ri), 0.0) for ri in r])
+        assert np.all(np.isfinite(scalar))
+        assert np.allclose(scalar, reference, rtol=1e-12, atol=0.0)
+
+    def test_array_valued_theta_is_evaluated_by_the_vectorized_path(self):
+        params = {**self._BASE, "theta": np.array([0.3, 1.2, np.pi / 2])}
+        density = AxisymmetricCSMDensityProfile.as_optimized_callable(**params)
+        processed = AxisymmetricCSMDensityProfile._validate_and_process_parameters(**params)
+        expected = AxisymmetricCSMDensityProfile._opt_eval(1e16, 0.0, **processed)
+        assert np.shape(expected) == (3,)
+        assert np.allclose(density(1e16, 0.0), expected, rtol=1e-13)
+
+    def test_nonpositive_radius_defers_to_the_vectorized_evaluation(self):
+        params = {**self._BASE, "theta": np.pi / 2}
+        density = AxisymmetricCSMDensityProfile.as_optimized_callable(**params)
+        processed = AxisymmetricCSMDensityProfile._validate_and_process_parameters(**params)
+        with np.errstate(all="ignore"):
+            expected = AxisymmetricCSMDensityProfile._opt_eval(np.float64(0.0), 0.0, **processed)
+            result = density(np.float64(0.0), 0.0)
+        assert np.array_equal(result, expected, equal_nan=True)

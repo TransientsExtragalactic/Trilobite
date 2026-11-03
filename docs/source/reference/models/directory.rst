@@ -202,6 +202,27 @@ radiation processes, and circumstellar interaction physics.
 
 ---------------------------------------------------------------------
 
+.. _lfbot_models:
+
+LFBOT Models
+------------
+
+Models of the circumstellar interaction of luminous fast blue optical transients (LFBOTs). The two-component model
+follows an equatorial and a polar sightline through an axisymmetric CSM, each with its own thin-shell shock,
+synchrotron emission and free-free attenuation. It provides both a paired ``(time, frequency)`` path for inference
+and a ``tabulate`` path for analysis and plotting.
+
+.. rubric:: Two-Component Synchrotron Model
+
+.. currentmodule:: trilobite.models.LFBOTs._diggins26
+
+.. autosummary::
+   :nosignatures:
+
+   Diggins26_TwoComponentModel
+
+---------------------------------------------------------------------
+
 .. _grb_models:
 
 GRB Models

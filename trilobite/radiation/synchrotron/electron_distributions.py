@@ -2003,6 +2003,108 @@ class BrokenPowerLaw(ElectronDistribution):
             return result.reshape(())[()]
         return result
 
+    # ------------------------------------------------------------------ #
+    # Batched evaluation over many break Lorentz factors (Private)       #
+    # ------------------------------------------------------------------ #
+    # Inference evaluates the same shape with a different cooling break at every epoch. These helpers evaluate
+    # a whole array of breaks in one vectorized pass. They match the scalar interface (`moment`, `pdf`) to
+    # floating-point round-off but skip parameter validation, which the caller must guarantee
+    # (``gamma_min < gamma_c < gamma_max`` and positive indices).
+    @classmethod
+    def _opt_first_moment_batch(
+        cls,
+        gamma_c: np.ndarray,
+        *,
+        p1: float,
+        p2: float,
+        gamma_min: float,
+        gamma_max: float,
+    ) -> np.ndarray:
+        r"""
+        First moment :math:`\int\gamma f(\gamma)\,d\gamma` of the unit-amplitude shape for an array of breaks.
+
+        Parameters
+        ----------
+        gamma_c : numpy.ndarray
+            Break Lorentz factors, shape ``(K,)``.
+        p1, p2, gamma_min, gamma_max : float
+            Shape parameters, as in :meth:`pdf`.
+
+        Returns
+        -------
+        numpy.ndarray
+            The first moment at each break, shape ``(K,)``.
+        """
+
+        def _branch(p: float, lower, upper):
+            exponent = 2.0 - float(p)  # order + 1 - p with order = 1
+            if abs(exponent) <= 1e-14:
+                integral = np.log(upper / lower)
+            else:
+                integral = (upper**exponent - lower**exponent) / exponent
+            return gamma_c ** float(p) * integral
+
+        return _branch(p1, gamma_min, gamma_c) + _branch(p2, gamma_c, gamma_max)
+
+    @classmethod
+    def _opt_normalize_from_magnetic_field_batch(
+        cls,
+        B: np.ndarray,
+        epsilon_B: float,
+        epsilon_E: float,
+        gamma_c: np.ndarray,
+        **params,
+    ) -> np.ndarray:
+        """Batched :meth:`_normalize_from_magnetic_field` for arrays ``B`` and ``gamma_c`` of shape ``(K,)``."""
+        u_B = B**2 / (8.0 * np.pi)
+        moment = cls._opt_first_moment_batch(gamma_c, **params)
+        return (epsilon_E / epsilon_B) * u_B / (electron_rest_energy_cgs * moment)
+
+    @classmethod
+    def _opt_log_pdf_batch(
+        cls,
+        gamma: np.ndarray,
+        norm: np.ndarray,
+        gamma_c: np.ndarray,
+        *,
+        p1: float,
+        p2: float,
+        gamma_min: float,
+        gamma_max: float,
+    ) -> np.ndarray:
+        r"""
+        Natural log of :meth:`pdf` for an array of amplitudes and breaks.
+
+        Parameters
+        ----------
+        gamma : numpy.ndarray
+            Lorentz-factor grid, shape ``(G,)``.
+        norm, gamma_c : numpy.ndarray
+            Amplitudes and break Lorentz factors, each of shape ``(K,)``.
+        p1, p2, gamma_min, gamma_max : float
+            Shape parameters, as in :meth:`pdf`.
+
+        Returns
+        -------
+        numpy.ndarray
+            :math:`\ln N(\gamma)`, shape ``(K, G)``, equal to ``-inf`` outside the support.
+        """
+        gamma = np.asarray(gamma, dtype="f8")[np.newaxis, :]
+        norm = np.asarray(norm, dtype="f8")[:, np.newaxis]
+        gamma_c = np.asarray(gamma_c, dtype="f8")[:, np.newaxis]
+
+        below = (gamma >= gamma_min) & (gamma < gamma_c)
+        above = (gamma >= gamma_c) & (gamma <= gamma_max)
+        gamma_safe = np.maximum(gamma, gamma_min)
+
+        N = np.where(
+            below,
+            norm * (gamma_safe / gamma_c) ** (-p1),
+            np.where(above, norm * (gamma_safe / gamma_c) ** (-p2), 0.0),
+        )
+        with np.errstate(divide="ignore"):
+            return np.log(N)
+
     @classmethod
     def support(
         cls,
