@@ -65,7 +65,7 @@
     <link rel="icon" href="../_static/logo.svg"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="trilobite.inference.likelihood.utils.get_likelihood_target" href="trilobite.inference.likelihood.utils.get_likelihood_target.html" />
+    <link rel="next" title="trilobite.inference.likelihood.utils.get_likelihood_config" href="trilobite.inference.likelihood.utils.get_likelihood_config.html" />
     <link rel="prev" title="trilobite.inference.likelihood.utils" href="trilobite.inference.likelihood.utils.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
@@ -2110,6 +2110,7 @@
 </details></li>
 <li class="toctree-l3 current active has-children"><a class="reference internal" href="trilobite.inference.likelihood.utils.html">trilobite.inference.likelihood.utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l4 current active"><a aria-current="page" class="current reference internal" href="#">trilobite.inference.likelihood.utils.build_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_config.html">trilobite.inference.likelihood.utils.get_likelihood_config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_target.html">trilobite.inference.likelihood.utils.get_likelihood_target</a></li>
 </ul>
 </details></li>
@@ -2429,18 +2430,22 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.html">trilobite.inference.likelihood.base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.config.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.config.html">trilobite.inference.likelihood.base.GaussianLikelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.config.html">trilobite.inference.likelihood.base.Likelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html">LogGaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.config.html">trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.config</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2452,6 +2457,7 @@
 </details></li>
 <li class="toctree-l2 current active has-children"><a class="reference internal" href="trilobite.inference.likelihood.utils.html">trilobite.inference.likelihood.utils</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
 <li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">trilobite.inference.likelihood.utils.build_likelihood</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_config.html">trilobite.inference.likelihood.utils.get_likelihood_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_target.html">trilobite.inference.likelihood.utils.get_likelihood_target</a></li>
 </ul>
 </details></li>
@@ -3227,7 +3233,7 @@
 <h1>trilobite.inference.likelihood.utils.build_likelihood<a class="headerlink" href="#trilobite-inference-likelihood-utils-build-likelihood" title="Link to this heading">#</a></h1>
 <dl class="py function">
 <dt class="sig sig-object py" id="trilobite.inference.likelihood.utils.build_likelihood">
-<span class="sig-prename descclassname"><span class="pre">trilobite.inference.likelihood.utils.</span></span><span class="sig-name descname"><span class="pre">build_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><span class="pre">Likelihood</span></a></span></span><a class="reference internal" href="../_modules/trilobite/inference/likelihood/utils.html#build_likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.inference.likelihood.utils.build_likelihood" title="Link to this definition">#</a></dt>
+<span class="sig-prename descclassname"><span class="pre">trilobite.inference.likelihood.utils.</span></span><span class="sig-name descname"><span class="pre">build_likelihood</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><span class="pre">str</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">model</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><span class="pre">Model</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="trilobite.data.core.InferenceData.html#trilobite.data.core.InferenceData" title="trilobite.data.core.InferenceData"><span class="pre">InferenceData</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">config</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><span class="pre">dict</span></a><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/builtins/constants.html#None" title="(in Python v3.15)"><span class="pre">None</span></a></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.html#trilobite.inference.likelihood.base.Likelihood" title="trilobite.inference.likelihood.base.Likelihood"><span class="pre">Likelihood</span></a></span></span><a class="reference internal" href="../_modules/trilobite/inference/likelihood/utils.html#build_likelihood"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#trilobite.inference.likelihood.utils.build_likelihood" title="Link to this definition">#</a></dt>
 <dd><p>Construct a Likelihood from a fully-qualified import path.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
@@ -3235,6 +3241,7 @@
 <li><p><strong>target</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Import path in the form “module:ClassName”.</p></li>
 <li><p><strong>model</strong> (<a class="reference internal" href="trilobite.models.core.base.Model.html#trilobite.models.core.base.Model" title="trilobite.models.core.base.Model"><code class="xref py py-class docutils literal notranslate"><span class="pre">Model</span></code></a>) – Forward model instance.</p></li>
 <li><p><strong>data</strong> (<code class="xref py py-class docutils literal notranslate"><span class="pre">InferenceData</span></code>) – Validated inference dataset.</p></li>
+<li><p><strong>config</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#dict" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code></a>, <em>optional</em>) – Keyword arguments forwarded to the likelihood constructor (see <a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_config.html#trilobite.inference.likelihood.utils.get_likelihood_config" title="trilobite.inference.likelihood.utils.get_likelihood_config"><code class="xref py py-func docutils literal notranslate"><span class="pre">get_likelihood_config()</span></code></a>).</p></li>
 </ul>
 </dd>
 <dt class="field-even">Returns<span class="colon">:</span></dt>
@@ -3275,11 +3282,11 @@
       </div>
     </a>
     <a class="right-next"
-       href="trilobite.inference.likelihood.utils.get_likelihood_target.html"
+       href="trilobite.inference.likelihood.utils.get_likelihood_config.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">trilobite.inference.likelihood.utils.get_likelihood_target</p>
+        <p class="prev-next-title">trilobite.inference.likelihood.utils.get_likelihood_config</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>

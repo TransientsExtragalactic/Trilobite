@@ -2271,14 +2271,16 @@
 <span class="sd">          serializable.</span>
 <span class="sd">        - The model must implement :meth:`to_model_spec`.</span>
 <span class="sd">        - The data container must implement :meth:`to_dict`.</span>
-<span class="sd">        - The likelihood must be importable via its fully-qualified module path.</span>
+<span class="sd">        - The likelihood must be importable via its fully-qualified module path, and its construction options</span>
+<span class="sd">          (:attr:`~trilobite.inference.likelihood.base.Likelihood.config`, e.g. ``sys_dex``) must be</span>
+<span class="sd">          JSON-serializable. They are stored under ``likelihood_kwargs``.</span>
 <span class="sd">        - The returned dictionary contains a ``format`` field for validation</span>
 <span class="sd">          during reconstruction.</span>
 <span class="sd">        - A version tag is embedded to allow compatibility checks during loading.</span>
 <span class="sd">        """</span>
         <span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
 
-        <span class="kn">from</span><span class="w"> </span><span class="nn">.likelihood.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_likelihood_target</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.likelihood.utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_likelihood_config</span><span class="p">,</span> <span class="n">get_likelihood_target</span>
 
         <span class="c1"># ---------------------------------------------------------</span>
         <span class="c1"># Base output template</span>
@@ -2288,6 +2290,7 @@
             <span class="s2">"metadata"</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">"model"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="s2">"likelihood"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s2">"likelihood_kwargs"</span><span class="p">:</span> <span class="p">{},</span>
             <span class="s2">"data"</span><span class="p">:</span> <span class="kc">None</span><span class="p">,</span>
             <span class="s2">"parameters"</span><span class="p">:</span> <span class="p">{},</span>
         <span class="p">}</span>
@@ -2306,6 +2309,7 @@
         <span class="c1"># ---------------------------------------------------------</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">output</span><span class="p">[</span><span class="s2">"likelihood"</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_likelihood_target</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="p">)</span>
+            <span class="n">output</span><span class="p">[</span><span class="s2">"likelihood_kwargs"</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_likelihood_config</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to serialize likelihood: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 
@@ -2453,7 +2457,9 @@
         <span class="c1"># --- Likelihood Reconstruction ------------------------</span>
         <span class="k">try</span><span class="p">:</span>
             <span class="n">likelihood_target</span> <span class="o">=</span> <span class="n">dict_spec</span><span class="p">[</span><span class="s2">"likelihood"</span><span class="p">]</span>
-            <span class="n">likelihood</span> <span class="o">=</span> <span class="n">build_likelihood</span><span class="p">(</span><span class="n">likelihood_target</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">)</span>
+            <span class="c1"># ``likelihood_kwargs`` is absent from specifications written before it was introduced.</span>
+            <span class="n">likelihood_kwargs</span> <span class="o">=</span> <span class="n">dict_spec</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"likelihood_kwargs"</span><span class="p">)</span> <span class="ow">or</span> <span class="p">{}</span>
+            <span class="n">likelihood</span> <span class="o">=</span> <span class="n">build_likelihood</span><span class="p">(</span><span class="n">likelihood_target</span><span class="p">,</span> <span class="n">model</span><span class="o">=</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">config</span><span class="o">=</span><span class="n">likelihood_kwargs</span><span class="p">)</span>
         <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Failed to reconstruct likelihood from specification: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">e</span>
 

@@ -2110,6 +2110,7 @@
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.utils.html">trilobite.inference.likelihood.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.utils.build_likelihood.html">trilobite.inference.likelihood.utils.build_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_config.html">trilobite.inference.likelihood.utils.get_likelihood_config</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_target.html">trilobite.inference.likelihood.utils.get_likelihood_target</a></li>
 </ul>
 </details></li>
@@ -2429,18 +2430,22 @@
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.html">trilobite.inference.likelihood.base</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html">GaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianCensoredLikelihood.config.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.html">GaussianLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.GaussianLikelihood.config.html">trilobite.inference.likelihood.base.GaussianLikelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.html">Likelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.log_likelihood.html">trilobite.inference.likelihood.base.Likelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.config.html">trilobite.inference.likelihood.base.Likelihood.config</a></li>
 </ul>
 </details></li>
 <li class="toctree-l3 has-children"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html">LogGaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.config.html">trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.config</a></li>
 </ul>
 </details></li>
 </ul>
@@ -2452,6 +2457,7 @@
 </details></li>
 <li class="toctree-l2 has-children"><a class="reference internal" href="trilobite.inference.likelihood.utils.html">trilobite.inference.likelihood.utils</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.likelihood.utils.build_likelihood.html">trilobite.inference.likelihood.utils.build_likelihood</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_config.html">trilobite.inference.likelihood.utils.get_likelihood_config</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.likelihood.utils.get_likelihood_target.html">trilobite.inference.likelihood.utils.get_likelihood_target</a></li>
 </ul>
 </details></li>
@@ -3268,7 +3274,9 @@ representation. All provided values must be JSON-serializable.</p>
 serializable.</p></li>
 <li><p>The model must implement <code class="xref py py-meth docutils literal notranslate"><span class="pre">to_model_spec()</span></code>.</p></li>
 <li><p>The data container must implement <a class="reference internal" href="#trilobite.inference.problem.InferenceProblem.to_dict" title="trilobite.inference.problem.InferenceProblem.to_dict"><code class="xref py py-meth docutils literal notranslate"><span class="pre">to_dict()</span></code></a>.</p></li>
-<li><p>The likelihood must be importable via its fully-qualified module path.</p></li>
+<li><p>The likelihood must be importable via its fully-qualified module path, and its construction options
+(<a class="reference internal" href="trilobite.inference.likelihood.base.Likelihood.config.html#trilobite.inference.likelihood.base.Likelihood.config" title="trilobite.inference.likelihood.base.Likelihood.config"><code class="xref py py-attr docutils literal notranslate"><span class="pre">config</span></code></a>, e.g. <code class="docutils literal notranslate"><span class="pre">sys_dex</span></code>) must be
+JSON-serializable. They are stored under <code class="docutils literal notranslate"><span class="pre">likelihood_kwargs</span></code>.</p></li>
 <li><p>The returned dictionary contains a <code class="docutils literal notranslate"><span class="pre">format</span></code> field for validation
 during reconstruction.</p></li>
 <li><p>A version tag is embedded to allow compatibility checks during loading.</p></li>
