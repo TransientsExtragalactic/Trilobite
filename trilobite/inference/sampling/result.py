@@ -10,9 +10,10 @@ results.
 
 import json
 from abc import ABC
+from collections.abc import Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TYPE_CHECKING, Optional, Sequence, Union
+from typing import TYPE_CHECKING, Optional, Union
 
 import emcee
 import h5py

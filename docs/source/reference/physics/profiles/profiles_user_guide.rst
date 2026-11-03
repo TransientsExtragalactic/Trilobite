@@ -165,6 +165,9 @@ shock engines. Stationary profiles simply ignore ``t`` when it is provided.
     * - :class:`~trilobite.dynamics.profiles.csm.SmoothTruncatedWindCSMProfile`
       - ``A`` (or ``A_star``), ``r_max``, ``q``
       - Wind profile with a smooth power-law transition to zero beyond ``r_max``.
+    * - :class:`~trilobite.dynamics.profiles.csm.AxisymmetricCSMDensityProfile`
+      - ``rho_int``, ``rho_ext``, ``r_ref``, ``alpha_int``, ``alpha_ext``, ``r_trans``, ``delta_trans``, ``f_pole``, ``aspect``, ``theta``
+      - Axisymmetric CSM: spherical exterior power law plus a disk-confined interior power law that fades beyond ``r_trans``. The polar angle ``theta`` is a parameter, so freezing it gives a spherical sightline profile.
 
 The wind profile is the most commonly used CSM environment and therefore the most
 feature-rich class. :class:`~trilobite.dynamics.profiles.csm.WindCSMProfile` accepts three
@@ -403,6 +406,7 @@ CSM Density Profiles
     TruncatedWindCSMProfile
     WindWithFloorCSMProfile
     SmoothTruncatedWindCSMProfile
+    AxisymmetricCSMDensityProfile
 
 Ejecta Density Profiles
 ^^^^^^^^^^^^^^^^^^^^^^^^
