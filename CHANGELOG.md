@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- `Diggins26_TwoComponentModel` (`trilobite/models/LFBOTs/`) — two-component (equatorial and polar) thin-shell shock and synchrotron model for LFBOTs with an axisymmetric CSM, free-free attenuation (composition-consistent emission measure), full redshift treatment, a paired `forward_model` inference path, a `tabulate`/`compute_dynamics` analysis path, and an explicit NaN-on-infeasible policy with `diagnose()`.
 - `LogGaussianCensoredLikelihood` (`trilobite/inference/likelihood/base.py`) — censored Gaussian likelihood in log10 space with an optional systematic floor in dex (`sys_dex`); suited to positive observables spanning several decades.
 - `AxisymmetricCSMDensityProfile` (`trilobite/dynamics/profiles/csm.py`) — stationary axisymmetric CSM with a spherical exterior power law plus a disk-confined, radially truncated interior power law; the polar angle is a profile parameter, so a sightline is a frozen `as_optimized_callable`. Includes solid-angle-fraction helpers.
 - One-zone accretion disk ODE integrator with Cython backend (`trilobite/dynamics/accretion/one_zone/`)
