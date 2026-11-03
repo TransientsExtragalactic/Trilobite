@@ -2556,6 +2556,108 @@
         <span class="k">return</span> <span class="n">result</span></div>
 
 
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Batched evaluation over many break Lorentz factors (Private)       #</span>
+    <span class="c1"># ------------------------------------------------------------------ #</span>
+    <span class="c1"># Inference evaluates the same shape with a different cooling break at every epoch. These helpers evaluate</span>
+    <span class="c1"># a whole array of breaks in one vectorized pass. They match the scalar interface (`moment`, `pdf`) to</span>
+    <span class="c1"># floating-point round-off but skip parameter validation, which the caller must guarantee</span>
+    <span class="c1"># (``gamma_min &lt; gamma_c &lt; gamma_max`` and positive indices).</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_first_moment_batch</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">p1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">p2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        First moment :math:`\int\gamma f(\gamma)\,d\gamma` of the unit-amplitude shape for an array of breaks.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gamma_c : numpy.ndarray</span>
+<span class="sd">            Break Lorentz factors, shape ``(K,)``.</span>
+<span class="sd">        p1, p2, gamma_min, gamma_max : float</span>
+<span class="sd">            Shape parameters, as in :meth:`pdf`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            The first moment at each break, shape ``(K,)``.</span>
+<span class="sd">        """</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">_branch</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+            <span class="n">exponent</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">-</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>  <span class="c1"># order + 1 - p with order = 1</span>
+            <span class="k">if</span> <span class="nb">abs</span><span class="p">(</span><span class="n">exponent</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mf">1e-14</span><span class="p">:</span>
+                <span class="n">integral</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span> <span class="o">/</span> <span class="n">lower</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">integral</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span><span class="o">**</span><span class="n">exponent</span> <span class="o">-</span> <span class="n">lower</span><span class="o">**</span><span class="n">exponent</span><span class="p">)</span> <span class="o">/</span> <span class="n">exponent</span>
+            <span class="k">return</span> <span class="n">gamma_c</span> <span class="o">**</span> <span class="nb">float</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="n">integral</span>
+
+        <span class="k">return</span> <span class="n">_branch</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">+</span> <span class="n">_branch</span><span class="p">(</span><span class="n">p2</span><span class="p">,</span> <span class="n">gamma_c</span><span class="p">,</span> <span class="n">gamma_max</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_normalize_from_magnetic_field_batch</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">B</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">epsilon_B</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">epsilon_E</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">**</span><span class="n">params</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Batched :meth:`_normalize_from_magnetic_field` for arrays ``B`` and ``gamma_c`` of shape ``(K,)``."""</span>
+        <span class="n">u_B</span> <span class="o">=</span> <span class="n">B</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">8.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">moment</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_opt_first_moment_batch</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">,</span> <span class="o">**</span><span class="n">params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">epsilon_E</span> <span class="o">/</span> <span class="n">epsilon_B</span><span class="p">)</span> <span class="o">*</span> <span class="n">u_B</span> <span class="o">/</span> <span class="p">(</span><span class="n">electron_rest_energy_cgs</span> <span class="o">*</span> <span class="n">moment</span><span class="p">)</span>
+
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_opt_log_pdf_batch</span><span class="p">(</span>
+        <span class="bp">cls</span><span class="p">,</span>
+        <span class="n">gamma</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">norm</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="n">gamma_c</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span>
+        <span class="o">*</span><span class="p">,</span>
+        <span class="n">p1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">p2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma_min</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+        <span class="n">gamma_max</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Natural log of :meth:`pdf` for an array of amplitudes and breaks.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gamma : numpy.ndarray</span>
+<span class="sd">            Lorentz-factor grid, shape ``(G,)``.</span>
+<span class="sd">        norm, gamma_c : numpy.ndarray</span>
+<span class="sd">            Amplitudes and break Lorentz factors, each of shape ``(K,)``.</span>
+<span class="sd">        p1, p2, gamma_min, gamma_max : float</span>
+<span class="sd">            Shape parameters, as in :meth:`pdf`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        numpy.ndarray</span>
+<span class="sd">            :math:`\ln N(\gamma)`, shape ``(K, G)``, equal to ``-inf`` outside the support.</span>
+<span class="sd">        """</span>
+        <span class="n">gamma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,</span> <span class="p">:]</span>
+        <span class="n">norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">norm</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+        <span class="n">gamma_c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">gamma_c</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s2">"f8"</span><span class="p">)[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+
+        <span class="n">below</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_min</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;</span> <span class="n">gamma_c</span><span class="p">)</span>
+        <span class="n">above</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&gt;=</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">gamma</span> <span class="o">&lt;=</span> <span class="n">gamma_max</span><span class="p">)</span>
+        <span class="n">gamma_safe</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">gamma</span><span class="p">,</span> <span class="n">gamma_min</span><span class="p">)</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+            <span class="n">below</span><span class="p">,</span>
+            <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p1</span><span class="p">),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">above</span><span class="p">,</span> <span class="n">norm</span> <span class="o">*</span> <span class="p">(</span><span class="n">gamma_safe</span> <span class="o">/</span> <span class="n">gamma_c</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="o">-</span><span class="n">p2</span><span class="p">),</span> <span class="mf">0.0</span><span class="p">),</span>
+        <span class="p">)</span>
+        <span class="k">with</span> <span class="n">np</span><span class="o">.</span><span class="n">errstate</span><span class="p">(</span><span class="n">divide</span><span class="o">=</span><span class="s2">"ignore"</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">N</span><span class="p">)</span>
+
 <div class="viewcode-block" id="BrokenPowerLaw.support">
 <a class="viewcode-back" href="../../../../_as_gen/trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support.html#trilobite.radiation.synchrotron.electron_distributions.BrokenPowerLaw.support">[docs]</a>
     <span class="nd">@classmethod</span>
