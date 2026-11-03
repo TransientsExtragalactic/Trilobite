@@ -114,8 +114,8 @@ class Diggins26Dynamics(NamedTuple):
     """
     Shock dynamics of both sightlines.
 
-    Returned by :meth:`~trilobite.models.LFBOTs._diggins26.Diggins26_TwoComponentModel.compute_dynamics`, and
-    accepted by :meth:`~trilobite.models.LFBOTs._diggins26.Diggins26_TwoComponentModel.tabulate` so that many
+    Returned by :meth:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel.compute_dynamics`, and
+    accepted by :meth:`~trilobite.models.LFBOTs.diggins26.Diggins26_TwoComponentModel.tabulate` so that many
     frequencies can be evaluated without re-solving the shock.
     """
 
@@ -394,7 +394,7 @@ class Diggins26_TwoComponentModel(Model):
 
     :meth:`tabulate`
         The analysis and plotting path. ``time`` and ``frequency`` are independent axes, and the result is a
-        :class:`~trilobite.models.LFBOTs._diggins26.Diggins26Tabulation` containing the total and the per-sector
+        :class:`~trilobite.models.LFBOTs.diggins26.Diggins26Tabulation` containing the total and the per-sector
         flux densities, optical depths, magnetic fields, and so on, on an ``(n_t, n_nu)`` grid. The shock can be solved
         once with :meth:`compute_dynamics` and reused.
 

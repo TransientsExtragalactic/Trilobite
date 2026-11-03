@@ -466,7 +466,7 @@ class TestVectorizedRadiation:
             assert np.allclose(tau[i], EM[i] * tau_per_EM[i], rtol=1e-14)
 
     def test_chunked_evaluation_is_identical(self, model, setup, monkeypatch):
-        import trilobite.models.LFBOTs._diggins26 as module
+        import trilobite.models.LFBOTs.diggins26 as module
 
         p, t_rest, state, gamma = setup
         micro = model._microphysics(p, state, t_rest, gamma)

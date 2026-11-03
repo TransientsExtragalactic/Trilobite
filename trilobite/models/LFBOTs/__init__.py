@@ -5,7 +5,11 @@ This subpackage collects models of the circumstellar interaction of LFBOTs, incl
 equatorial and polar synchrotron model of Diggins et al. (2026).
 """
 
-from . import _diggins26
-from ._diggins26 import *
+__all__ = [
+    "diggins26",
+]
 
-__all__ = list(_diggins26.__all__)
+from . import diggins26
+from .diggins26 import *
+
+__all__.extend(diggins26.__all__)
