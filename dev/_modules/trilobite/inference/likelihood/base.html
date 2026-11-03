@@ -463,7 +463,7 @@
     <span class="p">)</span>
 
 <span class="c1"># Defining the __all__ variable.</span>
-<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Likelihood"</span><span class="p">,</span> <span class="s2">"GaussianLikelihood"</span><span class="p">,</span> <span class="s2">"GaussianCensoredLikelihood"</span><span class="p">]</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Likelihood"</span><span class="p">,</span> <span class="s2">"GaussianLikelihood"</span><span class="p">,</span> <span class="s2">"GaussianCensoredLikelihood"</span><span class="p">,</span> <span class="s2">"LogGaussianCensoredLikelihood"</span><span class="p">]</span>
 
 
 <span class="c1"># ============================================================ #</span>
@@ -1044,6 +1044,151 @@
         <span class="k">return</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">(</span>
             <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
             <span class="n">model_y</span><span class="o">=</span><span class="n">model_y</span><span class="p">,</span>
+            <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
+            <span class="n">y_upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span>
+            <span class="n">y_lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">,</span>
+            <span class="n">y_upper_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span><span class="p">,</span>
+            <span class="n">y_lower_mask</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span><span class="p">,</span>
+        <span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="LogGaussianCensoredLikelihood">
+<a class="viewcode-back" href="../../../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">LogGaussianCensoredLikelihood</span><span class="p">(</span><span class="n">GaussianCensoredLikelihood</span><span class="p">):</span>
+<span class="w">    </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">    Censored Gaussian log-likelihood in :math:`\log_{10}` of the observables.</span>
+
+<span class="sd">    This likelihood compares model and data in logarithmic space, which is the natural choice</span>
+<span class="sd">    for strictly positive observables (e.g. flux densities) that span several orders of</span>
+<span class="sd">    magnitude. In linear space, the brightest points dominate the fit and a model that</span>
+<span class="sd">    under-predicts a point by a large factor is penalized far less than one that over-predicts</span>
+<span class="sd">    it by the same factor. In log space both directions are penalized equally.</span>
+
+<span class="sd">    For detections, the likelihood contribution is</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \log \mathcal{L}_i</span>
+<span class="sd">        =</span>
+<span class="sd">        -\frac{1}{2}</span>
+<span class="sd">        \left[</span>
+<span class="sd">            \frac{(\log_{10} y_i - \log_{10} \mu_i)^2}{\sigma_{i}^2}</span>
+<span class="sd">            +</span>
+<span class="sd">            \log(2\pi \sigma_i^2)</span>
+<span class="sd">        \right],</span>
+
+<span class="sd">    and upper (lower) limits contribute :math:`\log\Phi` (:math:`\log[1-\Phi]`) of the standardized</span>
+<span class="sd">    :math:`\log_{10}` limit, exactly as in</span>
+<span class="sd">    :class:`~trilobite.inference.likelihood.base.GaussianCensoredLikelihood`. The uncertainty</span>
+<span class="sd">    in log space combines the reported measurement error, propagated to log space at the</span>
+<span class="sd">    observed value (or at the limit value for censored entries), with an optional systematic</span>
+<span class="sd">    floor added in quadrature:</span>
+
+<span class="sd">    .. math::</span>
+
+<span class="sd">        \sigma_i^2</span>
+<span class="sd">        =</span>
+<span class="sd">        \left(\frac{\sigma_{y,i}}{y_i \ln 10}\right)^2</span>
+<span class="sd">        +</span>
+<span class="sd">        \sigma_{\rm sys}^2 .</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : ~trilobite.models.core.base.Model</span>
+<span class="sd">        The forward model. All of its outputs must be strictly positive.</span>
+<span class="sd">    data : ~trilobite.data.core.InferenceData</span>
+<span class="sd">        The dataset. Every detection and every limit must be strictly positive and finite.</span>
+<span class="sd">    sys_dex : float, optional</span>
+<span class="sd">        Systematic uncertainty floor in dex (:math:`\sigma_{\rm sys}`), added in quadrature to the</span>
+<span class="sd">        propagated measurement error of every entry, including the censoring width of limits.</span>
+<span class="sd">        Default is ``0``. If ``0``, every entry must have a nonzero reported error.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    - **Invalid model output.** If any model output is NaN, infinite, or negative, the</span>
+<span class="sd">      log-likelihood is ``-inf`` (this is how the infeasible-physics convention of models, which</span>
+<span class="sd">      return NaN, is carried through). A model output of exactly zero is floored at</span>
+<span class="sd">      ``1e-300`` before taking the logarithm, so it is penalized very strongly by detections but</span>
+<span class="sd">      remains consistent with upper limits.</span>
+<span class="sd">    - **Normalization.** This is a density in :math:`\log_{10} y`, not in :math:`y`; it omits the</span>
+<span class="sd">      constant Jacobian :math:`1/(y\ln 10)`. Values of :math:`\ln\mathcal{L}` are therefore not</span>
+<span class="sd">      comparable to those of the linear-space likelihoods (the parameter dependence, and hence</span>
+<span class="sd">      all posteriors, are unaffected).</span>
+<span class="sd">    - **Positivity.** Every observable in the dataset is assumed to be strictly positive.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    ~trilobite.inference.likelihood.base.GaussianCensoredLikelihood : The linear-space version.</span>
+<span class="sd">    """</span>
+
+    <span class="c1">#: Floor applied to non-negative model output before taking the logarithm.</span>
+    <span class="n">_MODEL_FLOOR</span> <span class="o">=</span> <span class="mf">1e-300</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_configure</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sys_dex</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Cache the log10-transformed data, errors and limits.</span>
+
+<span class="sd">        Executed once during initialization.</span>
+<span class="sd">        """</span>
+        <span class="n">sys_dex</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">sys_dex</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sys_dex</span><span class="p">)</span> <span class="ow">or</span> <span class="n">sys_dex</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"`sys_dex` must be finite and non-negative, got </span><span class="si">{</span><span class="n">sys_dex</span><span class="si">}</span><span class="s2">."</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sys_dex</span> <span class="o">=</span> <span class="n">sys_dex</span>
+
+        <span class="c1"># Cache the linear-space arrays and masks via the parent.</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">_configure</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+        <span class="n">upper_mask</span><span class="p">,</span> <span class="n">lower_mask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower_mask</span>
+        <span class="n">det_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">upper_mask</span> <span class="o">&amp;</span> <span class="o">~</span><span class="n">lower_mask</span>
+
+        <span class="c1"># The value at which each entry's reported error is converted to dex: the measured</span>
+        <span class="c1"># value for detections and the limit value for censored entries.</span>
+        <span class="n">reference</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">det_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">upper_mask</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">reference</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">reference</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"LogGaussianCensoredLikelihood requires every detection and limit to be finite and strictly positive."</span>
+            <span class="p">)</span>
+
+        <span class="n">sigma_dex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">/</span> <span class="p">(</span><span class="n">reference</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">10.0</span><span class="p">)))</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">sys_dex</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">sigma_dex</span><span class="p">))</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">sigma_dex</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">"LogGaussianCensoredLikelihood requires a finite, nonzero uncertainty for every entry. "</span>
+                <span class="s2">"Provide nonzero measurement errors or set `sys_dex` &gt; 0."</span>
+            <span class="p">)</span>
+
+        <span class="c1"># NaN entries (non-detections in `value`, detections in the limit arrays) stay NaN.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span> <span class="o">=</span> <span class="n">sigma_dex</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">parameters</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the censored Gaussian log-likelihood in log10 space.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        parameters : dict[str, Any]</span>
+<span class="sd">            Raw model parameters in unit-consistent internal format.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            Log-likelihood value, ``-inf`` if the model output is non-finite or negative.</span>
+<span class="sd">        """</span>
+        <span class="n">model_tuple</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">_forward_model_tupled</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_x</span><span class="p">,</span>
+            <span class="n">parameters</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">model_y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">(</span><span class="n">model_tuple</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">model_y</span><span class="p">))</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">model_y</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+
+        <span class="k">return</span> <span class="n">censored_gaussian_loglikelihood</span><span class="p">(</span>
+            <span class="n">data_y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_data_y</span><span class="p">,</span>
+            <span class="n">model_y</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">model_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_MODEL_FLOOR</span><span class="p">)),</span>
             <span class="n">y_err</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_err</span><span class="p">,</span>
             <span class="n">y_upper</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_upper</span><span class="p">,</span>
             <span class="n">y_lower</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_y_lower</span><span class="p">,</span>

@@ -442,6 +442,10 @@
 <li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.GaussianCensoredLikelihood.log_likelihood</a></li>
 </ul>
 </details></li>
+<li class="toctree-l2 has-children"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html">LogGaussianCensoredLikelihood</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l3"><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood.html">trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.log_likelihood</a></li>
+</ul>
+</details></li>
 </ul>
 </details></li>
 </ul>
@@ -1413,8 +1417,19 @@ Below are the likelihood classes currently available in Trilobite.</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.GaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.GaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.GaussianCensoredLikelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.GaussianCensoredLikelihood</span></code></a>(model, data, ...)</p></td>
 <td><p>Multivariate Gaussian log-likelihood with support for censored data.</p></td>
 </tr>
+<tr class="row-even"><td><p><a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood"><code class="xref py py-obj docutils literal notranslate"><span class="pre">base.LogGaussianCensoredLikelihood</span></code></a>(model, ...)</p></td>
+<td><p>Censored Gaussian log-likelihood in <span class="math notranslate nohighlight">\(\log_{10}\)</span> of the observables.</p></td>
+</tr>
 </tbody>
 </table>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>For strictly positive observables that span several orders of magnitude (e.g., radio flux densities),
+<a class="reference internal" href="../../_as_gen/trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood.html#trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood" title="trilobite.inference.likelihood.base.LogGaussianCensoredLikelihood"><code class="xref py py-class docutils literal notranslate"><span class="pre">LogGaussianCensoredLikelihood</span></code></a> compares model and data in
+<span class="math notranslate nohighlight">\(\log_{10}\)</span> space and accepts a systematic floor in dex (<code class="docutils literal notranslate"><span class="pre">sys_dex</span></code>). In linear space, the brightest
+points dominate the fit, and a model that under-predicts a point is penalized far less than one that
+over-predicts it by the same factor.</p>
 </div>
 </section>
 </section>
