@@ -30,7 +30,7 @@ _T_SCALAR = 10.0 * 24.0 * 3600.0  # 10 days in seconds
 _T_QTY = _T_SCALAR * u.s
 
 # Fiducial physical normalizations
-_E_EJ = 1e51   # erg (1 foe)
+_E_EJ = 1e51  # erg (1 foe)
 _M_EJ = 1.989e33  # 1 Msun in g
 
 
@@ -144,9 +144,7 @@ class BaseTestEjectaProfile:
             v = _R_CGS / _T_SCALAR
             G = self.PROFILE_CLASS.kernel(v * u.cm / u.s, **params).value
             rho_from_kernel = G / _T_SCALAR**3
-            assert np.allclose(rho, rho_from_kernel), (
-                f"Homologous factored form violated for {params}"
-            )
+            assert np.allclose(rho, rho_from_kernel), f"Homologous factored form violated for {params}"
 
     def test_homologous_scaling(self):
         """rho(λr, λt) == λ^{-3} * rho(r, t) — the t^{-3} pre-factor under dilation."""
@@ -162,6 +160,7 @@ class BaseTestEjectaProfile:
 # =========================================================================== #
 # Concrete Ejecta Profile Test Classes                                        #
 # =========================================================================== #
+
 
 class TestBrokenPowerLawEjectaProfile(BaseTestEjectaProfile):
     PROFILE_CLASS = BrokenPowerLawEjectaProfile
@@ -221,13 +220,15 @@ class TestBrokenPowerLawEjectaProfile(BaseTestEjectaProfile):
         v_t_cgs = v_t.value
 
         def integrand(v):
-            return 4.0 * np.pi * v**2 * BrokenPowerLawEjectaProfile.kernel(
-                v * u.cm / u.s, **params
-            ).value
+            return 4.0 * np.pi * v**2 * BrokenPowerLawEjectaProfile.kernel(v * u.cm / u.s, **params).value
 
         M_computed, _ = quad(
-            integrand, 0.0, 100.0 * v_t_cgs,
-            limit=300, epsabs=0.0, epsrel=1e-6,
+            integrand,
+            0.0,
+            100.0 * v_t_cgs,
+            limit=300,
+            epsabs=0.0,
+            epsrel=1e-6,
             points=[v_t_cgs],
         )
         assert M_computed == pytest.approx(_M_EJ, rel=1e-4)
@@ -240,13 +241,15 @@ class TestBrokenPowerLawEjectaProfile(BaseTestEjectaProfile):
         v_t_cgs = v_t.value
 
         def integrand(v):
-            return 2.0 * np.pi * v**4 * BrokenPowerLawEjectaProfile.kernel(
-                v * u.cm / u.s, **params
-            ).value
+            return 2.0 * np.pi * v**4 * BrokenPowerLawEjectaProfile.kernel(v * u.cm / u.s, **params).value
 
         E_computed, _ = quad(
-            integrand, 0.0, 100.0 * v_t_cgs,
-            limit=300, epsabs=0.0, epsrel=1e-6,
+            integrand,
+            0.0,
+            100.0 * v_t_cgs,
+            limit=300,
+            epsabs=0.0,
+            epsrel=1e-6,
             points=[v_t_cgs],
         )
         assert E_computed == pytest.approx(_E_EJ, rel=1e-4)
@@ -305,13 +308,15 @@ class TestExponentialEjectaProfile(BaseTestEjectaProfile):
         v_e_cgs = v_e.value
 
         def integrand(v):
-            return 4.0 * np.pi * v**2 * ExponentialEjectaProfile.kernel(
-                v * u.cm / u.s, **params
-            ).value
+            return 4.0 * np.pi * v**2 * ExponentialEjectaProfile.kernel(v * u.cm / u.s, **params).value
 
         M_computed, _ = quad(
-            integrand, 0.0, 30.0 * v_e_cgs,
-            limit=200, epsabs=0.0, epsrel=1e-7,
+            integrand,
+            0.0,
+            30.0 * v_e_cgs,
+            limit=200,
+            epsabs=0.0,
+            epsrel=1e-7,
         )
         assert M_computed == pytest.approx(_M_EJ, rel=1e-5)
 
@@ -322,13 +327,15 @@ class TestExponentialEjectaProfile(BaseTestEjectaProfile):
         v_e_cgs = v_e.value
 
         def integrand(v):
-            return 2.0 * np.pi * v**4 * ExponentialEjectaProfile.kernel(
-                v * u.cm / u.s, **params
-            ).value
+            return 2.0 * np.pi * v**4 * ExponentialEjectaProfile.kernel(v * u.cm / u.s, **params).value
 
         E_computed, _ = quad(
-            integrand, 0.0, 30.0 * v_e_cgs,
-            limit=200, epsabs=0.0, epsrel=1e-7,
+            integrand,
+            0.0,
+            30.0 * v_e_cgs,
+            limit=200,
+            epsabs=0.0,
+            epsrel=1e-7,
         )
         assert E_computed == pytest.approx(_E_EJ, rel=1e-5)
 
@@ -351,6 +358,7 @@ class TestExponentialEjectaProfile(BaseTestEjectaProfile):
 # Cross-Profile Physical Consistency                                          #
 # =========================================================================== #
 
+
 def test_bpl_and_exponential_same_EM_budget():
     """BPL and exponential normalizations both satisfy the same E/M = E_ej/M_ej."""
     K_bpl, v_t = BrokenPowerLawEjectaProfile.normalize(_E_EJ, _M_EJ)
@@ -360,19 +368,13 @@ def test_bpl_and_exponential_same_EM_budget():
     params_exp = {"K": K_exp.value, "v_e": v_e.value}
 
     def mass_integrand_bpl(v):
-        return 4.0 * np.pi * v**2 * BrokenPowerLawEjectaProfile.kernel(
-            v * u.cm / u.s, **params_bpl
-        ).value
+        return 4.0 * np.pi * v**2 * BrokenPowerLawEjectaProfile.kernel(v * u.cm / u.s, **params_bpl).value
 
     def mass_integrand_exp(v):
-        return 4.0 * np.pi * v**2 * ExponentialEjectaProfile.kernel(
-            v * u.cm / u.s, **params_exp
-        ).value
+        return 4.0 * np.pi * v**2 * ExponentialEjectaProfile.kernel(v * u.cm / u.s, **params_exp).value
 
-    M_bpl, _ = quad(mass_integrand_bpl, 0.0, 100.0 * v_t.value,
-                    limit=300, epsrel=1e-5, points=[v_t.value])
-    M_exp, _ = quad(mass_integrand_exp, 0.0, 30.0 * v_e.value,
-                    limit=200, epsrel=1e-5)
+    M_bpl, _ = quad(mass_integrand_bpl, 0.0, 100.0 * v_t.value, limit=300, epsrel=1e-5, points=[v_t.value])
+    M_exp, _ = quad(mass_integrand_exp, 0.0, 30.0 * v_e.value, limit=200, epsrel=1e-5)
 
     assert M_bpl == pytest.approx(_M_EJ, rel=1e-4)
     assert M_exp == pytest.approx(_M_EJ, rel=1e-4)

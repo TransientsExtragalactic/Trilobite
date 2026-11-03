@@ -51,9 +51,7 @@ class BaseTestVelocityProfile:
         for params in self.PARAMETER_SETS:
             result = self.PROFILE_CLASS.eval(_R_QTY, _T_QTY, **params)
             assert isinstance(result, u.Quantity)
-            assert result.unit.is_equivalent(u.cm / u.s), (
-                f"eval unit is not cm/s for {params}: got {result.unit}"
-            )
+            assert result.unit.is_equivalent(u.cm / u.s), f"eval unit is not cm/s for {params}: got {result.unit}"
 
     def test_eval_shape_matches_input(self):
         """eval output shape matches the radius array shape."""
@@ -119,6 +117,7 @@ class BaseTestVelocityProfile:
 # Concrete Velocity Profile Test Classes                                      #
 # =========================================================================== #
 
+
 class TestStaticVelocityProfile(BaseTestVelocityProfile):
     PROFILE_CLASS = StaticVelocityProfile
     PARAMETER_SETS = [{}]
@@ -181,8 +180,8 @@ class TestHomologousVelocityProfile(BaseTestVelocityProfile):
 
     def test_unit_input_conversion(self):
         """eval correctly converts unit-bearing r and t inputs."""
-        r = 1.0 * u.au        # 1 AU in cm
-        t = 1.0 * u.yr        # 1 yr in s
+        r = 1.0 * u.au  # 1 AU in cm
+        t = 1.0 * u.yr  # 1 yr in s
         result = HomologousVelocityProfile.eval(r, t).to(u.cm / u.s).value
         expected = r.to(u.cm).value / t.to(u.s).value
         assert result == pytest.approx(expected, rel=1e-10)
@@ -201,9 +200,7 @@ class TestConstantVelocityProfile(BaseTestVelocityProfile):
         """eval returns the same velocity at every radius."""
         for params in self.PARAMETER_SETS:
             result = ConstantVelocityProfile.eval(_R_QTY, _T_QTY, **params).value
-            assert np.all(result == result[0]), (
-                f"Velocity is not spatially uniform for {params}"
-            )
+            assert np.all(result == result[0]), f"Velocity is not spatially uniform for {params}"
 
     def test_matches_parameter_cgs(self):
         """eval returns exactly v_0 (in CGS) at every grid point."""
@@ -221,7 +218,5 @@ class TestConstantVelocityProfile(BaseTestVelocityProfile):
 
     def test_unit_aware_v0(self):
         """eval accepts a unit-bearing v_0 and converts correctly."""
-        result = ConstantVelocityProfile.eval(
-            _R_QTY, _T_QTY, v_0=100.0 * u.km / u.s
-        ).to(u.cm / u.s).value
+        result = ConstantVelocityProfile.eval(_R_QTY, _T_QTY, v_0=100.0 * u.km / u.s).to(u.cm / u.s).value
         assert np.allclose(result, 1e7, rtol=1e-10)
