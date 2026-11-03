@@ -137,8 +137,9 @@ class EmceeSampler(Sampler):
         # Grab the RNG if it is not given to us.
         rng = rng or np.random.default_rng()
 
-        # Grab the initial theta and dimensionality
-        theta0 = self.problem.initial_theta
+        # Grab the initial position and dimensionality. The log-posterior is evaluated in sampling space, so the
+        # walkers must start there too (this equals ``initial_theta`` for parameters without a transform).
+        theta0 = self.problem.initial_z
         if optimize:
             theta0 = find_posterior_maximum(self.problem._log_free_posterior, theta0)
         ndim = theta0.size

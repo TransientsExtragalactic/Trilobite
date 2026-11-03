@@ -597,19 +597,20 @@ class InferenceProblem:
     # ------------------------------------------------- #
     def __call__(self, theta: np.ndarray) -> float:
         """
-        Evaluate the log-posterior at the given parameter vector.
+        Evaluate the log-posterior at the given free-parameter vector.
 
         Parameters
         ----------
         theta: np.ndarray
-            Array of free parameters in the order defined by the model.
+            Array of free parameters in the order defined by the model, in **sampling space** (identical to
+            physical space for parameters without a transform).
 
         Returns
         -------
         float
             The computed log-posterior value.
         """
-        return self._log_posterior(theta)
+        return self._log_free_posterior(theta)
 
     def __len__(self) -> int:
         """
@@ -782,10 +783,14 @@ class InferenceProblem:
         """
         Unpack a NumPy array of parameter values into a dictionary keyed by parameter name.
 
+        This is the exact inverse of :meth:`pack_parameters`. No parameter transforms are applied: the
+        values are returned as given, so ``theta`` is expected to be in physical space. To convert a
+        sampling-space vector, use :meth:`transform_theta_inverse` first.
+
         Parameters
         ----------
         theta : np.ndarray
-            One-dimensional array of parameter values ordered according
+            One-dimensional array of (physical-space) parameter values ordered according
             to the model definition.
 
         Returns
@@ -795,23 +800,7 @@ class InferenceProblem:
         """
         theta = np.asarray(theta, dtype=float)
 
-        out = {}
-
-        for i, name in enumerate(self.__parameter_order__):
-            p = self.__parameters__[name]
-            z = theta[i]
-
-            if p.transform is not None:
-                try:
-                    x = p.transform.inverse(z)
-                except Exception:
-                    return None  # caller handles -inf
-            else:
-                x = z
-
-            out[name] = x
-
-        return out
+        return {name: theta[i] for i, name in enumerate(self.__parameter_order__)}
 
     def pack_free_parameters(self, parameters: dict[str, float]) -> np.ndarray:
         """
@@ -1053,7 +1042,12 @@ class InferenceProblem:
 
     # Prior callables.
     def _log_prior(self, theta: np.ndarray) -> float:
-        """Compute the log-prior in sampling space, including Jacobian corrections for transformed parameters."""
+        """
+        Compute the log-prior of a full **physical-space** parameter vector.
+
+        Priors are always defined on the physical parameters. Any Jacobian correction for transformed
+        parameters is added separately, by :meth:`_log_posterior` and :meth:`_log_free_posterior`.
+        """
         logp = 0.0
 
         for i, name in enumerate(self.__parameter_order__):
@@ -1073,21 +1067,21 @@ class InferenceProblem:
 
     def _log_likelihood(self, theta: np.ndarray) -> float:
         """
-        Compute the log-likelihood for a given set of parameters.
+        Compute the log-likelihood of a full **physical-space** parameter vector.
 
         Parameters
         ----------
         theta : np.ndarray
-            Array of parameter values in the order defined by the model. These
-            will be in the sampling space and therefore must be transformed back
-            to physical space before being passed to the likelihood.
+            Array of all parameter values in the order defined by the model, in physical space. No parameter
+            transforms are applied here; a sampling-space vector must first be mapped to physical space with
+            :meth:`transform_theta_inverse`.
 
         Returns
         -------
         float
             The computed log-likelihood value.
         """
-        # Unpack the parameters into a dictionary.
+        # Unpack the parameters into a dictionary (no transforms are applied).
         params = self.unpack_parameters(theta)
 
         # Compute the log-likelihood using the likelihood object.
@@ -1095,14 +1089,18 @@ class InferenceProblem:
 
         return logl
 
-    def _log_posterior(self, z: np.ndarray) -> float:
-        """Compute log-posterior in sampling space."""
-        # Convert sampling → physical once
-        try:
-            theta, log_jac = self.transform_theta_inverse(z)
-        except Exception as exp:
-            raise ValueError("Inverse transform failed.") from exp
+    def _log_posterior_physical(self, theta: np.ndarray, log_jac: float) -> float:
+        r"""
+        Evaluate the sampling-space log-posterior given the physical-space parameters.
 
+        Parameters
+        ----------
+        theta : np.ndarray
+            Full parameter vector in physical space.
+        log_jac : float
+            Log-Jacobian :math:`\log|d\theta/dz|` of the transform that produced ``theta`` from the
+            sampling-space vector.
+        """
         # Prior in physical space
         logp = self._log_prior(theta)
         if not np.isfinite(logp):
@@ -1115,6 +1113,26 @@ class InferenceProblem:
 
         return logp + logl + log_jac
 
+    def _log_posterior(self, z: np.ndarray) -> float:
+        """
+        Compute the log-posterior of a full **sampling-space** parameter vector.
+
+        The inverse transforms are applied exactly once, the prior and likelihood are evaluated in
+        physical space, and the log-Jacobian of the transform is added.
+
+        Parameters
+        ----------
+        z : np.ndarray
+            Array of all parameter values (free and frozen) in sampling space.
+        """
+        # Convert sampling → physical once
+        try:
+            theta, log_jac = self.transform_theta_inverse(z)
+        except Exception as exp:
+            raise ValueError("Inverse transform failed.") from exp
+
+        return self._log_posterior_physical(theta, log_jac)
+
     def _log_free_prior(self, theta_free: np.ndarray) -> float:
         """
         Compute the log-prior for a given set of free parameters.
@@ -1122,7 +1140,7 @@ class InferenceProblem:
         Parameters
         ----------
         theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+            Array of free parameter values in the order defined by the model, in physical space.
 
         Returns
         -------
@@ -1141,7 +1159,7 @@ class InferenceProblem:
         Parameters
         ----------
         theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+            Array of free parameter values in the order defined by the model, in physical space.
 
         Returns
         -------
@@ -1153,24 +1171,36 @@ class InferenceProblem:
         theta = self.pack_parameters(params)
         return self._log_likelihood(theta)
 
-    def _log_free_posterior(self, theta_free: np.ndarray) -> float:
+    def _log_free_posterior(self, z_free: np.ndarray) -> float:
         """
-        Compute the log-posterior for a given set of free parameters.
+        Compute the log-posterior for a given set of free **sampling-space** parameters.
+
+        This is the function evaluated by samplers (and by :meth:`__call__`). The free parameters are mapped
+        to physical space once, frozen parameters are inserted at their (physical) initial values, and the
+        log-Jacobian of the free-parameter transforms is added. Frozen parameters do not contribute a
+        Jacobian term.
 
         Parameters
         ----------
-        theta_free : np.ndarray
-            Array of free parameter values in the order defined by the model.
+        z_free : np.ndarray
+            Array of free parameter values in the order defined by the model, in sampling space. If no
+            parameter has a transform, this is identical to the physical-space vector.
 
         Returns
         -------
         float
             The computed log-posterior value.
         """
-        # Expand the free parameters into a full parameter vector.
-        params = self.unpack_free_parameters(theta_free)
-        theta = self.pack_parameters(params)
-        return self._log_posterior(theta)
+        # Map the free parameters to physical space once.
+        try:
+            theta_free, log_jac = self.transform_free_theta_inverse(z_free)
+        except Exception as exp:
+            raise ValueError("Inverse transform failed.") from exp
+
+        # Expand into a full physical-space vector, inserting the frozen values.
+        theta = self.pack_parameters(self.unpack_free_parameters(theta_free))
+
+        return self._log_posterior_physical(theta, log_jac)
 
     def log_prior(self, params: "_ModelParametersInput") -> float:
         """
@@ -1236,10 +1266,14 @@ class InferenceProblem:
         -----
         This is a public wrapper around the internal :meth:`_log_posterior` method which
         handles packing the parameters from a dictionary into the required NumPy array format.
+        The dictionary values are **physical** values; they are mapped to sampling space before the
+        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
+        parameter transforms) at that point.
         """
         params = self.__likelihood__._model.coerce_model_parameters(params)
         theta = self.pack_parameters(params)
-        return self._log_posterior(theta)
+        z, _ = self.transform_theta_forward(theta)
+        return self._log_posterior(z)
 
     def log_free_prior(self, params: "_ModelParametersInput") -> float:
         """
@@ -1306,10 +1340,14 @@ class InferenceProblem:
         -----
         This is a public wrapper around the internal :meth:`_log_free_posterior` method which
         handles packing the free parameters from a dictionary into the required NumPy array format.
+        The dictionary values are **physical** values; they are mapped to sampling space before the
+        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
+        free-parameter transforms) at that point.
         """
         params = self.__likelihood__._model.coerce_model_parameters(params)
         theta_free = self.pack_free_parameters(params)
-        return self._log_free_posterior(theta_free)
+        z_free, _ = self.transform_free_theta_forward(theta_free)
+        return self._log_free_posterior(z_free)
 
     # ------------------------------------------------- #
     # Validation Methods                                #
@@ -1574,7 +1612,7 @@ class InferenceProblem:
     @property
     def initial_log_posterior(self) -> float:
         """float: The log-posterior evaluated at the initial free parameter values."""
-        return self._log_free_posterior(self.initial_theta)
+        return self._log_free_posterior(self.initial_z)
 
     # ------------------------------------------------- #
     # Prior Setting Helpers                             #
