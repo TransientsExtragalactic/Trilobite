@@ -2509,6 +2509,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.n_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.n_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.parameter_names.html">trilobite.inference.sampling.result.MCMCSamplingResult.parameter_names</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.parameters.html">trilobite.inference.sampling.result.MCMCSamplingResult.parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata.html">trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.problem.html">trilobite.inference.sampling.result.MCMCSamplingResult.problem</a></li>
@@ -3276,13 +3277,13 @@ result and reshaped internally to:</p>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.from_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">from_hdf5</span></code></a>(path)</p></td>
 <td><p>Reconstruct a <a class="reference internal" href="trilobite.inference.sampling.result.SamplingResult.html#trilobite.inference.sampling.result.SamplingResult" title="trilobite.inference.sampling.result.SamplingResult"><code class="xref py py-class docutils literal notranslate"><span class="pre">SamplingResult</span></code></a> from disk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_flat_samples</span></code></a>([burn, thin, exclude_walkers])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.get_flat_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get_flat_samples</span></code></a>([burn, thin, ...])</p></td>
 <td><p>Return flattened MCMC samples with optional burn-in and thinning.</p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5.html#trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5" title="trilobite.inference.sampling.result.MCMCSamplingResult.to_hdf5"><code class="xref py py-obj docutils literal notranslate"><span class="pre">to_hdf5</span></code></a>(path[, overwrite])</p></td>
 <td><p>Serialize the sampling result to disk.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot" title="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_plot</span></code></a>(parameter[, burn, thin, fig, axes])</p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot.html#trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot" title="trilobite.inference.sampling.result.MCMCSamplingResult.trace_plot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">trace_plot</span></code></a>(parameter[, burn, thin, fig, ...])</p></td>
 <td><p>Plot the trace (chain evolution) for a single parameter.</p></td>
 </tr>
 </tbody>
@@ -3330,13 +3331,16 @@ result and reshaped internally to:</p>
 <tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.parameters.html#trilobite.inference.sampling.result.MCMCSamplingResult.parameters" title="trilobite.inference.sampling.result.MCMCSamplingResult.parameters"><code class="xref py py-obj docutils literal notranslate"><span class="pre">parameters</span></code></a></p></td>
 <td><p>The parameters of the inference problem.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata.html#trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata" title="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampler_metadata</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">physical_samples</span></code></a></p></td>
+<td><p>The chain mapped to physical space, with shape <code class="docutils literal notranslate"><span class="pre">(n_steps,</span> <span class="pre">n_walkers,</span> <span class="pre">n_dim)</span></code>.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata.html#trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata" title="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata"><code class="xref py py-obj docutils literal notranslate"><span class="pre">sampler_metadata</span></code></a></p></td>
 <td><p>Metadata about the sampling procedure.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samples</span></code></a></p></td>
+<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.samples.html#trilobite.inference.sampling.result.MCMCSamplingResult.samples" title="trilobite.inference.sampling.result.MCMCSamplingResult.samples"><code class="xref py py-obj docutils literal notranslate"><span class="pre">samples</span></code></a></p></td>
 <td><p>numpy.ndarray Sampled parameter values.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.problem.html#trilobite.inference.sampling.result.MCMCSamplingResult.problem" title="trilobite.inference.sampling.result.MCMCSamplingResult.problem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">problem</span></code></a></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.problem.html#trilobite.inference.sampling.result.MCMCSamplingResult.problem" title="trilobite.inference.sampling.result.MCMCSamplingResult.problem"><code class="xref py py-obj docutils literal notranslate"><span class="pre">problem</span></code></a></p></td>
 <td><p>The inference problem associated with this sampling result.</p></td>
 </tr>
 </tbody>

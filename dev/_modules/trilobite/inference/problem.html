@@ -1054,19 +1054,20 @@
     <span class="c1"># ------------------------------------------------- #</span>
     <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Evaluate the log-posterior at the given parameter vector.</span>
+<span class="sd">        Evaluate the log-posterior at the given free-parameter vector.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        theta: np.ndarray</span>
-<span class="sd">            Array of free parameters in the order defined by the model.</span>
+<span class="sd">            Array of free parameters in the order defined by the model, in **sampling space** (identical to</span>
+<span class="sd">            physical space for parameters without a transform).</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The computed log-posterior value.</span>
 <span class="sd">        """</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 
     <span class="k">def</span><span class="w"> </span><span class="fm">__len__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1256,10 +1257,14 @@
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Unpack a NumPy array of parameter values into a dictionary keyed by parameter name.</span>
 
+<span class="sd">        This is the exact inverse of :meth:`pack_parameters`. No parameter transforms are applied: the</span>
+<span class="sd">        values are returned as given, so ``theta`` is expected to be in physical space. To convert a</span>
+<span class="sd">        sampling-space vector, use :meth:`transform_theta_inverse` first.</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        theta : np.ndarray</span>
-<span class="sd">            One-dimensional array of parameter values ordered according</span>
+<span class="sd">            One-dimensional array of (physical-space) parameter values ordered according</span>
 <span class="sd">            to the model definition.</span>
 
 <span class="sd">        Returns</span>
@@ -1269,23 +1274,7 @@
 <span class="sd">        """</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
 
-        <span class="n">out</span> <span class="o">=</span> <span class="p">{}</span>
-
-        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">):</span>
-            <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__parameters__</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
-            <span class="n">z</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
-
-            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
-                <span class="k">try</span><span class="p">:</span>
-                    <span class="n">x</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-                <span class="k">except</span> <span class="ne">Exception</span><span class="p">:</span>
-                    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># caller handles -inf</span>
-            <span class="k">else</span><span class="p">:</span>
-                <span class="n">x</span> <span class="o">=</span> <span class="n">z</span>
-
-            <span class="n">out</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span>
-
-        <span class="k">return</span> <span class="n">out</span></div>
+        <span class="k">return</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">theta</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">)}</span></div>
 
 
 <div class="viewcode-block" id="InferenceProblem.pack_free_parameters">
@@ -1546,7 +1535,12 @@
 
     <span class="c1"># Prior callables.</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute the log-prior in sampling space, including Jacobian corrections for transformed parameters."""</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute the log-prior of a full **physical-space** parameter vector.</span>
+
+<span class="sd">        Priors are always defined on the physical parameters. Any Jacobian correction for transformed</span>
+<span class="sd">        parameters is added separately, by :meth:`_log_posterior` and :meth:`_log_free_posterior`.</span>
+<span class="sd">        """</span>
         <span class="n">logp</span> <span class="o">=</span> <span class="mf">0.0</span>
 
         <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__parameter_order__</span><span class="p">):</span>
@@ -1566,21 +1560,21 @@
 
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_likelihood</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute the log-likelihood for a given set of parameters.</span>
+<span class="sd">        Compute the log-likelihood of a full **physical-space** parameter vector.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        theta : np.ndarray</span>
-<span class="sd">            Array of parameter values in the order defined by the model. These</span>
-<span class="sd">            will be in the sampling space and therefore must be transformed back</span>
-<span class="sd">            to physical space before being passed to the likelihood.</span>
+<span class="sd">            Array of all parameter values in the order defined by the model, in physical space. No parameter</span>
+<span class="sd">            transforms are applied here; a sampling-space vector must first be mapped to physical space with</span>
+<span class="sd">            :meth:`transform_theta_inverse`.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The computed log-likelihood value.</span>
 <span class="sd">        """</span>
-        <span class="c1"># Unpack the parameters into a dictionary.</span>
+        <span class="c1"># Unpack the parameters into a dictionary (no transforms are applied).</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_parameters</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 
         <span class="c1"># Compute the log-likelihood using the likelihood object.</span>
@@ -1588,14 +1582,18 @@
 
         <span class="k">return</span> <span class="n">logl</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
-<span class="w">        </span><span class="sd">"""Compute log-posterior in sampling space."""</span>
-        <span class="c1"># Convert sampling → physical once</span>
-        <span class="k">try</span><span class="p">:</span>
-            <span class="n">theta</span><span class="p">,</span> <span class="n">log_jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_theta_inverse</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
-        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
-            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Inverse transform failed."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_posterior_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">log_jac</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sa">r</span><span class="sd">"""</span>
+<span class="sd">        Evaluate the sampling-space log-posterior given the physical-space parameters.</span>
 
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        theta : np.ndarray</span>
+<span class="sd">            Full parameter vector in physical space.</span>
+<span class="sd">        log_jac : float</span>
+<span class="sd">            Log-Jacobian :math:`\log|d\theta/dz|` of the transform that produced ``theta`` from the</span>
+<span class="sd">            sampling-space vector.</span>
+<span class="sd">        """</span>
         <span class="c1"># Prior in physical space</span>
         <span class="n">logp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">logp</span><span class="p">):</span>
@@ -1608,6 +1606,26 @@
 
         <span class="k">return</span> <span class="n">logp</span> <span class="o">+</span> <span class="n">logl</span> <span class="o">+</span> <span class="n">log_jac</span>
 
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Compute the log-posterior of a full **sampling-space** parameter vector.</span>
+
+<span class="sd">        The inverse transforms are applied exactly once, the prior and likelihood are evaluated in</span>
+<span class="sd">        physical space, and the log-Jacobian of the transform is added.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        z : np.ndarray</span>
+<span class="sd">            Array of all parameter values (free and frozen) in sampling space.</span>
+<span class="sd">        """</span>
+        <span class="c1"># Convert sampling → physical once</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">theta</span><span class="p">,</span> <span class="n">log_jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_theta_inverse</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Inverse transform failed."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior_physical</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">log_jac</span><span class="p">)</span>
+
     <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Compute the log-prior for a given set of free parameters.</span>
@@ -1615,7 +1633,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        theta_free : np.ndarray</span>
-<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+<span class="sd">            Array of free parameter values in the order defined by the model, in physical space.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1634,7 +1652,7 @@
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        theta_free : np.ndarray</span>
-<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+<span class="sd">            Array of free parameter values in the order defined by the model, in physical space.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -1646,24 +1664,36 @@
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_likelihood</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
 
-    <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">theta_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z_free</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
-<span class="sd">        Compute the log-posterior for a given set of free parameters.</span>
+<span class="sd">        Compute the log-posterior for a given set of free **sampling-space** parameters.</span>
+
+<span class="sd">        This is the function evaluated by samplers (and by :meth:`__call__`). The free parameters are mapped</span>
+<span class="sd">        to physical space once, frozen parameters are inserted at their (physical) initial values, and the</span>
+<span class="sd">        log-Jacobian of the free-parameter transforms is added. Frozen parameters do not contribute a</span>
+<span class="sd">        Jacobian term.</span>
 
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
-<span class="sd">        theta_free : np.ndarray</span>
-<span class="sd">            Array of free parameter values in the order defined by the model.</span>
+<span class="sd">        z_free : np.ndarray</span>
+<span class="sd">            Array of free parameter values in the order defined by the model, in sampling space. If no</span>
+<span class="sd">            parameter has a transform, this is identical to the physical-space vector.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
 <span class="sd">        float</span>
 <span class="sd">            The computed log-posterior value.</span>
 <span class="sd">        """</span>
-        <span class="c1"># Expand the free parameters into a full parameter vector.</span>
-        <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
-        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="c1"># Map the free parameters to physical space once.</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">theta_free</span><span class="p">,</span> <span class="n">log_jac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_free_theta_inverse</span><span class="p">(</span><span class="n">z_free</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exp</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Inverse transform failed."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exp</span>
+
+        <span class="c1"># Expand into a full physical-space vector, inserting the frozen values.</span>
+        <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unpack_free_parameters</span><span class="p">(</span><span class="n">theta_free</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior_physical</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">log_jac</span><span class="p">)</span>
 
 <div class="viewcode-block" id="InferenceProblem.log_prior">
 <a class="viewcode-back" href="../../../_as_gen/trilobite.inference.problem.InferenceProblem.log_prior.html#trilobite.inference.problem.InferenceProblem.log_prior">[docs]</a>
@@ -1737,10 +1767,14 @@
 <span class="sd">        -----</span>
 <span class="sd">        This is a public wrapper around the internal :meth:`_log_posterior` method which</span>
 <span class="sd">        handles packing the parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        The dictionary values are **physical** values; they are mapped to sampling space before the</span>
+<span class="sd">        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any</span>
+<span class="sd">        parameter transforms) at that point.</span>
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span></div>
+        <span class="n">z</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_theta_forward</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_posterior</span><span class="p">(</span><span class="n">z</span><span class="p">)</span></div>
 
 
 <div class="viewcode-block" id="InferenceProblem.log_free_prior">
@@ -1816,10 +1850,14 @@
 <span class="sd">        -----</span>
 <span class="sd">        This is a public wrapper around the internal :meth:`_log_free_posterior` method which</span>
 <span class="sd">        handles packing the free parameters from a dictionary into the required NumPy array format.</span>
+<span class="sd">        The dictionary values are **physical** values; they are mapped to sampling space before the</span>
+<span class="sd">        evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any</span>
+<span class="sd">        free-parameter transforms) at that point.</span>
 <span class="sd">        """</span>
         <span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__likelihood__</span><span class="o">.</span><span class="n">_model</span><span class="o">.</span><span class="n">coerce_model_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
         <span class="n">theta_free</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pack_free_parameters</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span></div>
+        <span class="n">z_free</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_free_theta_forward</span><span class="p">(</span><span class="n">theta_free</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">z_free</span><span class="p">)</span></div>
 
 
     <span class="c1"># ------------------------------------------------- #</span>
@@ -2088,7 +2126,7 @@
     <span class="nd">@property</span>
     <span class="k">def</span><span class="w"> </span><span class="nf">initial_log_posterior</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""float: The log-posterior evaluated at the initial free parameter values."""</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_theta</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">initial_z</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------- #</span>
     <span class="c1"># Prior Setting Helpers                             #</span>

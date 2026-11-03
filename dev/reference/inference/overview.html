@@ -1755,23 +1755,26 @@ works directly with parameter vectors.</p>
 <ul class="simple">
 <li><p>parameters are ordered according to the underlying model definition,</p></li>
 <li><p>only <strong>free parameters</strong> are included,</p></li>
-<li><p>all values are plain floats in base units.</p></li>
+<li><p>all values are plain floats in base units, in <strong>sampling space</strong>.</p></li>
 </ul>
+<p>Sampling space is the space in which parameter transforms (e.g. a
+<a class="reference internal" href="../../_as_gen/trilobite.inference.transform.Log10Transform.html#trilobite.inference.transform.Log10Transform" title="trilobite.inference.transform.Log10Transform"><code class="xref py py-class docutils literal notranslate"><span class="pre">Log10Transform</span></code></a>) are applied. For parameters without a
+transform it is identical to physical space.</p>
 <p>The core entry point is calling the inference problem itself:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">initial_theta</span>
-<span class="n">logpost</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">z</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">initial_z</span>
+<span class="n">logpost</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>This is equivalent to calling:</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logpost</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">)</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">logpost</span> <span class="o">=</span> <span class="n">inf_prob</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">(</span><span class="n">z</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Internally, the inference problem will:</p>
 <ul class="simple">
-<li><p>unpack the free parameter vector,</p></li>
-<li><p>reinsert frozen parameters,</p></li>
-<li><p>evaluate the log-prior and log-likelihood,</p></li>
-<li><p>and return their sum.</p></li>
+<li><p>map the free parameters to physical space with the inverse transforms (exactly once),</p></li>
+<li><p>reinsert frozen parameters (which are stored in physical space),</p></li>
+<li><p>evaluate the log-prior and log-likelihood in physical space,</p></li>
+<li><p>and return their sum plus the log-Jacobian of the transforms.</p></li>
 </ul>
 <p>This interface is used automatically by all built-in samplers.</p>
 </div>

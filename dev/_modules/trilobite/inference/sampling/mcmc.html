@@ -587,8 +587,9 @@
         <span class="c1"># Grab the RNG if it is not given to us.</span>
         <span class="n">rng</span> <span class="o">=</span> <span class="n">rng</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
 
-        <span class="c1"># Grab the initial theta and dimensionality</span>
-        <span class="n">theta0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_theta</span>
+        <span class="c1"># Grab the initial position and dimensionality. The log-posterior is evaluated in sampling space, so the</span>
+        <span class="c1"># walkers must start there too (this equals ``initial_theta`` for parameters without a transform).</span>
+        <span class="n">theta0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">initial_z</span>
         <span class="k">if</span> <span class="n">optimize</span><span class="p">:</span>
             <span class="n">theta0</span> <span class="o">=</span> <span class="n">find_posterior_maximum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">_log_free_posterior</span><span class="p">,</span> <span class="n">theta0</span><span class="p">)</span>
         <span class="n">ndim</span> <span class="o">=</span> <span class="n">theta0</span><span class="o">.</span><span class="n">size</span>

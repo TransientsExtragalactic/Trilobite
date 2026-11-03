@@ -2509,6 +2509,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.n_walkers.html">trilobite.inference.sampling.result.MCMCSamplingResult.n_walkers</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.parameter_names.html">trilobite.inference.sampling.result.MCMCSamplingResult.parameter_names</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.parameters.html">trilobite.inference.sampling.result.MCMCSamplingResult.parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.physical_samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata.html">trilobite.inference.sampling.result.MCMCSamplingResult.sampler_metadata</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.samples.html">trilobite.inference.sampling.result.MCMCSamplingResult.samples</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.sampling.result.MCMCSamplingResult.problem.html">trilobite.inference.sampling.result.MCMCSamplingResult.problem</a></li>
@@ -3248,7 +3249,10 @@
 </dl>
 <p class="rubric">Notes</p>
 <p>This is a public wrapper around the internal <code class="xref py py-meth docutils literal notranslate"><span class="pre">_log_free_posterior()</span></code> method which
-handles packing the free parameters from a dictionary into the required NumPy array format.</p>
+handles packing the free parameters from a dictionary into the required NumPy array format.
+The dictionary values are <strong>physical</strong> values; they are mapped to sampling space before the
+evaluation, so the result is the sampling-space log-posterior (including the Jacobian of any
+free-parameter transforms) at that point.</p>
 </dd></dl>
 
 </section>

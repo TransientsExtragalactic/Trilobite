@@ -639,27 +639,31 @@ parameters are represented.
 
         - parameters are ordered according to the underlying model definition,
         - only **free parameters** are included,
-        - all values are plain floats in base units.
+        - all values are plain floats in base units, in **sampling space**.
+
+        Sampling space is the space in which parameter transforms (e.g. a
+        :class:`~trilobite.inference.transform.Log10Transform`) are applied. For parameters without a
+        transform it is identical to physical space.
 
         The core entry point is calling the inference problem itself:
 
         .. code-block:: python
 
-            theta = inf_prob.initial_theta
-            logpost = inf_prob(theta)
+            z = inf_prob.initial_z
+            logpost = inf_prob(z)
 
         This is equivalent to calling:
 
         .. code-block:: python
 
-            logpost = inf_prob._log_free_posterior(theta)
+            logpost = inf_prob._log_free_posterior(z)
 
         Internally, the inference problem will:
 
-        - unpack the free parameter vector,
-        - reinsert frozen parameters,
-        - evaluate the log-prior and log-likelihood,
-        - and return their sum.
+        - map the free parameters to physical space with the inverse transforms (exactly once),
+        - reinsert frozen parameters (which are stored in physical space),
+        - evaluate the log-prior and log-likelihood in physical space,
+        - and return their sum plus the log-Jacobian of the transforms.
 
         This interface is used automatically by all built-in samplers.
 

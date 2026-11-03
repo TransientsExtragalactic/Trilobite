@@ -855,6 +855,34 @@
         <span class="k">return</span> <span class="nb">tuple</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">free_parameter_names</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------ #</span>
+    <span class="c1"># Sampling space &lt;-&gt; physical space                #</span>
+    <span class="c1"># ------------------------------------------------ #</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_inverse_transform_column</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">idx</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Map sampling-space values of the ``idx``-th free parameter to physical space."""</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_names</span><span class="p">[</span><span class="n">idx</span><span class="p">]]</span><span class="o">.</span><span class="n">transform</span>
+        <span class="k">if</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">transform</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">values</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_to_physical</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">samples</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Map an array of sampling-space samples, with parameters on the last axis, to physical space."""</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">parameter_names</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">samples</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">stack</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">_inverse_transform_column</span><span class="p">(</span><span class="n">samples</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="n">i</span><span class="p">],</span> <span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_dim</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">physical_samples</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""numpy.ndarray: The chain mapped to physical space, with shape ``(n_steps, n_walkers, n_dim)``.</span>
+
+<span class="sd">        The sampler explores *sampling space*, in which any parameter transforms (e.g. a</span>
+<span class="sd">        :class:`~trilobite.inference.transform.Log10Transform`) are applied, and that raw chain is what is stored in</span>
+<span class="sd">        :attr:`samples` (and what the convergence diagnostics use). This property applies the inverse transforms</span>
+<span class="sd">        to give the values of the model parameters themselves. If no parameter has a transform it is :attr:`samples`</span>
+<span class="sd">        itself (not a copy).</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_physical</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">)</span>
+
+    <span class="c1"># ------------------------------------------------ #</span>
     <span class="c1"># Flattening                                       #</span>
     <span class="c1"># ------------------------------------------------ #</span>
 <div class="viewcode-block" id="MCMCSamplingResult.get_flat_samples">
@@ -864,6 +892,7 @@
         <span class="n">burn</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
         <span class="n">thin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">exclude_walkers</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Sequence</span><span class="p">[</span><span class="nb">int</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">physical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
     <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">:</span>
 <span class="w">        </span><span class="sd">"""</span>
 <span class="sd">        Return flattened MCMC samples with optional burn-in and thinning.</span>
@@ -876,6 +905,10 @@
 <span class="sd">            Thinning factor.</span>
 <span class="sd">        exclude_walkers : sequence of int, optional</span>
 <span class="sd">            Indices of walkers to drop entirely, e.g. the output of :meth:`find_stranded_walkers`.</span>
+<span class="sd">        physical : bool, optional</span>
+<span class="sd">            If ``True`` (default), return the samples in physical space, i.e. with the inverse parameter</span>
+<span class="sd">            transforms applied. If ``False``, return the raw sampling-space chain. The two are identical for</span>
+<span class="sd">            parameters without a transform.</span>
 
 <span class="sd">        Returns</span>
 <span class="sd">        -------</span>
@@ -887,6 +920,10 @@
             <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
             <span class="n">keep</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">exclude_walkers</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">False</span>
             <span class="n">samples</span> <span class="o">=</span> <span class="n">samples</span><span class="p">[:,</span> <span class="n">keep</span><span class="p">,</span> <span class="p">:]</span>
+
+        <span class="c1"># Transform after burn / thin / exclusion so that only the retained samples are mapped.</span>
+        <span class="k">if</span> <span class="n">physical</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_to_physical</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
 
         <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_walkers</span><span class="p">,</span> <span class="n">n_dim</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
 
@@ -1025,6 +1062,9 @@
 <span class="sd">        where :math:`\sigma` is the posterior standard deviation and :math:`\mathrm{ESS}` is the effective sample</span>
 <span class="sd">        size accounting for autocorrelation.</span>
 
+<span class="sd">        Like all convergence diagnostics, this is computed on the chain in sampling space, so for a transformed</span>
+<span class="sd">        parameter it is in the units of the transformed variable (e.g. dex for a ``Log10Transform``).</span>
+
 <span class="sd">        Parameters</span>
 <span class="sd">        ----------</span>
 <span class="sd">        burn : int, optional</span>
@@ -1039,8 +1079,9 @@
 <span class="sd">        numpy.ndarray</span>
 <span class="sd">            Array of shape ``(n_dim,)`` containing the MCSE for each parameter.</span>
 <span class="sd">        """</span>
-        <span class="c1"># Flatten samples after burn-in / thinning</span>
-        <span class="n">flat_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flat_samples</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="n">thin</span><span class="p">)</span>
+        <span class="c1"># Flatten samples after burn-in / thinning. Diagnostics are computed in sampling space (the space the</span>
+        <span class="c1"># sampler explored), consistently with the autocorrelation time / ESS used below.</span>
+        <span class="n">flat_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flat_samples</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="n">thin</span><span class="p">,</span> <span class="n">physical</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 
         <span class="c1"># Posterior standard deviation</span>
         <span class="n">posterior_sd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">flat_samples</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">ddof</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
@@ -1197,6 +1238,7 @@
         <span class="n">thin</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1</span><span class="p">,</span>
         <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
         <span class="n">axes</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">physical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1217,6 +1259,9 @@
 <span class="sd">            Existing figure to plot into.</span>
 <span class="sd">        axes : matplotlib.axes.Axes, optional</span>
 <span class="sd">            Existing axes to plot into.</span>
+<span class="sd">        physical : bool, optional</span>
+<span class="sd">            If ``True`` (default), plot the parameter in physical space (inverse transform applied). If ``False``,</span>
+<span class="sd">            plot the raw sampling-space chain, which is the space the sampler explored.</span>
 <span class="sd">        **kwargs: Additional keyword arguments passed to the plotting function.</span>
 
 <span class="sd">        Returns</span>
@@ -1241,6 +1286,8 @@
 
         <span class="c1"># Extract samples</span>
         <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">samples</span><span class="p">[</span><span class="n">burn</span><span class="p">::</span><span class="n">thin</span><span class="p">,</span> <span class="p">:,</span> <span class="n">pidx</span><span class="p">]</span>  <span class="c1"># (steps, walkers)</span>
+        <span class="k">if</span> <span class="n">physical</span><span class="p">:</span>
+            <span class="n">samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_inverse_transform_column</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span> <span class="n">pidx</span><span class="p">)</span>
         <span class="n">n_steps</span><span class="p">,</span> <span class="n">n_walkers</span> <span class="o">=</span> <span class="n">samples</span><span class="o">.</span><span class="n">shape</span>
 
         <span class="c1"># Resolve the figure and the axes.</span>
@@ -1276,7 +1323,8 @@
             <span class="p">)</span>
 
         <span class="n">axes</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">"Step"</span><span class="p">)</span>
-        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">parameter</span><span class="p">)</span>
+        <span class="n">transform</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">problem</span><span class="o">.</span><span class="n">parameters</span><span class="p">[</span><span class="n">parameter</span><span class="p">]</span><span class="o">.</span><span class="n">transform</span>
+        <span class="n">axes</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">parameter</span> <span class="k">if</span> <span class="n">physical</span> <span class="ow">or</span> <span class="n">transform</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2"> (sampling space)"</span><span class="p">)</span>
         <span class="n">axes</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Trace plot: </span><span class="si">{</span><span class="n">parameter</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 
         <span class="n">axes</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
@@ -1293,6 +1341,7 @@
         <span class="n">parameters</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">truths</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
         <span class="n">fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">physical</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
         <span class="o">**</span><span class="n">kwargs</span><span class="p">,</span>
     <span class="p">):</span>
 <span class="w">        </span><span class="sd">"""</span>
@@ -1309,9 +1358,13 @@
 <span class="sd">            all parameters are plotted.</span>
 <span class="sd">        truths : dict, optional</span>
 <span class="sd">            Dictionary mapping parameter names to reference values</span>
-<span class="sd">            (e.g. injected or true values) to overlay on the plot.</span>
+<span class="sd">            (e.g. injected or true values) to overlay on the plot. These must be in the same space as the</span>
+<span class="sd">            plotted samples, i.e. physical values unless ``physical=False``.</span>
 <span class="sd">        fig : matplotlib.figure.Figure, optional</span>
 <span class="sd">            Existing figure to draw into.</span>
+<span class="sd">        physical : bool, optional</span>
+<span class="sd">            If ``True`` (default), plot the samples in physical space (inverse transforms applied). If ``False``,</span>
+<span class="sd">            plot the raw sampling-space chain.</span>
 <span class="sd">        **kwargs</span>
 <span class="sd">            Additional keyword arguments passed to `corner.corner`.</span>
 
@@ -1339,7 +1392,7 @@
         <span class="n">pidx</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parameter_names</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">]</span>
 
         <span class="c1"># Extract flattened samples</span>
-        <span class="n">flat_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flat_samples</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="n">thin</span><span class="p">)</span>
+        <span class="n">flat_samples</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_flat_samples</span><span class="p">(</span><span class="n">burn</span><span class="o">=</span><span class="n">burn</span><span class="p">,</span> <span class="n">thin</span><span class="o">=</span><span class="n">thin</span><span class="p">,</span> <span class="n">physical</span><span class="o">=</span><span class="n">physical</span><span class="p">)</span>
         <span class="n">flat_samples</span> <span class="o">=</span> <span class="n">flat_samples</span><span class="p">[:,</span> <span class="n">pidx</span><span class="p">]</span>
 
         <span class="c1"># Resolve truth values in correct order</span>
