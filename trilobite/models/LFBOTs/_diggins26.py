@@ -18,7 +18,7 @@ two sightlines, the equator and the pole, each of which stands in for its solid-
 
 from collections import namedtuple
 from collections.abc import Callable
-from typing import NamedTuple, Union
+from typing import NamedTuple, Optional, Union
 
 import numpy as np
 from astropy import constants as const
@@ -606,20 +606,20 @@ class Diggins26_TwoComponentModel(Model):
     # =============================================== #
     def __init__(
         self,
-        redshift: float | None = None,
-        luminosity_distance: Union[float, u.Quantity] | None = None,
-        angular_diameter_distance: Union[float, u.Quantity] | None = None,
+        redshift: Optional[float] = None,
+        luminosity_distance: Optional[Union[float, u.Quantity]] = None,
+        angular_diameter_distance: Optional[Union[float, u.Quantity]] = None,
         cosmology=None,
         *,
         hydrogen_mass_fraction: float = 0.7,
-        helium_mass_fraction: float | None = None,
+        helium_mass_fraction: Optional[float] = None,
         adiabatic_index: float = 5.0 / 3.0,
         reference_radius: Union[float, u.Quantity] = 1e15,
         shock_start_time: Union[float, u.Quantity] = 0.3 * u.day,
         max_initial_beta: float = 0.8,
         gamma_points_per_decade: int = 20,
-        integrator_kw: dict | None = None,
-        seed_photon_luminosity: Callable | None = None,
+        integrator_kw: Optional[dict] = None,
+        seed_photon_luminosity: Optional[Callable] = None,
     ):
         r"""
         Initialize the model.
@@ -803,7 +803,7 @@ class Diggins26_TwoComponentModel(Model):
         return self._mu_e
 
     @property
-    def seed_photon_luminosity(self) -> Callable | None:
+    def seed_photon_luminosity(self) -> Optional[Callable]:
         """Callable or None: The Compton seed photon luminosity :math:`L(t)`, or ``None`` (synchrotron cooling only)."""
         return self._seed_luminosity
 
@@ -1205,7 +1205,7 @@ class Diggins26_TwoComponentModel(Model):
         v = self.coerce_model_variables({"time": time, "frequency": frequency})
         return np.atleast_1d(np.asarray(v["time"], dtype=float)), np.atleast_1d(np.asarray(v["frequency"], dtype=float))
 
-    def diagnose(self, parameters=None, time=None) -> str | None:
+    def diagnose(self, parameters=None, time=None) -> Optional[str]:
         """
         Explain why a parameter set is rejected as infeasible.
 
@@ -1280,7 +1280,7 @@ class Diggins26_TwoComponentModel(Model):
             parameters={k: p[k] for k in _DYNAMICS_PARAMETERS},
         )
 
-    def tabulate(self, time, frequency, parameters=None, *, dynamics: Diggins26Dynamics | None = None):
+    def tabulate(self, time, frequency, parameters=None, *, dynamics: Optional[Diggins26Dynamics] = None):
         """
         Evaluate the model on independent time and frequency axes, keeping all intermediate quantities.
 
