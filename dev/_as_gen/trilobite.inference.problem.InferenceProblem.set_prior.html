@@ -53,6 +53,7 @@
     <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
     <script src="../_static/copybutton.js?v=f281be69"></script>
     <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = '_as_gen/trilobite.inference.problem.InferenceProblem.set_prior';</script>
     <script>
         DOCUMENTATION_OPTIONS.theme_version = '0.24.0';
@@ -66,7 +67,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="trilobite.inference.problem.InferenceProblem.summary" href="trilobite.inference.problem.InferenceProblem.summary.html" />
-    <link rel="prev" title="trilobite.inference.problem.InferenceProblem.pack_parameters" href="trilobite.inference.problem.InferenceProblem.pack_parameters.html" />
+    <link rel="prev" title="trilobite.inference.problem.InferenceProblem.sample_prior" href="trilobite.inference.problem.InferenceProblem.sample_prior.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="color-scheme" content="light dark"/>
   <meta name="docsearch:language" content="en"/>
@@ -2210,6 +2211,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.from_dict.html">trilobite.inference.prior.BetaPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.logp.html">trilobite.inference.prior.BetaPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.pdf.html">trilobite.inference.prior.BetaPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.sample.html">trilobite.inference.prior.BetaPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.to_dict.html">trilobite.inference.prior.BetaPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2218,6 +2220,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.from_dict.html">trilobite.inference.prior.CallablePrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.logp.html">trilobite.inference.prior.CallablePrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.pdf.html">trilobite.inference.prior.CallablePrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.sample.html">trilobite.inference.prior.CallablePrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.to_dict.html">trilobite.inference.prior.CallablePrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2226,6 +2229,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.from_dict.html">trilobite.inference.prior.GammaPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.logp.html">trilobite.inference.prior.GammaPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.pdf.html">trilobite.inference.prior.GammaPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.sample.html">trilobite.inference.prior.GammaPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.to_dict.html">trilobite.inference.prior.GammaPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2234,6 +2238,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.from_dict.html">trilobite.inference.prior.HalfNormalPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.logp.html">trilobite.inference.prior.HalfNormalPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.pdf.html">trilobite.inference.prior.HalfNormalPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.sample.html">trilobite.inference.prior.HalfNormalPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.to_dict.html">trilobite.inference.prior.HalfNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2242,6 +2247,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.from_dict.html">trilobite.inference.prior.LogNormalPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.logp.html">trilobite.inference.prior.LogNormalPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.pdf.html">trilobite.inference.prior.LogNormalPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.sample.html">trilobite.inference.prior.LogNormalPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.to_dict.html">trilobite.inference.prior.LogNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2250,6 +2256,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.from_dict.html">trilobite.inference.prior.LogUniformPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.logp.html">trilobite.inference.prior.LogUniformPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.pdf.html">trilobite.inference.prior.LogUniformPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.sample.html">trilobite.inference.prior.LogUniformPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.to_dict.html">trilobite.inference.prior.LogUniformPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2258,6 +2265,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.from_dict.html">trilobite.inference.prior.NormalPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.logp.html">trilobite.inference.prior.NormalPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.pdf.html">trilobite.inference.prior.NormalPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.sample.html">trilobite.inference.prior.NormalPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.to_dict.html">trilobite.inference.prior.NormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2266,6 +2274,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.Prior.from_dict.html">trilobite.inference.prior.Prior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.Prior.logp.html">trilobite.inference.prior.Prior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.Prior.pdf.html">trilobite.inference.prior.Prior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.Prior.sample.html">trilobite.inference.prior.Prior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.Prior.to_dict.html">trilobite.inference.prior.Prior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2274,6 +2283,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.from_dict.html">trilobite.inference.prior.TruncatedNormalPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.logp.html">trilobite.inference.prior.TruncatedNormalPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.pdf.html">trilobite.inference.prior.TruncatedNormalPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.sample.html">trilobite.inference.prior.TruncatedNormalPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.to_dict.html">trilobite.inference.prior.TruncatedNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2282,6 +2292,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.from_dict.html">trilobite.inference.prior.UniformPrior.from_dict</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.logp.html">trilobite.inference.prior.UniformPrior.logp</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.pdf.html">trilobite.inference.prior.UniformPrior.pdf</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.sample.html">trilobite.inference.prior.UniformPrior.sample</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.to_dict.html">trilobite.inference.prior.UniformPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2318,6 +2329,7 @@
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.log_prior.html">trilobite.inference.problem.InferenceProblem.log_prior</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.pack_free_parameters.html">trilobite.inference.problem.InferenceProblem.pack_free_parameters</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.pack_parameters.html">trilobite.inference.problem.InferenceProblem.pack_parameters</a></li>
+<li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.sample_prior.html">trilobite.inference.problem.InferenceProblem.sample_prior</a></li>
 <li class="toctree-l4 current active"><a aria-current="page" class="current reference internal" href="#">trilobite.inference.problem.InferenceProblem.set_prior</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.summary.html">trilobite.inference.problem.InferenceProblem.summary</a></li>
 <li class="toctree-l4"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.to_dict.html">trilobite.inference.problem.InferenceProblem.to_dict</a></li>
@@ -2437,6 +2449,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.from_dict.html">trilobite.inference.prior.BetaPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.logp.html">trilobite.inference.prior.BetaPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.pdf.html">trilobite.inference.prior.BetaPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.sample.html">trilobite.inference.prior.BetaPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.BetaPrior.to_dict.html">trilobite.inference.prior.BetaPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2445,6 +2458,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.from_dict.html">trilobite.inference.prior.CallablePrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.logp.html">trilobite.inference.prior.CallablePrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.pdf.html">trilobite.inference.prior.CallablePrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.sample.html">trilobite.inference.prior.CallablePrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.CallablePrior.to_dict.html">trilobite.inference.prior.CallablePrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2453,6 +2467,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.from_dict.html">trilobite.inference.prior.GammaPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.logp.html">trilobite.inference.prior.GammaPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.pdf.html">trilobite.inference.prior.GammaPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.sample.html">trilobite.inference.prior.GammaPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.GammaPrior.to_dict.html">trilobite.inference.prior.GammaPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2461,6 +2476,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.from_dict.html">trilobite.inference.prior.HalfNormalPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.logp.html">trilobite.inference.prior.HalfNormalPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.pdf.html">trilobite.inference.prior.HalfNormalPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.sample.html">trilobite.inference.prior.HalfNormalPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.HalfNormalPrior.to_dict.html">trilobite.inference.prior.HalfNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2469,6 +2485,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.from_dict.html">trilobite.inference.prior.LogNormalPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.logp.html">trilobite.inference.prior.LogNormalPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.pdf.html">trilobite.inference.prior.LogNormalPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.sample.html">trilobite.inference.prior.LogNormalPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogNormalPrior.to_dict.html">trilobite.inference.prior.LogNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2477,6 +2494,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.from_dict.html">trilobite.inference.prior.LogUniformPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.logp.html">trilobite.inference.prior.LogUniformPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.pdf.html">trilobite.inference.prior.LogUniformPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.sample.html">trilobite.inference.prior.LogUniformPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.LogUniformPrior.to_dict.html">trilobite.inference.prior.LogUniformPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2485,6 +2503,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.from_dict.html">trilobite.inference.prior.NormalPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.logp.html">trilobite.inference.prior.NormalPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.pdf.html">trilobite.inference.prior.NormalPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.sample.html">trilobite.inference.prior.NormalPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.NormalPrior.to_dict.html">trilobite.inference.prior.NormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2493,6 +2512,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.Prior.from_dict.html">trilobite.inference.prior.Prior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.Prior.logp.html">trilobite.inference.prior.Prior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.Prior.pdf.html">trilobite.inference.prior.Prior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.Prior.sample.html">trilobite.inference.prior.Prior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.Prior.to_dict.html">trilobite.inference.prior.Prior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2501,6 +2521,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.from_dict.html">trilobite.inference.prior.TruncatedNormalPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.logp.html">trilobite.inference.prior.TruncatedNormalPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.pdf.html">trilobite.inference.prior.TruncatedNormalPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.sample.html">trilobite.inference.prior.TruncatedNormalPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.TruncatedNormalPrior.to_dict.html">trilobite.inference.prior.TruncatedNormalPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2509,6 +2530,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.from_dict.html">trilobite.inference.prior.UniformPrior.from_dict</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.logp.html">trilobite.inference.prior.UniformPrior.logp</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.pdf.html">trilobite.inference.prior.UniformPrior.pdf</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.sample.html">trilobite.inference.prior.UniformPrior.sample</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.prior.UniformPrior.to_dict.html">trilobite.inference.prior.UniformPrior.to_dict</a></li>
 </ul>
 </details></li>
@@ -2660,6 +2682,7 @@
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.log_prior.html">trilobite.inference.problem.InferenceProblem.log_prior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.pack_free_parameters.html">trilobite.inference.problem.InferenceProblem.pack_free_parameters</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.pack_parameters.html">trilobite.inference.problem.InferenceProblem.pack_parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.sample_prior.html">trilobite.inference.problem.InferenceProblem.sample_prior</a></li>
 <li class="toctree-l3 current active"><a aria-current="page" class="current reference internal" href="#">trilobite.inference.problem.InferenceProblem.set_prior</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.summary.html">trilobite.inference.problem.InferenceProblem.summary</a></li>
 <li class="toctree-l3"><a class="reference internal" href="trilobite.inference.problem.InferenceProblem.to_dict.html">trilobite.inference.problem.InferenceProblem.to_dict</a></li>
@@ -3328,9 +3351,22 @@
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><ul class="simple">
 <li><p><strong>parameter</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Name of the model parameter.</p></li>
-<li><p><strong>prior_type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Type of prior (‘uniform’, ‘loguniform’, ‘normal’, etc.).</p></li>
-<li><p><strong>parameters</strong> – Parameters defining the prior.</p></li>
+<li><p><strong>prior_type</strong> (<a class="reference external" href="https://docs.python.org/3/builtins/stdtypes.html#str" title="(in Python v3.15)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>) – Type of prior. One of the keys of <code class="xref py py-data docutils literal notranslate"><span class="pre">PRIOR_REGISTRY</span></code>:
+<code class="docutils literal notranslate"><span class="pre">'uniform'</span></code>, <code class="docutils literal notranslate"><span class="pre">'loguniform'</span></code>, <code class="docutils literal notranslate"><span class="pre">'normal'</span></code>, <code class="docutils literal notranslate"><span class="pre">'lognormal'</span></code>, <code class="docutils literal notranslate"><span class="pre">'halfnormal'</span></code>, <code class="docutils literal notranslate"><span class="pre">'gamma'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">'beta'</span></code> or <code class="docutils literal notranslate"><span class="pre">'truncatednormal'</span></code>.</p></li>
+<li><p><strong>parameters</strong> – <p>Parameters defining the prior. Those that carry the parameter’s units (e.g. <code class="docutils literal notranslate"><span class="pre">lower</span></code> and <code class="docutils literal notranslate"><span class="pre">upper</span></code>
+for <code class="docutils literal notranslate"><span class="pre">'uniform'</span></code>) may be given as <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>; a bare float is interpreted in
+the parameter’s base units. Dimensionless arguments (e.g. <code class="docutils literal notranslate"><span class="pre">alpha</span></code> and <code class="docutils literal notranslate"><span class="pre">beta</span></code> for <code class="docutils literal notranslate"><span class="pre">'beta'</span></code>)
+must be plain numbers.</p>
+<p>For <code class="docutils literal notranslate"><span class="pre">'lognormal'</span></code> the median may be given instead of <code class="docutils literal notranslate"><span class="pre">mean</span></code> via <code class="docutils literal notranslate"><span class="pre">median=</span></code>. Since
+<code class="docutils literal notranslate"><span class="pre">mean</span></code> is <span class="math notranslate nohighlight">\(\ln(x / x_{\rm ref})\)</span>, it depends on the reference unit, whereas the median
+<span class="math notranslate nohighlight">\(e^{\mu}\)</span> carries the parameter’s units and converts like any other value.</p>
+</p></li>
 </ul>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/builtins/exceptions.html#ValueError" title="(in Python v3.15)"><strong>ValueError</strong></a> – If <code class="docutils literal notranslate"><span class="pre">prior_type</span></code> is unknown, if a unit-less argument is given a dimensional
+    <a class="reference external" href="https://docs.astropy.org/en/stable/api/astropy.units.Quantity.html#astropy.units.Quantity" title="(in Astropy v8.0)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Quantity</span></code></a>, or if both <code class="docutils literal notranslate"><span class="pre">mean</span></code> and <code class="docutils literal notranslate"><span class="pre">median</span></code> are given for a log-normal prior.</p>
 </dd>
 </dl>
 </dd></dl>
@@ -3348,12 +3384,12 @@
                   
 <div class="prev-next-area">
     <a class="left-prev"
-       href="trilobite.inference.problem.InferenceProblem.pack_parameters.html"
+       href="trilobite.inference.problem.InferenceProblem.sample_prior.html"
        title="previous page">
       <i class="fa-solid fa-angle-left"></i>
       <div class="prev-next-info">
         <p class="prev-next-subtitle">previous</p>
-        <p class="prev-next-title">trilobite.inference.problem.InferenceProblem.pack_parameters</p>
+        <p class="prev-next-title">trilobite.inference.problem.InferenceProblem.sample_prior</p>
       </div>
     </a>
     <a class="right-next"

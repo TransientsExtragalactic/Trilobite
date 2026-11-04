@@ -496,10 +496,11 @@
 <span class="kn">from</span><span class="w"> </span><span class="nn">abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">ABC</span><span class="p">,</span> <span class="n">abstractmethod</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">collections.abc</span><span class="w"> </span><span class="kn">import</span> <span class="n">Callable</span>
 <span class="kn">from</span><span class="w"> </span><span class="nn">importlib.metadata</span><span class="w"> </span><span class="kn">import</span> <span class="n">PackageNotFoundError</span><span class="p">,</span> <span class="n">version</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
 
 <span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
-<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">gamma</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.special</span><span class="w"> </span><span class="kn">import</span> <span class="n">erf</span><span class="p">,</span> <span class="n">erfc</span><span class="p">,</span> <span class="n">gamma</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy.stats</span><span class="w"> </span><span class="kn">import</span> <span class="n">truncnorm</span>
 
 <span class="c1"># ============================================================= #</span>
 <span class="c1"># Package versioning and Type checking</span>
@@ -580,6 +581,7 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">_log_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_log_prior</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_prior</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">_cum_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_cum_prior</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_generate_sampler</span><span class="p">(</span><span class="o">**</span><span class="n">parameters</span><span class="p">)</span>
 
     <span class="c1"># ------------------------------------------------------------ #</span>
     <span class="c1"># Generator methods                                            #</span>
@@ -624,6 +626,22 @@
 <span class="sd">        -------</span>
 <span class="sd">        callable or None</span>
 <span class="sd">            A function ``P(X ≤ x)``, or ``None`` if unavailable.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Callable</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Generate the sampling callable.</span>
+
+<span class="sd">        This method is optional. If not implemented, calling :meth:`sample` will</span>
+<span class="sd">        raise ``NotImplementedError``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        callable or None</span>
+<span class="sd">            A function ``draw(rng, size)`` returning samples of the prior in physical space (a scalar when</span>
+<span class="sd">            ``size`` is ``None``), or ``None`` if unavailable. The draws must be distributed according to</span>
+<span class="sd">            the density that :meth:`logp` evaluates.</span>
 <span class="sd">        """</span>
         <span class="k">return</span> <span class="kc">None</span>
 
@@ -679,6 +697,39 @@
         <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cum_prior</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not define a CDF."</span><span class="p">)</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cum_prior</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Prior.sample">
+<a class="viewcode-back" href="../../../_as_gen/trilobite.inference.prior.Prior.sample.html#trilobite.inference.prior.Prior.sample">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">sample</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">rng</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">Generator</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Draw random samples from the prior.</span>
+
+<span class="sd">        Samples are in **physical parameter space**, the same space in which :meth:`logp` is evaluated.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : int or tuple of int, optional</span>
+<span class="sd">            Output shape. If ``None`` (default), a single scalar draw is returned.</span>
+<span class="sd">        rng : ~numpy.random.Generator, optional</span>
+<span class="sd">            Random number generator. If ``None``, a fresh ``numpy.random.default_rng()`` is used. Pass a</span>
+<span class="sd">            seeded generator for reproducible draws.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float or numpy.ndarray</span>
+<span class="sd">            A scalar if ``size`` is ``None``, otherwise an array of shape ``size``.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If the prior does not define a sampler.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> does not define a sampler."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rng</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rng</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">default_rng</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sampler</span><span class="p">(</span><span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
 
     <span class="c1"># ------------------------------------------------------------ #</span>
@@ -932,7 +983,10 @@
                 <span class="k">return</span> <span class="n">log_norm</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
 
 
@@ -995,7 +1049,11 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">lower</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">upper</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="n">log_lower</span><span class="p">,</span> <span class="n">log_upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">lower</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">log_lower</span><span class="p">,</span> <span class="n">log_upper</span><span class="p">,</span> <span class="n">size</span><span class="p">)),</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span></div>
 
 
 
@@ -1031,7 +1089,10 @@
         <span class="k">def</span><span class="w"> </span><span class="nf">logp</span><span class="p">(</span><span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
             <span class="k">return</span> <span class="n">log_norm</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
 
 
@@ -1096,7 +1157,15 @@
     <span class="k">def</span><span class="w"> </span><span class="nf">_generate_log_prior</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
         <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span>
         <span class="n">beta</span> <span class="o">=</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span><span class="p">)</span>
-        <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">erf</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">erf</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="c1"># Probability mass inside [lower, upper]. When both bounds are on the same side of the mean, erf(beta)</span>
+        <span class="c1"># and erf(alpha) both approach +-1 and their difference cancels catastrophically, so use erfc (which is</span>
+        <span class="c1"># accurate in the tails) with the arguments oriented towards the nearer tail.</span>
+        <span class="k">if</span> <span class="n">alpha</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">erfc</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">erfc</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">beta</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">erfc</span><span class="p">(</span><span class="o">-</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">erfc</span><span class="p">(</span><span class="o">-</span><span class="n">alpha</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">Z</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">erf</span><span class="p">(</span><span class="n">beta</span><span class="p">)</span> <span class="o">-</span> <span class="n">erf</span><span class="p">(</span><span class="n">alpha</span><span class="p">))</span>
 
         <span class="k">if</span> <span class="n">Z</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
             <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Invalid truncation range for TruncatedNormalPrior."</span><span class="p">)</span>
@@ -1108,7 +1177,13 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">):</span>
+        <span class="c1"># scipy's truncnorm takes the bounds in standard-normal units. It handles far-tail truncations,</span>
+        <span class="c1"># where naive rejection sampling would stall.</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">(</span><span class="n">lower</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">,</span> <span class="p">(</span><span class="n">upper</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">truncnorm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">mean</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">,</span> <span class="n">random_state</span><span class="o">=</span><span class="n">rng</span><span class="p">)</span></div>
 
 
 
@@ -1168,7 +1243,10 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span></div>
 
 
 
@@ -1204,6 +1282,18 @@
 <span class="sd">    -------</span>
 <span class="sd">    :math:`x &gt; 0`</span>
 
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    mean : float</span>
+<span class="sd">        Mean :math:`\mu` of the **natural** logarithm of the parameter. Because :math:`\ln x` only makes sense</span>
+<span class="sd">        for a dimensionless argument, this is :math:`\ln(x / x_{\rm ref})`, where :math:`x_{\rm ref}` is the</span>
+<span class="sd">        reference unit in which ``x`` is expressed. Within an :class:`~trilobite.inference.problem.InferenceProblem`</span>
+<span class="sd">        that is the parameter's base unit. :math:`e^{\mu}` is the median of the distribution; use the ``median``</span>
+<span class="sd">        argument of :meth:`~trilobite.inference.problem.InferenceProblem.set_prior` to specify it with units.</span>
+<span class="sd">    sigma : float</span>
+<span class="sd">        Standard deviation :math:`\sigma` of the natural logarithm. This is dimensionless and independent of</span>
+<span class="sd">        the reference unit. To convert from a width in dex, use :math:`\sigma = \sigma_{\rm dex}\ln 10`.</span>
+
 <span class="sd">    Interpretation</span>
 <span class="sd">    --------------</span>
 <span class="sd">    The log-normal prior models multiplicative uncertainty and naturally</span>
@@ -1235,7 +1325,10 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">((</span><span class="n">y</span> <span class="o">-</span> <span class="n">mean</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">sigma</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">rng</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="p">))</span></div>
 
 
 
@@ -1297,7 +1390,10 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">+</span> <span class="p">(</span><span class="n">shape</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span> <span class="o">/</span> <span class="n">scale</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">shape</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">scale</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
 
 
@@ -1361,7 +1457,10 @@
                 <span class="k">return</span> <span class="n">log_norm</span> <span class="o">+</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">beta</span> <span class="o">-</span> <span class="mf">1.0</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
             <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span>
 
-        <span class="k">return</span> <span class="n">logp</span></div>
+        <span class="k">return</span> <span class="n">logp</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_generate_sampler</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">alpha</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">beta</span><span class="p">:</span> <span class="nb">float</span><span class="p">):</span>
+        <span class="k">return</span> <span class="k">lambda</span> <span class="n">rng</span><span class="p">,</span> <span class="n">size</span><span class="p">:</span> <span class="n">rng</span><span class="o">.</span><span class="n">beta</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span></div>
 
 
 
@@ -1386,7 +1485,9 @@
     <span class="p">},</span>
     <span class="s2">"lognormal"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"class"</span><span class="p">:</span> <span class="n">LogNormalPrior</span><span class="p">,</span>
-        <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"mean"</span><span class="p">,</span> <span class="s2">"sigma"</span><span class="p">),</span>
+        <span class="c1"># ``mean`` is ln(x / base_unit) and ``sigma`` a log-width: neither is a unit-bearing quantity. The</span>
+        <span class="c1"># unit-aware route is the ``median`` argument handled in ``InferenceProblem.set_prior``.</span>
+        <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(),</span>
     <span class="p">},</span>
     <span class="s2">"halfnormal"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"class"</span><span class="p">:</span> <span class="n">HalfNormalPrior</span><span class="p">,</span>
@@ -1398,7 +1499,7 @@
     <span class="p">},</span>
     <span class="s2">"beta"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"class"</span><span class="p">:</span> <span class="n">BetaPrior</span><span class="p">,</span>
-        <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"scale"</span><span class="p">,),</span>
+        <span class="s2">"unit_params"</span><span class="p">:</span> <span class="p">(),</span>
     <span class="p">},</span>
     <span class="s2">"truncatednormal"</span><span class="p">:</span> <span class="p">{</span>
         <span class="s2">"class"</span><span class="p">:</span> <span class="n">TruncatedNormalPrior</span><span class="p">,</span>
