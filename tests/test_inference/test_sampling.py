@@ -81,6 +81,86 @@ class TestGenerateInitialState:
             sampler.generate_initial_state(optimize=False, scale=5e-2, rng=np.random.default_rng(1), max_attempts=0)
 
 
+class TestGenerateInitialStateFromPrior:
+    def test_shape_and_support(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=32)
+        positions = sampler.generate_initial_state(from_prior=True, rng=np.random.default_rng(0))
+
+        assert positions.shape == (32, 2)
+        assert np.all((positions >= 0.0) & (positions <= 5.0))
+        assert all(np.isfinite(linear_problem._log_free_posterior(p)) for p in positions)
+
+    def test_keeps_the_best_candidates(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        positions = sampler.generate_initial_state(from_prior=True, n_candidates=200, rng=np.random.default_rng(0))
+
+        # Reproduce the single batch of candidates and check the selection is the top 16 by log-posterior.
+        candidates = linear_problem.sample_prior(200, rng=np.random.default_rng(0))
+        lp = np.array([linear_problem._log_free_posterior(c) for c in candidates])
+        expected = candidates[np.argsort(lp)[::-1][:16]]
+
+        np.testing.assert_array_equal(positions, expected)
+
+    def test_better_than_a_random_subset(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        best = sampler.generate_initial_state(from_prior=True, n_candidates=400, rng=np.random.default_rng(0))
+        random = linear_problem.sample_prior(16, rng=np.random.default_rng(1))
+
+        def mean_lp(zs):
+            return np.mean([linear_problem._log_free_posterior(z) for z in zs])
+
+        assert mean_lp(best) > mean_lp(random)
+
+    def test_reproducible_with_seeded_rng(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        a = sampler.generate_initial_state(from_prior=True, rng=np.random.default_rng(5))
+        b = sampler.generate_initial_state(from_prior=True, rng=np.random.default_rng(5))
+        np.testing.assert_array_equal(a, b)
+
+    def test_positions_are_in_sampling_space(self, linear_problem):
+        from trilobite.inference.transform import Log10Transform
+
+        linear_problem.parameters["b"].transform = Log10Transform()
+        linear_problem.set_prior("b", "loguniform", lower=1e-2, upper=1e2)
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        positions = sampler.generate_initial_state(from_prior=True, rng=np.random.default_rng(0))
+
+        assert np.all((positions[:, 1] >= -2.0) & (positions[:, 1] <= 2.0))
+
+    def test_usable_as_initial_state_for_run(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=8)
+        initial_state = sampler.generate_initial_state(from_prior=True, rng=np.random.default_rng(0))
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore", RuntimeWarning)
+            result = sampler.run(20, initial_state=initial_state, progress=False)
+
+        assert isinstance(result, MCMCSamplingResult)
+
+    def test_too_few_candidates_raises(self, linear_problem):
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        with pytest.raises(ValueError, match="n_candidates"):
+            sampler.generate_initial_state(from_prior=True, n_candidates=8)
+
+    def test_raises_when_too_few_candidates_are_finite(self, linear_problem, monkeypatch):
+        monkeypatch.setattr(linear_problem, "_log_free_posterior", lambda z: -np.inf)
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+
+        with pytest.raises(RuntimeError, match="finite log-posterior"):
+            sampler.generate_initial_state(from_prior=True, n_candidates=32, max_attempts=3)
+
+    def test_draws_extra_batches_until_enough_are_finite(self, linear_problem, monkeypatch):
+        # Only ~1 in 10 candidates is finite, so a single batch of 40 cannot fill 16 walkers.
+        true_posterior = linear_problem._log_free_posterior
+        monkeypatch.setattr(
+            linear_problem, "_log_free_posterior", lambda z: true_posterior(z) if z[0] < 0.5 else -np.inf
+        )
+        sampler = EmceeSampler(linear_problem, n_walkers=16)
+        positions = sampler.generate_initial_state(from_prior=True, n_candidates=40, rng=np.random.default_rng(0))
+
+        assert positions.shape == (16, 2)
+        assert np.all(positions[:, 0] < 0.5)
+
+
 # =================================================================== #
 # Posterior maximisation                                              #
 # =================================================================== #

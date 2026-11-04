@@ -50,10 +50,11 @@ and explicitly by the user.
 from abc import ABC, abstractmethod
 from collections.abc import Callable
 from importlib.metadata import PackageNotFoundError, version
-from typing import Optional
+from typing import Optional, Union
 
 import numpy as np
-from scipy.special import erf, gamma
+from scipy.special import erf, erfc, gamma
+from scipy.stats import truncnorm
 
 # ============================================================= #
 # Package versioning and Type checking
@@ -132,6 +133,7 @@ class Prior(ABC):
         self._log_prior = self._generate_log_prior(**parameters)
         self._prior = self._generate_prior(**parameters)
         self._cum_prior = self._generate_cum_prior(**parameters)
+        self._sampler = self._generate_sampler(**parameters)
 
     # ------------------------------------------------------------ #
     # Generator methods                                            #
@@ -179,6 +181,22 @@ class Prior(ABC):
         """
         return None
 
+    def _generate_sampler(self, **parameters) -> Optional[Callable]:
+        """
+        Generate the sampling callable.
+
+        This method is optional. If not implemented, calling :meth:`sample` will
+        raise ``NotImplementedError``.
+
+        Returns
+        -------
+        callable or None
+            A function ``draw(rng, size)`` returning samples of the prior in physical space (a scalar when
+            ``size`` is ``None``), or ``None`` if unavailable. The draws must be distributed according to
+            the density that :meth:`logp` evaluates.
+        """
+        return None
+
     # ------------------------------------------------------------ #
     # Public evaluation interface                                  #
     # ------------------------------------------------------------ #
@@ -223,6 +241,36 @@ class Prior(ABC):
         if self._cum_prior is None:
             raise NotImplementedError(f"{self.__class__.__name__} does not define a CDF.")
         return self._cum_prior(x)
+
+    def sample(self, size: Optional[Union[int, tuple]] = None, rng: Optional[np.random.Generator] = None):
+        """
+        Draw random samples from the prior.
+
+        Samples are in **physical parameter space**, the same space in which :meth:`logp` is evaluated.
+
+        Parameters
+        ----------
+        size : int or tuple of int, optional
+            Output shape. If ``None`` (default), a single scalar draw is returned.
+        rng : ~numpy.random.Generator, optional
+            Random number generator. If ``None``, a fresh ``numpy.random.default_rng()`` is used. Pass a
+            seeded generator for reproducible draws.
+
+        Returns
+        -------
+        float or numpy.ndarray
+            A scalar if ``size`` is ``None``, otherwise an array of shape ``size``.
+
+        Raises
+        ------
+        NotImplementedError
+            If the prior does not define a sampler.
+        """
+        if self._sampler is None:
+            raise NotImplementedError(f"{self.__class__.__name__} does not define a sampler.")
+        if rng is None:
+            rng = np.random.default_rng()
+        return self._sampler(rng, size)
 
     # ------------------------------------------------------------ #
     # Dunder methods                                               #
@@ -465,6 +513,9 @@ class UniformPrior(Prior):
 
         return logp
 
+    def _generate_sampler(self, *, lower: float, upper: float):
+        return lambda rng, size: rng.uniform(lower, upper, size)
+
 
 class LogUniformPrior(Prior):
     r"""
@@ -525,6 +576,10 @@ class LogUniformPrior(Prior):
 
         return logp
 
+    def _generate_sampler(self, *, lower: float, upper: float):
+        log_lower, log_upper = np.log(lower), np.log(upper)
+        return lambda rng, size: np.clip(np.exp(rng.uniform(log_lower, log_upper, size)), lower, upper)
+
 
 # ============================================================ #
 # GAUSSIAN PRIORS                                              #
@@ -557,6 +612,9 @@ class NormalPrior(Prior):
             return log_norm - 0.5 * ((x - mean) / sigma) ** 2
 
         return logp
+
+    def _generate_sampler(self, *, mean: float, sigma: float):
+        return lambda rng, size: rng.normal(mean, sigma, size)
 
 
 class TruncatedNormalPrior(Prior):
@@ -618,7 +676,15 @@ class TruncatedNormalPrior(Prior):
     def _generate_log_prior(self, *, mean, sigma, lower, upper):
         alpha = (lower - mean) / (np.sqrt(2) * sigma)
         beta = (upper - mean) / (np.sqrt(2) * sigma)
-        Z = 0.5 * (erf(beta) - erf(alpha))
+        # Probability mass inside [lower, upper]. When both bounds are on the same side of the mean, erf(beta)
+        # and erf(alpha) both approach +-1 and their difference cancels catastrophically, so use erfc (which is
+        # accurate in the tails) with the arguments oriented towards the nearer tail.
+        if alpha > 0:
+            Z = 0.5 * (erfc(alpha) - erfc(beta))
+        elif beta < 0:
+            Z = 0.5 * (erfc(-beta) - erfc(-alpha))
+        else:
+            Z = 0.5 * (erf(beta) - erf(alpha))
 
         if Z <= 0:
             raise ValueError("Invalid truncation range for TruncatedNormalPrior.")
@@ -631,6 +697,12 @@ class TruncatedNormalPrior(Prior):
             return -np.inf
 
         return logp
+
+    def _generate_sampler(self, *, mean, sigma, lower, upper):
+        # scipy's truncnorm takes the bounds in standard-normal units. It handles far-tail truncations,
+        # where naive rejection sampling would stall.
+        a, b = (lower - mean) / sigma, (upper - mean) / sigma
+        return lambda rng, size: truncnorm.rvs(a, b, loc=mean, scale=sigma, size=size, random_state=rng)
 
 
 class HalfNormalPrior(Prior):
@@ -689,6 +761,9 @@ class HalfNormalPrior(Prior):
 
         return logp
 
+    def _generate_sampler(self, *, sigma: float):
+        return lambda rng, size: np.abs(rng.normal(0.0, sigma, size))
+
 
 # ============================================================ #
 # LOG-NORMAL PRIORS                                            #
@@ -719,6 +794,18 @@ class LogNormalPrior(Prior):
     Support
     -------
     :math:`x > 0`
+
+    Parameters
+    ----------
+    mean : float
+        Mean :math:`\mu` of the **natural** logarithm of the parameter. Because :math:`\ln x` only makes sense
+        for a dimensionless argument, this is :math:`\ln(x / x_{\rm ref})`, where :math:`x_{\rm ref}` is the
+        reference unit in which ``x`` is expressed. Within an :class:`~trilobite.inference.problem.InferenceProblem`
+        that is the parameter's base unit. :math:`e^{\mu}` is the median of the distribution; use the ``median``
+        argument of :meth:`~trilobite.inference.problem.InferenceProblem.set_prior` to specify it with units.
+    sigma : float
+        Standard deviation :math:`\sigma` of the natural logarithm. This is dimensionless and independent of
+        the reference unit. To convert from a width in dex, use :math:`\sigma = \sigma_{\rm dex}\ln 10`.
 
     Interpretation
     --------------
@@ -752,6 +839,9 @@ class LogNormalPrior(Prior):
             return -np.inf
 
         return logp
+
+    def _generate_sampler(self, *, mean: float, sigma: float):
+        return lambda rng, size: np.exp(rng.normal(mean, sigma, size))
 
 
 # ============================================================ #
@@ -811,6 +901,9 @@ class GammaPrior(Prior):
             return -np.inf
 
         return logp
+
+    def _generate_sampler(self, *, shape: float, scale: float):
+        return lambda rng, size: rng.gamma(shape, scale, size)
 
 
 # ============================================================ #
@@ -873,6 +966,9 @@ class BetaPrior(Prior):
 
         return logp
 
+    def _generate_sampler(self, *, alpha: float, beta: float):
+        return lambda rng, size: rng.beta(alpha, beta, size)
+
 
 # ==================================================== #
 # Registry
@@ -895,7 +991,9 @@ PRIOR_REGISTRY = {
     },
     "lognormal": {
         "class": LogNormalPrior,
-        "unit_params": ("mean", "sigma"),
+        # ``mean`` is ln(x / base_unit) and ``sigma`` a log-width: neither is a unit-bearing quantity. The
+        # unit-aware route is the ``median`` argument handled in ``InferenceProblem.set_prior``.
+        "unit_params": (),
     },
     "halfnormal": {
         "class": HalfNormalPrior,
@@ -907,7 +1005,7 @@ PRIOR_REGISTRY = {
     },
     "beta": {
         "class": BetaPrior,
-        "unit_params": ("scale",),
+        "unit_params": (),
     },
     "truncatednormal": {
         "class": TruncatedNormalPrior,
