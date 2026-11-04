@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `trilobite/radiation/synchrotron/microphysics.py` superseded by `electron_distributions.py`; the module is retained for backwards compatibility but its contents now re-export from the new class-based API.
 - Pitch-angle averaging applied consistently across the synchrotron cooling pipeline in `cooling.py`.
 - Switched readme to Markdown for better PyPI rendering.
+- The pull-request documentation check (`.github/workflows/check_pull_requests.yml`) no longer passes `-W` to `sphinx-build`. It failed every pull request because the documentation carries several hundred existing nitpicky warnings (unresolved cross-references, missing bibliography keys); these are still reported in the log (`-n` is kept) but no longer fail the job. The two gallery examples that import the not-yet-implemented `FREDBlackbodyModel` were already listed in `expected_failing_examples` and are not the cause.
 
 ### Fixed
 - `TruncatedNormalPrior.logp` was off by a constant when both bounds lie far on the same side of the mean (e.g. 8 to 9 standard deviations), because its normalization subtracted two nearly equal `erf` values. It now uses `erfc` in the tails. The posterior shape was unaffected, only the normalization.

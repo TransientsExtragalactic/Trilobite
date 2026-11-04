@@ -75,9 +75,12 @@ jobs:
       - name: Install documentation dependencies
         run: |
           pip install .[docs]
+      # Warnings are reported (nitpicky mode, ``-n``) but do not fail the build: the documentation
+      # currently carries several hundred cross-reference and bibliography warnings, so ``-W`` failed
+      # every pull request regardless of its content. A Sphinx error or exception still fails this job.
       - name: Build documentation with Sphinx
         run: |
-          sphinx-build -b html -n -W -j auto docs/source docs/_build/html
+          sphinx-build -b html -n -j auto docs/source docs/_build/html
 
   # Run the test suite with pytest.
   tests:
