@@ -214,7 +214,7 @@ and a ``tabulate`` path for analysis and plotting.
 
 .. rubric:: Two-Component Synchrotron Model
 
-.. currentmodule:: trilobite.models.LFBOTs._diggins26
+.. currentmodule:: trilobite.models.LFBOTs.diggins26
 
 .. autosummary::
    :nosignatures:

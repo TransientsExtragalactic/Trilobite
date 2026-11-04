@@ -1278,7 +1278,7 @@ find the right table for your application.</p>
 entry point when an opacity specification is passed in from outside (e.g. a
 model parameter).  It accepts a registered string key, a plain float, or an
 existing opacity instance and always returns a
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>:</p>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">trilobite.radiation.opacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_opacity</span>
 
 <span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="s2">"kramers_es"</span><span class="p">)</span>    <span class="c1"># string key → KramersESOpacity()</span>
@@ -1302,7 +1302,7 @@ and in <a class="reference internal" href="../../../../_as_gen/trilobite.radiati
 </pre></div>
 </div>
 <p><code class="docutils literal notranslate"><span class="pre">get_opacity</span></code> also accepts a plain float and wraps it in a
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity.html#trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.ConstantGreyOpacity.html#trilobite.radiation.opacity.ConstantGreyOpacity" title="trilobite.radiation.opacity.grey_opacity.base.ConstantGreyOpacity"><code class="xref py py-class docutils literal notranslate"><span class="pre">ConstantGreyOpacity</span></code></a>
 automatically:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">kap</span> <span class="o">=</span> <span class="n">get_opacity</span><span class="p">(</span><span class="mf">0.34</span><span class="p">)</span>   <span class="c1"># → ConstantGreyOpacity(0.34)</span>
 </pre></div>
@@ -1379,7 +1379,7 @@ it straightforward to mask or visualise the valid region of the table.</p>
 <a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.base.OpacityLaw.opacity.html#trilobite.radiation.opacity.base.OpacityLaw.opacity" title="trilobite.radiation.opacity.base.OpacityLaw.opacity"><code class="xref py py-meth docutils literal notranslate"><span class="pre">opacity()</span></code></a> is
 accepted but silently ignored: grey opacities have no frequency dependence.
 The public method signature for
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a>
 subclasses is therefore simply <code class="docutils literal notranslate"><span class="pre">opacity(rho,</span> <span class="pre">T)</span></code>.</p>
 </div>
 <details class="sd-sphinx-override sd-dropdown sd-card sd-mb-3">
@@ -1639,7 +1639,7 @@ which is accessible via the <a class="reference internal" href="../../../../_as_
 </ul>
 <p>In order to work with other custom opacity tables, users may be able to simply download the table and load
 it into the code (for TOPS opacities), or they may need to implement a custom subclass of
-<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw.html#trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> that performs interpolation over
+<a class="reference internal" href="../../../../_as_gen/trilobite.radiation.opacity.GreyOpacityLaw.html#trilobite.radiation.opacity.GreyOpacityLaw" title="trilobite.radiation.opacity.grey_opacity.base.GreyOpacityLaw"><code class="xref py py-class docutils literal notranslate"><span class="pre">GreyOpacityLaw</span></code></a> that performs interpolation over
 the table (for OPAL opacities, which are not provided in a convenient format for direct loading).  The latter
 is more work but also more flexible, and the <a class="reference internal" href="opacity_dev_guide.html#opacity-dev-guide"><span class="std std-ref">Developer Guide: Implementing Opacity Laws</span></a> provides a step-by-step walkthrough of
 how to do this.</p>

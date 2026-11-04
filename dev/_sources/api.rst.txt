@@ -29,6 +29,7 @@ in different scenarios. These models can be used to simulate observations, fit d
     trilobite.models.SEDs
     trilobite.models.GRBs
     trilobite.models.supernovae
+    trilobite.models.LFBOTs
 
 Data Modules
 ------------
