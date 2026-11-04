@@ -96,15 +96,25 @@ class EmceeSampler(Sampler):
         optimize: bool = True,
         rng: Optional[np.random.Generator] = None,
         max_attempts: int = 100,
+        from_prior: bool = False,
+        n_candidates: int = 400,
     ) -> np.ndarray:
         """
-        Generate an initial walker ensemble around the problem's initial point.
+        Generate an initial walker ensemble.
 
-        If ``optimize`` is set, the initial point is first moved to a nearby maximum of the posterior
+        By default the walkers are scattered around the problem's initial point. If ``optimize`` is set, the
+        initial point is first moved to a nearby maximum of the posterior
         (see :func:`~trilobite.inference.sampling.utils.find_posterior_maximum`) and the walkers are
         scattered around that. This matters when the initial guess is poor: from a point where the
         log-posterior is, say, :math:`-10^8`, a sizeable fraction of walkers can fall into spurious
         corners of the prior and never reach the posterior bulk.
+
+        If ``from_prior`` is set, no starting point is needed. Instead, ``n_candidates`` points are drawn from
+        the priors (:meth:`~trilobite.inference.problem.InferenceProblem.sample_prior`) and the ``n_walkers``
+        with the highest log-posterior are kept. This is a good choice when the priors are wide, the posterior
+        is narrow and there is no reliable guess. Selecting the best candidates does not guarantee that they
+        all lie in the same posterior mode: check the result for stranded walkers
+        (:meth:`~trilobite.inference.sampling.result.MCMCSamplingResult.find_stranded_walkers`).
 
         Parameters
         ----------
@@ -114,15 +124,22 @@ class EmceeSampler(Sampler):
             at ``theta0 * exp(scale * N(0, 1))``, which is scale-invariant and
             works correctly for parameters that span many orders of magnitude.
             For any component whose starting value is exactly zero an absolute
-            perturbation of ``scale`` is used instead.
+            perturbation of ``scale`` is used instead. Ignored if ``from_prior`` is set.
         optimize : bool
             Whether to optimize the initial point before scattering the walkers. This costs a
-            few thousand posterior evaluations. Default ``True``.
+            few thousand posterior evaluations. Default ``True``. Ignored if ``from_prior`` is set.
         rng : ~numpy.random.Generator, optional
             Random number generator.
         max_attempts : int
             Walkers whose proposed starting point has a non-finite log-posterior
-            (e.g. outside the prior support) are redrawn up to this many times.
+            (e.g. outside the prior support) are redrawn up to this many times. With ``from_prior``, this is
+            the maximum number of batches of ``n_candidates`` prior draws.
+        from_prior : bool
+            Initialize from the best of ``n_candidates`` prior draws rather than around the initial point.
+            Default ``False``.
+        n_candidates : int
+            Number of prior draws per batch evaluated when ``from_prior`` is set. Must be at least
+            ``n_walkers``. Each costs one log-posterior evaluation. Default 400.
 
         Returns
         -------
@@ -131,11 +148,17 @@ class EmceeSampler(Sampler):
 
         Raises
         ------
+        ValueError
+            If ``from_prior`` is set and ``n_candidates < n_walkers``.
         RuntimeError
-            If some walkers still have a non-finite log-posterior after ``max_attempts`` redraws.
+            If some walkers still have a non-finite log-posterior after ``max_attempts`` redraws, or, with
+            ``from_prior``, if fewer than ``n_walkers`` finite candidates were found.
         """
         # Grab the RNG if it is not given to us.
-        rng = rng or np.random.default_rng()
+        rng = rng if rng is not None else np.random.default_rng()
+
+        if from_prior:
+            return self._initial_state_from_prior(n_candidates, rng, max_attempts)
 
         # Grab the initial position and dimensionality. The log-posterior is evaluated in sampling space, so the
         # walkers must start there too (this equals ``initial_theta`` for parameters without a transform).
@@ -167,6 +190,31 @@ class EmceeSampler(Sampler):
         raise RuntimeError(
             f"Could not place all {self.n_walkers} walkers at a finite log-posterior after {max_attempts} attempts "
             f"with scale={scale}. Reduce `scale` or move the initial values away from the prior bounds."
+        )
+
+    def _initial_state_from_prior(self, n_candidates: int, rng: np.random.Generator, max_attempts: int) -> np.ndarray:
+        """Keep the ``n_walkers`` highest-posterior points among batches of prior draws."""
+        n_candidates = int(n_candidates)
+        if n_candidates < self.n_walkers:
+            raise ValueError(f"n_candidates={n_candidates} must be at least n_walkers={self.n_walkers}.")
+
+        positions = np.empty((0, self.problem.n_free_parameters))
+        log_post = np.empty(0)
+
+        for _ in range(max(int(max_attempts), 1)):
+            candidates = self.problem.sample_prior(n_candidates, rng=rng)
+            lp = np.array([self.problem._log_free_posterior(c) for c in candidates])
+            finite = np.isfinite(lp)
+            positions = np.vstack([positions, candidates[finite]])
+            log_post = np.concatenate([log_post, lp[finite]])
+            if log_post.size >= self.n_walkers:
+                best = np.argsort(log_post)[::-1][: self.n_walkers]
+                return positions[best]
+
+        raise RuntimeError(
+            f"Found only {log_post.size} of the {self.n_walkers} required prior draws with a finite log-posterior "
+            f"after {max_attempts} batches of {n_candidates}. Increase `n_candidates` or check that the priors "
+            "overlap the region where the model is finite."
         )
 
     def run(

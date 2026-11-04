@@ -18,13 +18,7 @@ from astropy import units as u
 
 from trilobite.utils.misc_utils import ensure_in_units
 
-from .prior import (
-    HalfNormalPrior,
-    LogNormalPrior,
-    LogUniformPrior,
-    NormalPrior,
-    UniformPrior,
-)
+from .prior import PRIOR_REGISTRY
 
 # ============================================================= #
 # Package versioning and Type checking
@@ -1620,28 +1614,7 @@ class InferenceProblem:
     # These methods allow us to set up some basic priors quickly without
     # requiring the user to manually define prior callables. We can also do
     # some unit-handled priors this way, which is a nice feature.
-    _PRIOR_REGISTRY = {
-        "uniform": {
-            "class": UniformPrior,
-            "unit_params": ("lower", "upper"),
-        },
-        "loguniform": {
-            "class": LogUniformPrior,
-            "unit_params": ("lower", "upper"),
-        },
-        "normal": {
-            "class": NormalPrior,
-            "unit_params": ("mean", "sigma"),
-        },
-        "lognormal": {
-            "class": LogNormalPrior,
-            "unit_params": ("mean", "sigma"),
-        },
-        "halfnormal": {
-            "class": HalfNormalPrior,
-            "unit_params": ("sigma",),
-        },
-    }
+    _PRIOR_REGISTRY = PRIOR_REGISTRY
 
     def _coerce_to_base_units(
         self,
@@ -1662,7 +1635,7 @@ class InferenceProblem:
         return out
 
     def set_prior(self, parameter: str, prior_type: str, **parameters):
-        """
+        r"""
         Set a prior distribution on a parameter.
 
         Parameters
@@ -1670,9 +1643,24 @@ class InferenceProblem:
         parameter : str
             Name of the model parameter.
         prior_type : str
-            Type of prior ('uniform', 'loguniform', 'normal', etc.).
+            Type of prior. One of the keys of :data:`~trilobite.inference.prior.PRIOR_REGISTRY`:
+            ``'uniform'``, ``'loguniform'``, ``'normal'``, ``'lognormal'``, ``'halfnormal'``, ``'gamma'``,
+            ``'beta'`` or ``'truncatednormal'``.
         parameters
-            Parameters defining the prior.
+            Parameters defining the prior. Those that carry the parameter's units (e.g. ``lower`` and ``upper``
+            for ``'uniform'``) may be given as :class:`~astropy.units.Quantity`; a bare float is interpreted in
+            the parameter's base units. Dimensionless arguments (e.g. ``alpha`` and ``beta`` for ``'beta'``)
+            must be plain numbers.
+
+            For ``'lognormal'`` the median may be given instead of ``mean`` via ``median=``. Since
+            ``mean`` is :math:`\ln(x / x_{\rm ref})`, it depends on the reference unit, whereas the median
+            :math:`e^{\mu}` carries the parameter's units and converts like any other value.
+
+        Raises
+        ------
+        ValueError
+            If ``prior_type`` is unknown, if a unit-less argument is given a dimensional
+            :class:`~astropy.units.Quantity`, or if both ``mean`` and ``median`` are given for a log-normal prior.
         """
         prior_type = prior_type.lower()
 
@@ -1687,6 +1675,29 @@ class InferenceProblem:
         prior_cls = entry["class"]
         unit_params = entry["unit_params"]
 
+        parameters = dict(parameters)
+
+        # A log-normal is specified either by ``mean = ln(x / base_unit)`` or, with units, by its median.
+        if prior_type == "lognormal" and "median" in parameters:
+            if "mean" in parameters:
+                raise ValueError("Specify either `mean` or `median` for a lognormal prior, not both.")
+            median = self._coerce_to_base_units(parameter, {"median": parameters.pop("median")})["median"]
+            if not median > 0:
+                raise ValueError(f"The median of a lognormal prior must be positive, got {median}.")
+            parameters["mean"] = float(np.log(median))
+
+        # Dimensionless arguments must not carry units: silently converting them would produce a meaningless
+        # number, so a dimensional Quantity is an error and a dimensionless one is reduced to a float.
+        for key, val in list(parameters.items()):
+            if key in unit_params or not isinstance(val, u.Quantity):
+                continue
+            try:
+                parameters[key] = val.to_value(u.dimensionless_unscaled)
+            except u.UnitConversionError as exc:
+                raise ValueError(
+                    f"Argument '{key}' of a '{prior_type}' prior is dimensionless, but was given {val}."
+                ) from exc
+
         # Split parameters into unit-bearing and unitless
         unit_values = {k: parameters[k] for k in unit_params if k in parameters}
 
@@ -1699,6 +1710,72 @@ class InferenceProblem:
 
         # Assign prior
         self.__parameters__[parameter].prior = prior_cls(**final_params)
+
+    def sample_prior(self, n: int, rng: Optional[np.random.Generator] = None) -> np.ndarray:
+        r"""
+        Draw samples of the free parameters from their priors, in **sampling space**.
+
+        Each free parameter is drawn independently from its prior (via :meth:`~trilobite.inference.prior.Prior.sample`)
+        in physical space and then mapped through its transform, if any. The result is distributed according to
+        the prior part of the sampling-space target density, :math:`p(\theta(z))\,|d\theta/dz|`, so it can be
+        passed directly to :meth:`_log_free_posterior`, to :meth:`EmceeSampler.run
+        <trilobite.inference.sampling.mcmc.EmceeSampler.run>` as ``initial_state`` or to a pool.
+
+        Parameters
+        ----------
+        n : int
+            Number of draws.
+        rng : ~numpy.random.Generator, optional
+            Random number generator. Pass a seeded generator for reproducible draws.
+
+        Returns
+        -------
+        numpy.ndarray
+            Array of shape ``(n, n_free_parameters)`` with columns in the order of
+            :attr:`free_parameter_names`.
+
+        Raises
+        ------
+        ValueError
+            If ``n`` is not a positive integer.
+        RuntimeError
+            If a free parameter has no prior, if its prior cannot be sampled (e.g. a plain callable or a
+            :class:`~trilobite.inference.prior.CallablePrior`), or if a draw falls outside the domain of its
+            transform (e.g. a normal prior with a log transform).
+        """
+        if int(n) != n or n < 1:
+            raise ValueError(f"`n` must be a positive integer, got {n}.")
+        n = int(n)
+        rng = rng if rng is not None else np.random.default_rng()
+
+        draws = np.empty((n, self.n_free_parameters))
+
+        for j, (name, p) in enumerate(self.free_parameters.items()):
+            if p.prior is None:
+                raise RuntimeError(f"No prior specified for free parameter '{name}'.")
+
+            try:
+                x = np.asarray(p.prior.sample(size=n, rng=rng), dtype=float)
+            except (AttributeError, NotImplementedError) as exc:
+                raise RuntimeError(
+                    f"The prior of parameter '{name}' ({p.prior!r}) cannot be sampled. Use a "
+                    f"`Prior` subclass that defines a sampler."
+                ) from exc
+
+            if p.transform is not None:
+                # Applied element-wise so that scalar-only custom transforms work too.
+                with np.errstate(all="ignore"):
+                    x = np.array([p.transform.forward(xi) for xi in x], dtype=float)
+
+            if not np.all(np.isfinite(x)):
+                raise RuntimeError(
+                    f"Draws of parameter '{name}' are non-finite after applying its transform "
+                    f"({p.transform!r}); the prior support lies outside the transform's domain."
+                )
+
+            draws[:, j] = x
+
+        return draws
 
     # ------------------------------------------------- #
     # Freezing and Unfreezing Parameters                #
