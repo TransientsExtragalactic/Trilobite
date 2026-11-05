@@ -376,6 +376,37 @@ enables the ``R_0`` and ``E_th_0`` parameters:
     Parameters that depend on a switch are accepted but ignored when the switch is off. For example,
     ``kappa_gamma`` has no effect on an engine built with ``gamma_trapping=False``.
 
+Optical Photometry Models
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The engines predict a bolometric luminosity. To compare with photometry, use the optical models in
+:mod:`trilobite.models.supernovae.arnett`, which radiate the engine luminosity from a blackbody photosphere and
+convolve the result with a :class:`~trilobite.utils.phot_utils.FilterBundle`. There is one model for each engine,
+and they are used and fit like any other :class:`~trilobite.models.core.optical.OpticalModel`:
+
+.. list-table::
+    :header-rows: 1
+    :widths: 50 50
+
+    * - Engine
+      - Optical model
+    * - :class:`~trilobite.radiation.arnett.NickelCobaltArnettEngine`
+      - :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettModel`
+    * - :class:`~trilobite.radiation.arnett.MagnetarArnettEngine`
+      - :class:`~trilobite.models.supernovae.arnett.MagnetarArnettModel`
+    * - :class:`~trilobite.radiation.arnett.MagnetarNickelArnettEngine`
+      - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettModel`
+
+.. code-block:: python
+
+    from trilobite.models.supernovae import NickelCobaltArnettModel
+
+    model = NickelCobaltArnettModel(bundle, redshift=0.02)  # bundle: a FilterBundle
+    flux = model.forward_model(
+        {"band_index": ["V", "R", "V"], "time": [10, 10, 30] * u.day},
+        {"M_ej": 2 * u.Msun, "E_ej": 1e51 * u.erg, "M_Ni": 0.3 * u.Msun},
+    )
+
 ----
 
 The Structure of the Arnett Engine

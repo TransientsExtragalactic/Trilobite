@@ -30,3 +30,24 @@ def infer_err_from_non_detection(flux_limit: float, sigma: float = 3.0) -> float
         The inferred error value based on the non-detection flux limit.
     """
     return flux_limit / sigma
+
+
+def band_variable_name(model) -> str:
+    """
+    Return the name of a model's band-index variable.
+
+    Optical models built on :class:`~trilobite.models.core.optical.OpticalModel` declare the variable
+    ``band_index``; older models used ``band_idx``. The optical data containers use this to key the band indices
+    they hand to :class:`~trilobite.data.core.InferenceData`, so that they work with either.
+
+    Parameters
+    ----------
+    model : ~trilobite.models.core.base.Model
+        The optical model.
+
+    Returns
+    -------
+    str
+        ``"band_index"`` if the model declares it, otherwise ``"band_idx"``.
+    """
+    return "band_index" if "band_index" in tuple(getattr(model, "variable_names", ())) else "band_idx"
