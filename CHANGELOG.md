@@ -56,6 +56,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pitch-angle averaging applied consistently across the synchrotron cooling pipeline in `cooling.py`.
 - Switched readme to Markdown for better PyPI rendering.
 - The pull-request documentation check (`.github/workflows/check_pull_requests.yml`) no longer passes `-W` to `sphinx-build`. It failed every pull request because the documentation carries several hundred existing nitpicky warnings (unresolved cross-references, missing bibliography keys); these are still reported in the log (`-n` is kept) but no longer fail the job. The two gallery examples that import the not-yet-implemented `FREDBlackbodyModel` were already listed in `expected_failing_examples` and are not the cause.
+- Every electron distribution in `trilobite/radiation/synchrotron/electron_distributions.py` (`PowerLaw`, `BrokenPowerLaw`, `MaxwellJuettner` and the two mixtures) now follows the two-level pattern: public methods validate through `_validate_and_process_parameters` (which also converts to `float64` arrays) and dispatch to unvalidated private `_opt_*` backends (`_opt_pdf`, `_opt_moment`, `_opt_moment_between`, `_opt_cdf`) that broadcast over array parameters. The private `_normalize_*` and `_bol_emiss_*` methods are built on these backends, and the public `normalize_from_*` and `bol_emiss_from_*` methods now validate their parameters. `BrokenPowerLaw._opt_first_moment_batch`, `_opt_normalize_from_magnetic_field_batch` and `_opt_log_pdf_batch` are removed in favor of the backends.
+- Scalar `pdf` of `PowerLaw` and `MaxwellJuettner` now returns a `float64` rather than a 0-d array, matching `BrokenPowerLaw`. `MaxwellJuettner.cdf` requires a scalar `Theta` and raises `ValueError` otherwise; the Maxwell-Juttner truncated moments and moments above order two are numerical and are evaluated one temperature at a time.
 
 ### Fixed
 - `TruncatedNormalPrior.logp` was off by a constant when both bounds lie far on the same side of the mean (e.g. 8 to 9 standard deviations), because its normalization subtracted two nearly equal `erf` values. It now uses `erfc` in the tails. The posterior shape was unaffected, only the normalization.
@@ -67,6 +69,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Spurious warnings and incorrect guard conditions in `cooling.py`.
 - Corrected TREX footer attribution name in documentation.
 - `InferenceProblem.to_dict` / `to_json` stored the likelihood only as its class path, so `from_dict` / `from_json` rebuilt it with default options (e.g. `LogGaussianCensoredLikelihood(sys_dex=0.1)` came back with `sys_dex=0`). `LikelihoodMPPool` and `LikelihoodMPIPool` rebuild the problem in each worker this way, so pool runs silently sampled a different posterior than serial runs. Likelihood options are now serialized, and an option that cannot be represented in JSON raises `TypeError` instead of being dropped.
+- `BrokenPowerLaw.normalize_from_magnetic_field`, `moment`, `moment_between`, `pdf` and `cdf` coerced `gamma_c`, `gamma_min` and `gamma_max` to floats, so array-valued parameters raised a `TypeError` (#17). They now broadcast over array parameters, as do the other electron distributions.
 
 ---
 
