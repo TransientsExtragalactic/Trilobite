@@ -6,7 +6,7 @@
 
 Computation times
 =================
-**03:00.301** total execution time for 67 files **from all galleries**:
+**03:00.297** total execution time for 67 files **from all galleries**:
 
 .. container::
 
@@ -67,12 +67,6 @@ Computation times
      - 0.0
    * - :ref:`sphx_glr_auto_examples_data_plot_inference_data.py` (``galleries/data/plot_inference_data.py``)
      - 00:00.090
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
-     - 00:00.004
-     - 0.0
-   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
-     - 00:00.001
      - 0.0
    * - :ref:`sphx_glr_auto_examples_accretion_plot_adv_disk.py` (``galleries/accretion/plot_adv_disk.py``)
      - 00:00.000
@@ -161,10 +155,16 @@ Computation times
    * - :ref:`sphx_glr_auto_examples_free_free_c_ffa_sed_plot_ffa_synchrotron_sed.py` (``galleries/free_free/c_ffa_sed/plot_ffa_synchrotron_sed.py``)
      - 00:00.000
      - 0.0
+   * - :ref:`sphx_glr_auto_examples_inference_plot_optical_lc_inference.py` (``galleries/inference/plot_optical_lc_inference.py``)
+     - 00:00.000
+     - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_chevalier_shock_synchrotron_cooling.py` (``galleries/modeling/plot_chevalier_shock_synchrotron_cooling.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_ffa_fadeout_evolution.py` (``galleries/modeling/plot_ffa_fadeout_evolution.py``)
+     - 00:00.000
+     - 0.0
+   * - :ref:`sphx_glr_auto_examples_modeling_plot_fred_blackbody_optical_lc.py` (``galleries/modeling/plot_fred_blackbody_optical_lc.py``)
      - 00:00.000
      - 0.0
    * - :ref:`sphx_glr_auto_examples_modeling_plot_tde_radio_afterglow.py` (``galleries/modeling/plot_tde_radio_afterglow.py``)
