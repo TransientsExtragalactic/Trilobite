@@ -126,6 +126,7 @@ Parameter row: ``[t_d, a]`` (s, s).
 """
 
 _CLOCKS = {"homologous": HOMOLOGOUS_CLOCK, "finite_radius": FINITE_RADIUS_CLOCK}
+_TRAPPING_MODES = ("deposition", "emergence")
 
 
 # =================================== #
@@ -423,6 +424,7 @@ class ArnettEngine(ABC):
         window_depth: float = 40.0,
         beta: float = 13.8,
         clock: str = "homologous",
+        trapping_mode: str = "deposition",
     ):
         r"""
         Instantiate the engine.
@@ -441,6 +443,12 @@ class ArnettEngine(ABC):
             Arnett's dimensionless opacity-geometry constant :math:`\beta`. Default ``13.8``.
         clock : {"homologous", "finite_radius"}, optional
             The diffusion clock. Default ``"homologous"``.
+        trapping_mode : {"deposition", "emergence"}, optional
+            Where the incomplete trapping :math:`1 - e^{-A/t^2}` of a leaky channel is applied. ``"deposition"``
+            (default) applies it to the power at the time it is deposited, inside the diffusion integral, so that
+            energy that leaks out is lost for good. ``"emergence"`` applies it to the diffused luminosity of the
+            channel at the time of observation, outside the integral, which is how the MOSFiT ``slsn`` model does it.
+            The two agree when the channel is fully trapped. See :ref:`arnett_trapping_mode`.
         """
         if quadrature is None:
             quadrature = self._default_quadrature()
@@ -450,12 +458,15 @@ class ArnettEngine(ABC):
             raise ValueError(f"beta must be positive, got {beta}")
         if clock not in _CLOCKS:
             raise ValueError(f"clock must be one of {sorted(_CLOCKS)}, got {clock!r}")
+        if trapping_mode not in _TRAPPING_MODES:
+            raise ValueError(f"trapping_mode must be one of {list(_TRAPPING_MODES)}, got {trapping_mode!r}")
 
         self._gamma_trapping = bool(gamma_trapping)
         self._quadrature = quadrature
         self._window_depth = float(window_depth)
         self._beta = float(beta)
         self._clock_name = clock
+        self._trapping_mode = trapping_mode
 
         self._channels = tuple(self._get_channels())
         if not self._channels:
@@ -464,13 +475,17 @@ class ArnettEngine(ABC):
             raise ValueError("channel names must be unique")
 
         # One solver per channel, compiled lazily on first use and shared process-wide between engines
-        # (and channels) with the same physics.
+        # (and channels) with the same physics. The trapping of a leaky channel is a deposition factor (applied inside
+        # the integral) or an emergence factor (applied to the output); both are the same function of time.
+        emergence = self._get_emergence_function()
+        if trapping_mode == "emergence" and emergence is not None and any(ch.opacity for ch in self._channels):
+            raise ValueError("trapping_mode='emergence' cannot be combined with a custom emergence function")
         self._solvers = tuple(
             _get_solver(
                 _CLOCKS[clock],
                 ch.injection,
-                _gamma_trapping if ch.opacity is not None else None,
-                self._get_emergence_function(),
+                _gamma_trapping if (ch.opacity is not None and trapping_mode == "deposition") else None,
+                _gamma_trapping if (ch.opacity is not None and trapping_mode == "emergence") else emergence,
                 self._window_depth,
             )
             for ch in self._channels
@@ -498,6 +513,11 @@ class ArnettEngine(ABC):
     def beta(self) -> float:
         r"""float: Arnett's constant :math:`\beta` in the diffusion time."""
         return self._beta
+
+    @property
+    def trapping_mode(self) -> str:
+        """str: Where the incomplete trapping is applied, ``"deposition"`` or ``"emergence"``."""
+        return self._trapping_mode
 
     @property
     def clock(self) -> str:
@@ -658,12 +678,15 @@ class ArnettEngine(ABC):
         for i, (solver, ch, columns) in enumerate(zip(self._solvers, self._channels, channel_columns)):
             block = flat[start : start + len(columns)]
             start += len(columns)
+            trapping = pack(block[ch.n_injection :])  # the trapping parameter A, if the channel leaks
+            emergence_here = trapping if self._trapping_mode == "emergence" else emergence_params
+            deposition_here = emergence_params if self._trapping_mode == "emergence" else trapping
             solver(
                 eval_time,
                 clock_params,
                 pack(block[: ch.n_injection]),
-                pack(block[ch.n_injection :]),
-                emergence_params,
+                deposition_here,
+                emergence_here,
                 initial_luminosity if i == 0 else np.zeros(n_real),
                 self._quadrature,
                 buffer,
@@ -739,7 +762,10 @@ class ArnettEngine(ABC):
         return self.compute_luminosity(time, **parameters)
 
     def _switches(self) -> str:
-        return f"gamma_trapping={self._gamma_trapping}, clock={self._clock_name!r}, beta={self._beta}"
+        return (
+            f"gamma_trapping={self._gamma_trapping}, trapping_mode={self._trapping_mode!r}, "
+            f"clock={self._clock_name!r}, beta={self._beta}"
+        )
 
     def __str__(self):
         return f"{type(self).__name__}({self._switches()})"
@@ -762,7 +788,7 @@ class _PositronSwitchMixin:
 
     def _switches(self) -> str:
         return f"gamma_trapping={self._gamma_trapping}, positron_trapping={self._positron_trapping}, " + (
-            f"clock={self._clock_name!r}, beta={self._beta}"
+            f"trapping_mode={self._trapping_mode!r}, clock={self._clock_name!r}, beta={self._beta}"
         )
 
 

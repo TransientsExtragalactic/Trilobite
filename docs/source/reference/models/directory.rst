@@ -207,9 +207,12 @@ engines of :mod:`trilobite.radiation.arnett` (see :ref:`arnett`). They are
 :class:`~trilobite.models.core.optical.OpticalModel` subclasses: the bolometric luminosity heats a blackbody
 photosphere, and its spectrum is convolved with the filters of a
 :class:`~trilobite.utils.phot_utils.FilterBundle`. They take observer-frame times and include redshift. The models
-differ only in the power source: ``NickelCobaltArnettModel`` is powered by :math:`^{56}\mathrm{Ni}` decay
+differ in the power source: ``NickelCobaltArnettModel`` is powered by :math:`^{56}\mathrm{Ni}` decay
 (stripped-envelope supernovae), ``MagnetarArnettModel`` by magnetar spin-down (superluminous supernovae), and
-``MagnetarNickelArnettModel`` by both.
+``MagnetarNickelArnettModel`` by both. Each also has a ``Cutoff`` version, whose photosphere radiates a blackbody with a
+suppressed UV (see :ref:`blackbody_cutoff`), as is observed for superluminous supernovae and as is done in MOSFiT.
+The option ``trapping_mode`` of all of them chooses where incomplete trapping is applied, with ``"emergence"`` the choice
+of MOSFiT.
 
 .. currentmodule:: trilobite.models.supernovae.arnett
 
@@ -220,6 +223,9 @@ differ only in the power source: ``NickelCobaltArnettModel`` is powered by :math
    NickelCobaltArnettModel
    MagnetarArnettModel
    MagnetarNickelArnettModel
+   NickelCobaltArnettCutoffModel
+   MagnetarArnettCutoffModel
+   MagnetarNickelArnettCutoffModel
 
 ---------------------------------------------------------------------
 

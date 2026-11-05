@@ -593,3 +593,84 @@ def test_parameter_units_match_source_signatures(engine_cls):
     }[engine_cls]
     expected = set(arnett._COMMON_UNITS) | {name for fn in helpers for name in inspect.signature(fn).parameters}
     assert set(engine_cls._PARAMETER_UNITS) == expected
+
+
+# ---------------------------------------------------------------- #
+# Where the trapping is applied: deposition (default) or emergence #
+# ---------------------------------------------------------------- #
+def _leaky_kw(kappa_magnetar):
+    return dict(P_spin=2e-3, B_dipole=1e14, kappa_magnetar=kappa_magnetar, **MAG)
+
+
+def test_default_trapping_mode_is_deposition():
+    assert MagnetarArnettEngine().trapping_mode == "deposition"
+    assert "trapping_mode='deposition'" in str(MagnetarArnettEngine())
+
+
+def test_unknown_trapping_mode_is_rejected():
+    with pytest.raises(ValueError, match="trapping_mode"):
+        MagnetarArnettEngine(trapping_mode="late")
+
+
+@pytest.mark.parametrize("kappa_magnetar", [0.01, 0.03, 0.2])
+def test_emergence_mode_is_the_leakage_factor_times_the_unleaky_luminosity(kappa_magnetar):
+    """Nicholl et al. (2017), Eq. 5: L_out = (1 - exp(-A / t^2)) x the diffused luminosity of the full source."""
+    t = MAG_TIMES
+    emergence = MagnetarArnettEngine(trapping_mode="emergence")
+    unleaky = MagnetarArnettEngine(gamma_trapping=False)
+    L = emergence._compute_luminosity_cgs(t, **_leaky_kw(kappa_magnetar))
+    L_full = unleaky._compute_luminosity_cgs(t, **_leaky_kw(kappa_magnetar))
+    A = 9 * kappa_magnetar * MAG["M_ej"] ** 2 / (40 * np.pi * MAG["E_ej"])
+    np.testing.assert_allclose(L, -np.expm1(-A / np.asarray(t) ** 2) * L_full, rtol=1e-12)
+
+
+def test_the_two_modes_differ_when_the_source_leaks():
+    t = MAG_TIMES
+    kw = _leaky_kw(0.02)
+    deposition = MagnetarArnettEngine(trapping_mode="deposition")._compute_luminosity_cgs(t, **kw)
+    emergence = MagnetarArnettEngine(trapping_mode="emergence")._compute_luminosity_cgs(t, **kw)
+    assert not np.allclose(deposition, emergence, rtol=1e-2)
+
+
+def test_the_two_modes_agree_when_the_source_is_fully_trapped():
+    t = MAG_TIMES
+    kw = _leaky_kw(1.0e4)  # an enormous opacity: nothing leaks
+    deposition = MagnetarArnettEngine(trapping_mode="deposition")._compute_luminosity_cgs(t, **kw)
+    emergence = MagnetarArnettEngine(trapping_mode="emergence")._compute_luminosity_cgs(t, **kw)
+    np.testing.assert_allclose(deposition, emergence, rtol=1e-9)
+
+
+def test_the_mode_is_irrelevant_without_trapping():
+    t = MAG_TIMES
+    kw = _leaky_kw(0.02)
+    a = MagnetarArnettEngine(gamma_trapping=False, trapping_mode="deposition")._compute_luminosity_cgs(t, **kw)
+    b = MagnetarArnettEngine(gamma_trapping=False, trapping_mode="emergence")._compute_luminosity_cgs(t, **kw)
+    np.testing.assert_array_equal(a, b)
+
+
+def test_emergence_mode_works_for_several_channels_and_realizations():
+    """Each channel gets its own factor, and parameter arrays still give one realization per entry."""
+    t = np.array([20.0, 60.0, 150.0]) * DAY
+    M = np.array([2.0, 5.0]) * MSUN
+    kw = dict(M_ej=M, E_ej=np.array([1e51, 2e51]), kappa=0.1, M_Ni=np.array([0.2, 0.4]) * MSUN)
+    engine = NickelCobaltArnettEngine(trapping_mode="emergence")
+    L = engine._compute_luminosity_cgs(t, **kw)
+    assert L.shape == (3, 2)
+    for j in range(2):
+        single = {k: (v[j] if np.ndim(v) else v) for k, v in kw.items()}
+        np.testing.assert_allclose(L[:, j], engine._compute_luminosity_cgs(t, **single), rtol=1e-12)
+
+
+def test_emergence_mode_cannot_be_combined_with_a_custom_emergence_function():
+    @njit
+    def _unit_emergence(t, params):
+        return 1.0
+
+    class CustomEmergence(MagnetarArnettEngine):
+        def _get_emergence_function(self):
+            return _unit_emergence
+
+    CustomEmergence(trapping_mode="deposition")  # fine
+    CustomEmergence(gamma_trapping=False, trapping_mode="emergence")  # nothing leaks, so nothing to combine
+    with pytest.raises(ValueError, match="custom emergence"):
+        CustomEmergence(trapping_mode="emergence")

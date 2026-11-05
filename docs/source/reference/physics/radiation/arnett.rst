@@ -45,7 +45,7 @@ Theoretical Background
 The One-Zone Model
 ^^^^^^^^^^^^^^^^^^
 
-The model follows :footcite:t:`Arnett1982`. We consider ejecta of mass :math:`M_\mathrm{ej}` and kinetic energy
+The model follows :footcite:t:`1982ApJ...253..785A`. We consider ejecta of mass :math:`M_\mathrm{ej}` and kinetic energy
 :math:`E_\mathrm{ej}` and make the following assumptions:
 
 1. **One zone.** The ejecta are treated as a single uniform-density sphere with a single radiation-dominated
@@ -187,6 +187,30 @@ from this form, and :footcite:t:`Milne1999` show that positron escape depends on
 ionization state of the ejecta. The opacities :math:`\kappa_h` should therefore be thought of as effective
 parameters of the model.
 
+.. _arnett_trapping_mode:
+
+Where the Trapping is Applied
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+There are two ways to apply the trapping factor, which is the same function :math:`1 - e^{-A_h/t^2}` in both. They are
+selected by the option ``trapping_mode`` of the engines and of the optical models.
+
+- ``"deposition"`` (the default). The factor is the fraction of the power that is thermalized *when it is deposited*,
+  and is part of the heating :math:`Q = P\,D` inside the integral above. Energy that leaks out of the ejecta before it
+  has diffused is gone for good.
+- ``"emergence"``. The factor is applied to the diffused luminosity at the time of observation,
+
+  .. math::
+
+      L(t) = \left(1 - e^{-A_h/t^2}\right) L_\mathrm{diffused}(t),
+
+  where :math:`L_\mathrm{diffused}` is the luminosity of the same source with no leakage. This is the form used by the
+  MOSFiT magnetar model (Eq. 5 of :footcite:t:`Nicholl_2017`), and is what to use to reproduce it.
+
+The two agree when the source is fully trapped, :math:`A_h/t^2 \gg 1`, and differ when it leaks while the energy is still
+diffusing out. Each channel has its own factor in both modes, and the two modes give the same result for a channel that
+does not leak.
+
 The Emergence Factor
 ^^^^^^^^^^^^^^^^^^^^
 
@@ -267,6 +291,11 @@ different *physical* parameters. The structural choices are the options of
       - ``False``
       - (Nickel engines only.) Include incomplete trapping of the positron channel. By default positrons
         deposit locally and completely.
+    * - ``trapping_mode``
+      - ``"deposition"``
+      - Where the incomplete trapping is applied, to the power as it is deposited (``"deposition"``) or to the
+        diffused luminosity at the time of observation (``"emergence"``, as in MOSFiT). See
+        :ref:`arnett_trapping_mode`.
     * - ``clock``
       - ``"homologous"``
       - ``"homologous"`` or ``"finite_radius"``; see :ref:`arnett_clocks`.
@@ -380,22 +409,28 @@ Optical Photometry Models
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The engines predict a bolometric luminosity. To compare with photometry, use the optical models in
-:mod:`trilobite.models.supernovae.arnett`, which radiate the engine luminosity from a blackbody photosphere and
-convolve the result with a :class:`~trilobite.utils.phot_utils.FilterBundle`. There is one model for each engine,
-and they are used and fit like any other :class:`~trilobite.models.core.optical.OpticalModel`:
+:mod:`trilobite.models.supernovae.arnett`, which radiate the engine luminosity from a photosphere and convolve the
+spectrum with a :class:`~trilobite.utils.phot_utils.FilterBundle`. There is one model for each engine, and each comes
+in two versions, which differ in the spectrum of the photosphere: a blackbody, or a blackbody with a UV suppression (the
+``Cutoff`` models; see :ref:`blackbody_cutoff`). They are used and fit like any other
+:class:`~trilobite.models.core.optical.OpticalModel`:
 
 .. list-table::
     :header-rows: 1
-    :widths: 50 50
+    :widths: 34 33 33
 
     * - Engine
-      - Optical model
+      - Blackbody model
+      - UV-suppressed model
     * - :class:`~trilobite.radiation.arnett.NickelCobaltArnettEngine`
       - :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettModel`
+      - :class:`~trilobite.models.supernovae.arnett.NickelCobaltArnettCutoffModel`
     * - :class:`~trilobite.radiation.arnett.MagnetarArnettEngine`
       - :class:`~trilobite.models.supernovae.arnett.MagnetarArnettModel`
+      - :class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel`
     * - :class:`~trilobite.radiation.arnett.MagnetarNickelArnettEngine`
       - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettModel`
+      - :class:`~trilobite.models.supernovae.arnett.MagnetarNickelArnettCutoffModel`
 
 .. code-block:: python
 
@@ -406,6 +441,18 @@ and they are used and fit like any other :class:`~trilobite.models.core.optical.
         {"band_index": ["V", "R", "V"], "time": [10, 10, 30] * u.day},
         {"M_ej": 2 * u.Msun, "E_ej": 1e51 * u.erg, "M_Ni": 0.3 * u.Msun},
     )
+
+The photosphere of all of them is that of MOSFiT (:footcite:p:`Nicholl_2017`): the ejecta expand at constant velocity,
+the temperature follows from the Stefan-Boltzmann law, and the photosphere recedes into the ejecta once the temperature
+reaches a floor, ``T_floor``. The UV-suppressed spectrum is also theirs. The magnetar model that reproduces MOSFiT's
+``slsn`` model is
+:class:`~trilobite.models.supernovae.arnett.MagnetarArnettCutoffModel` with ``trapping_mode="emergence"``, as in
+:ref:`sphx_glr_auto_examples_inference_plot_slsn_magnetar_swift.py`.
+
+The ``time`` variable is measured on the time axis of the data, and the parameter ``t_exp`` is the explosion epoch on that
+axis. If the explosion epoch is known, measure the time from it (with the ``time_start`` of the data containers, as for the
+radio models) and leave ``t_exp`` at its default of zero, as above. If it is not, fit ``t_exp`` along with the physical
+parameters.
 
 ----
 
